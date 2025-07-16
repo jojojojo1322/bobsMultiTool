@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { DeviceType, DEVICE_CONFIGS } from '@/types';
+import { TranslationKey } from '@/locales';
+import { useTranslation } from '@/hooks/useTranslation';
+import LanguageSelector from './LanguageSelector';
 
 export default function IframeViewer() {
+  const { t } = useTranslation();
   const [url, setUrl] = useState<string>('https://example.com');
   const [selectedDevice, setSelectedDevice] = useState<DeviceType>('Desktop');
   const [customWidth, setCustomWidth] = useState<number>(800);
@@ -108,12 +112,34 @@ export default function IframeViewer() {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert('클립보드에 복사되었습니다!');
+      alert(t('copySuccess'));
     } catch (err) {
       console.error('복사 실패:', err);
-      alert('복사에 실패했습니다.');
+      alert(t('copyFailed'));
     }
   };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setShowCodeModal(false);
+  };
+
+  // Esc키로 모달 닫기
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showCodeModal) {
+        closeModal();
+      }
+    };
+
+    if (showCodeModal) {
+      document.addEventListener('keydown', handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [showCodeModal]);
 
   const normalizedUrl = normalizeUrl(url);
   const currentDevice = selectedDevice === 'Custom' 
@@ -124,13 +150,18 @@ export default function IframeViewer() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            📱 Iframe Viewer Tool
+            {t('toolTitle')}
           </h1>
           <p className="text-gray-600">
-            다양한 디바이스 크기로 웹사이트를 미리보기하세요
+            {t('toolSubtitle')}
           </p>
+          
+          {/* 언어 선택 버튼 - 오른쪽 상단 */}
+          <div className="absolute top-0 right-0">
+            <LanguageSelector />
+          </div>
         </div>
 
         {/* 컨트롤 패널 */}
@@ -138,7 +169,7 @@ export default function IframeViewer() {
           {/* URL 입력 */}
           <div className="mb-10">
             <label htmlFor="url-input" className="block text-sm font-medium text-gray-700 mb-2">
-              웹사이트 URL
+              {t('urlLabel')}
             </label>
             <div className="flex gap-2">
               <input
@@ -148,29 +179,29 @@ export default function IframeViewer() {
                 onChange={handleUrlChange}
                 onKeyDown={handleKeyDown}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                placeholder="https://example.com"
+                placeholder={t('urlPlaceholder')}
               />
               <button
                 onClick={handleLoadUrl}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
-                로드
+                {t('loadButton')}
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              http:// 또는 https://를 생략하면 자동으로 http://가 추가됩니다
+              {t('urlHint')}
             </p>
           </div>
 
           {/* 디바이스 선택 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              디바이스 크기
+              Device Size
             </label>
             
             {/* 모바일 디바이스 */}
             <div className="mb-4">
-              <h4 className="text-xs font-medium text-gray-600 mb-2">📱 모바일</h4>
+              <h4 className="text-xs font-medium text-gray-600 mb-2">{t('mobileCategory')}</h4>
               <div className="flex flex-wrap gap-2">
                 {(['iPhone_15', 'iPhone_SE', 'Galaxy_S24'] as DeviceType[]).map((deviceType) => {
                   const device = DEVICE_CONFIGS[deviceType];
@@ -187,7 +218,7 @@ export default function IframeViewer() {
                       }`}
                     >
                       <span className="mr-1">{device.icon}</span>
-                      {device.name}
+                      {t(`device.${deviceType}` as TranslationKey)}
                       <span className="ml-1 text-xs opacity-75">
                         {device.width}×{device.height}
                       </span>
@@ -385,15 +416,21 @@ export default function IframeViewer() {
 
         {/* iframe 코드 추출 모달 */}
         {showCodeModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={closeModal}
+          >
+            <div 
+              className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-semibold text-gray-900">
                     📋 iframe 코드 추출
                   </h2>
                   <button
-                    onClick={() => setShowCodeModal(false)}
+                    onClick={closeModal}
                     className="text-gray-400 hover:text-gray-600 text-2xl"
                   >
                     ×
