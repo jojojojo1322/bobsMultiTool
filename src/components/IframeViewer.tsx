@@ -9,6 +9,7 @@ import LanguageSelector from './LanguageSelector';
 export default function IframeViewer() {
   const { t } = useTranslation();
   const [url, setUrl] = useState<string>('https://example.com');
+  const [currentUrl, setCurrentUrl] = useState<string>('https://example.com'); // 실제 iframe에 표시되는 URL
   const [selectedDevice, setSelectedDevice] = useState<DeviceType>('Desktop');
   const [customWidth, setCustomWidth] = useState<number>(800);
   const [customHeight, setCustomHeight] = useState<number>(600);
@@ -55,10 +56,12 @@ export default function IframeViewer() {
     setIframeError(true);
   };
 
-  // URL 로드 핸들러
+  // URL 로드 핸들러 - 실제로 iframe src를 업데이트
   const handleLoadUrl = () => {
+    const normalizedUrl = normalizeUrl(url);
     setIsLoading(true);
     setIframeError(false);
+    setCurrentUrl(normalizedUrl); // 실제 iframe src 업데이트
   };
 
   // 커스텀 크기 업데이트 핸들러
@@ -72,13 +75,13 @@ export default function IframeViewer() {
 
   // iframe 코드 생성 함수들
   const generateBasicIframe = () => {
-    return `<iframe src="${normalizedUrl}" width="${currentDevice.width}" height="${currentDevice.height}" frameborder="0"></iframe>`;
+    return `<iframe src="${currentUrl}" width="${currentDevice.width}" height="${currentDevice.height}" frameborder="0"></iframe>`;
   };
 
   const generateResponsiveIframe = () => {
     return `<div style="position: relative; width: 100%; max-width: ${currentDevice.width}px; aspect-ratio: ${currentDevice.width}/${currentDevice.height};">
   <iframe 
-    src="${normalizedUrl}"
+    src="${currentUrl}"
     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
     frameborder="0">
   </iframe>
@@ -87,7 +90,7 @@ export default function IframeViewer() {
 
   const generateInlineStyleIframe = () => {
     return `<iframe 
-  src="${normalizedUrl}"
+  src="${currentUrl}"
   style="width: ${currentDevice.width}px; height: ${currentDevice.height}px; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"
   frameborder="0">
 </iframe>`;
@@ -106,7 +109,7 @@ export default function IframeViewer() {
 </style>
 
 <!-- HTML -->
-<iframe src="${normalizedUrl}" class="iframe-viewer" frameborder="0"></iframe>`;
+<iframe src="${currentUrl}" class="iframe-viewer" frameborder="0"></iframe>`;
   };
 
   // 클립보드에 복사
@@ -142,20 +145,19 @@ export default function IframeViewer() {
     };
   }, [showCodeModal]);
 
-  const normalizedUrl = normalizeUrl(url);
   const currentDevice = selectedDevice === 'Custom' 
     ? { ...DEVICE_CONFIGS.Custom, width: customWidth, height: customHeight }
     : DEVICE_CONFIGS[selectedDevice];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="text-center mb-8 relative">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8 relative">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             {t('toolTitle')}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base">
             {t('toolSubtitle')}
           </p>
           
@@ -165,14 +167,14 @@ export default function IframeViewer() {
           </div>
         </div>
 
-        {/* 컨트롤 패널 */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        {/* 컨트롤 패널 - 항상 위에 표시 */}
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
           {/* URL 입력 */}
-          <div className="mb-10">
+          <div className="mb-6 sm:mb-8">
             <label htmlFor="url-input" className="block text-sm font-medium text-gray-700 mb-2">
               {t('urlLabel')}
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 id="url-input"
                 type="text"
@@ -184,7 +186,7 @@ export default function IframeViewer() {
               />
               <button
                 onClick={handleLoadUrl}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors whitespace-nowrap"
               >
                 {t('loadButton')}
               </button>
@@ -194,196 +196,208 @@ export default function IframeViewer() {
             </p>
           </div>
 
-          {/* 디바이스 선택 */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Device Size
-            </label>
-            
-            {/* 모바일 디바이스 */}
-            <div className="mb-4">
-              <h4 className="text-xs font-medium text-gray-600 mb-2">{t('mobileCategory')}</h4>
-              <div className="flex flex-wrap gap-2">
-                {(['iPhone_15', 'iPhone_SE', 'Galaxy_S24'] as DeviceType[]).map((deviceType) => {
-                  const device = DEVICE_CONFIGS[deviceType];
-                  const isSelected = selectedDevice === deviceType;
-                  
-                  return (
-                    <button
-                      key={deviceType}
-                      onClick={() => setSelectedDevice(deviceType)}
-                      className={`px-3 py-2 rounded-md border-2 transition-all duration-200 text-sm ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="mr-1">{device.icon}</span>
-                      {t(`device.${deviceType}` as TranslationKey)}
-                      <span className="ml-1 text-xs opacity-75">
-                        {device.width}×{device.height}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 태블릿 디바이스 */}
-            <div className="mb-4">
-              <h4 className="text-xs font-medium text-gray-600 mb-2">📱 태블릿</h4>
-              <div className="flex flex-wrap gap-2">
-                {(['iPad', 'iPad_Pro'] as DeviceType[]).map((deviceType) => {
-                  const device = DEVICE_CONFIGS[deviceType];
-                  const isSelected = selectedDevice === deviceType;
-                  
-                  return (
-                    <button
-                      key={deviceType}
-                      onClick={() => setSelectedDevice(deviceType)}
-                      className={`px-3 py-2 rounded-md border-2 transition-all duration-200 text-sm ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="mr-1">{device.icon}</span>
-                      {device.name}
-                      <span className="ml-1 text-xs opacity-75">
-                        {device.width}×{device.height}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 데스크톱 디바이스 */}
-            <div className="mb-4">
-              <h4 className="text-xs font-medium text-gray-600 mb-2">💻 데스크톱</h4>
-              <div className="flex flex-wrap gap-2">
-                {(['Laptop', 'Desktop', 'Desktop_4K'] as DeviceType[]).map((deviceType) => {
-                  const device = DEVICE_CONFIGS[deviceType];
-                  const isSelected = selectedDevice === deviceType;
-                  
-                  return (
-                    <button
-                      key={deviceType}
-                      onClick={() => setSelectedDevice(deviceType)}
-                      className={`px-3 py-2 rounded-md border-2 transition-all duration-200 text-sm ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="mr-1">{device.icon}</span>
-                      {device.name}
-                      <span className="ml-1 text-xs opacity-75">
-                        {device.width}×{device.height}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 커스텀 크기 */}
-            <div className="mb-4">
-              <h4 className="text-xs font-medium text-gray-600 mb-2">⚙️ 커스텀</h4>
-              <div className="flex flex-wrap gap-2 items-center">
-                <button
-                  onClick={() => setSelectedDevice('Custom')}
-                  className={`px-3 py-2 rounded-md border-2 transition-all duration-200 text-sm ${
-                    selectedDevice === 'Custom'
-                      ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="mr-1">⚙️</span>
-                  Custom
-                  <span className="ml-1 text-xs opacity-75">
-                    {customWidth}×{customHeight}
-                  </span>
-                </button>
+          {/* 반응형 그리드 레이아웃 */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {/* 왼쪽 컬럼: 디바이스 선택 */}
+            <div className="space-y-6">
+              {/* 디바이스 선택 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Device Size
+                </label>
                 
-                {selectedDevice === 'Custom' && (
-                  <div className="flex items-center gap-2 ml-2">
-                    <input
-                      type="number"
-                      value={customWidth}
-                      onChange={(e) => handleCustomSizeChange(Number(e.target.value), customHeight)}
-                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      placeholder="Width"
-                      min="100"
-                      max="5000"
-                    />
-                    <span className="text-gray-400">×</span>
-                    <input
-                      type="number"
-                      value={customHeight}
-                      onChange={(e) => handleCustomSizeChange(customWidth, Number(e.target.value))}
-                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      placeholder="Height"
-                      min="100"
-                      max="5000"
-                    />
-                    <span className="text-xs text-gray-500">px</span>
+                {/* 모바일 디바이스 */}
+                <div className="mb-4">
+                  <h4 className="text-xs font-medium text-gray-600 mb-2">{t('mobileCategory')}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(['iPhone_15', 'iPhone_SE', 'Galaxy_S24'] as DeviceType[]).map((deviceType) => {
+                      const device = DEVICE_CONFIGS[deviceType];
+                      const isSelected = selectedDevice === deviceType;
+                      
+                      return (
+                        <button
+                          key={deviceType}
+                          onClick={() => setSelectedDevice(deviceType)}
+                          className={`px-2 sm:px-3 py-2 rounded-md border-2 transition-all duration-200 text-xs sm:text-sm ${
+                            isSelected
+                              ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
+                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span className="mr-1">{device.icon}</span>
+                          <span className="hidden sm:inline">{t(`device.${deviceType}` as TranslationKey)}</span>
+                          <span className="sm:hidden">{device.name.split(' ')[0]}</span>
+                          <span className="ml-1 text-xs opacity-75">
+                            {device.width}×{device.height}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
+
+                {/* 태블릿 디바이스 */}
+                <div className="mb-4">
+                  <h4 className="text-xs font-medium text-gray-600 mb-2">{t('tabletCategory')}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(['iPad', 'iPad_Pro'] as DeviceType[]).map((deviceType) => {
+                      const device = DEVICE_CONFIGS[deviceType];
+                      const isSelected = selectedDevice === deviceType;
+                      
+                      return (
+                        <button
+                          key={deviceType}
+                          onClick={() => setSelectedDevice(deviceType)}
+                          className={`px-2 sm:px-3 py-2 rounded-md border-2 transition-all duration-200 text-xs sm:text-sm ${
+                            isSelected
+                              ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
+                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span className="mr-1">{device.icon}</span>
+                          {t(`device.${deviceType}` as TranslationKey)}
+                          <span className="ml-1 text-xs opacity-75">
+                            {device.width}×{device.height}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 데스크톱 디바이스 */}
+                <div className="mb-4">
+                  <h4 className="text-xs font-medium text-gray-600 mb-2">{t('desktopCategory')}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(['Laptop', 'Desktop', 'Desktop_4K'] as DeviceType[]).map((deviceType) => {
+                      const device = DEVICE_CONFIGS[deviceType];
+                      const isSelected = selectedDevice === deviceType;
+                      
+                      return (
+                        <button
+                          key={deviceType}
+                          onClick={() => setSelectedDevice(deviceType)}
+                          className={`px-2 sm:px-3 py-2 rounded-md border-2 transition-all duration-200 text-xs sm:text-sm ${
+                            isSelected
+                              ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
+                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span className="mr-1">{device.icon}</span>
+                          <span className="hidden sm:inline">{t(`device.${deviceType}` as TranslationKey)}</span>
+                          <span className="sm:hidden">{device.name.split(' ')[0]}</span>
+                          <span className="ml-1 text-xs opacity-75">
+                            {device.width}×{device.height}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 커스텀 크기 */}
+                <div className="mb-4">
+                  <h4 className="text-xs font-medium text-gray-600 mb-2">{t('customCategory')}</h4>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <button
+                      onClick={() => setSelectedDevice('Custom')}
+                      className={`px-2 sm:px-3 py-2 rounded-md border-2 transition-all duration-200 text-xs sm:text-sm ${
+                        selectedDevice === 'Custom'
+                          ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="mr-1">⚙️</span>
+                      {t('device.Custom' as TranslationKey)}
+                      <span className="ml-1 text-xs opacity-75">
+                        {customWidth}×{customHeight}
+                      </span>
+                    </button>
+                    
+                    {selectedDevice === 'Custom' && (
+                      <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2">
+                        <input
+                          type="number"
+                          value={customWidth}
+                          onChange={(e) => handleCustomSizeChange(Number(e.target.value), customHeight)}
+                          className="w-16 sm:w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          placeholder="Width"
+                          min="100"
+                          max="5000"
+                        />
+                        <span className="text-gray-400">×</span>
+                        <input
+                          type="number"
+                          value={customHeight}
+                          onChange={(e) => handleCustomSizeChange(customWidth, Number(e.target.value))}
+                          className="w-16 sm:w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          placeholder="Height"
+                          min="100"
+                          max="5000"
+                        />
+                        <span className="text-xs text-gray-500">px</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* 현재 설정 표시 */}
-          <div className="bg-gray-50 p-4 rounded-md">
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-600">
-                <strong>{t('currentSettings')}</strong> {currentDevice.name} ({currentDevice.width}×{currentDevice.height}px) - {normalizedUrl}
+            {/* 오른쪽 컬럼: 설정 및 줌 */}
+            <div className="space-y-6">
+              {/* 배율 조절 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  🔍 Zoom Level: {zoomLevel}%
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[80, 90, 100, 110, 120].map((zoom) => (
+                    <button
+                      key={zoom}
+                      onClick={() => setZoomLevel(zoom)}
+                      className={`px-3 py-1 text-sm rounded-md border transition-all duration-200 ${
+                        zoomLevel === zoom
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                      }`}
+                    >
+                      {zoom}%
+                    </button>
+                  ))}
+                </div>
               </div>
-              <button
-                onClick={() => setShowCodeModal(true)}
-                className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-              >
-                {t('exportCodeButton')}
-              </button>
-            </div>
-          </div>
-        </div>
 
-        {/* 배율 조절 */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-8">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">
-              🔍 Zoom Level: {zoomLevel}%
-            </label>
-            <div className="flex items-center gap-2">
-              {[80, 90, 100, 110, 120].map((zoom) => (
-                <button
-                  key={zoom}
-                  onClick={() => setZoomLevel(zoom)}
-                  className={`px-3 py-1 text-sm rounded-md border transition-all duration-200 ${
-                    zoomLevel === zoom
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                  }`}
-                >
-                  {zoom}%
-                </button>
-              ))}
+              {/* 현재 설정 표시 */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                  <div className="text-sm text-gray-600">
+                    <strong>{t('currentSettings')}</strong><br className="sm:hidden" />
+                    <span className="sm:ml-1">{currentDevice.name} ({currentDevice.width}×{currentDevice.height}px)</span><br className="sm:hidden" />
+                    <span className="sm:ml-1 text-xs sm:text-sm">{currentUrl}</span>
+                  </div>
+                  <button
+                    onClick={() => setShowCodeModal(true)}
+                    className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors whitespace-nowrap"
+                  >
+                    {t('exportCodeButton')}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* iframe 미리보기 영역 */}
         <div className="flex justify-center">
-          <div className="relative">
+          <div className="relative w-full max-w-full overflow-x-auto">
             {/* 디바이스 프레임 */}
             <div 
-              className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+              className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden mx-auto"
               style={{
-                width: (currentDevice.width * zoomLevel / 100) + 40,
+                width: Math.min((currentDevice.width * zoomLevel / 100) + 40, 800),
                 height: (currentDevice.height * zoomLevel / 100) + 40,
-                padding: '20px'
+                padding: '20px',
+                maxWidth: 'calc(100vw - 2rem)'
               }}
             >
               {/* 로딩 상태 */}
@@ -422,10 +436,11 @@ export default function IframeViewer() {
 
               {/* iframe */}
               <iframe
-                src={normalizedUrl}
+                key={currentUrl} // URL이 변경될 때 iframe을 강제로 다시 렌더링
+                src={currentUrl}
                 width={currentDevice.width}
                 height={currentDevice.height}
-                className="border-0 bg-white"
+                className="border-0 bg-white max-w-full"
                 style={{
                   transform: `scale(${zoomLevel / 100})`,
                   transformOrigin: 'top left',
@@ -437,7 +452,7 @@ export default function IframeViewer() {
             </div>
             
             {/* 디바이스 라벨 */}
-            <div className="absolute -top-8 left-0 text-sm text-gray-600 font-medium">
+            <div className="absolute -top-6 sm:-top-8 left-0 text-xs sm:text-sm text-gray-600 font-medium">
               {currentDevice.icon} {currentDevice.name} - {currentDevice.width}×{currentDevice.height}px
             </div>
           </div>
