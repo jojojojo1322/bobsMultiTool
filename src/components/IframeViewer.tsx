@@ -15,6 +15,7 @@ export default function IframeViewer() {
   const [iframeError, setIframeError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCodeModal, setShowCodeModal] = useState<boolean>(false);
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
 
   // URL 정규화 함수
   const normalizeUrl = useCallback((inputUrl: string): string => {
@@ -337,14 +338,38 @@ export default function IframeViewer() {
           <div className="bg-gray-50 p-4 rounded-md">
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
-                <strong>현재 설정:</strong> {currentDevice.name} ({currentDevice.width}×{currentDevice.height}px) - {normalizedUrl}
+                <strong>{t('currentSettings')}</strong> {currentDevice.name} ({currentDevice.width}×{currentDevice.height}px) - {normalizedUrl}
               </div>
               <button
                 onClick={() => setShowCodeModal(true)}
                 className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
               >
-                📋 iframe 코드 추출
+                {t('exportCodeButton')}
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 배율 조절 */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-8">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium text-gray-700">
+              🔍 Zoom Level: {zoomLevel}%
+            </label>
+            <div className="flex items-center gap-2">
+              {[80, 90, 100, 110, 120].map((zoom) => (
+                <button
+                  key={zoom}
+                  onClick={() => setZoomLevel(zoom)}
+                  className={`px-3 py-1 text-sm rounded-md border transition-all duration-200 ${
+                    zoomLevel === zoom
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                  }`}
+                >
+                  {zoom}%
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -356,8 +381,8 @@ export default function IframeViewer() {
             <div 
               className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
               style={{
-                width: currentDevice.width + 40,
-                height: currentDevice.height + 40,
+                width: (currentDevice.width * zoomLevel / 100) + 40,
+                height: (currentDevice.height * zoomLevel / 100) + 40,
                 padding: '20px'
               }}
             >
@@ -366,7 +391,7 @@ export default function IframeViewer() {
                 <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
                   <div className="text-center">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
-                    <p className="text-gray-600">로딩 중...</p>
+                    <p className="text-gray-600">{t('loading')}</p>
                   </div>
                 </div>
               )}
@@ -377,19 +402,19 @@ export default function IframeViewer() {
                   <div className="text-center p-4">
                     <div className="text-red-600 text-4xl mb-2">⚠️</div>
                     <h3 className="text-lg font-semibold text-red-700 mb-2">
-                      로딩 실패
+                      {t('loadingFailed')}
                     </h3>
                     <p className="text-red-600 text-sm mb-2">
-                      웹사이트를 불러올 수 없습니다.
+                      {t('loadingFailedMessage')}
                     </p>
                     <p className="text-red-500 text-xs">
-                      CORS 정책 차단이나 잘못된 URL일 수 있습니다.
+                      {t('corsMessage')}
                     </p>
                     <button
                       onClick={handleLoadUrl}
                       className="mt-3 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
                     >
-                      다시 시도
+                      {t('retryButton')}
                     </button>
                   </div>
                 </div>
@@ -401,9 +426,13 @@ export default function IframeViewer() {
                 width={currentDevice.width}
                 height={currentDevice.height}
                 className="border-0 bg-white"
+                style={{
+                  transform: `scale(${zoomLevel / 100})`,
+                  transformOrigin: 'top left',
+                }}
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
-                title={`${currentDevice.name} 미리보기`}
+                title={`${t(`device.${selectedDevice}` as TranslationKey)} Preview`}
               />
             </div>
             
@@ -427,7 +456,7 @@ export default function IframeViewer() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-semibold text-gray-900">
-                    📋 iframe 코드 추출
+                    {t('exportCodeTitle')}
                   </h2>
                   <button
                     onClick={closeModal}
@@ -437,7 +466,7 @@ export default function IframeViewer() {
                   </button>
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
-                  현재 설정에 맞는 iframe 코드를 다양한 형태로 생성합니다.
+                  {t('exportCodeDescription')}
                 </p>
               </div>
               
@@ -447,73 +476,73 @@ export default function IframeViewer() {
                   {/* 기본 iframe */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-900">기본 iframe</h3>
+                      <h3 className="font-medium text-gray-900">{t('basicIframe')}</h3>
                       <button
                         onClick={() => copyToClipboard(generateBasicIframe())}
                         className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                       >
-                        복사
+                        {t('copyButton')}
                       </button>
                     </div>
                     <pre className="bg-gray-50 p-3 rounded text-sm overflow-x-auto">
-                      <code>{generateBasicIframe()}</code>
+                      <code className="text-gray-900">{generateBasicIframe()}</code>
                     </pre>
                   </div>
 
                   {/* 반응형 iframe */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-900">반응형 iframe</h3>
+                      <h3 className="font-medium text-gray-900">{t('responsiveIframe')}</h3>
                       <button
                         onClick={() => copyToClipboard(generateResponsiveIframe())}
                         className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                       >
-                        복사
+                        {t('copyButton')}
                       </button>
                     </div>
                     <pre className="bg-gray-50 p-3 rounded text-sm overflow-x-auto">
-                      <code>{generateResponsiveIframe()}</code>
+                      <code className="text-gray-900">{generateResponsiveIframe()}</code>
                     </pre>
                     <p className="text-xs text-gray-500 mt-2">
-                      부모 컨테이너에 맞춰 크기가 자동 조절됩니다.
+                      {t('responsiveDescription')}
                     </p>
                   </div>
 
                   {/* 인라인 스타일 iframe */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-900">스타일 적용 iframe</h3>
+                      <h3 className="font-medium text-gray-900">{t('styledIframe')}</h3>
                       <button
                         onClick={() => copyToClipboard(generateInlineStyleIframe())}
                         className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                       >
-                        복사
+                        {t('copyButton')}
                       </button>
                     </div>
                     <pre className="bg-gray-50 p-3 rounded text-sm overflow-x-auto">
-                      <code>{generateInlineStyleIframe()}</code>
+                      <code className="text-gray-900">{generateInlineStyleIframe()}</code>
                     </pre>
                     <p className="text-xs text-gray-500 mt-2">
-                      테두리와 그림자 효과가 적용된 iframe입니다.
+                      {t('styledDescription')}
                     </p>
                   </div>
 
                   {/* CSS 클래스 iframe */}
                   <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-900">CSS 클래스 iframe</h3>
+                      <h3 className="font-medium text-gray-900">{t('cssClassIframe')}</h3>
                       <button
                         onClick={() => copyToClipboard(generateCSSClassIframe())}
                         className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                       >
-                        복사
+                        {t('copyButton')}
                       </button>
                     </div>
                     <pre className="bg-gray-50 p-3 rounded text-sm overflow-x-auto">
-                      <code>{generateCSSClassIframe()}</code>
+                      <code className="text-gray-900">{generateCSSClassIframe()}</code>
                     </pre>
                     <p className="text-xs text-gray-500 mt-2">
-                      CSS 파일에 스타일을 분리하여 관리할 수 있습니다.
+                      {t('cssClassDescription')}
                     </p>
                   </div>
 
