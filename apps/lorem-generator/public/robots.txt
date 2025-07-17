@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Google bots
+User-agent: Googlebot
+Allow: /
+
+# AdSense crawler
+User-agent: Mediapartners-Google
+Allow: /
+
+# Sitemap location
+Sitemap: https://iframe.bobob.app/sitemap.xml
+
+# Crawl-delay for SEO optimization
+Crawl-delay: 1 
