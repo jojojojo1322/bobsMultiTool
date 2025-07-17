@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { translations, Language, TranslationKey } from '@/locales';
 
 interface TranslationContextType {
@@ -15,14 +16,15 @@ interface TranslationProviderProps {
   children: ReactNode;
 }
 
-export function TranslationProvider({ children }: TranslationProviderProps) {
+// 내부 Provider 컴포넌트 (useSearchParams 사용)
+function InnerTranslationProvider({ children }: TranslationProviderProps) {
   const [language, setLanguage] = useState<Language>('en');
+  const searchParams = useSearchParams();
 
   // URL 쿼리 파라미터, localStorage, 브라우저 언어 순서로 언어 감지
   useEffect(() => {
     // 1. URL 쿼리 파라미터 확인
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlLang = urlParams.get('lang') as Language;
+    const urlLang = searchParams.get('lang') as Language;
     
     if (urlLang && translations[urlLang]) {
       setLanguage(urlLang);
@@ -50,12 +52,17 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
     } else {
       setLanguage('en'); // 기본값
     }
-  }, []);
+  }, [searchParams]);
 
-  // 언어 변경
+  // 언어 변경 시 URL도 업데이트
   const changeLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
+    
+    // URL 파라미터 업데이트
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', newLanguage);
+    window.history.replaceState({}, '', url);
   };
 
   // 번역 함수
@@ -67,6 +74,17 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
     <TranslationContext.Provider value={{ language, changeLanguage, t }}>
       {children}
     </TranslationContext.Provider>
+  );
+}
+
+// Suspense로 감싼 Provider
+export function TranslationProvider({ children }: TranslationProviderProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <InnerTranslationProvider>
+        {children}
+      </InnerTranslationProvider>
+    </Suspense>
   );
 }
 
