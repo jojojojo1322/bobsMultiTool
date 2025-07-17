@@ -16,7 +16,7 @@ interface TranslationProviderProps {
 }
 
 export function TranslationProvider({ children }: TranslationProviderProps) {
-  const [language, setLanguage] = useState<Language>('ko');
+  const [language, setLanguage] = useState<Language>('en');
 
   useEffect(() => {
     // URL 쿼리에서 언어 감지
@@ -29,12 +29,12 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
     // 브라우저 언어 감지
     const browserLang = navigator.language.split('-')[0] as Language;
     
-    // 우선순위: URL > localStorage > browser > default(ko)
-    const detectedLang = urlLang || savedLang || browserLang || 'ko';
+    // 우선순위: URL > localStorage > browser > default(en)
+    const detectedLang = urlLang || savedLang || browserLang || 'en';
     
     // 지원하는 언어인지 확인
     const supportedLanguages: Language[] = ['en', 'ko', 'zh', 'ja', 'vi'];
-    const finalLang = supportedLanguages.includes(detectedLang) ? detectedLang : 'ko';
+    const finalLang = supportedLanguages.includes(detectedLang) ? detectedLang : 'en';
     
     setLanguage(finalLang);
   }, []);

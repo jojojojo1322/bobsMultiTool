@@ -74,7 +74,7 @@ function HomeContent() {
           </Link>
 
           {/* Lorem Ipsum Generator */}
-          <Link href="http://localhost:3003" className="group" target="_blank">
+          <Link href={process.env.NODE_ENV === 'development' ? "http://localhost:3003" : "https://lorem.bobob.app"} className="group" target="_blank">
             <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 hover:border-orange-300 h-64 flex flex-col">
               <div className="text-4xl mb-4 text-orange-500">📝</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600">
