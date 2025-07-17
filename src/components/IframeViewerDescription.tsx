@@ -3,7 +3,7 @@
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function IframeViewerDescription() {
-  const { language, t } = useTranslation();
+  const { language } = useTranslation();
 
   // 언어별 SEO 설명 데이터
   const seoContent = {

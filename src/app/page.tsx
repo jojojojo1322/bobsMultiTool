@@ -5,8 +5,9 @@ import IframeViewer from '@/components/IframeViewer';
 import IframeViewerDescription from '@/components/IframeViewerDescription';
 
 // 동적 메타데이터 생성
-export async function generateMetadata({ searchParams }: { searchParams: { lang?: string } }): Promise<Metadata> {
-  const lang = searchParams.lang || 'en';
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ lang?: string }> }): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const lang = resolvedSearchParams.lang || 'en';
   
   const metaContent = {
     en: {
@@ -70,12 +71,12 @@ export async function generateMetadata({ searchParams }: { searchParams: { lang?
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* 작은 상단 배너 */}
-      <div className="w-full bg-gray-50 border-b border-gray-200">
+      {/* 작은 상단 배너 - 주석처리됨 */}
+      {/* <div className="w-full bg-gray-50 border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-2 flex justify-center">
           <AdContainer size="banner" slot="top-banner" isPreview={true} />
         </div>
-      </div>
+      </div> */}
 
       <div className="max-w-7xl mx-auto px-4 py-4">
 
