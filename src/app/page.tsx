@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import AdContainer from '@/components/AdContainer';
 import IframeViewer from '@/components/IframeViewer';
 import IframeViewerDescription from '@/components/IframeViewerDescription';
+import ProTipsContent from '@/components/ProTipsContent';
 
 // 동적 메타데이터 생성
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ lang?: string }> }): Promise<Metadata> {
@@ -95,30 +96,8 @@ export default function Home() {
           <AdContainer size="large-rectangle" slot="bottom-content" isPreview={true} />
         </div>
 
-        {/* 추가 콘텐츠 영역 (수익 최적화) */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">💡 Pro Tips for Website Testing</h2>
-          <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-600">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">🎯 Testing Best Practices</h3>
-              <ul className="space-y-1">
-                <li>• Test on actual device sizes first</li>
-                <li>• Check loading speed on mobile</li>
-                <li>• Verify touch targets are 44px+</li>
-                <li>• Test landscape and portrait modes</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">🔧 Common Issues to Check</h3>
-              <ul className="space-y-1">
-                <li>• Horizontal scrolling on mobile</li>
-                <li>• Text too small to read</li>
-                <li>• Buttons too close together</li>
-                <li>• Images not optimized for mobile</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        {/* 추가 콘텐츠 영역 (수익 최적화) - 다국어 지원 */}
+        <ProTipsContent />
 
         {/* 중간 광고 (콘텐츠 사이) */}
         <div className="flex justify-center mb-8">

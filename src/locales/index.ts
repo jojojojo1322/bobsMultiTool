@@ -75,6 +75,19 @@ export interface Translation {
   'language.zh': string;
   'language.ja': string;
   'language.vi': string;
+  
+  // Pro Tips Section
+  proTipsTitle: string;
+  testingBestPracticesTitle: string;
+  testingBestPractice1: string;
+  testingBestPractice2: string;
+  testingBestPractice3: string;
+  testingBestPractice4: string;
+  commonIssuesTitle: string;
+  commonIssue1: string;
+  commonIssue2: string;
+  commonIssue3: string;
+  commonIssue4: string;
 }
 
 export type TranslationKey = keyof Translation;
@@ -141,6 +154,18 @@ const en: Translation = {
   'language.zh': '中文',
   'language.ja': '日本語',
   'language.vi': 'Tiếng Việt',
+  
+  proTipsTitle: '💡 Pro Tips for Website Testing',
+  testingBestPracticesTitle: '🎯 Testing Best Practices',
+  testingBestPractice1: '• Test on actual device sizes first',
+  testingBestPractice2: '• Check loading speed on mobile',
+  testingBestPractice3: '• Verify touch targets are 44px+',
+  testingBestPractice4: '• Test landscape and portrait modes',
+  commonIssuesTitle: '🔧 Common Issues to Check',
+  commonIssue1: '• Horizontal scrolling on mobile',
+  commonIssue2: '• Text too small to read',
+  commonIssue3: '• Buttons too close together',
+  commonIssue4: '• Images not optimized for mobile',
 };
 
 // Korean
@@ -205,6 +230,18 @@ const ko: Translation = {
   'language.zh': '中文',
   'language.ja': '日本語',
   'language.vi': 'Tiếng Việt',
+  
+  proTipsTitle: '💡 웹사이트 테스트 전문 팁',
+  testingBestPracticesTitle: '🎯 테스트 모범 사례',
+  testingBestPractice1: '• 실제 디바이스 크기로 먼저 테스트',
+  testingBestPractice2: '• 모바일에서 로딩 속도 확인',
+  testingBestPractice3: '• 터치 타겟이 44px 이상인지 확인',
+  testingBestPractice4: '• 가로/세로 모드 모두 테스트',
+  commonIssuesTitle: '🔧 확인해야 할 일반적인 문제',
+  commonIssue1: '• 모바일에서 가로 스크롤 발생',
+  commonIssue2: '• 텍스트가 너무 작아서 읽기 어려움',
+  commonIssue3: '• 버튼들이 너무 가까이 있음',
+  commonIssue4: '• 모바일용으로 최적화되지 않은 이미지',
 };
 
 // Chinese (Simplified)
@@ -269,6 +306,18 @@ const zh: Translation = {
   'language.zh': '中文',
   'language.ja': '日本語',
   'language.vi': 'Tiếng Việt',
+  
+  proTipsTitle: '💡 网站测试专业技巧',
+  testingBestPracticesTitle: '🎯 测试最佳实践',
+  testingBestPractice1: '• 首先在实际设备尺寸上测试',
+  testingBestPractice2: '• 检查移动端加载速度',
+  testingBestPractice3: '• 验证触摸目标至少为44px',
+  testingBestPractice4: '• 测试横屏和竖屏模式',
+  commonIssuesTitle: '🔧 常见问题检查',
+  commonIssue1: '• 移动端出现水平滚动',
+  commonIssue2: '• 文字太小难以阅读',
+  commonIssue3: '• 按钮间距太近',
+  commonIssue4: '• 图片未针对移动端优化',
 };
 
 // Japanese
@@ -333,6 +382,18 @@ const ja: Translation = {
   'language.zh': '中文',
   'language.ja': '日本語',
   'language.vi': 'Tiếng Việt',
+  
+  proTipsTitle: '💡 ウェブサイトテストのプロのコツ',
+  testingBestPracticesTitle: '🎯 テストのベストプラクティス',
+  testingBestPractice1: '• まず実際のデバイスサイズでテスト',
+  testingBestPractice2: '• モバイルでの読み込み速度を確認',
+  testingBestPractice3: '• タッチターゲットが44px以上であることを確認',
+  testingBestPractice4: '• 横向きと縦向きの両方をテスト',
+  commonIssuesTitle: '🔧 チェックすべき一般的な問題',
+  commonIssue1: '• モバイルでの横スクロール',
+  commonIssue2: '• 読むには小さすぎるテキスト',
+  commonIssue3: '• ボタンが近すぎる',
+  commonIssue4: '• モバイル用に最適化されていない画像',
 };
 
 // Vietnamese
@@ -397,6 +458,18 @@ const vi: Translation = {
   'language.zh': '中文',
   'language.ja': '日本語',
   'language.vi': 'Tiếng Việt',
+  
+  proTipsTitle: '💡 Mẹo chuyên nghiệp cho việc kiểm tra trang web',
+  testingBestPracticesTitle: '🎯 Thực hành tốt nhất cho việc kiểm tra',
+  testingBestPractice1: '• Kiểm tra trên kích thước thiết bị thực tế trước',
+  testingBestPractice2: '• Kiểm tra tốc độ tải trên di động',
+  testingBestPractice3: '• Xác minh mục tiêu chạm có ít nhất 44px',
+  testingBestPractice4: '• Kiểm tra cả chế độ ngang và dọc',
+  commonIssuesTitle: '🔧 Vấn đề thường gặp cần kiểm tra',
+  commonIssue1: '• Cuộn ngang trên di động',
+  commonIssue2: '• Văn bản quá nhỏ để đọc',
+  commonIssue3: '• Các nút quá gần nhau',
+  commonIssue4: '• Hình ảnh không được tối ưu hóa cho di động',
 };
 
 export const translations: Record<Language, Translation> = {
