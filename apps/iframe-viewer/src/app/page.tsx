@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { 
-  // AdContainer, 
-  IframeViewer, 
-  IframeViewerDescription, 
-  ProTipsContent,
-  TranslationProvider
-} from '@bobob/ui';
+import IframeViewer from "@/components/IframeViewer";
+import IframeViewerDescription from "@/components/IframeViewerDescription";
+import ProTipsContent from "@/components/ProTipsContent";
+import { TranslationProvider } from "@/contexts/TranslationContext";
+// import AdContainer from "@/components/AdContainer";
 
 // 동적 메타데이터 생성
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ lang?: string }> }): Promise<Metadata> {
