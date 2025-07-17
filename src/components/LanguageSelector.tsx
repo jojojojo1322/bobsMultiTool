@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Language, TranslationKey } from '@/locales';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function LanguageSelector() {
   const { language, changeLanguage, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const languages: { code: Language; flag: string }[] = [
     { code: 'en', flag: '🇺🇸' },
@@ -21,6 +24,11 @@ export default function LanguageSelector() {
   const handleLanguageChange = (newLanguage: Language) => {
     changeLanguage(newLanguage);
     setIsOpen(false);
+    
+    // URL 쿼리 파라미터 업데이트
+    const params = new URLSearchParams(searchParams);
+    params.set('lang', newLanguage);
+    router.replace(`/?${params.toString()}`);
   };
 
   return (

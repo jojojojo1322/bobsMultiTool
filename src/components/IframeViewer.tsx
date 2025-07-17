@@ -8,8 +8,8 @@ import LanguageSelector from './LanguageSelector';
 
 export default function IframeViewer() {
   const { t } = useTranslation();
-  const [url, setUrl] = useState<string>('https://example.com');
-  const [currentUrl, setCurrentUrl] = useState<string>('https://example.com'); // 실제 iframe에 표시되는 URL
+  const [url, setUrl] = useState<string>('https://www.example.com');
+  const [currentUrl, setCurrentUrl] = useState<string>('https://www.example.com'); // 실제 iframe에 표시되는 URL
   const [selectedDevice, setSelectedDevice] = useState<DeviceType>('Desktop');
   const [customWidth, setCustomWidth] = useState<number>(800);
   const [customHeight, setCustomHeight] = useState<number>(600);
@@ -44,14 +44,25 @@ export default function IframeViewer() {
   // URL 정규화 함수
   const normalizeUrl = useCallback((inputUrl: string): string => {
     const trimmedUrl = inputUrl.trim();
-    if (!trimmedUrl) return 'https://example.com';
+    if (!trimmedUrl) return 'https://www.example.com';
     
-    // http 또는 https로 시작하지 않으면 http를 붙임
-    if (!/^https?:\/\//i.test(trimmedUrl)) {
+    // 이미 프로토콜이 있으면 그대로 반환
+    if (/^https?:\/\//i.test(trimmedUrl)) {
+      return trimmedUrl;
+    }
+    
+    // localhost, IP 주소, 포트가 포함된 경우는 http 사용
+    if (/^(localhost|127\.0\.0\.1|\d+\.\d+\.\d+\.\d+|.*:\d+)/i.test(trimmedUrl)) {
       return `http://${trimmedUrl}`;
     }
     
-    return trimmedUrl;
+    // www로 시작하는 경우 https만 추가
+    if (/^www\./i.test(trimmedUrl)) {
+      return `https://${trimmedUrl}`;
+    }
+    
+    // 일반 도메인의 경우 https://www. 추가
+    return `https://www.${trimmedUrl}`;
   }, []);
 
   // URL 변경 핸들러
@@ -409,7 +420,7 @@ export default function IframeViewer() {
                   🔍 Zoom Level: {zoomLevel}%
                   {isAutoAdjusted && (
                     <span className="text-xs text-gray-500 ml-2">
-                      (자동 조정: {Math.round(effectiveZoom)}%)
+                      ({t('autoAdjusted')}: {Math.round(effectiveZoom)}%)
                     </span>
                   )}
                 </label>

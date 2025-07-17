@@ -66,6 +66,9 @@ export interface Translation {
   copySuccess: string;
   copyFailed: string;
   
+  // Zoom
+  autoAdjusted: string;
+  
   // Language Names
   'language.en': string;
   'language.ko': string;
@@ -85,9 +88,9 @@ const en: Translation = {
   toolSubtitle: 'Preview websites in various device sizes',
   
   urlLabel: 'Website URL',
-  urlPlaceholder: 'https://example.com',
+  urlPlaceholder: 'https://www.example.com',
   loadButton: 'Load',
-  urlHint: 'http:// will be automatically added if you omit http:// or https://',
+  urlHint: 'Smart URL completion: "example.com" → "https://www.example.com", "localhost:3000" → "http://localhost:3000"',
   
   mobileCategory: '📱 Mobile',
   tabletCategory: '📱 Tablet',
@@ -131,6 +134,8 @@ const en: Translation = {
   copySuccess: 'Copied to clipboard!',
   copyFailed: 'Copy failed.',
   
+  autoAdjusted: 'Auto-adjusted',
+  
   'language.en': 'English',
   'language.ko': '한국어',
   'language.zh': '中文',
@@ -147,9 +152,9 @@ const ko: Translation = {
   toolSubtitle: '다양한 디바이스 크기로 웹사이트를 미리보기하세요',
   
   urlLabel: '웹사이트 URL',
-  urlPlaceholder: 'https://example.com',
+  urlPlaceholder: 'https://www.example.com',
   loadButton: '로드',
-  urlHint: 'http:// 또는 https://를 생략하면 자동으로 http://가 추가됩니다',
+  urlHint: '스마트 URL 자동완성: "example.com" → "https://www.example.com", "localhost:3000" → "http://localhost:3000"',
   
   mobileCategory: '📱 모바일',
   tabletCategory: '📱 태블릿',
@@ -193,6 +198,8 @@ const ko: Translation = {
   copySuccess: '클립보드에 복사되었습니다!',
   copyFailed: '복사에 실패했습니다.',
   
+  autoAdjusted: '자동 조정',
+  
   'language.en': 'English',
   'language.ko': '한국어',
   'language.zh': '中文',
@@ -209,9 +216,9 @@ const zh: Translation = {
   toolSubtitle: '在各种设备尺寸下预览网站',
   
   urlLabel: '网站 URL',
-  urlPlaceholder: 'https://example.com',
+  urlPlaceholder: 'https://www.example.com',
   loadButton: '加载',
-  urlHint: '如果省略 http:// 或 https://，将自动添加 http://',
+  urlHint: '智能URL补全: "example.com" → "https://www.example.com", "localhost:3000" → "http://localhost:3000"',
   
   mobileCategory: '📱 手机',
   tabletCategory: '📱 平板',
@@ -255,6 +262,8 @@ const zh: Translation = {
   copySuccess: '已复制到剪贴板！',
   copyFailed: '复制失败。',
   
+  autoAdjusted: '自动调整',
+  
   'language.en': 'English',
   'language.ko': '한국어',
   'language.zh': '中文',
@@ -271,9 +280,9 @@ const ja: Translation = {
   toolSubtitle: '様々なデバイスサイズでウェブサイトをプレビュー',
   
   urlLabel: 'ウェブサイト URL',
-  urlPlaceholder: 'https://example.com',
+  urlPlaceholder: 'https://www.example.com',
   loadButton: '読み込み',
-  urlHint: 'http:// または https:// を省略すると、自動的に http:// が追加されます',
+  urlHint: 'スマートURL補完: "example.com" → "https://www.example.com", "localhost:3000" → "http://localhost:3000"',
   
   mobileCategory: '📱 モバイル',
   tabletCategory: '📱 タブレット',
@@ -317,6 +326,8 @@ const ja: Translation = {
   copySuccess: 'クリップボードにコピーしました！',
   copyFailed: 'コピーに失敗しました。',
   
+  autoAdjusted: '自動調整',
+  
   'language.en': 'English',
   'language.ko': '한국어',
   'language.zh': '中文',
@@ -333,9 +344,9 @@ const vi: Translation = {
   toolSubtitle: 'Xem trước trang web ở nhiều kích thước thiết bị',
   
   urlLabel: 'URL trang web',
-  urlPlaceholder: 'https://example.com',
+  urlPlaceholder: 'https://www.example.com',
   loadButton: 'Tải',
-  urlHint: 'http:// sẽ được tự động thêm nếu bạn bỏ qua http:// hoặc https://',
+  urlHint: 'Hoàn thành URL thông minh: "example.com" → "https://www.example.com", "localhost:3000" → "http://localhost:3000"',
   
   mobileCategory: '📱 Di động',
   tabletCategory: '📱 Máy tính bảng',
@@ -378,6 +389,8 @@ const vi: Translation = {
   
   copySuccess: 'Đã sao chép vào clipboard!',
   copyFailed: 'Sao chép thất bại.',
+  
+  autoAdjusted: 'Tự động điều chỉnh',
   
   'language.en': 'English',
   'language.ko': '한국어',
