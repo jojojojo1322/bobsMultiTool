@@ -45,7 +45,7 @@ export default function AdContainer({
     if (shouldShowRealAd && adRef.current && window.adsbygoogle) {
       try {
         // 광고 초기화
-        (window.adsbygoogle as any[]).push({});
+        (window.adsbygoogle as Record<string, unknown>[]).push({});
         
         // 분석 도구로 광고 노출 추적
         if (window.gtag) {
@@ -186,7 +186,7 @@ export function DesktopAdLeaderboard({
 // 타입 정의
 declare global {
   interface Window {
-    adsbygoogle: any[];
-    gtag: (...args: any[]) => void;
+    adsbygoogle: Record<string, unknown>[];
+    gtag: (...args: unknown[]) => void;
   }
 } 

@@ -38,6 +38,55 @@ export interface Translation {
   exampleTitle: string;
   exampleDescription: string;
   
+  // Copy Functions
+  copySuccess: string;
+  copyFailed: string;
+  
+  // Regex Tester
+  commonPatternsLabel: string;
+  flagsDescription: string;
+  testingText: string;
+  matchesFoundText: string;
+  highlightedMatchesText: string;
+  matchDetailsText: string;
+  noMatchesFoundText: string;
+  fixPatternText: string;
+  copyText: string;
+  matchText: string;
+  valueText: string;
+  positionText: string;
+  groupsText: string;
+  namedGroupsText: string;
+  
+  // Cheat Sheet
+  cheatSheetButtonText: string;
+  cheatSheetTitle: string;
+  characterClassesTitle: string;
+  anchorsTitle: string;
+  quantifiersTitle: string;
+  groupsLookaroundTitle: string;
+  flagsTitle: string;
+  specialCharsTitle: string;
+  popularExamplesTitle: string;
+  
+  // Common Pattern Names and Descriptions
+  emailPatternName: string;
+  emailPatternDesc: string;
+  phoneUSPatternName: string;
+  phoneUSPatternDesc: string;
+  urlPatternName: string;
+  urlPatternDesc: string;
+  ipPatternName: string;
+  ipPatternDesc: string;
+  datePatternName: string;
+  datePatternDesc: string;
+  creditCardPatternName: string;
+  creditCardPatternDesc: string;
+  hexColorPatternName: string;
+  hexColorPatternDesc: string;
+  koreanPhonePatternName: string;
+  koreanPhonePatternDesc: string;
+  
   // Back to Home
   backToHome: string;
   
@@ -94,6 +143,51 @@ const en: Translation = {
   exampleTitle: "💡 Example",
   exampleDescription: "Email regex: [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   
+  copySuccess: "Copied to clipboard!",
+  copyFailed: "Copy failed.",
+  
+  commonPatternsLabel: "Common Patterns",
+  flagsDescription: "Flags: g (global), i (ignore case), m (multiline), s (dotall), u (unicode), y (sticky)",
+  testingText: "Testing...",
+  matchesFoundText: "matches found",
+  highlightedMatchesText: "Highlighted Matches:",
+  matchDetailsText: "Match Details:",
+  noMatchesFoundText: "No matches found",
+  fixPatternText: "Please fix the regex pattern above",
+  copyText: "Copy",
+  matchText: "Match",
+  valueText: "Value:",
+  positionText: "Position:",
+  groupsText: "Groups:",
+  namedGroupsText: "Named Groups:",
+  
+  cheatSheetButtonText: "📖 Cheat Sheet",
+  cheatSheetTitle: "Regular Expression Cheat Sheet",
+  characterClassesTitle: "Character Classes",
+  anchorsTitle: "Anchors",
+  quantifiersTitle: "Quantifiers",
+  groupsLookaroundTitle: "Groups & Lookaround",
+  flagsTitle: "Flags",
+  specialCharsTitle: "Special Characters",
+  popularExamplesTitle: "🔥 Popular Examples",
+  
+  emailPatternName: "Email",
+  emailPatternDesc: "Basic email validation",
+  phoneUSPatternName: "Phone (US)",
+  phoneUSPatternDesc: "(123) 456-7890 format",
+  urlPatternName: "URL",
+  urlPatternDesc: "HTTP/HTTPS URLs",
+  ipPatternName: "IP Address",
+  ipPatternDesc: "IPv4 addresses",
+  datePatternName: "Date (MM/DD/YYYY)",
+  datePatternDesc: "US date format",
+  creditCardPatternName: "Credit Card",
+  creditCardPatternDesc: "16-digit credit card",
+  hexColorPatternName: "Hex Color",
+  hexColorPatternDesc: "Hexadecimal color codes",
+  koreanPhonePatternName: "Korean Phone",
+  koreanPhonePatternDesc: "Korean mobile numbers",
+  
   backToHome: "Back to Home",
   
   footerTitle: "🔍 Bob's Multi Tool - RegAx",
@@ -144,6 +238,51 @@ const ko: Translation = {
   step4: "결과 확인: 실시간으로 매칭 결과와 캡처 그룹을 확인하세요",
   exampleTitle: "💡 예시",
   exampleDescription: "이메일 주소를 찾는 정규식: [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+  
+  copySuccess: "클립보드에 복사되었습니다!",
+  copyFailed: "복사에 실패했습니다.",
+  
+  commonPatternsLabel: "자주 사용하는 패턴",
+  flagsDescription: "플래그: g (전역), i (대소문자 무시), m (다중행), s (dotall), u (유니코드), y (sticky)",
+  testingText: "테스트 중...",
+  matchesFoundText: "개 매치 발견",
+  highlightedMatchesText: "하이라이트된 매치:",
+  matchDetailsText: "매치 상세 정보:",
+  noMatchesFoundText: "매치가 없습니다",
+  fixPatternText: "위의 정규식 패턴을 수정해주세요",
+  copyText: "복사",
+  matchText: "매치",
+  valueText: "값:",
+  positionText: "위치:",
+  groupsText: "그룹:",
+  namedGroupsText: "이름 있는 그룹:",
+  
+  cheatSheetButtonText: "📖 치트시트",
+  cheatSheetTitle: "정규식 치트시트",
+  characterClassesTitle: "문자 클래스",
+  anchorsTitle: "앵커",
+  quantifiersTitle: "수량자",
+  groupsLookaroundTitle: "그룹 & 룩어라운드",
+  flagsTitle: "플래그",
+  specialCharsTitle: "특수 문자",
+  popularExamplesTitle: "🔥 인기 예제",
+  
+  emailPatternName: "이메일",
+  emailPatternDesc: "기본 이메일 검증",
+  phoneUSPatternName: "미국 전화번호",
+  phoneUSPatternDesc: "(123) 456-7890 형식",
+  urlPatternName: "URL",
+  urlPatternDesc: "HTTP/HTTPS URL",
+  ipPatternName: "IP 주소",
+  ipPatternDesc: "IPv4 주소",
+  datePatternName: "날짜 (MM/DD/YYYY)",
+  datePatternDesc: "미국 날짜 형식",
+  creditCardPatternName: "신용카드",
+  creditCardPatternDesc: "16자리 신용카드 번호",
+  hexColorPatternName: "헥스 컬러",
+  hexColorPatternDesc: "16진수 색상 코드",
+  koreanPhonePatternName: "한국 휴대폰",
+  koreanPhonePatternDesc: "한국 휴대폰 번호",
   
   backToHome: "홈으로 돌아가기",
   
@@ -196,6 +335,51 @@ const zh: Translation = {
   exampleTitle: "💡 示例",
   exampleDescription: "电子邮件正则表达式：[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   
+  copySuccess: "已复制到剪贴板！",
+  copyFailed: "复制失败。",
+  
+  commonPatternsLabel: "常用模式",
+  flagsDescription: "标志: g (全局), i (忽略大小写), m (多行), s (dotall), u (unicode), y (sticky)",
+  testingText: "测试中...",
+  matchesFoundText: "个匹配",
+  highlightedMatchesText: "高亮匹配:",
+  matchDetailsText: "匹配详情:",
+  noMatchesFoundText: "未找到匹配",
+  fixPatternText: "请修复上面的正则表达式模式",
+  copyText: "复制",
+  matchText: "匹配",
+  valueText: "值:",
+  positionText: "位置:",
+  groupsText: "分组:",
+  namedGroupsText: "命名分组:",
+  
+  cheatSheetButtonText: "📖 参考手册",
+  cheatSheetTitle: "正则表达式参考手册",
+  characterClassesTitle: "字符类",
+  anchorsTitle: "锚点",
+  quantifiersTitle: "量词",
+  groupsLookaroundTitle: "分组和预查",
+  flagsTitle: "标志",
+  specialCharsTitle: "特殊字符",
+  popularExamplesTitle: "🔥 热门示例",
+  
+  emailPatternName: "邮箱",
+  emailPatternDesc: "基本邮箱验证",
+  phoneUSPatternName: "美国电话",
+  phoneUSPatternDesc: "(123) 456-7890 格式",
+  urlPatternName: "网址",
+  urlPatternDesc: "HTTP/HTTPS 网址",
+  ipPatternName: "IP地址",
+  ipPatternDesc: "IPv4 地址",
+  datePatternName: "日期 (MM/DD/YYYY)",
+  datePatternDesc: "美国日期格式",
+  creditCardPatternName: "信用卡",
+  creditCardPatternDesc: "16位信用卡号",
+  hexColorPatternName: "十六进制颜色",
+  hexColorPatternDesc: "十六进制颜色代码",
+  koreanPhonePatternName: "韩国手机",
+  koreanPhonePatternDesc: "韩国手机号码",
+  
   backToHome: "返回首页",
   
   footerTitle: "🔍 Bob's Multi Tool - RegAx",
@@ -247,6 +431,51 @@ const ja: Translation = {
   exampleTitle: "💡 例",
   exampleDescription: "メールアドレスの正規表現：[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   
+  copySuccess: "クリップボードにコピーしました！",
+  copyFailed: "コピーに失敗しました。",
+  
+  commonPatternsLabel: "よく使うパターン",
+  flagsDescription: "フラグ: g (グローバル), i (大文字小文字無視), m (複数行), s (dotall), u (unicode), y (sticky)",
+  testingText: "テスト中...",
+  matchesFoundText: "個のマッチが見つかりました",
+  highlightedMatchesText: "ハイライトされたマッチ:",
+  matchDetailsText: "マッチ詳細:",
+  noMatchesFoundText: "マッチが見つかりません",
+  fixPatternText: "上記の正規表現パターンを修正してください",
+  copyText: "コピー",
+  matchText: "マッチ",
+  valueText: "値:",
+  positionText: "位置:",
+  groupsText: "グループ:",
+  namedGroupsText: "名前付きグループ:",
+  
+  cheatSheetButtonText: "📖 チートシート",
+  cheatSheetTitle: "正規表現チートシート",
+  characterClassesTitle: "文字クラス",
+  anchorsTitle: "アンカー",
+  quantifiersTitle: "量詞",
+  groupsLookaroundTitle: "グループと先読み・後読み",
+  flagsTitle: "フラグ",
+  specialCharsTitle: "特殊文字",
+  popularExamplesTitle: "🔥 人気の例",
+  
+  emailPatternName: "メール",
+  emailPatternDesc: "基本的なメール検証",
+  phoneUSPatternName: "米国電話番号",
+  phoneUSPatternDesc: "(123) 456-7890 形式",
+  urlPatternName: "URL",
+  urlPatternDesc: "HTTP/HTTPS URL",
+  ipPatternName: "IPアドレス",
+  ipPatternDesc: "IPv4アドレス",
+  datePatternName: "日付 (MM/DD/YYYY)",
+  datePatternDesc: "米国日付形式",
+  creditCardPatternName: "クレジットカード",
+  creditCardPatternDesc: "16桁のクレジットカード番号",
+  hexColorPatternName: "16進カラー",
+  hexColorPatternDesc: "16進数カラーコード",
+  koreanPhonePatternName: "韓国携帯電話",
+  koreanPhonePatternDesc: "韓国携帯電話番号",
+  
   backToHome: "ホームに戻る",
   
   footerTitle: "🔍 Bob's Multi Tool - RegAx",
@@ -297,6 +526,51 @@ const vi: Translation = {
   step4: "Kiểm tra kết quả: Xem kết quả khớp và nhóm bắt theo thời gian thực",
   exampleTitle: "💡 Ví dụ",
   exampleDescription: "Regex email: [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+  
+  copySuccess: "Đã sao chép vào clipboard!",
+  copyFailed: "Sao chép thất bại.",
+  
+  commonPatternsLabel: "Mẫu phổ biến",
+  flagsDescription: "Cờ: g (toàn cục), i (không phân biệt chữ hoa), m (đa dòng), s (dotall), u (unicode), y (sticky)",
+  testingText: "Đang kiểm tra...",
+  matchesFoundText: "khớp được tìm thấy",
+  highlightedMatchesText: "Khớp được tô sáng:",
+  matchDetailsText: "Chi tiết khớp:",
+  noMatchesFoundText: "Không tìm thấy khớp",
+  fixPatternText: "Vui lòng sửa mẫu regex ở trên",
+  copyText: "Sao chép",
+  matchText: "Khớp",
+  valueText: "Giá trị:",
+  positionText: "Vị trí:",
+  groupsText: "Nhóm:",
+  namedGroupsText: "Nhóm có tên:",
+  
+  cheatSheetButtonText: "📖 Bảng tham khảo",
+  cheatSheetTitle: "Bảng tham khảo biểu thức chính quy",
+  characterClassesTitle: "Lớp ký tự",
+  anchorsTitle: "Neo",
+  quantifiersTitle: "Bộ định lượng",
+  groupsLookaroundTitle: "Nhóm & Lookaround",
+  flagsTitle: "Cờ",
+  specialCharsTitle: "Ký tự đặc biệt",
+  popularExamplesTitle: "🔥 Ví dụ phổ biến",
+  
+  emailPatternName: "Email",
+  emailPatternDesc: "Xác thực email cơ bản",
+  phoneUSPatternName: "Điện thoại (Mỹ)",
+  phoneUSPatternDesc: "Định dạng (123) 456-7890",
+  urlPatternName: "URL",
+  urlPatternDesc: "URL HTTP/HTTPS",
+  ipPatternName: "Địa chỉ IP",
+  ipPatternDesc: "Địa chỉ IPv4",
+  datePatternName: "Ngày (MM/DD/YYYY)",
+  datePatternDesc: "Định dạng ngày Mỹ",
+  creditCardPatternName: "Thẻ tín dụng",
+  creditCardPatternDesc: "Số thẻ tín dụng 16 chữ số",
+  hexColorPatternName: "Màu Hex",
+  hexColorPatternDesc: "Mã màu thập lục phân",
+  koreanPhonePatternName: "Điện thoại Hàn Quốc",
+  koreanPhonePatternDesc: "Số điện thoại di động Hàn Quốc",
   
   backToHome: "Quay về trang chủ",
   

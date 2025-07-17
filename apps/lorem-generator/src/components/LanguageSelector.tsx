@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Language } from '@/types';
-import { Translation } from '@/locales';
 
 export default function LanguageSelector() {
   const { language, setLanguage, t } = useTranslation();

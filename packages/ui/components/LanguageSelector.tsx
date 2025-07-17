@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Language, TranslationKey } from '@/locales';
+import { Language } from '@/locales';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function LanguageSelector() {

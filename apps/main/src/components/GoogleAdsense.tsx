@@ -3,10 +3,10 @@
 import Script from 'next/script';
 
 interface GoogleAdsenseProps {
-  publisherId: string;
+  publisherId?: string;
 }
 
-export default function GoogleAdsense({ publisherId }: GoogleAdsenseProps) {
+export default function GoogleAdsense({ publisherId = "ca-pub-2620992505263949" }: GoogleAdsenseProps) {
   return (
     <>
       <Script

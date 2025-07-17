@@ -8,10 +8,11 @@ interface GoogleAdsenseProps {
   enableAutoAds?: boolean;
 }
 
-export default function GoogleAdsense({ 
-  publisherId = adsConfig.publisherId,
-  enableAutoAds = adsConfig.enableAutoAds
-}: GoogleAdsenseProps) {
+export default function GoogleAdsense(props: GoogleAdsenseProps = {}) {
+  const { 
+    publisherId = adsConfig.publisherId,
+    enableAutoAds = adsConfig.enableAutoAds
+  } = props;
   // 개발 환경이거나 Publisher ID가 없으면 광고를 로드하지 않음
   if (!publisherId || publisherId === 'ca-pub-YOUR_ACTUAL_PUBLISHER_ID') {
     if (adsConfig.debugMode) {

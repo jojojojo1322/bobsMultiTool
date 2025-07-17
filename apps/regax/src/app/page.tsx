@@ -2,6 +2,8 @@
 
 import { useTranslation } from '@/hooks/useTranslation';
 import LanguageSelector from '@/components/LanguageSelector';
+import RegexTester from '@/components/RegexTester';
+import RegexCheatSheet from '@/components/RegexCheatSheet';
 
 export default function RegaxPage() {
   const { t } = useTranslation();
@@ -31,54 +33,7 @@ export default function RegaxPage() {
       {/* RegEx Tester Tool */}
       <section className="py-8 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-            <div className="grid gap-6">
-              {/* Pattern Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('patternLabel')}
-                </label>
-                <div className="flex items-center space-x-2">
-                  <span className="text-gray-500 text-lg">/</span>
-                  <input
-                    type="text"
-                    placeholder={t('patternPlaceholder')}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-gray-900 placeholder-gray-500"
-                  />
-                  <span className="text-gray-500 text-lg">/</span>
-                  <input
-                    type="text"
-                    placeholder={t('flagPlaceholder')}
-                    className="w-20 px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-center text-gray-900 placeholder-gray-500"
-                  />
-                </div>
-              </div>
-
-              {/* Test String */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('testStringLabel')}
-                </label>
-                <textarea
-                  placeholder={t('testStringPlaceholder')}
-                  rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-gray-900 placeholder-gray-500"
-                />
-              </div>
-
-              {/* Results */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('resultsLabel')}
-                </label>
-                <div className="bg-gray-50 rounded-lg p-4 min-h-[100px] border">
-                  <p className="text-gray-500 text-center">
-                    {t('resultsPlaceholder')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RegexTester />
         </div>
       </section>
 
@@ -153,7 +108,7 @@ export default function RegaxPage() {
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <a
-            href="http://localhost:3000"
+            href="https://bobob.app"
             className="inline-flex items-center px-8 py-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-lg"
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +128,7 @@ export default function RegaxPage() {
               <a href="/privacy" className="hover:text-white transition-colors">{t('footerPrivacy')}</a>
               <a href="/terms" className="hover:text-white transition-colors">{t('footerTerms')}</a>
               <a href="mailto:bobob935@gmail.com" className="hover:text-white transition-colors">{t('footerContact')}</a>
-              <a href="http://localhost:3000" className="hover:text-white transition-colors">{t('footerBackHome')}</a>
+              <a href="https://bobob.app" className="hover:text-white transition-colors">{t('footerBackHome')}</a>
             </div>
             <p className="text-xs text-gray-500">
               📧 {t('footerSupport')} <a href="mailto:bobob935@gmail.com" className="text-blue-400 hover:text-blue-300">bobob935@gmail.com</a>
@@ -182,6 +137,9 @@ export default function RegaxPage() {
           <p className="text-sm text-gray-400">&copy; {t('footerCopyright')}</p>
         </div>
       </footer>
+
+      {/* Cheat Sheet */}
+      <RegexCheatSheet />
     </main>
   );
 }

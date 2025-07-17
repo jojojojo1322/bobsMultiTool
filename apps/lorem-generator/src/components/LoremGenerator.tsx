@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { translations } from '@/locales';
-import { Language, LoremType, LoremOptions } from '@/types';
+import { LoremType, LoremOptions } from '@/types';
 import LanguageSelector from './LanguageSelector';
 
 export default function LoremGenerator() {
@@ -58,7 +58,7 @@ export default function LoremGenerator() {
       await navigator.clipboard.writeText(generatedText);
       setCopyMessage(t('copySuccess'));
       setTimeout(() => setCopyMessage(''), 2000);
-    } catch (err) {
+    } catch {
       setCopyMessage(t('copyFailed'));
       setTimeout(() => setCopyMessage(''), 2000);
     }
