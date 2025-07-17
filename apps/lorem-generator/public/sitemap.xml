@@ -2,33 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
-  <!-- Main RegAx Page -->
+  <!-- Main Lorem Generator Page -->
   <url>
-    <loc>https://regax.bobob.app/</loc>
-    <lastmod>2024-01-15T00:00:00+00:00</lastmod>
+    <loc>https://lorem.bobob.app/</loc>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://regax.bobob.app/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://regax.bobob.app/?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://regax.bobob.app/?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://regax.bobob.app/?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://regax.bobob.app/?lang=vi"/>
-  </url>
-  
-  <!-- Privacy Policy -->
-  <url>
-    <loc>https://regax.bobob.app/privacy</loc>
-    <lastmod>2024-01-15T00:00:00+00:00</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  
-  <!-- Terms of Service -->
-  <url>
-    <loc>https://regax.bobob.app/terms</loc>
-    <lastmod>2024-01-15T00:00:00+00:00</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lorem.bobob.app/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://lorem.bobob.app/?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://lorem.bobob.app/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://lorem.bobob.app/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://lorem.bobob.app/?lang=vi"/>
   </url>
   
 </urlset> 

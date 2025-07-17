@@ -5,7 +5,7 @@
   <!-- Main RegAx Page -->
   <url>
     <loc>https://regax.bobob.app/</loc>
-    <lastmod>2024-01-15T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://regax.bobob.app/?lang=en"/>
@@ -18,17 +18,27 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://regax.bobob.app/privacy</loc>
-    <lastmod>2024-01-15T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://regax.bobob.app/privacy?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://regax.bobob.app/privacy?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://regax.bobob.app/privacy?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://regax.bobob.app/privacy?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://regax.bobob.app/privacy?lang=vi"/>
   </url>
   
   <!-- Terms of Service -->
   <url>
     <loc>https://regax.bobob.app/terms</loc>
-    <lastmod>2024-01-15T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://regax.bobob.app/terms?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://regax.bobob.app/terms?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://regax.bobob.app/terms?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://regax.bobob.app/terms?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://regax.bobob.app/terms?lang=vi"/>
   </url>
   
 </urlset> 
