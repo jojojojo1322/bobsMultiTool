@@ -46,6 +46,9 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
     title: content.title,
     description: content.description,
     keywords: content.keywords,
+    verification: {
+      google: 'NtDt2jnqkwLbHi1k1NXyUCVEeIlUXhnwF82bf_3bgbY',
+    },
     alternates: {
       canonical: `/?lang=${currentLang}`,
       languages: {
