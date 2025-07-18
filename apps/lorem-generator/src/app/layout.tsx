@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Bob's Multi Tool Team" }],
   creator: "Bob's Multi Tool",
   publisher: "Bob's Multi Tool",
+
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -79,7 +80,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-site-verification',
+    google: 'NtDt2jnqkwLbHi1k1NXyUCVEeIlUXhnwF82bf_3bgbY',
   },
 };
 
