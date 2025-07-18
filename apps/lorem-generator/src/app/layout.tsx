@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { TranslationProvider } from '@/contexts/TranslationContext';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 export const metadata: Metadata = {
   title: {
@@ -162,6 +163,7 @@ export default function RootLayout({
       </head>
       <body>
         <TranslationProvider>
+          <GoogleAnalytics />
           {children}
         </TranslationProvider>
       </body>

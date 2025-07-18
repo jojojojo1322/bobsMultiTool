@@ -6,7 +6,7 @@ interface GoogleAdsenseProps {
   publisherId?: string;
 }
 
-export default function GoogleAdsense({ publisherId = "ca-pub-2620992505263949" }: GoogleAdsenseProps) {
+export default function GoogleAdsense({ publisherId = "ca-pub-XXXXXXXXXX" }: GoogleAdsenseProps) {
   return (
     <>
       <Script
