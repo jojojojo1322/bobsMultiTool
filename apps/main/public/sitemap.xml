@@ -54,4 +54,30 @@
     <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/terms?lang=vi"/>
   </url>
   
+  <!-- Cron Generator Tool -->
+  <url>
+    <loc>https://bobob.app/cron-generator</loc>
+    <lastmod>2024-12-28T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/cron-generator?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/cron-generator?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/cron-generator?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/cron-generator?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/cron-generator?lang=vi"/>
+  </url>
+  
+  <!-- Meta Tag Generator Tool -->
+  <url>
+    <loc>https://bobob.app/meta-generator</loc>
+    <lastmod>2025-01-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/meta-generator?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/meta-generator?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/meta-generator?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/meta-generator?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/meta-generator?lang=vi"/>
+  </url>
+  
 </urlset> 

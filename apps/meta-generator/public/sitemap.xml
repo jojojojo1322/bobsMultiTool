@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://meta.bobob.app/</loc>
+    <lastmod>2025-01-27T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://meta.bobob.app/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://meta.bobob.app/?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://meta.bobob.app/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://meta.bobob.app/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://meta.bobob.app/?lang=vi"/>
+  </url>
+</urlset> 

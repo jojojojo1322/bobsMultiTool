@@ -39,8 +39,8 @@ function HomeContent() {
           </p>
         </div>
 
-        {/* 도구들 그리드 - 높이 통일 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {/* 도구들 그리드 - 4개 도구 2x2 배치 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto">
           {/* Iframe Viewer */}
           <Link href="https://iframe.bobob.app" className="group">
             <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 hover:border-blue-300 h-64 flex flex-col">
@@ -89,19 +89,39 @@ function HomeContent() {
             </div>
           </Link>
 
-          {/* 더 많은 도구들 추가 예정 */}
-          <div className="bg-gray-50 rounded-lg shadow-sm p-6 border border-gray-200 border-dashed h-64 flex flex-col">
-            <div className="text-4xl mb-4 text-gray-400">⚒️</div>
-            <h3 className="text-xl font-semibold text-gray-500 mb-2">
-              {t('moreToolsTitle')}
-            </h3>
-            <p className="text-gray-500 text-sm mb-4 flex-grow">
-              {t('moreToolsDescription')}
-            </p>
-            <div className="text-gray-400 text-sm mt-auto">
-              {t('moreToolsComingSoon')}
+          {/* Cron Expression Generator */}
+          <Link href={process.env.NODE_ENV === 'development' ? "http://localhost:3004" : "https://cron.bobob.app"} className="group" target="_blank">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 hover:border-blue-300 h-64 flex flex-col">
+              <div className="text-4xl mb-4 text-blue-500">⏰</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">
+                {t('cronGeneratorTitle')}
+              </h3>
+              <p className="text-gray-600 text-sm mb-4 flex-grow">
+                {t('cronGeneratorDescription')}
+              </p>
+              <div className="text-blue-500 text-sm font-medium group-hover:text-blue-700 mt-auto">
+                {t('useToolButton')} →
+              </div>
             </div>
-          </div>
+          </Link>
+
+          {/* Meta Tag Generator */}
+          <Link href={process.env.NODE_ENV === 'development' ? "http://localhost:3005" : "https://meta.bobob.app"} className="group" target="_blank">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 hover:border-purple-300 h-64 flex flex-col">
+              <div className="text-4xl mb-4 text-purple-500">🏷️</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-purple-600">
+                {t('metaGeneratorTitle')}
+              </h3>
+              <p className="text-gray-600 text-sm mb-4 flex-grow">
+                {t('metaGeneratorDescription')}
+              </p>
+              <div className="text-purple-500 text-sm font-medium group-hover:text-purple-700 mt-auto">
+                {t('useToolButton')} →
+              </div>
+            </div>
+          </Link>
+
+
         </div>
         
         {/* 콘텐츠 중간 광고 - 주석처리 */}
@@ -171,7 +191,7 @@ function HomeContent() {
       {/* 푸터 - 다국어 완성 */}
       <footer className="bg-gray-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 items-start">
             <div>
               <h3 className="text-lg font-semibold mb-4">{t('mainTitle')}</h3>
               <p className="text-gray-300 leading-relaxed">
@@ -183,15 +203,24 @@ function HomeContent() {
               <ul className="space-y-2 text-gray-300">
                 <li>
                   <a href="https://iframe.bobob.app" target="_blank" className="hover:text-white transition-colors">
-                    {t('iframeViewerTitle')}
+                    🖼️ {t('iframeViewerTitle')}
                   </a>
                 </li>
                 <li>
                   <a href="https://regax.bobob.app" target="_blank" className="hover:text-white transition-colors">
-                    {t('regaxTitle')}
+                    🔍 {t('regaxTitle')}
                   </a>
                 </li>
-                <li className="text-gray-400">{t('moreToolsComingSoon')}</li>
+                <li>
+                  <a href="https://lorem.bobob.app" target="_blank" className="hover:text-white transition-colors">
+                    📝 {t('loremGeneratorTitle')}
+                  </a>
+                </li>
+                <li>
+                  <a href="https://cron.bobob.app" target="_blank" className="hover:text-white transition-colors">
+                    ⏰ {t('cronGeneratorTitle')}
+                  </a>
+                </li>
               </ul>
             </div>
             <div>

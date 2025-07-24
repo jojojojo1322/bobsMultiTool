@@ -20,30 +20,30 @@ export const metadata: Metadata = {
     default: "Bob's Multi Tool - 개발자를 위한 실용적인 온라인 도구들",
     template: "%s | Bob's Multi Tool"
   },
-  description: "웹 개발하면서 자주 쓰는 도구들을 한 곳에 모았습니다. iframe 뷰어로 반응형 디자인 테스트하고, 정규식 테스터로 패턴 검증해보세요. 무료로 사용 가능합니다.",
+  description: "웹 개발하면서 자주 쓰는 도구들을 한 곳에 모았습니다. iframe 뷰어로 반응형 디자인 테스트하고, 정규식 테스터로 패턴 검증하고, cron 표현식 생성기로 스케줄링하세요. 무료로 사용 가능합니다.",
   keywords: [
     // 한국어 키워드
-    "개발자 도구", "iframe 뷰어", "정규식 테스터", "온라인 도구", "웹 개발", "무료 도구", 
+    "개발자 도구", "iframe 뷰어", "정규식 테스터", "크론 생성기", "온라인 도구", "웹 개발", "무료 도구", 
     "반응형 테스트", "모바일 미리보기", "개발 유틸리티", "Bob's Multi Tool", "아이프레임 뷰어",
-    "웹사이트 미리보기", "디바이스 테스트", "정규표현식", "regex 테스터", "개발자 툴",
-    "프론트엔드 도구", "웹 디자인 도구", "레스폰시브 테스트", "모바일 호환성",
+    "웹사이트 미리보기", "디바이스 테스트", "정규표현식", "regex 테스터", "크론 표현식", "스케줄링 도구",
+    "프론트엔드 도구", "웹 디자인 도구", "레스폰시브 테스트", "모바일 호환성", "cron generator",
     
     // English keywords
-    "developer tools", "iframe viewer", "regex tester", "online tools", "web development", "free tools", 
+    "developer tools", "iframe viewer", "regex tester", "cron generator", "online tools", "web development", "free tools", 
     "responsive testing", "mobile preview", "development utility", "website preview", "device simulator",
-    "regular expression", "frontend tools", "web design tools", "mobile compatibility",
+    "regular expression", "cron expression", "scheduling tool", "frontend tools", "web design tools", "mobile compatibility",
     
     // 中文关键词
-    "开发者工具", "iframe查看器", "正则表达式测试", "在线工具", "网站开发", "免费工具",
-    "响应式测试", "移动预览", "网站预览工具", "设备模拟器", "前端工具",
+    "开发者工具", "iframe查看器", "正则表达式测试", "cron生成器", "在线工具", "网站开发", "免费工具",
+    "响应式测试", "移动预览", "网站预览工具", "设备模拟器", "前端工具", "定时任务", "调度工具",
     
     // 日本語キーワード
-    "開発者ツール", "iframeビューア", "正規表現テスター", "オンラインツール", "ウェブ開発", "無料ツール",
-    "レスポンシブテスト", "モバイルプレビュー", "ウェブサイトプレビュー", "デバイスシミュレーター",
+    "開発者ツール", "iframeビューア", "正規表現テスター", "cronジェネレーター", "オンラインツール", "ウェブ開発", "無料ツール",
+    "レスポンシブテスト", "モバイルプレビュー", "ウェブサイトプレビュー", "デバイスシミュレーター", "スケジュールツール",
     
     // Tiếng Việt từ khóa
-    "công cụ developer", "iframe viewer", "regex tester", "công cụ online", "phát triển web", "công cụ miễn phí",
-    "kiểm tra responsive", "xem trước mobile", "công cụ phát triển web"
+    "công cụ developer", "iframe viewer", "regex tester", "tạo cron", "công cụ online", "phát triển web", "công cụ miễn phí",
+    "kiểm tra responsive", "xem trước mobile", "công cụ phát triển web", "lập lịch công việc"
   ],
   authors: [{ name: "Bob's Multi Tool Team" }],
   creator: "Bob's Multi Tool",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     url: 'https://bobob.app',
     siteName: "Bob's Multi Tool",
     title: "Bob's Multi Tool - 개발자를 위한 실용적인 온라인 도구들",
-    description: "웹 개발하면서 자주 쓰는 도구들을 한 곳에 모았습니다. iframe 뷰어로 반응형 디자인 테스트하고, 정규식 테스터로 패턴 검증해보세요.",
+    description: "웹 개발하면서 자주 쓰는 도구들을 한 곳에 모았습니다. iframe 뷰어로 반응형 디자인 테스트하고, 정규식 테스터로 패턴 검증하고, cron 생성기로 스케줄링하세요.",
     images: [
       {
         url: 'https://bobob.app/og-image.png',
@@ -145,6 +145,32 @@ export default function RootLayout({
         "operatingSystem": "Web Browser",
         "description": "정규식 패턴을 테스트하고 검증할 수 있는 강력한 도구",
         "url": "https://regax.bobob.app",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Cron Expression Generator",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "description": "크론 표현식을 생성하고 검증할 수 있는 온라인 도구",
+        "url": "https://cron.bobob.app",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Meta Tag Generator",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "description": "SEO 최적화를 위한 HTML 메타 태그를 생성하는 도구. Open Graph, Twitter 카드, 로봇 메타 태그 생성 지원",
+        "url": "https://meta.bobob.app",
         "offers": {
           "@type": "Offer",
           "price": "0",

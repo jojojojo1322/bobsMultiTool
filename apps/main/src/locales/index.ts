@@ -115,6 +115,10 @@ export interface Translation {
   regaxToolDescription: string;
   loremGeneratorTitle: string;
   loremGeneratorDescription: string;
+  cronGeneratorTitle: string;
+  cronGeneratorDescription: string;
+  metaGeneratorTitle: string;
+  metaGeneratorDescription: string;
   moreToolsTitle: string;
   moreToolsDescription: string;
   moreToolsComingSoon: string;
@@ -242,6 +246,10 @@ const en: Translation = {
   regaxToolDescription: 'A powerful tool for testing and validating regular expression patterns. Test regex patterns in real-time and complete your patterns.',
   loremGeneratorTitle: 'Lorem Ipsum Generator',
   loremGeneratorDescription: 'Generate placeholder text in multiple languages including Latin, Korean, Chinese, Japanese, and Vietnamese for your design and development projects.',
+  cronGeneratorTitle: 'Cron Expression Generator',
+  cronGeneratorDescription: 'Create and visualize cron expressions with real-time scheduling preview. Perfect for developers and system administrators.',
+  metaGeneratorTitle: 'Meta Tag Generator',
+  metaGeneratorDescription: 'Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards for better search ranking.',
   moreToolsTitle: 'More Tools',
   moreToolsDescription: 'More useful developer tools will be added soon. Stay tuned for updates!',
   moreToolsComingSoon: 'Coming Soon...',
@@ -367,6 +375,10 @@ const ko: Translation = {
   regaxToolDescription: '정규식을 테스트할 수 있는 도구예요. 패턴 작성하고 바로 결과를 확인할 수 있어서 개발할 때 많이 도움됩니다.',
   loremGeneratorTitle: 'Lorem Ipsum 생성기',
   loremGeneratorDescription: '라틴어, 한국어, 중국어, 일본어, 베트남어로 된 더미 텍스트를 만들 수 있어요. 디자인이나 개발할 때 텍스트가 필요하면 유용합니다.',
+  cronGeneratorTitle: 'Cron 표현식 생성기',
+  cronGeneratorDescription: '실시간 스케줄링 미리보기로 크론 표현식을 생성하고 시각화할 수 있어요. 개발자와 시스템 관리자에게 완벽한 도구입니다.',
+  metaGeneratorTitle: '메타 태그 생성기',
+  metaGeneratorDescription: 'SEO 최적화를 위한 HTML 메타 태그를 생성해보세요. 타이틀, 설명, 오픈 그래프, 트위터 카드를 만들어서 검색 순위를 높여보세요.',
   moreToolsTitle: '더 많은 도구들',
   moreToolsDescription: '앞으로 개발에 도움되는 도구들을 계속 추가할 예정이에요. 기대해주세요!',
   moreToolsComingSoon: '준비 중...',
@@ -492,6 +504,10 @@ const zh: Translation = {
   regaxToolDescription: '测试和验证正则表达式模式的强大工具。实时测试正则表达式模式并完善您的模式。',
   loremGeneratorTitle: 'Lorem Ipsum 生成器',
   loremGeneratorDescription: '为您的设计和开发项目生成拉丁语、韩语、中文、日语和越南语等多种语言的占位符文本。',
+  cronGeneratorTitle: 'Cron 表达式生成器',
+  cronGeneratorDescription: '通过实时调度预览创建和可视化 cron 表达式。为开发者和系统管理员量身打造。',
+  metaGeneratorTitle: '元标签生成器',
+  metaGeneratorDescription: '为SEO优化生成HTML元标签。创建标题、描述、Open Graph、Twitter卡片以提高搜索排名。',
   moreToolsTitle: '更多工具',
   moreToolsDescription: '更多有用的开发者工具即将推出。敬请期待更新！',
   moreToolsComingSoon: '即将推出...',
@@ -617,6 +633,10 @@ const ja: Translation = {
   regaxToolDescription: '正規表現パターンをテストおよび検証するための強力なツール。正規表現パターンをリアルタイムでテストし、パターンを完成させます。',
   loremGeneratorTitle: 'Lorem Ipsum ジェネレーター',
   loremGeneratorDescription: 'デザインおよび開発プロジェクト用に、ラテン語、韓国語、中国語、日本語、ベトナム語を含む複数言語のプレースホルダーテキストを生成します。',
+  cronGeneratorTitle: 'Cron 式ジェネレーター',
+  cronGeneratorDescription: 'リアルタイムスケジューリングプレビューで cron 式を作成・可視化できます。開発者とシステム管理者に最適。',
+  metaGeneratorTitle: 'メタタグジェネレーター',
+  metaGeneratorDescription: 'SEO最適化のためのHTMLメタタグを生成。タイトル、説明、Open Graph、Twitterカードを作成して検索ランキングを向上。',
   moreToolsTitle: 'その他のツール',
   moreToolsDescription: 'より多くの有用な開発者ツールが間もなく追加されます。アップデートをお待ちください！',
   moreToolsComingSoon: '準備中...',
@@ -742,6 +762,10 @@ const vi: Translation = {
   regaxToolDescription: 'Một công cụ mạnh mẽ để test và validate các pattern regular expression. Test các pattern regex trong thời gian thực và hoàn thiện các pattern của bạn.',
   loremGeneratorTitle: 'Lorem Ipsum Generator',
   loremGeneratorDescription: 'Tạo văn bản placeholder đa ngôn ngữ bao gồm tiếng Latin, Hàn Quốc, Trung Quốc, Nhật Bản và Việt Nam cho các dự án thiết kế và phát triển của bạn.',
+  cronGeneratorTitle: 'Trình tạo biểu thức Cron',
+  cronGeneratorDescription: 'Tạo và trực quan hóa biểu thức cron với xem trước lịch trình thời gian thực. Hoàn hảo cho các nhà phát triển và quản trị viên hệ thống.',
+  metaGeneratorTitle: 'Trình Tạo Meta Tag',
+  metaGeneratorDescription: 'Tạo meta tag HTML cho tối ưu hóa SEO. Tạo tiêu đề, mô tả, Open Graph, Twitter card để cải thiện thứ hạng tìm kiếm.',
   moreToolsTitle: 'Thêm công cụ',
   moreToolsDescription: 'Nhiều công cụ developer hữu ích sẽ được thêm vào sớm. Hãy theo dõi các cập nhật!',
   moreToolsComingSoon: 'Sắp ra mắt...',
