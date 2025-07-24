@@ -47,45 +47,44 @@ export const metadata: Metadata = {
   authors: [{ name: "Bob's Multi Tool Team" }],
   creator: "Bob's Multi Tool",
   publisher: "Bob's Multi Tool",
+
+  alternates: {
+    canonical: 'https://meta.bobob.app',
+    languages: {
+      'ko-KR': 'https://meta.bobob.app?lang=ko',
+      'en-US': 'https://meta.bobob.app?lang=en',
+      'zh-CN': 'https://meta.bobob.app?lang=zh',
+      'ja-JP': 'https://meta.bobob.app?lang=ja',
+      'vi-VN': 'https://meta.bobob.app?lang=vi',
+    },
+  },
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://meta.bobob.app'),
-  alternates: {
-    canonical: 'https://meta.bobob.app',
-    languages: {
-      'ko': 'https://meta.bobob.app?lang=ko',
-      'en': 'https://meta.bobob.app?lang=en',
-      'zh': 'https://meta.bobob.app?lang=zh',
-      'ja': 'https://meta.bobob.app?lang=ja',
-      'vi': 'https://meta.bobob.app?lang=vi',
-    },
-  },
   openGraph: {
     type: 'website',
-    locale: 'ko_KR',
+    locale: 'en_US',
+    alternateLocale: ['ko_KR', 'zh_CN', 'ja_JP', 'vi_VN'],
     url: 'https://meta.bobob.app',
-    title: 'Meta Tag Generator - SEO Meta Tags Generator',
-    description: 'Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags for better search engine ranking.',
-    siteName: "Bob's Multi Tool",
+    siteName: "Meta Tag Generator",
+    title: "Meta Tag Generator - SEO Meta Tags Generator",
+    description: "Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags for better search engine ranking.",
     images: [
       {
-        url: 'https://meta.bobob.app/og-image.jpg',
+        url: 'https://meta.bobob.app/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Meta Tag Generator - SEO Meta Tags Generator',
+        alt: "Meta Tag Generator - SEO Meta Tags Generator",
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Meta Tag Generator - SEO Meta Tags Generator',
-    description: 'Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags.',
-    images: ['https://meta.bobob.app/twitter-image.jpg'],
-    creator: '@bobob935',
-    site: '@bobob935',
+    title: "Meta Tag Generator - SEO Meta Tags Generator",
+    description: "Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags.",
+    images: ['https://meta.bobob.app/og-image.png'],
   },
   robots: {
     index: true,
@@ -98,10 +97,12 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  other: {
-    'google-site-verification': 'meta-bobob-app-verification',
-    'msvalidate.01': 'bing-webmaster-verification',
-    'naver-site-verification': 'naver-webmaster-verification',
+  verification: {
+    google: 'NtDt2jnqkwLbHi1k1NXyUCVEeIlUXhnwF82bf_3bgbY',
+    other: {
+      'naver-site-verification': 'naver-webmaster-verification',
+      'msvalidate.01': 'bing-webmaster-verification',
+    },
   },
 };
 
