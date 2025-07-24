@@ -34,7 +34,7 @@ const CronGenerator = () => {
   ];
 
   // 크론 표현식 검증 함수
-  const validateCronExpression = (expression: string): CronResult => {
+  const validateCronExpression = useCallback((expression: string): CronResult => {
     try {
       const parts = expression.trim().split(/\s+/);
       
@@ -67,7 +67,7 @@ const CronGenerator = () => {
         error: error instanceof Error ? error.message : 'Invalid cron expression',
       };
     }
-  };
+  }, []);
 
   // 크론 표현식 설명 생성
   const generateCronDescription = (parts: string[]): string => {
