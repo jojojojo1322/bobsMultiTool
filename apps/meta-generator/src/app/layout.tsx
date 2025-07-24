@@ -176,6 +176,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
         
+        {/* 구글 애드센스 계정 확인 */}
+        <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
+        
         {/* 파비콘 설정 */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

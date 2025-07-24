@@ -154,9 +154,9 @@ export default function RootLayout({
       {
         "@type": "SoftwareApplication",
         "name": "Cron Expression Generator",
-        "applicationCategory": "DeveloperApplication",
+        "applicationCategory": "DeveloperApplication", 
         "operatingSystem": "Web Browser",
-        "description": "크론 표현식을 생성하고 검증할 수 있는 온라인 도구",
+        "description": "크론 표현식을 쉽게 생성하고 검증할 수 있는 도구",
         "url": "https://cron.bobob.app",
         "offers": {
           "@type": "Offer",
@@ -168,8 +168,8 @@ export default function RootLayout({
         "@type": "SoftwareApplication",
         "name": "Meta Tag Generator",
         "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "Web Browser",
-        "description": "SEO 최적화를 위한 HTML 메타 태그를 생성하는 도구. Open Graph, X 카드, 로봇 메타 태그 생성 지원",
+        "operatingSystem": "Web Browser", 
+        "description": "SEO 최적화를 위한 메타 태그를 쉽게 생성할 수 있는 도구",
         "url": "https://meta.bobob.app",
         "offers": {
           "@type": "Offer",
@@ -180,9 +180,9 @@ export default function RootLayout({
       {
         "@type": "SoftwareApplication",
         "name": "Lorem Ipsum Generator",
-        "applicationCategory": "DesignApplication",
+        "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web Browser",
-        "description": "다국어 Lorem Ipsum 더미 텍스트를 생성하는 도구. 한국어, 영어, 중국어, 일본어, 베트남어 지원",
+        "description": "다국어 지원 더미 텍스트 생성 도구",
         "url": "https://lorem.bobob.app",
         "offers": {
           "@type": "Offer",
@@ -205,6 +205,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
+        
+        {/* 구글 애드센스 계정 확인 */}
+        <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
         
         {/* 파비콘 설정 */}
         <link rel="icon" href="/favicon.ico" sizes="any" />

@@ -173,6 +173,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* 구글 애드센스 계정 확인 */}
+        <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
+        
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
