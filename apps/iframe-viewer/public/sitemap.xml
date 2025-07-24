@@ -5,7 +5,7 @@
   <!-- Main Iframe Viewer Page -->
   <url>
     <loc>https://iframe.bobob.app/</loc>
-    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
+    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://iframe.bobob.app/?lang=en"/>
@@ -18,7 +18,7 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://iframe.bobob.app/privacy</loc>
-    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
+    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://iframe.bobob.app/privacy?lang=en"/>
@@ -31,7 +31,7 @@
   <!-- Terms of Service -->
   <url>
     <loc>https://iframe.bobob.app/terms</loc>
-    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
+    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://iframe.bobob.app/terms?lang=en"/>

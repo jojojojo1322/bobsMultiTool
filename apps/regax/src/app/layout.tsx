@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     default: "RegAx - Regular Expression Tester | 정규식 테스터 | Bob's Multi Tool",
     template: "%s | RegAx"
   },
-  description: "Free online regular expression tester and validator. Test regex patterns with real-time matching, syntax highlighting, and detailed explanations. Perfect for developers and programmers. 무료 온라인 정규식 테스터로 실시간 패턴 매칭 테스트를 해보세요.",
+  description: "무료 정규식 테스터 RegAx! 실시간 패턴 매칭, 문법 하이라이팅, 상세한 설명으로 정규표현식을 쉽게 테스트하고 검증하세요. 개발자와 프로그래머를 위한 필수 온라인 regex 도구입니다.",
   keywords: [
     // English keywords
     "regex tester", "regular expression", "regex validator", "pattern matching", "regex tool", "regex testing", 
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "RegAx - Regular Expression Tester | Free Online Regex Tool",
-    description: "Test regex patterns with real-time matching, syntax highlighting, and detailed explanations. Perfect for developers.",
+    description: "Test regex patterns with real-time matching, syntax highlighting, and detailed explanations. Perfect for developers and sharing on X (formerly Twitter).",
     images: ['https://regax.bobob.app/og-image.png'],
   },
   alternates: {

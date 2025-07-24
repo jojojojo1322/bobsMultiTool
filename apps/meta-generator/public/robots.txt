@@ -1,12 +1,36 @@
 User-agent: *
 Allow: /
 
+# Google bots
 User-agent: Googlebot
 Allow: /
 
+# AdSense crawler
 User-agent: Mediapartners-Google
 Allow: /
 
+# Bing bot
+User-agent: Bingbot
+Allow: /
+
+# Naver bot (Korean search engine)
+User-agent: Yeti
+Allow: /
+
+# Baidu bot (Chinese search engine)
+User-agent: Baiduspider
+Allow: /
+
+# Yandex bot (Russian search engine)
+User-agent: YandexBot
+Allow: /
+
+# DuckDuckGo bot
+User-agent: DuckDuckBot
+Allow: /
+
+# Sitemap location
 Sitemap: https://meta.bobob.app/sitemap.xml
 
+# Crawl-delay for SEO optimization
 Crawl-delay: 1 

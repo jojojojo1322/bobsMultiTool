@@ -20,13 +20,14 @@ export const metadata: Metadata = {
     default: "Iframe Viewer - Free Website Preview Tool | 무료 웹사이트 미리보기 도구",
     template: "%s | Iframe Viewer"
   },
-  description: "Free online iframe viewer and website preview tool for developers and designers. Test website responsiveness across iPhone, iPad, Desktop, and custom device sizes instantly. 무료 온라인 iframe 뷰어로 다양한 디바이스에서 웹사이트를 미리보기하세요.",
+  description: "무료 iframe 뷰어 & 웹사이트 미리보기 도구! iPhone, iPad, 데스크톱 등 다양한 디바이스 크기로 반응형 웹사이트를 실시간 테스트하세요. 개발자와 디자이너를 위한 필수 온라인 도구입니다.",
   keywords: [
     // English keywords
     "iframe viewer", "website preview", "responsive testing", "mobile preview", "device simulator", 
     "web development tool", "iframe generator", "responsive design", "mobile testing", "device testing",
     "online iframe viewer", "website preview tool", "mobile simulator", "tablet simulator", "desktop preview",
     "web design testing", "frontend testing", "ui testing", "cross-device testing", "browser testing",
+    "X card preview", "social media preview", "responsive web design",
     
     // 한국어 키워드
     "iframe 뷰어", "아이프레임 뷰어", "웹사이트 미리보기", "반응형 테스트", "모바일 미리보기", "디바이스 시뮬레이터",
@@ -73,7 +74,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Iframe Viewer - Free Website Preview Tool",
-    description: "Test website responsiveness across iPhone, iPad, Desktop, and custom device sizes instantly.",
+    description: "Test website responsiveness across iPhone, iPad, Desktop, and custom device sizes instantly. Perfect for sharing on X (formerly Twitter).",
     images: ['https://iframe.bobob.app/og-image.png'],
   },
   alternates: {

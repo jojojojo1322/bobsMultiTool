@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Lorem Ipsum Generator - Multi-language Text Generator",
-    description: "Generate Lorem Ipsum placeholder text in multiple languages. Perfect for designers and developers.",
+    description: "Generate Lorem Ipsum placeholder text in multiple languages. Perfect for designers, developers, and sharing on X (formerly Twitter).",
     images: ['https://lorem.bobob.app/og-image.png'],
   },
   alternates: {
@@ -67,6 +67,11 @@ export const metadata: Metadata = {
       'ja-JP': 'https://lorem.bobob.app?lang=ja',
       'vi-VN': 'https://lorem.bobob.app?lang=vi',
     },
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
   robots: {
     index: true,
@@ -81,6 +86,10 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'NtDt2jnqkwLbHi1k1NXyUCVEeIlUXhnwF82bf_3bgbY',
+    other: {
+      'naver-site-verification': 'your-naver-verification-code',
+      'msvalidate.01': 'your-bing-verification-code',
+    },
   },
 };
 

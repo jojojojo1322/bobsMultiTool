@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     default: "Bob's Multi Tool - 개발자를 위한 실용적인 온라인 도구들",
     template: "%s | Bob's Multi Tool"
   },
-  description: "웹 개발하면서 자주 쓰는 도구들을 한 곳에 모았습니다. iframe 뷰어로 반응형 디자인 테스트하고, 정규식 테스터로 패턴 검증하고, cron 표현식 생성기로 스케줄링하세요. 무료로 사용 가능합니다.",
+  description: "무료 개발자 도구 모음집! iframe 뷰어로 반응형 웹사이트 테스트, 정규식 테스터로 패턴 검증, cron 생성기로 스케줄 관리, 메타태그 생성기로 SEO 최적화까지. 웹 개발 필수 온라인 도구들을 한곳에서 이용하세요.",
   keywords: [
     // 한국어 키워드
     "개발자 도구", "iframe 뷰어", "정규식 테스터", "크론 생성기", "온라인 도구", "웹 개발", "무료 도구", 
@@ -169,8 +169,21 @@ export default function RootLayout({
         "name": "Meta Tag Generator",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web Browser",
-        "description": "SEO 최적화를 위한 HTML 메타 태그를 생성하는 도구. Open Graph, Twitter 카드, 로봇 메타 태그 생성 지원",
+        "description": "SEO 최적화를 위한 HTML 메타 태그를 생성하는 도구. Open Graph, X 카드, 로봇 메타 태그 생성 지원",
         "url": "https://meta.bobob.app",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Lorem Ipsum Generator",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web Browser",
+        "description": "다국어 Lorem Ipsum 더미 텍스트를 생성하는 도구. 한국어, 영어, 중국어, 일본어, 베트남어 지원",
+        "url": "https://lorem.bobob.app",
         "offers": {
           "@type": "Offer",
           "price": "0",

@@ -20,28 +20,28 @@ export const metadata: Metadata = {
     default: "Meta Tag Generator - SEO Meta Tags Generator | Bob's Multi Tool",
     template: "%s | Meta Tag Generator"
   },
-  description: "Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags for better search engine ranking. Free online tool for developers and marketers.",
+  description: "무료 메타태그 생성기! SEO 최적화를 위한 HTML 메타태그를 쉽게 생성하세요. title, description, Open Graph, X 카드, robots 메타태그까지 한번에 만들어 구글 검색 순위를 높이세요. 개발자와 마케터 필수 도구입니다.",
   keywords: [
     // English keywords
-    "meta tag generator", "SEO meta tags", "HTML meta generator", "Open Graph generator", "Twitter card generator", 
+    "meta tag generator", "SEO meta tags", "HTML meta generator", "Open Graph generator", "X card generator", "Twitter card generator", 
     "meta description generator", "robots meta tag", "canonical URL generator", "SEO optimization tool", "free meta tag tool",
-    "website meta tags", "search engine optimization", "social media meta tags", "Facebook Open Graph", "Twitter cards",
+    "website meta tags", "search engine optimization", "social media meta tags", "Facebook Open Graph", "X cards", "Twitter cards",
     
     // 한국어 키워드
-    "메타 태그 생성기", "SEO 메타 태그", "HTML 메타 생성기", "오픈 그래프 생성기", "트위터 카드 생성기",
+    "메타 태그 생성기", "SEO 메타 태그", "HTML 메타 생성기", "오픈 그래프 생성기", "X 카드 생성기", "트위터 카드 생성기",
     "메타 설명 생성기", "로봇 메타 태그", "정규 URL 생성기", "SEO 최적화 도구", "무료 메타 태그 도구",
-    "웹사이트 메타 태그", "검색 엔진 최적화", "소셜 미디어 메타 태그", "페이스북 오픈 그래프", "트위터 카드",
+    "웹사이트 메타 태그", "검색 엔진 최적화", "소셜 미디어 메타 태그", "페이스북 오픈 그래프", "X 카드", "트위터 카드",
     
     // 中文关键词
-    "元标签生成器", "SEO元标签", "HTML元生成器", "Open Graph生成器", "Twitter卡片生成器",
+    "元标签生成器", "SEO元标签", "HTML元生成器", "Open Graph生成器", "X卡片生成器", "Twitter卡片生成器",
     "元描述生成器", "机器人元标签", "规范URL生成器", "SEO优化工具", "免费元标签工具",
     
     // 日本語キーワード
-    "メタタグジェネレーター", "SEOメタタグ", "HTMLメタ生成器", "Open Graphジェネレーター", "Twitterカードジェネレーター",
+    "メタタグジェネレーター", "SEOメタタグ", "HTMLメタ生成器", "Open Graphジェネレーター", "Xカードジェネレーター", "Twitterカードジェネレーター",
     "メタ説明ジェネレーター", "ロボットメタタグ", "正規URLジェネレーター", "SEO最適化ツール", "無料メタタグツール",
     
     // Tiếng Việt từ khóa
-    "trình tạo meta tag", "SEO meta tag", "tạo meta HTML", "Open Graph generator", "Twitter card generator",
+    "trình tạo meta tag", "SEO meta tag", "tạo meta HTML", "Open Graph generator", "X card generator", "Twitter card generator",
     "tạo meta description", "robots meta tag", "canonical URL generator", "công cụ SEO"
   ],
   authors: [{ name: "Bob's Multi Tool Team" }],
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Meta Tag Generator - SEO Meta Tags Generator",
-    description: "Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags.",
+    description: "Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, X cards (formerly Twitter), and robots meta tags.",
     images: ['https://meta.bobob.app/og-image.png'],
   },
   robots: {
@@ -115,7 +115,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Meta Tag Generator",
-    "alternateName": ["SEO Meta Tags Generator", "메타 태그 생성기", "元标签生成器", "メタタグジェネレーター"],
+    "alternateName": ["SEO Meta Tags Generator", "X Card Generator", "메타 태그 생성기", "元标签生成器", "メタタグジェネレーター"],
     "url": "https://meta.bobob.app",
     "description": "Generate HTML meta tags for SEO optimization. Create title, description, Open Graph, Twitter cards, and robots meta tags for better search engine ranking.",
     "applicationCategory": "DeveloperApplication",
@@ -133,12 +133,13 @@ export default function RootLayout({
     "featureList": [
       "Basic Meta Tags Generation",
       "Open Graph Tags for Social Media", 
+      "X Card Generation (formerly Twitter)",
       "Twitter Card Generation",
       "Robots Meta Tags",
       "SEO Optimization Tools",
       "Multi-language Support"
     ],
-    "keywords": "meta tag generator, SEO meta tags, HTML meta generator, Open Graph generator, Twitter card generator, 메타 태그 생성기, 元标签生成器, メタタグジェネレーター",
+    "keywords": "meta tag generator, SEO meta tags, HTML meta generator, Open Graph generator, X card generator, Twitter card generator, 메타 태그 생성기, 元标签生成器, メタタグジェネレーター",
     "inLanguage": ["ko", "en", "zh", "ja", "vi"],
     "offers": {
       "@type": "Offer",
@@ -153,8 +154,8 @@ export default function RootLayout({
     },
     "screenshot": "https://meta.bobob.app/screenshot.png",
     "softwareVersion": "1.0.0",
-    "datePublished": "2025-01-27",
-    "dateModified": "2025-01-27",
+    "datePublished": "2025-07-24",
+    "dateModified": "2025-07-24",
     "audience": {
       "@type": "Audience",
       "audienceType": ["Web Developers", "SEO Specialists", "Digital Marketers", "Content Creators"]

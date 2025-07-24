@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     default: "Cron Expression Generator & Visualizer | Cron 표현식 생성기 | Bob's Multi Tool",
     template: "%s | Cron Generator"
   },
-  description: "Free online cron expression generator and visualizer. Create and validate cron jobs with real-time scheduling preview. Perfect for developers and system administrators. 무료 온라인 크론 표현식 생성기 및 시각화 도구로 실시간 스케줄링 미리보기를 제공합니다.",
+  description: "무료 크론 표현식 생성기! 실시간 스케줄링 미리보기로 cron job을 쉽게 생성하고 검증하세요. 개발자와 시스템 관리자를 위한 필수 온라인 크론탭 도구입니다. Unix/Linux 서버 작업 스케줄링이 간편해집니다.",
   keywords: [
     // English keywords
     "cron generator", "cron expression", "cron validator", "cron scheduler", "cron job", "cron syntax",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Cron Expression Generator & Visualizer | Free Online Cron Tool",
-    description: "Create and validate cron jobs with real-time scheduling preview. Perfect for developers and system administrators.",
+    description: "Create and validate cron jobs with real-time scheduling preview. Perfect for developers, system administrators, and sharing on X (formerly Twitter).",
     images: ['https://cron.bobob.app/og-image.png'],
   },
   alternates: {
