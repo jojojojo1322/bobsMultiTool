@@ -340,10 +340,34 @@ const ko: Translation = {
   footerCopyright: "2024 Bob's Multi Tool. 웹 개발자를 위한 무료 도구모음.",
   backToHome: "멀티 툴로 돌아가기",
   
+  // Privacy Policy
+  privacyPolicy: "개인정보처리방침",
+  privacySubtitle: "당신의 개인정보는 우리에게 중요합니다",
+  privacyDataCollection: "데이터 수집",
+  privacyDataCollectionDesc: "저희는 사용자 경험 개선을 위해 최소한의 데이터를 수집합니다. 익명 사용 통계를 위해 Google Analytics를, 광고를 위해 Google AdSense를 사용합니다.",
+  privacyGoogleServices: "Google 서비스",
+  privacyGoogleServicesDesc: "이 사이트는 Google Analytics와 Google AdSense를 사용합니다. 이러한 서비스는 각각의 개인정보 정책에 따라 데이터를 수집할 수 있습니다.",
+  privacyDataUsage: "데이터 사용",
+  privacyDataUsageDesc: "수집된 모든 데이터는 서비스 개선 목적으로만 사용되며, Google 광고 네트워크를 제외한 제3자와 절대 공유되지 않습니다.",
+  privacyContact: "문의",
+  privacyContactDesc: "이 개인정보처리방침에 대한 질문이 있으시면 Bob's Multi Tool을 통해 연락 주세요.",
+  
+  // Terms of Service
+  termsOfService: "이용약관",
+  termsSubtitle: "서비스 이용을 위한 약관 및 조건",
+  termsServiceUsage: "서비스 이용",
+  termsServiceUsageDesc: "이 서비스는 개인 및 상업적 용도로 무료로 제공됩니다. 책임감 있게 사용해 주세요.",
+  termsLimitations: "제한사항",
+  termsLimitationsDesc: "저희는 이 도구를 '있는 그대로' 보증 없이 제공합니다. 생성된 크론 표현식 사용으로 발생하는 문제에 대해서는 책임지지 않습니다.",
+  termsDisclaimer: "면책조항",
+  termsDisclaimerDesc: "프로덕션 시스템에 배포하기 전에 항상 안전한 환경에서 크론 표현식을 테스트하세요.",
+  termsChanges: "약관 변경",
+  termsChangesDesc: "저희는 가끔 이 약관을 업데이트할 수 있습니다. 계속 사용하시면 변경사항에 동의한 것으로 간주됩니다.",
+  
   'language.en': 'English',
   'language.ko': '한국어',
   'language.zh': '中文',
-  'language.ja': '日本語',
+  'language.ja': '日본語',
   'language.vi': 'Tiếng Việt',
 };
 

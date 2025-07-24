@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { CronField, CronResult } from '@/types';
 
@@ -174,7 +174,7 @@ const CronGenerator = () => {
   useEffect(() => {
     const validationResult = validateCronExpression(cronExpression);
     setResult(validationResult);
-  }, [cronExpression]);
+  }, [cronExpression, validateCronExpression]);
 
   // 필드 변경 처리
   const handleFieldChange = (field: keyof CronField, value: string) => {
