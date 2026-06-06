@@ -26,6 +26,15 @@ npm run lint
 npm run build
 ```
 
+For deployment-sensitive changes, also verify a clean install/build path rather than relying on local caches:
+
+```bash
+npm ci
+npm run build
+```
+
+Do not reintroduce `next/font/google` or build-time external font fetches. The build must not depend on Google Fonts network access.
+
 For a running local server, run:
 
 ```bash
@@ -43,4 +52,5 @@ Include:
 - Home and workbench shared search behavior.
 - Desktop left and right sidebar resizing, single-shell panel alignment, top brand/home link, plus mobile Sheet fallback.
 - A local-only tool and a server route tool.
+- Clean build behavior with no build-time external font downloads.
 - The agent-skills-sync gate whenever feature, policy, SEO, theme, or i18n rules changed.

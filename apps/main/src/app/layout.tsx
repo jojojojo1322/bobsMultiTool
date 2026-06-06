@@ -1,21 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import GoogleAdsense from "@/components/GoogleAdsense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { ThemeProvider } from "@/components/theme-provider";
 import { languageAlternates, openGraphLocales } from "@/features/i18n/config";
 import { getDictionary } from "@/features/i18n/dictionaries";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bobob.app"),
@@ -99,7 +88,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}>
+      <body className="bg-background text-foreground antialiased">
         <ThemeProvider>
           <GoogleAnalytics />
           <GoogleAdsense publisherId={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID} />

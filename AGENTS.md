@@ -26,4 +26,5 @@
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.
 - Desktop workbench layout must use one aligned shell. Do not reintroduce separate rounded bordered left, center, and right cards around the resizable panels.
 - Light/Dark/System theme behavior is a product feature. Do not replace it with only `prefers-color-scheme`.
+- Do not use `next/font/google` or other build-time external font fetches. Vercel builds must pass from a clean install without depending on Google Fonts network access or local font cache.
 - Run `npm run harness:localization` and `npm run harness:agents` whenever tool copy, guide copy, locale, layout, SEO, AdSense, or verification policy changes.

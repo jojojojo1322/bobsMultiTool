@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TranslationProvider } from "@/contexts/TranslationContext";
 import GoogleAdsense from "@/components/GoogleAdsense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -143,7 +132,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en">
       <head>
         {/* 구글 애드센스 계정 확인 */}
         <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
@@ -162,4 +151,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-} 
+}

@@ -17,6 +17,7 @@ const failures = [];
 const checks = [
   ["agents", "features, tool policy, SEO/AdSense policy, i18n, or theme rules change"],
   ["agents", "skills must be updated"],
+  ["agents", "build-time external font fetches"],
   ["agents", "aliases, useCases, inputExamples, contentCluster, and monetizationTier"],
   ["agents", "real resizable left and right sidebars"],
   ["agents", "visible prose must pass through localized content resolvers"],
@@ -47,6 +48,7 @@ const checks = [
   ["verification", "harness:search"],
   ["verification", "harness:layout"],
   ["verification", "agent-skills-sync"],
+  ["verification", "build-time external font fetches"],
   ["product", "monetizationTier"],
   ["product", "Post-approval candidates"],
   ["product", "40+"],
@@ -54,6 +56,21 @@ const checks = [
 
 for (const [file, fragment] of checks) {
   if (!files[file].includes(fragment)) failures.push(`${file} missing ${fragment}`);
+}
+
+const sourceFiles = [
+  "apps/main/src/app/layout.tsx",
+  "apps/cron-generator/src/app/layout.tsx",
+  "apps/iframe-viewer/src/app/layout.tsx",
+  "apps/lorem-generator/src/app/layout.tsx",
+  "apps/meta-generator/src/app/layout.tsx",
+  "apps/regax/src/app/layout.tsx",
+];
+
+for (const file of sourceFiles) {
+  if (read(file).includes("next/font/google")) {
+    failures.push(`${file} must not use next/font/google`);
+  }
 }
 
 if (failures.length) {
