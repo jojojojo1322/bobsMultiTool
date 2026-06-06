@@ -1,109 +1,201 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-  <!-- Main Page -->
-  <url>
-    <loc>https://bobob.app/</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/?lang=vi"/>
-  </url>
-  
-  <!-- Iframe Viewer Tool -->
-  <url>
-    <loc>https://bobob.app/iframe-viewer</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/iframe-viewer?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/iframe-viewer?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/iframe-viewer?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/iframe-viewer?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/iframe-viewer?lang=vi"/>
-  </url>
-  
-  <!-- Privacy Policy -->
-  <url>
-    <loc>https://bobob.app/privacy</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/privacy?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/privacy?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/privacy?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/privacy?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/privacy?lang=vi"/>
-  </url>
-  
-  <!-- Terms of Service -->
-  <url>
-    <loc>https://bobob.app/terms</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/terms?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/terms?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/terms?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/terms?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/terms?lang=vi"/>
-  </url>
-  
-  <!-- Cron Generator Tool -->
-  <url>
-    <loc>https://bobob.app/cron-generator</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/cron-generator?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/cron-generator?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/cron-generator?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/cron-generator?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/cron-generator?lang=vi"/>
-  </url>
-  
-  <!-- Meta Tag Generator Tool -->
-  <url>
-    <loc>https://bobob.app/meta-generator</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/meta-generator?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/meta-generator?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/meta-generator?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/meta-generator?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/meta-generator?lang=vi"/>
-  </url>
-  
-  <!-- Lorem Generator Tool -->
-  <url>
-    <loc>https://bobob.app/lorem-generator</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/lorem-generator?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/lorem-generator?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/lorem-generator?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/lorem-generator?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/lorem-generator?lang=vi"/>
-  </url>
-  
-  <!-- RegAx Tool -->
-  <url>
-    <loc>https://bobob.app/regax</loc>
-    <lastmod>2025-07-24T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://bobob.app/regax?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bobob.app/regax?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bobob.app/regax?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://bobob.app/regax?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://bobob.app/regax?lang=vi"/>
-  </url>
-  
-</urlset> 
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.bobob.app/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.bobob.app/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/base64-tool</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/timestamp-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/uuid-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/hash-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/text-diff</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/yaml-json-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/sql-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/xml-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/csv-json-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/html-entity-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/color-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/password-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/qr-code-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/random-token-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/case-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/slug-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/json-to-typescript</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/json-schema-validator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/jsonpath-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/html-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/css-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/css-minifier</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/javascript-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/javascript-minifier</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/markdown-previewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/text-sort-dedupe</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/word-character-counter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/url-parser</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/mime-type-lookup</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/ulid-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/robots-txt-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/sitemap-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/open-graph-preview</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/favicon-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/http-status-checker</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/dns-lookup</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/user-agent-parser</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/timezone-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/css-unit-converter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/tools/css-clamp-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.bobob.app/guides</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/regex-cheat-sheet</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/cron-expression-examples</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/seo-meta-tags</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/iframe-preview-limitations</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/placeholder-text-for-design</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/hash-generator-security</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/text-diff-for-developers</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/json-yaml-csv-conversion</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/sql-formatting-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/color-contrast-checking</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/secure-generator-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/web-seo-utilities</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/network-debugging-tools</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/css-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/guides/text-cleanup-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/privacy</loc><lastmod>2026-06-05</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.bobob.app/terms</loc><lastmod>2026-06-05</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.bobob.app/ko/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/ja/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/es/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/de/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/fr/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/hi/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/id/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/vi/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/th/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/ar/</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ja/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/es/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/de/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/fr/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/hi/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/id/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/vi/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/th/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/regex-tester</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/cron-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/meta-tag-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/iframe-viewer</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/lorem-ipsum-generator</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/json-formatter</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/jwt-decoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ar/tools/url-encoder</loc><lastmod>2026-06-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bobob.app/ko/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/ja/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/zh-CN/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/zh-TW/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/es/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/pt-BR/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/de/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/fr/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/hi/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/id/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/vi/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/th/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.bobob.app/ar/guides/developer-utility-workflow</loc><lastmod>2026-06-05</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+</urlset>

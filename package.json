@@ -12,7 +12,16 @@
     "build": "turbo build",
     "start": "turbo start",
     "lint": "turbo lint",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "harness:registry": "node scripts/harness/validate-registry.mjs",
+    "harness:routes": "node scripts/harness/route-smoke.mjs",
+    "harness:tools": "node scripts/harness/tool-logic-smoke.mjs",
+    "harness:i18n": "node scripts/harness/i18n-smoke.mjs",
+    "harness:theme": "node scripts/harness/theme-smoke.mjs",
+    "harness:localization": "node scripts/harness/localization-smoke.mjs",
+    "harness:search": "node scripts/harness/search-smoke.mjs",
+    "harness:layout": "node scripts/harness/layout-smoke.mjs",
+    "harness:agents": "node scripts/harness/agent-skills-sync.mjs"
   },
   "devDependencies": {
     "turbo": "^2.3.0",

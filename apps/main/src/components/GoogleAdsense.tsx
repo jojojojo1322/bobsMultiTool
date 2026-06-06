@@ -9,7 +9,6 @@ interface GoogleAdsenseProps {
 export default function GoogleAdsense({ publisherId = "ca-pub-XXXXXXXXXX" }: GoogleAdsenseProps) {
   // 애드센스 미승인 상태에서는 로드하지 않음
   if (publisherId === "ca-pub-XXXXXXXXXX") {
-    console.log('Google AdSense not configured - awaiting approval');
     return null;
   }
 

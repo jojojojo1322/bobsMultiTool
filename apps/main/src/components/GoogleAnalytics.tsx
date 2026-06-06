@@ -11,9 +11,6 @@ export default function GoogleAnalytics({
   measurementId = adsConfig.ga4MeasurementId 
 }: GoogleAnalyticsProps) {
   if (!adsConfig.enableAnalytics || measurementId === 'G-XXXXXXXXXX') {
-    if (adsConfig.debugMode) {
-      console.log('Google Analytics disabled or not configured');
-    }
     return null;
   }
 
@@ -35,11 +32,6 @@ export default function GoogleAnalytics({
               page_title: document.title,
               page_location: window.location.href,
               send_page_view: true,
-              // 크로스 도메인 추적 설정 - 서브도메인 간 사용자 여정 추적
-              linker: {
-                domains: ['bobob.app', 'iframe.bobob.app', 'regax.bobob.app', 'lorem.bobob.app']
-              },
-              // Enhanced ecommerce for AdSense tracking
               custom_map: {
                 'custom_parameter_1': 'ad_click',
                 'custom_parameter_2': 'ad_impression'

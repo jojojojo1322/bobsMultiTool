@@ -6,23 +6,36 @@
     "dev": "next dev --turbopack --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@bobob/ui": "file:../../packages/ui",
+    "@types/crypto-js": "^4.2.2",
+    "@types/papaparse": "^5.5.2",
+    "@types/qrcode": "^1.5.6",
+    "clsx": "^2.1.1",
+    "crypto-js": "^4.2.0",
+    "diff": "^9.0.0",
+    "lucide-react": "^0.468.0",
+    "next": "15.4.1",
+    "next-themes": "^0.4.6",
+    "papaparse": "^5.5.3",
+    "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.1",
-    "@bobob/ui": "file:../../packages/ui"
+    "sql-formatter": "^15.8.1",
+    "tailwind-merge": "^2.5.5",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
-} 
+}

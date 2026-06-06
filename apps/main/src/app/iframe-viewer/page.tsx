@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function IframeViewerPage() {
-  redirect('/');
-} 
+  redirect('/tools/iframe-viewer');
+}
