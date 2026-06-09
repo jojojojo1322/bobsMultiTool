@@ -9,7 +9,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@bobob/ui": "file:../../packages/ui",
     "@types/crypto-js": "^4.2.2",
     "@types/papaparse": "^5.5.2",
     "@types/qrcode": "^1.5.6",

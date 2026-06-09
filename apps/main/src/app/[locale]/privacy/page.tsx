@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { defaultLocale, isLocale, languageAlternates, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
+import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
 
 interface LocalizedPolicyProps {
   params: Promise<{ locale: string }>;
@@ -18,9 +19,10 @@ function validLocale(value: string): Locale {
 export async function generateMetadata({ params }: LocalizedPolicyProps): Promise<Metadata> {
   const { locale: value } = await params;
   const locale = validLocale(value);
+  const content = getLocalizedLegalContent(locale, "privacy");
   return {
-    title: "Privacy Policy",
-    description: "Privacy policy for Bob's Multi Tool developer utilities.",
+    title: content.title,
+    description: content.description,
     alternates: {
       canonical: `https://www.bobob.app${withLocale("/privacy", locale)}`,
       languages: languageAlternates("/privacy"),
@@ -32,21 +34,34 @@ export default async function LocalizedPrivacyPage({ params }: LocalizedPolicyPr
   const { locale: value } = await params;
   const locale = validLocale(value);
   const dictionary = getClientDictionary(locale);
+  const content = getLocalizedLegalContent(locale, "privacy");
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-4 py-10" lang={locale} dir={dictionary.dir}>
       <Link href={withLocale("/", locale)} className="text-sm text-muted-foreground hover:text-foreground">
-        Back to tools
+        {content.backToTools}
       </Link>
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle className="text-3xl">Privacy Policy</CardTitle>
-          <CardDescription>Last updated: June 5, 2026</CardDescription>
+          <CardTitle className="text-3xl">{content.title}</CardTitle>
+          <CardDescription>{content.lastUpdated}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 text-sm leading-6 text-muted-foreground">
-          <p>Bob&apos;s Multi Tool is designed around local browser utilities. Inputs used for formatting, encoding, decoding, generation, and conversion are processed in your browser where practical and are not stored by this site.</p>
-          <p>HTTP status and DNS tools require a small server route because browsers cannot perform those checks directly. Do not submit private internal hostnames or confidential data.</p>
-          <p>The site may use Google Analytics and Google AdSense. These third-party services may use cookies or similar technologies according to their own policies.</p>
-          <p>Questions about this policy can be sent to <a className="text-foreground underline" href="mailto:bobob935@gmail.com">bobob935@gmail.com</a>.</p>
+          {content.sections.map((section) => (
+            <section key={section.heading}>
+              <h2 className="mb-2 text-base font-semibold text-foreground">{section.heading}</h2>
+              <p>{section.body}</p>
+            </section>
+          ))}
+          <section>
+            <h2 className="mb-2 text-base font-semibold text-foreground">{content.contact.heading}</h2>
+            <p>
+              {content.contact.body}{" "}
+              <a className="text-foreground underline" href="mailto:bobob935@gmail.com">
+                bobob935@gmail.com
+              </a>
+              .
+            </p>
+          </section>
         </CardContent>
       </Card>
     </main>

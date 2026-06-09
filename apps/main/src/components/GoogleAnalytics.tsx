@@ -1,16 +1,13 @@
 'use client';
 
 import Script from 'next/script';
-import { adsConfig } from '../lib/config';
 
 interface GoogleAnalyticsProps {
   measurementId?: string;
 }
 
-export default function GoogleAnalytics({ 
-  measurementId = adsConfig.ga4MeasurementId 
-}: GoogleAnalyticsProps) {
-  if (!adsConfig.enableAnalytics || measurementId === 'G-XXXXXXXXXX') {
+export default function GoogleAnalytics({ measurementId = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID }: GoogleAnalyticsProps) {
+  if (process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'false' || !measurementId || !/^G-[A-Z0-9]+$/.test(measurementId)) {
     return null;
   }
 

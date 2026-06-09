@@ -4,15 +4,13 @@
   "private": true,
   "packageManager": "npm@10.0.0",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/main"
   ],
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "start": "turbo start",
-    "lint": "turbo lint",
-    "clean": "turbo clean",
+    "dev": "npm run dev --workspace @bobob/main",
+    "build": "npm run build --workspace @bobob/main",
+    "start": "npm run start --workspace @bobob/main",
+    "lint": "npm run lint --workspace @bobob/main",
     "harness:registry": "node scripts/harness/validate-registry.mjs",
     "harness:routes": "node scripts/harness/route-smoke.mjs",
     "harness:tools": "node scripts/harness/tool-logic-smoke.mjs",
@@ -21,13 +19,19 @@
     "harness:localization": "node scripts/harness/localization-smoke.mjs",
     "harness:search": "node scripts/harness/search-smoke.mjs",
     "harness:layout": "node scripts/harness/layout-smoke.mjs",
-    "harness:agents": "node scripts/harness/agent-skills-sync.mjs"
+    "harness:visual": "node scripts/harness/visual-smoke.mjs",
+    "harness:agents": "node scripts/harness/agent-skills-sync.mjs",
+    "harness:seo-opportunities": "node scripts/harness/seo-opportunity-report.mjs"
   },
   "devDependencies": {
-    "turbo": "^2.3.0",
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "eslint": "^9",
-    "@eslint/eslintrc": "^3"
+    "next": "^15.5.19",
+    "playwright": "^1.60.0",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "8.5.15"
   }
 }

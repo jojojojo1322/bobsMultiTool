@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { defaultLocale, languageAlternates, withLocale } from "@/features/i18n/config";
+import { defaultLocale, languageAlternates, openGraphLocales, withLocale } from "@/features/i18n/config";
 import { getDictionary } from "@/features/i18n/dictionaries";
 import { getGuideBySlug, guides } from "@/features/guides/registry";
 import { getRelatedTools } from "@/features/tools/registry";
@@ -20,15 +20,28 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
   const { slug } = await params;
   const guide = getGuideBySlug(slug);
   if (!guide) return {};
-  const dictionary = getDictionary(defaultLocale);
   const pathname = `/guides/${guide.slug}`;
+  const url = `https://www.bobob.app${pathname}`;
 
   return {
     title: guide.title,
-    description: dictionary.metadata.guideDescription(guide.title),
+    description: guide.description,
     alternates: {
-      canonical: `https://www.bobob.app${pathname}`,
+      canonical: url,
       languages: languageAlternates(pathname),
+    },
+    openGraph: {
+      title: guide.title,
+      description: guide.description,
+      url,
+      siteName: "Bob's Multi Tool",
+      type: "article",
+      locale: openGraphLocales[defaultLocale],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: guide.title,
+      description: guide.description,
     },
   };
 }

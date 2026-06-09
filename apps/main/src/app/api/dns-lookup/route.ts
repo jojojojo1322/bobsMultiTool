@@ -1,5 +1,6 @@
 import { resolve4, resolve6, resolveCname, resolveMx, resolveNs, resolveTxt } from "node:dns/promises";
 import { NextRequest, NextResponse } from "next/server";
+import { consumeRateLimit, isPrivateOrReservedIp, normalizePublicHostname } from "@/features/server/network-guards";
 
 const resolvers = {
   A: resolve4,
@@ -10,19 +11,22 @@ const resolvers = {
   NS: resolveNs,
 };
 
-function isPublicHostname(value: string) {
-  const hostname = value.trim().toLowerCase();
-  if (!hostname || hostname.length > 253) return false;
-  if (hostname === "localhost" || hostname.endsWith(".local")) return false;
-  if (/^(10|127|169\.254|172\.(1[6-9]|2\d|3[0-1])|192\.168)\./.test(hostname)) return false;
-  return /^[a-z0-9.-]+$/.test(hostname) && hostname.includes(".");
-}
-
 export async function GET(request: NextRequest) {
+  const rateLimit = consumeRateLimit(request, "dns-lookup", 50);
+  if (rateLimit) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+    );
+  }
+
   const hostname = request.nextUrl.searchParams.get("hostname") ?? "";
   const record = (request.nextUrl.searchParams.get("record") ?? "A").toUpperCase() as keyof typeof resolvers;
+  let normalizedHostname: string;
 
-  if (!isPublicHostname(hostname)) {
+  try {
+    normalizedHostname = normalizePublicHostname(hostname);
+  } catch {
     return NextResponse.json({ error: "Use a public hostname." }, { status: 400 });
   }
 
@@ -35,9 +39,12 @@ export async function GET(request: NextRequest) {
     const timeout = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error("DNS lookup timed out.")), 5_000);
     });
-    const records = await Promise.race([resolver(hostname), timeout]);
-    return NextResponse.json({ hostname, record, records });
+    const records = await Promise.race([resolver(normalizedHostname), timeout]);
+    if ((record === "A" || record === "AAAA") && Array.isArray(records) && records.some((ip) => typeof ip === "string" && isPrivateOrReservedIp(ip))) {
+      return NextResponse.json({ hostname: normalizedHostname, record, error: "Hostname resolves to a private or reserved address." }, { status: 400 });
+    }
+    return NextResponse.json({ hostname: normalizedHostname, record, records });
   } catch (error) {
-    return NextResponse.json({ hostname, record, error: error instanceof Error ? error.message : "DNS lookup failed." }, { status: 502 });
+    return NextResponse.json({ hostname: normalizedHostname, record, error: error instanceof Error ? error.message : "DNS lookup failed." }, { status: 502 });
   }
 }

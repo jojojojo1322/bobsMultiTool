@@ -47,6 +47,11 @@ export async function generateMetadata({ params }: LocalizedToolPageProps): Prom
       type: "website",
       locale: openGraphLocales[locale],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: tool.seo.title,
+      description: tool.seo.description,
+    },
   };
 }
 

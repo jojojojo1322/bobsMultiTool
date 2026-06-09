@@ -7,6 +7,8 @@ const guideRegistryPath = path.join(root, "apps/main/src/features/guides/registr
 const sitemapSourcePath = path.join(root, "apps/main/src/features/seo/sitemaps.ts");
 const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/route.ts");
 const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
+const toolsIndexPath = path.join(root, "apps/main/src/app/tools/page.tsx");
+const localizedToolsIndexPath = path.join(root, "apps/main/src/app/[locale]/tools/page.tsx");
 const i18nConfigPath = path.join(root, "apps/main/src/features/i18n/config.ts");
 const registry = fs.readFileSync(registryPath, "utf8");
 const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
@@ -24,8 +26,22 @@ if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
 if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
 if (fs.existsSync(path.join(root, "apps/main/public/sitemap.xml"))) failures.push("static public sitemap.xml must not shadow dynamic sitemap index");
+for (const legacyPath of [
+  "packages/ui",
+  "apps/cron-generator",
+  "apps/iframe-viewer",
+  "apps/lorem-generator",
+  "apps/meta-generator",
+  "apps/regax",
+  "apps/main/src/app/iframe-viewer",
+  "turbo.json",
+]) {
+  if (fs.existsSync(path.join(root, legacyPath))) failures.push(`${legacyPath} should not be restored`);
+}
 if (!fs.existsSync(sitemapIndexRoutePath)) failures.push("sitemap index route missing");
 if (!fs.existsSync(localizedSitemapRoutePath)) failures.push("localized sitemap route missing");
+if (!fs.existsSync(toolsIndexPath) || !fs.readFileSync(toolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("/tools index directory page missing");
+if (!fs.existsSync(localizedToolsIndexPath) || !fs.readFileSync(localizedToolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("localized tools index directory page missing");
 
 for (const [fullBlock, slug, relatedSource] of toolBlocks) {
   const generatedByHelper = fullBlock.includes("keywords:") && fullBlock.includes("guideSlug:");
@@ -41,6 +57,13 @@ for (const [fullBlock, slug, relatedSource] of toolBlocks) {
   if (!relatedSlugs.length) failures.push(`${slug} has no related tools`);
   for (const relatedSlug of relatedSlugs) {
     if (!uniqueSlugs.has(relatedSlug)) failures.push(`${slug} references missing related tool: ${relatedSlug}`);
+  }
+}
+
+for (const slug of ["css-unit-converter", "css-clamp-generator"]) {
+  const block = toolBlocks.find((match) => match[1] === slug)?.[0] ?? "";
+  if (!block.includes('category: "Code"')) {
+    failures.push(`${slug} must stay in Code category so localized copy does not describe it as color work`);
   }
 }
 
@@ -68,6 +91,10 @@ for (const fragment of [
 const urlsPerLocale = slugs.length + guideSlugs.size + 4;
 const totalLocalizedUrls = urlsPerLocale * locales.length;
 if (totalLocalizedUrls < 900) failures.push(`expected at least 900 localized sitemap URLs, found ${totalLocalizedUrls}`);
+
+const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+if (JSON.stringify(packageJson.workspaces) !== JSON.stringify(["apps/main"])) failures.push("root workspaces must stay apps/main only");
+if (packageJson.devDependencies?.turbo || packageJson.scripts?.clean?.includes("turbo")) failures.push("turbo dependency/script should not be restored");
 
 if (failures.length) {
   console.error(failures.join("\n"));

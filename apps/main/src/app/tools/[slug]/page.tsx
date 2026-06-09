@@ -35,6 +35,11 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       type: "website",
       locale: openGraphLocales.en,
     },
+    twitter: {
+      card: "summary_large_image",
+      title: tool.seo.title,
+      description: tool.seo.description,
+    },
   };
 }
 

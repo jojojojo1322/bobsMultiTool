@@ -12,11 +12,14 @@ const guideSlugs = Array.from(guides.matchAll(/slug:\s+"([^"]+)"/g)).map((match)
 const paths = [
   "/",
   "/tools",
+  "/tools?q=json",
   ...toolSlugs.map((slug) => `/tools/${slug}`),
   "/guides",
   ...guideSlugs.map((slug) => `/guides/${slug}`),
   "/ko",
+  "/ko/tools",
   "/ko/tools/json-formatter",
+  "/ar/tools",
   "/ja/tools/regex-tester",
   "/es/guides/developer-utility-workflow",
   "/privacy",
@@ -29,12 +32,32 @@ const paths = [
   "/ads.txt",
 ];
 
+const redirects = [
+  ["/iframe-viewer", "/tools/iframe-viewer"],
+  ["/regax", "/tools/regex-tester"],
+  ["/cron-generator", "/tools/cron-generator"],
+  ["/meta-generator", "/tools/meta-tag-generator"],
+  ["/lorem-generator", "/tools/lorem-ipsum-generator"],
+];
+
 const failures = [];
 
 for (const routePath of paths) {
   const response = await fetch(`${baseUrl}${routePath}`, { redirect: "manual" });
   if (response.status < 200 || response.status >= 400) {
     failures.push(`${routePath} returned ${response.status}`);
+  }
+}
+
+for (const [source, destination] of redirects) {
+  const response = await fetch(`${baseUrl}${source}`, { redirect: "manual" });
+  if (![301, 308].includes(response.status)) {
+    failures.push(`${source} should be a permanent redirect, got ${response.status}`);
+    continue;
+  }
+  const location = response.headers.get("location") ?? "";
+  if (!location.endsWith(destination)) {
+    failures.push(`${source} redirects to ${location}, expected ${destination}`);
   }
 }
 

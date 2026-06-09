@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import GoogleAdsense from "@/components/GoogleAdsense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { ThemeProvider } from "@/components/theme-provider";
-import { languageAlternates, openGraphLocales } from "@/features/i18n/config";
+import { defaultLocale, languageAlternates, normalizeLocale, openGraphLocales } from "@/features/i18n/config";
 import { getDictionary } from "@/features/i18n/dictionaries";
 import "./globals.css";
 
@@ -51,12 +52,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const dictionary = getDictionary("en");
+  const headerList = await headers();
+  const locale = normalizeLocale(headerList.get("x-bobob-locale") ?? undefined) ?? defaultLocale;
+  const dictionary = getDictionary(locale);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -64,20 +67,20 @@ export default function RootLayout({
     alternateName: "Bobob Developer Utilities",
     url: "https://www.bobob.app",
     description: dictionary.siteDescription,
-    inLanguage: "en",
+    inLanguage: locale,
     creator: {
       "@type": "Person",
       name: "Bob",
     },
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://www.bobob.app/?q={search_term_string}",
+      target: "https://www.bobob.app/tools?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} dir={dictionary.dir} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />

@@ -34,6 +34,16 @@ function preferredLocale(request: NextRequest): Locale {
   return localeFromCookie(request) ?? localeFromAcceptLanguage(request) ?? localeFromCountry(request) ?? defaultLocale;
 }
 
+function nextWithLocale(request: NextRequest, locale: Locale) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-bobob-locale", locale);
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (skippedPrefixes.some((prefix) => pathname.startsWith(prefix)) || PUBLIC_FILE.test(pathname)) {
@@ -42,15 +52,15 @@ export function middleware(request: NextRequest) {
 
   const firstSegment = pathname.split("/").filter(Boolean)[0];
   if (isLocale(firstSegment)) {
-    const response = NextResponse.next();
+    const response = nextWithLocale(request, firstSegment);
     response.cookies.set("NEXT_LOCALE", firstSegment, { path: "/", maxAge: 31_536_000, sameSite: "lax" });
     return response;
   }
 
-  if (pathHasLocale(pathname)) return NextResponse.next();
+  if (pathHasLocale(pathname)) return nextWithLocale(request, firstSegment as Locale);
 
   const locale = preferredLocale(request);
-  if (locale === defaultLocale) return NextResponse.next();
+  if (locale === defaultLocale) return nextWithLocale(request, defaultLocale);
 
   const url = request.nextUrl.clone();
   url.pathname = withLocale(pathname, locale);
