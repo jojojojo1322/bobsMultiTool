@@ -28,10 +28,24 @@ if (!workspace.includes("rounded-lg border bg-background")) failures.push("singl
 if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workbench shell must keep a fixed height with internal panel scroll");
 if (!workspace.includes("h-full min-h-0")) failures.push("workbench panels must use min-h-0 for internal scrolling");
 if (!workspace.includes("withLocale(\"/\", locale)")) failures.push("detail top bar home link missing");
+if (!workspace.includes("bobob:tool-nav-scroll")) failures.push("tool navigation scroll persistence missing");
+if (!workspace.includes("React.useLayoutEffect")) failures.push("tool navigation scroll restore must happen before paint");
+if (!workspace.includes("onScroll={persistScroll}")) failures.push("tool navigation scroll position is not persisted");
+if (!workspace.includes("scroll={false}")) failures.push("tool navigation links must not reset document scroll");
+if (workspace.includes("dictionary.tool.demand") || workspace.includes("demandLabel")) failures.push("tool detail must not expose demand wording");
 if (workspace.includes("rounded-lg border bg-card shadow-none")) failures.push("center panel still has separate outer rounded border");
 if (workspace.includes("sticky top-4")) failures.push("desktop panels still use separate sticky card layout");
 if (!resizable.includes("after:bg-border")) failures.push("resize handle missing single neutral divider policy");
 if (resizable.includes("border-x border-transparent")) failures.push("resize handle still uses extra border columns");
+
+for (const file of [
+  "apps/main/src/features/tools/tool-search-panel.tsx",
+  "apps/main/src/app/page.tsx",
+  "apps/main/src/app/[locale]/page.tsx",
+]) {
+  const source = fs.readFileSync(path.join(root, file), "utf8");
+  if (source.includes("tool.demandTier")) failures.push(`${file} exposes demand tier in the UI`);
+}
 
 if (failures.length) {
   console.error(failures.join("\n"));

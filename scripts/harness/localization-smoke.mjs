@@ -67,10 +67,27 @@ for (const fragment of [
   "generate",
   "commonInput",
   "typicalOutput",
+  "extensionOrMimeType",
+  "httpStatus",
+  "dnsRecords",
+  "localizedNoOutput",
 ]) {
   if (!toolComponents.includes(fragment) && !dictionaries.includes(fragment)) {
     failures.push(`tool component/dictionary localization missing ${fragment}`);
   }
+}
+
+if (dictionaries.includes("...en.tool,\\n      developerWorkbench")) {
+  failures.push("locale dictionary override must not re-spread en.tool over common localized tool text");
+}
+
+for (const fragment of [
+  "<Button onClick={lookup}>Lookup</Button>",
+  "title=\"DNS records\"",
+  "title=\"HTTP status\"",
+  "Output will appear here.",
+]) {
+  if (toolComponents.includes(fragment)) failures.push(`tool component still hardcodes visible English: ${fragment}`);
 }
 
 for (const englishFragment of [

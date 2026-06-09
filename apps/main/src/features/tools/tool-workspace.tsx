@@ -21,6 +21,8 @@ import { toolCategories } from "./registry";
 import { ToolPanel } from "./tool-components";
 import type { ToolDefinition } from "./types";
 
+const navigationScrollStorageKey = (locale: Locale) => `bobob:tool-nav-scroll:${locale}`;
+
 function ToolNavigation({
   activeSlug,
   query,
@@ -39,6 +41,29 @@ function ToolNavigation({
   const filteredTools = React.useMemo(() => {
     return searchLocalizedTools(query, locale);
   }, [locale, query]);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollStorageKey = navigationScrollStorageKey(locale);
+
+  React.useLayoutEffect(() => {
+    const navigation = scrollRef.current;
+    if (!navigation || typeof window === "undefined") return;
+
+    const storedScrollTop = Number(window.localStorage.getItem(scrollStorageKey) ?? 0);
+    if (!Number.isFinite(storedScrollTop) || storedScrollTop <= 0) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      navigation.scrollTop = storedScrollTop;
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeSlug, scrollStorageKey]);
+
+  const persistScroll = React.useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      if (typeof window === "undefined") return;
+      window.localStorage.setItem(scrollStorageKey, String(event.currentTarget.scrollTop));
+    },
+    [scrollStorageKey],
+  );
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
@@ -54,7 +79,7 @@ function ToolNavigation({
           className="pl-8"
         />
       </label>
-      <div className="min-h-0 space-y-5 overflow-auto pr-1">
+      <div ref={scrollRef} onScroll={persistScroll} className="min-h-0 space-y-5 overflow-auto pr-1">
         {toolCategories.map((category) => {
           const categoryTools = filteredTools.filter((tool) => tool.category === category);
           if (!categoryTools.length) return null;
@@ -66,6 +91,7 @@ function ToolNavigation({
                   <Link
                     key={tool.slug}
                     href={withLocale(`/tools/${tool.slug}`, locale)}
+                    scroll={false}
                     onClick={onNavigate}
                     className={cn(
                       "block rounded-md border border-transparent px-2 py-2 text-sm transition-colors",
@@ -169,7 +195,6 @@ export function ToolWorkspace({
   const [query, setQuery] = React.useState("");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const privacyLabel = tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly;
-  const demandLabel = locale === defaultLocale ? tool.demandTier : (tool.seo.keywords[3] ?? tool.demandTier);
 
   return (
     <main className="min-h-screen bg-background" lang={locale} dir={dictionary.dir}>
@@ -211,7 +236,6 @@ export function ToolWorkspace({
                   {tool.seo.keywords.slice(0, 4).map((keyword) => (
                     <Badge key={keyword} className="max-w-full break-words">{keyword}</Badge>
                   ))}
-                  <Badge>{dictionary.tool.demand}: {demandLabel}</Badge>
                   <Badge>{dictionary.tool.privacy}: {privacyLabel}</Badge>
                 </div>
                 <h2 className="mt-4 text-2xl font-semibold tracking-normal">{tool.title}</h2>

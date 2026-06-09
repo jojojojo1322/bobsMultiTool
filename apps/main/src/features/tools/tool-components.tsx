@@ -1242,17 +1242,17 @@ function MimeLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <TextTransformTool
       dictionary={dictionary}
-      inputLabel="Extension or MIME type"
+      inputLabel={ui(dictionary, "extensionOrMimeType", "Extension or MIME type")}
       defaultInput=".json"
       modes={[
         {
           value: "lookup",
-          label: "Lookup",
+          label: ui(dictionary, "lookup", "Lookup"),
           transform: (value) => {
             const normalized = value.trim().toLowerCase().replace(/^\./, "");
             const byExtension = mimeTypes[normalized];
             const byMime = Object.entries(mimeTypes).filter(([, mime]) => mime === value.trim().toLowerCase()).map(([ext]) => `.${ext}`);
-            return byExtension ? `${normalized}: ${byExtension}` : byMime.length ? `${value}: ${byMime.join(", ")}` : "No common MIME type found.";
+            return byExtension ? `${normalized}: ${byExtension}` : byMime.length ? `${value}: ${byMime.join(", ")}` : ui(dictionary, "noCommonMimeTypeFound", "No common MIME type found.");
           },
         },
       ]}
@@ -1389,9 +1389,9 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-[1fr_auto]">
         <Input value={url} onChange={(event) => setUrl(event.target.value)} />
-        <Button onClick={check} disabled={loading}>{loading ? "Checking" : "Check"}</Button>
+        <Button onClick={check} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
       </div>
-      <ResultBlock title="HTTP status" value={result} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "httpStatus", "HTTP status")} value={result} dictionary={dictionary} />
     </div>
   );
 }
@@ -1405,7 +1405,7 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
       const response = await fetch(`/api/dns-lookup?hostname=${encodeURIComponent(hostname)}&record=${encodeURIComponent(record)}`);
       setResult(JSON.stringify(await response.json(), null, 2));
     } catch (error) {
-      setResult(error instanceof Error ? error.message : "DNS lookup failed.");
+      setResult(error instanceof Error ? error.message : ui(dictionary, "dnsLookupFailed", "DNS lookup failed."));
     }
   };
   return (
@@ -1417,9 +1417,9 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
             <option key={item} value={item}>{item}</option>
           ))}
         </Select>
-        <Button onClick={lookup}>Lookup</Button>
+        <Button onClick={lookup}>{ui(dictionary, "lookup", "Lookup")}</Button>
       </div>
-      <ResultBlock title="DNS records" value={result} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "dnsRecords", "DNS records")} value={result} dictionary={dictionary} />
     </div>
   );
 }

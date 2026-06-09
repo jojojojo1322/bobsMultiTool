@@ -5,7 +5,9 @@ const root = process.cwd();
 const config = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/config.ts"), "utf8");
 const dictionaries = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/dictionaries.ts"), "utf8");
 const middleware = fs.readFileSync(path.join(root, "apps/main/src/middleware.ts"), "utf8");
-const sitemap = fs.readFileSync(path.join(root, "apps/main/public/sitemap.xml"), "utf8");
+const sitemapSource = fs.readFileSync(path.join(root, "apps/main/src/features/seo/sitemaps.ts"), "utf8");
+const sitemapIndexRoute = fs.readFileSync(path.join(root, "apps/main/src/app/sitemap.xml/route.ts"), "utf8");
+const localizedSitemapRoute = fs.readFileSync(path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts"), "utf8");
 const toolWorkspace = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-workspace.tsx"), "utf8");
 const localizedContent = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/localized-content.ts"), "utf8");
 
@@ -24,6 +26,11 @@ for (const fragment of ["homeTitle", "homeDescription", "toolDescription", "guid
 }
 
 if (!config.includes('"x-default"')) failures.push("languageAlternates missing x-default hreflang");
+if (!sitemapSource.includes('hreflang="x-default"')) failures.push("localized sitemap missing x-default hreflang links");
+if (!sitemapSource.includes("xmlns:xhtml")) failures.push("localized sitemap missing xhtml alternate namespace");
+if (!sitemapIndexRoute.includes("sitemapIndexXml")) failures.push("sitemap index route missing generator");
+if (!localizedSitemapRoute.includes("generateStaticParams")) failures.push("localized sitemap route missing static params");
+if (!middleware.includes("/sitemaps")) failures.push("middleware must skip sitemap routes");
 if (!dictionaries.includes('ar:') || !dictionaries.includes('dir: "rtl"')) failures.push("Arabic RTL dictionary missing");
 if (!toolWorkspace.includes("dir={dictionary.dir}") || !toolWorkspace.includes("lang={locale}")) {
   failures.push("tool workspace missing locale lang/dir attributes");
@@ -45,9 +52,6 @@ for (const routeFile of [
     failures.push(`localized route missing dir attribute: ${routeFile}`);
   }
 }
-
-if (!sitemap.includes("https://www.bobob.app/ko/")) failures.push("sitemap missing Korean home");
-if (!sitemap.includes("https://www.bobob.app/es/tools/json-formatter")) failures.push("sitemap missing Spanish tool sample");
 
 if (failures.length) {
   console.error(failures.join("\n"));

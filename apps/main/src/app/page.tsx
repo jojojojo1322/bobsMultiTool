@@ -68,7 +68,6 @@ export default function HomePage() {
                     <Card className="h-full transition-colors hover:bg-muted/50">
                       <CardHeader>
                         <div className="mb-2 flex flex-wrap gap-2">
-                          <Badge>{tool.demandTier}</Badge>
                           <Badge>{tool.contentCluster}</Badge>
                           <Badge>{tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly}</Badge>
                         </div>

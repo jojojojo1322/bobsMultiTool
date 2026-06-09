@@ -160,6 +160,11 @@ const enToolUi = {
   check: "Check",
   checking: "Checking",
   lookup: "Lookup",
+  extensionOrMimeType: "Extension or MIME type",
+  noCommonMimeTypeFound: "No common MIME type found.",
+  httpStatus: "HTTP status",
+  dnsRecords: "DNS records",
+  dnsLookupFailed: "DNS lookup failed.",
   download: "Download",
   openPng: "Open PNG",
   dataUrl: "Data URL",
@@ -187,6 +192,40 @@ const localizedToolUi: Record<Locale, Record<string, string>> = {
   vi: { mode: "Che do", output: "Ket qua", transformError: "Loi chuyen doi", copyReadyOutput: "Ket qua san sang sao chep", input: "Nhap", generate: "Tao", count: "So luong", pattern: "Mau", flags: "Flags", sampleText: "Van ban mau", syntaxError: "Loi cu phap", cronExpression: "Bieu thuc cron", fiveFieldInterpretation: "Giai thich nam truong", title: "Tieu de", canonicalUrl: "URL chuan", description: "Mo ta", openGraphImage: "Anh Open Graph", generatedMetaTags: "Meta tag da tao", url: "URL", viewport: "Viewport", enterValidUrl: "Nhap URL hop le.", iframeMarkup: "Ma iframe", frameLoadingNote: "Ghi chu tai frame", paragraphs: "Doan", sentencesPerParagraph: "Cau moi doan", placeholderText: "Van ban giu cho", jsonInput: "Nhap JSON", indent: "Thut le", formattedJson: "JSON da dinh dang", invalidJson: "JSON khong hop le", header: "Header", payload: "Payload", decodeError: "Loi giai ma", textOrUrlComponent: "Van ban hoac thanh phan URL", encode: "Ma hoa", decode: "Giai ma", textOrBase64: "Van ban hoac Base64", encodeBase64: "Ma hoa UTF-8 sang Base64", decodeBase64: "Giai ma Base64 sang UTF-8", timestampOrDate: "Timestamp hoac ngay", now: "Hien tai", convertedDate: "Ngay da chuyen doi", uuidValues: "Gia tri UUID v4", hashes: "Hash", originalText: "Van ban goc", changedText: "Van ban thay doi", diffResult: "Ket qua diff", conversionError: "Loi chuyen doi", convertedOutput: "Ket qua chuyen doi", prettyPrint: "Dinh dang dep", minify: "Nen", commonInput: "Dau vao thuong gap", typicalOutput: "Dau ra thuong gap", check: "Kiem tra", checking: "Dang kiem tra", lookup: "Tra cuu", download: "Tai xuong", openPng: "Mo PNG", dataUrl: "Data URL", password: "Mat khau", randomToken: "Token ngau nhien", bytes: "Byte", length: "Do dai", symbols: "Ky tu dac biet", foreground: "Mau chu", background: "Nen" },
   th: { mode: "โหมด", output: "ผลลัพธ์", transformError: "ข้อผิดพลาดในการแปลง", copyReadyOutput: "ผลลัพธ์พร้อมคัดลอก", input: "อินพุต", generate: "สร้าง", count: "จำนวน", pattern: "แพตเทิร์น", flags: "แฟล็ก", sampleText: "ข้อความตัวอย่าง", syntaxError: "ข้อผิดพลาดไวยากรณ์", cronExpression: "นิพจน์ cron", fiveFieldInterpretation: "คำอธิบายห้าช่อง", title: "ชื่อ", canonicalUrl: "Canonical URL", description: "คำอธิบาย", openGraphImage: "รูป Open Graph", generatedMetaTags: "เมตาแท็กที่สร้าง", url: "URL", viewport: "วิวพอร์ต", enterValidUrl: "ป้อน URL ที่ถูกต้อง", iframeMarkup: "มาร์กอัป iframe", frameLoadingNote: "หมายเหตุการโหลดเฟรม", paragraphs: "ย่อหน้า", sentencesPerParagraph: "ประโยคต่อย่อหน้า", placeholderText: "ข้อความตัวอย่าง", jsonInput: "อินพุต JSON", indent: "ย่อหน้า", formattedJson: "JSON ที่จัดรูปแบบ", invalidJson: "JSON ไม่ถูกต้อง", header: "เฮดเดอร์", payload: "เพย์โหลด", decodeError: "ข้อผิดพลาดการถอดรหัส", textOrUrlComponent: "ข้อความหรือส่วน URL", encode: "เข้ารหัส", decode: "ถอดรหัส", textOrBase64: "ข้อความหรือ Base64", encodeBase64: "เข้ารหัส UTF-8 เป็น Base64", decodeBase64: "ถอดรหัส Base64 เป็น UTF-8", timestampOrDate: "เวลา Unix หรือวันที่", now: "ตอนนี้", convertedDate: "วันที่ที่แปลงแล้ว", uuidValues: "ค่า UUID v4", hashes: "แฮช", originalText: "ข้อความเดิม", changedText: "ข้อความที่เปลี่ยน", diffResult: "ผลต่าง", conversionError: "ข้อผิดพลาดการแปลง", convertedOutput: "ผลลัพธ์ที่แปลง", prettyPrint: "จัดรูปแบบ", minify: "ย่อ", commonInput: "อินพุตทั่วไป", typicalOutput: "ผลลัพธ์ทั่วไป", check: "ตรวจสอบ", checking: "กำลังตรวจสอบ", lookup: "ค้นหา", download: "ดาวน์โหลด", openPng: "เปิด PNG", dataUrl: "Data URL", password: "รหัสผ่าน", randomToken: "โทเค็นสุ่ม", bytes: "ไบต์", length: "ความยาว", symbols: "สัญลักษณ์", foreground: "สีหน้า", background: "สีพื้น" },
   ar: { mode: "الوضع", output: "الناتج", transformError: "خطأ في التحويل", copyReadyOutput: "ناتج جاهز للنسخ", input: "الإدخال", generate: "إنشاء", count: "العدد", pattern: "النمط", flags: "الخيارات", sampleText: "نص تجريبي", syntaxError: "خطأ في الصياغة", cronExpression: "تعبير Cron", fiveFieldInterpretation: "شرح الحقول الخمسة", title: "العنوان", canonicalUrl: "الرابط الأساسي", description: "الوصف", openGraphImage: "صورة Open Graph", generatedMetaTags: "وسوم meta المنشأة", url: "URL", viewport: "إطار العرض", enterValidUrl: "أدخل URL صالحا.", iframeMarkup: "وسم iframe", frameLoadingNote: "ملاحظة تحميل الإطار", paragraphs: "الفقرات", sentencesPerParagraph: "الجمل لكل فقرة", placeholderText: "نص مؤقت", jsonInput: "إدخال JSON", indent: "المسافة البادئة", formattedJson: "JSON منسق", invalidJson: "JSON غير صالح", header: "الرأس", payload: "الحمولة", decodeError: "خطأ فك الترميز", textOrUrlComponent: "نص أو جزء URL", encode: "ترميز", decode: "فك الترميز", textOrBase64: "نص أو Base64", encodeBase64: "ترميز UTF-8 إلى Base64", decodeBase64: "فك Base64 إلى UTF-8", timestampOrDate: "طابع زمني أو تاريخ", now: "الآن", convertedDate: "التاريخ المحول", uuidValues: "قيم UUID v4", hashes: "الهاش", originalText: "النص الأصلي", changedText: "النص المعدل", diffResult: "نتيجة الفرق", conversionError: "خطأ التحويل", convertedOutput: "الناتج المحول", prettyPrint: "تنسيق واضح", minify: "تصغير", commonInput: "إدخال شائع", typicalOutput: "ناتج شائع", check: "فحص", checking: "جار الفحص", lookup: "بحث", download: "تنزيل", openPng: "فتح PNG", dataUrl: "Data URL", password: "كلمة المرور", randomToken: "رمز عشوائي", bytes: "بايت", length: "الطول", symbols: "رموز", foreground: "المقدمة", background: "الخلفية" },
+};
+
+const localizedToolUiSupplement: Record<Locale, Record<string, string>> = {
+  en: {},
+  ko: { extensionOrMimeType: "확장자 또는 MIME 타입", noCommonMimeTypeFound: "일반적인 MIME 타입을 찾지 못했습니다.", httpStatus: "HTTP 상태", dnsRecords: "DNS 레코드", dnsLookupFailed: "DNS 조회에 실패했습니다." },
+  ja: { extensionOrMimeType: "拡張子または MIME タイプ", noCommonMimeTypeFound: "一般的な MIME タイプが見つかりません。", httpStatus: "HTTP ステータス", dnsRecords: "DNS レコード", dnsLookupFailed: "DNS ルックアップに失敗しました。" },
+  "zh-CN": { extensionOrMimeType: "扩展名或 MIME 类型", noCommonMimeTypeFound: "未找到常见 MIME 类型。", httpStatus: "HTTP 状态", dnsRecords: "DNS 记录", dnsLookupFailed: "DNS 查询失败。" },
+  "zh-TW": { extensionOrMimeType: "副檔名或 MIME 類型", noCommonMimeTypeFound: "找不到常見 MIME 類型。", httpStatus: "HTTP 狀態", dnsRecords: "DNS 記錄", dnsLookupFailed: "DNS 查詢失敗。" },
+  es: { extensionOrMimeType: "Extension o tipo MIME", noCommonMimeTypeFound: "No se encontro un tipo MIME comun.", httpStatus: "Estado HTTP", dnsRecords: "Registros DNS", dnsLookupFailed: "Fallo la consulta DNS." },
+  "pt-BR": { extensionOrMimeType: "Extensao ou tipo MIME", noCommonMimeTypeFound: "Nenhum tipo MIME comum encontrado.", httpStatus: "Status HTTP", dnsRecords: "Registros DNS", dnsLookupFailed: "Falha na consulta DNS." },
+  de: { extensionOrMimeType: "Erweiterung oder MIME-Typ", noCommonMimeTypeFound: "Kein gaengiger MIME-Typ gefunden.", httpStatus: "HTTP-Status", dnsRecords: "DNS-Eintraege", dnsLookupFailed: "DNS-Abfrage fehlgeschlagen." },
+  fr: { extensionOrMimeType: "Extension ou type MIME", noCommonMimeTypeFound: "Aucun type MIME courant trouve.", httpStatus: "Statut HTTP", dnsRecords: "Enregistrements DNS", dnsLookupFailed: "Echec de la requete DNS." },
+  hi: { extensionOrMimeType: "Extension ya MIME type", noCommonMimeTypeFound: "Common MIME type nahi mila.", httpStatus: "HTTP status", dnsRecords: "DNS records", dnsLookupFailed: "DNS lookup fail hua." },
+  id: { extensionOrMimeType: "Ekstensi atau tipe MIME", noCommonMimeTypeFound: "Tipe MIME umum tidak ditemukan.", httpStatus: "Status HTTP", dnsRecords: "Record DNS", dnsLookupFailed: "Lookup DNS gagal." },
+  vi: { extensionOrMimeType: "Phan mo rong hoac MIME type", noCommonMimeTypeFound: "Khong tim thay MIME type pho bien.", httpStatus: "Trang thai HTTP", dnsRecords: "Ban ghi DNS", dnsLookupFailed: "Tra cuu DNS that bai." },
+  th: { extensionOrMimeType: "นามสกุลหรือ MIME type", noCommonMimeTypeFound: "ไม่พบ MIME type ทั่วไป", httpStatus: "สถานะ HTTP", dnsRecords: "ระเบียน DNS", dnsLookupFailed: "ค้นหา DNS ไม่สำเร็จ" },
+  ar: { extensionOrMimeType: "امتداد أو نوع MIME", noCommonMimeTypeFound: "لم يتم العثور على نوع MIME شائع.", httpStatus: "حالة HTTP", dnsRecords: "سجلات DNS", dnsLookupFailed: "فشل بحث DNS." },
+};
+
+const localizedNoOutput: Record<Locale, string> = {
+  en: "Output will appear here.",
+  ko: "출력이 여기에 표시됩니다.",
+  ja: "出力はここに表示されます。",
+  "zh-CN": "输出会显示在这里。",
+  "zh-TW": "輸出會顯示在這裡。",
+  es: "La salida aparecera aqui.",
+  "pt-BR": "A saida aparecera aqui.",
+  de: "Die Ausgabe erscheint hier.",
+  fr: "La sortie apparaitra ici.",
+  hi: "Output yahan dikhega.",
+  id: "Output akan muncul di sini.",
+  vi: "Ket qua se hien thi tai day.",
+  th: "ผลลัพธ์จะแสดงที่นี่",
+  ar: "سيظهر الناتج هنا.",
 };
 
 const en: Dictionary = {
@@ -262,6 +301,8 @@ const en: Dictionary = {
 };
 
 type CommonLocaleOverride = {
+  dir?: Dictionary["dir"];
+  siteDescription?: string;
   nav?: Partial<Dictionary["nav"]>;
   home?: Partial<Dictionary["home"]>;
   tool?: Partial<Dictionary["tool"]>;
@@ -372,16 +413,15 @@ const commonLocaleOverrides = Object.fromEntries(
     {
       ...commonText[locale],
       categories: localizedCategories[locale],
-      toolUi: { ...enToolUi, ...localizedToolUi[locale] },
+      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale] },
     },
   ]),
 ) as unknown as Record<Locale, CommonLocaleOverride>;
 
-const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
+const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
   ko: {
     siteDescription: "포맷, 인코딩, 테스트, 변환, SEO, 네트워크, 색상, 시간, 텍스트 작업을 위한 무료 개발자 도구 모음.",
     nav: {
-      ...en.nav,
       searchPlaceholder: "도구 검색",
       guides: "가이드",
       tools: "도구",
@@ -394,7 +434,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
       theme: "테마",
     },
     home: {
-      ...en.home,
       badge: "개발자 워크벤치",
       title: "매일 쓰는 개발 작업을 위한 실용적인 브라우저 도구.",
       description: "페이로드 포맷, 패턴 테스트, 토큰 확인, 메타데이터 생성, 텍스트 비교, 값 변환을 한 도메인에서 처리합니다.",
@@ -404,7 +443,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
       toolIndexDescription: "SEO, 내비게이션, locale, 검증이 registry로 연결된 유틸리티입니다.",
     },
     tool: {
-      ...en.tool,
       developerWorkbench: "개발자 워크벤치",
       singleDomainTitle: "단일 도메인",
       singleDomainBody: "모든 도구를 www.bobob.app 아래에 두어 AdSense 심사와 검색 권위를 정리합니다.",
@@ -423,7 +461,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
       localOnly: "브라우저 로컬",
     },
     guides: {
-      ...en.guides,
       badge: "가이드",
       title: "브라우저 유틸리티 실전 가이드",
       description: "일반 블로그가 아니라 도구 사용 맥락을 보강하는 짧은 가이드입니다.",
@@ -437,7 +474,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
       system: "시스템",
     },
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - 실용적인 개발자 유틸리티",
       homeDescription: "JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, color, network, text 변환을 위한 무료 온라인 개발자 도구.",
       guidesTitle: "개발자 유틸리티 가이드",
@@ -449,13 +485,11 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   ja: {
     siteDescription: "整形、エンコード、テスト、変換、SEO、ネットワーク、色、時間、テキスト作業のための無料開発者ツール集。",
     home: {
-      ...en.home,
       badge: "Developer workbench",
       title: "日常の開発作業に使える実用的なブラウザツール。",
       description: "ペイロード整形、パターンテスト、トークン確認、メタデータ生成、テキスト比較、値変換を単一ドメインで行えます。",
     },
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - 実用的な開発者ユーティリティ",
       homeDescription: "JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、color、network、text 変換の無料オンライン開発者ツール。",
       toolDescription: (title) => `${title} を Bob's Multi Tool で使えます。例、FAQ、関連ツール、ローカル優先のプライバシーを備えています。`,
@@ -465,7 +499,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   es: {
     siteDescription: "Banco de herramientas gratis para formateo, codificacion, pruebas, conversion, SEO, red, color, tiempo y texto.",
     home: {
-      ...en.home,
       badge: "Mesa de trabajo",
       title: "Herramientas de navegador practicas para flujos diarios de desarrollo.",
       description: "Formatea datos, prueba patrones, inspecciona tokens, genera metadatos, compara texto y convierte valores en un solo dominio.",
@@ -473,7 +506,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
       readGuides: "Leer guias",
     },
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Utilidades practicas para desarrolladores",
       homeDescription: "Herramientas gratis para JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, color, red y texto.",
       toolDescription: (title) => `${title} en Bob's Multi Tool. Usa una utilidad rapida con ejemplos, FAQ, herramientas relacionadas y privacidad local cuando sea posible.`,
@@ -483,13 +515,11 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   "pt-BR": {
     siteDescription: "Ferramentas gratis para formatar, codificar, testar, converter, SEO, rede, cor, tempo e texto.",
     home: {
-      ...en.home,
       badge: "Workbench de desenvolvimento",
       title: "Ferramentas de navegador praticas para fluxos diarios de desenvolvimento.",
       description: "Formate payloads, teste padroes, inspecione tokens, gere metadados, compare texto e converta valores em um unico dominio.",
     },
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Utilitarios praticos para desenvolvedores",
       homeDescription: "Ferramentas gratis para JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, cor, rede e texto.",
       toolDescription: (title) => `${title} no Bob's Multi Tool. Use uma ferramenta rapida com exemplos, FAQ, ferramentas relacionadas e privacidade local quando possivel.`,
@@ -499,7 +529,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   de: {
     siteDescription: "Kostenlose Entwicklertools fuer Formatierung, Encoding, Tests, Konvertierung, SEO, Netzwerk, Farbe, Zeit und Text.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Praktische Entwicklerwerkzeuge",
       homeDescription: "Kostenlose Online-Tools fuer JSON, Regex, Base64, JWT, Cron, Zeitstempel, UUID, SEO, Farben, Netzwerk und Text.",
       toolDescription: (title) => `${title} in Bob's Multi Tool. Schnelle Entwicklerhilfe mit Beispielen, FAQ, verwandten Tools und lokaler Verarbeitung wenn moeglich.`,
@@ -509,7 +538,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   fr: {
     siteDescription: "Outils developpeur gratuits pour formatage, encodage, tests, conversion, SEO, reseau, couleur, temps et texte.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Utilitaires pratiques pour developpeurs",
       homeDescription: "Outils gratuits pour JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, couleur, reseau et texte.",
       toolDescription: (title) => `${title} dans Bob's Multi Tool. Utilitaire rapide avec exemples, FAQ, outils lies et traitement local quand possible.`,
@@ -519,7 +547,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   hi: {
     siteDescription: "Formatting, encoding, testing, conversion, SEO, network, color, time, aur text workflow ke liye free developer tools.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Practical Developer Utilities",
       homeDescription: "JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, color, network, aur text ke free online developer tools.",
       toolDescription: (title) => `${title} Bob's Multi Tool par. Examples, FAQ, related tools, aur local-first privacy ke sath fast utility.`,
@@ -529,7 +556,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   id: {
     siteDescription: "Kumpulan tool developer gratis untuk format, encoding, testing, konversi, SEO, jaringan, warna, waktu, dan teks.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Utilitas developer praktis",
       homeDescription: "Tool gratis untuk JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, warna, jaringan, dan teks.",
       toolDescription: (title) => `${title} di Bob's Multi Tool. Utilitas cepat dengan contoh, FAQ, tool terkait, dan privasi lokal bila memungkinkan.`,
@@ -539,7 +565,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   vi: {
     siteDescription: "Bo cong cu lap trinh mien phi cho dinh dang, ma hoa, kiem thu, chuyen doi, SEO, mang, mau sac, thoi gian va van ban.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Tien ich lap trinh thuc dung",
       homeDescription: "Cong cu mien phi cho JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, mau sac, mang va van ban.",
       toolDescription: (title) => `${title} tren Bob's Multi Tool. Cong cu nhanh voi vi du, FAQ, cong cu lien quan va xu ly cuc bo khi co the.`,
@@ -549,7 +574,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
   th: {
     siteDescription: "Free developer tools for formatting, encoding, testing, conversion, SEO, network, color, time, and text workflows.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Practical Developer Utilities",
       homeDescription: "Free tools for JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, color, network, and text.",
       toolDescription: (title) => `${title} in Bob's Multi Tool with examples, FAQ, related tools, and local-first privacy where practical.`,
@@ -560,7 +584,6 @@ const dictionaryOverrides: Partial<Record<Locale, Partial<Dictionary>>> = {
     dir: "rtl",
     siteDescription: "Free developer tools for formatting, encoding, testing, conversion, SEO, network, color, time, and text workflows.",
     metadata: {
-      ...en.metadata,
       homeTitle: "Bob's Multi Tool - Practical Developer Utilities",
       homeDescription: "Free tools for JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, color, network, and text.",
       toolDescription: (title) => `${title} in Bob's Multi Tool with examples, FAQ, related tools, and local-first privacy where practical.`,
@@ -578,7 +601,7 @@ export function getDictionary(locale: Locale = defaultLocale): Dictionary {
     ...localeOverride,
     nav: { ...en.nav, ...commonOverride?.nav, ...localeOverride?.nav },
     home: { ...en.home, ...commonOverride?.home, ...localeOverride?.home },
-    tool: { ...en.tool, ...commonOverride?.tool, ...localeOverride?.tool },
+    tool: { ...en.tool, ...commonOverride?.tool, noOutput: localizedNoOutput[locale], ...localeOverride?.tool },
     toolUi: { ...en.toolUi, ...commonOverride?.toolUi, ...localeOverride?.toolUi },
     guides: { ...en.guides, ...commonOverride?.guides, ...localeOverride?.guides },
     theme: { ...en.theme, ...commonOverride?.theme, ...localeOverride?.theme },

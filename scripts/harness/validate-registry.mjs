@@ -4,18 +4,28 @@ import path from "node:path";
 const root = process.cwd();
 const registryPath = path.join(root, "apps/main/src/features/tools/registry.ts");
 const guideRegistryPath = path.join(root, "apps/main/src/features/guides/registry.ts");
-const sitemapPath = path.join(root, "apps/main/public/sitemap.xml");
+const sitemapSourcePath = path.join(root, "apps/main/src/features/seo/sitemaps.ts");
+const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/route.ts");
+const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
+const i18nConfigPath = path.join(root, "apps/main/src/features/i18n/config.ts");
 const registry = fs.readFileSync(registryPath, "utf8");
 const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
-const sitemap = fs.readFileSync(sitemapPath, "utf8");
+const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
+const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
 const failures = [];
 
 const toolBlocks = Array.from(registry.matchAll(/slug:\s+"([^"]+)"[\s\S]*?relatedTools:\s+\[([^\]]*)\]/g));
 const slugs = toolBlocks.map((match) => match[1]);
 const uniqueSlugs = new Set(slugs);
+const localesMatch = i18nConfig.match(/export const locales = \[([\s\S]*?)\] as const/);
+const locales = localesMatch ? Array.from(localesMatch[1].matchAll(/"([^"]+)"/g)).map((match) => match[1]) : [];
 
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
+if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
+if (fs.existsSync(path.join(root, "apps/main/public/sitemap.xml"))) failures.push("static public sitemap.xml must not shadow dynamic sitemap index");
+if (!fs.existsSync(sitemapIndexRoutePath)) failures.push("sitemap index route missing");
+if (!fs.existsSync(localizedSitemapRoutePath)) failures.push("localized sitemap route missing");
 
 for (const [fullBlock, slug, relatedSource] of toolBlocks) {
   const generatedByHelper = fullBlock.includes("keywords:") && fullBlock.includes("guideSlug:");
@@ -27,7 +37,6 @@ for (const [fullBlock, slug, relatedSource] of toolBlocks) {
       if (!registry.includes(helperFragment)) failures.push(`tool helper missing ${helperFragment}`);
     }
   }
-  if (!sitemap.includes(`https://www.bobob.app/tools/${slug}`)) failures.push(`${slug} missing default sitemap URL`);
   const relatedSlugs = Array.from(relatedSource.matchAll(/"([^"]+)"/g)).map((item) => item[1]);
   if (!relatedSlugs.length) failures.push(`${slug} has no related tools`);
   for (const relatedSlug of relatedSlugs) {
@@ -42,17 +51,27 @@ const guideSlugs = new Set([
 
 for (const slug of guideSlugs) {
   if (!guideRegistry.includes(`slug: "${slug}"`)) failures.push(`guide slug is not registered: ${slug}`);
-  if (!sitemap.includes(`https://www.bobob.app/guides/${slug}`)) failures.push(`guide missing from sitemap: ${slug}`);
 }
 
-const sitemapUrls = Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)).map((match) => match[1]);
-if (sitemapUrls.length > 200) failures.push(`sitemap must stay at or below 200 URLs, found ${sitemapUrls.length}`);
-if (!sitemap.includes("https://www.bobob.app/ko/tools/json-formatter")) failures.push("localized sitemap sample missing: ko json formatter");
-if (!sitemap.includes("https://www.bobob.app/ja/tools/regex-tester")) failures.push("localized sitemap sample missing: ja regex tester");
+for (const fragment of [
+  "sitemapIndexXml",
+  "localizedSitemapXml",
+  "xmlns:xhtml",
+  "hreflang=\"x-default\"",
+  "tools.map",
+  "guides.map",
+  "sitemapLocales",
+]) {
+  if (!sitemapSource.includes(fragment)) failures.push(`sitemap source missing ${fragment}`);
+}
+
+const urlsPerLocale = slugs.length + guideSlugs.size + 4;
+const totalLocalizedUrls = urlsPerLocale * locales.length;
+if (totalLocalizedUrls < 900) failures.push(`expected at least 900 localized sitemap URLs, found ${totalLocalizedUrls}`);
 
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);
 }
 
-console.log(`Registry harness passed for ${slugs.length} tools, ${guideSlugs.size} guides, and ${sitemapUrls.length} sitemap URLs.`);
+console.log(`Registry harness passed for ${slugs.length} tools, ${guideSlugs.size} guides, ${locales.length} locale sitemaps, and ${totalLocalizedUrls} localized sitemap URLs.`);

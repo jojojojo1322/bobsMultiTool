@@ -744,12 +744,6 @@ function localizeTitle(title: string, locale: Locale, pack: TextPack) {
   return Object.entries(pack.titleTerms).reduce((value, [source, replacement]) => value.replaceAll(source, replacement), title);
 }
 
-function demandChip(tool: ToolDefinition, pack: TextPack) {
-  if (tool.demandTier === "core") return pack.coreChip;
-  if (tool.demandTier === "growth") return pack.growthChip;
-  return pack.longTailChip;
-}
-
 function privacyChip(tool: ToolDefinition, pack: TextPack) {
   return tool.requiresServer ? pack.serverChip : pack.localChip;
 }
@@ -785,7 +779,7 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
     seo: {
       title: pack.seoTitle(title, category),
       description: pack.seoDescription(title, category, privacy),
-      keywords: [title, category, privacy, demandChip(tool, pack)],
+      keywords: [title, category, privacy],
     },
     examples: tool.examples.map((example, index) => ({
       ...example,

@@ -13,6 +13,8 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Desktop tool pages must use one aligned workbench shell around the resizable panels. Do not wrap left, center, and right panels in separate outer rounded bordered cards.
 - Resize handles use a transparent hit area with one neutral divider line; avoid extra border columns that visually protrude.
 - Detail top bars must include a locale-aware brand/home link so users can return to the main screen without opening side navigation.
+- Tool navigation clicks must preserve sidebar scroll position across tool detail navigation. Use non-scrolling tool links and restore the navigation scroll container from localStorage.
+- Demand tier is not a user-facing label. Do not show demand wording or raw `core` / `growth` / `long-tail` badges in cards, search results, or detail headers.
 - Mobile must keep Sheet navigation and single-column content instead of draggable panels.
 - Use lucide icons for actions where an icon exists.
 - Light/Dark/System is required product behavior. Use next-themes, ThemeProvider, ThemeToggle, and class-based `.dark` variables.

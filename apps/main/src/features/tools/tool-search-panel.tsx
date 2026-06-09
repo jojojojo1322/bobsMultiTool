@@ -41,7 +41,7 @@ export function ToolSearchPanel({ locale, dictionary }: { locale: Locale; dictio
                   <p className="truncate text-sm font-medium">{tool.title}</p>
                   <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
                 </div>
-                <Badge>{locale === "en" ? tool.demandTier : (tool.seo.keywords[3] ?? tool.demandTier)}</Badge>
+                <Badge>{tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly}</Badge>
               </div>
             </Link>
           ))}

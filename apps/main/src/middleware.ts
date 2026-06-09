@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { countryLocaleMap, defaultLocale, isLocale, normalizeLocale, pathHasLocale, withLocale, type Locale } from "@/features/i18n/config";
 
 const PUBLIC_FILE = /\.(.*)$/;
-const skippedPrefixes = ["/_next", "/api"];
+const skippedPrefixes = ["/_next", "/api", "/sitemaps"];
 
 function localeFromCookie(request: NextRequest): Locale | undefined {
   return normalizeLocale(request.cookies.get("NEXT_LOCALE")?.value);
@@ -58,5 +58,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|ads.txt).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|sitemaps|ads.txt).*)"],
 };

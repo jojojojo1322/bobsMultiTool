@@ -49,8 +49,10 @@ Include:
 - Default English and at least two localized routes.
 - Localized visible prose for home, tool detail, sidebar search results, examples, FAQ, guide sections, and metadata.
 - Arabic RTL route and visible prose.
+- Sitemap index at `/sitemap.xml`, per-locale sitemaps at `/sitemaps/en`, `/sitemaps/ko`, `/sitemaps/ar`, and full locale URL coverage without the old 200 URL static cap.
 - Home and workbench shared search behavior.
-- Desktop left and right sidebar resizing, single-shell panel alignment, top brand/home link, plus mobile Sheet fallback.
+- Desktop left and right sidebar resizing, single-shell panel alignment, top brand/home link, preserved sidebar scroll when clicking tool navigation, plus mobile Sheet fallback.
+- No visible demand wording or raw `core` / `growth` / `long-tail` demand badges in home cards, search results, or tool detail headers.
 - A local-only tool and a server route tool.
 - Clean build behavior with no build-time external font downloads.
 - The agent-skills-sync gate whenever feature, policy, SEO, theme, or i18n rules changed.

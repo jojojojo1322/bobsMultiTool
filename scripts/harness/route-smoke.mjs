@@ -23,6 +23,9 @@ const paths = [
   "/terms",
   "/robots.txt",
   "/sitemap.xml",
+  "/sitemaps/en",
+  "/sitemaps/ko",
+  "/sitemaps/ar",
   "/ads.txt",
 ];
 
