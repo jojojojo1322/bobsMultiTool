@@ -19,9 +19,11 @@ const toolDirectory = read("apps/main/src/features/tools/tool-directory.tsx");
 const toolWorkspace = read("apps/main/src/features/tools/tool-workspace.tsx");
 const toolSearch = read("apps/main/src/features/tools/tool-search-panel.tsx");
 const toolComponents = read("apps/main/src/features/tools/tool-components.tsx");
+const toolRegistry = read("apps/main/src/features/tools/registry.ts");
 
 const failures = [];
 const nonEnglishLocales = ["ko", "ja", "zh-CN", "zh-TW", "es", "pt-BR", "de", "fr", "hi", "id", "vi", "th", "ar"];
+const longTailLocales = ["zh-CN", "zh-TW", "pt-BR", "fr", "hi", "id", "vi", "th", "ar"];
 
 for (const locale of nonEnglishLocales) {
   if (!localizedContent.includes(`${locale}:`) && !localizedContent.includes(`"${locale}":`)) {
@@ -50,6 +52,21 @@ for (const fragment of [
   "priorityGuideDescriptions",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
+}
+
+const registrySlugs = Array.from(toolRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
+const longTailIntentSource = localizedContent.match(/const longTailPriorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst priorityGuideDescriptions/)?.[1] ?? "";
+for (const slug of registrySlugs) {
+  const toolSource = longTailIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
+  if (!toolSource) {
+    failures.push(`long-tail localized intent missing tool slug: ${slug}`);
+    continue;
+  }
+  for (const locale of longTailLocales) {
+    if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
+      failures.push(`long-tail localized intent missing ${locale} for ${slug}`);
+    }
+  }
 }
 
 for (const fragment of [

@@ -10,12 +10,13 @@ description: Use when adding, renaming, removing, or reorganizing Bob's Multi To
 3. Implement the client component in `apps/main/src/features/tools/tool-components.tsx`.
 4. Set demandTier, searchIntents, aliases, useCases, inputExamples, contentCluster, monetizationTier, supportedLocales, privacyMode, and requiresServer.
 5. Add localized visible prose for every non-English locale through the localized content resolver: description, SEO title/description, keyword chips, use cases, examples, FAQ, guide title, and related display labels.
-6. Add guide links that resolve under `/guides/{slug}` and localized routes.
-7. Add related tools that resolve to registered slugs.
-8. Confirm the dynamic sitemap index and `/sitemaps/{locale}` coverage include the tool. Do not add a static `apps/main/public/sitemap.xml`.
-9. Keep `apps/main` as the only app workspace. Do not add standalone app packages for individual tools; use registry entries and old-path redirects instead.
-10. Update AGENTS.md or this skill when the tool-addition policy changes.
-11. Run `npm run harness:registry`, `npm run harness:localization`, `npm run harness:search`, `npm run harness:tools`, and `npm run harness:agents`.
+6. Add slug-specific long-tail visible descriptions for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`; do not rely on generic translated templates for new tools.
+7. Add guide links that resolve under `/guides/{slug}` and localized routes.
+8. Add related tools that resolve to registered slugs.
+9. Confirm the dynamic sitemap index and `/sitemaps/{locale}` coverage include the tool. Do not add a static `apps/main/public/sitemap.xml`.
+10. Keep `apps/main` as the only app workspace. Do not add standalone app packages for individual tools; use registry entries and old-path redirects instead.
+11. Update AGENTS.md or this skill when the tool-addition policy changes.
+12. Run `npm run harness:registry`, `npm run harness:localization`, `npm run harness:search`, `npm run harness:tools`, and `npm run harness:agents`.
 
 Every tool must include title, category, description, component key, SEO title/description/keywords, examples, FAQs, guides, related tools, demandTier, searchIntents, aliases, useCases, inputExamples, contentCluster, monetizationTier, supportedLocales, privacyMode, and requiresServer.
 Locale routes must not fall back to raw English registry prose for sentence copy.

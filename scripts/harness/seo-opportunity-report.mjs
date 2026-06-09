@@ -10,8 +10,9 @@ const minImpressions = Number(process.env.BOBOB_MIN_IMPRESSIONS ?? 100);
 const lowCtr = Number(process.env.BOBOB_LOW_CTR ?? 0.025);
 const lowRpm = Number(process.env.BOBOB_LOW_RPM ?? 1);
 const localePrefix = /^\/(?:ko|ja|zh-CN|zh-TW|es|pt-BR|de|fr|hi|id|vi|th|ar)(?=\/)/;
+const inputWarnings = [];
 
-function parseCsv(source) {
+function parseCsvTable(source) {
   const rows = [];
   let row = [];
   let cell = "";
@@ -39,9 +40,36 @@ function parseCsv(source) {
   }
   row.push(cell.trim());
   if (row.some(Boolean)) rows.push(row);
-  if (!rows.length) return [];
+  if (!rows.length) return { headers: [], rows: [] };
   const headers = rows[0].map((header) => header.toLowerCase().replace(/[^a-z0-9]+/g, ""));
-  return rows.slice(1).map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""])));
+  return {
+    headers,
+    rows: rows.slice(1).map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""]))),
+  };
+}
+
+function hasAnyHeader(headers, aliases) {
+  return aliases.some((alias) => headers.includes(alias.toLowerCase().replace(/[^a-z0-9]+/g, "")));
+}
+
+function readCsvTable(csvPath, label, requiredHeaderGroups, recommendedHeaderGroups) {
+  const table = parseCsvTable(fs.readFileSync(csvPath, "utf8"));
+  if (!table.headers.length) {
+    inputWarnings.push(`${label} CSV has no header row or parseable rows.`);
+    return table;
+  }
+  for (const aliases of requiredHeaderGroups) {
+    if (!hasAnyHeader(table.headers, aliases)) {
+      inputWarnings.push(`${label} CSV missing required column: one of ${aliases.join(", ")}.`);
+    }
+  }
+  for (const aliases of recommendedHeaderGroups) {
+    if (!hasAnyHeader(table.headers, aliases)) {
+      inputWarnings.push(`${label} CSV missing recommended column: one of ${aliases.join(", ")}.`);
+    }
+  }
+  if (!table.rows.length) inputWarnings.push(`${label} CSV has headers but no data rows.`);
+  return table;
 }
 
 function numberValue(value) {
@@ -161,7 +189,12 @@ function readContentInventory() {
 
 function searchConsoleRows() {
   if (!searchCsvPath) return [];
-  const rows = parseCsv(fs.readFileSync(searchCsvPath, "utf8"));
+  const { rows } = readCsvTable(
+    searchCsvPath,
+    "Search Console",
+    [["page", "url", "pages", "landingpage", "path"], ["impressions"]],
+    [["query", "queries"], ["clicks"], ["ctr"], ["position", "avgposition", "averageposition"]],
+  );
   return rows
     .map((row) => {
       const page = row.page || row.url || row.pages || row.landingpage || row.path;
@@ -184,7 +217,12 @@ function searchConsoleOpportunities(rows) {
 
 function adsenseRows() {
   if (!adsenseCsvPath) return [];
-  const rows = parseCsv(fs.readFileSync(adsenseCsvPath, "utf8"));
+  const { rows } = readCsvTable(
+    adsenseCsvPath,
+    "AdSense",
+    [["page", "url", "pages", "path", "landingpage"], ["impressions", "pageviews", "views"]],
+    [["pagerpm", "rpm"], ["estimatedearnings", "earnings"], ["ctr"]],
+  );
   return rows
     .map((row) => {
       const page = row.page || row.url || row.pages || row.path || row.landingpage;
@@ -344,6 +382,13 @@ function formatMarkdownReport(report) {
       ],
     ),
     "",
+    "## Input Warnings",
+    "",
+    markdownTable(
+      ["Warning"],
+      report.inputWarnings.map((warning) => [warning]),
+    ),
+    "",
     "## Title And Description Recommendations",
     "",
     markdownTable(
@@ -476,6 +521,7 @@ const report = {
   inventoryCount: contentInventory.all.length,
   toolInventoryCount: contentInventory.tools.length,
   guideInventoryCount: contentInventory.guides.length,
+  inputWarnings,
   searchConsoleOpportunities: scOpportunities,
   adsenseOpportunities: adOpportunities,
   metadataWarnings,
@@ -487,3 +533,4 @@ emitReport(report);
 
 if (!searchCsvPath) console.error("No BOBOB_SEARCH_CONSOLE_CSV provided; Search Console CTR opportunities were skipped.");
 if (!adsenseCsvPath) console.error("No BOBOB_ADSENSE_CSV provided; AdSense RPM opportunities were skipped.");
+for (const warning of inputWarnings) console.error(`SEO input warning: ${warning}`);

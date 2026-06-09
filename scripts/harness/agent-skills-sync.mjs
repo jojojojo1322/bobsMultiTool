@@ -27,6 +27,7 @@ const checks = [
   ["agents", "guide.description"],
   ["agents", "Twitter title/description"],
   ["agents", "Long-tail acquisition locales"],
+  ["agents", "every registered tool"],
   ["agents", "Long-tail guide descriptions"],
   ["agents", "root `<html lang>`"],
   ["agents", "getLocalizedLegalContent"],
@@ -38,6 +39,7 @@ const checks = [
   ["agents", "SearchAction schema"],
   ["agents", "harness:seo-opportunities"],
   ["agents", "titleDescriptionRecommendations"],
+  ["agents", "inputWarnings"],
   ["agents", "BOBOB_SEO_REPORT_FORMAT"],
   ["agents", "visual screenshot smoke"],
   ["agents", "unused AdSense placeholder"],
@@ -50,6 +52,7 @@ const checks = [
   ["tool", "supportedLocales"],
   ["tool", "privacyMode"],
   ["tool", "requiresServer"],
+  ["tool", "slug-specific long-tail visible descriptions"],
   ["tool", "/{locale}/tools"],
   ["tool", "Do not add a static"],
   ["tool", "only app workspace"],
@@ -70,6 +73,7 @@ const checks = [
   ["localization", "must not re-spread English nested objects"],
   ["localization", "slug-specific descriptions"],
   ["localization", "Long-tail acquisition locales"],
+  ["localization", "every registered tool"],
   ["localization", "Long-tail guide descriptions"],
   ["localization", "root `<html lang>`"],
   ["localization", "getLocalizedLegalContent"],
@@ -85,6 +89,7 @@ const checks = [
   ["seo", "SearchAction schema"],
   ["seo", "harness:seo-opportunities"],
   ["seo", "titleDescriptionRecommendations"],
+  ["seo", "inputWarnings"],
   ["seo", "BOBOB_SEO_REPORT_FORMAT"],
   ["seo", "tool and guide pages"],
   ["seo", "guide.description"],
@@ -103,6 +108,7 @@ const checks = [
   ["verification", "harness:visual"],
   ["verification", "harness:seo-opportunities"],
   ["verification", "titleDescriptionRecommendations"],
+  ["verification", "inputWarnings"],
   ["verification", "BOBOB_SEO_REPORT_FORMAT"],
   ["verification", "tool and guide pages"],
   ["verification", "preserved sidebar scroll"],
@@ -120,6 +126,7 @@ const checks = [
   ["product", "localized tool directories"],
   ["product", "harness:seo-opportunities"],
   ["product", "titleDescriptionRecommendations"],
+  ["product", "inputWarnings"],
   ["product", "BOBOB_SEO_REPORT_FORMAT"],
   ["product", "tool and guide pages"],
 ];
@@ -186,7 +193,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "titleDescriptionRecommendations", "measuredMetadataSuggestion", "canonicalContentPath", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
