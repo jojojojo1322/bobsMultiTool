@@ -25,6 +25,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - SearchAction schema must point to a URL that actually accepts `?q=` and renders usable search results.
 - For post-deploy title/description work, use Search Console and AdSense page/query CSV exports with `npm run harness:seo-opportunities`. Prioritize high-impression low-CTR tool and guide pages, low-RPM pages, metadata warnings, and `titleDescriptionRecommendations` before broad copy rewrites.
 - Review `inputWarnings` from the SEO opportunity report before trusting empty measured results; missing Search Console/AdSense CSV headers must be fixed or acknowledged before title/description edits.
+- Run `npm run harness:seo-opportunities:smoke` when changing the measured SEO report so valid CSV fixtures still create opportunities and malformed CSV fixtures still create `inputWarnings`.
 - Use `BOBOB_SEO_REPORT_FORMAT=markdown` and `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` when a human review artifact is needed for measured title/description decisions.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.
 - Keep privacy and terms pages aligned with the actual local-first utility behavior.

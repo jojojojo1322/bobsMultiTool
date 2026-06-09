@@ -28,6 +28,7 @@
 - Internal search must use the shared registry search index across home, `/tools`, locale tool directories, and tool workbench surfaces. URL query `?q=` must stay aligned with the SearchAction schema.
 - Post-deploy title/description changes should be driven by Search Console and AdSense page/query CSV exports when available. Use `npm run harness:seo-opportunities` to identify high-impression low-CTR tool and guide pages, low-RPM pages, metadata length/intent issues, and `titleDescriptionRecommendations`.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.
+- `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.
 - For measured SEO review handoff, use `BOBOB_SEO_REPORT_FORMAT=markdown` and optionally `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` to generate a readable recommendations artifact.
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.

@@ -10,6 +10,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Classify tools by monetizationTier: core, growth, or long-tail. Core tools get the strongest SEO guide, FAQ, examples, and related-link coverage first.
 - After deployment, review Search Console and AdSense CSV exports with `npm run harness:seo-opportunities` before changing title/description copy for tool and guide pages. Real impressions, CTR, position, RPM, and `titleDescriptionRecommendations` should outrank guesses.
 - Treat SEO report `inputWarnings` as a data quality gate; a missing header can make measured opportunities look empty.
+- Keep `npm run harness:seo-opportunities:smoke` green so the measured SEO workflow is tested without real private exports.
 - For stakeholder review, generate the Markdown SEO report with `BOBOB_SEO_REPORT_FORMAT=markdown` and keep title/description changes tied to measured rows.
 - Treat JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript as search-led acquisition clusters.
 - Treat guides as support content for tools, not as a separate generic blog.

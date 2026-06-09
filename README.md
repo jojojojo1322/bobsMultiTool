@@ -34,6 +34,7 @@ npm run harness:theme
 npm run harness:tools
 npm run harness:agents
 npm run harness:seo-opportunities
+npm run harness:seo-opportunities:smoke
 BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes
 BOBOB_BASE_URL=http://localhost:3000 npm run harness:visual
 ```
@@ -51,6 +52,8 @@ npm run harness:seo-opportunities
 Search Console exports should come from the Performance report with page/query data and the filters you want to evaluate. AdSense exports should include page URL, impressions, page RPM, estimated earnings, and CTR where available.
 
 Without CSV inputs, the report still checks registry metadata length and search-intent coverage. With CSV inputs, it covers tool pages and guide pages, warns through `inputWarnings` when expected CSV headers are missing, then reports `titleDescriptionRecommendations` before changing page titles or meta descriptions.
+
+Run `npm run harness:seo-opportunities:smoke` to verify valid measured CSV fixtures produce opportunities and malformed CSV fixtures produce `inputWarnings`.
 
 For a human-readable report:
 

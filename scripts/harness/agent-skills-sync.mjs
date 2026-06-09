@@ -38,6 +38,7 @@ const checks = [
   ["agents", "/{locale}/tools"],
   ["agents", "SearchAction schema"],
   ["agents", "harness:seo-opportunities"],
+  ["agents", "harness:seo-opportunities:smoke"],
   ["agents", "titleDescriptionRecommendations"],
   ["agents", "inputWarnings"],
   ["agents", "BOBOB_SEO_REPORT_FORMAT"],
@@ -88,6 +89,7 @@ const checks = [
   ["seo", "country"],
   ["seo", "SearchAction schema"],
   ["seo", "harness:seo-opportunities"],
+  ["seo", "harness:seo-opportunities:smoke"],
   ["seo", "titleDescriptionRecommendations"],
   ["seo", "inputWarnings"],
   ["seo", "BOBOB_SEO_REPORT_FORMAT"],
@@ -107,6 +109,7 @@ const checks = [
   ["verification", "harness:layout"],
   ["verification", "harness:visual"],
   ["verification", "harness:seo-opportunities"],
+  ["verification", "harness:seo-opportunities:smoke"],
   ["verification", "titleDescriptionRecommendations"],
   ["verification", "inputWarnings"],
   ["verification", "BOBOB_SEO_REPORT_FORMAT"],
@@ -125,6 +128,7 @@ const checks = [
   ["product", "40+"],
   ["product", "localized tool directories"],
   ["product", "harness:seo-opportunities"],
+  ["product", "harness:seo-opportunities:smoke"],
   ["product", "titleDescriptionRecommendations"],
   ["product", "inputWarnings"],
   ["product", "BOBOB_SEO_REPORT_FORMAT"],
@@ -197,6 +201,14 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
+if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke.mjs"))) {
+  failures.push("SEO opportunity report smoke harness missing");
+} else {
+  const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
+    if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
+  }
+}
 
 const resizable = read("apps/main/src/components/ui/resizable.tsx");
 for (const fragment of ["clampLayoutToAvailable", "ResizeObserver", "minmax(0,1fr)", "data-resizable-layout"]) {
@@ -225,6 +237,9 @@ for (const file of sourceFiles) {
 const packageJson = JSON.parse(read("package.json"));
 if (JSON.stringify(packageJson.workspaces) !== JSON.stringify(["apps/main"])) {
   failures.push("root workspaces must include only apps/main");
+}
+if (packageJson.scripts?.["harness:seo-opportunities:smoke"] !== "node scripts/harness/seo-opportunity-report-smoke.mjs") {
+  failures.push("root package scripts must expose harness:seo-opportunities:smoke");
 }
 if (packageJson.devDependencies?.turbo || packageJson.scripts?.clean?.includes("turbo")) {
   failures.push("single-app workspace must not keep turbo dependency or turbo clean script");
