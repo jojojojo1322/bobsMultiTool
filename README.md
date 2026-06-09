@@ -48,7 +48,21 @@ BOBOB_ADSENSE_CSV=/path/to/adsense.csv \
 npm run harness:seo-opportunities
 ```
 
+Search Console exports should come from the Performance report with page/query data and the filters you want to evaluate. AdSense exports should include page URL, impressions, page RPM, estimated earnings, and CTR where available.
+
 Without CSV inputs, the report still checks registry metadata length and search-intent coverage. With CSV inputs, it covers tool pages and guide pages, then reports `titleDescriptionRecommendations` before changing page titles or meta descriptions.
+
+For a human-readable report:
+
+```bash
+BOBOB_SEARCH_CONSOLE_CSV=/path/to/search-console.csv \
+BOBOB_ADSENSE_CSV=/path/to/adsense.csv \
+BOBOB_SEO_REPORT_FORMAT=markdown \
+BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md \
+npm run harness:seo-opportunities
+```
+
+Reference docs: Search Console CSV export is documented by Google Search Console Help, and AdSense CSV export is documented by Google AdSense Help.
 
 Legacy app removal is recorded in `docs/legacy-apps-archive.md`.
 

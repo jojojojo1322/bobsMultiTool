@@ -4,6 +4,8 @@ import path from "node:path";
 const root = process.cwd();
 const searchCsvPath = process.env.BOBOB_SEARCH_CONSOLE_CSV;
 const adsenseCsvPath = process.env.BOBOB_ADSENSE_CSV;
+const reportFormat = process.env.BOBOB_SEO_REPORT_FORMAT ?? "json";
+const reportOutputPath = process.env.BOBOB_SEO_REPORT_OUT;
 const minImpressions = Number(process.env.BOBOB_MIN_IMPRESSIONS ?? 100);
 const lowCtr = Number(process.env.BOBOB_LOW_CTR ?? 0.025);
 const lowRpm = Number(process.env.BOBOB_LOW_RPM ?? 1);
@@ -243,6 +245,10 @@ function clampText(value, maxLength) {
   return `${trimmed}.`;
 }
 
+function percent(value) {
+  return `${(value * 100).toFixed(2)}%`;
+}
+
 function cleanDescriptionSource(description) {
   return description
     .replace(/^Free online [^.]+\.?\s*/i, "")
@@ -311,6 +317,116 @@ function measuredMetadataSuggestion(item, pageRows, adsenseRow) {
   };
 }
 
+function markdownTable(headers, rows) {
+  if (!rows.length) return "_None._";
+  const escape = (value) => String(value ?? "").replace(/\|/g, "\\|").replace(/\n/g, " ");
+  const headerRow = `| ${headers.map(escape).join(" | ")} |`;
+  const divider = `| ${headers.map(() => "---").join(" | ")} |`;
+  const body = rows.map((row) => `| ${row.map(escape).join(" | ")} |`).join("\n");
+  return `${headerRow}\n${divider}\n${body}`;
+}
+
+function formatMarkdownReport(report) {
+  const lines = [
+    "# Bob's Multi Tool SEO Opportunity Report",
+    "",
+    "## Inputs",
+    "",
+    markdownTable(
+      ["Field", "Value"],
+      [
+        ["Search Console CSV", report.inputs.searchConsoleCsv ?? "not provided"],
+        ["AdSense CSV", report.inputs.adsenseCsv ?? "not provided"],
+        ["Minimum impressions", report.inputs.minImpressions],
+        ["Low CTR threshold", percent(report.inputs.lowCtr)],
+        ["Low RPM threshold", report.inputs.lowRpm],
+        ["Inventory", `${report.inventoryCount} pages (${report.toolInventoryCount} tools, ${report.guideInventoryCount} guides)`],
+      ],
+    ),
+    "",
+    "## Title And Description Recommendations",
+    "",
+    markdownTable(
+      ["Path", "Source", "Primary query", "Suggested title", "Suggested description", "Reason"],
+      report.titleDescriptionRecommendations.map((item) => [
+        item.path,
+        item.sourcePage,
+        item.primaryQuery ?? "",
+        item.suggestedTitle,
+        item.suggestedDescription,
+        item.reason,
+      ]),
+    ),
+    "",
+    "## Search Console Opportunities",
+    "",
+    markdownTable(
+      ["Page", "Query", "Impressions", "Clicks", "CTR", "Position"],
+      report.searchConsoleOpportunities.map((row) => [
+        row.page,
+        row.query,
+        row.impressions,
+        row.clicks,
+        percent(row.ctr),
+        row.position || "",
+      ]),
+    ),
+    "",
+    "## AdSense Opportunities",
+    "",
+    markdownTable(
+      ["Page", "Impressions", "RPM", "Earnings", "CTR"],
+      report.adsenseOpportunities.map((row) => [
+        row.page,
+        row.impressions,
+        row.rpm,
+        row.earnings,
+        percent(row.ctr),
+      ]),
+    ),
+    "",
+    "## Metadata Warnings",
+    "",
+    markdownTable(
+      ["Path", "Title length", "Description length", "Title intent", "Description intent"],
+      report.metadataWarnings.map((row) => [
+        row.path,
+        row.titleLength,
+        row.descriptionLength,
+        row.titleHasIntent ? "yes" : "no",
+        row.descriptionHasIntent ? "yes" : "no",
+      ]),
+    ),
+    "",
+    "## Unsupported Measured Pages",
+    "",
+    markdownTable(
+      ["Source", "Page", "Canonical path", "Impressions"],
+      report.unsupportedMeasuredPages.map((row) => [
+        row.source,
+        row.page,
+        row.canonicalPath || "not a tracked tool/guide page",
+        row.impressions ?? "",
+      ]),
+    ),
+    "",
+  ];
+  return lines.join("\n");
+}
+
+function emitReport(report) {
+  const output = reportFormat === "markdown" || reportFormat === "md"
+    ? formatMarkdownReport(report)
+    : JSON.stringify(report, null, 2);
+  if (reportOutputPath) {
+    const outputPath = path.resolve(root, reportOutputPath);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, `${output}\n`);
+  } else {
+    console.log(output);
+  }
+}
+
 const inventory = readRegistryInventory();
 const contentInventory = readContentInventory();
 const inventoryByPath = new Map(contentInventory.all.map((item) => [item.path, item]));
@@ -367,7 +483,7 @@ const report = {
   unsupportedMeasuredPages,
 };
 
-console.log(JSON.stringify(report, null, 2));
+emitReport(report);
 
 if (!searchCsvPath) console.error("No BOBOB_SEARCH_CONSOLE_CSV provided; Search Console CTR opportunities were skipped.");
 if (!adsenseCsvPath) console.error("No BOBOB_ADSENSE_CSV provided; AdSense RPM opportunities were skipped.");

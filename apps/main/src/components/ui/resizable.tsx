@@ -11,8 +11,33 @@ const minRightWidth = 280;
 const minCenterWidth = 560;
 const handleWidth = 8;
 
-function clampPanelWidth(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(Math.round(value), max));
+function getAvailableWidth(element: HTMLDivElement | null) {
+  return Math.min(element?.getBoundingClientRect().width ?? 1600, 1600);
+}
+
+function clampLayoutToAvailable(layout: { left: number; right: number }, available: number) {
+  const safeAvailable = Math.max(0, available);
+  const handleTotal = handleWidth * 2;
+  const minimumPanelTotal = minLeftWidth + minRightWidth;
+  const desiredCenterWidth = Math.min(minCenterWidth, Math.max(0, safeAvailable - minimumPanelTotal - handleTotal));
+  const maxPanelTotal = Math.max(minimumPanelTotal, safeAvailable - desiredCenterWidth - handleTotal);
+
+  let left = Math.max(minLeftWidth, Math.round(layout.left));
+  let right = Math.max(minRightWidth, Math.round(layout.right));
+  let excess = left + right - maxPanelTotal;
+
+  if (excess > 0) {
+    const rightReduction = Math.min(excess, right - minRightWidth);
+    right -= rightReduction;
+    excess -= rightReduction;
+  }
+
+  if (excess > 0) {
+    const leftReduction = Math.min(excess, left - minLeftWidth);
+    left -= leftReduction;
+  }
+
+  return { left, right };
 }
 
 function readStoredLayout() {
@@ -35,7 +60,21 @@ export function ResizablePanelGroup({ className, children, ...props }: React.HTM
   const panels = React.Children.toArray(children);
 
   React.useEffect(() => {
-    setLayout(readStoredLayout());
+    const syncLayout = () => {
+      const available = getAvailableWidth(containerRef.current);
+      setLayout((current) => clampLayoutToAvailable(current, available));
+    };
+
+    setLayout(clampLayoutToAvailable(readStoredLayout(), getAvailableWidth(containerRef.current)));
+    if (!containerRef.current || typeof ResizeObserver === "undefined") return;
+
+    const observer = new ResizeObserver(syncLayout);
+    observer.observe(containerRef.current);
+    window.addEventListener("resize", syncLayout);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncLayout);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -47,31 +86,16 @@ export function ResizablePanelGroup({ className, children, ...props }: React.HTM
     (clientX: number, handle: "left" | "right") => {
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
-      const available = Math.min(rect.width, 1600);
-      const maxLeft = Math.max(minLeftWidth, available - layout.right - minCenterWidth - handleWidth * 2);
-      const maxRight = Math.max(minRightWidth, available - layout.left - minCenterWidth - handleWidth * 2);
+      const available = getAvailableWidth(containerRef.current);
 
       setLayout((current) => {
         if (handle === "left") {
-          return {
-            ...current,
-            left: clampPanelWidth(clientX - rect.left, minLeftWidth, Math.max(minLeftWidth, available - current.right - minCenterWidth - handleWidth * 2)),
-          };
+          return clampLayoutToAvailable({ ...current, left: clientX - rect.left }, available);
         }
-        return {
-          ...current,
-          right: clampPanelWidth(rect.right - clientX, minRightWidth, Math.max(minRightWidth, available - current.left - minCenterWidth - handleWidth * 2)),
-        };
+        return clampLayoutToAvailable({ ...current, right: rect.right - clientX }, available);
       });
-
-      if (maxLeft < layout.left || maxRight < layout.right) {
-        setLayout((current) => ({
-          left: clampPanelWidth(current.left, minLeftWidth, maxLeft),
-          right: clampPanelWidth(current.right, minRightWidth, maxRight),
-        }));
-      }
     },
-    [layout.left, layout.right],
+    [],
   );
 
   React.useEffect(() => {
@@ -92,14 +116,11 @@ export function ResizablePanelGroup({ className, children, ...props }: React.HTM
   }, [activeHandle, updateFromPointer]);
 
   const nudge = React.useCallback((handle: "left" | "right", delta: number) => {
-    setLayout((current) => ({
-      ...current,
-      [handle]: Math.max(handle === "left" ? minLeftWidth : minRightWidth, current[handle] + delta),
-    }));
+    setLayout((current) => clampLayoutToAvailable({ ...current, [handle]: current[handle] + delta }, getAvailableWidth(containerRef.current)));
   }, []);
 
   const handleClassName = "relative hidden cursor-col-resize bg-transparent transition-colors after:absolute after:inset-y-0 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:block";
-  const gridTemplateColumns = `${layout.left}px ${handleWidth}px minmax(${minCenterWidth}px,1fr) ${handleWidth}px ${layout.right}px`;
+  const gridTemplateColumns = `${layout.left}px ${handleWidth}px minmax(0,1fr) ${handleWidth}px ${layout.right}px`;
   const style = { "--bobob-grid-columns": gridTemplateColumns } as React.CSSProperties;
 
   return (

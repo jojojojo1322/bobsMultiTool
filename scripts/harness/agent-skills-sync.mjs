@@ -20,6 +20,7 @@ const checks = [
   ["agents", "build-time external font fetches"],
   ["agents", "aliases, useCases, inputExamples, contentCluster, and monetizationTier"],
   ["agents", "real resizable left and right sidebars"],
+  ["agents", "clamped to the workbench container"],
   ["agents", "preserve the sidebar scroll position"],
   ["agents", "Demand tier is an internal prioritization"],
   ["agents", "visible prose must pass through localized content resolvers"],
@@ -37,6 +38,7 @@ const checks = [
   ["agents", "SearchAction schema"],
   ["agents", "harness:seo-opportunities"],
   ["agents", "titleDescriptionRecommendations"],
+  ["agents", "BOBOB_SEO_REPORT_FORMAT"],
   ["agents", "visual screenshot smoke"],
   ["agents", "unused AdSense placeholder"],
   ["agents", "legacy standalone app directories"],
@@ -54,6 +56,7 @@ const checks = [
   ["design", "Light/Dark"],
   ["design", "ThemeToggle"],
   ["design", "resizable left and right sidebars"],
+  ["design", "clamp to the workbench container"],
   ["design", "one aligned workbench shell"],
   ["design", "preserve sidebar scroll position"],
   ["design", "Demand tier is not a user-facing label"],
@@ -82,6 +85,7 @@ const checks = [
   ["seo", "SearchAction schema"],
   ["seo", "harness:seo-opportunities"],
   ["seo", "titleDescriptionRecommendations"],
+  ["seo", "BOBOB_SEO_REPORT_FORMAT"],
   ["seo", "tool and guide pages"],
   ["seo", "guide.description"],
   ["seo", "Twitter title/description"],
@@ -99,8 +103,10 @@ const checks = [
   ["verification", "harness:visual"],
   ["verification", "harness:seo-opportunities"],
   ["verification", "titleDescriptionRecommendations"],
+  ["verification", "BOBOB_SEO_REPORT_FORMAT"],
   ["verification", "tool and guide pages"],
   ["verification", "preserved sidebar scroll"],
+  ["verification", "no horizontal overflow at narrow desktop widths"],
   ["verification", "No visible demand wording"],
   ["verification", "agent-skills-sync"],
   ["verification", "build-time external font fetches"],
@@ -114,6 +120,7 @@ const checks = [
   ["product", "localized tool directories"],
   ["product", "harness:seo-opportunities"],
   ["product", "titleDescriptionRecommendations"],
+  ["product", "BOBOB_SEO_REPORT_FORMAT"],
   ["product", "tool and guide pages"],
 ];
 
@@ -179,9 +186,14 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "titleDescriptionRecommendations", "measuredMetadataSuggestion", "canonicalContentPath"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "titleDescriptionRecommendations", "measuredMetadataSuggestion", "canonicalContentPath", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
+}
+
+const resizable = read("apps/main/src/components/ui/resizable.tsx");
+for (const fragment of ["clampLayoutToAvailable", "ResizeObserver", "minmax(0,1fr)", "data-resizable-layout"]) {
+  if (!resizable.includes(fragment)) failures.push(`resizable implementation missing ${fragment}`);
 }
 
 if (!fs.existsSync(path.join(root, "docs/legacy-apps-archive.md"))) {

@@ -19,11 +19,14 @@ for (const fragment of [
   "minRightWidth = 280",
   "minCenterWidth = 560",
   "localStorage",
+  "ResizeObserver",
+  "clampLayoutToAvailable",
   "Resize left sidebar",
   "Resize right sidebar",
   "role=\"separator\"",
   "data-resizable-handle",
   "lg:grid-cols-[var(--bobob-grid-columns)]",
+  "minmax(0,1fr)",
 ]) {
   if (!resizable.includes(fragment)) failures.push(`resizable layout missing ${fragment}`);
 }

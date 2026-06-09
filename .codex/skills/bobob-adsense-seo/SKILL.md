@@ -24,6 +24,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Do not add fabricated review, rating, pricing, or availability schema.
 - SearchAction schema must point to a URL that actually accepts `?q=` and renders usable search results.
 - For post-deploy title/description work, use Search Console and AdSense page/query CSV exports with `npm run harness:seo-opportunities`. Prioritize high-impression low-CTR tool and guide pages, low-RPM pages, metadata warnings, and `titleDescriptionRecommendations` before broad copy rewrites.
+- Use `BOBOB_SEO_REPORT_FORMAT=markdown` and `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` when a human review artifact is needed for measured title/description decisions.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.
 - Keep privacy and terms pages aligned with the actual local-first utility behavior.
 - If SEO, AdSense, locale, redirect, schema, or country detection policy changes, update AGENTS.md and this skill before handoff.

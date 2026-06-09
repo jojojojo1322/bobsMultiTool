@@ -10,7 +10,8 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Avoid oversized heroes, gradient-heavy sections, emoji tool cards, bento marketing layouts, nested cards, explanatory UI copy, and AI-generated-looking card accents.
 - Tool pages use the same frame: left navigation, top context bar, central tool panel, right examples/FAQ/guides/related tools.
 - Tool directory pages at `/tools` and `/{locale}/tools` use the same dense product-lab card system as the home index.
-- Desktop tool pages require real resizable left and right sidebars with localStorage persistence: left 280px default / 220px min, right 340px default / 280px min, center 560px min.
+- Desktop tool pages require real resizable left and right sidebars with localStorage persistence: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.
+- Resizable sidebars must clamp to the workbench container width. Narrow desktop widths must not create horizontal overflow; let the center panel shrink before the shell breaks.
 - Desktop tool pages must use one aligned workbench shell around the resizable panels. Do not wrap left, center, and right panels in separate outer rounded bordered cards.
 - Resize handles use a transparent hit area with one neutral divider line; avoid extra border columns that visually protrude.
 - Detail top bars must include a locale-aware brand/home link so users can return to the main screen without opening side navigation.
