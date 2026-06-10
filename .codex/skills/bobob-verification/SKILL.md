@@ -75,6 +75,7 @@ Include:
 - Search results, center tool panel, and right reference panel should all offer related next-action links for session-depth growth.
 - Related next-action links should preserve registry `relatedTools` order and show localized use-case context from the related tool.
 - Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific priority descriptions for JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript.
+- Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific localized priority failure cases and pre-copy checklist items for the central review strip, not only generic localized fallback support prose.
 - Acquisition-cluster and first-step related tools should also have Korean, Japanese, Spanish, and German priority intent copy so next-action links avoid generic fallback prose.
 - Pointer-reactive background motion should stay subtle, respect reduced motion, render on home/tool directory and tool detail pages, use requestAnimationFrame-driven CSS variable smoothing with depth offset and ray opacity variables, and avoid `ogl`, `framer-motion`, or other heavy animation dependencies.
 - Run `npm run harness:pointer-background` after pointer background changes to prove CSS variables change on real mouse movement.

@@ -27,6 +27,15 @@ type TextPack = {
 };
 
 type LocalizedDemandDetails = Required<Pick<ToolDefinition, "failureCases" | "preCopyChecklist">>;
+type LocalizedDemandDetailOverride = {
+  failureCases: [string, string];
+  preCopyChecklist: [string, string];
+};
+
+const demandDetail = (failureCases: [string, string], preCopyChecklist: [string, string]): LocalizedDemandDetailOverride => ({
+  failureCases,
+  preCopyChecklist,
+});
 
 const localizedExampleValues: Record<string, Partial<Record<Exclude<Locale, "en">, string[]>>> = {
   "yaml-validator": {
@@ -667,6 +676,117 @@ const priorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {
     ja: "hex、Base64、URL-safe の random token を生成し、nonce、test secret、一時アクセス値に使います。",
     es: "Genera tokens aleatorios hex, Base64 y URL-safe para nonce, secretos de prueba y accesos temporales.",
     de: "Erzeugt zufaellige Tokens in Hex, Base64 und URL-safe fuer Nonces, Test-Secrets und temporaere Zugaenge.",
+  },
+};
+
+const localizedPriorityDemandDetails: Record<string, Partial<Record<Exclude<Locale, "en">, LocalizedDemandDetailOverride>>> = {
+  "regex-tester": {
+    ko: demandDetail(["PCRE나 Python에서 되던 패턴이 JavaScript RegExp에서는 다르게 동작할 수 있습니다.", "문자열 리터럴에서 복사한 백슬래시가 대상 코드에서 한 번 더 escape되어 match가 깨질 수 있습니다."], ["match되어야 하는 샘플과 실패해야 하는 샘플을 각각 하나 이상 넣어 봅니다.", "g, i, m, s, u, y flag가 실제 런타임 의도와 맞는지 확인합니다."]),
+    ja: demandDetail(["PCRE や Python で動いた pattern が JavaScript RegExp では違う結果になる場合があります。", "文字列リテラルからコピーしたバックスラッシュが対象コードでさらに escape されることがあります。"], ["match すべきサンプルと失敗すべきサンプルをそれぞれ確認します。", "g, i, m, s, u, y flag が実際の実行環境に合うか確認します。"]),
+    es: demandDetail(["Un patron que funciona en PCRE o Python puede comportarse distinto en JavaScript RegExp.", "Las barras invertidas copiadas desde un string literal pueden quedar escapadas dos veces."], ["Prueba al menos un ejemplo que debe coincidir y otro que debe fallar.", "Confirma que los flags g, i, m, s, u, y coinciden con el runtime destino."]),
+    de: demandDetail(["Ein Pattern aus PCRE oder Python kann in JavaScript RegExp anders laufen.", "Backslashes aus String-Literalen koennen im Zielcode doppelt escaped werden."], ["Teste mindestens ein Positiv- und ein Negativbeispiel.", "Pruefe, ob g, i, m, s, u, y wirklich zur Ziel-Runtime passen."]),
+  },
+  "json-formatter": {
+    ko: demandDetail(["trailing comma, comment, single quote가 섞이면 브라우저 JSON 파서에서 실패합니다.", "큰 숫자, 날짜, ID는 문법상 맞아도 downstream schema에서 의미가 달라질 수 있습니다."], ["정리된 구조의 array, object, null, number 형태가 API 계약과 맞는지 확인합니다.", "token, cookie, 고객 ID, 내부 URL을 제거한 뒤 공유하거나 복사합니다."]),
+    ja: demandDetail(["trailing comma、comment、single quote が混ざるとブラウザの JSON parser で失敗します。", "大きな数値、日付、ID は構文上正しくても downstream schema と意味がずれる場合があります。"], ["整形後の array、object、null、number が API 契約と合うか確認します。", "token、cookie、顧客 ID、内部 URL を削除してから共有またはコピーします。"]),
+    es: demandDetail(["Trailing commas, comentarios o comillas simples hacen fallar el parser JSON del navegador.", "Numeros grandes, fechas e IDs pueden ser validos pero no coincidir con el schema destino."], ["Revisa que arrays, objetos, null y numeros encajen con el contrato de API.", "Quita tokens, cookies, IDs de cliente y URLs internas antes de compartir o copiar."]),
+    de: demandDetail(["Trailing Commas, Kommentare oder einfache Quotes lassen den Browser-JSON-Parser scheitern.", "Grosse Zahlen, Datumswerte und IDs koennen syntaktisch stimmen, aber nicht zum Ziel-Schema passen."], ["Pruefe, ob Arrays, Objekte, null und Zahlen zum API-Vertrag passen.", "Entferne Tokens, Cookies, Kunden-IDs und interne URLs vor dem Teilen oder Kopieren."]),
+  },
+  "json-escape-unescape": {
+    ko: demandDetail(["문자열 내부 escape는 맞아도 바깥 JSON 객체나 코드 리터럴이 여전히 깨져 있을 수 있습니다.", "두 번 escape하면 줄바꿈, 따옴표, 백슬래시가 의도보다 많은 문자로 남습니다."], ["대상이 raw escaped content를 원하는지, 따옴표까지 포함한 JSON string을 원하는지 확인합니다.", "줄바꿈, 탭, 따옴표, 백슬래시가 기대한 문자 수로 남았는지 비교합니다."]),
+    ja: demandDetail(["文字列内部の escape が正しくても、外側の JSON object や code literal が壊れている場合があります。", "二重 escape で改行、引用符、バックスラッシュが余分な文字として残ることがあります。"], ["対象が raw escaped content を求めるのか、引用符付き JSON string を求めるのか確認します。", "改行、tab、引用符、バックスラッシュが期待通りの文字数か比較します。"]),
+    es: demandDetail(["El contenido escapado puede ser correcto aunque el objeto JSON externo siga roto.", "Escapar dos veces deja saltos de linea, comillas y barras invertidas como caracteres extra."], ["Decide si el destino necesita contenido escapado raw o un string JSON con comillas.", "Compara saltos de linea, tabs, comillas y barras invertidas antes de copiar."]),
+    de: demandDetail(["Escaped Inhalt kann korrekt sein, waehrend das aeussere JSON-Objekt noch fehlerhaft ist.", "Doppeltes Escaping laesst Newlines, Quotes und Backslashes als zusaetzliche Zeichen stehen."], ["Klaere, ob das Ziel raw escaped content oder einen gequoteten JSON-String erwartet.", "Vergleiche Newlines, Tabs, Quotes und Backslashes vor dem Kopieren."]),
+  },
+  "yaml-validator": {
+    ko: demandDetail(["눈으로는 맞아 보이는 들여쓰기가 실제로는 다른 parent 아래로 key를 넣을 수 있습니다.", "yes, no, on, off 같은 값은 도구와 버전에 따라 boolean처럼 해석될 수 있습니다."], ["파싱된 JSON 모양으로 list, map, null, boolean 위치를 확인합니다.", "CI, Docker, Kubernetes, app config가 요구하는 필수 field를 별도로 점검합니다."]),
+    ja: demandDetail(["見た目で揃った indentation でも、実際には別の parent の下に key が入る場合があります。", "yes、no、on、off などは tool や version によって boolean として解釈される場合があります。"], ["解析済み JSON の形で list、map、null、boolean の位置を確認します。", "CI、Docker、Kubernetes、app config が求める必須 field を別途確認します。"]),
+    es: demandDetail(["La indentacion puede parecer alineada y aun asi anidar claves bajo otro padre.", "Valores como yes, no, on y off pueden interpretarse como booleanos segun la herramienta."], ["Revisa en la forma JSON parseada la posicion de listas, mapas, null y booleanos.", "Comprueba aparte los campos requeridos por CI, Docker, Kubernetes o la app."]),
+    de: demandDetail(["Einrueckung kann optisch stimmen und Keys trotzdem unter dem falschen Parent verschachteln.", "Werte wie yes, no, on und off koennen je nach Tool als Boolean gelesen werden."], ["Pruefe in der geparsten JSON-Form Listen, Maps, null und Boolean-Positionen.", "Kontrolliere Pflichtfelder fuer CI, Docker, Kubernetes oder App-Konfiguration separat."]),
+  },
+  "env-parser-validator": {
+    ko: demandDetail(["중복 변수는 런타임 loader에 따라 앞 값이 조용히 덮어써질 수 있습니다.", "닫히지 않은 따옴표는 다음 줄 변수까지 하나의 값처럼 망가뜨릴 수 있습니다."], ["CI나 hosting 설정에 붙여넣기 전에 duplicate key 목록을 먼저 확인합니다.", "URL, 공백 포함 값, quoted string이 파싱된 JSON에서 의도대로 보이는지 봅니다."]),
+    ja: demandDetail(["重複変数は runtime loader によって前の値が静かに上書きされることがあります。", "閉じていない引用符は次の行の変数まで一つの値として壊す場合があります。"], ["CI や hosting 設定に貼る前に duplicate key を確認します。", "URL、空白を含む値、quoted string が解析済み JSON で意図通りか見ます。"]),
+    es: demandDetail(["Una variable duplicada puede sobrescribir silenciosamente el valor anterior segun el loader.", "Una comilla sin cerrar puede romper tambien la variable de la linea siguiente."], ["Revisa las claves duplicadas antes de pegar en CI o hosting.", "Comprueba en el JSON parseado URLs, valores con espacios y strings entre comillas."]),
+    de: demandDetail(["Doppelte Variablen koennen je nach Loader fruehere Werte still ueberschreiben.", "Ein nicht geschlossener Quote kann auch die Variable der naechsten Zeile zerstoeren."], ["Pruefe doppelte Keys, bevor du in CI oder Hosting-Settings kopierst.", "Kontrolliere URLs, Werte mit Leerzeichen und quoted strings in der geparsten JSON-Form."]),
+  },
+  "jwt-decoder": {
+    ko: demandDetail(["디코딩된 payload가 보여도 이 도구가 signature를 검증한 것은 아닙니다.", "exp, nbf는 Unix time으로 맞아도 현재 환경 기준으로는 이미 만료됐을 수 있습니다."], ["exp, nbf, iss, aud, scope, tenant claim을 운영 환경 기준으로 확인합니다.", "signature 신뢰 여부는 auth service나 backend에서 별도로 검증합니다."]),
+    ja: demandDetail(["payload が読めても、この tool が signature を検証したわけではありません。", "exp、nbf は Unix time として正しくても、実際の環境では期限切れの場合があります。"], ["exp、nbf、iss、aud、scope、tenant claim を実環境の基準で確認します。", "signature の信頼性は auth service や backend で別途検証します。"]),
+    es: demandDetail(["Ver el payload decodificado no significa que la firma JWT este verificada.", "exp y nbf pueden ser Unix time validos pero estar vencidos en el entorno real."], ["Revisa exp, nbf, iss, aud, scope y tenant claims contra el entorno activo.", "Verifica la firma en el servicio de auth o backend, no solo aqui."]),
+    de: demandDetail(["Ein lesbarer Payload bedeutet nicht, dass die JWT-Signatur verifiziert wurde.", "exp und nbf koennen als Unix-Zeit stimmen und trotzdem in der Umgebung abgelaufen sein."], ["Pruefe exp, nbf, iss, aud, scope und Tenant-Claims gegen die aktive Umgebung.", "Verifiziere die Signatur im Auth-Service oder Backend, nicht nur hier."]),
+  },
+  "base64-tool": {
+    ko: demandDetail(["URL-safe Base64와 표준 Base64는 padding과 문자셋이 달라 그대로 섞으면 실패할 수 있습니다.", "디코딩 결과가 사람이 읽히지 않으면 UTF-8 텍스트가 아니라 binary나 압축 데이터일 수 있습니다."], ["encode/decode 모드가 대상 값의 방향과 맞는지 먼저 확인합니다.", "decoded 값에 credential, cookie, API key가 드러나지 않는지 확인합니다."]),
+    ja: demandDetail(["URL-safe Base64 と standard Base64 は padding と文字種が違い、混ぜると失敗することがあります。", "decode 結果が読めない場合、UTF-8 text ではなく binary や圧縮データの可能性があります。"], ["encode/decode mode が対象値の向きと合うか先に確認します。", "decoded 値に credential、cookie、API key が出ていないか確認します。"]),
+    es: demandDetail(["Base64 URL-safe y Base64 estandar difieren en padding y caracteres.", "Si lo decodificado no es legible, puede ser binario o comprimido, no texto UTF-8."], ["Confirma si necesitas encode o decode antes de pegar el valor.", "Revisa que el valor decodificado no exponga credenciales, cookies o API keys."]),
+    de: demandDetail(["URL-safe Base64 und Standard-Base64 unterscheiden sich bei Padding und Zeichen.", "Wenn Decode nicht lesbar ist, kann es Binary oder komprimierte Daten statt UTF-8 sein."], ["Klaere zuerst, ob du Encode oder Decode fuer den Wert brauchst.", "Pruefe, ob der decodierte Wert Credentials, Cookies oder API-Keys enthaelt."]),
+  },
+  "cron-generator": {
+    ko: demandDetail(["five-field crontab과 seconds/year가 있는 Quartz cron은 필드 수부터 다릅니다.", "서버 timezone 설정이 다르면 맞는 표현식도 현지 시간 기준으로 다르게 실행됩니다."], ["대상 scheduler가 5, 6, 7 field 중 무엇을 받는지 확인합니다.", "staging에서 다음 실행 시간이 기대 시간과 일치하는지 테스트합니다."]),
+    ja: demandDetail(["five-field crontab と seconds/year を持つ Quartz cron は field 数から違います。", "server timezone 設定が違うと、正しい式でも現地時刻では違って実行されます。"], ["対象 scheduler が 5、6、7 field のどれを受けるか確認します。", "staging で次回実行時刻が期待通りかテストします。"]),
+    es: demandDetail(["Crontab de cinco campos y Quartz cron con segundos o ano no usan la misma forma.", "La zona horaria del scheduler puede ejecutar una expresion correcta a otra hora local."], ["Confirma si el scheduler espera 5, 6 o 7 campos.", "Prueba el siguiente tiempo de ejecucion en staging antes de produccion."]),
+    de: demandDetail(["Five-Field-Crontab und Quartz Cron mit Sekunden oder Jahr haben unterschiedliche Felder.", "Die Scheduler-Zeitzone kann einen korrekten Ausdruck zur falschen lokalen Zeit ausfuehren."], ["Klaere, ob der Scheduler 5, 6 oder 7 Felder erwartet.", "Teste die naechste Ausfuehrungszeit in Staging vor Production."]),
+  },
+  "uuid-generator": {
+    ko: demandDetail(["UUID v4는 고유 식별자일 뿐 secret이나 정렬 가능한 timestamp가 아닙니다.", "bulk output을 손으로 편집하면 fixture에서 같은 ID를 재사용할 수 있습니다."], ["필요한 개수를 정하고 bulk 복사는 한 줄에 하나씩 유지합니다.", "secret처럼 써야 하는 값이면 UUID 대신 random token을 사용합니다."]),
+    ja: demandDetail(["UUID v4 は一意識別子であり、secret や sortable timestamp ではありません。", "bulk output を手で編集すると fixture で同じ ID を再利用してしまう場合があります。"], ["必要な件数を決め、bulk copy は 1 行 1 UUID のまま使います。", "secret として使う値なら UUID ではなく random token を使います。"]),
+    es: demandDetail(["UUID v4 es identificador unico, no secreto ni timestamp ordenable.", "Editar a mano una salida bulk puede reutilizar IDs en fixtures."], ["Elige la cantidad y copia un UUID por linea para salidas bulk.", "Usa random token si el valor debe comportarse como secreto."]),
+    de: demandDetail(["UUID v4 ist eine Kennung, kein Secret und kein sortierbarer Timestamp.", "Manuelles Bearbeiten von Bulk-Ausgaben kann IDs in Fixtures doppeln."], ["Waehle die Anzahl und behalte einen UUID pro Zeile beim Kopieren.", "Nutze random token, wenn der Wert wie ein Secret funktionieren soll."]),
+  },
+  "hash-generator": {
+    ko: demandDetail(["Hash는 암호화가 아니며 password 저장 보호책으로 단독 사용하면 안 됩니다.", "숨은 newline, space, Unicode normalization 차이가 hash 값을 완전히 바꿉니다."], ["대상 시스템이 읽는 정확한 원문 기준으로 입력을 normalize합니다.", "호환성이 아니라면 MD5/SHA-1보다 SHA-256 또는 SHA-512를 우선 사용합니다."]),
+    ja: demandDetail(["Hash は暗号化ではなく、password 保存の保護として単独使用すべきではありません。", "隠れた newline、space、Unicode normalization の違いで hash 値は完全に変わります。"], ["対象 system が読む正確な原文基準で入力を normalize します。", "互換性目的でなければ MD5/SHA-1 より SHA-256 または SHA-512 を優先します。"]),
+    es: demandDetail(["Un hash no es cifrado y no basta para almacenar contrasenas por si solo.", "Saltos de linea, espacios y normalizacion Unicode cambian totalmente el hash."], ["Normaliza la entrada exactamente como la leera el sistema destino.", "Prefiere SHA-256 o SHA-512 salvo que necesites compatibilidad con MD5/SHA-1."]),
+    de: demandDetail(["Hashing ist keine Verschluesselung und reicht allein nicht fuer Passwortspeicherung.", "Versteckte Newlines, Leerzeichen oder Unicode-Normalisierung aendern den Hash komplett."], ["Normalisiere die Eingabe exakt so, wie das Zielsystem sie liest.", "Nutze SHA-256 oder SHA-512, ausser Kompatibilitaet verlangt MD5/SHA-1."]),
+  },
+  "password-generator": {
+    ko: demandDetail(["생성된 password도 clipboard history, screenshot, chat log를 통해 유출될 수 있습니다.", "일부 시스템은 강한 값이어도 symbol이나 긴 길이를 거부합니다."], ["대상 시스템의 길이와 문자 정책에 맞춰 옵션을 조절합니다.", "실제 credential은 생성 직후 password manager에 저장합니다."]),
+    ja: demandDetail(["生成した password も clipboard history、screenshot、chat log から漏れる可能性があります。", "強い値でも system によっては symbol や長い length を拒否します。"], ["対象 system の長さと文字ポリシーに合わせて option を調整します。", "実際の credential は生成直後に password manager へ保存します。"]),
+    es: demandDetail(["Una contrasena generada puede filtrarse por historial del portapapeles, capturas o chats.", "Algunos sistemas rechazan simbolos o longitudes altas aunque el valor sea fuerte."], ["Ajusta longitud y clases de caracteres a la politica del sistema destino.", "Guarda credenciales reales en un password manager justo despues de generarlas."]),
+    de: demandDetail(["Ein generiertes Passwort kann ueber Clipboard-History, Screenshots oder Chats leaken.", "Manche Systeme lehnen Symbole oder lange Werte trotz hoher Staerke ab."], ["Passe Laenge und Zeichenklassen an die Zielsystem-Policy an.", "Speichere echte Credentials direkt nach der Erzeugung im Passwortmanager."]),
+  },
+  "qr-code-generator": {
+    ko: demandDetail(["긴 URL이나 Wi-Fi payload는 QR이 너무 조밀해져 실제 카메라에서 잘 안 읽힐 수 있습니다.", "다운로드한 QR 이미지만 보면 URL 오타나 protocol 실수를 알아차리기 어렵습니다."], ["게시하거나 인쇄하기 전에 실제 기기로 QR을 스캔합니다.", "destination URL, protocol, tracking parameter를 다운로드 전에 다시 확인합니다."]),
+    ja: demandDetail(["長い URL や Wi-Fi payload は QR が密になり、実機カメラで読み取りにくい場合があります。", "download 後の QR 画像だけでは URL typo や protocol ミスに気づきにくいです。"], ["公開または印刷前に実機で QR を scan します。", "destination URL、protocol、tracking parameter を download 前に再確認します。"]),
+    es: demandDetail(["URLs largas o payloads Wi-Fi pueden producir QR densos dificiles de escanear.", "Despues de descargar la imagen es facil no ver errores de URL o protocolo."], ["Escanea el QR con un dispositivo real antes de publicar o imprimir.", "Revisa URL destino, protocolo y parametros de tracking antes de descargar."]),
+    de: demandDetail(["Lange URLs oder WLAN-Payloads koennen QR-Codes zu dicht und schwer scanbar machen.", "Nach dem Download erkennt man URL-Tippfehler oder falsche Protokolle schwer."], ["Scanne den QR-Code mit einem echten Geraet vor Veroeffentlichung oder Druck.", "Pruefe Ziel-URL, Protokoll und Tracking-Parameter vor dem Download."]),
+  },
+  "dns-lookup": {
+    ko: demandDetail(["public resolver cache 때문에 migration 중에는 이전 record가 계속 보일 수 있습니다.", "TXT record는 DNS provider에 따라 여러 문자열로 쪼개져 보일 수 있습니다."], ["A, CNAME, MX, TXT, NS처럼 필요한 record type을 정확히 선택합니다.", "apex와 www record를 같이 비교한 뒤 HTTP 상태를 이어서 확인합니다."]),
+    ja: demandDetail(["public resolver cache により、migration 中は古い record が見え続ける場合があります。", "TXT record は DNS provider によって複数の文字列に分割されることがあります。"], ["A、CNAME、MX、TXT、NS など必要な record type を正確に選びます。", "apex と www record を比較し、その後 HTTP status を確認します。"]),
+    es: demandDetail(["La cache de resolvers publicos puede mostrar registros antiguos durante una migracion.", "Registros TXT pueden aparecer divididos en varias cadenas segun el proveedor DNS."], ["Elige el tipo exacto de registro: A, CNAME, MX, TXT o NS.", "Compara apex y www, luego continua con HTTP Status Checker."]),
+    de: demandDetail(["Public Resolver Cache kann waehrend Migrationen alte Records zeigen.", "TXT-Records koennen je nach DNS-Provider in mehrere Strings geteilt erscheinen."], ["Waehle den exakten Record-Typ wie A, CNAME, MX, TXT oder NS.", "Vergleiche Apex und www und pruefe danach den HTTP-Status."]),
+  },
+  "http-status-checker": {
+    ko: demandDetail(["리다이렉트 흐름은 예상과 다른 host, path, protocol, locale에서 끝날 수 있습니다.", "서버는 HEAD, GET, user-agent, cache 상태에 따라 다른 status를 줄 수 있습니다."], ["status code, final URL, content type, cache header를 함께 확인합니다.", "apex와 www, http와 https의 canonical redirect를 각각 확인합니다."]),
+    ja: demandDetail(["リダイレクトの流れは想定外の host、path、protocol、locale で終わる場合があります。", "server は HEAD、GET、user-agent、cache 状態によって違う status を返すことがあります。"], ["status code、final URL、content type、cache header をまとめて確認します。", "apex と www、http と https の canonical redirect をそれぞれ確認します。"]),
+    es: demandDetail(["Una cadena de redirects puede terminar en host, path, protocolo o locale inesperado.", "El servidor puede responder distinto segun HEAD, GET, user-agent o cache."], ["Revisa juntos status code, URL final, content type y cache headers.", "Comprueba redirects canonicos para apex/www y http/https."]),
+    de: demandDetail(["Eine Redirect-Kette kann auf anderem Host, Path, Protokoll oder Locale enden.", "Server koennen je nach HEAD, GET, User-Agent oder Cache anderen Status liefern."], ["Pruefe Statuscode, finale URL, Content-Type und Cache-Header zusammen.", "Kontrolliere Canonical Redirects fuer Apex/www und http/https separat."]),
+  },
+  "color-converter": {
+    ko: demandDetail(["contrast ratio가 통과해도 실제 font size, weight, 상태가 다르면 읽기 어려울 수 있습니다.", "alpha, overlay, background image는 계산된 foreground/background 대비를 바꿉니다."], ["실제 UI의 foreground와 background 쌍으로 다시 확인합니다.", "AA normal text와 AA large text 기준을 따로 봅니다."]),
+    ja: demandDetail(["contrast ratio が通っても、実際の font size、weight、state が違うと読みにくい場合があります。", "alpha、overlay、background image は計算上の foreground/background contrast を変えます。"], ["実際の UI の foreground と background の組み合わせで再確認します。", "AA normal text と AA large text の基準を分けて見ます。"]),
+    es: demandDetail(["Un ratio de contraste aprobado puede fallar con otro tamano, peso o estado visual.", "Alpha, overlays e imagenes de fondo cambian el contraste efectivo."], ["Comprueba el par foreground/background real de la UI.", "Revisa por separado AA normal text y AA large text."]),
+    de: demandDetail(["Ein bestandener Kontrast kann bei anderer Schriftgroesse, Gewichtung oder State scheitern.", "Alpha, Overlays und Hintergrundbilder aendern den effektiven Kontrast."], ["Pruefe das echte Vordergrund/Hintergrund-Paar der UI.", "Bewerte AA Normal Text und AA Large Text getrennt."]),
+  },
+  "sql-formatter": {
+    ko: demandDetail(["formatting은 SQL을 읽기 좋게 만들 뿐 query 안전성이나 성능을 증명하지 않습니다.", "dialect별 syntax는 database formatter와 다르게 줄바꿈될 수 있습니다."], ["실행하기 전에 원본 query와 formatted query의 조건과 join을 비교합니다.", "공유 전 customer ID, email, internal table name 같은 literal을 제거합니다."]),
+    ja: demandDetail(["formatting は SQL を読みやすくするだけで、query の安全性や性能を証明しません。", "dialect 固有 syntax は database formatter と違う改行になる場合があります。"], ["実行前に元の query と formatted query の条件や join を比較します。", "共有前に customer ID、email、internal table name などの literal を削除します。"]),
+    es: demandDetail(["Formatear SQL mejora lectura, pero no prueba seguridad ni rendimiento.", "Sintaxis de dialectos puede quedar distinta al formatter de la base de datos."], ["Compara condiciones y joins entre query original y formateada antes de ejecutar.", "Elimina IDs, emails y nombres internos antes de compartir SQL."]),
+    de: demandDetail(["SQL-Formatierung macht lesbar, beweist aber keine Sicherheit oder Performance.", "Dialekt-Syntax kann anders umbrochen werden als im Datenbank-Formatter."], ["Vergleiche Bedingungen und Joins vor dem Ausfuehren mit der Originalquery.", "Entferne Kunden-IDs, E-Mails und interne Tabellennamen vor dem Teilen."]),
+  },
+  "css-formatter": {
+    ko: demandDetail(["formatting은 selector specificity나 cascade 결과를 바꾸지 않습니다.", "media query나 container context 없이 block만 복사하면 실제 layout에서 다르게 보일 수 있습니다."], ["selector, media query, custom property가 원래 block에 붙어 있는지 확인합니다.", "대상 breakpoint에서 formatted CSS를 실제 화면으로 확인합니다."]),
+    ja: demandDetail(["formatting は selector specificity や cascade の結果を変えません。", "media query や container context なしで block だけコピーすると実際の layout で違って見える場合があります。"], ["selector、media query、custom property が元の block に付いているか確認します。", "対象 breakpoint で formatted CSS を実画面で確認します。"]),
+    es: demandDetail(["Formatear no cambia specificity de selectores ni resultado del cascade.", "Copiar un bloque sin media query o contexto de container puede romper el layout real."], ["Confirma que selectores, media queries y custom properties siguen en su bloque.", "Prueba el CSS formateado en el breakpoint destino."]),
+    de: demandDetail(["Formatierung aendert keine Selector-Specificity und kein Cascade-Verhalten.", "Ein Block ohne Media Query oder Container-Kontext kann im Layout anders wirken."], ["Pruefe, ob Selektoren, Media Queries und Custom Properties am richtigen Block bleiben.", "Teste das formatierte CSS am Ziel-Breakpoint."]),
+  },
+  "javascript-formatter": {
+    ko: demandDetail(["formatting은 lint, compile, type check, security review를 대신하지 않습니다.", "minified snippet에는 side effect, unsafe eval, 환경별 global이 숨어 있을 수 있습니다."], ["읽기 좋아진 코드라도 untrusted JavaScript는 실행하지 않습니다.", "실제 runtime에서 formatting 전후 동작이 같은지 비교합니다."]),
+    ja: demandDetail(["formatting は lint、compile、type check、security review の代わりではありません。", "minified snippet には side effect、unsafe eval、環境依存 global が隠れている場合があります。"], ["読みやすくなっても untrusted JavaScript は実行しません。", "実際の runtime で formatting 前後の挙動が同じか比較します。"]),
+    es: demandDetail(["Formatear no sustituye lint, compilacion, type check ni revision de seguridad.", "Un snippet minificado puede ocultar side effects, eval inseguro o globals del entorno."], ["No ejecutes JavaScript no confiable solo porque se vea legible.", "Compara el comportamiento antes y despues en el runtime real."]),
+    de: demandDetail(["Formatierung ersetzt kein Linting, Compile, Type Check oder Security Review.", "Minifizierte Snippets koennen Side Effects, unsicheres eval oder Globals verstecken."], ["Fuehre kein untrusted JavaScript aus, nur weil es lesbar wurde.", "Vergleiche Verhalten vor und nach der Formatierung in der echten Runtime."]),
   },
 };
 
@@ -1639,7 +1759,7 @@ function priorityUseCases(locale: Exclude<Locale, "en">, title: string, intent: 
   return cases[locale];
 }
 
-function localizedDemandDetails(locale: Exclude<Locale, "en">, title: string, intent: string, privacy: string): LocalizedDemandDetails {
+function localizedDemandDetails(locale: Exclude<Locale, "en">, title: string, intent: string, privacy: string, slug?: string): LocalizedDemandDetails {
   const details: Record<Exclude<Locale, "en">, LocalizedDemandDetails> = {
     ko: {
       failureCases: [intent, `${privacy} 처리 방식과 실제 입력 구조가 맞지 않으면 결과를 그대로 믿기 어렵습니다.`, "복사한 값에 운영 비밀값, 고객 데이터, 내부 URL이 섞여 있으면 공유 전에 제거해야 합니다."],
@@ -1694,7 +1814,14 @@ function localizedDemandDetails(locale: Exclude<Locale, "en">, title: string, in
       preCopyChecklist: ["قارن الإدخال الأصلي بشكل الناتج مرة أخرى.", "راجع اختلافات بيئة التشغيل والترميز والمنطقة الزمنية وسياسة الأمان.", `تابع بأداة مرتبطة للتأكد من أن نتيجة ${title} مناسبة للخطوة التالية.`],
     },
   };
-  return details[locale];
+  const baseDetails = details[locale];
+  const priorityDetails = slug ? localizedPriorityDemandDetails[slug]?.[locale] : undefined;
+  if (!priorityDetails) return baseDetails;
+
+  return {
+    failureCases: [...priorityDetails.failureCases, baseDetails.failureCases[2]],
+    preCopyChecklist: [...priorityDetails.preCopyChecklist, baseDetails.preCopyChecklist[2]],
+  };
 }
 
 function priorityFaqs(locale: Exclude<Locale, "en">, title: string, requiresServer: boolean) {
@@ -2148,7 +2275,7 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
   const privacy = privacyChip(tool, pack);
   const description = pack.description(title, category, privacy);
   const localizedLocale = locale as Exclude<Locale, "en">;
-  const fallbackDemandDetails = localizedDemandDetails(localizedLocale, title, description, privacy);
+  const fallbackDemandDetails = localizedDemandDetails(localizedLocale, title, description, privacy, tool.slug);
 
   const localizedTool: ToolDefinition = {
     ...tool,
@@ -2186,7 +2313,7 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
 
   const priorityIntent = priorityToolIntents[tool.slug]?.[localizedLocale] ?? longTailPriorityToolIntents[tool.slug]?.[localizedLocale];
   if (!priorityIntent) return localizedTool;
-  const priorityDemandDetails = localizedDemandDetails(localizedLocale, title, priorityIntent, privacy);
+  const priorityDemandDetails = localizedDemandDetails(localizedLocale, title, priorityIntent, privacy, tool.slug);
 
   return {
     ...localizedTool,

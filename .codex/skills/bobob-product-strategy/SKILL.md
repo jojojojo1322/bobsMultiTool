@@ -26,6 +26,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Increase session depth before adding thin tools: search results, central tool output, and the right reference panel should all expose related next-action links that lead to a second tool.
 - Related next-action links should preserve the registry `relatedTools` order and include localized use-case context so users understand why the next tool is useful.
 - Acquisition-cluster and first-step related tools should have Korean, Japanese, Spanish, and German priority intent copy so high-traffic session paths avoid generic fallback prose.
+- Core acquisition tool detail pages in Korean, Japanese, Spanish, and German should have localized priority failure cases and pre-copy checklist items so review-strip copy is specific enough to increase trust and session depth.
 - Use `/tools` and localized tool directories as session-depth hubs: acquisition workflow clusters should connect high-demand tools into second and third tool paths using localized registry copy.
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.

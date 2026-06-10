@@ -51,6 +51,7 @@ for (const fragment of [
   "localizedGuideSections",
   "seoDescription",
   "priorityToolIntents",
+  "localizedPriorityDemandDetails",
   "longTailPriorityToolIntents",
   "priorityGuideDescriptions",
   "localizedExampleValues",
@@ -62,7 +63,8 @@ for (const fragment of [
 
 const registrySlugs = Array.from(toolRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guideRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
-const priorityIntentSource = localizedContent.match(/const priorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst longTailPriorityToolIntents/)?.[1] ?? "";
+const priorityIntentSource = localizedContent.match(/const priorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst localizedPriorityDemandDetails/)?.[1] ?? "";
+const localizedPriorityDemandSource = localizedContent.match(/const localizedPriorityDemandDetails:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst longTailPriorityToolIntents/)?.[1] ?? "";
 const longTailIntentSource = localizedContent.match(/const longTailPriorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst priorityGuideDescriptions/)?.[1] ?? "";
 const coreAcquisitionSlugs = [
   "regex-tester",
@@ -108,6 +110,21 @@ for (const slug of sessionDepthPrioritySlugs) {
     if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
       failures.push(`session-depth priority intent missing ${locale} for ${slug}`);
     }
+  }
+}
+for (const slug of coreAcquisitionSlugs) {
+  const toolSource = localizedPriorityDemandSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
+  if (!toolSource) {
+    failures.push(`localized priority demand detail missing tool slug: ${slug}`);
+    continue;
+  }
+  for (const locale of ["ko", "ja", "es", "de"]) {
+    if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
+      failures.push(`localized priority demand detail missing ${locale} for ${slug}`);
+    }
+  }
+  if (!toolSource.includes("demandDetail(")) {
+    failures.push(`localized priority demand detail must use demandDetail helper for ${slug}`);
   }
 }
 for (const slug of registrySlugs) {
