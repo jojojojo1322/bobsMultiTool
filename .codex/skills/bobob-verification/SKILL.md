@@ -54,7 +54,7 @@ Include:
 - Default English and at least two localized routes.
 - Root `<html lang>` and `<html dir>` must match the active locale; route-level `main` attributes alone are insufficient.
 - Localized visible prose for home, tool detail, sidebar search results, examples, FAQ, guide sections, and metadata.
-- Long-tail guide lead sections should be topic-specific on Regex, Cron, SEO meta tags, Hash, Text diff, SQL, Color, JSON/YAML/CSV, secure generator, Web SEO, Network, CSS, and Text cleanup guide pages rather than reusing the same generic opening paragraph.
+- Every guide should have topic-specific long-tail guide lead sections for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`, rather than reusing the same generic opening paragraph.
 - Guide detail meta description and OpenGraph description must match the localized `guide.description`, not a generic title-based template.
 - Tool and guide detail pages must expose page-specific OpenGraph and Twitter title/description values, not root default social metadata.
 - Localized privacy and terms prose plus metadata through `getLocalizedLegalContent`.

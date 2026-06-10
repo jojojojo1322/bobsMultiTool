@@ -54,7 +54,7 @@
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
 - Long-tail acquisition locales (`zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, `ar`) need slug-specific visible descriptions for every registered tool, not only generic translated templates.
 - Long-tail guide descriptions should also be slug-specific for high-traffic workflows such as Regex, Cron, SEO meta tags, Hash, JSON/YAML/CSV, Network, CSS, Web SEO, and Text cleanup.
-- Long-tail guide lead sections should use topic-specific localized prose for high-value workflows. Do not let Regex, Cron, SEO meta tags, Hash, Text diff, SQL, Color, JSON/YAML/CSV, secure generators, Web SEO, Network, CSS, or Text cleanup guide pages fall back to the same generic first paragraph across all locales.
+- Every guide needs topic-specific long-tail guide lead sections for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`. Do not let localized guide pages fall back to the same generic first paragraph across all locales.
 - Locale routes must set the root `<html lang>` and `<html dir>` through the middleware locale handoff; setting only nested page or main attributes is not enough for multilingual SEO.
 - Localized privacy and terms pages must use `getLocalizedLegalContent`; non-English legal routes must not hardcode English policy or terms prose.
 - Desktop workbench layout must use one aligned shell. Do not reintroduce separate rounded bordered left, center, and right cards around the resizable panels.

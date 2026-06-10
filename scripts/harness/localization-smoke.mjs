@@ -20,6 +20,7 @@ const toolWorkspace = read("apps/main/src/features/tools/tool-workspace.tsx");
 const toolSearch = read("apps/main/src/features/tools/tool-search-panel.tsx");
 const toolComponents = read("apps/main/src/features/tools/tool-components.tsx");
 const toolRegistry = read("apps/main/src/features/tools/registry.ts");
+const guideRegistry = read("apps/main/src/features/guides/registry.ts");
 
 const failures = [];
 const nonEnglishLocales = ["ko", "ja", "zh-CN", "zh-TW", "es", "pt-BR", "de", "fr", "hi", "id", "vi", "th", "ar"];
@@ -57,6 +58,7 @@ for (const fragment of [
 }
 
 const registrySlugs = Array.from(toolRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
+const guideSlugs = Array.from(guideRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
 const longTailIntentSource = localizedContent.match(/const longTailPriorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst priorityGuideDescriptions/)?.[1] ?? "";
 for (const slug of registrySlugs) {
   const toolSource = longTailIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
@@ -67,6 +69,20 @@ for (const slug of registrySlugs) {
   for (const locale of longTailLocales) {
     if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
       failures.push(`long-tail localized intent missing ${locale} for ${slug}`);
+    }
+  }
+}
+
+const guideLeadSource = localizedContent.match(/const priorityGuideLeadSections:[\s\S]*?= \{([\s\S]*?)\n\};\n\nfunction priorityUseCases/)?.[1] ?? "";
+for (const slug of guideSlugs) {
+  const guideSource = guideLeadSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
+  if (!guideSource) {
+    failures.push(`long-tail localized guide lead section missing guide slug: ${slug}`);
+    continue;
+  }
+  for (const locale of longTailLocales) {
+    if (!guideSource.includes(`${locale}:`) && !guideSource.includes(`"${locale}":`)) {
+      failures.push(`long-tail localized guide lead section missing ${locale} for ${slug}`);
     }
   }
 }
@@ -435,6 +451,9 @@ for (const fragment of [
   "قلل الضجيج قبل diff",
   "Preserve a semantica da consulta",
   "असल background पर जांचें",
+  "पहले देखें पेज iframe की अनुमति देता है या नहीं",
+  "Đừng để văn bản giả che lỗi thật",
+  "จัดเครื่องมือให้เป็นขั้นตอนที่ทำซ้ำได้",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`long-tail priority guide description missing: ${fragment}`);
 }
