@@ -584,14 +584,14 @@ function TextDiffTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
-        <Textarea value={left} onChange={(event) => setLeft(event.target.value)} className="min-h-44" aria-label="Original text" />
-        <Textarea value={right} onChange={(event) => setRight(event.target.value)} className="min-h-44" aria-label="Changed text" />
+        <Textarea value={left} onChange={(event) => setLeft(event.target.value)} className="min-h-44" aria-label={ui(dictionary, "originalText", "Original text")} />
+        <Textarea value={right} onChange={(event) => setRight(event.target.value)} className="min-h-44" aria-label={ui(dictionary, "changedText", "Changed text")} />
       </div>
       <Select value={mode} onChange={(event) => setMode(event.target.value)} className="max-w-44">
-        <option value="lines">Line diff</option>
-        <option value="words">Word diff</option>
+        <option value="lines">{ui(dictionary, "lineDiff", "Line diff")}</option>
+        <option value="words">{ui(dictionary, "wordDiff", "Word diff")}</option>
       </Select>
-      <ResultBlock title="Diff result" value={output} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "diffResult", "Diff result")} value={output} dictionary={dictionary} />
     </div>
   );
 }
@@ -617,7 +617,7 @@ function YamlJsonTool({ dictionary }: { dictionary: ClientDictionary }) {
           <option value="json-yaml">JSON to YAML</option>
         </Select>
       </div>
-      {result.error ? <ErrorAlert title="Conversion error" message={result.error} /> : <ResultBlock title="Converted output" value={result.value} dictionary={dictionary} />}
+      {result.error ? <ErrorAlert title={ui(dictionary, "conversionError", "Conversion error")} message={result.error} /> : <ResultBlock title={ui(dictionary, "convertedOutput", "Converted output")} value={result.value} dictionary={dictionary} />}
     </div>
   );
 }
@@ -762,39 +762,46 @@ function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [foreground, setForeground] = React.useState("#2563eb");
   const [background, setBackground] = React.useState("#ffffff");
   const result = React.useMemo(() => {
+    const foregroundLabel = ui(dictionary, "foreground", "Foreground");
+    const backgroundLabel = ui(dictionary, "background", "Background");
+    const contrastLabel = ui(dictionary, "contrastRatio", "Contrast ratio");
+    const aaNormalText = ui(dictionary, "aaNormalText", "AA normal text");
+    const aaLargeText = ui(dictionary, "aaLargeText", "AA large text");
+    const belowAaText = ui(dictionary, "belowAa", "Below AA");
+
     try {
       const fg = parseColor(foreground);
       const bg = parseColor(background);
       const fgHsl = rgbToHsl(fg);
       const contrast = (Math.max(luminance(fg), luminance(bg)) + 0.05) / (Math.min(luminance(fg), luminance(bg)) + 0.05);
       return [
-        `Foreground HEX: ${rgbToHex(fg)}`,
-        `Foreground RGB: rgb(${fg.r}, ${fg.g}, ${fg.b})`,
-        `Foreground HSL: hsl(${fgHsl.h}, ${fgHsl.s.toFixed(1)}%, ${fgHsl.l.toFixed(1)}%)`,
-        `Background HEX: ${rgbToHex(bg)}`,
-        `Contrast ratio: ${contrast.toFixed(2)} (${contrast >= 4.5 ? "AA normal text" : contrast >= 3 ? "AA large text" : "Below AA"})`,
+        `${foregroundLabel} HEX: ${rgbToHex(fg)}`,
+        `${foregroundLabel} RGB: rgb(${fg.r}, ${fg.g}, ${fg.b})`,
+        `${foregroundLabel} HSL: hsl(${fgHsl.h}, ${fgHsl.s.toFixed(1)}%, ${fgHsl.l.toFixed(1)}%)`,
+        `${backgroundLabel} HEX: ${rgbToHex(bg)}`,
+        `${contrastLabel}: ${contrast.toFixed(2)} (${contrast >= 4.5 ? aaNormalText : contrast >= 3 ? aaLargeText : belowAaText})`,
       ].join("\n");
     } catch (error) {
       return error instanceof Error ? error.message : "Invalid color.";
     }
-  }, [background, foreground]);
+  }, [background, dictionary, foreground]);
 
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
         <label className="space-y-2">
-          <span className="text-sm font-medium">Foreground</span>
+          <span className="text-sm font-medium">{ui(dictionary, "foreground", "Foreground")}</span>
           <Input value={foreground} onChange={(event) => setForeground(event.target.value)} />
         </label>
         <label className="space-y-2">
-          <span className="text-sm font-medium">Background</span>
+          <span className="text-sm font-medium">{ui(dictionary, "background", "Background")}</span>
           <Input value={background} onChange={(event) => setBackground(event.target.value)} />
         </label>
       </div>
       <div className="rounded-md border p-4 text-sm" style={{ color: foreground, backgroundColor: background }}>
-        Preview text for contrast checking.
+        {ui(dictionary, "contrastPreviewText", "Preview text for contrast checking.")}
       </div>
-      <ResultBlock title="Color values" value={result} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "colorValues", "Color values")} value={result} dictionary={dictionary} />
     </div>
   );
 }
@@ -1044,7 +1051,7 @@ function JsonSchemaTool({ dictionary }: { dictionary: ClientDictionary }) {
         <Textarea value={json} onChange={(event) => setJson(event.target.value)} className="min-h-48" aria-label="JSON value" />
         <Textarea value={schema} onChange={(event) => setSchema(event.target.value)} className="min-h-48" aria-label="JSON schema" />
       </div>
-      <ResultBlock title="Validation result" value={result} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result} dictionary={dictionary} />
     </div>
   );
 }
@@ -1066,7 +1073,7 @@ function JsonPathTool({ dictionary }: { dictionary: ClientDictionary }) {
     <div className="space-y-4">
       <Input value={path} onChange={(event) => setPath(event.target.value)} aria-label="JSONPath" />
       <Textarea value={json} onChange={(event) => setJson(event.target.value)} className="min-h-44" />
-      <ResultBlock title="Path result" value={result} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "pathResult", "Path result")} value={result} dictionary={dictionary} />
     </div>
   );
 }
@@ -1171,17 +1178,17 @@ function WordCounterTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("Bob's Multi Tool has practical browser utilities.");
   const bytes = new TextEncoder().encode(input).length;
   const output = [
-    `Characters: ${input.length}`,
-    `Characters without spaces: ${input.replace(/\s/g, "").length}`,
-    `Words: ${input.trim() ? input.trim().split(/\s+/).length : 0}`,
-    `Lines: ${input.split(/\r?\n/).length}`,
-    `Bytes: ${bytes}`,
-    `Estimated reading time: ${Math.max(1, Math.ceil((input.trim().split(/\s+/).length || 0) / 220))} minute(s)`,
+    `${ui(dictionary, "characters", "Characters")}: ${input.length}`,
+    `${ui(dictionary, "charactersNoSpaces", "Characters without spaces")}: ${input.replace(/\s/g, "").length}`,
+    `${ui(dictionary, "words", "Words")}: ${input.trim() ? input.trim().split(/\s+/).length : 0}`,
+    `${ui(dictionary, "lines", "Lines")}: ${input.split(/\r?\n/).length}`,
+    `${ui(dictionary, "bytes", "Bytes")}: ${bytes}`,
+    `${ui(dictionary, "estimatedReadingTime", "Estimated reading time")}: ${Math.max(1, Math.ceil((input.trim().split(/\s+/).length || 0) / 220))} ${ui(dictionary, "minutes", "minute(s)")}`,
   ].join("\n");
   return (
     <div className="space-y-4">
       <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-44" />
-      <ResultBlock title="Text metrics" value={output} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "textMetrics", "Text metrics")} value={output} dictionary={dictionary} />
     </div>
   );
 }
@@ -1283,7 +1290,7 @@ function UlidTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <div className="space-y-4">
       <GeneratorControls count={count} setCount={setCount} regenerate={regenerate} dictionary={dictionary} />
-      <ResultBlock title="ULID values" value={values.join("\n")} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "ulidValues", "ULID values")} value={values.join("\n")} dictionary={dictionary} />
     </div>
   );
 }
@@ -1317,7 +1324,7 @@ function SitemapGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) 
   return (
     <div className="space-y-4">
       <Textarea value={urls} onChange={(event) => setUrls(event.target.value)} className="min-h-44" />
-      <ResultBlock title="XML sitemap" value={output} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "xmlSitemap", "XML sitemap")} value={output} dictionary={dictionary} />
     </div>
   );
 }
@@ -1331,10 +1338,10 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
-        <Input value={title} onChange={(event) => setTitle(event.target.value)} aria-label="Title" />
+        <Input value={title} onChange={(event) => setTitle(event.target.value)} aria-label={ui(dictionary, "title", "Title")} />
         <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" />
-        <Textarea value={description} onChange={(event) => setDescription(event.target.value)} className="md:col-span-2" aria-label="Description" />
-        <Input value={image} onChange={(event) => setImage(event.target.value)} aria-label="Image URL" className="md:col-span-2" />
+        <Textarea value={description} onChange={(event) => setDescription(event.target.value)} className="md:col-span-2" aria-label={ui(dictionary, "description", "Description")} />
+        <Input value={image} onChange={(event) => setImage(event.target.value)} aria-label={ui(dictionary, "imageUrl", "Image URL")} className="md:col-span-2" />
       </div>
       <div className="max-w-xl overflow-hidden rounded-lg border bg-card">
         <div className="aspect-[1.91/1] bg-muted p-4 text-sm text-muted-foreground">{image}</div>
@@ -1344,7 +1351,7 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
       </div>
-      <ResultBlock title="Open Graph tags" value={tags} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "openGraphTags", "Open Graph tags")} value={tags} dictionary={dictionary} />
     </div>
   );
 }
@@ -1358,14 +1365,14 @@ function FaviconGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) 
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-3">
-        <Input value={text} onChange={(event) => setText(event.target.value)} aria-label="Text" />
-        <Input value={bg} onChange={(event) => setBg(event.target.value)} aria-label="Background" />
-        <Input value={fg} onChange={(event) => setFg(event.target.value)} aria-label="Foreground" />
+        <Input value={text} onChange={(event) => setText(event.target.value)} aria-label={ui(dictionary, "text", "Text")} />
+        <Input value={bg} onChange={(event) => setBg(event.target.value)} aria-label={ui(dictionary, "background", "Background")} />
+        <Input value={fg} onChange={(event) => setFg(event.target.value)} aria-label={ui(dictionary, "foreground", "Foreground")} />
       </div>
       <div className="flex h-24 w-24 items-center justify-center rounded-lg border bg-muted">
-        <Image src={dataUrl} alt="Generated favicon" width={64} height={64} unoptimized className="h-16 w-16" />
+        <Image src={dataUrl} alt={ui(dictionary, "generatedFavicon", "Generated favicon")} width={64} height={64} unoptimized className="h-16 w-16" />
       </div>
-      <ResultBlock title="Favicon markup" value={`<link rel="icon" href="${dataUrl}" />\n${svg}`} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "faviconMarkup", "Favicon markup")} value={`<link rel="icon" href="${dataUrl}" />\n${svg}`} dictionary={dictionary} />
     </div>
   );
 }
@@ -1456,7 +1463,7 @@ function TimezoneConverterTool({ dictionary }: { dictionary: ClientDictionary })
   return (
     <div className="space-y-4">
       <Input value={input} onChange={(event) => setInput(event.target.value)} />
-      <ResultBlock title="Time zones" value={output} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "timeZones", "Time zones")} value={output} dictionary={dictionary} />
     </div>
   );
 }
@@ -1471,7 +1478,7 @@ function CssUnitConverterTool({ dictionary }: { dictionary: ClientDictionary }) 
         <Input type="number" value={px} onChange={(event) => setPx(Number(event.target.value))} aria-label="Pixels" />
         <Input type="number" value={root} onChange={(event) => setRoot(Number(event.target.value))} aria-label="Root pixels" />
       </div>
-      <ResultBlock title="Converted CSS units" value={output} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "convertedCssUnits", "Converted CSS units")} value={output} dictionary={dictionary} />
     </div>
   );
 }
@@ -1492,7 +1499,7 @@ function CssClampGeneratorTool({ dictionary }: { dictionary: ClientDictionary })
         <Input type="number" value={minViewport} onChange={(event) => setMinViewport(Number(event.target.value))} aria-label="Minimum viewport" />
         <Input type="number" value={maxViewport} onChange={(event) => setMaxViewport(Number(event.target.value))} aria-label="Maximum viewport" />
       </div>
-      <ResultBlock title="CSS clamp" value={output} dictionary={dictionary} />
+      <ResultBlock title={ui(dictionary, "cssClamp", "CSS clamp")} value={output} dictionary={dictionary} />
     </div>
   );
 }
