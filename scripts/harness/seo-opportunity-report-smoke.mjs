@@ -6,6 +6,10 @@ import path from "node:path";
 const root = process.cwd();
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "bobob-seo-smoke-"));
 const failures = [];
+const registrySource = fs.readFileSync(path.join(root, "apps/main/src/features/tools/registry.ts"), "utf8");
+const guideRegistrySource = fs.readFileSync(path.join(root, "apps/main/src/features/guides/registry.ts"), "utf8");
+const expectedToolCount = Array.from(registrySource.matchAll(/slug: "([^"]+)"/g)).length;
+const expectedGuideCount = Array.from(guideRegistrySource.matchAll(/slug: "([^"]+)"/g)).length;
 
 function writeFixture(name, content) {
   const filePath = path.join(tempDir, name);
@@ -70,9 +74,9 @@ const report = JSON.parse(validRun.stdout);
 
 assert(report.inputWarnings.length === 0, "valid measured CSV fixtures should not produce inputWarnings");
 assert(!validRun.stderr.includes("SEO input warning"), "valid measured CSV fixtures should not write SEO input warnings to stderr");
-assert(report.inventoryCount === 64, "SEO opportunity report should cover 48 tools plus 16 guides");
-assert(report.toolInventoryCount === 48, "SEO opportunity report should include 48 tool pages");
-assert(report.guideInventoryCount === 16, "SEO opportunity report should include 16 guide pages");
+assert(report.inventoryCount === expectedToolCount + expectedGuideCount, `SEO opportunity report should cover ${expectedToolCount} tools plus ${expectedGuideCount} guides`);
+assert(report.toolInventoryCount === expectedToolCount, `SEO opportunity report should include ${expectedToolCount} tool pages`);
+assert(report.guideInventoryCount === expectedGuideCount, `SEO opportunity report should include ${expectedGuideCount} guide pages`);
 assert(report.measuredCoverage.requiredMode === "tiers", "default measured coverage should use tier mode");
 assert(report.measuredCoverage.requiredSources.includes("search-console") && report.measuredCoverage.requiredSources.includes("adsense"), "measured coverage should require Search Console and AdSense by default");
 assert(report.measuredExportPlan.defaultFiles.searchConsole.includes("reports/search-console.csv"), "measured export plan should list default Search Console CSV path");
@@ -83,6 +87,7 @@ assert(report.measuredExportPlan.copyTargets.canonicalUrls.includes("https://www
 assert(report.measuredExportPlan.copyTargets.searchConsolePageRegex.includes("https://www\\.bobob\\.app/tools/regex-tester"), "measured export plan should include escaped Search Console page regex");
 assert(report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv.includes("/tools/regex-tester"), "measured export plan should include focused measured paths env value");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("regex tester"), "measured export plan should include search intent seeds");
+assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("email regex"), "measured export plan should include long-tail Regex snippet search intent seeds");
 assert(report.measuredExportPlan.csvTemplates.searchConsoleHeader === "Page,Query,Impressions,Clicks,CTR,Position", "measured export plan should include Search Console CSV template header");
 assert(report.measuredExportPlan.csvTemplates.adsenseHeader === "Page,Impressions,Page RPM,Estimated earnings,CTR", "measured export plan should include AdSense CSV template header");
 assert(report.metadataRewriteReadiness.status === "needs-measured-data-first", "default fixture should not be ready until required measured coverage is complete");

@@ -94,7 +94,7 @@ export default async function RootLayout({
       <body className="bg-background text-foreground antialiased">
         <ThemeProvider>
           <GoogleAnalytics />
-          <GoogleAdsense publisherId={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID} />
+          <GoogleAdsense enabled={process.env.NEXT_PUBLIC_ENABLE_ADSENSE === "true"} publisherId={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID} />
           {children}
         </ThemeProvider>
       </body>

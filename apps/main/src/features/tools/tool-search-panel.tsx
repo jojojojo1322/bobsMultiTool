@@ -9,6 +9,65 @@ import { Input } from "@/components/ui/input";
 import { withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
+import type { ToolDefinition } from "./types";
+import { getLocalizedWorkflowRecipes, type LocalizedWorkflowRecipe } from "./workflows";
+
+function normalizeSearchValue(value: string) {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function getSearchMatchSignals(tool: ToolDefinition, query: string, relatedTools: ToolDefinition[] = []) {
+  const normalizedQuery = normalizeSearchValue(query);
+  const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 1);
+  const candidates = [
+    tool.title,
+    tool.shortTitle,
+    tool.slug,
+    ...tool.aliases,
+    ...tool.searchIntents,
+    ...tool.seo.keywords,
+    ...tool.useCases,
+    ...tool.inputExamples,
+    ...(tool.failureCases ?? []),
+    ...(tool.preCopyChecklist ?? []),
+    ...tool.examples.flatMap((example) => [example.label, example.note]),
+    ...tool.faqs.flatMap((faq) => [faq.question]),
+    ...tool.guides.map((guide) => guide.title),
+    ...relatedTools.flatMap((related) => [related.title, related.shortTitle, related.description, ...related.useCases]),
+  ]
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  const matched = normalizedQuery
+    ? candidates.filter((value) => {
+        const normalizedValue = normalizeSearchValue(value);
+        return normalizedValue.includes(normalizedQuery) || queryTokens.some((token) => normalizedValue.includes(token));
+      })
+    : [...tool.useCases, ...tool.inputExamples, ...tool.searchIntents];
+
+  const suppressed = new Set([tool.title, tool.shortTitle, tool.description].map(normalizeSearchValue));
+  return Array.from(new Set(matched))
+    .filter((value) => !suppressed.has(normalizeSearchValue(value)))
+    .slice(0, 3);
+}
+
+function workflowRecipeMatches(recipe: LocalizedWorkflowRecipe, query: string) {
+  const normalizedQuery = normalizeSearchValue(query);
+  if (!normalizedQuery) return false;
+  const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 1);
+  const candidates = [
+    recipe.title,
+    recipe.description,
+    ...recipe.searchIntents,
+    ...recipe.steps.flatMap((step) => [step.tool.title, step.tool.shortTitle, step.tool.description, step.reason, ...step.tool.searchIntents, ...step.tool.aliases]),
+  ];
+
+  const normalizedCandidates = candidates.map(normalizeSearchValue);
+  return (
+    normalizedCandidates.some((value) => value.includes(normalizedQuery)) ||
+    (queryTokens.length > 1 && queryTokens.every((token) => normalizedCandidates.some((value) => value.includes(token))))
+  );
+}
 
 export function ToolSearchPanel({
   locale,
@@ -20,10 +79,15 @@ export function ToolSearchPanel({
   initialQuery?: string;
 }) {
   const [query, setQuery] = React.useState(initialQuery);
+  const localizedTools = React.useMemo(() => getLocalizedTools(locale), [locale]);
   const results = React.useMemo(() => {
-    if (!query.trim()) return getLocalizedTools(locale).filter((tool) => tool.monetizationTier === "core").slice(0, 8);
+    if (!query.trim()) return localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 8);
     return searchLocalizedTools(query, locale).slice(0, 8);
-  }, [locale, query]);
+  }, [locale, localizedTools, query]);
+  const workflowResults = React.useMemo(() => {
+    if (!query.trim()) return [];
+    return getLocalizedWorkflowRecipes(locale, localizedTools).filter((recipe) => workflowRecipeMatches(recipe, query)).slice(0, 3);
+  }, [locale, localizedTools, query]);
 
   React.useEffect(() => {
     setQuery(initialQuery);
@@ -59,9 +123,36 @@ export function ToolSearchPanel({
             className="pl-8"
           />
         </label>
+        {workflowResults.length ? (
+          <div className="grid gap-2" data-search-workflow-recipes>
+            {workflowResults.map((recipe) => {
+              const firstStep = recipe.steps[0];
+              if (!firstStep) return null;
+              return (
+                <Link key={recipe.slug} href={withLocale(`/tools/${firstStep.tool.slug}`, locale)} className="rounded-md border bg-muted/20 px-3 py-2 text-sm transition-colors hover:bg-muted/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{recipe.title}</p>
+                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{recipe.description}</p>
+                    </div>
+                    <Badge>{dictionary.tool.developerWorkbench}</Badge>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {recipe.steps.map((step, index) => (
+                      <span key={`${recipe.slug}-${step.tool.slug}`} className="max-w-full rounded-sm border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                        {index + 1}. {step.tool.shortTitle}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : null}
         <div className="grid max-h-80 gap-2 overflow-auto pr-1">
           {results.length ? results.map((tool) => {
             const relatedTools = getLocalizedRelatedTools(tool.relatedTools.slice(0, 2), locale);
+            const matchSignals = getSearchMatchSignals(tool, query, relatedTools);
             return (
               <div key={tool.slug} className="rounded-md border transition-colors hover:bg-muted/40">
                 <Link href={withLocale(`/tools/${tool.slug}`, locale)} className="block px-3 py-2">
@@ -69,6 +160,15 @@ export function ToolSearchPanel({
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">{tool.title}</p>
                       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+                      {matchSignals.length ? (
+                        <div className="mt-2 flex flex-wrap gap-1" data-search-match-signals>
+                          {matchSignals.map((signal) => (
+                            <Badge key={signal} className="max-w-[12rem] truncate text-[11px] font-normal sm:max-w-[14rem]">
+                              {signal}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     <Badge>{tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly}</Badge>
                   </div>

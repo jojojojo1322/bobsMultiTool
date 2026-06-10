@@ -3,11 +3,12 @@
 import Script from 'next/script';
 
 interface GoogleAdsenseProps {
+  enabled?: boolean;
   publisherId?: string;
 }
 
-export default function GoogleAdsense({ publisherId }: GoogleAdsenseProps) {
-  if (!publisherId || !/^ca-pub-\d+$/.test(publisherId)) {
+export default function GoogleAdsense({ enabled = false, publisherId }: GoogleAdsenseProps) {
+  if (!enabled || !publisherId || !/^ca-pub-\d+$/.test(publisherId)) {
     return null;
   }
 
@@ -27,8 +28,7 @@ export default function GoogleAdsense({ publisherId }: GoogleAdsenseProps) {
           __html: `
             (adsbygoogle = window.adsbygoogle || []).push({
               google_ad_client: "${publisherId}",
-              enable_page_level_ads: true,
-              overlays: {bottom: true}
+              enable_page_level_ads: true
             });
           `
         }}

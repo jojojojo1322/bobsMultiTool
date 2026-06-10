@@ -1,10 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
 import { assertPublicHttpUrl, consumeRateLimit } from "@/features/server/network-guards";
 
+type RedirectHop = {
+  url: string;
+  status: number;
+  statusText: string;
+  location: string | null;
+  contentType: string | null;
+  cacheControl: string | null;
+  elapsedMs: number;
+};
+
+const finalHeaderAllowlist = new Set([
+  "age",
+  "access-control-allow-origin",
+  "cache-control",
+  "cf-cache-status",
+  "content-encoding",
+  "content-language",
+  "content-security-policy",
+  "content-security-policy-report-only",
+  "content-type",
+  "etag",
+  "expires",
+  "last-modified",
+  "location",
+  "permissions-policy",
+  "referrer-policy",
+  "server",
+  "strict-transport-security",
+  "vary",
+  "x-cache",
+  "x-content-type-options",
+  "x-frame-options",
+  "x-vercel-cache",
+]);
+
+function collectFinalHeaders(headers: Headers) {
+  return Array.from(headers.entries())
+    .filter(([name]) => finalHeaderAllowlist.has(name.toLowerCase()))
+    .map(([name, value]) => ({ name: name.toLowerCase(), value }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 async function fetchPublicUrl(value: string, signal: AbortSignal) {
   let url = await assertPublicHttpUrl(value);
+  const redirectChain: RedirectHop[] = [];
 
   for (let redirectCount = 0; redirectCount <= 5; redirectCount += 1) {
+    const startedAt = performance.now();
     const response = await fetch(url, {
       method: "GET",
       redirect: "manual",
@@ -13,13 +57,23 @@ async function fetchPublicUrl(value: string, signal: AbortSignal) {
         "user-agent": "BobobStatusChecker/1.0",
       },
     });
+    const elapsedMs = Math.max(0, Math.round(performance.now() - startedAt));
+    const location = response.headers.get("location");
+    redirectChain.push({
+      url: url.toString(),
+      status: response.status,
+      statusText: response.statusText,
+      location,
+      contentType: response.headers.get("content-type"),
+      cacheControl: response.headers.get("cache-control"),
+      elapsedMs,
+    });
 
     if (![301, 302, 303, 307, 308].includes(response.status)) {
-      return { response, finalUrl: url.toString(), redirectCount };
+      return { response, finalUrl: url.toString(), redirectCount, redirectChain, finalResponseHeaders: collectFinalHeaders(response.headers) };
     }
 
-    const location = response.headers.get("location");
-    if (!location) return { response, finalUrl: url.toString(), redirectCount };
+    if (!location) return { response, finalUrl: url.toString(), redirectCount, redirectChain, finalResponseHeaders: collectFinalHeaders(response.headers) };
     url = await assertPublicHttpUrl(new URL(location, url));
   }
 
@@ -27,7 +81,7 @@ async function fetchPublicUrl(value: string, signal: AbortSignal) {
 }
 
 function isInputError(error: unknown) {
-  return error instanceof TypeError || error instanceof Error && /public|private|reserved|credentials|protocol/i.test(error.message);
+  return error instanceof Error && /invalid url|public|private|reserved|credentials|protocol/i.test(error.message);
 }
 
 export async function GET(request: NextRequest) {
@@ -48,11 +102,13 @@ export async function GET(request: NextRequest) {
   const timeout = setTimeout(() => controller.abort(), 8_000);
 
   try {
-    const { response, finalUrl, redirectCount } = await fetchPublicUrl(value, controller.signal);
+    const { response, finalUrl, redirectCount, redirectChain, finalResponseHeaders } = await fetchPublicUrl(value, controller.signal);
     return NextResponse.json({
       inputUrl: value,
       finalUrl,
       redirectCount,
+      redirectChain,
+      finalResponseHeaders,
       status: response.status,
       statusText: response.statusText,
       ok: response.status >= 200 && response.status < 300,

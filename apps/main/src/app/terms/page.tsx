@@ -43,10 +43,10 @@ export default function TermsPage() {
             </p>
           </section>
           <section>
-            <h2 className="mb-2 text-base font-semibold text-foreground">Advertising</h2>
+            <h2 className="mb-2 text-base font-semibold text-foreground">Third-party services</h2>
             <p>
-              The site may display ads through Google AdSense after approval. Advertisement content is served by third-party
-              networks and may be personalized according to their policies.
+              The site may include third-party services that help operate and support the free utility experience. Third-party
+              content is governed by the policies of the providers that serve it.
             </p>
           </section>
           <section>

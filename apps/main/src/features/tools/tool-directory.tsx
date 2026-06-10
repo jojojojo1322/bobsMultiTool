@@ -11,6 +11,7 @@ import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { toolCategories } from "@/features/tools/registry";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
 import type { ToolDefinition } from "@/features/tools/types";
+import { getLocalizedWorkflowRecipes, type LocalizedWorkflowRecipe } from "@/features/tools/workflows";
 
 const acquisitionClusterSlugs = [
   ["json-formatter", "json-escape-unescape", "json-to-typescript", "json-schema-validator"],
@@ -44,6 +45,7 @@ export function ToolDirectory({
   const localizedTools = getLocalizedTools(locale);
   const coreTools = localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 12);
   const localizedToolBySlug = new Map(localizedTools.map((tool) => [tool.slug, tool]));
+  const workflowRecipes = getLocalizedWorkflowRecipes(locale, localizedTools);
   const acquisitionClusters = acquisitionClusterSlugs
     .map((cluster) => cluster.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition))
     .filter((cluster) => cluster.length >= 3);
@@ -105,6 +107,22 @@ export function ToolDirectory({
                   <Badge>{dictionary.categories[tool.category] ?? tool.category}</Badge>
                 </div>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="border-b" data-workflow-recipes>
+        <div className="mx-auto max-w-7xl px-4 py-6">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold">{dictionary.tool.developerWorkbench}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{dictionary.home.description}</p>
+            </div>
+            <Badge>{dictionary.tool.localOnly}</Badge>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            {workflowRecipes.map((recipe) => (
+              <WorkflowRecipeCard key={recipe.slug} recipe={recipe} locale={locale} dictionary={dictionary} />
             ))}
           </div>
         </div>
@@ -191,5 +209,50 @@ export function ToolDirectory({
         })}
       </section>
     </main>
+  );
+}
+
+function WorkflowRecipeCard({
+  recipe,
+  locale,
+  dictionary,
+}: {
+  recipe: LocalizedWorkflowRecipe;
+  locale: Locale;
+  dictionary: ClientDictionary;
+}) {
+  const firstStep = recipe.steps[0];
+  if (!firstStep) return null;
+
+  return (
+    <article className="rounded-md border bg-background p-3">
+      <Link href={withLocale(`/tools/${firstStep.tool.slug}`, locale)} className="block">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="truncate text-sm font-medium">{recipe.title}</h3>
+            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{recipe.description}</p>
+          </div>
+          <Badge>{recipe.steps.length} {dictionary.nav.tools}</Badge>
+        </div>
+      </Link>
+      <ol className="mt-3 grid gap-2 border-t pt-3">
+        {recipe.steps.map((step, index) => (
+          <li key={`${recipe.slug}-${step.tool.slug}`} className="min-w-0">
+            <Link
+              href={withLocale(`/tools/${step.tool.slug}`, locale)}
+              className="grid grid-cols-[1.5rem_1fr] gap-2 rounded-sm border bg-card px-2 py-1.5 text-xs transition-colors hover:bg-muted"
+            >
+              <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-muted text-[11px] font-medium text-muted-foreground">
+                {index + 1}
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate font-medium text-foreground">{step.tool.shortTitle}</span>
+                <span className="mt-0.5 block line-clamp-1 text-muted-foreground">{step.reason}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </article>
   );
 }

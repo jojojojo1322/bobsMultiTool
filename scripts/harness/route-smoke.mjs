@@ -78,6 +78,27 @@ for (const routePath of structuredDataPaths) {
   }
 }
 
+const httpStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}`);
+const httpStatusBody = await httpStatusResponse.json().catch(() => null);
+if (httpStatusResponse.status !== 200) {
+  failures.push(`/api/http-status should accept public URLs, got ${httpStatusResponse.status}`);
+} else if (!Array.isArray(httpStatusBody?.redirectChain) || !httpStatusBody.redirectChain.length) {
+  failures.push("/api/http-status response missing redirectChain array");
+} else {
+  const firstHop = httpStatusBody.redirectChain[0];
+  for (const field of ["url", "status", "statusText", "contentType", "cacheControl", "elapsedMs"]) {
+    if (!(field in firstHop)) failures.push(`/api/http-status redirectChain hop missing ${field}`);
+  }
+  if (!Array.isArray(httpStatusBody?.finalResponseHeaders)) {
+    failures.push("/api/http-status response missing finalResponseHeaders array");
+  }
+}
+
+const privateStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("http://localhost:3000")}`);
+if (privateStatusResponse.status !== 400) {
+  failures.push(`/api/http-status should reject private or local URLs, got ${privateStatusResponse.status}`);
+}
+
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);

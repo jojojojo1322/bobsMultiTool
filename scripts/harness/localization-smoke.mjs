@@ -20,6 +20,7 @@ const toolWorkspace = read("apps/main/src/features/tools/tool-workspace.tsx");
 const toolSearch = read("apps/main/src/features/tools/tool-search-panel.tsx");
 const toolComponents = read("apps/main/src/features/tools/tool-components.tsx");
 const toolRegistry = read("apps/main/src/features/tools/registry.ts");
+const workflows = read("apps/main/src/features/tools/workflows.ts");
 const guideRegistry = read("apps/main/src/features/guides/registry.ts");
 
 const failures = [];
@@ -32,6 +33,17 @@ for (const locale of nonEnglishLocales) {
   }
   if (!dictionaries.includes(`${locale}:`) && !dictionaries.includes(`"${locale}":`)) {
     failures.push(`dictionary visible UI override missing locale: ${locale}`);
+  }
+}
+
+for (const [source, label] of [
+  [dictionaries, "visible dictionary"],
+  [legalContent, "localized legal content"],
+  [read("apps/main/src/app/privacy/page.tsx"), "default privacy page"],
+  [read("apps/main/src/app/terms/page.tsx"), "default terms page"],
+]) {
+  if (/Google AdSense|AdSense|after approval|approval\.|승인 후|심사와 검색|承認後|获得批准后|核准後|Tras la aprobacion|Apos aprovacao|Nach Genehmigung|Apres approbation|मंजूरी के बाद|Setelah disetujui|Sau khi được chấp thuận|หลังได้รับอนุมัติ|بعد الموافقة/.test(source)) {
+    failures.push(`${label} must not expose AdSense, approval, or review-status wording to users`);
   }
 }
 
@@ -55,10 +67,44 @@ for (const fragment of [
   "longTailPriorityToolIntents",
   "priorityGuideDescriptions",
   "localizedExampleValues",
-  "유효한 YAML / 파싱된 JSON 미리보기",
+  "유효한 YAML / Docker Compose 진단 / 포맷된 YAML",
+  "Docker Compose service",
   "파싱된 변수와 중복/형식 경고",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
+}
+for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+  if (!workflows.includes(fragment)) failures.push(`workflow localization missing ${fragment}`);
+}
+for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+  const recipeSource = workflows.match(new RegExp(`slug: "${recipeSlug}"[\\s\\S]*?(?=\\n  \\{\\n    slug: "|\\n\\];)`))?.[0] ?? "";
+  if (!recipeSource) {
+    failures.push(`workflow recipe missing localized source for ${recipeSlug}`);
+    continue;
+  }
+  for (const locale of nonEnglishLocales) {
+    if (!recipeSource.includes(`${locale}:`) && !recipeSource.includes(`"${locale}":`)) {
+      failures.push(`workflow recipe ${recipeSlug} missing locale ${locale}`);
+    }
+  }
+}
+for (const fragment of ["이미지 data URL", "画像 data URL", "data URL de imagen", "Bild-Data-URLs", "图片 data URL", "data URL ảnh"]) {
+  if (!localizedContent.includes(fragment) && !workflows.includes(fragment)) failures.push(`Base64 image/data URL localized prose missing fragment: ${fragment}`);
+}
+if (!dictionaries.includes("localizedDockerComposeToolUi") || !dictionaries.includes("composeSecretEnvWarning")) {
+  failures.push("dictionary missing localized Docker Compose labels");
+}
+for (const fragment of ["localizedCronRuntimeToolUi", "cronRuntimeContext", "cronDayMatchingOr", "cronDayOverlapAndWarning", "브라우저 타임존", "ブラウザーのタイムゾーン", "रनटाइम संदर्भ", "المنطقة الزمنية للمتصفح"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`dictionary missing localized Cron runtime fragment: ${fragment}`);
+}
+for (const fragment of ["localizedHashHmacToolUi", "hashModeHmac", "hmacSecretWarning", "HMAC signature", "HMAC-Signaturen", "تواقيع HMAC"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized HMAC hash content missing fragment: ${fragment}`);
+}
+for (const fragment of ["localizedPasswordPassphraseToolUi", "passphraseModeDescription", "passphraseCompatibilityWarning", "암호구문", "パスフレーズ", "Passphrase", "عبارة مرور"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized password passphrase content missing fragment: ${fragment}`);
+}
+for (const fragment of ["localizedQrBuilderToolUi", "qrPayloadBuilder", "qrWifiSsid", "Payload 빌더", "Payloadビルダー", "Constructor de payload", "منشئ payload"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized QR builder content missing fragment: ${fragment}`);
 }
 
 const registrySlugs = Array.from(toolRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
@@ -100,6 +146,37 @@ const sessionDepthPrioritySlugs = [
   "sitemap-generator",
   "random-token-generator",
 ];
+const genericDescriptionCleanupSlugs = [
+  "meta-tag-generator",
+  "favicon-generator",
+  "iframe-viewer",
+  "html-entity-converter",
+  "html-formatter",
+  "mime-type-lookup",
+  "user-agent-parser",
+  "lorem-ipsum-generator",
+  "text-diff",
+  "case-converter",
+  "slug-generator",
+  "yaml-json-converter",
+  "xml-formatter",
+  "csv-json-converter",
+  "css-minifier",
+  "javascript-minifier",
+  "ulid-generator",
+];
+for (const slug of genericDescriptionCleanupSlugs) {
+  const toolSource = priorityIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
+  if (!toolSource) {
+    failures.push(`generic-description cleanup missing priority tool intent: ${slug}`);
+    continue;
+  }
+  for (const locale of ["ko", "ja", "es", "de"]) {
+    if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
+      failures.push(`generic-description cleanup ${slug} missing locale ${locale}`);
+    }
+  }
+}
 for (const slug of sessionDepthPrioritySlugs) {
   const toolSource = priorityIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
   if (!toolSource) {
@@ -179,7 +256,9 @@ const pageChecks = [
   [localizedTermsPage, "localized terms page", "getLocalizedLegalContent"],
   [toolWorkspace, "tool workspace search", "searchLocalizedTools"],
   [toolWorkspace, "tool workspace related", "getLocalizedRelatedTools"],
+  [toolWorkspace, "tool workspace workflow recipes", "getWorkflowRecipesForTool"],
   [toolSearch, "home search panel", "searchLocalizedTools"],
+  [toolSearch, "home search workflow recipes", "getLocalizedWorkflowRecipes"],
 ];
 
 for (const [source, label, fragment] of pageChecks) {
@@ -215,6 +294,24 @@ for (const fragment of [
   "copyReadyOutput",
   "jsonInput",
   "formattedJson",
+  "jsonPathPreview",
+  "copyJsonPath",
+  "localizedJsonPathToolUi",
+  "jsonPathExamples",
+  "jsonPathSupportedSyntax",
+  "jsonPathMatchedValues",
+  "jsonPathNoMatchesWarning",
+  "jsonPathTruncatedWarning",
+  "jwtTimeWindow",
+  "jwtTimeWindowDescription",
+  "issuedAge",
+  "validAfter",
+  "expiresIn",
+  "tokenLifetime",
+  "localSessionTitle",
+  "localSessionBody",
+  "restoreLastWork",
+  "clearLocalHistory",
   "count",
   "generate",
   "commonInput",
@@ -222,10 +319,71 @@ for (const fragment of [
   "extensionOrMimeType",
   "httpStatus",
   "dnsRecords",
+  "dnsDiagnostics",
+  "dnsPrimarySignal",
+  "dnsNoDiagnosticWarnings",
   "contrastRatio",
   "contrastPreviewText",
   "colorValues",
+  "colorDiagnostics",
+  "aaaNormalText",
+  "colorAlphaIgnoredWarning",
+  "colorNoDiagnosticWarnings",
+  "localizedBase64DiagnosticsToolUi",
+  "base64PngDataUrlExample",
+  "base64Diagnostics",
+  "base64DetectedContent",
+  "base64JwtSegmentWarning",
+  "base64SecretLikeWarning",
+  "base64ImagePreview",
+  "base64ImagePreviewDescription",
+  "base64ImageShape",
+  "base64ImageWarning",
+  "localizedRandomTokenToolUi",
+  "tokenDiagnostics",
+  "tokenSessionExample",
+  "tokenUrlSafe",
+  "tokenBase64PaddingWarning",
+  "localizedQrDiagnosticsToolUi",
+  "qrDiagnostics",
+  "qrPayloadType",
+  "qrTrackingWarning",
+  "qrVcardWarning",
+  "localizedCssDiagnosticsToolUi",
+  "cssDiagnostics",
+  "customProperties",
+  "colorTokens",
+  "compressionRatio",
+  "selectorPreview",
+  "cssDuplicateSelectorWarning",
+  "cssCommentRemovalWarning",
+  "localizedJavaScriptDiagnosticsToolUi",
+  "jsDiagnostics",
+  "imports",
+  "browserApis",
+  "jsSignalPreview",
+  "jsBrowserApiWarning",
+  "jsFetchWarning",
+  "jsCommentRemovalWarning",
   "localizedResultToolUi",
+  "localizedRegexGeneratorToolUi",
+  "localizedRegexSnippetToolUi",
+  "localizedHttpHeaderToolUi",
+  "localizedCspGeneratorToolUi",
+  "localizedHttpRedirectAdvancedToolUi",
+  "httpHeaderParser",
+  "httpHeadersMissingCspWarning",
+  "redirectDiagnostics",
+  "redirectCanonicalChangedWarning",
+  "redirectTemporaryWarning",
+  "cspGenerator",
+  "cspUnsafeInlineWarning",
+  "regexGeneratorTitle",
+  "applyGeneratedPattern",
+  "regexCheatSnippets",
+  "regexSnippetEmailDescription",
+  "regexSnippetIpv4Description",
+  "regexSnippetHexColorDescription",
   "validationResult",
   "labelKey",
   "getModeLabel",
@@ -242,12 +400,19 @@ for (const fragment of [
 
 for (const fragment of [
   "localizedToolDetailText",
+  "localizedExampleActions",
+  "localizedExampleResults",
+  "localizeExampleAction",
+  "localizeExampleResult",
   "localizedDemandDetails",
   "failureCases",
   "failureCasesDescription",
   "preCopyChecklist",
   "preCopyChecklistDescription",
   "nextActionPrefix",
+  "favoriteTools",
+  "addFavorite",
+  "removeFavorite",
 ]) {
   if (!localizedContent.includes(fragment) && !dictionaries.includes(fragment)) {
     failures.push(`tool detail localization missing ${fragment}`);
@@ -310,6 +475,9 @@ for (const locale of nonEnglishLocales) {
     'faqDescription: "Common implementation details"',
     "homeTitle: \"Bob's Multi Tool - Practical Developer Utilities\"",
     'theme: { light: "Light", dark: "Dark", system: "System" }',
+    'cronRuntimeContext: "Runtime context"',
+    'cronTimezone: "Browser timezone"',
+    'cronDayMatching: "Day matching"',
     'privacy: "Privacy"',
     'serverRequired: "Server route"',
     'localOnly: "Browser local"',

@@ -58,6 +58,7 @@ const parseEnvContent = (input) => {
 };
 
 check(CryptoJS.SHA256("hello world").toString() === "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9", "sha256 output mismatch");
+check(CryptoJS.HmacSHA256("hello world", "shared-secret").toString() === "71ace429edf71e65320e89d6933f8140b988780d5f0288eb99b239e465946502", "hmac sha256 output mismatch");
 check(escapeJsonString("hello \"Bob\"\n") === "hello \\\"Bob\\\"\\n", "json escape output mismatch");
 check(unescapeJsonString("hello \\\"Bob\\\"\\n") === "hello \"Bob\"\n", "json unescape output mismatch");
 check(diffLines("a\nb\n", "a\nc\n").some((part) => part.added), "diff did not detect addition");

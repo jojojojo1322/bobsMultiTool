@@ -65,12 +65,13 @@ try {
       },
     });
     const page = await context.newPage();
-    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "networkidle", timeout: 20_000 });
+    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "domcontentloaded", timeout: 20_000 });
     if (!response || response.status() >= 400) {
       failures.push(`${scenario.name} returned ${response?.status() ?? "no response"}`);
       await context.close();
       continue;
     }
+    await page.waitForSelector("main", { timeout: 20_000 });
 
     for (const text of scenario.expectedText) {
       if (!(await page.getByText(text, { exact: false }).first().isVisible().catch(() => false))) {

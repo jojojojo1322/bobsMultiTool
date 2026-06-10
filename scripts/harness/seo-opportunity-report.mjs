@@ -479,7 +479,7 @@ function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
         contentCluster: item.contentCluster,
         missingInputs,
         score,
-        searchIntents: item.searchIntents.slice(0, 4),
+        searchIntents: item.searchIntents.slice(0, 6),
       };
     })
     .filter((item) => item.missingInputs.length > 0)
@@ -502,7 +502,7 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
   const canonicalUrls = priorityPages.map((row) => row.canonicalUrl);
   const searchConsolePageRegex = canonicalUrls.length ? `^(${canonicalUrls.map(escapeRegexLiteral).join("|")})$` : "";
   const requiredMeasuredPathsEnv = priorityPages.map((row) => row.path).join(",");
-  const searchIntentSeedList = Array.from(new Set(priorityPages.flatMap((row) => row.searchIntents))).slice(0, 100);
+  const searchIntentSeedList = Array.from(new Set(priorityPages.flatMap((row) => row.searchIntents))).slice(0, 150);
 
   return {
     status: measuredCoverageSummary.pass ? "covered" : "needs-measured-exports",

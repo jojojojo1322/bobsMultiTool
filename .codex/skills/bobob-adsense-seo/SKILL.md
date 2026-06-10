@@ -19,6 +19,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Do not cap localized sitemap coverage in a single static file. Use the sitemap index to expose every supported locale/tool/guide URL.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.
+- Security-header search intent such as CSP Generator should strengthen the HTTP Status Checker page unless measured Search Console data proves a standalone page is needed.
 - Localized metadata must use localized tool and guide content. Do not leave non-English title/description pages backed by raw English registry prose.
 - Guide detail meta descriptions and OpenGraph descriptions must use the same localized `guide.description` shown in the page body.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
@@ -33,10 +34,12 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Use `npm run harness:seo-measured` or `BOBOB_REQUIRE_MEASURED_SEO=1` before claiming post-deploy measured SEO improvement is ready. The strict gate should fail until required core pages have both Search Console and AdSense rows.
 - Use `BOBOB_REQUIRED_MEASURED_PATHS` only for targeted page reviews; final core coverage should rely on the default tier-based measured gate.
 - Run `npm run harness:seo-opportunities:smoke` when changing the measured SEO report so valid CSV fixtures still create opportunities and malformed CSV fixtures still create `inputWarnings`.
-- Use `npm run seo:export-packet` when Search Console/AdSense rows still need to be collected. The packet should contain the page regex, canonical URL batch, CSV headers, focused gate command, and metadata rewrite stop rule; do not treat it as evidence for public metadata edits.
+- Use `npm run seo:export-packet` when Search Console/AdSense rows still need to be collected. The packet should contain the page regex, canonical URL batch, CSV headers, focused gate command, metadata rewrite stop rule, and long-tail search intent seeds for feature-specific queries such as Regex snippets and Base64 image/data URL preview; do not treat it as evidence for public metadata edits.
 - Use `npm run seo:report` when a human review artifact is needed for measured title/description decisions. Keep measured CSVs and markdown reports out of git.
 - Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when Search Console/AdSense export headers, copy targets, or measured export instructions change.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.
+- Public UI, dictionaries, legal pages, and support copy must not expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording. Keep revenue-operation language in governance and measured reports only.
+- AdSense script loading must stay opt-in through `NEXT_PUBLIC_ENABLE_ADSENSE=true`; do not enable bottom overlays or auto-ad UI that can cover tool input/output surfaces.
 - Use `npm run harness:deployment-status` to verify that the canonical `bobs-multi-tool-main` Vercel deployment succeeds separately from stale legacy Vercel project statuses. After external project cleanup, run `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status`.
 - Keep privacy and terms pages aligned with the actual local-first utility behavior.
 - If SEO, AdSense, locale, redirect, schema, or country detection policy changes, update AGENTS.md and this skill before handoff.

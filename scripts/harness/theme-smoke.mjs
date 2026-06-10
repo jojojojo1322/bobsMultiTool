@@ -12,6 +12,10 @@ const home = fs.readFileSync(path.join(root, "apps/main/src/app/page.tsx"), "utf
 const localizedHome = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/page.tsx"), "utf8");
 const directory = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-directory.tsx"), "utf8");
 const workspace = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-workspace.tsx"), "utf8");
+const guidesIndex = fs.readFileSync(path.join(root, "apps/main/src/app/guides/page.tsx"), "utf8");
+const localizedGuidesIndex = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/guides/page.tsx"), "utf8");
+const guideDetail = fs.readFileSync(path.join(root, "apps/main/src/app/guides/[slug]/page.tsx"), "utf8");
+const localizedGuideDetail = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/guides/[slug]/page.tsx"), "utf8");
 
 const failures = [];
 for (const [source, fragment, message] of [
@@ -38,6 +42,10 @@ for (const [source, fragment, message] of [
   [globals, "--bobob-ray-opacity", "pointer background ray opacity variable missing"],
   [directory, "<PointerBackground />", "tool directory hero missing pointer background"],
   [workspace, "<PointerBackground />", "tool detail workspace missing pointer background"],
+  [guidesIndex, "<PointerBackground />", "guide directory missing pointer background"],
+  [localizedGuidesIndex, "<PointerBackground />", "localized guide directory missing pointer background"],
+  [guideDetail, "<PointerBackground />", "guide detail missing pointer background"],
+  [localizedGuideDetail, "<PointerBackground />", "localized guide detail missing pointer background"],
 ]) {
   if (!source.includes(fragment)) failures.push(message);
 }

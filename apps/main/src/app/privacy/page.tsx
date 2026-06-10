@@ -30,10 +30,10 @@ export default function PrivacyPage() {
             </p>
           </section>
           <section>
-            <h2 className="mb-2 text-base font-semibold text-foreground">Analytics and advertising</h2>
+            <h2 className="mb-2 text-base font-semibold text-foreground">Analytics and third-party services</h2>
             <p>
-              The site may use Google Analytics to understand usage patterns and Google AdSense to display ads after approval.
-              These third-party services may use cookies or similar technologies according to their own policies.
+              The site may use privacy-conscious analytics and third-party services to understand usage patterns and support the
+              free utility experience. These services may use cookies or similar technologies according to their own policies.
             </p>
           </section>
           <section>

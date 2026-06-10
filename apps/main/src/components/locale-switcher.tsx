@@ -23,7 +23,7 @@ export function LocaleSwitcher({
   };
 
   return (
-    <label className="flex items-center gap-2 text-sm text-muted-foreground">
+    <label className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
       <span className="sr-only">{dictionary.nav.language}</span>
       <Button variant="ghost" size="icon" aria-label={dictionary.nav.language}>
         <Globe2 className="h-4 w-4" />
@@ -31,7 +31,7 @@ export function LocaleSwitcher({
       <Select
         value={locale}
         onChange={(event) => changeLocale(event.target.value as Locale)}
-        className="h-8 w-36"
+        className="h-8 w-28 px-2 sm:w-36 sm:px-3"
         aria-label={dictionary.nav.language}
       >
         {locales.map((item) => (

@@ -19,6 +19,7 @@ import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
+import { cn } from "@/lib/utils";
 import type { ToolComponentKey } from "./types";
 
 const commonTimeZones = ["UTC", "Asia/Seoul", "Asia/Tokyo", "America/New_York", "America/Los_Angeles", "Europe/London", "Europe/Berlin", "Asia/Kolkata"];
@@ -74,8 +75,8 @@ function ResultBlock({
         </Button>
       </CardHeader>
       <CardContent>
-        <pre className="max-h-96 overflow-auto rounded-md bg-muted p-3 text-xs leading-relaxed text-foreground">
-          <code>{value || dictionary.tool.noOutput}</code>
+        <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs leading-relaxed text-foreground">
+          <code className="break-words">{value || dictionary.tool.noOutput}</code>
         </pre>
       </CardContent>
     </Card>
@@ -88,6 +89,45 @@ function ErrorAlert({ title, message }: { title: string; message: string }) {
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>{message}</AlertDescription>
     </Alert>
+  );
+}
+
+function byteLength(value: string) {
+  if (typeof TextEncoder !== "undefined") return new TextEncoder().encode(value).length;
+  return value.length;
+}
+
+function clampInteger(value: number, min: number, max: number) {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, Math.trunc(value)));
+}
+
+function ToolMetricGrid({ items }: { items: Array<{ label: string; value: string; description?: string }> }) {
+  return (
+    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+      {items.map((item) => (
+        <div key={item.label} className="min-w-0 rounded-md border bg-card p-3">
+          <p className="text-xs text-muted-foreground">{item.label}</p>
+          <p className="mt-1 break-words text-sm font-semibold">{item.value}</p>
+          {item.description ? <p className="mt-1 text-xs text-muted-foreground">{item.description}</p> : null}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ToolWarningList({ title, warnings, emptyLabel }: { title: string; warnings: string[]; emptyLabel: string }) {
+  return (
+    <section className="rounded-md border bg-card p-3">
+      <h3 className="text-sm font-semibold">{title}</h3>
+      <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+        {(warnings.length ? warnings : [emptyLabel]).map((warning) => (
+          <li key={warning} className="break-words">
+            {warning}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -137,26 +177,242 @@ function TextTransformTool({
   );
 }
 
+const regexPresets = [
+  {
+    labelKey: "isoDatePattern",
+    fallbackLabel: "ISO date",
+    pattern: String.raw`(\d{4})-(\d{2})-(\d{2})`,
+    flags: "g",
+    sample: "Release dates: 2026-06-05 and 2026-07-01.",
+  },
+  {
+    labelKey: "emailPattern",
+    fallbackLabel: "Email",
+    pattern: String.raw`([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})`,
+    flags: "gi",
+    sample: "Contact billing@example.com or support@bobob.app.",
+  },
+  {
+    labelKey: "routePattern",
+    fallbackLabel: "Route path",
+    pattern: String.raw`^/tools/([a-z0-9-]+)$`,
+    flags: "gm",
+    sample: "/tools/json-formatter\n/tools/regex-tester\n/guides/seo-meta-tags",
+  },
+  {
+    labelKey: "uuidPattern",
+    fallbackLabel: "UUID v4",
+    pattern: String.raw`\b[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b`,
+    flags: "gi",
+    sample: "id=550e8400-e29b-41d4-a716-446655440000 request=not-a-uuid",
+  },
+];
+
+const regexCheatSnippets = [
+  {
+    labelKey: "emailPattern",
+    fallbackLabel: "Email",
+    descriptionKey: "regexSnippetEmailDescription",
+    fallbackDescription: "Find common email addresses in logs, forms, and pasted payloads.",
+    pattern: String.raw`\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b`,
+    flags: "gi",
+    sample: "billing@example.com support@bobob.app invalid@email",
+  },
+  {
+    labelKey: "urlPattern",
+    fallbackLabel: "URL",
+    descriptionKey: "regexSnippetUrlDescription",
+    fallbackDescription: "Extract http and https URLs without swallowing quotes, angle brackets, or trailing sentence punctuation.",
+    pattern: String.raw`https?:\/\/[^\s"'<>]*[A-Za-z0-9/#]`,
+    flags: "gi",
+    sample: "See https://www.bobob.app/tools/json-formatter and http://localhost:3000/test.",
+  },
+  {
+    labelKey: "isoDatePattern",
+    fallbackLabel: "ISO date",
+    descriptionKey: "regexSnippetIsoDateDescription",
+    fallbackDescription: "Match yyyy-mm-dd dates before validating calendar rules in code.",
+    pattern: String.raw`\b\d{4}-\d{2}-\d{2}\b`,
+    flags: "g",
+    sample: "Release dates: 2026-06-05, 2026-07-01, and 06/05/2026.",
+  },
+  {
+    labelKey: "uuidPattern",
+    fallbackLabel: "UUID v4",
+    descriptionKey: "regexSnippetUuidDescription",
+    fallbackDescription: "Find UUID values in request IDs, fixtures, and copied API responses.",
+    pattern: String.raw`\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b`,
+    flags: "gi",
+    sample: "id=550e8400-e29b-41d4-a716-446655440000 request=not-a-uuid",
+  },
+  {
+    labelKey: "ipv4Pattern",
+    fallbackLabel: "IPv4",
+    descriptionKey: "regexSnippetIpv4Description",
+    fallbackDescription: "Spot IPv4 addresses in server logs and DNS troubleshooting notes.",
+    pattern: String.raw`\b(?:25[0-5]|2[0-4]\d|1?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|1?\d?\d)){3}\b`,
+    flags: "g",
+    sample: "Allowed: 192.168.0.1, 8.8.8.8. Invalid: 999.999.999.999",
+  },
+  {
+    labelKey: "hexColorPattern",
+    fallbackLabel: "Hex color",
+    descriptionKey: "regexSnippetHexColorDescription",
+    fallbackDescription: "Collect CSS hex colors including short, six-digit, and alpha forms.",
+    pattern: String.raw`#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b`,
+    flags: "g",
+    sample: "Colors: #0f172a #fff #0066cc #11223344 not-a-color",
+  },
+  {
+    labelKey: "slugPattern",
+    fallbackLabel: "Slug",
+    descriptionKey: "regexSnippetSlugDescription",
+    fallbackDescription: "Match lowercase URL slugs used in routes, docs, and content IDs.",
+    pattern: String.raw`\b[a-z0-9]+(?:-[a-z0-9]+)*\b`,
+    flags: "g",
+    sample: "json-formatter regex-tester Not_A_Slug /tools/base64-tool",
+  },
+];
+
+function normalizeRegexFlags(flags: string) {
+  return Array.from(new Set(flags.replace(/[^gimsuyd]/g, "").split(""))).join("");
+}
+
+function escapeRegexLiteral(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function commonPrefix(values: string[]) {
+  if (!values.length) return "";
+  let prefix = values[0] ?? "";
+  for (const value of values.slice(1)) {
+    while (prefix && !value.startsWith(prefix)) prefix = prefix.slice(0, -1);
+  }
+  return prefix;
+}
+
+function commonSuffix(values: string[]) {
+  if (!values.length) return "";
+  let suffix = values[0] ?? "";
+  for (const value of values.slice(1)) {
+    while (suffix && !value.endsWith(suffix)) suffix = suffix.slice(1);
+  }
+  return suffix;
+}
+
+function compactCharacterClass(values: string[]) {
+  const maxLength = Math.max(...values.map((value) => value.length));
+  const tokens: string[] = [];
+  for (let index = 0; index < maxLength; index += 1) {
+    const chars = values.map((value) => value[index] ?? "");
+    if (chars.some((char) => !char)) return "";
+    if (chars.every((char) => /\d/.test(char))) tokens.push(String.raw`\d`);
+    else if (chars.every((char) => /[a-z]/.test(char))) tokens.push("[a-z]");
+    else if (chars.every((char) => /[A-Z]/.test(char))) tokens.push("[A-Z]");
+    else if (chars.every((char) => /[A-Za-z]/.test(char))) tokens.push("[A-Za-z]");
+    else tokens.push(escapeRegexLiteral(chars[0] ?? ""));
+  }
+  return tokens.join("").replace(/(\\d)+/g, (match) => (match.length > 2 ? String.raw`\d{${match.length / 2}}` : match));
+}
+
+function generateRegexFromExamples(positiveInput: string, negativeInput: string, dictionary: ClientDictionary) {
+  const positives = positiveInput
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const negatives = negativeInput
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (!positives.length) {
+    return {
+      pattern: "",
+      confidence: "0%",
+      positiveMatches: 0,
+      negativeMatches: 0,
+      warnings: [ui(dictionary, "regexGeneratorNeedsExamples", "Add at least one positive example before generating a pattern.")],
+    };
+  }
+
+  const presets = [
+    { test: (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value), pattern: String.raw`\b\d{4}-\d{2}-\d{2}\b`, confidence: 92 },
+    { test: (value: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value), pattern: String.raw`\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b`, confidence: 90 },
+    { test: (value: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value), pattern: String.raw`\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b`, confidence: 90 },
+    { test: (value: string) => /^\/[a-z0-9-]+(?:\/[a-z0-9-]+)*$/i.test(value), pattern: String.raw`^\/[a-z0-9-]+(?:\/[a-z0-9-]+)*$`, confidence: 82 },
+    { test: (value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(value), pattern: String.raw`\b[a-z0-9]+(?:-[a-z0-9]+)*\b`, confidence: 78 },
+    { test: (value: string) => /^\d+$/.test(value), pattern: String.raw`\b\d+\b`, confidence: 76 },
+  ];
+  const preset = presets.find((candidate) => positives.every(candidate.test));
+  let pattern = preset?.pattern ?? "";
+  let confidence = preset?.confidence ?? 55;
+  const warnings: string[] = [];
+
+  if (!pattern) {
+    const prefix = commonPrefix(positives);
+    const suffix = commonSuffix(positives);
+    if (prefix.length >= 2 || suffix.length >= 2) {
+      pattern = `${prefix ? escapeRegexLiteral(prefix) : ""}(.+)${suffix ? escapeRegexLiteral(suffix) : ""}`;
+      confidence = 64;
+    } else {
+      const shape = compactCharacterClass(positives);
+      if (shape) {
+        pattern = `^${shape}$`;
+        confidence = 58;
+      } else {
+        pattern = `(?:${positives.map(escapeRegexLiteral).join("|")})`;
+        confidence = 42;
+        warnings.push(ui(dictionary, "regexGeneratorLiteralWarning", "Generated a literal alternation because the examples do not share a clear shape."));
+      }
+    }
+  }
+
+  let positiveMatches = 0;
+  let negativeMatches = 0;
+  try {
+    const regex = new RegExp(pattern, "i");
+    positiveMatches = positives.filter((value) => regex.test(value)).length;
+    negativeMatches = negatives.filter((value) => regex.test(value)).length;
+  } catch {
+    warnings.push(ui(dictionary, "regexGeneratorInvalidWarning", "The generated pattern could not be tested. Review it manually before applying."));
+  }
+  if (negativeMatches) warnings.push(ui(dictionary, "regexGeneratorNegativeWarning", "The generated pattern also matches negative examples. Tighten it before copying."));
+
+  return {
+    pattern,
+    confidence: `${Math.max(0, Math.min(99, confidence - negativeMatches * 15))}%`,
+    positiveMatches,
+    negativeMatches,
+    warnings,
+  };
+}
+
 function RegexTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [pattern, setPattern] = React.useState(String.raw`(\d{4})-(\d{2})-(\d{2})`);
   const [flags, setFlags] = React.useState("g");
   const [sample, setSample] = React.useState("Release dates: 2026-06-05 and 2026-07-01.");
+  const [positiveExamples, setPositiveExamples] = React.useState("2026-06-05\n2026-07-01");
+  const [negativeExamples, setNegativeExamples] = React.useState("2026/06/05\nrelease-date");
 
   const result = React.useMemo(() => {
     try {
-      const safeFlags = flags.includes("g") ? flags : `${flags}g`;
+      const normalizedFlags = normalizeRegexFlags(flags);
+      const safeFlags = normalizedFlags.includes("g") ? normalizedFlags : `${normalizedFlags}g`;
       const regex = new RegExp(pattern, safeFlags);
       const matches = Array.from(sample.matchAll(regex)).map((match, index) => ({
         index: index + 1,
         text: match[0],
         position: match.index ?? 0,
         groups: match.slice(1),
+        namedGroups: match.groups ? { ...match.groups } : undefined,
       }));
-      return { error: "", matches };
+      return { error: "", matches, safeFlags };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : "Invalid regular expression", matches: [] };
+      return { error: error instanceof Error ? error.message : "Invalid regular expression", matches: [], safeFlags: "" };
     }
   }, [flags, pattern, sample]);
+  const generated = React.useMemo(() => generateRegexFromExamples(positiveExamples, negativeExamples, dictionary), [dictionary, negativeExamples, positiveExamples]);
+  const rawPattern = pattern;
+  const slashWrappedPattern = `/${pattern.replace(/\//g, "\\/")}/${result.safeFlags}`;
 
   return (
     <div className="space-y-4">
@@ -167,9 +423,65 @@ function RegexTool({ dictionary }: { dictionary: ClientDictionary }) {
         </label>
         <label className="space-y-2">
           <span className="text-sm font-medium">{ui(dictionary, "flags", "Flags")}</span>
-          <Input value={flags} onChange={(event) => setFlags(event.target.value.replace(/[^gimsuyd]/g, ""))} />
+          <Input value={flags} onChange={(event) => setFlags(normalizeRegexFlags(event.target.value))} />
         </label>
       </div>
+      <div className="space-y-2" data-regex-presets>
+        <p className="text-sm font-medium">{ui(dictionary, "regexPresets", "Pattern presets")}</p>
+        <div className="flex flex-wrap gap-2">
+          {regexPresets.map((preset) => (
+            <Button
+              key={preset.labelKey}
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setPattern(preset.pattern);
+                setFlags(preset.flags);
+                setSample(preset.sample);
+              }}
+            >
+              {ui(dictionary, preset.labelKey, preset.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <section className="rounded-md border bg-card" data-regex-cheat-snippets>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "regexCheatSnippets", "Regex snippets")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "regexCheatSnippetsDescription", "Apply common production patterns, then verify them against your own sample before copying.")}</p>
+        </div>
+        <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-3">
+          {regexCheatSnippets.map((snippet) => (
+            <div key={snippet.labelKey} className="min-w-0 rounded-md bg-muted p-3">
+              <div className="flex min-w-0 items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{ui(dictionary, snippet.labelKey, snippet.fallbackLabel)}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, snippet.descriptionKey, snippet.fallbackDescription)}</p>
+                </div>
+                <Badge>{snippet.flags}</Badge>
+              </div>
+              <code className="mt-2 block break-all rounded bg-background px-2 py-1 text-xs text-muted-foreground">{snippet.pattern}</code>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPattern(snippet.pattern);
+                    setFlags(snippet.flags);
+                    setSample(snippet.sample);
+                  }}
+                >
+                  {ui(dictionary, "applyRegexSnippet", "Apply")}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(snippet.pattern)}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyRegexSnippet", "Copy")}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
       <label className="block space-y-2">
         <span className="text-sm font-medium">{ui(dictionary, "sampleText", "Sample text")}</span>
         <Textarea value={sample} onChange={(event) => setSample(event.target.value)} />
@@ -177,45 +489,396 @@ function RegexTool({ dictionary }: { dictionary: ClientDictionary }) {
       {result.error ? (
         <ErrorAlert title={ui(dictionary, "syntaxError", "Syntax error")} message={result.error} />
       ) : (
-        <ResultBlock title={`${result.matches.length} match${result.matches.length === 1 ? "" : "es"}`} value={JSON.stringify(result.matches, null, 2)} dictionary={dictionary} />
+        <div className="space-y-4" data-regex-result-details>
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-md border bg-card p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "regexMatches", "Matches")}</p>
+              <p className="mt-2 text-lg font-semibold">{result.matches.length}</p>
+            </div>
+            <div className="rounded-md border bg-card p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "effectiveFlags", "Effective flags")}</p>
+              <p className="mt-2 font-mono text-sm font-semibold">{result.safeFlags}</p>
+            </div>
+            <div className="flex flex-wrap items-end gap-2 rounded-md border bg-card p-3">
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(rawPattern)}>
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copyRawPattern", "Copy raw")}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(slashWrappedPattern)}>
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copySlashPattern", "Copy /pattern/")}
+              </Button>
+            </div>
+          </div>
+          <section className="rounded-md border bg-card" data-regex-match-list>
+            <div className="border-b p-3">
+              <h3 className="text-sm font-semibold">{ui(dictionary, "matchDetails", "Match details")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "matchDetailsDescription", "Inspect positions and capture groups before copying the pattern.")}</p>
+            </div>
+            {result.matches.length ? (
+              <div className="divide-y">
+                {result.matches.map((match) => (
+                  <div key={`${match.index}-${match.position}`} className="grid gap-2 p-3 text-sm md:grid-cols-[88px_1fr]">
+                    <Badge className="w-fit">
+                      #{match.index} @ {match.position}
+                    </Badge>
+                    <div className="min-w-0 space-y-2">
+                      <code className="block break-all rounded bg-muted px-2 py-1 text-xs">{match.text}</code>
+                      {match.groups.length || match.namedGroups ? (
+                        <div className="flex min-w-0 flex-wrap gap-2">
+                          {match.groups.map((group, groupIndex) => (
+                            <code key={`${match.index}-group-${groupIndex}`} className="max-w-full break-all rounded-md border bg-background px-2 py-1 text-xs">
+                              {ui(dictionary, "captureGroup", "Group")} {groupIndex + 1}: {group}
+                            </code>
+                          ))}
+                          {match.namedGroups
+                            ? Object.entries(match.namedGroups).map(([name, value]) => (
+                                <code key={`${match.index}-named-${name}`} className="max-w-full break-all rounded-md border bg-background px-2 py-1 text-xs">
+                                  {name}: {value}
+                                </code>
+                              ))
+                            : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="p-3 text-sm text-muted-foreground">{ui(dictionary, "noRegexMatches", "No matches for this sample.")}</p>
+            )}
+          </section>
+          <ResultBlock title={ui(dictionary, "rawMatchJson", "Raw match JSON")} value={JSON.stringify(result.matches, null, 2)} dictionary={dictionary} />
+        </div>
       )}
+      <section className="rounded-md border bg-card" data-regex-generator>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "regexGeneratorTitle", "Generate from examples")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "regexGeneratorDescription", "Draft a starting pattern from positive and negative examples, then test it above before copying.")}</p>
+        </div>
+        <div className="grid gap-3 p-3 md:grid-cols-2">
+          <label className="block space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "positiveExamples", "Positive examples")}</span>
+            <Textarea value={positiveExamples} onChange={(event) => setPositiveExamples(event.target.value)} className="min-h-32" />
+          </label>
+          <label className="block space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "negativeExamples", "Negative examples")}</span>
+            <Textarea value={negativeExamples} onChange={(event) => setNegativeExamples(event.target.value)} className="min-h-32" />
+          </label>
+        </div>
+        <div className="space-y-3 border-t p-3" data-regex-generator-results>
+          <ToolMetricGrid
+            items={[
+              { label: ui(dictionary, "generatorConfidence", "Confidence"), value: generated.confidence },
+              { label: ui(dictionary, "positiveMatches", "Positive matches"), value: String(generated.positiveMatches) },
+              { label: ui(dictionary, "negativeMatches", "Negative matches"), value: String(generated.negativeMatches) },
+              { label: ui(dictionary, "suggestedPattern", "Suggested pattern"), value: generated.pattern || "—" },
+            ]}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => copyToClipboard(generated.pattern)} disabled={!generated.pattern}>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyRawPattern", "Copy raw")}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                if (!generated.pattern) return;
+                setPattern(generated.pattern);
+                setFlags("gi");
+                setSample([...positiveExamples.split(/\r?\n/), ...negativeExamples.split(/\r?\n/)].filter(Boolean).join("\n"));
+              }}
+              disabled={!generated.pattern}
+            >
+              {ui(dictionary, "applyGeneratedPattern", "Apply generated pattern")}
+            </Button>
+          </div>
+          <ToolWarningList title={ui(dictionary, "generatorWarnings", "Generator warnings")} warnings={generated.warnings} emptyLabel={ui(dictionary, "regexGeneratedNoWarnings", "Generated pattern is ready for review in the tester above.")} />
+        </div>
+      </section>
     </div>
   );
 }
 
+const cronPresets = [
+  { labelKey: "cronEvery15Minutes", fallback: "Every 15 minutes", value: "*/15 * * * *" },
+  { labelKey: "cronWeekdayMorning", fallback: "Every weekday at 09:00", value: "0 9 * * 1-5" },
+  { labelKey: "cronMonthlyMorning", fallback: "First day of month at 08:30", value: "30 8 1 * *" },
+  { labelKey: "cronSundayMidnight", fallback: "Every Sunday at midnight", value: "0 0 * * 0" },
+];
+
+const cronFields = [
+  { key: "minuteField", fallback: "Minute", min: 0, max: 59 },
+  { key: "hourField", fallback: "Hour", min: 0, max: 23 },
+  { key: "dayOfMonthField", fallback: "Day of month", min: 1, max: 31 },
+  { key: "monthField", fallback: "Month", min: 1, max: 12 },
+  { key: "dayOfWeekField", fallback: "Day of week", min: 0, max: 7 },
+];
+
+type CronDayMatchingMode = "or" | "and";
+
+function normalizeCronValue(value: number, min: number, max: number) {
+  if (min === 0 && max === 7 && value === 7) return 0;
+  return value;
+}
+
+function expandCronField(field: string, min: number, max: number) {
+  const values = new Set<number>();
+  const add = (value: number) => {
+    if (!Number.isInteger(value) || value < min || value > max) throw new Error("out-of-range");
+    values.add(normalizeCronValue(value, min, max));
+  };
+
+  for (const segment of field.split(",")) {
+    const part = segment.trim();
+    if (!part) throw new Error("empty-segment");
+    if (part === "*") {
+      for (let value = min; value <= max; value += 1) add(value);
+      continue;
+    }
+    const stepMatch = part.match(/^(\*|\d+-\d+)\/(\d+)$/);
+    if (stepMatch) {
+      const [, base, stepText] = stepMatch;
+      const step = Number(stepText);
+      if (!Number.isInteger(step) || step <= 0) throw new Error("bad-step");
+      const [start, end] = base === "*" ? [min, max] : base!.split("-").map(Number);
+      if (!Number.isInteger(start) || !Number.isInteger(end) || start > end) throw new Error("bad-range");
+      for (let value = start; value <= end; value += step) add(value);
+      continue;
+    }
+    const rangeMatch = part.match(/^(\d+)-(\d+)$/);
+    if (rangeMatch) {
+      const start = Number(rangeMatch[1]);
+      const end = Number(rangeMatch[2]);
+      if (!Number.isInteger(start) || !Number.isInteger(end) || start > end) throw new Error("bad-range");
+      for (let value = start; value <= end; value += 1) add(value);
+      continue;
+    }
+    if (/^\d+$/.test(part)) {
+      add(Number(part));
+      continue;
+    }
+    throw new Error("unsupported-token");
+  }
+
+  return values;
+}
+
+function describeCronField(field: string, dictionary: ClientDictionary) {
+  if (field === "*") return ui(dictionary, "cronAnyValue", "Any value");
+  if (/^\*\/\d+$/.test(field)) return `${ui(dictionary, "cronEvery", "Every")} ${field.slice(2)} ${ui(dictionary, "cronUnits", "units")}`;
+  if (/^\d+-\d+$/.test(field)) return ui(dictionary, "cronRange", "Range");
+  if (field.includes(",")) return ui(dictionary, "cronList", "List");
+  return ui(dictionary, "cronSpecificValue", "Specific value");
+}
+
+function getBrowserTimeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+  } catch {
+    return "Local";
+  }
+}
+
+function matchesCronDay({
+  day,
+  dayOfWeek,
+  dayOfMonthValues,
+  dayOfWeekValues,
+  dayOfMonthRestricted,
+  dayOfWeekRestricted,
+  mode,
+}: {
+  day: number;
+  dayOfWeek: number;
+  dayOfMonthValues: Set<number>;
+  dayOfWeekValues: Set<number>;
+  dayOfMonthRestricted: boolean;
+  dayOfWeekRestricted: boolean;
+  mode: CronDayMatchingMode;
+}) {
+  const dayOfMonthMatches = dayOfMonthValues.has(day);
+  const dayOfWeekMatches = dayOfWeekValues.has(dayOfWeek);
+  if (dayOfMonthRestricted && dayOfWeekRestricted) {
+    return mode === "or" ? dayOfMonthMatches || dayOfWeekMatches : dayOfMonthMatches && dayOfWeekMatches;
+  }
+  return dayOfMonthMatches && dayOfWeekMatches;
+}
+
+function getCronAnalysis(expression: string, dictionary: ClientDictionary, dayMatchingMode: CronDayMatchingMode) {
+  const parts = expression.trim().split(/\s+/).filter(Boolean);
+  const timezone = getBrowserTimeZone();
+  if (parts.length !== 5) {
+    return {
+      valid: false,
+      parts,
+      fields: [],
+      nextRuns: [],
+      warnings: [parts.length === 6 ? "cronSixFieldWarning" : "cronFiveFieldWarning"],
+      timezone,
+      dayMatchingMode,
+    };
+  }
+
+  try {
+    const expanded = cronFields.map((field, index) => expandCronField(parts[index]!, field.min, field.max));
+    const dayOfMonthRestricted = parts[2] !== "*";
+    const dayOfWeekRestricted = parts[4] !== "*";
+    const now = new Date();
+    const cursor = new Date(now);
+    cursor.setSeconds(0, 0);
+    cursor.setMinutes(cursor.getMinutes() + 1);
+    const nextRuns: string[] = [];
+    for (let index = 0; index < 200000 && nextRuns.length < 5; index += 1) {
+      const month = cursor.getMonth() + 1;
+      const day = cursor.getDate();
+      const dayOfWeek = cursor.getDay();
+      const dayMatches = matchesCronDay({
+        day,
+        dayOfWeek,
+        dayOfMonthValues: expanded[2]!,
+        dayOfWeekValues: expanded[4]!,
+        dayOfMonthRestricted,
+        dayOfWeekRestricted,
+        mode: dayMatchingMode,
+      });
+      if (expanded[0]!.has(cursor.getMinutes()) && expanded[1]!.has(cursor.getHours()) && dayMatches && expanded[3]!.has(month)) {
+        nextRuns.push(cursor.toLocaleString());
+      }
+      cursor.setMinutes(cursor.getMinutes() + 1);
+    }
+
+    const warnings = [
+      parts[0] === "*" ? "cronEveryMinuteWarning" : "",
+      dayOfMonthRestricted && dayOfWeekRestricted ? (dayMatchingMode === "or" ? "cronDayOverlapOrWarning" : "cronDayOverlapAndWarning") : "",
+      nextRuns.length === 0 ? "cronNoRunsWarning" : "",
+      "cronTimezoneWarning",
+    ].filter(Boolean);
+
+    return {
+      valid: true,
+      parts,
+      fields: cronFields.map((field, index) => ({
+        ...field,
+        value: parts[index]!,
+        description: describeCronField(parts[index]!, dictionary),
+        count: expanded[index]!.size,
+      })),
+      nextRuns,
+      warnings,
+      timezone,
+      dayMatchingMode,
+    };
+  } catch {
+    return {
+      valid: false,
+      parts,
+      fields: cronFields.map((field, index) => ({
+        ...field,
+        value: parts[index] ?? "—",
+        description: ui(dictionary, "cronInvalidField", "Invalid field"),
+        count: 0,
+      })),
+      nextRuns: [],
+      warnings: ["cronUnsupportedSyntaxWarning"],
+      timezone,
+      dayMatchingMode,
+    };
+  }
+}
+
 function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
-  const presets = [
-    ["Every 15 minutes", "*/15 * * * *"],
-    ["Every weekday at 09:00", "0 9 * * 1-5"],
-    ["First day of month at 08:30", "30 8 1 * *"],
-    ["Every Sunday at midnight", "0 0 * * 0"],
-  ];
-  const [expression, setExpression] = React.useState(presets[0][1]);
-  const parts = expression.trim().split(/\s+/);
+  const [expression, setExpression] = React.useState(cronPresets[0]!.value);
+  const [dayMatchingMode, setDayMatchingMode] = React.useState<CronDayMatchingMode>("or");
+  const analysis = React.useMemo(() => getCronAnalysis(expression, dictionary, dayMatchingMode), [dayMatchingMode, dictionary, expression]);
+  const dayMatchingModeLabel =
+    dayMatchingMode === "or"
+      ? ui(dictionary, "cronDayMatchingOr", "OR, common crontab")
+      : ui(dictionary, "cronDayMatchingAnd", "AND, strict match");
   const summary =
-    parts.length === 5
-      ? `Minute: ${parts[0]}, hour: ${parts[1]}, day of month: ${parts[2]}, month: ${parts[3]}, day of week: ${parts[4]}.`
-      : "Use standard five-field crontab syntax: minute hour day-of-month month day-of-week.";
+    analysis.valid && analysis.parts.length === 5
+      ? `${ui(dictionary, "minuteField", "Minute")}: ${analysis.parts[0]}, ${ui(dictionary, "hourField", "Hour")}: ${analysis.parts[1]}, ${ui(dictionary, "dayOfMonthField", "Day of month")}: ${analysis.parts[2]}, ${ui(dictionary, "monthField", "Month")}: ${analysis.parts[3]}, ${ui(dictionary, "dayOfWeekField", "Day of week")}: ${analysis.parts[4]}.`
+      : ui(dictionary, "cronFiveFieldSyntax", "Use standard five-field crontab syntax: minute hour day-of-month month day-of-week.");
 
   return (
     <div className="space-y-4">
-      <label className="block space-y-2">
-        <span className="text-sm font-medium">{ui(dictionary, "cronExpression", "Cron expression")}</span>
-        <Input value={expression} onChange={(event) => setExpression(event.target.value)} />
-      </label>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {presets.map(([label, value]) => (
-          <Button key={label} variant="outline" className="justify-start" onClick={() => setExpression(value)}>
-            {label}
+      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_240px]">
+        <label className="block min-w-0 space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "cronExpression", "Cron expression")}</span>
+          <Input value={expression} onChange={(event) => setExpression(event.target.value)} />
+        </label>
+        <label className="block min-w-0 space-y-2" data-cron-scheduler-semantics>
+          <span className="text-sm font-medium">{ui(dictionary, "cronDayMatching", "Day matching")}</span>
+          <Select value={dayMatchingMode} onChange={(event) => setDayMatchingMode(event.target.value as CronDayMatchingMode)}>
+            <option value="or">{ui(dictionary, "cronDayMatchingOr", "OR, common crontab")}</option>
+            <option value="and">{ui(dictionary, "cronDayMatchingAnd", "AND, strict match")}</option>
+          </Select>
+        </label>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2" data-cron-presets>
+        {cronPresets.map((preset) => (
+          <Button key={preset.labelKey} variant="outline" className="justify-start" onClick={() => setExpression(preset.value)}>
+            {ui(dictionary, preset.labelKey, preset.fallback)}
           </Button>
         ))}
       </div>
-      <Alert>
+      <Alert data-cron-result-details>
         <AlertTitle>{ui(dictionary, "fiveFieldInterpretation", "Five-field interpretation")}</AlertTitle>
         <AlertDescription>{summary}</AlertDescription>
       </Alert>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5" data-cron-fields>
+        {analysis.fields.map((field) => (
+          <div key={field.key} className="rounded-md border bg-card p-3">
+            <p className="text-xs text-muted-foreground">{ui(dictionary, field.key, field.fallback)}</p>
+            <p className="mt-1 break-words text-sm font-medium">{field.value}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{field.description}</p>
+            <Badge className="mt-2">
+              {ui(dictionary, "cronAllowedValues", "Allowed values")}: {field.count}
+            </Badge>
+          </div>
+        ))}
+      </div>
+      <section className="rounded-md border bg-card p-3" data-cron-runtime-context>
+        <div className="mb-3">
+          <p className="text-sm font-medium">{ui(dictionary, "cronRuntimeContext", "Runtime context")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "cronRuntimeContextDescription", "Match the browser preview with the scheduler that will run this expression.")}</p>
+        </div>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "cronTimezone", "Browser timezone"), value: analysis.timezone },
+            { label: ui(dictionary, "cronDayMatching", "Day matching"), value: dayMatchingModeLabel },
+          ]}
+        />
+      </section>
+      <section className="rounded-md border bg-card p-3" data-cron-next-runs>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">{ui(dictionary, "cronNextRuns", "Next runs")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "cronNextRunsDescription", "Estimated from the browser's local timezone for quick schedule review.")}</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => copyToClipboard(expression)}>
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyCronExpression", "Copy cron")}
+          </Button>
+        </div>
+        <div className="mt-3 grid gap-2">
+          {(analysis.nextRuns.length ? analysis.nextRuns : [ui(dictionary, "cronNoRunsFound", "No runs found in the preview window.")]).map((run, index) => (
+            <div key={`${run}-${index}`} className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+              {run}
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="rounded-md border bg-card p-3" data-cron-warnings>
+        <p className="text-sm font-medium">{ui(dictionary, "cronReviewNotes", "Review notes")}</p>
+        <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+          {analysis.warnings.map((key) => (
+            <li key={key}>- {ui(dictionary, key, key)}</li>
+          ))}
+        </ul>
+      </section>
       <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-        <Kbd>*</Kbd> any value <Kbd>*/15</Kbd> every 15 units <Kbd>1-5</Kbd> range <Kbd>1,3,5</Kbd> list
+        <Kbd>*</Kbd> {ui(dictionary, "cronAnyValue", "Any value")} <Kbd>*/15</Kbd> {ui(dictionary, "cronEvery15Units", "Every 15 units")} <Kbd>1-5</Kbd> {ui(dictionary, "cronRange", "Range")} <Kbd>1,3,5</Kbd> {ui(dictionary, "cronList", "List")}
       </div>
     </div>
   );
@@ -359,20 +1022,167 @@ function LoremTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+const jsonFormatterExamples = [
+  {
+    labelKey: "apiResponseJson",
+    fallback: "API response",
+    value: '{"status":"ok","items":[{"id":1,"name":"Bob","roles":["admin","editor"]}],"meta":{"page":1,"total":42}}',
+  },
+  {
+    labelKey: "packageConfigJson",
+    fallback: "Package config",
+    value: '{"name":"bobob-tools","private":true,"scripts":{"build":"next build","lint":"next lint"},"dependencies":{"next":"15.3.3"}}',
+  },
+  {
+    labelKey: "analyticsEventJson",
+    fallback: "Analytics event",
+    value: '{"event":"tool_used","tool":"json-formatter","timestamp":"2026-06-10T08:00:00.000Z","properties":{"locale":"en","localOnly":true}}',
+  },
+];
+
+function getJsonValueType(value: unknown) {
+  if (value === null) return "null";
+  if (Array.isArray(value)) return "array";
+  return typeof value;
+}
+
+function collectJsonStats(value: unknown, formatted: string) {
+  let objectCount = 0;
+  let arrayCount = 0;
+  let keyCount = 0;
+  let primitiveCount = 0;
+
+  const walk = (node: unknown, depth: number): number => {
+    if (Array.isArray(node)) {
+      arrayCount += 1;
+      if (node.length === 0) return depth;
+      return Math.max(...node.map((item) => walk(item, depth + 1)));
+    }
+    if (node && typeof node === "object") {
+      objectCount += 1;
+      const entries = Object.entries(node as Record<string, unknown>);
+      keyCount += entries.length;
+      if (entries.length === 0) return depth;
+      return Math.max(...entries.map(([, item]) => walk(item, depth + 1)));
+    }
+    primitiveCount += 1;
+    return depth;
+  };
+
+  const rootType = getJsonValueType(value);
+  const topLevelItems = Array.isArray(value) ? value.length : value && typeof value === "object" ? Object.keys(value).length : 1;
+
+  return {
+    rootType,
+    topLevelItems,
+    depth: walk(value, 1),
+    lines: formatted ? formatted.split("\n").length : 0,
+    bytes: new Blob([formatted]).size,
+    objectCount,
+    arrayCount,
+    keyCount,
+    primitiveCount,
+  };
+}
+
+function getJsonRootEntries(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.slice(0, 8).map((item, index) => ({ name: `[${index}]`, type: getJsonValueType(item) }));
+  }
+  if (value && typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>)
+      .slice(0, 8)
+      .map(([name, item]) => ({ name, type: getJsonValueType(item) }));
+  }
+  return [{ name: "value", type: getJsonValueType(value) }];
+}
+
+function getJsonPreviewValue(value: unknown) {
+  if (Array.isArray(value)) return `${value.length} items`;
+  if (value && typeof value === "object") return `${Object.keys(value as Record<string, unknown>).length} keys`;
+  const serialized = JSON.stringify(value);
+  return serialized === undefined ? String(value) : serialized;
+}
+
+function collectJsonPaths(value: unknown, limit = 12) {
+  const paths: Array<{ path: string; type: string; preview: string }> = [];
+  const walk = (node: unknown, path: string, depth: number) => {
+    if (paths.length >= limit || depth > 5) return;
+    paths.push({ path, type: getJsonValueType(node), preview: getJsonPreviewValue(node) });
+
+    if (Array.isArray(node)) {
+      node.slice(0, 4).forEach((item, index) => walk(item, `${path}[${index}]`, depth + 1));
+      return;
+    }
+
+    if (node && typeof node === "object") {
+      Object.entries(node as Record<string, unknown>)
+        .slice(0, 6)
+        .forEach(([key, item]) => {
+          const safeKey = /^[A-Za-z_$][\w$]*$/.test(key) ? `.${key}` : `[${JSON.stringify(key)}]`;
+          walk(item, `${path}${safeKey}`, depth + 1);
+        });
+    }
+  };
+
+  walk(value, "$", 1);
+  return paths;
+}
+
+function getJsonErrorLocation(message: string, input: string) {
+  const explicitLineColumn = message.match(/line\s+(\d+)\s+column\s+(\d+)/i);
+  const positionMatch = message.match(/position\s+(\d+)/i);
+  const position = positionMatch ? Number(positionMatch[1]) : null;
+  if (!explicitLineColumn && position === null) return null;
+
+  const safePosition = typeof position === "number" && Number.isFinite(position) ? Math.max(0, Math.min(input.length, position)) : 0;
+  const before = input.slice(0, safePosition);
+  const line = explicitLineColumn ? Number(explicitLineColumn[1]) : before.split("\n").length;
+  const column = explicitLineColumn ? Number(explicitLineColumn[2]) : before.split("\n").at(-1)!.length + 1;
+  const lineText = input.split("\n")[Math.max(0, line - 1)] ?? input.slice(Math.max(0, safePosition - 40), safePosition + 40);
+
+  return {
+    position: safePosition,
+    line,
+    column,
+    excerpt: lineText.trim() || input.slice(Math.max(0, safePosition - 40), safePosition + 40),
+  };
+}
+
 function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState('{"status":"ok","items":[{"id":1,"name":"Bob"}]}');
   const [space, setSpace] = React.useState("2");
   const result = React.useMemo(() => {
     try {
       const parsed = JSON.parse(input);
-      return { error: "", value: JSON.stringify(parsed, null, Number(space)) };
+      const value = JSON.stringify(parsed, null, Number(space));
+      const minified = JSON.stringify(parsed);
+      return {
+        error: "",
+        value,
+        minified,
+        stats: collectJsonStats(parsed, value),
+        rootEntries: getJsonRootEntries(parsed),
+        paths: collectJsonPaths(parsed),
+      };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : "Invalid JSON", value: "" };
+      const message = error instanceof Error ? error.message : "Invalid JSON";
+      return { error: message, value: "", minified: "", stats: null, rootEntries: [], paths: [], errorLocation: getJsonErrorLocation(message, input) };
     }
   }, [input, space]);
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2" data-json-examples>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jsonExamples", "JSON examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {jsonFormatterExamples.map((example) => (
+            <Button key={example.labelKey} type="button" variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallback)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-3 md:grid-cols-[1fr_140px]">
         <label className="space-y-2">
           <span className="text-sm font-medium">{ui(dictionary, "jsonInput", "JSON input")}</span>
@@ -381,13 +1191,114 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
         <label className="space-y-2">
           <span className="text-sm font-medium">{ui(dictionary, "indent", "Indent")}</span>
           <Select value={space} onChange={(event) => setSpace(event.target.value)}>
-            <option value="2">2 spaces</option>
-            <option value="4">4 spaces</option>
-            <option value="0">Minified</option>
+            <option value="2">{ui(dictionary, "twoSpaces", "2 spaces")}</option>
+            <option value="4">{ui(dictionary, "fourSpaces", "4 spaces")}</option>
+            <option value="0">{ui(dictionary, "minified", "Minified")}</option>
           </Select>
         </label>
       </div>
-      {result.error ? <ErrorAlert title={ui(dictionary, "invalidJson", "Invalid JSON")} message={result.error} /> : <ResultBlock title={ui(dictionary, "formattedJson", "Formatted JSON")} value={result.value} dictionary={dictionary} />}
+      {result.error ? (
+        <div className="space-y-3">
+          <ErrorAlert title={ui(dictionary, "invalidJson", "Invalid JSON")} message={result.error} />
+          {result.errorLocation ? (
+            <section className="rounded-md border bg-card p-3" data-json-error-details>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-medium">{ui(dictionary, "jsonErrorDetails", "JSON error details")}</p>
+                <Badge>
+                  {ui(dictionary, "errorPosition", "Position")} {result.errorLocation.position}
+                </Badge>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {ui(dictionary, "errorLineColumn", "Line / column")}: {result.errorLocation.line}:{result.errorLocation.column}
+              </p>
+              <pre className="mt-3 overflow-x-auto rounded-md bg-muted p-3 text-xs">
+                <code>{result.errorLocation.excerpt}</code>
+              </pre>
+            </section>
+          ) : null}
+        </div>
+      ) : (
+        <div className="space-y-4" data-json-result-details>
+          {result.stats ? (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: ui(dictionary, "rootType", "Root type"), value: result.stats.rootType },
+                { label: ui(dictionary, "topLevelItems", "Top-level items"), value: String(result.stats.topLevelItems) },
+                { label: ui(dictionary, "nestedDepth", "Nested depth"), value: String(result.stats.depth) },
+                { label: ui(dictionary, "outputLines", "Output lines"), value: String(result.stats.lines) },
+              ].map((item) => (
+                <div key={item.label} className="rounded-md border bg-card p-3">
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
+                  <p className="mt-1 break-words text-sm font-medium">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          <section className="rounded-md border bg-card p-3" data-json-structure>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{ui(dictionary, "jsonStructure", "JSON structure")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsonStructureDescription", "Review the root shape before copying the formatted payload.")}</p>
+              </div>
+              {result.stats ? (
+                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                  <Badge>
+                    {ui(dictionary, "totalKeys", "Keys")}: {result.stats.keyCount}
+                  </Badge>
+                  <Badge>
+                    {ui(dictionary, "arrays", "Arrays")}: {result.stats.arrayCount}
+                  </Badge>
+                  <Badge>
+                    {ui(dictionary, "primitives", "Primitives")}: {result.stats.primitiveCount}
+                  </Badge>
+                </div>
+              ) : null}
+            </div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {result.rootEntries.map((entry) => (
+                <div key={`${entry.name}-${entry.type}`} className="min-w-0 rounded-md bg-muted px-3 py-2 text-xs">
+                  <span className="font-medium break-words">{entry.name}</span>
+                  <span className="mx-2 text-muted-foreground">:</span>
+                  <span className="text-muted-foreground">{entry.type}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="rounded-md border bg-card p-3" data-json-path-preview>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{ui(dictionary, "jsonPathPreview", "JSON path preview")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsonPathPreviewDescription", "Copy common paths before moving into JSONPath or TypeScript generation.")}</p>
+              </div>
+              <Badge>{result.paths.length}</Badge>
+            </div>
+            <div className="mt-3 grid gap-2">
+              {result.paths.map((entry) => (
+                <div key={`${entry.path}-${entry.type}`} className="grid min-w-0 gap-2 rounded-md bg-muted px-3 py-2 text-xs md:grid-cols-[minmax(0,1.2fr)_7rem_minmax(0,1fr)_auto] md:items-center">
+                  <code className="min-w-0 overflow-x-auto whitespace-nowrap rounded bg-background px-2 py-1">{entry.path}</code>
+                  <span className="text-muted-foreground">{entry.type}</span>
+                  <span className="min-w-0 truncate text-muted-foreground">{entry.preview}</span>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(entry.path)}>
+                    <Copy className="h-4 w-4" />
+                    {ui(dictionary, "copyJsonPath", "Copy path")}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </section>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.value)}>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyFormattedJson", "Copy formatted JSON")}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.minified)}>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyMinifiedJson", "Copy minified JSON")}
+            </Button>
+          </div>
+          <ResultBlock title={ui(dictionary, "formattedJson", "Formatted JSON")} value={result.value} dictionary={dictionary} />
+        </div>
+      )}
     </div>
   );
 }
@@ -424,17 +1335,70 @@ function unescapeJsonString(value: string) {
   return parsed;
 }
 
+const jsonEscapeExamples = [
+  { labelKey: "jsonEscapeLogLineExample", fallbackLabel: "Log line", value: '{"message":"Hello Bob","path":"/tools/json-formatter"}' },
+  { labelKey: "jsonEscapeMultilineExample", fallbackLabel: "Multiline text", value: "Line 1\nLine 2\tTabbed\nQuote: \"Bob\"" },
+  { labelKey: "jsonEscapeWindowsPathExample", fallbackLabel: "Windows path", value: "C:\\temp\\bob\\payload.json" },
+];
+
 function JsonEscapeTool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [input, setInput] = React.useState(jsonEscapeExamples[0].value);
+  const [mode, setMode] = React.useState("escape");
+  const result = React.useMemo(() => {
+    try {
+      return { error: "", value: mode === "escape" ? escapeJsonString(input) : unescapeJsonString(input) };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "JSON string transform failed.", value: "" };
+    }
+  }, [input, mode]);
+  const outputValue = result.value;
+  const warnings = [
+    mode === "unescape" && !input.trim().startsWith("\"") ? ui(dictionary, "jsonUnescapeQuoteWarning", "Unescape mode treats unquoted input as a JSON string value. Wrap copied JSON string literals in quotes when possible.") : "",
+    /\\{3,}/.test(input) ? ui(dictionary, "jsonEscapeBackslashWarning", "The input already contains repeated backslashes. Confirm it is not already escaped before copying.") : "",
+    mode === "escape" && /\r?\n|\t/.test(input) ? ui(dictionary, "jsonEscapeControlWarning", "Line breaks and tabs will be escaped for transport. Confirm the target expects literal escape sequences.") : "",
+    mode === "escape" && /["']/.test(input) ? ui(dictionary, "jsonEscapeQuoteWarning", "Quotes are present. Check whether the output is going into a JSON string, JavaScript string, or shell command.") : "",
+  ].filter(Boolean);
+
   return (
-    <TextTransformTool
-      dictionary={dictionary}
-      inputLabel={ui(dictionary, "jsonStringInput", "JSON string input")}
-      defaultInput={"{\"message\":\"Hello Bob\",\"path\":\"/tools/json-formatter\"}"}
-      modes={[
-        { value: "escape", label: ui(dictionary, "escapeJsonString", "Escape JSON string"), transform: escapeJsonString },
-        { value: "unescape", label: ui(dictionary, "unescapeJsonString", "Unescape JSON string"), transform: unescapeJsonString },
-      ]}
-    />
+    <div className="space-y-4" data-json-escape-tool>
+      <div className="space-y-2" data-json-escape-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "jsonEscapeExamples", "JSON string examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {jsonEscapeExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
+        <label className="block space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "jsonStringInput", "JSON string input")}</span>
+          <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-44" />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "mode", "Mode")}</span>
+          <Select value={mode} onChange={(event) => setMode(event.target.value)}>
+            <option value="escape">{ui(dictionary, "escapeJsonString", "Escape JSON string")}</option>
+            <option value="unescape">{ui(dictionary, "unescapeJsonString", "Unescape JSON string")}</option>
+          </Select>
+        </label>
+      </div>
+      <div data-json-escape-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(byteLength(input)) },
+            { label: ui(dictionary, "characters", "Characters"), value: String(input.length) },
+            { label: ui(dictionary, "escapedLength", "Escaped length"), value: result.error ? "—" : String(outputValue.length) },
+            { label: ui(dictionary, "lineBreaks", "Line breaks"), value: String((input.match(/\r?\n/g) ?? []).length) },
+          ]}
+        />
+      </div>
+      <div data-json-escape-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "jsonEscapeNoWarnings", "String is ready to copy for the selected mode.")} />
+      </div>
+      {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={ui(dictionary, "output", "Output")} value={result.value} dictionary={dictionary} />}
+    </div>
   );
 }
 
@@ -445,24 +1409,144 @@ function decodeBase64Url(value: string) {
   return new TextDecoder().decode(bytes);
 }
 
+const jwtDecoderExamples = [
+  {
+    labelKey: "jwtActiveExample",
+    fallback: "Session token",
+    value:
+      "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmNvbSIsImF1ZCI6ImJvYm9iLWFwaSIsInNjb3BlIjoicmVhZDp0b29scyB3cml0ZTpub3RlcyIsImlhdCI6MTc4MTA0OTYwMCwibmJmIjoxNzgxMDQ5NjAwLCJleHAiOjQxMDI0NDQ4MDB9.signature",
+  },
+  {
+    labelKey: "jwtExpiredExample",
+    fallback: "Expired token",
+    value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsImlzcyI6ImxlZ2FjeS1hcHAiLCJhdWQiOiJhcGkiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTUxNjI0MjYyMn0.signature",
+  },
+  {
+    labelKey: "jwtUnsignedExample",
+    fallback: "Unsigned dev token",
+    value: "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpc3MiOiJkZXYiLCJzdWIiOiJsb2NhbC10ZXN0Iiwic2NvcGUiOlsiZGVidWciLCJwcmV2aWV3Il19.signature",
+  },
+];
+
+function getRecordValue(record: Record<string, unknown>, key: string) {
+  const value = record[key];
+  if (Array.isArray(value)) return value.join(", ");
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function getNumericClaim(record: Record<string, unknown>, key: string) {
+  const value = record[key];
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() && Number.isFinite(Number(value))) return Number(value);
+  return null;
+}
+
+function formatJwtDate(seconds: number | null) {
+  if (seconds === null) return "—";
+  return `${new Date(seconds * 1000).toISOString()} (${seconds})`;
+}
+
+function formatJwtDuration(totalSeconds: number | null, dictionary: ClientDictionary) {
+  if (totalSeconds === null || !Number.isFinite(totalSeconds)) return "—";
+  const absolute = Math.max(0, Math.trunc(totalSeconds));
+  if (absolute < 60) return `${absolute}${ui(dictionary, "jwtSecondUnit", "s")}`;
+  const minutes = Math.floor(absolute / 60);
+  if (minutes < 60) return `${minutes}${ui(dictionary, "jwtMinuteUnit", "m")}`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 48) return `${hours}${ui(dictionary, "jwtHourUnit", "h")} ${minutes % 60}${ui(dictionary, "jwtMinuteUnit", "m")}`;
+  const days = Math.floor(hours / 24);
+  return `${days}${ui(dictionary, "jwtDayUnit", "d")} ${hours % 24}${ui(dictionary, "jwtHourUnit", "h")}`;
+}
+
+function formatJwtRelative(seconds: number | null, nowSeconds: number, dictionary: ClientDictionary) {
+  if (seconds === null) return "—";
+  const delta = seconds - nowSeconds;
+  if (Math.abs(delta) < 60) return ui(dictionary, "jwtNow", "now");
+  const duration = formatJwtDuration(Math.abs(delta), dictionary);
+  const template = delta > 0 ? ui(dictionary, "jwtInRelative", "in {duration}") : ui(dictionary, "jwtAgoRelative", "{duration} ago");
+  return template.replace("{duration}", duration);
+}
+
+function getJwtStatus(payload: Record<string, unknown>, nowSeconds: number, dictionary: ClientDictionary) {
+  const exp = getNumericClaim(payload, "exp");
+  const nbf = getNumericClaim(payload, "nbf");
+  if (nbf !== null && nowSeconds < nbf) return ui(dictionary, "notActiveYet", "Not active yet");
+  if (exp !== null && nowSeconds >= exp) return ui(dictionary, "expiredTokenStatus", "Expired");
+  if (exp === null) return ui(dictionary, "noExpiration", "No expiration");
+  return ui(dictionary, "activeToken", "Active");
+}
+
+function getJwtTimeWindow(payload: Record<string, unknown>, nowSeconds: number, dictionary: ClientDictionary) {
+  const issuedAt = getNumericClaim(payload, "iat");
+  const notBefore = getNumericClaim(payload, "nbf");
+  const expiresAt = getNumericClaim(payload, "exp");
+  const lifetime = issuedAt !== null && expiresAt !== null && expiresAt >= issuedAt ? expiresAt - issuedAt : null;
+  return [
+    { label: ui(dictionary, "issuedAge", "Issued age"), value: formatJwtRelative(issuedAt, nowSeconds, dictionary) },
+    { label: ui(dictionary, "validAfter", "Valid after"), value: formatJwtRelative(notBefore, nowSeconds, dictionary) },
+    { label: ui(dictionary, "expiresIn", "Expires in"), value: formatJwtRelative(expiresAt, nowSeconds, dictionary) },
+    { label: ui(dictionary, "tokenLifetime", "Token lifetime"), value: formatJwtDuration(lifetime, dictionary) },
+  ];
+}
+
 function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
-  const [token, setToken] = React.useState("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkJvYiIsImlhdCI6MTUxNjIzOTAyMn0.signature");
+  const [token, setToken] = React.useState(jwtDecoderExamples[0]!.value);
   const result = React.useMemo(() => {
     try {
-      const [header, payload] = token.split(".");
+      const [header, payload, signature] = token.trim().split(".");
       if (!header || !payload) throw new Error("JWT must contain header and payload segments.");
+      const headerObject = JSON.parse(decodeBase64Url(header)) as Record<string, unknown>;
+      const payloadObject = JSON.parse(decodeBase64Url(payload)) as Record<string, unknown>;
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      const warningKeys = [
+        "signatureNotVerified",
+        !signature ? "missingSignatureWarning" : "",
+        getRecordValue(headerObject, "alg").toLowerCase() === "none" ? "unsignedAlgorithmWarning" : "",
+        getNumericClaim(payloadObject, "exp") === null ? "missingExpirationWarning" : "",
+      ].filter(Boolean);
+
       return {
         error: "",
-        header: JSON.stringify(JSON.parse(decodeBase64Url(header)), null, 2),
-        payload: JSON.stringify(JSON.parse(decodeBase64Url(payload)), null, 2),
+        header: JSON.stringify(headerObject, null, 2),
+        payload: JSON.stringify(payloadObject, null, 2),
+        summary: {
+          algorithm: getRecordValue(headerObject, "alg"),
+          type: getRecordValue(headerObject, "typ"),
+          status: getJwtStatus(payloadObject, nowSeconds, dictionary),
+          expiresAt: formatJwtDate(getNumericClaim(payloadObject, "exp")),
+        },
+        claims: [
+          { label: ui(dictionary, "subject", "Subject"), value: getRecordValue(payloadObject, "sub") },
+          { label: ui(dictionary, "issuer", "Issuer"), value: getRecordValue(payloadObject, "iss") },
+          { label: ui(dictionary, "audience", "Audience"), value: getRecordValue(payloadObject, "aud") },
+          { label: ui(dictionary, "scope", "Scope"), value: getRecordValue(payloadObject, "scope") },
+          { label: ui(dictionary, "issuedAt", "Issued at"), value: formatJwtDate(getNumericClaim(payloadObject, "iat")) },
+          { label: ui(dictionary, "notBefore", "Not before"), value: formatJwtDate(getNumericClaim(payloadObject, "nbf")) },
+          { label: ui(dictionary, "expiresAt", "Expires at"), value: formatJwtDate(getNumericClaim(payloadObject, "exp")) },
+          { label: ui(dictionary, "signature", "Signature"), value: signature ? ui(dictionary, "present", "Present") : ui(dictionary, "missing", "Missing") },
+        ],
+        timeWindow: getJwtTimeWindow(payloadObject, nowSeconds, dictionary),
+        warningKeys,
       };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : "Invalid token", header: "", payload: "" };
+      return { error: error instanceof Error ? error.message : "Invalid token", header: "", payload: "", summary: null, claims: [], timeWindow: [], warningKeys: [] };
     }
-  }, [token]);
+  }, [dictionary, token]);
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2" data-jwt-examples>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jwtExamples", "JWT examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {jwtDecoderExamples.map((example) => (
+            <Button key={example.labelKey} type="button" variant="outline" size="sm" onClick={() => setToken(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallback)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <label className="block space-y-2">
         <span className="text-sm font-medium">JWT</span>
         <Textarea value={token} onChange={(event) => setToken(event.target.value)} className="min-h-28" />
@@ -470,12 +1554,62 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
       {result.error ? (
         <ErrorAlert title={ui(dictionary, "decodeError", "Decode error")} message={result.error} />
       ) : (
-        <Tabs
-          tabs={[
-            { value: "header", label: ui(dictionary, "header", "Header"), content: <ResultBlock title={ui(dictionary, "header", "Header")} value={result.header} dictionary={dictionary} /> },
-            { value: "payload", label: ui(dictionary, "payload", "Payload"), content: <ResultBlock title={ui(dictionary, "payload", "Payload")} value={result.payload} dictionary={dictionary} /> },
-          ]}
-        />
+        <div className="space-y-4" data-jwt-result-details>
+          {result.summary ? (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: ui(dictionary, "algorithm", "Algorithm"), value: result.summary.algorithm },
+                { label: ui(dictionary, "tokenType", "Token type"), value: result.summary.type },
+                { label: ui(dictionary, "tokenStatus", "Token status"), value: result.summary.status },
+                { label: ui(dictionary, "expiresAt", "Expires at"), value: result.summary.expiresAt },
+              ].map((item) => (
+                <div key={item.label} className="rounded-md border bg-card p-3">
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
+                  <p className="mt-1 break-words text-sm font-medium">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          <section className="rounded-md border bg-card p-3" data-jwt-time-window>
+            <p className="text-sm font-medium">{ui(dictionary, "jwtTimeWindow", "JWT time window")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtTimeWindowDescription", "Compare iat, nbf, exp, and lifetime against the current browser time before using the token.")}</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {result.timeWindow.map((item) => (
+                <div key={item.label} className="min-w-0 rounded-md bg-muted px-3 py-2 text-xs">
+                  <p className="text-muted-foreground">{item.label}</p>
+                  <p className="mt-1 break-words font-medium text-foreground">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="rounded-md border bg-card p-3" data-jwt-claims>
+            <p className="text-sm font-medium">{ui(dictionary, "jwtClaims", "JWT claims")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtClaimsDescription", "Review identity, issuer, audience, time claims, and signature state before using the token.")}</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {result.claims.map((claim) => (
+                <div key={claim.label} className="min-w-0 rounded-md bg-muted px-3 py-2 text-xs">
+                  <span className="font-medium">{claim.label}</span>
+                  <span className="mx-2 text-muted-foreground">:</span>
+                  <span className="break-words text-muted-foreground">{claim.value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="rounded-md border bg-card p-3" data-jwt-warnings>
+            <p className="text-sm font-medium">{ui(dictionary, "jwtReviewNotes", "Review notes")}</p>
+            <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+              {result.warningKeys.map((key) => (
+                <li key={key}>- {ui(dictionary, key, key)}</li>
+              ))}
+            </ul>
+          </section>
+          <Tabs
+            tabs={[
+              { value: "header", label: ui(dictionary, "header", "Header"), content: <ResultBlock title={ui(dictionary, "header", "Header")} value={result.header} dictionary={dictionary} /> },
+              { value: "payload", label: ui(dictionary, "payload", "Payload"), content: <ResultBlock title={ui(dictionary, "payload", "Payload")} value={result.payload} dictionary={dictionary} /> },
+            ]}
+          />
+        </div>
       )}
     </div>
   );
@@ -493,6 +1627,112 @@ function decodeUtf8Base64(value: string) {
   return new TextDecoder().decode(bytes);
 }
 
+function decodeBase64Bytes(value: string) {
+  const binary = globalThis.atob(value);
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+const base64Examples = [
+  { labelKey: "base64PlainTextExample", fallback: "Plain text", value: "hello world", mode: "encode" },
+  { labelKey: "base64JwtPayloadExample", fallback: "JWT payload", value: "eyJzdWIiOiIxMjMifQ==", mode: "decode" },
+  { labelKey: "base64UrlSafeExample", fallback: "URL-safe token", value: "dG9rZW4_Ky8", mode: "decode" },
+  { labelKey: "base64PngDataUrlExample", fallback: "PNG data URL", value: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMB/6Xr5eQAAAAASUVORK5CYII=", mode: "decode" },
+];
+
+function normalizeBase64Input(value: string) {
+  const compact = (parseImageDataUrl(value)?.base64 ?? value).trim().replace(/\s+/g, "");
+  const urlSafe = /[-_]/.test(compact);
+  const normalized = compact.replace(/-/g, "+").replace(/_/g, "/");
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(normalized)) throw new Error("Input contains characters outside the Base64 alphabet.");
+  const remainder = normalized.length % 4;
+  if (remainder === 1) throw new Error("Base64 length is invalid. Check for missing or extra characters.");
+  const padded = normalized + (remainder ? "=".repeat(4 - remainder) : "");
+  return {
+    compact,
+    normalized,
+    padded,
+    urlSafe,
+    missingPadding: padded.length - normalized.length,
+    paddingCount: (compact.match(/=/g) ?? []).length,
+  };
+}
+
+function encodeUrlSafeBase64(value: string) {
+  return value.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function getTextKind(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "empty";
+  try {
+    JSON.parse(trimmed);
+    return "json";
+  } catch {
+    return /^[\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]*$/.test(value) ? "text" : "binary";
+  }
+}
+
+function countJsonKeys(value: string) {
+  try {
+    const parsed = JSON.parse(value);
+    let count = 0;
+    const visit = (node: unknown) => {
+      if (Array.isArray(node)) {
+        node.forEach(visit);
+        return;
+      }
+      if (node && typeof node === "object") {
+        const entries = Object.entries(node);
+        count += entries.length;
+        entries.forEach(([, child]) => visit(child));
+      }
+    };
+    visit(parsed);
+    return count;
+  } catch {
+    return 0;
+  }
+}
+
+function countControlCharacters(value: string) {
+  return (value.match(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g) ?? []).length;
+}
+
+function parseImageDataUrl(value: string) {
+  const match = value.trim().match(/^data:(image\/(?:png|jpe?g|gif|webp|svg\+xml));base64,([A-Za-z0-9+/=_-]+)$/i);
+  if (!match?.[1] || !match[2]) return null;
+  return { mime: match[1].toLowerCase().replace("image/jpg", "image/jpeg"), base64: match[2], dataUrl: value.trim() };
+}
+
+function detectImageMime(bytes: Uint8Array, decodedText: string) {
+  if (bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "image/png";
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
+  if (bytes.length >= 6 && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "image/gif";
+  if (bytes.length >= 12 && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return "image/webp";
+  if (/^\s*<svg[\s>]/i.test(decodedText)) return "image/svg+xml";
+  return "";
+}
+
+function containsSecretLikeText(value: string) {
+  return /(?:password|passwd|secret|token|api[_-]?key|authorization|cookie|session|bearer\s+[a-z0-9._-]+)/i.test(value);
+}
+
+function looksLikeJwtBase64Segment(encoded: string, decoded: string) {
+  const compact = encoded.trim().replace(/\s+/g, "").replace(/=+$/g, "");
+  return /^[A-Za-z0-9_-]+$/.test(compact) && getTextKind(decoded) === "json" && /"(?:sub|iss|aud|exp|iat|nbf|scope)"\s*:/.test(decoded);
+}
+
+function getBase64ShapeKey(value: string, context: { urlSafe?: boolean; jwtSegment?: boolean; image?: boolean }) {
+  if (context.image) return "base64ImageShape";
+  if (context.jwtSegment) return "base64JwtSegmentShape";
+  const kind = getTextKind(value);
+  if (kind === "json") return "base64JsonShape";
+  if (kind === "binary") return "base64BinaryShape";
+  if (kind === "empty") return "base64EmptyShape";
+  if (context.urlSafe) return "base64UrlSafeShape";
+  return "base64TextShape";
+}
+
 function UrlEncoderTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <TextTransformTool
@@ -508,16 +1748,231 @@ function UrlEncoderTool({ dictionary }: { dictionary: ClientDictionary }) {
 }
 
 function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [input, setInput] = React.useState("hello world");
+  const [mode, setMode] = React.useState("encode");
+  const result = React.useMemo(() => {
+    try {
+      if (mode === "encode") {
+        const value = encodeUtf8Base64(input);
+        const urlSafe = encodeUrlSafeBase64(value);
+        const warningKeys = [
+          input.trim().startsWith("{") ? "base64JsonWarning" : "",
+          containsSecretLikeText(input) ? "base64SecretLikeWarning" : "",
+          new TextEncoder().encode(input).length > 4096 ? "base64LargePayloadWarning" : "",
+        ].filter(Boolean);
+        return {
+          error: "",
+          value,
+          alternate: urlSafe,
+          warnings: warningKeys,
+          stats: {
+            inputBytes: new TextEncoder().encode(input).length,
+            outputChars: value.length,
+            padding: (value.match(/=/g) ?? []).length,
+            variant: ui(dictionary, "standardBase64", "Standard Base64"),
+            outputKind: getTextKind(input),
+          },
+          diagnostics: {
+            shapeKey: getBase64ShapeKey(input, { urlSafe: false }),
+            lineCount: input ? input.split(/\r?\n/).length : 0,
+            jsonKeyCount: countJsonKeys(input),
+            controlCharacters: countControlCharacters(input),
+          },
+          imagePreview: null,
+        };
+      }
+      const inputDataUrl = parseImageDataUrl(input);
+      const normalized = normalizeBase64Input(input);
+      const decoded = decodeUtf8Base64(normalized.padded);
+      const bytes = decodeBase64Bytes(normalized.padded);
+      const imageMime = inputDataUrl?.mime ?? detectImageMime(bytes, decoded);
+      const imagePreview = imageMime
+        ? {
+            mime: imageMime,
+            bytes: bytes.length,
+            dataUrl: inputDataUrl?.dataUrl ?? `data:${imageMime};base64,${normalized.padded}`,
+          }
+        : null;
+      const jwtSegment = looksLikeJwtBase64Segment(normalized.compact, decoded);
+      const warnings = [
+        normalized.urlSafe ? "base64UrlSafeWarning" : "",
+        normalized.missingPadding ? "base64PaddingAddedWarning" : "",
+        imagePreview ? "base64ImageWarning" : "",
+        getTextKind(decoded) === "binary" ? "base64BinaryWarning" : "",
+        getTextKind(decoded) === "json" ? "base64DecodedJsonWarning" : "",
+        jwtSegment ? "base64JwtSegmentWarning" : "",
+        containsSecretLikeText(decoded) ? "base64SecretLikeWarning" : "",
+        new TextEncoder().encode(decoded).length > 4096 ? "base64LargePayloadWarning" : "",
+        decoded.includes("\uFFFD") ? "base64Utf8ReplacementWarning" : "",
+      ].filter(Boolean);
+      return {
+        error: "",
+        value: decoded,
+        alternate: normalized.padded,
+        warnings,
+        stats: {
+          inputBytes: new TextEncoder().encode(input).length,
+          outputChars: decoded.length,
+          padding: normalized.paddingCount + normalized.missingPadding,
+          variant: normalized.urlSafe ? ui(dictionary, "urlSafeBase64", "URL-safe Base64") : ui(dictionary, "standardBase64", "Standard Base64"),
+          outputKind: getTextKind(decoded),
+        },
+        diagnostics: {
+          shapeKey: getBase64ShapeKey(decoded, { urlSafe: normalized.urlSafe, jwtSegment, image: Boolean(imagePreview) }),
+          lineCount: decoded ? decoded.split(/\r?\n/).length : 0,
+          jsonKeyCount: countJsonKeys(decoded),
+          controlCharacters: countControlCharacters(decoded),
+        },
+        imagePreview,
+      };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : "Invalid Base64 input",
+        value: "",
+        alternate: "",
+        warnings: [],
+        stats: null,
+        diagnostics: null,
+        imagePreview: null,
+      };
+    }
+  }, [dictionary, input, mode]);
+
   return (
-    <TextTransformTool
-      dictionary={dictionary}
-      inputLabel={ui(dictionary, "textOrBase64", "Text or Base64")}
-      defaultInput="hello world"
-      modes={[
-        { value: "encode", label: ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64"), transform: encodeUtf8Base64 },
-        { value: "decode", label: ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8"), transform: decodeUtf8Base64 },
-      ]}
-    />
+    <div className="space-y-4">
+      <div className="space-y-2" data-base64-examples>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "base64Examples", "Base64 examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {base64Examples.map((example) => (
+            <Button
+              key={example.labelKey}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setInput(example.value);
+                setMode(example.mode);
+              }}
+            >
+              {ui(dictionary, example.labelKey, example.fallback)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "textOrBase64", "Text or Base64")}</span>
+          <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-40" />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "mode", "Mode")}</span>
+          <Select value={mode} onChange={(event) => setMode(event.target.value)}>
+            <option value="encode">{ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64")}</option>
+            <option value="decode">{ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8")}</option>
+          </Select>
+        </label>
+      </div>
+      {result.error ? (
+        <ErrorAlert title={ui(dictionary, "decodeError", "Decode error")} message={result.error} />
+      ) : (
+        <div className="space-y-4" data-base64-result-details>
+          {result.stats ? (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(result.stats.inputBytes) },
+                { label: ui(dictionary, "outputCharacters", "Output characters"), value: String(result.stats.outputChars) },
+                { label: ui(dictionary, "paddingCharacters", "Padding characters"), value: String(result.stats.padding) },
+                { label: ui(dictionary, "base64Variant", "Base64 variant"), value: result.stats.variant },
+              ].map((item) => (
+                <div key={item.label} className="rounded-md border bg-card p-3">
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
+                  <p className="mt-1 break-words text-sm font-medium">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          <section className="rounded-md border bg-card p-3" data-base64-variants>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{mode === "encode" ? ui(dictionary, "base64OutputVariants", "Output variants") : ui(dictionary, "base64NormalizedInput", "Normalized input")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {mode === "encode"
+                    ? ui(dictionary, "base64OutputVariantsDescription", "Copy the standard value for headers and storage, or URL-safe value for path and token segments.")
+                    : ui(dictionary, "base64NormalizedInputDescription", "URL-safe characters and missing padding are normalized before decoding.")}
+                </p>
+              </div>
+              <Badge>{ui(dictionary, result.stats?.outputKind ?? "text", result.stats?.outputKind ?? "text")}</Badge>
+            </div>
+            <div className="mt-3 grid gap-2">
+              <div className="min-w-0 rounded-md bg-muted p-3 text-xs">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-medium">{mode === "encode" ? ui(dictionary, "urlSafeBase64", "URL-safe Base64") : ui(dictionary, "normalizedBase64", "Normalized Base64")}</span>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.alternate)}>
+                    <Copy className="h-4 w-4" />
+                    {dictionary.tool.copy}
+                  </Button>
+                </div>
+                <code className="mt-2 block break-all text-muted-foreground">{result.alternate}</code>
+              </div>
+            </div>
+          </section>
+          {result.diagnostics ? (
+            <section className="rounded-md border bg-card p-3" data-base64-diagnostics data-base64-shape>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{ui(dictionary, "base64Diagnostics", "Base64 diagnostics")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "base64DiagnosticsDescription", "Check decoded shape, JSON keys, line count, and control characters before copying the value.")}</p>
+                </div>
+                <Badge>{ui(dictionary, result.diagnostics.shapeKey, result.diagnostics.shapeKey)}</Badge>
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { label: ui(dictionary, "base64DetectedContent", "Detected content"), value: ui(dictionary, result.diagnostics.shapeKey, result.diagnostics.shapeKey) },
+                  { label: ui(dictionary, "base64TextLines", "Text lines"), value: String(result.diagnostics.lineCount) },
+                  { label: ui(dictionary, "base64JsonKeys", "JSON keys"), value: String(result.diagnostics.jsonKeyCount) },
+                  { label: ui(dictionary, "base64ControlCharacters", "Control characters"), value: String(result.diagnostics.controlCharacters) },
+                ].map((item) => (
+                  <div key={item.label} className="min-w-0 rounded-md bg-muted px-3 py-2 text-xs">
+                    <p className="text-muted-foreground">{item.label}</p>
+                    <p className="mt-1 break-words font-medium">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+          {result.imagePreview ? (
+            <section className="rounded-md border bg-card p-3" data-base64-image-preview>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{ui(dictionary, "base64ImagePreview", "Image preview")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "base64ImagePreviewDescription", "Detected image data from the Base64 payload. Preview it before copying decoded binary text.")}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Badge>{result.imagePreview.mime}</Badge>
+                  <Badge>{result.imagePreview.bytes} {ui(dictionary, "bytes", "bytes")}</Badge>
+                </div>
+              </div>
+              <div className="mt-3 flex min-h-48 items-center justify-center overflow-auto rounded-md bg-muted p-3">
+                <Image src={result.imagePreview.dataUrl} alt={ui(dictionary, "base64ImagePreview", "Image preview")} width={320} height={220} unoptimized className="max-h-64 w-auto max-w-full rounded-sm object-contain" />
+              </div>
+            </section>
+          ) : null}
+          <section className="rounded-md border bg-card p-3" data-base64-warnings>
+            <p className="text-sm font-medium">{ui(dictionary, "base64ReviewNotes", "Review notes")}</p>
+            <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+              {(result.warnings.length ? result.warnings : ["base64NoWarnings"]).map((key) => (
+                <li key={key}>- {ui(dictionary, key, key)}</li>
+              ))}
+            </ul>
+          </section>
+          <ResultBlock
+            title={result.imagePreview ? ui(dictionary, "dataUrl", "Data URL") : mode === "encode" ? ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64") : ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8")}
+            value={result.imagePreview?.dataUrl ?? result.value}
+            dictionary={dictionary}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -558,16 +2013,79 @@ function makeUuid() {
   );
 }
 
+const uuidCountPresets = [1, 5, 20, 50];
+
+function formatUuidValue(value: string, format: string) {
+  if (format === "uppercase") return value.toUpperCase();
+  if (format === "compact") return value.replace(/-/g, "");
+  return value.toLowerCase();
+}
+
 function UuidTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [count, setCount] = React.useState(5);
-  const [values, setValues] = React.useState<string[]>(sampleUuids);
+  const [format, setFormat] = React.useState("lowercase");
+  const [values, setValues] = React.useState<string[]>(sampleUuids.map((value) => formatUuidValue(value, "lowercase")));
   const regenerate = React.useCallback(() => {
-    setValues(Array.from({ length: Math.max(1, Math.min(count, 50)) }, makeUuid));
-  }, [count]);
+    const nextCount = clampInteger(count, 1, 50);
+    setValues(Array.from({ length: nextCount }, () => formatUuidValue(makeUuid(), format)));
+  }, [count, format]);
+
+  React.useEffect(() => {
+    setValues((current) => current.map((value) => formatUuidValue(value.includes("-") ? value : `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(16, 20)}-${value.slice(20)}`, format)));
+  }, [format]);
+
+  const uniqueCount = new Set(values).size;
+  const warnings = [
+    count > 50 ? ui(dictionary, "uuidClampedWarning", "Count is clamped to 50 to keep browser output readable.") : "",
+    format === "compact" ? ui(dictionary, "uuidCompactWarning", "Compact UUIDs remove hyphens; confirm the target accepts 32-character IDs.") : "",
+    count >= 25 ? ui(dictionary, "uuidBulkWarning", "Bulk UUIDs are useful for fixtures, but production IDs should be generated at write time.") : "",
+  ].filter(Boolean);
 
   return (
-    <div className="space-y-4">
-      <GeneratorControls count={count} setCount={setCount} regenerate={regenerate} dictionary={dictionary} />
+    <div className="space-y-4" data-uuid-tool>
+      <div className="space-y-2" data-uuid-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "uuidExamples", "UUID examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {uuidCountPresets.map((preset) => (
+            <Button key={preset} variant="outline" size="sm" onClick={() => setCount(preset)}>
+              {preset} {ui(dictionary, "uuidCountSuffix", "values")}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[160px_180px_auto]">
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "count", "Count")}</span>
+          <Input type="number" min={1} max={50} value={count} onChange={(event) => setCount(Number(event.target.value))} />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "uuidFormat", "UUID format")}</span>
+          <Select value={format} onChange={(event) => setFormat(event.target.value)}>
+            <option value="lowercase">{ui(dictionary, "uuidLowercase", "Lowercase")}</option>
+            <option value="uppercase">{ui(dictionary, "uuidUppercase", "Uppercase")}</option>
+            <option value="compact">{ui(dictionary, "uuidCompact", "No hyphens")}</option>
+          </Select>
+        </label>
+        <div className="flex items-end">
+          <Button onClick={regenerate}>
+            <RefreshCcw className="h-4 w-4" />
+            {ui(dictionary, "generate", "Generate")}
+          </Button>
+        </div>
+      </div>
+      <div data-uuid-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "generatedCount", "Generated"), value: String(values.length) },
+            { label: ui(dictionary, "uniqueCount", "Unique"), value: String(uniqueCount), description: uniqueCount === values.length ? ui(dictionary, "uuidUniqueOk", "No duplicate values in this batch.") : ui(dictionary, "uuidDuplicateWarning", "Duplicate detected in this batch.") },
+            { label: ui(dictionary, "uuidVersion", "Version"), value: format === "compact" ? "4" : values[0]?.[14] ?? "4" },
+            { label: ui(dictionary, "uuidVariant", "Variant"), value: "RFC 4122 / 9562" },
+          ]}
+        />
+      </div>
+      <div data-uuid-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "uuidNoWarnings", "Generated locally with browser crypto. Copy only the count you need.")} />
+      </div>
       <ResultBlock title={ui(dictionary, "uuidValues", "UUID v4 values")} value={values.join("\n")} dictionary={dictionary} />
     </div>
   );
@@ -590,26 +2108,113 @@ function GeneratorControls({ count, setCount, regenerate, dictionary }: { count:
   );
 }
 
+const hashExamples = [
+  { labelKey: "hashPlainTextExample", fallbackLabel: "Plain text", value: "hello world" },
+  { labelKey: "hashJsonExample", fallbackLabel: "JSON payload", value: '{"id":123,"status":"ok"}' },
+  { labelKey: "hashReleaseExample", fallbackLabel: "Release label", value: "release-artifact-v1.2.3" },
+  { labelKey: "hashWebhookExample", fallbackLabel: "Webhook body", value: '{"event":"checkout.session.completed","id":"evt_123"}' },
+];
+
 function HashGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("hello world");
-  const output = React.useMemo(
-    () =>
-      [
-        `MD5: ${CryptoJS.MD5(input).toString()}`,
-        `SHA-1: ${CryptoJS.SHA1(input).toString()}`,
-        `SHA-256: ${CryptoJS.SHA256(input).toString()}`,
-        `SHA-512: ${CryptoJS.SHA512(input).toString()}`,
-      ].join("\n"),
-    [input],
+  const [mode, setMode] = React.useState<"digest" | "hmac">("digest");
+  const [secret, setSecret] = React.useState("shared-secret");
+  const digestHashes = React.useMemo(
+    () => [
+      { name: "MD5", value: CryptoJS.MD5(input).toString(), note: ui(dictionary, "hashLegacyChecksum", "Legacy checksum only") },
+      { name: "SHA-1", value: CryptoJS.SHA1(input).toString(), note: ui(dictionary, "hashLegacyCollision", "Legacy; collision-prone") },
+      { name: "SHA-256", value: CryptoJS.SHA256(input).toString(), note: ui(dictionary, "hashRecommendedChecksum", "Recommended checksum default") },
+      { name: "SHA-512", value: CryptoJS.SHA512(input).toString(), note: ui(dictionary, "hashLargeDigest", "Long digest for stronger comparison") },
+    ],
+    [dictionary, input],
   );
+  const hmacHashes = React.useMemo(
+    () => [
+      { name: "HMAC-SHA-256", value: CryptoJS.HmacSHA256(input, secret).toString(), note: ui(dictionary, "hmacSha256Recommended", "Common webhook signature default") },
+      { name: "HMAC-SHA-512", value: CryptoJS.HmacSHA512(input, secret).toString(), note: ui(dictionary, "hmacSha512LargeDigest", "Longer keyed digest") },
+    ],
+    [dictionary, input, secret],
+  );
+  const hashes = React.useMemo(
+    () => (mode === "hmac" ? hmacHashes : digestHashes),
+    [digestHashes, hmacHashes, mode],
+  );
+  const output = hashes.map((hash) => `${hash.name}: ${hash.value}`).join("\n");
+  const trimmed = input.trim();
+  const trimmedSecret = secret.trim();
+  const warnings = [
+    trimmed.length === 0 ? ui(dictionary, "hashEmptyWarning", "The input is empty, so these hashes represent an empty string.") : "",
+    mode === "hmac" && trimmedSecret.length === 0 ? ui(dictionary, "hmacEmptySecretWarning", "HMAC mode needs a shared secret key before the digest is meaningful.") : "",
+    mode === "hmac" && trimmedSecret.length > 0 && byteLength(secret) < 16 ? ui(dictionary, "hmacShortSecretWarning", "Short HMAC secrets are easy to guess. Use a high-entropy secret for real signatures.") : "",
+    mode === "hmac" ? ui(dictionary, "hmacSecretWarning", "Do not share the HMAC secret itself. Copy only the resulting signature unless you are setting up a local test.") : "",
+    ui(dictionary, "hashPasswordWarning", "Do not use plain hashes for password storage. Use a slow password hashing scheme with salt."),
+    /[\r\n]/.test(input) ? ui(dictionary, "hashWhitespaceWarning", "Line endings and trailing spaces change every digest. Normalize before comparing with another system.") : "",
+    /^[{\[]/.test(trimmed) ? ui(dictionary, "hashJsonWarning", "JSON key order and whitespace affect the digest. Format or canonicalize before using as a stable checksum.") : "",
+  ].filter(Boolean);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-hash-tool>
+      <div className="space-y-2" data-hash-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "hashExamples", "Hash examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {hashExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)]" data-hash-hmac-options>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "hashMode", "Hash mode")}</span>
+          <Select value={mode} onChange={(event) => setMode(event.target.value as "digest" | "hmac")}>
+            <option value="digest">{ui(dictionary, "hashModeDigest", "Digest")}</option>
+            <option value="hmac">{ui(dictionary, "hashModeHmac", "HMAC")}</option>
+          </Select>
+        </label>
+        {mode === "hmac" ? (
+          <label className="space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "hmacSecret", "HMAC secret")}</span>
+            <Input value={secret} onChange={(event) => setSecret(event.target.value)} />
+          </label>
+        ) : null}
+      </div>
       <label className="block space-y-2">
-          <span className="text-sm font-medium">{ui(dictionary, "input", "Input")}</span>
+        <span className="text-sm font-medium">{ui(dictionary, "input", "Input")}</span>
         <Textarea value={input} onChange={(event) => setInput(event.target.value)} />
       </label>
-      <ResultBlock title={ui(dictionary, "hashes", "Hashes")} value={output} dictionary={dictionary} />
+      <div data-hash-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(byteLength(input)) },
+            { label: ui(dictionary, "characters", "Characters"), value: String(input.length) },
+            { label: ui(dictionary, "lines", "Lines"), value: String(input.split(/\r?\n/).length) },
+            ...(mode === "hmac" ? [{ label: ui(dictionary, "hmacSecretBytes", "Secret bytes"), value: String(byteLength(secret)) }] : []),
+            { label: ui(dictionary, "hashAlgorithms", "Algorithms"), value: String(hashes.length) },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-hash-algorithms>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "hashAlgorithmNotes", "Algorithm notes")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "hashAlgorithmNotesDescription", "Use the digest that matches the system you are comparing against.")}</p>
+        </div>
+        <div className="divide-y">
+          {hashes.map((hash) => (
+            <div key={hash.name} className="grid gap-1 p-3 text-sm md:grid-cols-[120px_1fr]">
+              <div>
+                <p className="font-semibold">{hash.name}</p>
+                <p className="text-xs text-muted-foreground">{hash.note}</p>
+              </div>
+              <code className="min-w-0 break-all rounded bg-muted px-2 py-1 text-xs">{hash.value}</code>
+            </div>
+          ))}
+        </div>
+      </section>
+      <div data-hash-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "hashNoWarnings", "Input looks suitable for local checksum generation.")} />
+      </div>
+      <ResultBlock title={mode === "hmac" ? ui(dictionary, "hmacHashes", "HMAC signatures") : ui(dictionary, "hashes", "Hashes")} value={output} dictionary={dictionary} />
     </div>
   );
 }
@@ -669,28 +2274,235 @@ function YamlJsonTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+const yamlValidatorExamples = [
+  { labelKey: "yamlSimpleConfigExample", fallbackLabel: "App config", value: "name: Bob\nactive: true\nitems:\n  - json\n  - yaml" },
+  { labelKey: "yamlDockerServiceExample", fallbackLabel: "Docker Compose", value: "services:\n  app:\n    image: node:20\n    ports:\n      - \"3000:3000\"\n    environment:\n      NODE_ENV: production\n    depends_on:\n      - db\n  db:\n    image: postgres:16\n    volumes:\n      - db-data:/var/lib/postgresql/data\nvolumes:\n  db-data:" },
+  { labelKey: "yamlWorkflowExample", fallbackLabel: "Workflow env", value: "env:\n  NODE_ENV: production\n  FEATURE_FLAG: \"on\"\nsteps:\n  - run: npm test" },
+];
+
+function getYamlTopLevelSummary(value: unknown, dictionary: ClientDictionary) {
+  if (Array.isArray(value)) {
+    return { type: ui(dictionary, "array", "Array"), entries: value.length };
+  }
+  if (value && typeof value === "object") {
+    return { type: ui(dictionary, "object", "Object"), entries: Object.keys(value as Record<string, unknown>).length };
+  }
+  if (value === null) return { type: "null", entries: 0 };
+  return { type: typeof value, entries: 1 };
+}
+
+function asPlainRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function collectionSize(value: unknown) {
+  if (Array.isArray(value)) return value.length;
+  const record = asPlainRecord(value);
+  if (record) return Object.keys(record).length;
+  if (typeof value === "string" && value.trim()) return 1;
+  return 0;
+}
+
+function listValue(value: unknown) {
+  if (Array.isArray(value)) return value.map((item) => String(item));
+  const record = asPlainRecord(value);
+  if (record) return Object.keys(record);
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return [];
+}
+
+function isUnpinnedComposeImage(value: unknown) {
+  if (typeof value !== "string") return false;
+  const image = value.trim();
+  if (!image || image.includes("@sha256:")) return false;
+  const lastSegment = image.split("/").pop() ?? image;
+  return !lastSegment.includes(":") || lastSegment.endsWith(":latest");
+}
+
+function hasHostPathMount(value: unknown) {
+  return listValue(value).some((item) => {
+    const source = item.split(":")[0]?.trim() ?? "";
+    return source === "." || source.startsWith("./") || source.startsWith("../") || source.startsWith("/") || source.startsWith("~/");
+  });
+}
+
+function hasSecretLikeEnvironment(value: unknown) {
+  const keys = Array.isArray(value)
+    ? value.map((item) => String(item).split("=")[0] ?? "")
+    : Object.keys(asPlainRecord(value) ?? {});
+  return keys.some((key) => /secret|token|password|passwd|api[_-]?key|private/i.test(key));
+}
+
+function getComposeDiagnostics(parsed: unknown, dictionary: ClientDictionary) {
+  const root = asPlainRecord(parsed);
+  const services = asPlainRecord(root?.services);
+  const serviceEntries = Object.entries(services ?? {});
+  const serviceNames = new Set(serviceEntries.map(([name]) => name));
+  const warnings: string[] = [];
+  const serviceRows = serviceEntries.map(([name, value]) => {
+    const service = asPlainRecord(value);
+    if (!service) {
+      warnings.push(ui(dictionary, "composeInvalidServiceWarning", "Service \"{service}\" should be a mapping with image, build, ports, and environment.").replace("{service}", name));
+      return { name, imageOrBuild: "—", ports: "0", env: "0", volumes: "0", dependsOn: "—" };
+    }
+    const image = typeof service.image === "string" ? service.image : "";
+    const build = service.build ? ui(dictionary, "composeBuild", "build") : "";
+    const dependsOn = listValue(service.depends_on);
+    if (!image && !service.build) warnings.push(ui(dictionary, "composeMissingImageBuildWarning", "Service \"{service}\" has neither image nor build.").replace("{service}", name));
+    if (isUnpinnedComposeImage(image)) warnings.push(ui(dictionary, "composeUnpinnedImageWarning", "Service \"{service}\" uses an unpinned or latest image tag.").replace("{service}", name));
+    if (service.privileged === true) warnings.push(ui(dictionary, "composePrivilegedWarning", "Service \"{service}\" runs privileged. Confirm this is required before sharing the file.").replace("{service}", name));
+    if (hasHostPathMount(service.volumes)) warnings.push(ui(dictionary, "composeHostPathWarning", "Service \"{service}\" uses a host path volume. Check portability before copying.").replace("{service}", name));
+    if (hasSecretLikeEnvironment(service.environment)) warnings.push(ui(dictionary, "composeSecretEnvWarning", "Service \"{service}\" contains secret-like environment keys. Redact production values before sharing.").replace("{service}", name));
+    const missingDependencies = dependsOn.filter((dependency) => !serviceNames.has(dependency));
+    if (missingDependencies.length) warnings.push(ui(dictionary, "composeUnknownDependencyWarning", "Service \"{service}\" depends on unknown services: {dependencies}.").replace("{service}", name).replace("{dependencies}", missingDependencies.join(", ")));
+    return {
+      name,
+      imageOrBuild: image || build || "—",
+      ports: String(collectionSize(service.ports)),
+      env: String(collectionSize(service.environment)),
+      volumes: String(collectionSize(service.volumes)),
+      dependsOn: dependsOn.join(", ") || "—",
+    };
+  });
+  const imageCount = serviceEntries.filter(([, value]) => Boolean(asPlainRecord(value)?.image)).length;
+  const buildCount = serviceEntries.filter(([, value]) => Boolean(asPlainRecord(value)?.build)).length;
+  const portCount = serviceEntries.reduce((count, [, value]) => count + collectionSize(asPlainRecord(value)?.ports), 0);
+  const volumeCount = serviceEntries.reduce((count, [, value]) => count + collectionSize(asPlainRecord(value)?.volumes), 0);
+  const environmentCount = serviceEntries.reduce((count, [, value]) => count + collectionSize(asPlainRecord(value)?.environment), 0);
+  if (root && "services" in root && !services) warnings.push(ui(dictionary, "composeNoServicesWarning", "Compose services should be a mapping of service names."));
+  return {
+    isCompose: Boolean(services),
+    serviceRows,
+    warnings,
+    metrics: [
+      { label: ui(dictionary, "composeStatus", "Compose status"), value: services ? ui(dictionary, "composeDetected", "Detected") : ui(dictionary, "composeNotDetected", "Not detected") },
+      { label: ui(dictionary, "composeServices", "Services"), value: String(serviceEntries.length) },
+      { label: ui(dictionary, "composeImages", "Images"), value: String(imageCount) },
+      { label: ui(dictionary, "composeBuildServices", "Build services"), value: String(buildCount) },
+      { label: ui(dictionary, "composePublishedPorts", "Published ports"), value: String(portCount) },
+      { label: ui(dictionary, "composeVolumeMounts", "Volume mounts"), value: String(volumeCount) },
+      { label: ui(dictionary, "composeEnvironmentEntries", "Environment entries"), value: String(environmentCount) },
+    ],
+  };
+}
+
 function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("name: Bob\nactive: true\nitems:\n  - json\n  - yaml");
   const result = React.useMemo(() => {
     try {
       const parsed = parseYaml(input);
-      return { error: "", value: `${ui(dictionary, "validYaml", "Valid YAML")}\n\n${ui(dictionary, "parsedPreview", "Parsed preview")}:\n${JSON.stringify(parsed, null, 2)}` };
+      const summary = getYamlTopLevelSummary(parsed, dictionary);
+      return { error: "", parsed, summary, formattedYaml: stringifyYaml(parsed), value: `${ui(dictionary, "validYaml", "Valid YAML")}\n\n${ui(dictionary, "parsedPreview", "Parsed preview")}:\n${JSON.stringify(parsed, null, 2)}` };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : "YAML validation failed", value: "" };
+      return { error: error instanceof Error ? error.message : "YAML validation failed", parsed: null, summary: null, formattedYaml: "", value: "" };
     }
   }, [dictionary, input]);
+  const composeDiagnostics = React.useMemo(() => (result.error ? null : getComposeDiagnostics(result.parsed, dictionary)), [dictionary, result.error, result.parsed]);
+  const warnings = [
+    input.trim().length === 0 ? ui(dictionary, "yamlEmptyWarning", "The YAML input is empty.") : "",
+    /\t/.test(input) ? ui(dictionary, "yamlTabWarning", "Tabs can break YAML indentation. Use spaces before copying.") : "",
+    /:\s*(yes|no|on|off)\s*(#.*)?$/im.test(input) ? ui(dictionary, "yamlAmbiguousBooleanWarning", "Unquoted yes/no/on/off values can behave differently across YAML tooling. Quote them when they are strings.") : "",
+    /^\s*-\s*$/m.test(input) ? ui(dictionary, "yamlEmptyListItemWarning", "An empty list item is present. Confirm this is intentional.") : "",
+  ].filter(Boolean);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-yaml-validator-tool>
+      <div className="space-y-2" data-yaml-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "yamlExamples", "YAML examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {yamlValidatorExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-48" aria-label={ui(dictionary, "yamlInput", "YAML input")} />
-      {result.error ? <ErrorAlert title={ui(dictionary, "yamlValidationError", "YAML validation error")} message={result.error} /> : <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result.value} dictionary={dictionary} />}
+      <div data-yaml-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(byteLength(input)) },
+            { label: ui(dictionary, "lines", "Lines"), value: String(input.split(/\r?\n/).length) },
+            { label: ui(dictionary, "documentType", "Document type"), value: result.summary?.type ?? "—" },
+            { label: ui(dictionary, "topLevelEntries", "Top-level entries"), value: result.summary ? String(result.summary.entries) : "—" },
+          ]}
+        />
+      </div>
+      <div data-yaml-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "yamlNoWarnings", "YAML syntax and common indentation checks look ready.")} />
+      </div>
+      {composeDiagnostics ? (
+        <section className="rounded-md border bg-card" data-compose-diagnostics>
+          <div className="border-b p-3">
+            <h3 className="text-sm font-semibold">{ui(dictionary, "dockerComposeChecks", "Docker Compose checks")}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "dockerComposeDescription", "Inspect services, image/build coverage, ports, volumes, environment, and depends_on before copying a Compose file.")}</p>
+          </div>
+          <div className="space-y-3 p-3">
+            <ToolMetricGrid items={composeDiagnostics.metrics} />
+            {composeDiagnostics.serviceRows.length ? (
+              <section className="rounded-md border bg-background p-3" data-compose-service-preview>
+                <h4 className="text-sm font-semibold">{ui(dictionary, "composeServicePreview", "Service preview")}</h4>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "composeServicePreviewDescription", "Review each service entry before using the formatted YAML.")}</p>
+                <div className="mt-3 grid gap-2">
+                  {composeDiagnostics.serviceRows.map((service) => (
+                    <div key={service.name} className="grid min-w-0 gap-2 rounded-md bg-muted p-3 text-xs md:grid-cols-[1fr_1.5fr_repeat(4,minmax(72px,auto))]">
+                      <div className="min-w-0">
+                        <p className="text-muted-foreground">{ui(dictionary, "composeServiceName", "Service")}</p>
+                        <p className="break-words font-medium">{service.name}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-muted-foreground">{ui(dictionary, "composeImageOrBuild", "Image / build")}</p>
+                        <p className="break-words font-medium">{service.imageOrBuild}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">{ui(dictionary, "composePorts", "Ports")}</p>
+                        <p className="font-medium">{service.ports}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">{ui(dictionary, "composeEnv", "Env")}</p>
+                        <p className="font-medium">{service.env}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">{ui(dictionary, "composeVolumes", "Volumes")}</p>
+                        <p className="font-medium">{service.volumes}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-muted-foreground">{ui(dictionary, "composeDependsOn", "Depends on")}</p>
+                        <p className="break-words font-medium">{service.dependsOn}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+            <div data-compose-warnings>
+              <ToolWarningList title={ui(dictionary, "composeWarnings", "Compose review notes")} warnings={composeDiagnostics.warnings} emptyLabel={ui(dictionary, "composeNoWarnings", "Compose service checks look ready for local validation or formatting.")} />
+            </div>
+          </div>
+        </section>
+      ) : null}
+      {result.error ? (
+        <ErrorAlert title={ui(dictionary, "yamlValidationError", "YAML validation error")} message={result.error} />
+      ) : (
+        <div className="grid gap-3 xl:grid-cols-2">
+          <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result.value} dictionary={dictionary} />
+          <ResultBlock title={ui(dictionary, "formattedYaml", "Formatted YAML")} value={result.formattedYaml} dictionary={dictionary} />
+        </div>
+      )}
     </div>
   );
 }
 
+type EnvWarning =
+  | { type: "missingSyntax"; line: number }
+  | { type: "invalidName"; line: number; key: string }
+  | { type: "duplicateKey"; line: number; key: string; firstLine: number }
+  | { type: "unclosedQuote"; line: number; key: string }
+  | { type: "whitespace"; line: number; key: string };
+
 function parseEnvContent(input: string) {
   const entries: Array<{ key: string; value: string; line: number }> = [];
-  const warnings: string[] = [];
+  const warnings: EnvWarning[] = [];
   const seenKeys = new Map<string, number>();
 
   input.split(/\r?\n/).forEach((rawLine, index) => {
@@ -701,22 +2513,22 @@ function parseEnvContent(input: string) {
     const source = trimmed.startsWith("export ") ? trimmed.slice(7).trimStart() : trimmed;
     const equalsIndex = source.indexOf("=");
     if (equalsIndex <= 0) {
-      warnings.push(`Line ${line}: missing KEY=value syntax.`);
+      warnings.push({ type: "missingSyntax", line });
       return;
     }
 
     const key = source.slice(0, equalsIndex).trim();
     let value = source.slice(equalsIndex + 1).trim();
-    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) warnings.push(`Line ${line}: invalid variable name "${key}".`);
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) warnings.push({ type: "invalidName", line, key });
 
     const firstLine = seenKeys.get(key);
-    if (firstLine) warnings.push(`Line ${line}: duplicate key "${key}" also appears on line ${firstLine}.`);
+    if (firstLine) warnings.push({ type: "duplicateKey", line, key, firstLine });
     else seenKeys.set(key, line);
 
     const quote = value[0];
     if (quote === "\"" || quote === "'") {
       if (value.length === 1 || !value.endsWith(quote)) {
-        warnings.push(`Line ${line}: unclosed quoted value for "${key}".`);
+        warnings.push({ type: "unclosedQuote", line, key });
       } else {
         value = value.slice(1, -1);
         if (quote === "\"") value = value.replace(/\\n/g, "\n").replace(/\\r/g, "\r").replace(/\\t/g, "\t").replace(/\\"/g, "\"").replace(/\\\\/g, "\\");
@@ -724,7 +2536,7 @@ function parseEnvContent(input: string) {
     } else {
       const commentIndex = value.search(/\s#/);
       if (commentIndex >= 0) value = value.slice(0, commentIndex).trimEnd();
-      if (/\s/.test(value)) warnings.push(`Line ${line}: unquoted value for "${key}" contains whitespace.`);
+      if (/\s/.test(value)) warnings.push({ type: "whitespace", line, key });
     }
 
     entries.push({ key, value, line });
@@ -737,33 +2549,255 @@ function parseEnvContent(input: string) {
   };
 }
 
+const envParserExamples = [
+  { labelKey: "envProductionExample", fallbackLabel: "Production env", value: "APP_ENV=production\nAPI_URL=https://api.example.com\nFEATURE_FLAG=true" },
+  { labelKey: "envExportExample", fallbackLabel: "Export syntax", value: "export NODE_ENV=production\nTIMEOUT_MS=5000\nPUBLIC_URL=https://bobob.app" },
+  { labelKey: "envQuotedSecretExample", fallbackLabel: "Quoted secret", value: "SECRET_KEY=\"redacted value\"\nDATABASE_URL=\"postgres://user:pass@example.com/app\"" },
+];
+
+function formatEnvWarning(dictionary: ClientDictionary, warning: EnvWarning) {
+  const templates = {
+    missingSyntax: ui(dictionary, "envMissingSyntaxWarning", "Line {line}: missing KEY=value syntax."),
+    invalidName: ui(dictionary, "envInvalidNameWarning", "Line {line}: invalid variable name \"{key}\"."),
+    duplicateKey: ui(dictionary, "envDuplicateKeyWarning", "Line {line}: duplicate key \"{key}\" also appears on line {firstLine}."),
+    unclosedQuote: ui(dictionary, "envUnclosedQuoteWarning", "Line {line}: unclosed quoted value for \"{key}\"."),
+    whitespace: ui(dictionary, "envWhitespaceWarning", "Line {line}: unquoted value for \"{key}\" contains whitespace."),
+  };
+  return templates[warning.type]
+    .replaceAll("{line}", String(warning.line))
+    .replaceAll("{key}", "key" in warning ? warning.key : "")
+    .replaceAll("{firstLine}", "firstLine" in warning ? String(warning.firstLine) : "");
+}
+
 function EnvParserTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("APP_ENV=production\nAPI_URL=https://api.example.com\nFEATURE_FLAG=true");
   const result = React.useMemo(() => {
     const parsed = parseEnvContent(input);
-    const warningBlock = parsed.warnings.length ? `\n\n${ui(dictionary, "envWarnings", "Warnings")}:\n${parsed.warnings.map((warning) => `- ${warning}`).join("\n")}` : "";
+    const warningBlock = parsed.warnings.length ? `\n\n${ui(dictionary, "envWarnings", "Warnings")}:\n${parsed.warnings.map((warning) => `- ${formatEnvWarning(dictionary, warning)}`).join("\n")}` : "";
     return `${ui(dictionary, "parsedVariables", "Parsed variables")}: ${parsed.entries.length}${warningBlock}\n\n${ui(dictionary, "parsedJson", "Parsed JSON")}:\n${parsed.json}`;
   }, [dictionary, input]);
+  const parsed = React.useMemo(() => parseEnvContent(input), [input]);
+  const duplicateCount = parsed.warnings.filter((warning) => warning.type === "duplicateKey").length;
+  const malformedLineCount = parsed.warnings.filter((warning) => warning.type === "missingSyntax" || warning.type === "invalidName" || warning.type === "unclosedQuote").length;
+  const secretLikeKeys = parsed.entries.filter((entry) => /secret|token|key|password|credential/i.test(entry.key));
+  const warnings = [
+    ...parsed.warnings.map((warning) => formatEnvWarning(dictionary, warning)),
+    secretLikeKeys.length ? ui(dictionary, "envSecretWarning", "Secret-like keys are present. Do not paste production secrets into shared screenshots or tickets.") : "",
+  ].filter(Boolean);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-env-parser-tool>
+      <div className="space-y-2" data-env-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "envExamples", "ENV examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {envParserExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-48" aria-label={ui(dictionary, "envInput", "ENV input")} />
+      <div data-env-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "variableCount", "Variables"), value: String(parsed.entries.length) },
+            { label: ui(dictionary, "duplicateCount", "Duplicates"), value: String(duplicateCount) },
+            { label: ui(dictionary, "malformedLineCount", "Malformed lines"), value: String(malformedLineCount) },
+            { label: ui(dictionary, "secretLikeKeys", "Secret-like keys"), value: String(secretLikeKeys.length) },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-env-entry-list>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "parsedVariables", "Parsed variables")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "valuePreview", "Review key names and value shape before copying config.")}</p>
+        </div>
+        <div className="divide-y">
+          {(parsed.entries.length ? parsed.entries : [{ key: "—", value: dictionary.tool.noOutput, line: 0 }]).map((entry) => (
+            <div key={`${entry.line}-${entry.key}`} className="grid gap-1 p-3 text-sm md:grid-cols-[120px_1fr]">
+              <p className="text-xs text-muted-foreground">{entry.line ? `${ui(dictionary, "lineLabel", "Line")} ${entry.line}` : ui(dictionary, "lineLabel", "Line")}</p>
+              <div className="min-w-0">
+                <p className="font-semibold">{entry.key}</p>
+                <code className="mt-1 block max-h-24 overflow-auto break-all rounded bg-muted px-2 py-1 text-xs">{entry.value}</code>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <div data-env-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "envNoWarnings", "ENV syntax looks ready to copy into a local config file.")} />
+      </div>
       <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result} dictionary={dictionary} />
     </div>
   );
 }
 
+const sqlExamples = [
+  { labelKey: "joinQueryExample", fallbackLabel: "JOIN query", value: "select u.id,o.total from users u join orders o on o.user_id=u.id where o.status='paid' order by o.created_at desc" },
+  { labelKey: "aggregateQueryExample", fallbackLabel: "Aggregate query", value: "select status,count(*) as total from orders where created_at >= '2026-01-01' group by status order by total desc" },
+  { labelKey: "mutationQueryExample", fallbackLabel: "Mutation query", value: "update users set active=false where last_login_at < '2025-01-01'" },
+];
+
+function minifySql(value: string) {
+  return value.replace(/\s+/g, " ").replace(/\s*([(),=<>+-])\s*/g, "$1").trim();
+}
+
+function getSqlDiagnostics(input: string, dictionary: ClientDictionary) {
+  const source = input.trim();
+  const lower = source.toLowerCase();
+  const statements = source.split(";").map((item) => item.trim()).filter(Boolean);
+  const tableReferences = Array.from(
+    new Set(
+      Array.from(source.matchAll(/\b(?:from|join|update|into|delete\s+from)\s+("?[\w.:-]+"?)/gi))
+        .map((match) => match[1]?.replace(/^"|"$/g, "") ?? "")
+        .filter(Boolean),
+    ),
+  ).slice(0, 8);
+  const joinCount = (lower.match(/\bjoin\b/g) ?? []).length;
+  const subqueryCount = (source.match(/\(\s*select\b/gi) ?? []).length;
+  const parameterCount = (source.match(/(\$\d+|:[a-zA-Z_][\w]*|@[a-zA-Z_][\w]*|\?)/g) ?? []).length;
+  const sensitiveFieldCount = (lower.match(/\b(password|passwd|token|secret|api_key|apikey|access_key|refresh_token)\b/g) ?? []).length;
+  const hasSelect = /\bselect\b/i.test(source);
+  const hasMutation = /\b(update|delete|insert|merge)\b/i.test(source);
+  const hasSchemaChange = /\b(drop|truncate|alter|create)\b/i.test(source);
+  const hasWhere = /\bwhere\b/i.test(source);
+  const hasLimit = /\blimit\b|\bfetch\s+first\b|\btop\s+\d+\b/i.test(source);
+  const hasReturning = /\breturning\b/i.test(source);
+  const hasOrderBy = /\border\s+by\b/i.test(source);
+  const hasGroupBy = /\bgroup\s+by\b/i.test(source);
+  const hasComments = /--|\/\*/.test(source);
+  const queryTypeKey = hasSchemaChange ? "sqlSchemaQuery" : hasMutation ? "sqlMutationQuery" : hasSelect ? "sqlSelectQuery" : source ? "sqlOtherQuery" : "sqlEmptyQuery";
+  const clauseChecks = [
+    { label: "WHERE", active: hasWhere },
+    { label: "LIMIT", active: hasLimit },
+    { label: "JOIN", active: joinCount > 0 },
+    { label: "GROUP BY", active: hasGroupBy },
+    { label: "ORDER BY", active: hasOrderBy },
+    { label: "RETURNING", active: hasReturning },
+  ];
+  const warnings = [
+    hasMutation && !hasWhere ? ui(dictionary, "sqlMutationWithoutWhereWarning", "Mutation query without a WHERE clause. Confirm this is intentional before copying.") : "",
+    hasSchemaChange ? ui(dictionary, "sqlSchemaChangeWarning", "Schema-changing SQL was detected. Run it only through migration review or a controlled environment.") : "",
+    hasSelect && !hasLimit && !hasGroupBy ? ui(dictionary, "sqlNoLimitWarning", "SELECT query has no LIMIT or aggregation. Add a limit before ad-hoc production checks.") : "",
+    statements.length > 3 ? ui(dictionary, "sqlManyStatementsWarning", "Several statements were detected. Review execution order before copying as one block.") : "",
+    joinCount >= 4 ? ui(dictionary, "sqlManyJoinsWarning", "Many JOIN clauses were detected. Check join keys and expected row multiplication.") : "",
+    sensitiveFieldCount > 0 ? ui(dictionary, "sqlSecretWarning", "The query may reference sensitive fields. Redact real values before sharing.") : "",
+    hasComments ? ui(dictionary, "sqlCommentWarning", "SQL comments are present. Remove private notes before sharing the formatted query.") : "",
+  ].filter(Boolean);
+
+  return {
+    clauseChecks,
+    tableReferences,
+    warnings,
+    metrics: [
+      { label: ui(dictionary, "queryType", "Query type"), value: ui(dictionary, queryTypeKey, queryTypeKey) },
+      { label: ui(dictionary, "tableReferences", "Table references"), value: String(tableReferences.length) },
+      { label: ui(dictionary, "joinCount", "JOIN clauses"), value: String(joinCount) },
+      { label: ui(dictionary, "subqueryCount", "Subqueries"), value: String(subqueryCount) },
+      { label: ui(dictionary, "parameterCount", "Parameters"), value: String(parameterCount) },
+      { label: ui(dictionary, "sensitiveFields", "Sensitive fields"), value: String(sensitiveFieldCount) },
+    ],
+  };
+}
+
 function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [input, setInput] = React.useState(sqlExamples[0].value);
+  const [mode, setMode] = React.useState("pretty");
+  const result = React.useMemo(() => {
+    try {
+      return { error: "", value: mode === "minify" ? minifySql(input) : formatSql(input, { language: "postgresql" }) };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Unable to format SQL.", value: "" };
+    }
+  }, [input, mode]);
+  const lowerInput = input.toLowerCase();
+  const sqlDiagnostics = React.useMemo(() => getSqlDiagnostics(input, dictionary), [dictionary, input]);
+  const warnings = Array.from(
+    new Set(
+      [
+        /\b(update|delete|drop|truncate|alter)\b/i.test(input) ? ui(dictionary, "destructiveSqlWarning", "This looks like a mutation query. Review WHERE clauses and transactions before copying.") : "",
+        /\bselect\s+\*/i.test(input) ? ui(dictionary, "selectStarWarning", "SELECT * can hide schema changes. Prefer explicit columns for shared queries.") : "",
+        !input.trim().endsWith(";") ? ui(dictionary, "sqlSemicolonWarning", "No trailing semicolon detected. Add one if your SQL client expects statement terminators.") : "",
+        lowerInput.includes(" password") || lowerInput.includes(" token") || lowerInput.includes(" secret") ? ui(dictionary, "sqlSecretWarning", "The query may reference sensitive fields. Redact real values before sharing.") : "",
+        ...sqlDiagnostics.warnings,
+      ].filter(Boolean),
+    ),
+  );
+
   return (
-    <TextTransformTool
-      dictionary={dictionary}
-      inputLabel="SQL"
-      defaultInput="select id,name from users where active=1 order by created_at desc"
-      modes={[
-        { value: "pretty", label: "Pretty print", labelKey: "prettyPrint", transform: (value) => formatSql(value, { language: "postgresql" }) },
-        { value: "minify", label: "Minify", labelKey: "minify", transform: (value) => value.replace(/\s+/g, " ").replace(/\s*([(),=<>+-])\s*/g, "$1").trim() },
-      ]}
-    />
+    <div className="space-y-4" data-sql-tool>
+      <div className="space-y-2" data-sql-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "sqlExamples", "SQL examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {sqlExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+        <label className="space-y-2">
+          <span className="text-sm font-medium">SQL</span>
+          <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-44" />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "mode", "Mode")}</span>
+          <Select value={mode} onChange={(event) => setMode(event.target.value)}>
+            <option value="pretty">{ui(dictionary, "prettyPrint", "Pretty print")}</option>
+            <option value="minify">{ui(dictionary, "minify", "Minify")}</option>
+          </Select>
+        </label>
+      </div>
+      <div data-sql-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "statementCount", "Statements"), value: String(input.split(";").map((item) => item.trim()).filter(Boolean).length) },
+            { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(byteLength(input)) },
+            { label: ui(dictionary, "outputLines", "Output lines"), value: result.value ? String(result.value.split(/\r?\n/).length) : "0" },
+            { label: ui(dictionary, "dialect", "Dialect"), value: "PostgreSQL" },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-sql-diagnostics>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "sqlDiagnostics", "SQL diagnostics")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "sqlDiagnosticsDescription", "Review query shape, table references, clauses, and copy risks before running formatted SQL.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={sqlDiagnostics.metrics} />
+          <div className="flex flex-wrap gap-2" data-sql-clause-checks>
+            {sqlDiagnostics.clauseChecks.map((item) => (
+              <Badge key={item.label} className={cn(item.active ? "border-foreground/30 text-foreground" : "opacity-65")}>
+                {item.label}: {item.active ? ui(dictionary, "yes", "Yes") : ui(dictionary, "no", "No")}
+              </Badge>
+            ))}
+          </div>
+          <section className="rounded-md border bg-background" data-sql-table-list>
+            <div className="border-b p-3">
+              <h4 className="text-sm font-semibold">{ui(dictionary, "sqlTableReferences", "Table references")}</h4>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "sqlTableReferencesDescription", "First table-like references detected from FROM, JOIN, UPDATE, INSERT, or DELETE clauses.")}</p>
+            </div>
+            {sqlDiagnostics.tableReferences.length ? (
+              <div className="flex flex-wrap gap-2 p-3">
+                {sqlDiagnostics.tableReferences.map((table) => (
+                  <Badge key={table} className="max-w-full break-all font-mono text-[11px]">
+                    {table}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="p-3 text-sm text-muted-foreground">{ui(dictionary, "noSqlTableReferences", "No table references detected yet.")}</p>
+            )}
+          </section>
+        </div>
+      </section>
+      <div data-sql-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "sqlNoWarnings", "SQL is ready for review. Run it against a safe environment before production use.")} />
+      </div>
+      {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={mode === "minify" ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")} value={result.value} dictionary={dictionary} />}
+    </div>
   );
 }
 
@@ -794,25 +2828,175 @@ function XmlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+const csvExamples = [
+  { labelKey: "csvPeopleExample", fallbackLabel: "People CSV", value: "id,name,role\n1,Bob,admin\n2,Alice,editor\n2,Alice,editor" },
+  { labelKey: "csvMessyExportExample", fallbackLabel: "Messy export", value: " id , name , status \n 1 , Bob , active \n\n 2 , Alice , pending " },
+  { labelKey: "csvJsonArrayExample", fallbackLabel: "JSON array", value: '[{"id":"1","name":"Bob"},{"id":"2","name":"Alice"}]' },
+];
+
+function normalizeCsvRows(input: string, trimCells: boolean, skipEmptyRows: boolean, removeDuplicates: boolean) {
+  const parsed = Papa.parse<string[]>(input, { skipEmptyLines: false });
+  const rawRows = parsed.data.filter((row): row is string[] => Array.isArray(row));
+  const rows = rawRows.map((row) => row.map((cell) => (trimCells ? String(cell ?? "").trim() : String(cell ?? ""))));
+  const emptyRows = rows.filter((row) => row.every((cell) => cell.trim() === "")).length;
+  const candidateRows = skipEmptyRows ? rows.filter((row) => row.some((cell) => cell.trim() !== "")) : rows;
+  const seen = new Set<string>();
+  let duplicateRows = 0;
+  const cleanedRows = removeDuplicates
+    ? candidateRows.filter((row, index) => {
+        if (index === 0) return true;
+        const key = JSON.stringify(row);
+        if (seen.has(key)) {
+          duplicateRows += 1;
+          return false;
+        }
+        seen.add(key);
+        return true;
+      })
+    : candidateRows;
+  const columnCount = Math.max(0, ...cleanedRows.map((row) => row.length));
+  const inconsistentRows = cleanedRows.filter((row) => row.length !== columnCount).length;
+  return {
+    errors: parsed.errors,
+    rows: cleanedRows,
+    rowCount: Math.max(cleanedRows.length - 1, 0),
+    columnCount,
+    emptyRows,
+    duplicateRows,
+    inconsistentRows,
+  };
+}
+
+function rowsToCsv(rows: string[][]) {
+  return Papa.unparse(rows);
+}
+
+function rowsToJson(rows: string[][]) {
+  const csv = rowsToCsv(rows);
+  return JSON.stringify(Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true }).data, null, 2);
+}
+
+function summarizeJsonArray(value: string) {
+  const parsed = JSON.parse(value) as unknown;
+  if (!Array.isArray(parsed)) throw new Error("JSON input must be an array of objects.");
+  const objectRows = parsed.filter((row): row is Record<string, unknown> => Boolean(row) && typeof row === "object" && !Array.isArray(row));
+  const keys = Array.from(new Set(objectRows.flatMap((row) => Object.keys(row))));
+  return { rows: objectRows.length, columns: keys.length, value: Papa.unparse(objectRows) };
+}
+
 function CsvJsonTool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [input, setInput] = React.useState(csvExamples[0].value);
+  const [mode, setMode] = React.useState("csv-json");
+  const [trimCells, setTrimCells] = React.useState(true);
+  const [skipEmptyRows, setSkipEmptyRows] = React.useState(true);
+  const [removeDuplicates, setRemoveDuplicates] = React.useState(false);
+  const csvSummary = React.useMemo(() => normalizeCsvRows(input, trimCells, skipEmptyRows, removeDuplicates), [input, removeDuplicates, skipEmptyRows, trimCells]);
+  const result = React.useMemo(() => {
+    try {
+      if (mode === "json-csv") {
+        const jsonSummary = summarizeJsonArray(input);
+        return { error: "", value: jsonSummary.value, rowCount: jsonSummary.rows, columnCount: jsonSummary.columns };
+      }
+      const value = mode === "clean-csv" ? rowsToCsv(csvSummary.rows) : rowsToJson(csvSummary.rows);
+      return { error: "", value, rowCount: csvSummary.rowCount, columnCount: csvSummary.columnCount };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "CSV conversion failed.", value: "", rowCount: 0, columnCount: 0 };
+    }
+  }, [csvSummary, input, mode]);
+  const warnings = [
+    ...csvSummary.errors.slice(0, 3).map((error) => `${ui(dictionary, "lineLabel", "Line")} ${error.row ?? "—"}: ${error.message}`),
+    csvSummary.inconsistentRows ? ui(dictionary, "csvInconsistentWarning", "Some rows have a different column count. Check delimiters and quoted values before copying.") : "",
+    csvSummary.duplicateRows ? ui(dictionary, "csvDuplicateWarning", "Duplicate rows were removed from the cleaned output.") : "",
+    csvSummary.emptyRows && !skipEmptyRows ? ui(dictionary, "csvEmptyRowsWarning", "Empty rows are still included. Enable empty-row removal before copying clean data.") : "",
+    mode === "json-csv" && !input.trim().startsWith("[") ? ui(dictionary, "csvJsonArrayWarning", "JSON to CSV expects an array of objects.") : "",
+  ].filter(Boolean);
+  const previewRows = csvSummary.rows.slice(0, 6);
+  const previewColumns = previewRows[0] ?? [];
+
   return (
-    <TextTransformTool
-      dictionary={dictionary}
-      inputLabel="CSV or JSON"
-      defaultInput="id,name\n1,Bob\n2,Alice"
-      modes={[
-        {
-          value: "csv-json",
-          label: "CSV to JSON",
-          transform: (value) => JSON.stringify(Papa.parse<Record<string, string>>(value, { header: true, skipEmptyLines: true }).data, null, 2),
-        },
-        {
-          value: "json-csv",
-          label: "JSON to CSV",
-          transform: (value) => Papa.unparse(JSON.parse(value)),
-        },
-      ]}
-    />
+    <div className="space-y-4" data-csv-json-tool>
+      <div className="space-y-2" data-csv-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "csvExamples", "CSV examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {csvExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
+        <label className="block space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "csvOrJsonInput", "CSV or JSON input")}</span>
+          <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-48" />
+        </label>
+        <div className="space-y-3">
+          <label className="space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "mode", "Mode")}</span>
+            <Select value={mode} onChange={(event) => setMode(event.target.value)}>
+              <option value="csv-json">{ui(dictionary, "csvToJson", "CSV to JSON")}</option>
+              <option value="json-csv">{ui(dictionary, "jsonToCsv", "JSON to CSV")}</option>
+              <option value="clean-csv">{ui(dictionary, "cleanCsv", "Clean CSV")}</option>
+            </Select>
+          </label>
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <input type="checkbox" checked={trimCells} onChange={(event) => setTrimCells(event.target.checked)} />
+            {ui(dictionary, "trimCells", "Trim cells")}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <input type="checkbox" checked={skipEmptyRows} onChange={(event) => setSkipEmptyRows(event.target.checked)} />
+            {ui(dictionary, "removeEmptyRows", "Remove empty rows")}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <input type="checkbox" checked={removeDuplicates} onChange={(event) => setRemoveDuplicates(event.target.checked)} />
+            {ui(dictionary, "removeDuplicateRows", "Remove duplicate rows")}
+          </label>
+        </div>
+      </div>
+      <div data-csv-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "rowCount", "Rows"), value: String(result.rowCount) },
+            { label: ui(dictionary, "columnCount", "Columns"), value: String(result.columnCount) },
+            { label: ui(dictionary, "emptyRows", "Empty rows"), value: String(csvSummary.emptyRows) },
+            { label: ui(dictionary, "duplicateRows", "Duplicate rows"), value: String(csvSummary.duplicateRows) },
+          ]}
+        />
+      </div>
+      {mode !== "json-csv" ? (
+        <section className="rounded-md border bg-card" data-csv-preview>
+          <div className="border-b p-3">
+            <h3 className="text-sm font-semibold">{ui(dictionary, "csvPreview", "CSV preview")}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "csvPreviewDescription", "First rows after the selected cleaning options.")}</p>
+          </div>
+          <div className="overflow-auto">
+            <table className="min-w-full border-separate border-spacing-0 text-sm">
+              <tbody>
+                {previewRows.length ? (
+                  previewRows.map((row, rowIndex) => (
+                    <tr key={`${rowIndex}-${row.join("|")}`}>
+                      {(rowIndex === 0 ? previewColumns : previewColumns).map((_, columnIndex) => (
+                        <td key={columnIndex} className={cn("max-w-60 border-b border-e px-3 py-2 align-top", rowIndex === 0 ? "bg-muted font-medium" : "")}>
+                          <span className="block break-words">{row[columnIndex] ?? ""}</span>
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="px-3 py-2 text-muted-foreground">{dictionary.tool.noOutput}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+      <div data-csv-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "csvNoWarnings", "CSV output looks ready for conversion or cleanup.")} />
+      </div>
+      {result.error ? <ErrorAlert title={ui(dictionary, "conversionError", "Conversion error")} message={result.error} /> : <ResultBlock title={ui(dictionary, "convertedOutput", "Converted output")} value={result.value} dictionary={dictionary} />}
+    </div>
   );
 }
 
@@ -858,9 +3042,28 @@ function parseColor(input: string) {
       b: Number.parseInt(full.slice(4, 6), 16),
     };
   }
-  const rgb = value.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-  if (rgb) return { r: Number(rgb[1]), g: Number(rgb[2]), b: Number(rgb[3]) };
-  throw new Error("Use HEX or RGB input.");
+  const rgb = value.match(/^rgba?\(?\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})/i);
+  if (rgb) {
+    const color = { r: Number(rgb[1]), g: Number(rgb[2]), b: Number(rgb[3]) };
+    if ([color.r, color.g, color.b].some((part) => part < 0 || part > 255)) throw new Error("RGB channels must be between 0 and 255.");
+    return color;
+  }
+  const hsl = value.match(/^hsla?\(?\s*(\d{1,3})(?:deg)?[,\s]+(\d{1,3})%?[,\s]+(\d{1,3})%?/i);
+  if (hsl) return hslToRgb({ h: Number(hsl[1]), s: Number(hsl[2]), l: Number(hsl[3]) });
+  throw new Error("Use HEX, RGB, or HSL input.");
+}
+
+function hslToRgb({ h, s, l }: { h: number; s: number; l: number }) {
+  if (h < 0 || h > 360 || s < 0 || s > 100 || l < 0 || l > 100) throw new Error("HSL must use hue 0-360 and percentages 0-100.");
+  const saturation = s / 100;
+  const lightness = l / 100;
+  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+  const huePrime = h / 60;
+  const x = chroma * (1 - Math.abs((huePrime % 2) - 1));
+  const [r1, g1, b1] =
+    huePrime < 1 ? [chroma, x, 0] : huePrime < 2 ? [x, chroma, 0] : huePrime < 3 ? [0, chroma, x] : huePrime < 4 ? [0, x, chroma] : huePrime < 5 ? [x, 0, chroma] : [chroma, 0, x];
+  const m = lightness - chroma / 2;
+  return { r: Math.round((r1 + m) * 255), g: Math.round((g1 + m) * 255), b: Math.round((b1 + m) * 255) };
 }
 
 function rgbToHex({ r, g, b }: { r: number; g: number; b: number }) {
@@ -889,6 +3092,35 @@ function luminance({ r, g, b }: { r: number; g: number; b: number }) {
   return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 }
 
+const colorExamples = [
+  { labelKey: "blueOnWhite", fallbackLabel: "Blue on white", foreground: "#2563eb", background: "#ffffff" },
+  { labelKey: "zincOnNearWhite", fallbackLabel: "Zinc on near-white", foreground: "rgb(24, 24, 27)", background: "#fafafa" },
+  { labelKey: "hslAccentExample", fallbackLabel: "HSL accent", foreground: "hsl(220 90% 56%)", background: "hsl(0 0% 100%)" },
+];
+
+function formatRgbValue({ r, g, b }: { r: number; g: number; b: number }) {
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function formatHslValue(color: { r: number; g: number; b: number }) {
+  const hsl = rgbToHsl(color);
+  return `hsl(${hsl.h}, ${hsl.s.toFixed(1)}%, ${hsl.l.toFixed(1)}%)`;
+}
+
+function colorInputHasAlpha(value: string) {
+  const input = value.trim().toLowerCase();
+  return /^(rgba|hsla)\(/.test(input) || /\s\/\s*(?:0?\.\d+|1(?:\.0+)?|[1-9]\d?%|100%)\)?$/.test(input);
+}
+
+function formatPassState(passed: boolean, dictionary: ClientDictionary) {
+  return passed ? ui(dictionary, "colorPass", "Pass") : ui(dictionary, "colorFail", "Fail");
+}
+
+function formatSignedDecimal(value: number) {
+  const formatted = value.toFixed(2);
+  return value > 0 ? `+${formatted}` : formatted;
+}
+
 function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [foreground, setForeground] = React.useState("#2563eb");
   const [background, setBackground] = React.useState("#ffffff");
@@ -903,22 +3135,76 @@ function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
     try {
       const fg = parseColor(foreground);
       const bg = parseColor(background);
-      const fgHsl = rgbToHsl(fg);
-      const contrast = (Math.max(luminance(fg), luminance(bg)) + 0.05) / (Math.min(luminance(fg), luminance(bg)) + 0.05);
-      return [
+      const foregroundLuminance = luminance(fg);
+      const backgroundLuminance = luminance(bg);
+      const contrast = (Math.max(foregroundLuminance, backgroundLuminance) + 0.05) / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
+      return {
+        error: "",
+        fg,
+        bg,
+        contrast,
+        foregroundLuminance,
+        backgroundLuminance,
+        value: [
         `${foregroundLabel} HEX: ${rgbToHex(fg)}`,
-        `${foregroundLabel} RGB: rgb(${fg.r}, ${fg.g}, ${fg.b})`,
-        `${foregroundLabel} HSL: hsl(${fgHsl.h}, ${fgHsl.s.toFixed(1)}%, ${fgHsl.l.toFixed(1)}%)`,
+        `${foregroundLabel} RGB: ${formatRgbValue(fg)}`,
+        `${foregroundLabel} HSL: ${formatHslValue(fg)}`,
         `${backgroundLabel} HEX: ${rgbToHex(bg)}`,
+        `${backgroundLabel} RGB: ${formatRgbValue(bg)}`,
+        `${backgroundLabel} HSL: ${formatHslValue(bg)}`,
         `${contrastLabel}: ${contrast.toFixed(2)} (${contrast >= 4.5 ? aaNormalText : contrast >= 3 ? aaLargeText : belowAaText})`,
-      ].join("\n");
+        ].join("\n"),
+      };
     } catch (error) {
-      return error instanceof Error ? error.message : "Invalid color.";
+      return { error: error instanceof Error ? error.message : "Invalid color.", fg: null, bg: null, contrast: 0, foregroundLuminance: 0, backgroundLuminance: 0, value: "" };
     }
   }, [background, dictionary, foreground]);
+  const contrastStatus = result.contrast >= 7 ? "AAA" : result.contrast >= 4.5 ? "AA" : result.contrast >= 3 ? ui(dictionary, "largeTextOnly", "Large text only") : ui(dictionary, "failsContrast", "Fails");
+  const hasAlphaInput = colorInputHasAlpha(foreground) || colorInputHasAlpha(background);
+  const colorWarnings = [
+    result.error,
+    !result.error && hasAlphaInput ? ui(dictionary, "colorAlphaIgnoredWarning", "Alpha channels are not blended here. Test against the final rendered background before shipping.") : "",
+    !result.error && result.contrast <= 1.1 ? ui(dictionary, "colorSameColorWarning", "Foreground and background are nearly identical, so text will be unreadable.") : "",
+    !result.error && result.contrast >= 3 && result.contrast < 4.5 ? ui(dictionary, "colorLargeOnlyWarning", "This pair only meets the large-text AA threshold. Do not use it for normal body text.") : "",
+    !result.error && result.contrast < 3 ? ui(dictionary, "colorContrastWarning", "Normal body text should reach at least 4.5:1 contrast.") : "",
+    !result.error && result.contrast >= 4.5 && result.contrast < 7 ? ui(dictionary, "colorAaaWarning", "AA passes, but AAA text requires 7:1 contrast.") : "",
+  ].filter(Boolean);
+  const diagnosticItems = [
+    { label: ui(dictionary, "aaNormalText", "AA normal text"), value: result.error ? "-" : formatPassState(result.contrast >= 4.5, dictionary), description: "4.5:1" },
+    { label: ui(dictionary, "aaLargeText", "AA large text"), value: result.error ? "-" : formatPassState(result.contrast >= 3, dictionary), description: "3:1" },
+    { label: ui(dictionary, "aaaNormalText", "AAA normal text"), value: result.error ? "-" : formatPassState(result.contrast >= 7, dictionary), description: "7:1" },
+    {
+      label: ui(dictionary, "colorContrastDelta", "AA delta"),
+      value: result.error ? "-" : formatSignedDecimal(result.contrast - 4.5),
+      description: ui(dictionary, "colorContrastDeltaDescription", "Positive values clear normal text AA."),
+    },
+    {
+      label: ui(dictionary, "luminanceGap", "Luminance gap"),
+      value: result.error ? "-" : Math.abs(result.foregroundLuminance - result.backgroundLuminance).toFixed(3),
+      description: ui(dictionary, "luminanceGapDescription", "Higher gaps usually read more clearly."),
+    },
+  ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-color-tool>
+      <div className="space-y-2" data-color-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "colorExamples", "Color examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {colorExamples.map((example) => (
+            <Button
+              key={example.labelKey}
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setForeground(example.foreground);
+                setBackground(example.background);
+              }}
+            >
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-3 md:grid-cols-2">
         <label className="space-y-2">
           <span className="text-sm font-medium">{ui(dictionary, "foreground", "Foreground")}</span>
@@ -929,10 +3215,44 @@ function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
           <Input value={background} onChange={(event) => setBackground(event.target.value)} />
         </label>
       </div>
-      <div className="rounded-md border p-4 text-sm" style={{ color: foreground, backgroundColor: background }}>
+      <div className="rounded-md border p-4 text-sm" style={{ color: result.error ? undefined : foreground, backgroundColor: result.error ? undefined : background }} data-color-preview>
         {ui(dictionary, "contrastPreviewText", "Preview text for contrast checking.")}
       </div>
-      <ResultBlock title={ui(dictionary, "colorValues", "Color values")} value={result} dictionary={dictionary} />
+      <div data-color-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "contrastRatio", "Contrast ratio"), value: result.error ? "-" : result.contrast.toFixed(2), description: contrastStatus },
+            { label: ui(dictionary, "foreground", "Foreground"), value: result.fg ? rgbToHex(result.fg) : foreground },
+            { label: ui(dictionary, "background", "Background"), value: result.bg ? rgbToHex(result.bg) : background },
+            { label: ui(dictionary, "wcagTarget", "WCAG target"), value: "AA 4.5:1 / AAA 7:1", description: ui(dictionary, "wcagTargetDescription", "Use 3:1 only for large or bold text.") },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-color-diagnostics>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "colorDiagnostics", "Color diagnostics")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "colorDiagnosticsDescription", "Check AA/AAA thresholds, alpha limitations, and luminance before copying design tokens.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={diagnosticItems} />
+          <div data-color-warnings>
+            <ToolWarningList title={ui(dictionary, "colorReviewNotes", "Color review notes")} warnings={colorWarnings} emptyLabel={ui(dictionary, "colorNoDiagnosticWarnings", "Color pair clears normal text AA. Still verify hover, disabled, and focus states.")} />
+          </div>
+        </div>
+      </section>
+      <section className="grid gap-3 md:grid-cols-2" data-color-swatches>
+        {[
+          { label: ui(dictionary, "foreground", "Foreground"), color: result.fg ? rgbToHex(result.fg) : foreground },
+          { label: ui(dictionary, "background", "Background"), color: result.bg ? rgbToHex(result.bg) : background },
+        ].map((item) => (
+          <div key={item.label} className="rounded-md border bg-card p-3">
+            <div className="h-12 rounded border" style={{ backgroundColor: item.color }} />
+            <p className="mt-2 text-xs text-muted-foreground">{item.label}</p>
+            <p className="break-all text-sm font-semibold">{item.color}</p>
+          </div>
+        ))}
+      </section>
+      {result.error ? <ErrorAlert title={ui(dictionary, "invalidColor", "Invalid color")} message={result.error} /> : <ResultBlock title={ui(dictionary, "colorValues", "Color values")} value={result.value} dictionary={dictionary} />}
     </div>
   );
 }
@@ -943,47 +3263,356 @@ function randomBytes(length: number) {
   return bytes;
 }
 
+const passwordCharacterSets = {
+  lower: "abcdefghijklmnopqrstuvwxyz",
+  upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  numbers: "0123456789",
+  symbols: "!@#$%^&*()-_=+[]{};:,.?",
+};
+const ambiguousPasswordCharacters = new Set("0Ool1I|`'\"{}[]()/\\");
+const passphraseWords = [
+  "anchor",
+  "brisk",
+  "copper",
+  "delta",
+  "ember",
+  "forest",
+  "granite",
+  "harbor",
+  "ivory",
+  "jupiter",
+  "keystone",
+  "lantern",
+  "matrix",
+  "nebula",
+  "orbit",
+  "pixel",
+  "quartz",
+  "river",
+  "signal",
+  "timber",
+  "uplink",
+  "vector",
+  "willow",
+  "zenith",
+  "atlas",
+  "binary",
+  "cipher",
+  "drift",
+  "echo",
+  "frost",
+  "garden",
+  "helium",
+  "island",
+  "kernel",
+  "ledger",
+  "meadow",
+  "north",
+  "onyx",
+  "prairie",
+  "rocket",
+  "summit",
+  "tundra",
+  "violet",
+  "window",
+  "yellow",
+  "zephyr",
+];
+
+type PasswordMode = "password" | "passphrase";
+
+function cleanPasswordSet(value: string, excludeAmbiguous: boolean) {
+  return excludeAmbiguous
+    ? value
+        .split("")
+        .filter((char) => !ambiguousPasswordCharacters.has(char))
+        .join("")
+    : value;
+}
+
+function secureCharacterFrom(value: string) {
+  if (!value.length) return "";
+  return value[randomBytes(1)[0] % value.length] ?? "";
+}
+
+function shuffleSecure(values: string[]) {
+  const shuffled = [...values];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = randomBytes(1)[0] % (index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled.join("");
+}
+
+function makePassphrase(wordCount: number, separator: string, includeNumber: boolean) {
+  const words = Array.from(randomBytes(wordCount), (byte) => passphraseWords[byte % passphraseWords.length] ?? passphraseWords[0]!);
+  const suffix = includeNumber ? String(randomBytes(1)[0] % 100).padStart(2, "0") : "";
+  return [...words, suffix].filter(Boolean).join(separator);
+}
+
+function describeEntropy(dictionary: ClientDictionary, entropy: number) {
+  if (entropy >= 120) return ui(dictionary, "passwordStrengthExcellent", "Excellent");
+  if (entropy >= 90) return ui(dictionary, "passwordStrengthStrong", "Strong");
+  if (entropy >= 70) return ui(dictionary, "passwordStrengthGood", "Good");
+  return ui(dictionary, "passwordStrengthWeak", "Needs more length");
+}
+
 function PasswordGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [mode, setMode] = React.useState<PasswordMode>("password");
   const [length, setLength] = React.useState(24);
   const [symbols, setSymbols] = React.useState(true);
+  const [uppercase, setUppercase] = React.useState(true);
+  const [numbers, setNumbers] = React.useState(true);
+  const [excludeAmbiguous, setExcludeAmbiguous] = React.useState(true);
+  const [wordCount, setWordCount] = React.useState(5);
+  const [separator, setSeparator] = React.useState("-");
+  const [includeNumber, setIncludeNumber] = React.useState(true);
   const [value, setValue] = React.useState("");
+  const selectedSets = React.useMemo(() => {
+    const sets = [cleanPasswordSet(passwordCharacterSets.lower, excludeAmbiguous)];
+    if (uppercase) sets.push(cleanPasswordSet(passwordCharacterSets.upper, excludeAmbiguous));
+    if (numbers) sets.push(cleanPasswordSet(passwordCharacterSets.numbers, excludeAmbiguous));
+    if (symbols) sets.push(cleanPasswordSet(passwordCharacterSets.symbols, excludeAmbiguous));
+    return sets.filter(Boolean);
+  }, [excludeAmbiguous, numbers, symbols, uppercase]);
+  const alphabet = selectedSets.join("");
+  const safeLength = clampInteger(length, 8, 128);
+  const safeWordCount = clampInteger(wordCount, 3, 8);
+  const passphraseEntropy = safeWordCount * Math.log2(passphraseWords.length) + (includeNumber ? Math.log2(100) : 0);
+  const entropy = mode === "passphrase" ? passphraseEntropy : alphabet.length > 0 ? safeLength * Math.log2(alphabet.length) : 0;
   const generate = React.useCallback(() => {
-    const alphabet = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789${symbols ? "!@#$%^&*()-_=+[]{};:,.?" : ""}`;
-    const bytes = randomBytes(Math.max(8, Math.min(length, 128)));
-    setValue(Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join(""));
-  }, [length, symbols]);
+    if (mode === "passphrase") {
+      setValue(makePassphrase(safeWordCount, separator, includeNumber));
+      return;
+    }
+    const activeAlphabet = alphabet || passwordCharacterSets.lower;
+    const required = selectedSets.map(secureCharacterFrom).filter(Boolean);
+    const remainingLength = Math.max(0, safeLength - required.length);
+    const remaining = Array.from(randomBytes(remainingLength), (byte) => activeAlphabet[byte % activeAlphabet.length] ?? "");
+    setValue(shuffleSecure([...required, ...remaining]));
+  }, [alphabet, includeNumber, mode, safeLength, safeWordCount, selectedSets, separator]);
 
   React.useEffect(() => {
     generate();
   }, [generate]);
 
+  const selectedSetCount = selectedSets.length;
+  const warnings = [
+    mode === "password" && safeLength < 16 ? ui(dictionary, "passwordShortWarning", "Use at least 16 characters for reusable credentials.") : "",
+    mode === "password" && selectedSetCount < 3 ? ui(dictionary, "passwordCharsetWarning", "Use at least three character groups unless the target system restricts them.") : "",
+    mode === "password" && !symbols ? ui(dictionary, "passwordNoSymbolsWarning", "Symbols are disabled. Confirm the target accepts longer passwords if symbols are not allowed.") : "",
+    mode === "passphrase" && safeWordCount < 4 ? ui(dictionary, "passphraseShortWarning", "Use at least four words for reusable passphrases.") : "",
+    mode === "passphrase" ? ui(dictionary, "passphraseCompatibilityWarning", "Some systems reject spaces or long passphrases. Confirm the target policy before copying.") : "",
+    ui(dictionary, "passwordStorageWarning", "Store generated secrets in a password manager. Do not paste production secrets into logs or tickets."),
+  ].filter(Boolean);
+
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 md:grid-cols-[160px_160px_auto]">
+    <div className="space-y-4" data-password-tool>
+      <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)]" data-password-mode>
         <label className="space-y-2">
-          <span className="text-sm font-medium">{ui(dictionary, "length", "Length")}</span>
-          <Input type="number" min={8} max={128} value={length} onChange={(event) => setLength(Number(event.target.value))} />
+          <span className="text-sm font-medium">{ui(dictionary, "passwordMode", "Password mode")}</span>
+          <Select value={mode} onChange={(event) => setMode(event.target.value as PasswordMode)}>
+            <option value="password">{ui(dictionary, "passwordModeRandom", "Random password")}</option>
+            <option value="passphrase">{ui(dictionary, "passwordModePassphrase", "Passphrase")}</option>
+          </Select>
         </label>
-        <label className="flex items-end gap-2 pb-2 text-sm">
-          <input type="checkbox" checked={symbols} onChange={(event) => setSymbols(event.target.checked)} />
-          {ui(dictionary, "symbols", "Symbols")}
-        </label>
-        <div className="flex items-end">
-          <Button onClick={generate}>{ui(dictionary, "generate", "Generate")}</Button>
+        <div className="rounded-md border bg-card p-3 text-sm text-muted-foreground">
+          {mode === "passphrase"
+            ? ui(dictionary, "passphraseModeDescription", "Generate memorable word-based secrets for systems that allow longer values.")
+            : ui(dictionary, "passwordModeDescription", "Generate high-entropy random character strings for credential fields.")}
         </div>
       </div>
-      <ResultBlock title={ui(dictionary, "password", "Password")} value={value} dictionary={dictionary} />
+      {mode === "password" ? (
+        <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-[160px_120px_120px_120px_160px_auto]" data-password-options>
+          <label className="space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "length", "Length")}</span>
+            <Input type="number" min={8} max={128} value={length} onChange={(event) => setLength(Number(event.target.value))} />
+          </label>
+          <label className="flex items-end gap-2 pb-2 text-sm">
+            <input type="checkbox" checked={uppercase} onChange={(event) => setUppercase(event.target.checked)} />
+            {ui(dictionary, "uppercase", "Uppercase")}
+          </label>
+          <label className="flex items-end gap-2 pb-2 text-sm">
+            <input type="checkbox" checked={numbers} onChange={(event) => setNumbers(event.target.checked)} />
+            {ui(dictionary, "numbers", "Numbers")}
+          </label>
+          <label className="flex items-end gap-2 pb-2 text-sm">
+            <input type="checkbox" checked={symbols} onChange={(event) => setSymbols(event.target.checked)} />
+            {ui(dictionary, "symbols", "Symbols")}
+          </label>
+          <label className="flex items-end gap-2 pb-2 text-sm">
+            <input type="checkbox" checked={excludeAmbiguous} onChange={(event) => setExcludeAmbiguous(event.target.checked)} />
+            {ui(dictionary, "avoidAmbiguous", "Avoid ambiguous")}
+          </label>
+          <div className="flex items-end">
+            <Button onClick={generate}>{ui(dictionary, "generate", "Generate")}</Button>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-[160px_160px_160px_auto]" data-password-passphrase-options>
+          <label className="space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "passphraseWords", "Words")}</span>
+            <Input type="number" min={3} max={8} value={wordCount} onChange={(event) => setWordCount(Number(event.target.value))} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "passphraseSeparator", "Separator")}</span>
+            <Select value={separator} onChange={(event) => setSeparator(event.target.value)}>
+              <option value="-">-</option>
+              <option value=".">.</option>
+              <option value="_">_</option>
+              <option value=" ">{ui(dictionary, "passphraseSeparatorSpace", "space")}</option>
+            </Select>
+          </label>
+          <label className="flex items-end gap-2 pb-2 text-sm">
+            <input type="checkbox" checked={includeNumber} onChange={(event) => setIncludeNumber(event.target.checked)} />
+            {ui(dictionary, "passphraseIncludeNumber", "Include number")}
+          </label>
+          <div className="flex items-end">
+            <Button onClick={generate}>{ui(dictionary, "generate", "Generate")}</Button>
+          </div>
+        </div>
+      )}
+      <div data-password-strength>
+        <ToolMetricGrid
+          items={[
+            { label: mode === "passphrase" ? ui(dictionary, "passphraseWordList", "Word list") : ui(dictionary, "charsetSize", "Charset size"), value: String(mode === "passphrase" ? passphraseWords.length : alphabet.length || passwordCharacterSets.lower.length) },
+            { label: ui(dictionary, "entropyEstimate", "Entropy estimate"), value: `${Math.round(entropy)} bits`, description: describeEntropy(dictionary, entropy) },
+            { label: mode === "passphrase" ? ui(dictionary, "passphraseWords", "Words") : ui(dictionary, "characterGroups", "Character groups"), value: String(mode === "passphrase" ? safeWordCount : selectedSetCount) },
+            { label: ui(dictionary, "generatedLocally", "Generated locally"), value: ui(dictionary, "yes", "Yes") },
+          ]}
+        />
+      </div>
+      <div data-password-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "passwordNoWarnings", "Password settings look strong for local generation.")} />
+      </div>
+      <ResultBlock title={mode === "passphrase" ? ui(dictionary, "passwordModePassphrase", "Passphrase") : ui(dictionary, "password", "Password")} value={value} dictionary={dictionary} />
     </div>
   );
 }
 
+const qrExamples = [
+  { labelKey: "qrWebsiteExample", fallbackLabel: "Website", value: "https://www.bobob.app" },
+  { labelKey: "qrWifiExample", fallbackLabel: "Wi-Fi", value: "WIFI:T:WPA;S:Guest Network;P:example-password;;" },
+  { labelKey: "qrEmailExample", fallbackLabel: "Email", value: "mailto:hello@example.com?subject=Demo" },
+  { labelKey: "qrVcardExample", fallbackLabel: "vCard", value: "BEGIN:VCARD\nVERSION:3.0\nFN:Bob\nURL:https://www.bobob.app\nEND:VCARD" },
+];
+
+type QrBuilderMode = "url" | "wifi" | "email" | "vcard";
+
+function escapeWifiQrValue(value: string) {
+  return value.replace(/([\\;,:"])/g, "\\$1");
+}
+
+function buildMailto(to: string, subject: string, body: string) {
+  const params = new URLSearchParams();
+  if (subject.trim()) params.set("subject", subject.trim());
+  if (body.trim()) params.set("body", body.trim());
+  const query = params.toString();
+  return `mailto:${to.trim()}${query ? `?${query}` : ""}`;
+}
+
+function buildVcard({ name, org, phone, email, url }: { name: string; org: string; phone: string; email: string; url: string }) {
+  return [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `FN:${name.trim() || "Bob"}`,
+    org.trim() ? `ORG:${org.trim()}` : "",
+    phone.trim() ? `TEL:${phone.trim()}` : "",
+    email.trim() ? `EMAIL:${email.trim()}` : "",
+    url.trim() ? `URL:${url.trim()}` : "",
+    "END:VCARD",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function downloadDataUrl(dataUrl: string, filename: string) {
+  if (!dataUrl || typeof document === "undefined") return;
+  const link = document.createElement("a");
+  link.href = dataUrl;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
+function getQrPayloadInfo(value: string, errorCorrection: "L" | "M" | "Q" | "H") {
+  const trimmed = value.trim();
+  const bytes = byteLength(trimmed);
+  let typeKey = "qrPlainTextType";
+  let destinationHost = "—";
+  let trackingParams = 0;
+
+  if (/^WIFI:/i.test(trimmed)) {
+    typeKey = "qrWifiType";
+  } else if (/^BEGIN:VCARD/i.test(trimmed)) {
+    typeKey = "qrVcardType";
+  } else if (/^mailto:/i.test(trimmed)) {
+    typeKey = "qrEmailType";
+  } else if (/^tel:/i.test(trimmed)) {
+    typeKey = "qrPhoneType";
+  } else if (/^sms:/i.test(trimmed)) {
+    typeKey = "qrSmsType";
+  } else {
+    try {
+      const parsed = new URL(trimmed);
+      typeKey = "qrUrlType";
+      destinationHost = parsed.hostname || "—";
+      trackingParams = Array.from(parsed.searchParams.keys()).filter((key) => /^(utm_|fbclid$|gclid$|mc_cid$|mc_eid$)/i.test(key)).length;
+    } catch {
+      if (/^[\w.-]+\.[a-z]{2,}(?:\/|$)/i.test(trimmed)) {
+        typeKey = "qrUrlWithoutProtocolType";
+        destinationHost = trimmed.split(/[/?#]/)[0] ?? "—";
+      }
+    }
+  }
+
+  const densityKey = bytes > 900 ? "qrDensityHigh" : bytes > 240 ? "qrDensityMedium" : "qrDensityLow";
+  const errorCorrectionKey = {
+    L: "qrErrorCorrectionLow",
+    M: "qrErrorCorrectionMedium",
+    Q: "qrErrorCorrectionQuartile",
+    H: "qrErrorCorrectionHigh",
+  }[errorCorrection];
+
+  return {
+    typeKey,
+    destinationHost,
+    trackingParams,
+    densityKey,
+    errorCorrectionKey,
+    lineCount: trimmed ? trimmed.split(/\r?\n/).length : 0,
+  };
+}
+
 function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("https://www.bobob.app");
+  const [errorCorrection, setErrorCorrection] = React.useState<"L" | "M" | "Q" | "H">("M");
+  const [builderMode, setBuilderMode] = React.useState<QrBuilderMode>("url");
+  const [qrUrl, setQrUrl] = React.useState("https://www.bobob.app");
+  const [wifiSecurity, setWifiSecurity] = React.useState("WPA");
+  const [wifiSsid, setWifiSsid] = React.useState("Guest Network");
+  const [wifiPassword, setWifiPassword] = React.useState("example-password");
+  const [wifiHidden, setWifiHidden] = React.useState(false);
+  const [emailTo, setEmailTo] = React.useState("hello@example.com");
+  const [emailSubject, setEmailSubject] = React.useState("Demo");
+  const [emailBody, setEmailBody] = React.useState("");
+  const [vcardName, setVcardName] = React.useState("Bob");
+  const [vcardOrg, setVcardOrg] = React.useState("Bob's Multi Tool");
+  const [vcardPhone, setVcardPhone] = React.useState("");
+  const [vcardEmail, setVcardEmail] = React.useState("hello@example.com");
+  const [vcardUrl, setVcardUrl] = React.useState("https://www.bobob.app");
   const [dataUrl, setDataUrl] = React.useState("");
 
   React.useEffect(() => {
     let mounted = true;
-    QRCode.toDataURL(input, { margin: 2, width: 320 })
+    if (!input.trim()) {
+      setDataUrl("");
+      return () => {
+        mounted = false;
+      };
+    }
+    QRCode.toDataURL(input, { errorCorrectionLevel: errorCorrection, margin: 2, width: 320 })
       .then((value) => {
         if (mounted) setDataUrl(value);
       })
@@ -993,14 +3622,190 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
     return () => {
       mounted = false;
     };
-  }, [input]);
+  }, [errorCorrection, input]);
+
+  const trimmed = input.trim();
+  const builderPayload = React.useMemo(() => {
+    if (builderMode === "wifi") {
+      const type = wifiSecurity === "nopass" ? "nopass" : wifiSecurity;
+      const passwordPart = type === "nopass" ? "" : `P:${escapeWifiQrValue(wifiPassword)};`;
+      const hiddenPart = wifiHidden ? "H:true;" : "";
+      return `WIFI:T:${type};S:${escapeWifiQrValue(wifiSsid)};${passwordPart}${hiddenPart};`;
+    }
+    if (builderMode === "email") return buildMailto(emailTo, emailSubject, emailBody);
+    if (builderMode === "vcard") return buildVcard({ name: vcardName, org: vcardOrg, phone: vcardPhone, email: vcardEmail, url: vcardUrl });
+    return qrUrl.trim();
+  }, [builderMode, emailBody, emailSubject, emailTo, qrUrl, vcardEmail, vcardName, vcardOrg, vcardPhone, vcardUrl, wifiHidden, wifiPassword, wifiSecurity, wifiSsid]);
+  const payloadInfo = React.useMemo(() => getQrPayloadInfo(trimmed, errorCorrection), [errorCorrection, trimmed]);
+  const qrWarnings = [
+    trimmed.length === 0 ? ui(dictionary, "qrEmptyWarning", "Enter content before generating a QR code.") : "",
+    payloadInfo.typeKey === "qrUrlWithoutProtocolType" || /^www\./i.test(trimmed) ? ui(dictionary, "qrProtocolWarning", "Add https:// before web domains so scanners open the expected URL.") : "",
+    /^http:\/\//i.test(trimmed) ? ui(dictionary, "qrHttpWarning", "The QR opens an HTTP URL. Use HTTPS for public pages when possible.") : "",
+    /^WIFI:/i.test(trimmed) ? ui(dictionary, "qrWifiWarning", "Wi-Fi QR codes expose the network password to anyone who can scan the image.") : "",
+    /^BEGIN:VCARD/i.test(trimmed) ? ui(dictionary, "qrVcardWarning", "vCard QR codes can expose personal contact data. Review every field before sharing.") : "",
+    /^mailto:/i.test(trimmed) ? ui(dictionary, "qrEmailWarning", "mailto QR codes depend on the scanner's mail app and may not preserve every query parameter.") : "",
+    payloadInfo.trackingParams > 0 ? ui(dictionary, "qrTrackingWarning", "Tracking parameters are present. Confirm analytics tags are intentional before download.") : "",
+    byteLength(trimmed) > 900 ? ui(dictionary, "qrLongContentWarning", "Long content creates dense QR codes. Test scan quality before publishing.") : "",
+    errorCorrection === "H" && byteLength(trimmed) > 700 ? ui(dictionary, "qrHighCorrectionWarning", "High error correction with long content can make the code very dense.") : "",
+    ui(dictionary, "qrLocalWarning", "The QR image is generated locally in the browser; only the encoded content is visible in the PNG."),
+  ].filter(Boolean);
 
   return (
-    <div className="space-y-4">
-      <label className="block space-y-2">
-        <span className="text-sm font-medium">QR content</span>
-        <Textarea value={input} onChange={(event) => setInput(event.target.value)} />
-      </label>
+    <div className="space-y-4" data-qr-tool>
+      <div className="space-y-2" data-qr-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "qrExamples", "QR examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {qrExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+        <label className="block space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "qrContent", "QR content")}</span>
+          <Textarea value={input} onChange={(event) => setInput(event.target.value)} />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "errorCorrection", "Error correction")}</span>
+          <Select value={errorCorrection} onChange={(event) => setErrorCorrection(event.target.value as "L" | "M" | "Q" | "H")}>
+            <option value="L">L</option>
+            <option value="M">M</option>
+            <option value="Q">Q</option>
+            <option value="H">H</option>
+          </Select>
+        </label>
+      </div>
+      <section className="rounded-md border bg-card p-3" data-qr-payload-builder>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold">{ui(dictionary, "qrPayloadBuilder", "Payload builder")}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "qrPayloadBuilderDescription", "Build URL, Wi-Fi, email, or vCard payloads before generating the QR image.")}</p>
+          </div>
+          <Button size="sm" onClick={() => setInput(builderPayload)}>
+            {ui(dictionary, "applyQrPayload", "Apply payload")}
+          </Button>
+        </div>
+        <div className="mt-3 grid gap-3 md:grid-cols-[180px_minmax(0,1fr)]" data-qr-builder-fields>
+          <label className="space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "qrPayloadMode", "Payload type")}</span>
+            <Select value={builderMode} onChange={(event) => setBuilderMode(event.target.value as QrBuilderMode)}>
+              <option value="url">{ui(dictionary, "qrModeUrl", "URL")}</option>
+              <option value="wifi">{ui(dictionary, "qrModeWifi", "Wi-Fi")}</option>
+              <option value="email">{ui(dictionary, "qrModeEmail", "Email")}</option>
+              <option value="vcard">{ui(dictionary, "qrModeVcard", "vCard")}</option>
+            </Select>
+          </label>
+          {builderMode === "url" ? (
+            <label className="space-y-2">
+              <span className="text-sm font-medium">{ui(dictionary, "qrUrlValue", "URL")}</span>
+              <Input value={qrUrl} onChange={(event) => setQrUrl(event.target.value)} />
+            </label>
+          ) : null}
+          {builderMode === "wifi" ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrWifiSsid", "Network name")}</span>
+                <Input value={wifiSsid} onChange={(event) => setWifiSsid(event.target.value)} />
+              </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrWifiSecurity", "Security")}</span>
+                <Select value={wifiSecurity} onChange={(event) => setWifiSecurity(event.target.value)}>
+                  <option value="WPA">WPA/WPA2</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">{ui(dictionary, "qrWifiNoPassword", "No password")}</option>
+                </Select>
+              </label>
+              {wifiSecurity !== "nopass" ? (
+                <label className="space-y-2">
+                  <span className="text-sm font-medium">{ui(dictionary, "qrWifiPassword", "Password")}</span>
+                  <Input value={wifiPassword} onChange={(event) => setWifiPassword(event.target.value)} />
+                </label>
+              ) : null}
+              <label className="flex items-end gap-2 pb-2 text-sm">
+                <input type="checkbox" checked={wifiHidden} onChange={(event) => setWifiHidden(event.target.checked)} />
+                {ui(dictionary, "qrWifiHidden", "Hidden network")}
+              </label>
+            </div>
+          ) : null}
+          {builderMode === "email" ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrEmailTo", "Email to")}</span>
+                <Input value={emailTo} onChange={(event) => setEmailTo(event.target.value)} />
+              </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrEmailSubject", "Subject")}</span>
+                <Input value={emailSubject} onChange={(event) => setEmailSubject(event.target.value)} />
+              </label>
+              <label className="space-y-2 md:col-span-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrEmailBody", "Body")}</span>
+                <Textarea value={emailBody} onChange={(event) => setEmailBody(event.target.value)} />
+              </label>
+            </div>
+          ) : null}
+          {builderMode === "vcard" ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrVcardName", "Name")}</span>
+                <Input value={vcardName} onChange={(event) => setVcardName(event.target.value)} />
+              </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrVcardOrg", "Organization")}</span>
+                <Input value={vcardOrg} onChange={(event) => setVcardOrg(event.target.value)} />
+              </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrVcardPhone", "Phone")}</span>
+                <Input value={vcardPhone} onChange={(event) => setVcardPhone(event.target.value)} />
+              </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrVcardEmail", "Email")}</span>
+                <Input value={vcardEmail} onChange={(event) => setVcardEmail(event.target.value)} />
+              </label>
+              <label className="space-y-2 md:col-span-2">
+                <span className="text-sm font-medium">{ui(dictionary, "qrVcardUrl", "Website")}</span>
+                <Input value={vcardUrl} onChange={(event) => setVcardUrl(event.target.value)} />
+              </label>
+            </div>
+          ) : null}
+        </div>
+        <div className="mt-3">
+          <ResultBlock title={ui(dictionary, "builtQrPayload", "Built payload")} value={builderPayload} dictionary={dictionary} />
+        </div>
+      </section>
+      <div data-qr-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "characters", "Characters"), value: String(trimmed.length) },
+            { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(byteLength(trimmed)) },
+            { label: ui(dictionary, "qrPayloadType", "Payload type"), value: ui(dictionary, payloadInfo.typeKey, payloadInfo.typeKey) },
+            { label: ui(dictionary, "qrScanDensity", "Scan density"), value: ui(dictionary, payloadInfo.densityKey, payloadInfo.densityKey) },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card p-3" data-qr-diagnostics data-qr-payload-type>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold">{ui(dictionary, "qrDiagnostics", "QR diagnostics")}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "qrDiagnosticsDescription", "Review payload type, destination, density, and error correction before downloading the PNG.")}</p>
+          </div>
+          <Badge>{ui(dictionary, payloadInfo.typeKey, payloadInfo.typeKey)}</Badge>
+        </div>
+        <div className="mt-3">
+          <ToolMetricGrid
+            items={[
+              { label: ui(dictionary, "qrDestinationHost", "Destination host"), value: payloadInfo.destinationHost },
+              { label: ui(dictionary, "qrTrackingParameters", "Tracking parameters"), value: String(payloadInfo.trackingParams) },
+              { label: ui(dictionary, "textLines", "Text lines"), value: String(payloadInfo.lineCount) },
+              { label: ui(dictionary, "errorCorrection", "Error correction"), value: `${errorCorrection} · ${ui(dictionary, payloadInfo.errorCorrectionKey, payloadInfo.errorCorrectionKey)}` },
+            ]}
+          />
+        </div>
+      </section>
+      <div data-qr-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={qrWarnings} emptyLabel={ui(dictionary, "qrNoWarnings", "QR content is ready for a local PNG preview.")} />
+      </div>
       <div className="grid gap-4 md:grid-cols-[340px_1fr]">
         <div className="flex min-h-80 items-center justify-center rounded-lg border bg-white p-4">
           {dataUrl ? <Image src={dataUrl} alt="Generated QR code" width={288} height={288} unoptimized className="h-72 w-72" /> : <span className="text-sm text-zinc-500">{dictionary.tool.noOutput}</span>}
@@ -1008,13 +3813,19 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
         <Card>
           <CardHeader>
             <CardTitle>{ui(dictionary, "download", "Download")}</CardTitle>
-            <CardDescription>PNG data URL generated in the browser.</CardDescription>
+            <CardDescription>{ui(dictionary, "qrDownloadDescription", "PNG data URL generated in the browser.")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" disabled={!dataUrl} onClick={() => dataUrl && window.open(dataUrl, "_blank")}>
-              <Download className="h-4 w-4" />
-              {ui(dictionary, "openPng", "Open PNG")}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" disabled={!dataUrl} onClick={() => dataUrl && window.open(dataUrl, "_blank")}>
+                <Download className="h-4 w-4" />
+                {ui(dictionary, "openPng", "Open PNG")}
+              </Button>
+              <Button variant="outline" disabled={!dataUrl} onClick={() => downloadDataUrl(dataUrl, "bobob-qr-code.png")}>
+                <Download className="h-4 w-4" />
+                {ui(dictionary, "downloadPng", "Download PNG")}
+              </Button>
+            </div>
             <ResultBlock title={ui(dictionary, "dataUrl", "Data URL")} value={dataUrl} dictionary={dictionary} />
           </CardContent>
         </Card>
@@ -1026,7 +3837,14 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
 function RandomTokenTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [bytes, setBytes] = React.useState(32);
   const [format, setFormat] = React.useState("hex");
+  const [purposeKey, setPurposeKey] = React.useState("tokenUseSession");
   const [value, setValue] = React.useState("");
+  const tokenPresets = [
+    { labelKey: "tokenSessionExample", fallbackLabel: "Session token", bytes: 32, format: "url", purposeKey: "tokenUseSession" },
+    { labelKey: "tokenApiKeyExample", fallbackLabel: "API key seed", bytes: 48, format: "hex", purposeKey: "tokenUseApiKey" },
+    { labelKey: "tokenCsrfExample", fallbackLabel: "CSRF token", bytes: 24, format: "url", purposeKey: "tokenUseUrlSafe" },
+    { labelKey: "tokenWebhookExample", fallbackLabel: "Webhook secret", bytes: 32, format: "base64", purposeKey: "tokenUseBinary" },
+  ];
   const generate = React.useCallback(() => {
     const raw = randomBytes(Math.max(8, Math.min(bytes, 128)));
     if (format === "hex") setValue(Array.from(raw, (byte) => byte.toString(16).padStart(2, "0")).join(""));
@@ -1038,16 +3856,65 @@ function RandomTokenTool({ dictionary }: { dictionary: ClientDictionary }) {
     generate();
   }, [generate]);
 
+  const safeBytes = clampInteger(bytes, 8, 128);
+  const entropyBits = safeBytes * 8;
+  const tokenWarnings = [
+    safeBytes < 16 ? ui(dictionary, "tokenShortWarning", "Use at least 16 bytes for security-sensitive tokens.") : "",
+    format === "base64" ? ui(dictionary, "tokenBase64PaddingWarning", "Standard Base64 can include +, /, and = padding. Use URL-safe format for links, cookies, and path segments.") : "",
+    format !== "url" && purposeKey === "tokenUseUrlSafe" ? ui(dictionary, "tokenUrlFormatWarning", "This use case usually needs a URL-safe token. Switch format before copying.") : "",
+    ui(dictionary, "tokenLocalWarning", "Generated locally with browser crypto. Store real secrets in a secret manager or password manager."),
+  ].filter(Boolean);
+  const applyPreset = (preset: (typeof tokenPresets)[number]) => {
+    setBytes(preset.bytes);
+    setFormat(preset.format);
+    setPurposeKey(preset.purposeKey);
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-random-token-tool>
+      <div className="space-y-2" data-random-token-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "tokenExamples", "Token examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {tokenPresets.map((preset) => (
+            <Button key={preset.labelKey} variant="outline" size="sm" onClick={() => applyPreset(preset)}>
+              {ui(dictionary, preset.labelKey, preset.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-3 md:grid-cols-[160px_180px_auto]">
-        <Input type="number" min={8} max={128} value={bytes} onChange={(event) => setBytes(Number(event.target.value))} aria-label="Bytes" />
-        <Select value={format} onChange={(event) => setFormat(event.target.value)}>
-          <option value="hex">Hex</option>
-          <option value="base64">Base64</option>
-          <option value="url">URL-safe</option>
-        </Select>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "bytes", "Bytes")}</span>
+          <Input type="number" min={8} max={128} value={bytes} onChange={(event) => setBytes(Number(event.target.value))} />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "tokenFormat", "Token format")}</span>
+          <Select value={format} onChange={(event) => setFormat(event.target.value)}>
+            <option value="hex">Hex</option>
+            <option value="base64">Base64</option>
+            <option value="url">URL-safe</option>
+          </Select>
+        </label>
         <Button onClick={generate}>{ui(dictionary, "generate", "Generate")}</Button>
+      </div>
+      <section className="rounded-md border bg-card p-3" data-random-token-diagnostics>
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "tokenDiagnostics", "Token diagnostics")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "tokenDiagnosticsDescription", "Check entropy, encoding length, URL safety, and intended use before copying a secret.")}</p>
+        </div>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "entropyEstimate", "Entropy estimate"), value: `${entropyBits} bits`, description: describeEntropy(dictionary, entropyBits) },
+            { label: ui(dictionary, "encodedLength", "Encoded length"), value: String(value.length) },
+            { label: ui(dictionary, "tokenUse", "Intended use"), value: ui(dictionary, purposeKey, purposeKey) },
+            { label: ui(dictionary, "tokenUrlSafe", "URL safe"), value: format === "url" || format === "hex" ? ui(dictionary, "yes", "Yes") : ui(dictionary, "no", "No") },
+            { label: ui(dictionary, "tokenPadding", "Padding"), value: format === "base64" ? "Base64 =" : ui(dictionary, "notApplicable", "Not applicable") },
+            { label: ui(dictionary, "generatedLocally", "Generated locally"), value: ui(dictionary, "yes", "Yes") },
+          ]}
+        />
+      </section>
+      <div data-random-token-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={tokenWarnings} emptyLabel={ui(dictionary, "tokenNoWarnings", "Token settings look ready for local generation.")} />
       </div>
       <ResultBlock title={ui(dictionary, "randomToken", "Random token")} value={value} dictionary={dictionary} />
     </div>
@@ -1187,24 +4054,326 @@ function JsonSchemaTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+const jsonPathExamples = [
+  {
+    labelKey: "jsonPathFirstItemExample",
+    fallback: "First item name",
+    path: "$.items[0].name",
+    json: '{"items":[{"id":1,"name":"Bob","active":true},{"id":2,"name":"Alice","active":false}],"meta":{"total":2}}',
+  },
+  {
+    labelKey: "jsonPathWildcardExample",
+    fallback: "All item names",
+    path: "$.items[*].name",
+    json: '{"items":[{"id":1,"name":"Bob"},{"id":2,"name":"Alice"},{"id":3,"name":"Charlie"}]}',
+  },
+  {
+    labelKey: "jsonPathRecursiveExample",
+    fallback: "Every id",
+    path: "$..id",
+    json: '{"user":{"id":"u_123","team":{"id":"team_9"}},"items":[{"id":1},{"id":2}]}',
+  },
+  {
+    labelKey: "jsonPathBracketExample",
+    fallback: "Bracket key",
+    path: "$.data['user-id']",
+    json: '{"data":{"user-id":"bob-42","roles":["admin","editor"]}}',
+  },
+];
+
+type JsonPathToken =
+  | { kind: "key"; key: string }
+  | { kind: "index"; index: number }
+  | { kind: "wildcard" }
+  | { kind: "recursiveKey"; key: string };
+
+type JsonPathMatch = {
+  path: string;
+  value: unknown;
+  type: string;
+  preview: string;
+};
+
+function jsonPathSegment(key: string) {
+  return /^[A-Za-z_$][\w$]*$/.test(key) ? `.${key}` : `[${JSON.stringify(key)}]`;
+}
+
+function readJsonPathIdentifier(source: string, start: number) {
+  const match = source.slice(start).match(/^[A-Za-z_$][\w$]*/);
+  if (!match) return null;
+  return { value: match[0], end: start + match[0].length };
+}
+
+function parseJsonPath(path: string): JsonPathToken[] {
+  const source = path.trim();
+  if (!source.startsWith("$")) throw new Error("JSONPath must start with $.");
+
+  const tokens: JsonPathToken[] = [];
+  let index = 1;
+
+  while (index < source.length) {
+    if (source.startsWith("..", index)) {
+      index += 2;
+      const identifier = readJsonPathIdentifier(source, index);
+      if (!identifier) throw new Error("Recursive descent supports keys such as $..id.");
+      tokens.push({ kind: "recursiveKey", key: identifier.value });
+      index = identifier.end;
+      continue;
+    }
+
+    const character = source[index];
+    if (character === ".") {
+      index += 1;
+      if (source[index] === "*") {
+        tokens.push({ kind: "wildcard" });
+        index += 1;
+        continue;
+      }
+      const identifier = readJsonPathIdentifier(source, index);
+      if (!identifier) throw new Error("Dot notation expects a property name.");
+      tokens.push({ kind: "key", key: identifier.value });
+      index = identifier.end;
+      continue;
+    }
+
+    if (character === "[") {
+      const closeIndex = source.indexOf("]", index);
+      if (closeIndex === -1) throw new Error("Bracket notation is missing ].");
+      const raw = source.slice(index + 1, closeIndex).trim();
+      if (raw === "*") {
+        tokens.push({ kind: "wildcard" });
+      } else if (/^\d+$/.test(raw)) {
+        tokens.push({ kind: "index", index: Number(raw) });
+      } else {
+        const quoted = raw.match(/^["'](.+)["']$/);
+        if (!quoted) throw new Error("Supported brackets are [0], [*], ['key'], and [\"key\"].");
+        tokens.push({ kind: "key", key: quoted[1]!.replace(/\\(["'])/g, "$1") });
+      }
+      index = closeIndex + 1;
+      continue;
+    }
+
+    throw new Error(`Unsupported JSONPath syntax near "${source.slice(index)}".`);
+  }
+
+  return tokens;
+}
+
+function collectRecursiveJsonPathMatches(node: unknown, key: string, path: string, matches: JsonPathMatch[], limit: number) {
+  if (matches.length >= limit) return;
+
+  if (Array.isArray(node)) {
+    node.forEach((item, index) => collectRecursiveJsonPathMatches(item, key, `${path}[${index}]`, matches, limit));
+    return;
+  }
+
+  if (!node || typeof node !== "object") return;
+
+  const record = node as Record<string, unknown>;
+  if (Object.prototype.hasOwnProperty.call(record, key)) {
+    const value = record[key];
+    matches.push({
+      path: `${path}${jsonPathSegment(key)}`,
+      value,
+      type: getJsonValueType(value),
+      preview: getJsonPreviewValue(value),
+    });
+  }
+
+  for (const [childKey, child] of Object.entries(record)) {
+    collectRecursiveJsonPathMatches(child, key, `${path}${jsonPathSegment(childKey)}`, matches, limit);
+  }
+}
+
+function evaluateJsonPath(json: string, path: string, limit = 80) {
+  const root = JSON.parse(json);
+  const tokens = parseJsonPath(path);
+  let matches: JsonPathMatch[] = [{ path: "$", value: root, type: getJsonValueType(root), preview: getJsonPreviewValue(root) }];
+  let truncated = false;
+
+  for (const token of tokens) {
+    const next: JsonPathMatch[] = [];
+
+    for (const match of matches) {
+      if (next.length >= limit) {
+        truncated = true;
+        break;
+      }
+
+      if (token.kind === "key") {
+        if (match.value && typeof match.value === "object" && !Array.isArray(match.value)) {
+          const record = match.value as Record<string, unknown>;
+          if (Object.prototype.hasOwnProperty.call(record, token.key)) {
+            const value = record[token.key];
+            next.push({ path: `${match.path}${jsonPathSegment(token.key)}`, value, type: getJsonValueType(value), preview: getJsonPreviewValue(value) });
+          }
+        }
+        continue;
+      }
+
+      if (token.kind === "index") {
+        if (Array.isArray(match.value) && token.index < match.value.length) {
+          const value = match.value[token.index];
+          next.push({ path: `${match.path}[${token.index}]`, value, type: getJsonValueType(value), preview: getJsonPreviewValue(value) });
+        }
+        continue;
+      }
+
+      if (token.kind === "wildcard") {
+        if (Array.isArray(match.value)) {
+          match.value.slice(0, limit - next.length).forEach((value, childIndex) => {
+            next.push({ path: `${match.path}[${childIndex}]`, value, type: getJsonValueType(value), preview: getJsonPreviewValue(value) });
+          });
+          truncated = truncated || match.value.length > limit - next.length;
+        } else if (match.value && typeof match.value === "object") {
+          for (const [key, value] of Object.entries(match.value as Record<string, unknown>)) {
+            if (next.length >= limit) {
+              truncated = true;
+              break;
+            }
+            next.push({ path: `${match.path}${jsonPathSegment(key)}`, value, type: getJsonValueType(value), preview: getJsonPreviewValue(value) });
+          }
+        }
+        continue;
+      }
+
+      collectRecursiveJsonPathMatches(match.value, token.key, match.path, next, limit);
+      truncated = truncated || next.length >= limit;
+    }
+
+    matches = next;
+  }
+
+  const values = matches.map((match) => match.value);
+  return {
+    tokens,
+    matches,
+    truncated,
+    output: JSON.stringify(matches.length === 1 ? values[0] : values, null, 2),
+    rootType: getJsonValueType(root),
+    resultType: matches.length === 1 ? getJsonValueType(values[0]) : "array",
+  };
+}
+
 function JsonPathTool({ dictionary }: { dictionary: ClientDictionary }) {
-  const [json, setJson] = React.useState('{"items":[{"name":"Bob"},{"name":"Alice"}]}');
-  const [path, setPath] = React.useState("$.items[0].name");
+  const [json, setJson] = React.useState(jsonPathExamples[0]!.json);
+  const [path, setPath] = React.useState(jsonPathExamples[0]!.path);
   const result = React.useMemo(() => {
     try {
-      const parts = path.replace(/^\$\.?/, "").replace(/\[(\d+)\]/g, ".$1").split(".").filter(Boolean);
-      const value = parts.reduce<unknown>((current, part) => (current as Record<string, unknown> | unknown[])?.[part as keyof typeof current], JSON.parse(json));
-      return JSON.stringify(value, null, 2);
+      return { error: "", ...evaluateJsonPath(json, path) };
     } catch (error) {
-      return error instanceof Error ? error.message : "Unable to evaluate path.";
+      return {
+        error: error instanceof Error ? error.message : "Unable to evaluate path.",
+        tokens: [],
+        matches: [],
+        truncated: false,
+        output: "",
+        rootType: "",
+        resultType: "",
+      };
     }
   }, [json, path]);
 
+  const warnings = [
+    !result.error && result.matches.length === 0 ? ui(dictionary, "jsonPathNoMatchesWarning", "No values matched this path. Check array indexes, key names, and wildcard placement.") : "",
+    result.truncated ? ui(dictionary, "jsonPathTruncatedWarning", "Results were limited so the browser stays responsive. Narrow the path before copying.") : "",
+  ].filter(Boolean);
+
   return (
     <div className="space-y-4">
-      <Input value={path} onChange={(event) => setPath(event.target.value)} aria-label="JSONPath" />
-      <Textarea value={json} onChange={(event) => setJson(event.target.value)} className="min-h-44" />
-      <ResultBlock title={ui(dictionary, "pathResult", "Path result")} value={result} dictionary={dictionary} />
+      <div className="space-y-2" data-jsonpath-examples>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jsonPathExamples", "JSONPath examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {jsonPathExamples.map((example) => (
+            <Button
+              key={example.labelKey}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setPath(example.path);
+                setJson(example.json);
+              }}
+            >
+              {ui(dictionary, example.labelKey, example.fallback)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "jsonPathExpression", "JSONPath expression")}</span>
+          <Input value={path} onChange={(event) => setPath(event.target.value)} aria-label="JSONPath" />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "jsonInput", "JSON input")}</span>
+          <Textarea value={json} onChange={(event) => setJson(event.target.value)} className="min-h-44" />
+        </label>
+      </div>
+      <section className="rounded-md border bg-card p-3" data-jsonpath-supported-syntax>
+        <p className="text-sm font-medium">{ui(dictionary, "jsonPathSupportedSyntax", "Supported syntax")}</p>
+        <div className="mt-2 flex flex-wrap gap-2 text-xs">
+          {["$.items[0].name", "$.items[*].name", "$..id", "$['data']['user-id']"].map((item) => (
+            <Kbd key={item}>{item}</Kbd>
+          ))}
+        </div>
+      </section>
+      {result.error ? (
+        <ErrorAlert title={ui(dictionary, "jsonPathError", "JSONPath error")} message={result.error} />
+      ) : (
+        <div className="space-y-4" data-jsonpath-result-details>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: ui(dictionary, "jsonPathMatches", "Matches"), value: String(result.matches.length) },
+              { label: ui(dictionary, "jsonPathResultType", "Result type"), value: result.resultType },
+              { label: ui(dictionary, "jsonPathTokens", "Path tokens"), value: String(result.tokens.length) },
+              { label: ui(dictionary, "rootType", "Root type"), value: result.rootType },
+            ].map((item) => (
+              <div key={item.label} className="rounded-md border bg-card p-3">
+                <p className="text-xs text-muted-foreground">{item.label}</p>
+                <p className="mt-1 break-words text-sm font-medium">{item.value}</p>
+              </div>
+            ))}
+          </div>
+          {warnings.length ? (
+            <section className="rounded-md border bg-card p-3" data-jsonpath-warnings>
+              <p className="text-sm font-medium">{ui(dictionary, "jsonPathReviewNotes", "Review notes")}</p>
+              <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                {warnings.map((warning) => (
+                  <li key={warning}>{warning}</li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          <section className="rounded-md border bg-card p-3" data-jsonpath-matches>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{ui(dictionary, "jsonPathMatchedValues", "Matched values")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsonPathMatchedValuesDescription", "Review matched paths and values before copying the result.")}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.matches.map((match) => match.path).join("\n"))}>
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copyMatchedPaths", "Copy paths")}
+              </Button>
+            </div>
+            <div className="mt-3 grid gap-2">
+              {result.matches.slice(0, 24).map((match) => (
+                <div key={match.path} className="grid min-w-0 gap-2 rounded-md bg-muted px-3 py-2 text-xs md:grid-cols-[minmax(0,1.2fr)_6rem_minmax(0,1fr)_auto] md:items-center">
+                  <code className="min-w-0 overflow-x-auto whitespace-nowrap rounded bg-background px-2 py-1">{match.path}</code>
+                  <span className="text-muted-foreground">{match.type}</span>
+                  <span className="min-w-0 truncate text-muted-foreground">{match.preview}</span>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(JSON.stringify(match.value, null, 2))}>
+                    <Copy className="h-4 w-4" />
+                    {dictionary.tool.copy}
+                  </Button>
+                </div>
+              ))}
+              {!result.matches.length ? <p className="text-xs text-muted-foreground">{ui(dictionary, "jsonPathNoMatches", "No matched values.")}</p> : null}
+            </div>
+          </section>
+          <ResultBlock title={ui(dictionary, "pathResult", "Path result")} value={result.output} dictionary={dictionary} />
+        </div>
+      )}
     </div>
   );
 }
@@ -1237,12 +4406,153 @@ function minifyCss(value: string) {
   return value.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").replace(/\s*([{}:;,>])\s*/g, "$1").trim();
 }
 
+function stripCssComments(value: string) {
+  return value.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+function uniqueStrings(values: string[]) {
+  return Array.from(new Set(values));
+}
+
+function analyzeCss(value: string) {
+  const withoutComments = stripCssComments(value);
+  const selectorMatches = Array.from(withoutComments.matchAll(/(?:^|[{}])\s*([^@{};][^{}]*)\s*\{/g));
+  const selectors = selectorMatches
+    .map((match) => (match[1] ?? "").trim().replace(/\s+/g, " "))
+    .filter(Boolean);
+  const selectorCounts = selectors.reduce<Record<string, number>>((counts, selector) => {
+    counts[selector] = (counts[selector] ?? 0) + 1;
+    return counts;
+  }, {});
+  const duplicateSelectors = Object.entries(selectorCounts)
+    .filter(([, count]) => count > 1)
+    .map(([selector]) => selector);
+  const atRules = uniqueStrings(Array.from(withoutComments.matchAll(/@[a-z-]+[^{;]*/gi)).map((match) => (match[0] ?? "").trim().replace(/\s+/g, " ")));
+  const customProperties = uniqueStrings(Array.from(withoutComments.matchAll(/--[a-zA-Z0-9-_]+(?=\s*:)/g)).map((match) => match[0] ?? ""));
+  const colorTokens = uniqueStrings(Array.from(withoutComments.matchAll(/#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)/gi)).map((match) => (match[0] ?? "").trim()));
+  const minifiedLength = minifyCss(value).length;
+  const compressionRatio = value.trim() ? Math.max(0, (1 - minifiedLength / value.length) * 100) : 0;
+  return {
+    atRules,
+    colorTokens,
+    compressionRatio,
+    customProperties,
+    duplicateSelectors,
+    hasComments: /\/\*/.test(value),
+    hasIdSelector: selectors.some((selector) => /#[A-Za-z0-9_-]+/.test(selector)),
+    selectors,
+  };
+}
+
+const cssExamples = [
+  { labelKey: "flexRuleExample", fallbackLabel: "Flex rule", value: ".card{display:flex;gap:16px;color:#111}" },
+  { labelKey: "mediaQueryExample", fallbackLabel: "Media query", value: "@media (min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}" },
+  { labelKey: "cssVariableExample", fallbackLabel: "CSS variables", value: ":root{--gap:16px}.panel{padding:var(--gap);border:1px solid #ddd}" },
+];
+
+function CssFormatterPanel({ dictionary, minifier = false }: { dictionary: ClientDictionary; minifier?: boolean }) {
+  const [input, setInput] = React.useState(minifier ? ".card { display: flex; color: #111; }" : cssExamples[0].value);
+  const result = React.useMemo(() => {
+    try {
+      return { error: "", value: minifier ? minifyCss(input) : formatCss(input) };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Unable to format CSS.", value: "" };
+    }
+  }, [input, minifier]);
+  const cssAnalysis = React.useMemo(() => analyzeCss(input), [input]);
+  const openBraces = (input.match(/{/g) ?? []).length;
+  const closeBraces = (input.match(/}/g) ?? []).length;
+  const warnings = [
+    openBraces !== closeBraces ? ui(dictionary, "cssUnbalancedBracesWarning", "Opening and closing brace counts do not match.") : "",
+    /!important/.test(input) ? ui(dictionary, "cssImportantWarning", "The snippet contains !important. Confirm this is intentional before copying.") : "",
+    cssAnalysis.duplicateSelectors.length ? ui(dictionary, "cssDuplicateSelectorWarning", "Duplicate selectors were detected. Confirm cascade order before copying.") : "",
+    cssAnalysis.hasIdSelector ? ui(dictionary, "cssSpecificityWarning", "ID selectors raise specificity and can make overrides harder.") : "",
+    minifier && cssAnalysis.hasComments ? ui(dictionary, "cssCommentRemovalWarning", "Minifying removes comments, including license or handoff notes.") : "",
+    ui(dictionary, "cssHeuristicWarning", "This lightweight formatter is for small snippets. Run your project formatter before committing large stylesheets."),
+  ].filter(Boolean);
+
+  return (
+    <div className="space-y-4" data-css-tool>
+      <div className="space-y-2" data-css-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "cssExamples", "CSS examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {cssExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-44" aria-label="CSS" />
+      <div data-css-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "selectorBlocks", "Selector blocks"), value: String(cssAnalysis.selectors.length) },
+            { label: ui(dictionary, "declarations", "Declarations"), value: String(input.match(/:[^;{}]+[;}]/g)?.length ?? 0) },
+            { label: ui(dictionary, "mediaQueries", "Media queries"), value: String(input.match(/@media/g)?.length ?? 0) },
+            { label: ui(dictionary, "outputLines", "Output lines"), value: result.value ? String(result.value.split(/\r?\n/).length) : "0" },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-css-diagnostics>
+        <div className="border-b px-3 py-2">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "cssDiagnostics", "CSS diagnostics")}</h3>
+          <p className="text-xs text-muted-foreground">{ui(dictionary, "cssDiagnosticsDescription", "Inspect selectors, tokens, at-rules, and minified size before copying.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid
+            items={[
+              {
+                label: ui(dictionary, "customProperties", "Custom properties"),
+                value: String(cssAnalysis.customProperties.length),
+                description: cssAnalysis.customProperties.slice(0, 3).join(", ") || ui(dictionary, "noCustomProperties", "No custom properties detected."),
+              },
+              {
+                label: ui(dictionary, "colorTokens", "Color tokens"),
+                value: String(cssAnalysis.colorTokens.length),
+                description: cssAnalysis.colorTokens.slice(0, 3).join(", ") || ui(dictionary, "noColorTokens", "No color tokens detected."),
+              },
+              {
+                label: ui(dictionary, "atRules", "At-rules"),
+                value: String(cssAnalysis.atRules.length),
+                description: cssAnalysis.atRules.slice(0, 2).join(", ") || ui(dictionary, "noAtRules", "No at-rules detected."),
+              },
+              {
+                label: ui(dictionary, "compressionRatio", "Compression ratio"),
+                value: `${cssAnalysis.compressionRatio.toFixed(0)}%`,
+                description: ui(dictionary, "cssCompressionDescription", "Estimated reduction after whitespace and comment removal."),
+              },
+            ]}
+          />
+          <div className="rounded-md border bg-background p-3" data-css-selector-list>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-medium">{ui(dictionary, "selectorPreview", "Selector preview")}</p>
+              <p className="text-xs text-muted-foreground">{ui(dictionary, "selectorPreviewDescription", "First selectors found in the snippet.")}</p>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(cssAnalysis.selectors.length ? cssAnalysis.selectors.slice(0, 8) : [ui(dictionary, "noSelectorsDetected", "No selectors detected.")]).map((selector) => (
+                <Badge key={selector} className="max-w-full break-all bg-muted font-mono text-xs">
+                  {selector}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      <div data-css-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "cssNoWarnings", "CSS snippet is ready for visual review.")} />
+      </div>
+      {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")} value={result.value} dictionary={dictionary} />}
+    </div>
+  );
+}
+
 function CssFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="CSS" defaultInput=".card{display:flex;color:#111}" modes={[{ value: "format", label: "Format CSS", labelKey: "prettyPrint", transform: formatCss }]} />;
+  return <CssFormatterPanel dictionary={dictionary} />;
 }
 
 function CssMinifierTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="CSS" defaultInput=".card { display: flex; color: #111; }" modes={[{ value: "minify", label: "Minify CSS", labelKey: "minify", transform: minifyCss }]} />;
+  return <CssFormatterPanel dictionary={dictionary} minifier />;
 }
 
 function formatJs(value: string) {
@@ -1259,32 +4569,296 @@ function minifyJs(value: string) {
   return value.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").replace(/\s*([{}();,:=+\-*/<>])\s*/g, "$1").trim();
 }
 
+function stripJsComments(value: string) {
+  return value.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+function analyzeJavaScript(value: string) {
+  const withoutComments = stripJsComments(value);
+  const importCount = withoutComments.match(/\bimport\s+(?:[\s\S]*?\s+from\s+)?["'][^"']+["']|import\s*\(/g)?.length ?? 0;
+  const exportCount = withoutComments.match(/\bexport\s+(?:default\s+)?(?:async\s+)?(?:function|const|let|var|class|\{)/g)?.length ?? 0;
+  const asyncCount = withoutComments.match(/\basync\b|\bawait\b/g)?.length ?? 0;
+  const browserApiMatches = uniqueStrings(Array.from(withoutComments.matchAll(/\b(window|document|localStorage|sessionStorage|navigator|location|fetch)\b/g)).map((match) => match[0] ?? ""));
+  const functionCount = withoutComments.match(/\bfunction\b|=>/g)?.length ?? 0;
+  const consoleCalls = withoutComments.match(/\bconsole\./g)?.length ?? 0;
+  const minifiedLength = minifyJs(value).length;
+  const compressionRatio = value.trim() ? Math.max(0, (1 - minifiedLength / value.length) * 100) : 0;
+  const signals = [
+    importCount ? `${importCount} import` : "",
+    exportCount ? `${exportCount} export` : "",
+    asyncCount ? `${asyncCount} async/await` : "",
+    browserApiMatches.length ? browserApiMatches.join(", ") : "",
+    functionCount ? `${functionCount} function` : "",
+  ].filter(Boolean);
+
+  return {
+    asyncCount,
+    browserApiMatches,
+    compressionRatio,
+    consoleCalls,
+    exportCount,
+    functionCount,
+    hasComments: /\/\/|\/\*/.test(value),
+    hasFetch: /\bfetch\s*\(/.test(withoutComments),
+    hasTodo: /\b(?:TODO|FIXME|HACK)\b/i.test(value),
+    importCount,
+    signals,
+  };
+}
+
+const javascriptExamples = [
+  { labelKey: "functionExample", fallbackLabel: "Function", value: "function hi(){console.log('bob');}" },
+  { labelKey: "reduceExample", fallbackLabel: "Array reduce", value: "const total=items.reduce((sum,item)=>sum+item.price,0)" },
+  { labelKey: "exportExample", fallbackLabel: "Export helper", value: "export function slugify(value){return value.toLowerCase().replace(/\\s+/g,'-')}" },
+];
+
+function JavaScriptFormatterPanel({ dictionary, minifier = false }: { dictionary: ClientDictionary; minifier?: boolean }) {
+  const [input, setInput] = React.useState(minifier ? "function hi() { console.log('bob'); }" : javascriptExamples[0].value);
+  const result = React.useMemo(() => {
+    try {
+      return { error: "", value: minifier ? minifyJs(input) : formatJs(input) };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Unable to format JavaScript.", value: "" };
+    }
+  }, [input, minifier]);
+  const jsAnalysis = React.useMemo(() => analyzeJavaScript(input), [input]);
+  const warnings = [
+    /\beval\s*\(|new Function\s*\(/.test(input) ? ui(dictionary, "jsEvalWarning", "The snippet contains eval or Function constructor usage. Review it before copying.") : "",
+    jsAnalysis.consoleCalls ? ui(dictionary, "jsConsoleWarning", "Console calls are present. Remove debug logging before production use if needed.") : "",
+    jsAnalysis.browserApiMatches.length ? ui(dictionary, "jsBrowserApiWarning", "Browser APIs were detected. Confirm the snippet is not meant for Node.js before copying.") : "",
+    jsAnalysis.hasFetch ? ui(dictionary, "jsFetchWarning", "Network calls were detected. Review URLs, credentials, and error handling before running.") : "",
+    jsAnalysis.hasTodo ? ui(dictionary, "jsTodoWarning", "TODO, FIXME, or HACK notes are still present.") : "",
+    minifier && jsAnalysis.hasComments ? ui(dictionary, "jsCommentRemovalWarning", "Minifying removes comments, including license or handoff notes.") : "",
+    minifier ? ui(dictionary, "jsMinifyWarning", "The lightweight minifier removes comments and whitespace but does not perform AST-safe bundling.") : ui(dictionary, "jsHeuristicWarning", "This lightweight formatter is for short snippets and does not replace Prettier or your project formatter."),
+  ].filter(Boolean);
+
+  return (
+    <div className="space-y-4" data-javascript-tool>
+      <div className="space-y-2" data-javascript-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "javascriptExamples", "JavaScript examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {javascriptExamples.map((example) => (
+            <Button key={example.labelKey} variant="outline" size="sm" onClick={() => setInput(example.value)}>
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-44" aria-label="JavaScript" />
+      <div data-javascript-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "characters", "Characters"), value: String(input.length) },
+            { label: ui(dictionary, "functionCount", "Functions"), value: String(jsAnalysis.functionCount) },
+            { label: ui(dictionary, "consoleCalls", "Console calls"), value: String(jsAnalysis.consoleCalls) },
+            { label: ui(dictionary, "outputLines", "Output lines"), value: result.value ? String(result.value.split(/\r?\n/).length) : "0" },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-javascript-diagnostics>
+        <div className="border-b px-3 py-2">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "jsDiagnostics", "JavaScript diagnostics")}</h3>
+          <p className="text-xs text-muted-foreground">{ui(dictionary, "jsDiagnosticsDescription", "Inspect module syntax, async usage, browser APIs, and minified size before copying.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid
+            items={[
+              { label: ui(dictionary, "imports", "Imports"), value: String(jsAnalysis.importCount) },
+              { label: ui(dictionary, "exports", "Exports"), value: String(jsAnalysis.exportCount) },
+              { label: ui(dictionary, "asyncAwait", "Async/await"), value: String(jsAnalysis.asyncCount) },
+              {
+                label: ui(dictionary, "browserApis", "Browser APIs"),
+                value: String(jsAnalysis.browserApiMatches.length),
+                description: jsAnalysis.browserApiMatches.join(", ") || ui(dictionary, "noBrowserApis", "No browser APIs detected."),
+              },
+              {
+                label: ui(dictionary, "compressionRatio", "Compression ratio"),
+                value: `${jsAnalysis.compressionRatio.toFixed(0)}%`,
+                description: ui(dictionary, "jsCompressionDescription", "Estimated reduction after whitespace and comment removal."),
+              },
+            ]}
+          />
+          <div className="rounded-md border bg-background p-3" data-javascript-signal-list>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-medium">{ui(dictionary, "jsSignalPreview", "Signal preview")}</p>
+              <p className="text-xs text-muted-foreground">{ui(dictionary, "jsSignalPreviewDescription", "Runtime and module signals found in the snippet.")}</p>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(jsAnalysis.signals.length ? jsAnalysis.signals : [ui(dictionary, "noJsSignals", "No module or runtime signals detected.")]).map((signal) => (
+                <Badge key={signal} className="max-w-full break-all bg-muted font-mono text-xs">
+                  {signal}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      <div data-javascript-warnings>
+        <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "jsNoWarnings", "JavaScript snippet is ready for review.")} />
+      </div>
+      {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")} value={result.value} dictionary={dictionary} />}
+    </div>
+  );
+}
+
 function JavaScriptFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="JavaScript" defaultInput="function hi(){console.log('bob');}" modes={[{ value: "format", label: "Format JavaScript", labelKey: "prettyPrint", transform: formatJs }]} />;
+  return <JavaScriptFormatterPanel dictionary={dictionary} />;
 }
 
 function JavaScriptMinifierTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="JavaScript" defaultInput="function hi() { console.log('bob'); }" modes={[{ value: "minify", label: "Minify JavaScript", labelKey: "minify", transform: minifyJs }]} />;
+  return <JavaScriptFormatterPanel dictionary={dictionary} minifier />;
+}
+
+const markdownTableExamples = [
+  { labelKey: "markdownTableCsvExample", fallbackLabel: "CSV table", value: "Name,Role,Status\nBob,Admin,Active\nAlice,Editor,Pending", delimiter: "comma" },
+  { labelKey: "markdownTableTsvExample", fallbackLabel: "TSV table", value: "Package\tVersion\tPurpose\nnext\t15.5.19\tApp framework\nqrcode\tlatest\tQR output", delimiter: "tab" },
+  { labelKey: "markdownTablePipeExample", fallbackLabel: "Pipe rows", value: "Metric | Value | Notes\nCLS | 0.02 | Stable\nLCP | 1.8s | Good", delimiter: "pipe" },
+] as const;
+
+type MarkdownTableDelimiter = "comma" | "tab" | "pipe";
+
+function parseMarkdownTableRows(value: string, delimiter: MarkdownTableDelimiter) {
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  if (delimiter === "pipe") {
+    return trimmed
+      .split(/\r?\n/)
+      .map((line) => line.replace(/^\s*\|?|\|?\s*$/g, "").split("|").map((cell) => cell.trim()))
+      .filter((row) => row.some(Boolean));
+  }
+  const parsed = Papa.parse<string[]>(trimmed, {
+    delimiter: delimiter === "tab" ? "\t" : ",",
+    skipEmptyLines: "greedy",
+  });
+  return parsed.data.map((row) => row.map((cell) => String(cell ?? "").trim())).filter((row) => row.some(Boolean));
+}
+
+function escapeMarkdownTableCell(value: string) {
+  return value.replace(/\r?\n/g, " ").replace(/\|/g, "\\|").trim();
+}
+
+function buildMarkdownTable(rows: string[][]) {
+  if (!rows.length) return "";
+  const columnCount = Math.max(...rows.map((row) => row.length), 1);
+  const normalized = rows.map((row) => Array.from({ length: columnCount }, (_, index) => escapeMarkdownTableCell(row[index] ?? "")));
+  const header = normalized[0]?.map((cell, index) => cell || `Column ${index + 1}`) ?? [];
+  const separator = header.map(() => "---");
+  const body = normalized.slice(1);
+  return [header, separator, ...body].map((row) => `| ${row.join(" | ")} |`).join("\n");
+}
+
+function getMarkdownTableDiagnostics(source: string, delimiter: MarkdownTableDelimiter, dictionary: ClientDictionary) {
+  const rows = parseMarkdownTableRows(source, delimiter);
+  const columnCount = rows.length ? Math.max(...rows.map((row) => row.length)) : 0;
+  const inconsistentRows = rows.filter((row) => row.length !== columnCount).length;
+  const emptyCells = rows.reduce((count, row) => count + row.filter((cell) => !cell.trim()).length, 0);
+  const hasPipeCharacters = source.includes("|") && delimiter !== "pipe";
+  const warnings = [
+    !source.trim() ? ui(dictionary, "markdownTableEmptyWarning", "Paste rows before generating a Markdown table.") : "",
+    rows.length === 1 ? ui(dictionary, "markdownTableHeaderOnlyWarning", "Only a header row was detected. Add at least one body row for a useful table.") : "",
+    inconsistentRows > 0 ? ui(dictionary, "markdownTableInconsistentWarning", "Some rows have a different column count. Review the generated blanks before copying.") : "",
+    emptyCells > 0 ? ui(dictionary, "markdownTableEmptyCellWarning", "Empty cells were detected. Confirm blanks are intentional.") : "",
+    columnCount > 6 ? ui(dictionary, "markdownTableWideWarning", "Wide Markdown tables can be hard to read on mobile. Consider splitting columns.") : "",
+    hasPipeCharacters ? ui(dictionary, "markdownTablePipeEscapeWarning", "Pipe characters inside CSV/TSV cells will be escaped for Markdown output.") : "",
+  ].filter(Boolean);
+  return {
+    rows,
+    markdown: buildMarkdownTable(rows),
+    warnings,
+    metrics: [
+      { label: ui(dictionary, "tableRows", "Rows"), value: String(Math.max(0, rows.length - 1)) },
+      { label: ui(dictionary, "tableColumns", "Columns"), value: String(columnCount) },
+      { label: ui(dictionary, "emptyCells", "Empty cells"), value: String(emptyCells) },
+      { label: ui(dictionary, "inconsistentRows", "Uneven rows"), value: String(inconsistentRows) },
+    ],
+  };
 }
 
 function MarkdownPreviewTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("# Release notes\n\n- Added JSON Formatter\n- Added Regex Tester\n\n`npm run build`");
+  const [tableSource, setTableSource] = React.useState<string>(markdownTableExamples[0].value);
+  const [tableDelimiter, setTableDelimiter] = React.useState<MarkdownTableDelimiter>("comma");
   const lines = input.split("\n");
+  const tableDiagnostics = React.useMemo(() => getMarkdownTableDiagnostics(tableSource, tableDelimiter, dictionary), [dictionary, tableDelimiter, tableSource]);
+  const appendTableToPreview = () => {
+    if (!tableDiagnostics.markdown) return;
+    setInput((current) => (current.trim() ? `${current.trim()}\n\n${tableDiagnostics.markdown}` : tableDiagnostics.markdown));
+  };
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-72" />
-      <div className="min-h-72 rounded-lg border bg-card p-4 text-sm">
-        {lines.map((line, index) => {
-          if (line.startsWith("# ")) return <h2 key={index} className="mb-3 text-xl font-semibold">{line.slice(2)}</h2>;
-          if (line.startsWith("## ")) return <h3 key={index} className="mb-2 text-lg font-semibold">{line.slice(3)}</h3>;
-          if (line.startsWith("- ")) return <li key={index} className="ml-4 list-disc">{line.slice(2)}</li>;
-          if (/^`.*`$/.test(line)) return <code key={index} className="my-2 block rounded bg-muted px-2 py-1">{line.slice(1, -1)}</code>;
-          return <p key={index} className="mb-2 text-muted-foreground">{line || "\u00a0"}</p>;
-        })}
-        <Button variant="outline" size="sm" onClick={() => copyToClipboard(input)}>
-          <Copy className="h-4 w-4" />
-          {dictionary.tool.copy}
-        </Button>
+    <div className="space-y-4" data-markdown-tool>
+      <section className="rounded-md border bg-card" data-markdown-table-generator>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "markdownTableGenerator", "Markdown table generator")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "markdownTableGeneratorDescription", "Convert CSV, TSV, or pipe-separated rows into a copy-ready Markdown table for README files, docs, and issue comments.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <div className="flex flex-wrap gap-2" data-markdown-table-examples>
+            {markdownTableExamples.map((example) => (
+              <Button
+                key={example.labelKey}
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setTableSource(example.value);
+                  setTableDelimiter(example.delimiter);
+                }}
+              >
+                {ui(dictionary, example.labelKey, example.fallbackLabel)}
+              </Button>
+            ))}
+          </div>
+          <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+            <label className="space-y-2">
+              <span className="text-sm font-medium">{ui(dictionary, "tableInput", "Table input")}</span>
+              <Textarea value={tableSource} onChange={(event) => setTableSource(event.target.value)} className="min-h-36 font-mono text-xs" />
+            </label>
+            <label className="space-y-2">
+              <span className="text-sm font-medium">{ui(dictionary, "delimiter", "Delimiter")}</span>
+              <Select value={tableDelimiter} onChange={(event) => setTableDelimiter(event.target.value as MarkdownTableDelimiter)}>
+                <option value="comma">{ui(dictionary, "comma", "Comma")}</option>
+                <option value="tab">{ui(dictionary, "tab", "Tab")}</option>
+                <option value="pipe">{ui(dictionary, "pipe", "Pipe")}</option>
+              </Select>
+            </label>
+          </div>
+          <div data-markdown-table-details>
+            <ToolMetricGrid items={tableDiagnostics.metrics} />
+          </div>
+          <div data-markdown-table-warnings>
+            <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={tableDiagnostics.warnings} emptyLabel={ui(dictionary, "markdownTableNoWarnings", "Markdown table rows look ready to copy or preview.")} />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={appendTableToPreview} disabled={!tableDiagnostics.markdown}>
+              {ui(dictionary, "useTableInPreview", "Use in preview")}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => copyToClipboard(tableDiagnostics.markdown)} disabled={!tableDiagnostics.markdown}>
+              <Copy className="h-4 w-4" />
+              {dictionary.tool.copy}
+            </Button>
+          </div>
+          <ResultBlock title={ui(dictionary, "markdownTableOutput", "Markdown table")} value={tableDiagnostics.markdown} dictionary={dictionary} />
+        </div>
+      </section>
+      <div className="grid gap-4 md:grid-cols-2" data-markdown-preview>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "markdownInput", "Markdown input")}</span>
+          <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-72" />
+        </label>
+        <div className="min-h-72 rounded-lg border bg-card p-4 text-sm">
+          {lines.map((line, index) => {
+            if (line.startsWith("# ")) return <h2 key={index} className="mb-3 text-xl font-semibold">{line.slice(2)}</h2>;
+            if (line.startsWith("## ")) return <h3 key={index} className="mb-2 text-lg font-semibold">{line.slice(3)}</h3>;
+            if (line.startsWith("- ")) return <li key={index} className="ml-4 list-disc">{line.slice(2)}</li>;
+            if (/^`.*`$/.test(line)) return <code key={index} className="my-2 block rounded bg-muted px-2 py-1">{line.slice(1, -1)}</code>;
+            if (/^\|.*\|$/.test(line)) return <code key={index} className="mb-1 block overflow-auto whitespace-pre rounded bg-muted px-2 py-1 text-xs">{line}</code>;
+            return <p key={index} className="mb-2 text-muted-foreground">{line || "\u00a0"}</p>;
+          })}
+          <Button variant="outline" size="sm" onClick={() => copyToClipboard(input)}>
+            <Copy className="h-4 w-4" />
+            {dictionary.tool.copy}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -1508,56 +5082,740 @@ function FaviconGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) 
   );
 }
 
+type HttpRedirectHop = {
+  url: string;
+  status: number;
+  statusText: string;
+  location: string | null;
+  contentType: string | null;
+  cacheControl?: string | null;
+  elapsedMs?: number;
+};
+
+type HttpStatusResult = {
+  inputUrl?: string;
+  finalUrl?: string;
+  redirectCount?: number;
+  redirectChain?: HttpRedirectHop[];
+  finalResponseHeaders?: Array<{ name: string; value: string }>;
+  status?: number;
+  statusText?: string;
+  ok?: boolean;
+  contentType?: string | null;
+  cacheControl?: string | null;
+  server?: string | null;
+  error?: string;
+};
+
+type ParsedHttpHeader = {
+  name: string;
+  value: string;
+  categoryKey: string;
+  categoryFallback: string;
+};
+
+type CspDirectiveKey = "defaultSrc" | "scriptSrc" | "styleSrc" | "imgSrc" | "connectSrc" | "fontSrc" | "frameAncestors";
+type CspDirectives = Record<CspDirectiveKey, string>;
+type CspPresetKey = "strict" | "marketing" | "preview";
+
+const cspDirectiveRows: Array<{
+  key: CspDirectiveKey;
+  directive: string;
+  labelKey: string;
+  fallbackLabel: string;
+}> = [
+  { key: "defaultSrc", directive: "default-src", labelKey: "defaultSrc", fallbackLabel: "default-src" },
+  { key: "scriptSrc", directive: "script-src", labelKey: "scriptSrc", fallbackLabel: "script-src" },
+  { key: "styleSrc", directive: "style-src", labelKey: "styleSrc", fallbackLabel: "style-src" },
+  { key: "imgSrc", directive: "img-src", labelKey: "imgSrc", fallbackLabel: "img-src" },
+  { key: "connectSrc", directive: "connect-src", labelKey: "connectSrc", fallbackLabel: "connect-src" },
+  { key: "fontSrc", directive: "font-src", labelKey: "fontSrc", fallbackLabel: "font-src" },
+  { key: "frameAncestors", directive: "frame-ancestors", labelKey: "frameAncestors", fallbackLabel: "frame-ancestors" },
+];
+
+const cspPresets: Record<CspPresetKey, { labelKey: string; fallbackLabel: string; directives: CspDirectives }> = {
+  strict: {
+    labelKey: "cspStrictPreset",
+    fallbackLabel: "Strict app",
+    directives: {
+      defaultSrc: "'self'",
+      scriptSrc: "'self'",
+      styleSrc: "'self'",
+      imgSrc: "'self' data:",
+      connectSrc: "'self'",
+      fontSrc: "'self'",
+      frameAncestors: "'none'",
+    },
+  },
+  marketing: {
+    labelKey: "cspMarketingPreset",
+    fallbackLabel: "Marketing site",
+    directives: {
+      defaultSrc: "'self'",
+      scriptSrc: "'self' https:",
+      styleSrc: "'self' 'unsafe-inline' https:",
+      imgSrc: "'self' data: https:",
+      connectSrc: "'self' https:",
+      fontSrc: "'self' data: https:",
+      frameAncestors: "'none'",
+    },
+  },
+  preview: {
+    labelKey: "cspPreviewPreset",
+    fallbackLabel: "Local preview",
+    directives: {
+      defaultSrc: "'self'",
+      scriptSrc: "'self' 'unsafe-inline' 'unsafe-eval' http: https:",
+      styleSrc: "'self' 'unsafe-inline'",
+      imgSrc: "'self' data: blob: http: https:",
+      connectSrc: "'self' ws: http: https:",
+      fontSrc: "'self' data:",
+      frameAncestors: "'self'",
+    },
+  },
+};
+
+const httpHeaderExamples = [
+  {
+    labelKey: "httpHeadersSecurityExample",
+    fallbackLabel: "Security headers",
+    value: [
+      "HTTP/2 200 OK",
+      "content-type: text/html; charset=utf-8",
+      "cache-control: public, max-age=3600",
+      "strict-transport-security: max-age=31536000; includeSubDomains",
+      "content-security-policy: default-src 'self'; img-src 'self' https:",
+      "x-frame-options: DENY",
+    ].join("\n"),
+  },
+  {
+    labelKey: "httpHeadersCookieExample",
+    fallbackLabel: "Cookie review",
+    value: [
+      "HTTP/1.1 200 OK",
+      "content-type: text/html",
+      "cache-control: public, max-age=600",
+      "set-cookie: session=abc123; Path=/; HttpOnly",
+      "set-cookie: theme=dark; Path=/; SameSite=Lax",
+    ].join("\n"),
+  },
+  {
+    labelKey: "httpHeadersCorsExample",
+    fallbackLabel: "CORS headers",
+    value: [
+      "HTTP/1.1 204 No Content",
+      "access-control-allow-origin: *",
+      "access-control-allow-credentials: true",
+      "access-control-allow-methods: GET, POST, OPTIONS",
+      "vary: Origin",
+    ].join("\n"),
+  },
+];
+
+function classifyHttpHeader(name: string) {
+  if (["strict-transport-security", "content-security-policy", "x-frame-options", "x-content-type-options", "referrer-policy", "permissions-policy"].includes(name)) {
+    return { categoryKey: "securityHeaderCategory", categoryFallback: "Security" };
+  }
+  if (["cache-control", "etag", "expires", "last-modified", "pragma"].includes(name)) {
+    return { categoryKey: "cacheHeaderCategory", categoryFallback: "Cache" };
+  }
+  if (name.startsWith("access-control-") || name === "vary") {
+    return { categoryKey: "corsHeaderCategory", categoryFallback: "CORS" };
+  }
+  if (name === "set-cookie" || name === "cookie") {
+    return { categoryKey: "cookieHeaderCategory", categoryFallback: "Cookie" };
+  }
+  if (["content-type", "content-length", "content-encoding", "content-language"].includes(name)) {
+    return { categoryKey: "contentHeaderCategory", categoryFallback: "Content" };
+  }
+  return { categoryKey: "generalHeaderCategory", categoryFallback: "General" };
+}
+
+function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
+  const entries: ParsedHttpHeader[] = [];
+  let malformedLines = 0;
+
+  for (const line of rawHeaders.split(/\r?\n/)) {
+    const trimmed = line.trimEnd();
+    if (!trimmed.trim()) continue;
+    if (/^HTTP\/\d(?:\.\d)?\s+\d{3}/i.test(trimmed)) continue;
+    if (/^\s/.test(line) && entries.length) {
+      entries[entries.length - 1].value = `${entries[entries.length - 1].value} ${trimmed.trim()}`;
+      continue;
+    }
+
+    const separatorIndex = trimmed.indexOf(":");
+    if (separatorIndex <= 0) {
+      malformedLines += 1;
+      continue;
+    }
+
+    const originalName = trimmed.slice(0, separatorIndex).trim();
+    const value = trimmed.slice(separatorIndex + 1).trim();
+    const normalizedName = originalName.toLowerCase();
+    entries.push({
+      name: normalizedName,
+      value,
+      ...classifyHttpHeader(normalizedName),
+    });
+  }
+
+  const valuesByName = new Map<string, string[]>();
+  for (const entry of entries) {
+    const values = valuesByName.get(entry.name) ?? [];
+    values.push(entry.value);
+    valuesByName.set(entry.name, values);
+  }
+
+  const valueOf = (name: string) => (valuesByName.get(name) ?? []).join(", ").toLowerCase();
+  const hasHeader = (name: string) => valuesByName.has(name);
+  const cookies = valuesByName.get("set-cookie") ?? [];
+  const securityHeaders = entries.filter((entry) => entry.categoryKey === "securityHeaderCategory").length;
+  const corsHeaders = entries.filter((entry) => entry.categoryKey === "corsHeaderCategory").length;
+  const duplicateHeaderNames = Array.from(valuesByName.values()).filter((values) => values.length > 1).length;
+  const warnings = [
+    !entries.length ? ui(dictionary, "httpHeadersEmptyWarning", "Paste response headers before reviewing.") : "",
+    malformedLines ? ui(dictionary, "httpHeadersMalformedWarning", "{count} header lines could not be parsed.").replace("{count}", String(malformedLines)) : "",
+    entries.length && !hasHeader("strict-transport-security") ? ui(dictionary, "httpHeadersMissingHstsWarning", "HSTS is missing. HTTPS pages usually need Strict-Transport-Security.") : "",
+    entries.length && !hasHeader("content-security-policy") ? ui(dictionary, "httpHeadersMissingCspWarning", "Content-Security-Policy is missing. Add one before exposing sensitive pages.") : "",
+    cookies.some((cookie) => !/;\s*secure\b/i.test(cookie)) ? ui(dictionary, "httpHeadersCookieSecureWarning", "At least one Set-Cookie header is missing Secure.") : "",
+    cookies.some((cookie) => !/;\s*httponly\b/i.test(cookie)) ? ui(dictionary, "httpHeadersCookieHttpOnlyWarning", "At least one Set-Cookie header is missing HttpOnly.") : "",
+    cookies.some((cookie) => !/;\s*samesite=/i.test(cookie)) ? ui(dictionary, "httpHeadersCookieSameSiteWarning", "At least one Set-Cookie header is missing SameSite.") : "",
+    valueOf("access-control-allow-origin").includes("*") && valueOf("access-control-allow-credentials").includes("true")
+      ? ui(dictionary, "httpHeadersCorsWildcardWarning", "CORS allows wildcard origin with credentials. Browsers reject or expose risky intent.")
+      : "",
+    valueOf("cache-control").includes("public") && cookies.length
+      ? ui(dictionary, "httpHeadersPublicCookieCacheWarning", "Public cache headers appear with Set-Cookie. Confirm private data is not cacheable.")
+      : "",
+  ].filter(Boolean);
+
+  return {
+    entries,
+    malformedLines,
+    metrics: {
+      headerCount: entries.length,
+      duplicateHeaderNames,
+      securityHeaders,
+      corsHeaders,
+      cookieHeaders: cookies.length,
+    },
+    warnings,
+  };
+}
+
+function buildCspHeader(directives: CspDirectives, reportOnly: boolean) {
+  const policy = cspDirectiveRows
+    .map((row) => {
+      const value = directives[row.key].trim();
+      return value ? `${row.directive} ${value}` : "";
+    })
+    .filter(Boolean)
+    .join("; ");
+  const headerName = reportOnly ? "Content-Security-Policy-Report-Only" : "Content-Security-Policy";
+  return policy ? `${headerName}: ${policy}` : `${headerName}:`;
+}
+
+function getCspWarnings(directives: CspDirectives, reportOnly: boolean, dictionary: ClientDictionary) {
+  const combined = Object.values(directives).join(" ").toLowerCase();
+  const frameAncestors = directives.frameAncestors.trim().toLowerCase();
+  return [
+    combined.includes("*") ? ui(dictionary, "cspWildcardWarning", "Wildcard sources should be tightened before production use.") : "",
+    combined.includes("'unsafe-inline'") ? ui(dictionary, "cspUnsafeInlineWarning", "unsafe-inline is allowed. Use nonces or hashes when the app can support them.") : "",
+    /\bhttp:/.test(combined) ? ui(dictionary, "cspHttpWarning", "http: sources are allowed. Prefer HTTPS sources for deployed pages.") : "",
+    !frameAncestors || !/(^|\s)'(?:none|self)'(\s|$)/.test(frameAncestors)
+      ? ui(dictionary, "cspFrameAncestorsWarning", "frame-ancestors should usually be 'none' or 'self' unless embedding is intentional.")
+      : "",
+    reportOnly ? ui(dictionary, "cspReportOnlyWarning", "Report-only mode observes violations but does not block them.") : "",
+  ].filter(Boolean);
+}
+
+function parseUrlSafely(value?: string | null) {
+  if (!value) return null;
+  try {
+    return new URL(value);
+  } catch {
+    return null;
+  }
+}
+
+function getRedirectDiagnostics(result: HttpStatusResult, dictionary: ClientDictionary) {
+  const chain = result.redirectChain ?? [];
+  const urls = chain.map((hop) => parseUrlSafely(hop.url)).filter((value): value is URL => value !== null);
+  const inputUrl = parseUrlSafely(result.inputUrl ?? chain[0]?.url);
+  const finalUrl = parseUrlSafely(result.finalUrl);
+  const hostCount = new Set(urls.map((item) => item.host)).size;
+  const hostChanges = Math.max(0, hostCount - 1);
+  const finalStatus = result.status ? String(result.status) : "-";
+  const finalProtocol = finalUrl?.protocol ? finalUrl.protocol.replace(":", "").toUpperCase() : "-";
+  const lastHopStatus = chain.at(-1)?.status;
+  const sawHttpsDowngrade = urls.some((item, index) => index > 0 && urls[index - 1]?.protocol === "https:" && item.protocol === "http:");
+  const finalHostChanged = Boolean(inputUrl && finalUrl && inputUrl.host !== finalUrl.host);
+  const finalPathChanged = Boolean(inputUrl && finalUrl && inputUrl.pathname !== finalUrl.pathname);
+  const permanentRedirects = chain.filter((hop) => [301, 308].includes(hop.status)).length;
+  const temporaryRedirects = chain.filter((hop) => [302, 303, 307].includes(hop.status)).length;
+  const totalElapsedMs = chain.reduce((total, hop) => total + (hop.elapsedMs ?? 0), 0);
+  const slowestHopMs = Math.max(0, ...chain.map((hop) => hop.elapsedMs ?? 0));
+  const queryChanged = Boolean(inputUrl && finalUrl && inputUrl.search !== finalUrl.search);
+  const trailingSlashChanged = Boolean(inputUrl && finalUrl && inputUrl.pathname.replace(/\/$/, "") === finalUrl.pathname.replace(/\/$/, "") && inputUrl.pathname !== finalUrl.pathname);
+  const permanentRedirectWithoutCache = chain.some((hop) => [301, 308].includes(hop.status) && !hop.cacheControl);
+  const warnings = [
+    (result.redirectCount ?? 0) > 3 ? ui(dictionary, "redirectLongWarning", "{count} redirects were followed. Shorter chains are easier for crawlers and users.").replace("{count}", String(result.redirectCount)) : "",
+    lastHopStatus && [301, 302, 303, 307, 308].includes(lastHopStatus) ? ui(dictionary, "redirectUnsettledWarning", "The last checked hop is still a redirect. The chain may not be settled.") : "",
+    finalUrl?.protocol === "http:" ? ui(dictionary, "redirectFinalHttpWarning", "Final URL is still HTTP. Public canonical pages should usually finish on HTTPS.") : "",
+    sawHttpsDowngrade ? ui(dictionary, "redirectDowngradeWarning", "The chain moves from HTTPS back to HTTP. Check canonical and security rules.") : "",
+    hostChanges > 0 ? ui(dictionary, "redirectHostChangeWarning", "{count} host changes detected. Confirm apex, www, and locale routing are intentional.").replace("{count}", String(hostChanges)) : "",
+    finalHostChanged || finalPathChanged ? ui(dictionary, "redirectCanonicalChangedWarning", "Final canonical target differs from the requested host or path. Confirm this is expected for SEO.") : "",
+    temporaryRedirects > 0 ? ui(dictionary, "redirectTemporaryWarning", "{count} temporary redirects are present. Stable canonical routes usually use 301 or 308.").replace("{count}", String(temporaryRedirects)) : "",
+    permanentRedirects > 0 && temporaryRedirects > 0 ? ui(dictionary, "redirectMixedTypeWarning", "Permanent and temporary redirects are mixed in one chain. Confirm this is intentional.") : "",
+    queryChanged ? ui(dictionary, "redirectQueryChangedWarning", "Final URL query parameters differ from the requested URL. Check tracking, locale, and canonical rules.") : "",
+    trailingSlashChanged ? ui(dictionary, "redirectTrailingSlashWarning", "Only the trailing slash changed. Confirm the canonical URL format is consistent in links and sitemap.") : "",
+    slowestHopMs > 2000 ? ui(dictionary, "redirectSlowHopWarning", "At least one redirect hop took more than 2 seconds. Slow chains can hurt crawl and user experience.") : "",
+    permanentRedirectWithoutCache ? ui(dictionary, "redirectPermanentCacheWarning", "A permanent redirect has no visible Cache-Control header. Confirm CDN/browser caching behavior.") : "",
+    typeof result.status === "number" && result.status >= 400 ? ui(dictionary, "redirectErrorStatusWarning", "Final status is an error response. This URL is not ready for public linking.") : "",
+  ].filter(Boolean);
+
+  return {
+    metrics: [
+      { label: ui(dictionary, "redirectHopCount", "Hops"), value: String(chain.length) },
+      { label: ui(dictionary, "redirectHostChanges", "Host changes"), value: String(hostChanges) },
+      { label: ui(dictionary, "permanentRedirects", "Permanent redirects"), value: String(permanentRedirects) },
+      { label: ui(dictionary, "temporaryRedirects", "Temporary redirects"), value: String(temporaryRedirects) },
+      { label: ui(dictionary, "finalProtocol", "Final protocol"), value: finalProtocol },
+      { label: ui(dictionary, "finalStatus", "Final status"), value: finalStatus },
+      { label: ui(dictionary, "totalRedirectTime", "Total time"), value: `${totalElapsedMs} ms` },
+      { label: ui(dictionary, "slowestHop", "Slowest hop"), value: `${slowestHopMs} ms` },
+    ],
+    warnings,
+  };
+}
+
 function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [url, setUrl] = React.useState("https://www.bobob.app");
-  const [result, setResult] = React.useState("");
+  const [result, setResult] = React.useState<HttpStatusResult | null>(null);
+  const [rawResult, setRawResult] = React.useState("");
+  const [rawHeaders, setRawHeaders] = React.useState(httpHeaderExamples[0]?.value ?? "");
+  const [cspDirectives, setCspDirectives] = React.useState<CspDirectives>(cspPresets.strict.directives);
+  const [cspReportOnly, setCspReportOnly] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const check = async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/http-status?url=${encodeURIComponent(url)}`);
-      setResult(JSON.stringify(await response.json(), null, 2));
+      const body = (await response.json()) as HttpStatusResult;
+      setResult(body);
+      setRawResult(JSON.stringify(body, null, 2));
     } catch (error) {
-      setResult(error instanceof Error ? error.message : "Request failed.");
+      const message = error instanceof Error ? error.message : "Request failed.";
+      setResult({ error: message });
+      setRawResult(message);
     } finally {
       setLoading(false);
     }
   };
+  const headerRows = result
+    ? (result.finalResponseHeaders?.length
+        ? result.finalResponseHeaders.map((header) => ({ ...header, ...classifyHttpHeader(header.name.toLowerCase()) }))
+        : [
+            { name: "content-type", value: result.contentType ?? "", ...classifyHttpHeader("content-type") },
+            { name: "cache-control", value: result.cacheControl ?? "", ...classifyHttpHeader("cache-control") },
+            { name: "server", value: result.server ?? "", ...classifyHttpHeader("server") },
+          ].filter((row) => row.value.length > 0))
+    : [];
+  const responseHeaderLines = result ? headerRows.map((header) => `${header.name}: ${header.value}`).join("\n") : "";
+  const parsedHeaders = React.useMemo(() => parseHttpHeaders(rawHeaders, dictionary), [dictionary, rawHeaders]);
+  const generatedCspHeader = React.useMemo(() => buildCspHeader(cspDirectives, cspReportOnly), [cspDirectives, cspReportOnly]);
+  const cspWarnings = React.useMemo(() => getCspWarnings(cspDirectives, cspReportOnly, dictionary), [cspDirectives, cspReportOnly, dictionary]);
+  const redirectDiagnostics = React.useMemo(() => (result && !result.error ? getRedirectDiagnostics(result, dictionary) : null), [dictionary, result]);
+  const cspDirectiveCount = cspDirectiveRows.filter((row) => cspDirectives[row.key].trim()).length;
+  const updateCspDirective = (key: CspDirectiveKey, value: string) => setCspDirectives((current) => ({ ...current, [key]: value }));
+  const applyCspPreset = (preset: CspPresetKey) => setCspDirectives(cspPresets[preset].directives);
+  const useGeneratedCspInParser = () => {
+    const nextLines = rawHeaders
+      .split(/\r?\n/)
+      .filter((line) => {
+        const normalized = line.trim().toLowerCase();
+        return !normalized.startsWith("content-security-policy:") && !normalized.startsWith("content-security-policy-report-only:");
+      })
+      .filter((line) => line.trim().length > 0);
+    setRawHeaders([...nextLines, generatedCspHeader].join("\n"));
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-        <Input value={url} onChange={(event) => setUrl(event.target.value)} />
+        <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" />
         <Button onClick={check} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
       </div>
-      <ResultBlock title={ui(dictionary, "httpStatus", "HTTP status")} value={result} dictionary={dictionary} />
+      {result?.error ? <ErrorAlert title={ui(dictionary, "httpCheckFailed", "HTTP check failed")} message={result.error} /> : null}
+      {result && !result.error ? (
+        <div className="space-y-4" data-http-status-details>
+          <div className="grid gap-3 md:grid-cols-4">
+            <div className="rounded-md border bg-card p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "statusCode", "Status code")}</p>
+              <p className="mt-2 text-lg font-semibold">
+                {result.status} {result.statusText}
+              </p>
+            </div>
+            <div className="rounded-md border bg-card p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "redirects", "Redirects")}</p>
+              <p className="mt-2 text-lg font-semibold">{result.redirectCount ?? 0}</p>
+            </div>
+            <div className="rounded-md border bg-card p-3 md:col-span-2">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "finalUrl", "Final URL")}</p>
+              <p className="mt-2 break-all text-sm font-medium">{result.finalUrl}</p>
+            </div>
+          </div>
+          <section className="rounded-md border bg-card" data-http-redirect-chain>
+            <div className="border-b p-3">
+              <h3 className="text-sm font-semibold">{ui(dictionary, "redirectChain", "Redirect chain")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "redirectChainDescription", "Each public hop followed by the checker.")}</p>
+            </div>
+            <div className="divide-y">
+              {(result.redirectChain ?? []).map((hop, index) => (
+	                <div key={`${hop.url}-${index}`} className="grid gap-2 p-3 text-sm md:grid-cols-[72px_1fr]">
+	                  <Badge className="w-fit">
+	                    {index + 1}. {hop.status}
+	                  </Badge>
+	                  <div className="min-w-0 space-y-1">
+	                    <p className="break-all font-medium">{hop.url}</p>
+	                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+	                      <span>{ui(dictionary, "hopTime", "Time")}: {hop.elapsedMs ?? 0} ms</span>
+	                      {hop.cacheControl ? <span className="break-all">{ui(dictionary, "hopCache", "Cache")}: {hop.cacheControl}</span> : null}
+	                    </div>
+	                    {hop.location ? (
+	                      <p className="break-all text-xs text-muted-foreground">
+	                        {ui(dictionary, "locationHeader", "Location")}: {hop.location}
+                      </p>
+                    ) : null}
+                    {hop.contentType ? <p className="break-all text-xs text-muted-foreground">{hop.contentType}</p> : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+          {redirectDiagnostics ? (
+            <section className="rounded-md border bg-card" data-http-redirect-diagnostics>
+              <div className="border-b p-3">
+                <h3 className="text-sm font-semibold">{ui(dictionary, "redirectDiagnostics", "Redirect diagnostics")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "redirectDiagnosticsDescription", "Review canonical target, HTTPS finish, host changes, and crawler-friendly chain length.")}</p>
+              </div>
+              <div className="space-y-3 p-3">
+                <ToolMetricGrid items={redirectDiagnostics.metrics} />
+                <ToolWarningList title={ui(dictionary, "redirectReviewNotes", "Redirect review notes")} warnings={redirectDiagnostics.warnings} emptyLabel={ui(dictionary, "redirectNoWarnings", "Redirect chain looks settled for public linking and SEO review.")} />
+              </div>
+            </section>
+          ) : null}
+          {headerRows.length ? (
+            <section className="rounded-md border bg-card" data-http-response-headers>
+              <div className="border-b p-3">
+                <h3 className="text-sm font-semibold">{ui(dictionary, "responseHeaders", "Response headers")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "responseHeadersDescription", "Key final-response headers for caching, MIME, and server checks.")}</p>
+              </div>
+	              <dl className="divide-y">
+	                {headerRows.map((header) => (
+	                  <div key={header.name} className="grid gap-2 p-3 text-sm md:grid-cols-[180px_1fr]">
+	                    <dt className="min-w-0">
+	                      <span className="block break-all font-medium">{header.name}</span>
+	                      <Badge className="mt-1">{ui(dictionary, header.categoryKey, header.categoryFallback)}</Badge>
+	                    </dt>
+	                    <dd className="min-w-0 break-all text-muted-foreground">{header.value}</dd>
+	                  </div>
+	                ))}
+	              </dl>
+            </section>
+          ) : null}
+        </div>
+      ) : null}
+      <section className="rounded-md border bg-card" data-http-header-parser>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "httpHeaderParser", "HTTP header parser")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "httpHeaderParserDescription", "Paste response headers to review cache, security, cookie, and CORS signals before copying debug notes.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <div className="flex flex-wrap gap-2">
+            {httpHeaderExamples.map((example) => (
+              <Button key={example.labelKey} type="button" variant="outline" size="sm" onClick={() => setRawHeaders(example.value)}>
+                {ui(dictionary, example.labelKey, example.fallbackLabel)}
+              </Button>
+            ))}
+            {responseHeaderLines ? (
+              <Button type="button" variant="outline" size="sm" onClick={() => setRawHeaders(responseHeaderLines)}>
+                {ui(dictionary, "useCheckedResponseHeaders", "Use checked response headers")}
+              </Button>
+            ) : null}
+          </div>
+          <label className="block space-y-2">
+            <span className="text-sm font-medium">{ui(dictionary, "rawHttpHeaders", "Raw HTTP headers")}</span>
+            <Textarea value={rawHeaders} onChange={(event) => setRawHeaders(event.target.value)} className="min-h-40 font-mono text-xs" />
+          </label>
+          <div data-http-header-summary>
+            <ToolMetricGrid
+              items={[
+                { label: ui(dictionary, "headerCount", "Headers"), value: String(parsedHeaders.metrics.headerCount) },
+                { label: ui(dictionary, "duplicateHeaders", "Duplicate names"), value: String(parsedHeaders.metrics.duplicateHeaderNames) },
+                { label: ui(dictionary, "securityHeaders", "Security headers"), value: String(parsedHeaders.metrics.securityHeaders) },
+                { label: ui(dictionary, "cookieHeaders", "Cookie headers"), value: String(parsedHeaders.metrics.cookieHeaders) },
+              ]}
+            />
+          </div>
+          <section className="rounded-md border bg-background" data-http-header-list>
+            <div className="border-b p-3">
+              <h4 className="text-sm font-semibold">{ui(dictionary, "parsedHeaders", "Parsed headers")}</h4>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "parsedHeadersDescription", "Header names are normalized so duplicates and review categories are easier to scan.")}</p>
+            </div>
+            {parsedHeaders.entries.length ? (
+              <dl className="divide-y">
+                {parsedHeaders.entries.map((entry, index) => (
+                  <div key={`${entry.name}-${index}`} className="grid gap-2 p-3 text-sm md:grid-cols-[180px_1fr]">
+                    <dt className="min-w-0">
+                      <span className="block break-all font-medium">{entry.name}</span>
+                      <Badge className="mt-1">{ui(dictionary, entry.categoryKey, entry.categoryFallback)}</Badge>
+                    </dt>
+                    <dd className="min-w-0 break-all text-muted-foreground">{entry.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p className="p-3 text-sm text-muted-foreground">{ui(dictionary, "noParsedHeaders", "No parsed headers yet.")}</p>
+            )}
+          </section>
+          <div data-http-header-warnings>
+            <ToolWarningList title={ui(dictionary, "headerReviewNotes", "Header review notes")} warnings={parsedHeaders.warnings} emptyLabel={ui(dictionary, "httpHeadersNoWarnings", "Headers look ready for debugging notes. Still confirm policy with the target app.")} />
+          </div>
+          <div className="rounded-md bg-muted p-3 text-xs" data-http-header-json>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{ui(dictionary, "parsedHeaderJson", "Parsed header JSON")}</span>
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(JSON.stringify(parsedHeaders, null, 2))}>
+                <Copy className="h-4 w-4" />
+                {dictionary.tool.copy}
+              </Button>
+            </div>
+            <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words text-muted-foreground">
+              <code>{JSON.stringify(parsedHeaders, null, 2)}</code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section className="rounded-md border bg-card" data-csp-generator>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "cspGenerator", "CSP generator")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "cspGeneratorDescription", "Draft a Content-Security-Policy header, review risky sources, then send it into the header parser.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <div className="flex flex-wrap gap-2">
+            {(["strict", "marketing", "preview"] as const).map((preset) => (
+              <Button key={preset} type="button" variant="outline" size="sm" onClick={() => applyCspPreset(preset)}>
+                {ui(dictionary, cspPresets[preset].labelKey, cspPresets[preset].fallbackLabel)}
+              </Button>
+            ))}
+            <Button type="button" variant={cspReportOnly ? "default" : "outline"} size="sm" onClick={() => setCspReportOnly((current) => !current)}>
+              {ui(dictionary, "reportOnly", "Report-only")}
+            </Button>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2" data-csp-directives>
+            {cspDirectiveRows.map((row) => (
+              <label key={row.key} className="block min-w-0 space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, row.labelKey, row.fallbackLabel)}</span>
+                <Input value={cspDirectives[row.key]} onChange={(event) => updateCspDirective(row.key, event.target.value)} className="font-mono text-xs" />
+              </label>
+            ))}
+          </div>
+          <ToolMetricGrid
+            items={[
+              { label: ui(dictionary, "directiveCount", "Directives"), value: String(cspDirectiveCount) },
+              { label: ui(dictionary, "cspHeaderMode", "Header mode"), value: cspReportOnly ? "Report-Only" : "Enforce" },
+            ]}
+          />
+          <div className="rounded-md bg-muted p-3 text-xs" data-csp-output>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{ui(dictionary, "generatedCspHeader", "Generated CSP header")}</span>
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(generatedCspHeader)}>
+                <Copy className="h-4 w-4" />
+                {dictionary.tool.copy}
+              </Button>
+            </div>
+            <pre className="overflow-auto whitespace-pre-wrap break-words text-muted-foreground">
+              <code>{generatedCspHeader}</code>
+            </pre>
+          </div>
+          <div data-csp-warnings>
+            <ToolWarningList title={ui(dictionary, "cspWarnings", "CSP review notes")} warnings={cspWarnings} emptyLabel={ui(dictionary, "cspNoWarnings", "CSP sources look tight enough for a first enforcement review.")} />
+          </div>
+          <Button type="button" variant="outline" onClick={useGeneratedCspInParser}>
+            {ui(dictionary, "useGeneratedCspInParser", "Use generated CSP in parser")}
+          </Button>
+        </div>
+      </section>
+      <ResultBlock title={ui(dictionary, "rawResponse", "Raw response")} value={rawResult} dictionary={dictionary} />
     </div>
   );
+}
+
+type DnsLookupResponse = {
+  hostname?: string;
+  record?: string;
+  records?: unknown[];
+  error?: string;
+};
+
+const dnsExamples = [
+  { labelKey: "dnsAExample", fallbackLabel: "A record", hostname: "bobob.app", record: "A" },
+  { labelKey: "dnsMxExample", fallbackLabel: "MX record", hostname: "google.com", record: "MX" },
+  { labelKey: "dnsTxtExample", fallbackLabel: "TXT record", hostname: "vercel.com", record: "TXT" },
+  { labelKey: "dnsNsExample", fallbackLabel: "NS record", hostname: "example.com", record: "NS" },
+];
+
+function formatDnsRecordValue(record: unknown) {
+  if (Array.isArray(record)) return record.join(" ");
+  if (record && typeof record === "object") return Object.entries(record).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(" ") : String(value)}`).join(", ");
+  return String(record);
+}
+
+function getDnsRecordTextValues(records: unknown[]) {
+  return records.map((item) => formatDnsRecordValue(item));
+}
+
+function getDnsPrimarySignal(record: string, hostname: string, values: string[], dictionary: ClientDictionary) {
+  const normalizedRecord = record.toUpperCase();
+  const joined = values.join(" ").toLowerCase();
+  if (!values.length) return ui(dictionary, "dnsNoSignal", "No public record");
+  if (normalizedRecord === "A" || normalizedRecord === "AAAA") return ui(dictionary, "dnsHasPublicAddress", "Public address found");
+  if (normalizedRecord === "CNAME") return ui(dictionary, "dnsHasCanonicalName", "Canonical name found");
+  if (normalizedRecord === "MX") return ui(dictionary, "dnsHasMailRouting", "Mail routing found");
+  if (normalizedRecord === "NS") return ui(dictionary, "dnsHasNameServers", "Name servers found");
+  if (normalizedRecord === "TXT") {
+    if (joined.includes("v=spf1")) return ui(dictionary, "dnsHasSpfPolicy", "SPF policy found");
+    if (hostname.toLowerCase().startsWith("_dmarc") || joined.includes("v=dmarc1")) return ui(dictionary, "dnsHasDmarcPolicy", "DMARC policy found");
+    if (/site-verification|domain-verification|verification/.test(joined)) return ui(dictionary, "dnsHasVerificationRecord", "Verification record found");
+    return ui(dictionary, "dnsHasTextPolicy", "TXT records found");
+  }
+  return ui(dictionary, "dnsGenericSignal", "Records found");
+}
+
+function getDnsDiagnostics(hostname: string, record: string, result: DnsLookupResponse | null, dictionary: ClientDictionary) {
+  const records = Array.isArray(result?.records) ? result.records : [];
+  const values = getDnsRecordTextValues(records);
+  const normalizedRecord = (result?.record ?? record).toUpperCase();
+  const resolvedHostname = result?.hostname ?? hostname.trim();
+  const labels = resolvedHostname.split(".").filter(Boolean);
+  const lowerValues = values.map((value) => value.toLowerCase());
+  const spfCount = lowerValues.filter((value) => value.includes("v=spf1")).length;
+  const dmarcDetected = resolvedHostname.toLowerCase().startsWith("_dmarc") || lowerValues.some((value) => value.includes("v=dmarc1"));
+  const hasVerification = lowerValues.some((value) => /site-verification|domain-verification|verification/.test(value));
+  const warnings = [
+    ui(dictionary, "dnsServerRouteWarning", "DNS lookup uses a server route and only accepts public hostnames."),
+    result?.error ? result.error : "",
+    records.length === 0 && result && !result.error ? ui(dictionary, "dnsNoRecordsWarning", "No records returned for this type. Try A, AAAA, TXT, MX, or NS.") : "",
+    normalizedRecord === "AAAA" && result && !result.error && records.length === 0 ? ui(dictionary, "dnsAaaaMissingWarning", "No AAAA records returned. IPv6 may not be configured for this host.") : "",
+    normalizedRecord === "CNAME" && records.length > 0 && labels.length <= 2 ? ui(dictionary, "dnsApexCnameWarning", "CNAME on an apex-like hostname can conflict with other required records. Confirm your DNS provider supports it.") : "",
+    normalizedRecord === "MX" && records.length === 1 ? ui(dictionary, "dnsSingleMxWarning", "Only one MX record returned. Confirm that a single mail exchanger is intentional.") : "",
+    normalizedRecord === "TXT" && spfCount > 1 ? ui(dictionary, "dnsMultipleSpfWarning", "More than one SPF policy was found. Mail providers usually expect a single SPF TXT record.") : "",
+    normalizedRecord === "TXT" && records.length > 0 && !spfCount && !dmarcDetected && !hasVerification ? ui(dictionary, "dnsTxtPurposeWarning", "TXT records are present, but no SPF, DMARC, or common verification marker was detected.") : "",
+    normalizedRecord === "NS" && records.length > 0 && records.length < 2 ? ui(dictionary, "dnsSingleNsWarning", "Only one name server returned. Public DNS usually needs at least two authoritative name servers.") : "",
+    ui(dictionary, "dnsTtlWarning", "TTL is not shown by this resolver; verify DNS propagation with your DNS provider when timing matters."),
+  ].filter(Boolean);
+
+  return {
+    metrics: [
+      { label: ui(dictionary, "dnsRecordFamily", "Record family"), value: normalizedRecord },
+      { label: ui(dictionary, "dnsHostnameDepth", "Host labels"), value: String(labels.length) },
+      { label: ui(dictionary, "dnsResponseShape", "Response shape"), value: records.length ? ui(dictionary, "dnsListResponse", "List response") : ui(dictionary, "dnsEmptyResponse", "Empty response") },
+      { label: ui(dictionary, "dnsPrimarySignal", "Primary signal"), value: getDnsPrimarySignal(normalizedRecord, resolvedHostname, values, dictionary) },
+    ],
+    warnings,
+  };
 }
 
 function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [hostname, setHostname] = React.useState("bobob.app");
   const [record, setRecord] = React.useState("A");
-  const [result, setResult] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [result, setResult] = React.useState<DnsLookupResponse | null>(null);
   const lookup = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/dns-lookup?hostname=${encodeURIComponent(hostname)}&record=${encodeURIComponent(record)}`);
-      setResult(JSON.stringify(await response.json(), null, 2));
+      setResult((await response.json()) as DnsLookupResponse);
     } catch (error) {
-      setResult(error instanceof Error ? error.message : ui(dictionary, "dnsLookupFailed", "DNS lookup failed."));
+      setResult({ error: error instanceof Error ? error.message : ui(dictionary, "dnsLookupFailed", "DNS lookup failed.") });
+    } finally {
+      setLoading(false);
     }
   };
+  const records = Array.isArray(result?.records) ? result.records : [];
+  const rawResult = result ? JSON.stringify(result, null, 2) : "";
+  const dnsDiagnostics = getDnsDiagnostics(hostname, record, result, dictionary);
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-dns-tool>
+      <div className="space-y-2" data-dns-examples>
+        <p className="text-sm font-medium">{ui(dictionary, "dnsExamples", "DNS examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {dnsExamples.map((example) => (
+            <Button
+              key={example.labelKey}
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setHostname(example.hostname);
+                setRecord(example.record);
+              }}
+            >
+              {ui(dictionary, example.labelKey, example.fallbackLabel)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-3 md:grid-cols-[1fr_140px_auto]">
-        <Input value={hostname} onChange={(event) => setHostname(event.target.value)} />
+        <Input value={hostname} onChange={(event) => setHostname(event.target.value)} aria-label={ui(dictionary, "hostname", "Hostname")} />
         <Select value={record} onChange={(event) => setRecord(event.target.value)}>
           {["A", "AAAA", "CNAME", "MX", "TXT", "NS"].map((item) => (
             <option key={item} value={item}>{item}</option>
           ))}
         </Select>
-        <Button onClick={lookup}>{ui(dictionary, "lookup", "Lookup")}</Button>
+        <Button onClick={lookup} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "lookup", "Lookup")}</Button>
       </div>
-      <ResultBlock title={ui(dictionary, "dnsRecords", "DNS records")} value={result} dictionary={dictionary} />
+      <div data-dns-result-details>
+        <ToolMetricGrid
+          items={[
+            { label: ui(dictionary, "hostname", "Hostname"), value: result?.hostname ?? hostname },
+            { label: ui(dictionary, "recordType", "Record type"), value: result?.record ?? record },
+            { label: ui(dictionary, "recordCount", "Record count"), value: String(records.length) },
+            { label: ui(dictionary, "dnsStatus", "Status"), value: result?.error ? ui(dictionary, "dnsFailed", "Failed") : result ? ui(dictionary, "dnsResolved", "Resolved") : ui(dictionary, "notRunYet", "Not run yet") },
+          ]}
+        />
+      </div>
+      <section className="rounded-md border bg-card" data-dns-diagnostics>
+        <div className="border-b p-3">
+          <h3 className="text-sm font-semibold">{ui(dictionary, "dnsDiagnostics", "DNS diagnostics")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "dnsDiagnosticsDescription", "Review record shape, routing signal, DNS propagation limits, and provider-specific caveats before copying.")}</p>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={dnsDiagnostics.metrics} />
+          <div data-dns-warnings>
+            <ToolWarningList title={ui(dictionary, "dnsReviewNotes", "DNS review notes")} warnings={dnsDiagnostics.warnings} emptyLabel={ui(dictionary, "dnsNoDiagnosticWarnings", "DNS response looks ready for public deployment review.")} />
+          </div>
+        </div>
+      </section>
+      {records.length ? (
+        <section className="rounded-md border bg-card" data-dns-record-list>
+          <div className="border-b p-3">
+            <h3 className="text-sm font-semibold">{ui(dictionary, "dnsRecords", "DNS records")}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "dnsRecordsDescription", "Resolved public records for the selected hostname and type.")}</p>
+          </div>
+          <div className="divide-y">
+            {records.map((item, index) => (
+              <div key={`${index}-${formatDnsRecordValue(item)}`} className="grid gap-1 p-3 text-sm md:grid-cols-[90px_1fr]">
+                <dt className="text-muted-foreground">#{index + 1}</dt>
+                <dd className="min-w-0 break-all font-medium">{formatDnsRecordValue(item)}</dd>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : result?.error ? (
+        <ErrorAlert title={ui(dictionary, "dnsLookupFailed", "DNS lookup failed.")} message={result.error} />
+      ) : null}
+      <ResultBlock title={ui(dictionary, "rawResponse", "Raw response")} value={rawResult} dictionary={dictionary} />
     </div>
   );
 }

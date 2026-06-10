@@ -53,6 +53,9 @@ async function readPointerState(page) {
 const scenarios = [
   { name: "tool-directory", path: "/tools", first: [220, 180], second: [980, 260] },
   { name: "tool-detail", path: "/tools/json-formatter", first: [260, 220], second: [980, 520] },
+  { name: "guide-directory", path: "/guides", first: [220, 180], second: [980, 260] },
+  { name: "guide-detail", path: "/guides/developer-utility-workflow", first: [260, 220], second: [980, 520] },
+  { name: "localized-guide-detail", path: "/ko/guides/developer-utility-workflow", first: [260, 220], second: [980, 520] },
 ];
 
 const browser = await launchBrowser();
@@ -60,12 +63,19 @@ const browser = await launchBrowser();
 try {
   for (const scenario of scenarios) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 860 } });
-    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "networkidle", timeout: 20_000 });
+    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "domcontentloaded", timeout: 20_000 });
     if (!response || response.status() >= 400) {
       failures.push(`${scenario.name} returned ${response?.status() ?? "no response"}`);
       await page.close();
       continue;
     }
+    await page.waitForSelector(".bobob-pointer-background", { timeout: 20_000 });
+    await page.waitForFunction(() => {
+      const layer = document.querySelector(".bobob-pointer-background");
+      const host = layer?.parentElement;
+      if (!host) return false;
+      return Boolean(getComputedStyle(host).getPropertyValue("--bobob-pointer-x").trim());
+    }, { timeout: 20_000 });
 
     await page.mouse.move(...scenario.first);
     await page.waitForTimeout(80);

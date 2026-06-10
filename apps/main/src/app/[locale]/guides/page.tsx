@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { PointerBackground } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,30 +46,33 @@ export default async function LocalizedGuidesPage({ params }: LocalizedGuidesPag
   const localizedGuides = getLocalizedGuides(locale);
 
   return (
-    <main className="mx-auto min-h-screen max-w-5xl px-4 py-10" lang={locale} dir={dictionary.dir}>
-      <header className="mb-8 flex items-center justify-between gap-3">
-        <Link href={withLocale("/", locale)} className="text-sm font-semibold tracking-tight">
-          {dictionary.nav.brand}
-        </Link>
-        <div className="flex flex-wrap justify-end gap-2">
-          <ThemeToggle dictionary={dictionary} />
-          <LocaleSwitcher locale={locale} dictionary={dictionary} />
-        </div>
-      </header>
-      <Badge>{dictionary.guides.badge}</Badge>
-      <h1 className="mt-4 text-3xl font-semibold tracking-normal">{dictionary.guides.title}</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{dictionary.guides.description}</p>
-      <div className="mt-8 grid gap-3 md:grid-cols-2">
-        {localizedGuides.map((guide) => (
-          <Link key={guide.slug} href={withLocale(`/guides/${guide.slug}`, locale)}>
-            <Card className="h-full transition-colors hover:bg-muted/50">
-              <CardHeader>
-                <CardTitle>{guide.title}</CardTitle>
-                <CardDescription>{guide.description}</CardDescription>
-              </CardHeader>
-            </Card>
+    <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
+      <PointerBackground />
+      <div className="relative mx-auto max-w-5xl px-4 py-10">
+        <header className="mb-8 flex items-center justify-between gap-3">
+          <Link href={withLocale("/", locale)} className="text-sm font-semibold tracking-tight">
+            {dictionary.nav.brand}
           </Link>
-        ))}
+          <div className="flex flex-wrap justify-end gap-2">
+            <ThemeToggle dictionary={dictionary} />
+            <LocaleSwitcher locale={locale} dictionary={dictionary} />
+          </div>
+        </header>
+        <Badge>{dictionary.guides.badge}</Badge>
+        <h1 className="mt-4 text-3xl font-semibold tracking-normal">{dictionary.guides.title}</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{dictionary.guides.description}</p>
+        <div className="mt-8 grid gap-3 md:grid-cols-2">
+          {localizedGuides.map((guide) => (
+            <Link key={guide.slug} href={withLocale(`/guides/${guide.slug}`, locale)}>
+              <Card className="h-full transition-colors hover:bg-muted/50">
+                <CardHeader>
+                  <CardTitle>{guide.title}</CardTitle>
+                  <CardDescription>{guide.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </main>
   );
