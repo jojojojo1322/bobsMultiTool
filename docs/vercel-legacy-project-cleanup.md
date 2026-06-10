@@ -36,6 +36,15 @@ BOBOB_REQUIRE_MAIN_VERCEL=1 \
 npm run harness:deployment-status
 ```
 
+If the latest repository commit only changes docs, harnesses, or agent skills, Vercel may not create a new production deployment. In that case, point the check at the latest app-affecting deployment SHA:
+
+```bash
+BOBOB_DEPLOY_SHA=<deployed-app-commit-sha> \
+VERCEL_TOKEN=... \
+BOBOB_REQUIRE_MAIN_VERCEL=1 \
+npm run harness:deployment-status
+```
+
 After the legacy Vercel projects are deleted or disconnected from the GitHub repository, run the strict gate:
 
 ```bash
@@ -46,6 +55,7 @@ The full strict gate should pass only when the main deployment succeeds and no l
 
 ```bash
 VERCEL_TOKEN=... \
+BOBOB_DEPLOY_SHA=<deployed-app-commit-sha> \
 BOBOB_REQUIRE_MAIN_VERCEL=1 \
 BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 \
 npm run harness:deployment-status

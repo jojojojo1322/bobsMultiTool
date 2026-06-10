@@ -193,6 +193,7 @@ const checks = [
   ["verification", "harness:legacy"],
   ["verification", "harness:deployment-status"],
   ["verification", "BOBOB_REQUIRE_MAIN_VERCEL"],
+  ["verification", "BOBOB_DEPLOY_SHA"],
   ["verification", "BOBOB_REQUIRE_NO_LEGACY_VERCEL"],
   ["product", "monetizationTier"],
   ["product", "Post-approval candidates"],
@@ -315,7 +316,7 @@ if (!fs.existsSync(path.join(root, "docs/vercel-legacy-project-cleanup.md"))) {
   failures.push("Vercel legacy project cleanup document missing");
 } else {
   const vercelCleanup = read("docs/vercel-legacy-project-cleanup.md");
-  for (const fragment of ["bobs-multi-tool-main", "bobs-multi-tool-cron-generator", "BOBOB_REQUIRE_MAIN_VERCEL", "BOBOB_REQUIRE_NO_LEGACY_VERCEL", "harness:deployment-status"]) {
+  for (const fragment of ["bobs-multi-tool-main", "bobs-multi-tool-cron-generator", "BOBOB_REQUIRE_MAIN_VERCEL", "BOBOB_DEPLOY_SHA", "BOBOB_REQUIRE_NO_LEGACY_VERCEL", "harness:deployment-status"]) {
     if (!vercelCleanup.includes(fragment)) failures.push(`Vercel legacy cleanup doc missing ${fragment}`);
   }
 }
