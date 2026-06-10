@@ -73,22 +73,50 @@ body {
 
 .bobob-pointer-background {
   position: absolute;
-  inset: -8%;
-  opacity: 0.55;
+  inset: -12%;
+  opacity: 0.5;
   transform: translate3d(var(--bobob-parallax-x, 0), var(--bobob-parallax-y, 0), 0);
-  transition: transform 180ms ease-out;
+  transition: transform 160ms ease-out, opacity 160ms ease-out;
   background:
-    radial-gradient(circle at var(--bobob-pointer-x, 50%) var(--bobob-pointer-y, 50%), color-mix(in srgb, var(--foreground) 8%, transparent), transparent 28%),
-    linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--border) 65%, transparent) 48%, transparent 70%);
-  mask-image: linear-gradient(to bottom, black, transparent 78%);
+    linear-gradient(115deg, transparent 0 42%, color-mix(in srgb, var(--foreground) 4%, transparent) 45%, transparent 53%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--border) 42%, transparent) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--border) 34%, transparent) 0 1px, transparent 1px 72px);
+  background-position:
+    calc(50% + var(--bobob-grid-x, 0px)) calc(0% + var(--bobob-grid-y, 0px)),
+    var(--bobob-grid-x, 0px) var(--bobob-grid-y, 0px),
+    var(--bobob-grid-x, 0px) var(--bobob-grid-y, 0px);
+  background-size: 680px 460px, 72px 72px, 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 84%);
+}
+
+.bobob-pointer-background::before,
+.bobob-pointer-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.bobob-pointer-background::before {
+  opacity: 0.45;
+  background:
+    linear-gradient(90deg, transparent calc(var(--bobob-pointer-x, 50%) - 1px), color-mix(in srgb, var(--foreground) 7%, transparent) var(--bobob-pointer-x, 50%), transparent calc(var(--bobob-pointer-x, 50%) + 1px)),
+    linear-gradient(0deg, transparent calc(var(--bobob-pointer-y, 50%) - 1px), color-mix(in srgb, var(--foreground) 6%, transparent) var(--bobob-pointer-y, 50%), transparent calc(var(--bobob-pointer-y, 50%) + 1px));
+}
+
+.bobob-pointer-background::after {
+  opacity: 0.35;
+  transform: translate3d(var(--bobob-sweep-x, 0), var(--bobob-sweep-y, 0), 0);
+  transition: transform 160ms ease-out;
+  background: linear-gradient(118deg, transparent 0 44%, color-mix(in srgb, var(--border) 48%, transparent) 50%, transparent 58% 100%);
 }
 
 .dark .bobob-pointer-background {
-  opacity: 0.4;
+  opacity: 0.36;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bobob-pointer-background {
+  .bobob-pointer-background,
+  .bobob-pointer-background::after {
     transform: none;
     transition: none;
   }

@@ -4,6 +4,7 @@ import * as React from "react";
 
 export function PointerBackground() {
   const ref = React.useRef<HTMLDivElement>(null);
+  const frameRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     const element = ref.current;
@@ -15,14 +16,25 @@ export function PointerBackground() {
 
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
-      element.style.setProperty("--bobob-pointer-x", `${Math.max(0, Math.min(100, x))}%`);
-      element.style.setProperty("--bobob-pointer-y", `${Math.max(0, Math.min(100, y))}%`);
-      element.style.setProperty("--bobob-parallax-x", `${(x - 50) * -0.08}px`);
-      element.style.setProperty("--bobob-parallax-y", `${(y - 50) * -0.08}px`);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+
+      frameRef.current = requestAnimationFrame(() => {
+        const clampedX = Math.max(0, Math.min(100, x));
+        const clampedY = Math.max(0, Math.min(100, y));
+        element.style.setProperty("--bobob-pointer-x", `${clampedX}%`);
+        element.style.setProperty("--bobob-pointer-y", `${clampedY}%`);
+        element.style.setProperty("--bobob-grid-x", `${(clampedX - 50) * -0.18}px`);
+        element.style.setProperty("--bobob-grid-y", `${(clampedY - 50) * -0.18}px`);
+        element.style.setProperty("--bobob-parallax-x", `${(clampedX - 50) * -0.05}px`);
+        element.style.setProperty("--bobob-parallax-y", `${(clampedY - 50) * -0.05}px`);
+        element.style.setProperty("--bobob-sweep-x", `${(clampedX - 50) * 0.08}px`);
+        element.style.setProperty("--bobob-sweep-y", `${(clampedY - 50) * 0.08}px`);
+      });
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
       window.removeEventListener("pointermove", handlePointerMove);
     };
   }, []);

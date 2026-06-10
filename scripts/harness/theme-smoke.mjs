@@ -26,8 +26,12 @@ for (const [source, fragment, message] of [
   [workspace, "rounded-lg border bg-background", "workbench shell should use neutral border without raised accent"],
   [pointerBackground, "prefers-reduced-motion: reduce", "pointer background must respect reduced motion"],
   [pointerBackground, "window.addEventListener(\"pointermove\"", "pointer background must react to pointer movement"],
+  [pointerBackground, "requestAnimationFrame", "pointer background must throttle CSS variable updates"],
   [globals, ".bobob-pointer-background", "pointer background CSS missing"],
+  [globals, "repeating-linear-gradient", "pointer background should use restrained grid lines rather than decorative blobs"],
+  [globals, "--bobob-grid-x", "pointer background grid offset variables missing"],
   [directory, "<PointerBackground />", "tool directory hero missing pointer background"],
+  [workspace, "<PointerBackground />", "tool detail workspace missing pointer background"],
 ]) {
   if (!source.includes(fragment)) failures.push(message);
 }

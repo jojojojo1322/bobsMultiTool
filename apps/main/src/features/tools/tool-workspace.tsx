@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Menu, Search } from "lucide-react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { PointerBackground } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Accordion } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
@@ -290,8 +291,9 @@ export function ToolWorkspace({
   const privacyLabel = tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly;
 
   return (
-    <main className="min-h-screen bg-background" lang={locale} dir={dictionary.dir}>
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
+      <PointerBackground />
+      <div className="relative border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label={dictionary.nav.openNavigation}>
@@ -315,7 +317,7 @@ export function ToolWorkspace({
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <ToolNavigation activeSlug={tool.slug} query={query} onQueryChange={setQuery} onNavigate={() => setMobileOpen(false)} locale={locale} dictionary={dictionary} />
       </Sheet>
-      <div className="mx-auto max-w-[1600px] px-4 py-4">
+      <div className="relative mx-auto max-w-[1600px] px-4 py-4">
         <ResizablePanelGroup className="min-h-[calc(100vh-7rem)] rounded-lg border bg-background lg:h-[calc(100vh-7rem)] lg:min-h-0">
           <ResizablePanel className="hidden min-h-0 lg:block">
             <Sidebar className="h-full min-h-0 p-4">

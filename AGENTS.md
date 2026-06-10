@@ -23,7 +23,8 @@
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
 - Core tool pages should improve demand through registry-backed `failureCases`, `preCopyChecklist`, and related next actions before broad feature sprawl.
 - Keep the UI dense, neutral, and workbench-like. Avoid generic AI-generated landing-page patterns, especially raised colored top borders and decorative accent strips.
-- Pointer-reactive visual effects must stay lightweight CSS/React, respect reduced motion, and avoid adding WebGL, `ogl`, or `framer-motion` unless explicitly approved.
+- Pointer-reactive visual effects must stay lightweight CSS/React, respect reduced motion, and avoid adding WebGL, `ogl`, or `framer-motion` unless explicitly approved. Home/tool directory and tool detail pages should keep the restrained grid-line pointer background, not decorative blobs.
+- Pointer background changes must keep `npm run harness:pointer-background` green so real pointer movement updates CSS variables on both directory and detail pages.
 - Desktop tool pages must keep real resizable left and right sidebars with persisted localStorage widths: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.
 - Resizable panel widths must be clamped to the workbench container. Narrow desktop widths must not overflow horizontally; if the full target widths cannot fit, the center panel may shrink before the shell breaks.
 - Tool navigation clicks must preserve the sidebar scroll position and must not force the document back to the top while moving between tool detail pages.
