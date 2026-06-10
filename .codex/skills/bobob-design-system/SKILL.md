@@ -8,6 +8,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Use shadcn/ui-style local primitives from `apps/main/src/components/ui`.
 - Keep the product-lab tone: neutral zinc palette, compact panels, crisp borders, modest radius, no raised colored top borders, and no decorative accent strips.
 - Avoid oversized heroes, gradient-heavy sections, emoji tool cards, bento marketing layouts, nested cards, explanatory UI copy, and AI-generated-looking card accents.
+- Pointer-reactive background motion must stay subtle and lightweight: CSS variables plus React pointer tracking only, reduced-motion aware, and no WebGL, `ogl`, or `framer-motion` dependency unless explicitly approved.
 - Tool pages use the same frame: left navigation, top context bar, central tool panel, right examples/FAQ/guides/related tools.
 - Tool directory pages at `/tools` and `/{locale}/tools` use the same dense product-lab card system as the home index.
 - Desktop tool pages require real resizable left and right sidebars with localStorage persistence: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.

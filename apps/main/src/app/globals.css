@@ -71,6 +71,29 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.bobob-pointer-background {
+  position: absolute;
+  inset: -8%;
+  opacity: 0.55;
+  transform: translate3d(var(--bobob-parallax-x, 0), var(--bobob-parallax-y, 0), 0);
+  transition: transform 180ms ease-out;
+  background:
+    radial-gradient(circle at var(--bobob-pointer-x, 50%) var(--bobob-pointer-y, 50%), color-mix(in srgb, var(--foreground) 8%, transparent), transparent 28%),
+    linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--border) 65%, transparent) 48%, transparent 70%);
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+.dark .bobob-pointer-background {
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bobob-pointer-background {
+    transform: none;
+    transition: none;
+  }
+}
+
 code,
 pre,
 kbd,

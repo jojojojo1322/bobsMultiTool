@@ -38,6 +38,15 @@ if (!searchPanel.includes("getLocalizedTools(")) failures.push("tool search pane
 if (!searchPanel.includes("initialQuery")) failures.push("tool search panel does not accept initial URL query");
 if (!searchPanel.includes("url.searchParams.set(\"q\"")) failures.push("tool search panel does not sync q search param");
 if (!layout.includes("https://www.bobob.app/tools?q={search_term_string}")) failures.push("SearchAction target is not aligned to /tools?q=");
+for (const fragment of [
+  "commonFailureCases",
+  "commonPreCopyChecklist",
+  "dictionary.tool.failureCases",
+  "dictionary.tool.preCopyChecklist",
+  "dictionary.tool.nextActionPrefix",
+]) {
+  if (!workspace.includes(fragment)) failures.push(`tool workspace missing retention detail ${fragment}`);
+}
 
 if (!home.includes("readSearchQuery")) failures.push("default home does not read ?q=");
 if (!localizedHome.includes("readSearchQuery")) failures.push("localized home does not read ?q=");

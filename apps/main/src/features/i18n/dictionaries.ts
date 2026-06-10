@@ -39,6 +39,17 @@ export interface Dictionary {
     faqDescription: string;
     guidesDescription: string;
     useCases: string;
+    failureCases: string;
+    failureCasesDescription: string;
+    failureCaseInputPrefix: string;
+    failureCaseCategoryPrefix: string;
+    failureCasePrivacyPrefix: string;
+    preCopyChecklist: string;
+    preCopyChecklistDescription: string;
+    preCopyCheckSourcePrefix: string;
+    preCopyCheckSecrets: string;
+    preCopyCheckRelatedPrefix: string;
+    nextActionPrefix: string;
     noOutput: string;
     copy: string;
     copied: string;
@@ -271,6 +282,206 @@ const localizedNoOutput: Record<Locale, string> = {
   ar: "سيظهر الناتج هنا.",
 };
 
+type ToolDetailText = Pick<
+  Dictionary["tool"],
+  | "failureCases"
+  | "failureCasesDescription"
+  | "failureCaseInputPrefix"
+  | "failureCaseCategoryPrefix"
+  | "failureCasePrivacyPrefix"
+  | "preCopyChecklist"
+  | "preCopyChecklistDescription"
+  | "preCopyCheckSourcePrefix"
+  | "preCopyCheckSecrets"
+  | "preCopyCheckRelatedPrefix"
+  | "nextActionPrefix"
+>;
+
+const localizedToolDetailText: Record<Locale, ToolDetailText> = {
+  en: {
+    failureCases: "Common failure cases",
+    failureCasesDescription: "Check these before trusting or sharing output",
+    failureCaseInputPrefix: "Input shape to verify:",
+    failureCaseCategoryPrefix: "Tool context to confirm:",
+    failureCasePrivacyPrefix: "Processing mode to respect:",
+    preCopyChecklist: "Before copying",
+    preCopyChecklistDescription: "A short review loop for safer reuse",
+    preCopyCheckSourcePrefix: "Compare output against the search intent:",
+    preCopyCheckSecrets: "Remove secrets, private hosts, customer data, and one-off test values.",
+    preCopyCheckRelatedPrefix: "If the result needs another step, continue with:",
+    nextActionPrefix: "Next step:",
+  },
+  ko: {
+    failureCases: "흔한 실패 사례",
+    failureCasesDescription: "결과를 신뢰하거나 공유하기 전에 확인하세요",
+    failureCaseInputPrefix: "확인할 입력 형태:",
+    failureCaseCategoryPrefix: "확인할 도구 맥락:",
+    failureCasePrivacyPrefix: "지켜야 할 처리 방식:",
+    preCopyChecklist: "복사 전 확인",
+    preCopyChecklistDescription: "안전하게 재사용하기 위한 짧은 검토 흐름",
+    preCopyCheckSourcePrefix: "검색 의도와 결과를 비교:",
+    preCopyCheckSecrets: "비밀값, 사설 호스트, 고객 데이터, 일회성 테스트 값을 제거하세요.",
+    preCopyCheckRelatedPrefix: "다음 처리가 필요하면 이어서 사용:",
+    nextActionPrefix: "다음 단계:",
+  },
+  ja: {
+    failureCases: "よくある失敗例",
+    failureCasesDescription: "出力を信頼または共有する前に確認します",
+    failureCaseInputPrefix: "確認する入力形式:",
+    failureCaseCategoryPrefix: "確認するツール文脈:",
+    failureCasePrivacyPrefix: "守る処理方式:",
+    preCopyChecklist: "コピー前の確認",
+    preCopyChecklistDescription: "安全に再利用するための短い確認手順",
+    preCopyCheckSourcePrefix: "検索意図と出力を比較:",
+    preCopyCheckSecrets: "秘密値、内部ホスト、顧客データ、一時的なテスト値を削除してください。",
+    preCopyCheckRelatedPrefix: "次の処理が必要なら続けて使用:",
+    nextActionPrefix: "次の手順:",
+  },
+  "zh-CN": {
+    failureCases: "常见失败情况",
+    failureCasesDescription: "信任或分享输出前先检查这些点",
+    failureCaseInputPrefix: "需要验证的输入形态:",
+    failureCaseCategoryPrefix: "需要确认的工具上下文:",
+    failureCasePrivacyPrefix: "需要遵守的处理方式:",
+    preCopyChecklist: "复制前检查",
+    preCopyChecklistDescription: "便于安全复用的简短检查流程",
+    preCopyCheckSourcePrefix: "将输出与搜索意图对比:",
+    preCopyCheckSecrets: "移除密钥、内部主机、客户数据和一次性测试值。",
+    preCopyCheckRelatedPrefix: "如果结果还需要下一步, 继续使用:",
+    nextActionPrefix: "下一步:",
+  },
+  "zh-TW": {
+    failureCases: "常見失敗情況",
+    failureCasesDescription: "信任或分享輸出前先檢查這些點",
+    failureCaseInputPrefix: "需要驗證的輸入形態:",
+    failureCaseCategoryPrefix: "需要確認的工具脈絡:",
+    failureCasePrivacyPrefix: "需要遵守的處理方式:",
+    preCopyChecklist: "複製前檢查",
+    preCopyChecklistDescription: "便於安全重用的簡短檢查流程",
+    preCopyCheckSourcePrefix: "將輸出與搜尋意圖對比:",
+    preCopyCheckSecrets: "移除密鑰、內部主機、客戶資料與一次性測試值。",
+    preCopyCheckRelatedPrefix: "如果結果還需要下一步, 繼續使用:",
+    nextActionPrefix: "下一步:",
+  },
+  es: {
+    failureCases: "Fallos comunes",
+    failureCasesDescription: "Revisa esto antes de confiar en la salida o compartirla",
+    failureCaseInputPrefix: "Forma de entrada a validar:",
+    failureCaseCategoryPrefix: "Contexto de herramienta a confirmar:",
+    failureCasePrivacyPrefix: "Modo de proceso a respetar:",
+    preCopyChecklist: "Antes de copiar",
+    preCopyChecklistDescription: "Revision corta para reutilizar con mas seguridad",
+    preCopyCheckSourcePrefix: "Compara la salida con la intencion de busqueda:",
+    preCopyCheckSecrets: "Elimina secretos, hosts privados, datos de clientes y valores de prueba puntuales.",
+    preCopyCheckRelatedPrefix: "Si el resultado necesita otro paso, continua con:",
+    nextActionPrefix: "Siguiente paso:",
+  },
+  "pt-BR": {
+    failureCases: "Falhas comuns",
+    failureCasesDescription: "Confira antes de confiar na saida ou compartilhar",
+    failureCaseInputPrefix: "Formato de entrada a validar:",
+    failureCaseCategoryPrefix: "Contexto da ferramenta a confirmar:",
+    failureCasePrivacyPrefix: "Modo de processamento a respeitar:",
+    preCopyChecklist: "Antes de copiar",
+    preCopyChecklistDescription: "Revisao curta para reutilizar com mais seguranca",
+    preCopyCheckSourcePrefix: "Compare a saida com a intencao de busca:",
+    preCopyCheckSecrets: "Remova segredos, hosts privados, dados de clientes e valores de teste pontuais.",
+    preCopyCheckRelatedPrefix: "Se o resultado precisa de outro passo, continue com:",
+    nextActionPrefix: "Proximo passo:",
+  },
+  de: {
+    failureCases: "Haeufige Fehlerfaelle",
+    failureCasesDescription: "Vor Vertrauen oder Teilen der Ausgabe pruefen",
+    failureCaseInputPrefix: "Zu pruefende Eingabeform:",
+    failureCaseCategoryPrefix: "Zu bestaetigender Werkzeugkontext:",
+    failureCasePrivacyPrefix: "Zu beachtender Verarbeitungsmodus:",
+    preCopyChecklist: "Vor dem Kopieren",
+    preCopyChecklistDescription: "Kurzer Pruefablauf fuer sichere Wiederverwendung",
+    preCopyCheckSourcePrefix: "Ausgabe mit Suchabsicht vergleichen:",
+    preCopyCheckSecrets: "Entferne Geheimnisse, private Hosts, Kundendaten und einmalige Testwerte.",
+    preCopyCheckRelatedPrefix: "Wenn ein weiterer Schritt noetig ist, weiter mit:",
+    nextActionPrefix: "Naechster Schritt:",
+  },
+  fr: {
+    failureCases: "Erreurs frequentes",
+    failureCasesDescription: "A verifier avant de faire confiance a la sortie ou de la partager",
+    failureCaseInputPrefix: "Forme d'entree a verifier:",
+    failureCaseCategoryPrefix: "Contexte d'outil a confirmer:",
+    failureCasePrivacyPrefix: "Mode de traitement a respecter:",
+    preCopyChecklist: "Avant de copier",
+    preCopyChecklistDescription: "Verification courte pour une reutilisation plus sure",
+    preCopyCheckSourcePrefix: "Comparer la sortie avec l'intention de recherche:",
+    preCopyCheckSecrets: "Retirez secrets, hotes prives, donnees client et valeurs de test ponctuelles.",
+    preCopyCheckRelatedPrefix: "Si le resultat demande une etape suivante, continuez avec:",
+    nextActionPrefix: "Etape suivante:",
+  },
+  hi: {
+    failureCases: "आम असफल स्थितियां",
+    failureCasesDescription: "नतीजे पर भरोसा करने या साझा करने से पहले जांचें",
+    failureCaseInputPrefix: "जांचने वाला इनपुट रूप:",
+    failureCaseCategoryPrefix: "पुष्टि करने वाला साधन संदर्भ:",
+    failureCasePrivacyPrefix: "पालन करने वाला प्रक्रिया तरीका:",
+    preCopyChecklist: "कॉपी से पहले",
+    preCopyChecklistDescription: "सुरक्षित दोबारा उपयोग के लिए छोटी जांच",
+    preCopyCheckSourcePrefix: "नतीजे को खोज इरादे से मिलाएं:",
+    preCopyCheckSecrets: "गुप्त मान, निजी होस्ट, ग्राहक डेटा और एक बार के टेस्ट मान हटाएं.",
+    preCopyCheckRelatedPrefix: "अगर अगले कदम की जरूरत हो तो आगे इस्तेमाल करें:",
+    nextActionPrefix: "अगला कदम:",
+  },
+  id: {
+    failureCases: "Kegagalan umum",
+    failureCasesDescription: "Periksa ini sebelum percaya atau membagikan hasil",
+    failureCaseInputPrefix: "Bentuk masukan yang perlu dicek:",
+    failureCaseCategoryPrefix: "Konteks alat yang perlu dipastikan:",
+    failureCasePrivacyPrefix: "Cara pemrosesan yang perlu dijaga:",
+    preCopyChecklist: "Sebelum menyalin",
+    preCopyChecklistDescription: "Alur pemeriksaan singkat agar pemakaian ulang lebih aman",
+    preCopyCheckSourcePrefix: "Bandingkan hasil dengan niat pencarian:",
+    preCopyCheckSecrets: "Hapus nilai rahasia, host privat, data pelanggan, dan nilai uji sekali pakai.",
+    preCopyCheckRelatedPrefix: "Jika hasil perlu langkah berikutnya, lanjutkan dengan:",
+    nextActionPrefix: "Langkah berikutnya:",
+  },
+  vi: {
+    failureCases: "Lỗi thường gặp",
+    failureCasesDescription: "Kiểm tra trước khi tin tưởng hoặc chia sẻ kết quả",
+    failureCaseInputPrefix: "Dạng đầu vào cần kiểm tra:",
+    failureCaseCategoryPrefix: "Ngữ cảnh công cụ cần xác nhận:",
+    failureCasePrivacyPrefix: "Cách xử lý cần tuân thủ:",
+    preCopyChecklist: "Trước khi sao chép",
+    preCopyChecklistDescription: "Vòng kiểm tra ngắn để tái sử dụng an toàn hơn",
+    preCopyCheckSourcePrefix: "Đối chiếu kết quả với ý định tìm kiếm:",
+    preCopyCheckSecrets: "Xóa khóa bí mật, host nội bộ, dữ liệu khách hàng và giá trị thử nghiệm dùng một lần.",
+    preCopyCheckRelatedPrefix: "Nếu kết quả cần bước tiếp theo, tiếp tục với:",
+    nextActionPrefix: "Bước tiếp theo:",
+  },
+  th: {
+    failureCases: "กรณีผิดพลาดที่พบบ่อย",
+    failureCasesDescription: "ตรวจสอบก่อนเชื่อผลลัพธ์หรือแชร์ต่อ",
+    failureCaseInputPrefix: "รูปแบบข้อมูลที่ต้องตรวจ:",
+    failureCaseCategoryPrefix: "บริบทเครื่องมือที่ต้องยืนยัน:",
+    failureCasePrivacyPrefix: "วิธีประมวลผลที่ต้องรักษา:",
+    preCopyChecklist: "ก่อนคัดลอก",
+    preCopyChecklistDescription: "ขั้นตอนตรวจสั้น ๆ เพื่อใช้ซ้ำอย่างปลอดภัย",
+    preCopyCheckSourcePrefix: "เทียบผลลัพธ์กับเจตนาการค้นหา:",
+    preCopyCheckSecrets: "ลบค่าลับ โฮสต์ส่วนตัว ข้อมูลลูกค้า และค่าทดสอบใช้ครั้งเดียว",
+    preCopyCheckRelatedPrefix: "ถ้าผลลัพธ์ต้องทำต่อ ให้ใช้:",
+    nextActionPrefix: "ขั้นตอนถัดไป:",
+  },
+  ar: {
+    failureCases: "حالات فشل شائعة",
+    failureCasesDescription: "افحص هذه النقاط قبل الوثوق بالناتج أو مشاركته",
+    failureCaseInputPrefix: "شكل الإدخال المطلوب فحصه:",
+    failureCaseCategoryPrefix: "سياق الأداة المطلوب تأكيده:",
+    failureCasePrivacyPrefix: "طريقة المعالجة المطلوب احترامها:",
+    preCopyChecklist: "قبل النسخ",
+    preCopyChecklistDescription: "دورة فحص قصيرة لإعادة استخدام أكثر أمانا",
+    preCopyCheckSourcePrefix: "قارن الناتج مع نية البحث:",
+    preCopyCheckSecrets: "أزل القيم السرية والمضيفين الخاصين وبيانات العملاء وقيم الاختبار المؤقتة.",
+    preCopyCheckRelatedPrefix: "إذا احتاجت النتيجة خطوة أخرى فتابع مع:",
+    nextActionPrefix: "الخطوة التالية:",
+  },
+};
+
 const en: Dictionary = {
   dir: "ltr",
   siteDescription: "A focused workbench of free developer tools for formatting, encoding, testing, conversion, SEO, networking, color, time, and text workflows.",
@@ -310,6 +521,7 @@ const en: Dictionary = {
     faqDescription: "Common implementation details",
     guidesDescription: "Workflow notes connected to this tool",
     useCases: "Use cases",
+    ...localizedToolDetailText.en,
     noOutput: "Output will appear here.",
     copy: "Copy",
     copied: "Copied",
@@ -642,7 +854,7 @@ export function getDictionary(locale: Locale = defaultLocale): Dictionary {
     ...localeOverride,
     nav: { ...en.nav, ...commonOverride?.nav, ...localeOverride?.nav },
     home: { ...en.home, ...commonOverride?.home, ...localeOverride?.home },
-    tool: { ...en.tool, ...commonOverride?.tool, noOutput: localizedNoOutput[locale], ...localeOverride?.tool },
+    tool: { ...en.tool, ...localizedToolDetailText[locale], ...commonOverride?.tool, noOutput: localizedNoOutput[locale], ...localeOverride?.tool },
     toolUi: { ...en.toolUi, ...commonOverride?.toolUi, ...localeOverride?.toolUi },
     guides: { ...en.guides, ...commonOverride?.guides, ...localeOverride?.guides },
     theme: { ...en.theme, ...commonOverride?.theme, ...localeOverride?.theme },

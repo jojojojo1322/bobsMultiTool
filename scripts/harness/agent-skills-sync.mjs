@@ -19,6 +19,9 @@ const checks = [
   ["agents", "skills must be updated"],
   ["agents", "build-time external font fetches"],
   ["agents", "aliases, useCases, inputExamples, contentCluster, and monetizationTier"],
+  ["agents", "failure cases, before-copy checklist, and related next actions"],
+  ["agents", "Pointer-reactive visual effects"],
+  ["agents", "avoid adding WebGL, `ogl`, or `framer-motion`"],
   ["agents", "real resizable left and right sidebars"],
   ["agents", "clamped to the workbench container"],
   ["agents", "preserve the sidebar scroll position"],
@@ -81,6 +84,9 @@ const checks = [
   ["tool", "supportedLocales"],
   ["tool", "privacyMode"],
   ["tool", "requiresServer"],
+  ["tool", "failure cases"],
+  ["tool", "pre-copy checklist"],
+  ["tool", "related next actions"],
   ["tool", "slug-specific long-tail visible descriptions"],
   ["tool", "/{locale}/tools"],
   ["tool", "Do not add a static"],
@@ -88,6 +94,8 @@ const checks = [
   ["tool", "harness:legacy"],
   ["design", "Light/Dark"],
   ["design", "ThemeToggle"],
+  ["design", "Pointer-reactive background motion"],
+  ["design", "no WebGL, `ogl`, or `framer-motion` dependency"],
   ["design", "resizable left and right sidebars"],
   ["design", "clamp to the workbench container"],
   ["design", "one aligned workbench shell"],
@@ -113,6 +121,9 @@ const checks = [
   ["localization", "Vietnamese, Thai, and Arabic reusable templates"],
   ["localization", "native language labels"],
   ["localization", "empty-output placeholders"],
+  ["localization", "Failure cases"],
+  ["localization", "pre-copy checklist"],
+  ["localization", "related next-action labels"],
   ["localization", "must not re-spread English nested objects"],
   ["localization", "slug-specific descriptions"],
   ["localization", "Long-tail acquisition locales"],
@@ -166,6 +177,9 @@ const checks = [
   ["verification", "harness:search"],
   ["verification", "harness:layout"],
   ["verification", "harness:visual"],
+  ["verification", "failure cases"],
+  ["verification", "pre-copy checklist"],
+  ["verification", "Pointer-reactive background motion"],
   ["verification", "harness:seo-opportunities"],
   ["verification", "harness:seo-measured"],
   ["verification", "BOBOB_REQUIRE_MEASURED_SEO"],
@@ -199,6 +213,8 @@ const checks = [
   ["verification", "BOBOB_DEPLOY_SHA"],
   ["verification", "BOBOB_REQUIRE_NO_LEGACY_VERCEL"],
   ["product", "monetizationTier"],
+  ["product", "70/30 split"],
+  ["product", "failure cases, pre-copy checklist, and related next actions"],
   ["product", "Post-approval candidates"],
   ["product", "40+"],
   ["product", "localized tool directories"],
@@ -276,6 +292,22 @@ for (const file of [
 
 if (!fs.existsSync(path.join(root, "scripts/harness/visual-smoke.mjs"))) {
   failures.push("visual smoke harness missing");
+}
+if (!fs.existsSync(path.join(root, "apps/main/src/components/pointer-background.tsx"))) {
+  failures.push("pointer background component missing");
+} else {
+  const pointerBackground = read("apps/main/src/components/pointer-background.tsx");
+  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x"]) {
+    if (!pointerBackground.includes(fragment)) failures.push(`pointer background missing ${fragment}`);
+  }
+}
+const globalsCss = read("apps/main/src/app/globals.css");
+for (const fragment of [".bobob-pointer-background", "@media (prefers-reduced-motion: reduce)", "color-mix"]) {
+  if (!globalsCss.includes(fragment)) failures.push(`global CSS missing pointer background policy ${fragment}`);
+}
+const directorySource = read("apps/main/src/features/tools/tool-directory.tsx");
+if (!directorySource.includes("<PointerBackground />")) {
+  failures.push("tool directory hero missing pointer background");
 }
 if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs"))) {
   failures.push("SEO opportunity report harness missing");

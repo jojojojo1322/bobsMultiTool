@@ -7,8 +7,10 @@ const globals = fs.readFileSync(path.join(root, "apps/main/src/app/globals.css")
 const layout = fs.readFileSync(path.join(root, "apps/main/src/app/layout.tsx"), "utf8");
 const provider = fs.readFileSync(path.join(root, "apps/main/src/components/theme-provider.tsx"), "utf8");
 const toggle = fs.readFileSync(path.join(root, "apps/main/src/components/theme-toggle.tsx"), "utf8");
+const pointerBackground = fs.readFileSync(path.join(root, "apps/main/src/components/pointer-background.tsx"), "utf8");
 const home = fs.readFileSync(path.join(root, "apps/main/src/app/page.tsx"), "utf8");
 const localizedHome = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/page.tsx"), "utf8");
+const directory = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-directory.tsx"), "utf8");
 const workspace = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-workspace.tsx"), "utf8");
 
 const failures = [];
@@ -22,8 +24,16 @@ for (const [source, fragment, message] of [
   [toggle, "dictionary.theme.dark", "ThemeToggle missing dark option"],
   [toggle, "dictionary.theme.system", "ThemeToggle missing system option"],
   [workspace, "rounded-lg border bg-background", "workbench shell should use neutral border without raised accent"],
+  [pointerBackground, "prefers-reduced-motion: reduce", "pointer background must respect reduced motion"],
+  [pointerBackground, "window.addEventListener(\"pointermove\"", "pointer background must react to pointer movement"],
+  [globals, ".bobob-pointer-background", "pointer background CSS missing"],
+  [directory, "<PointerBackground />", "tool directory hero missing pointer background"],
 ]) {
   if (!source.includes(fragment)) failures.push(message);
+}
+
+if (packageJson.includes("\"ogl\"") || packageJson.includes("\"framer-motion\"")) {
+  failures.push("Bob's utility app should not add WebGL or animation dependencies for the pointer background");
 }
 
 for (const [source, name] of [

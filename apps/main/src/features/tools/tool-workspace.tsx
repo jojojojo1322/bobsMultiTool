@@ -130,6 +130,9 @@ function ToolNavigation({
 
 function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
   const relatedTools = getLocalizedRelatedTools(tool.relatedTools, locale);
+  const nextRelatedTitle = relatedTools[0]?.shortTitle;
+  const failureCases = React.useMemo(() => commonFailureCases(tool, dictionary), [tool, dictionary]);
+  const preCopyChecklist = React.useMemo(() => commonPreCopyChecklist(tool, dictionary, nextRelatedTitle), [tool, dictionary, nextRelatedTitle]);
 
   return (
     <div className="space-y-5">
@@ -138,6 +141,24 @@ function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition
           {tool.useCases.map((useCase) => (
             <li key={useCase} className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
               {useCase}
+            </li>
+          ))}
+        </ul>
+      </ReferenceSection>
+      <ReferenceSection title={dictionary.tool.failureCases} description={dictionary.tool.failureCasesDescription}>
+        <ul className="space-y-2">
+          {failureCases.map((failureCase) => (
+            <li key={failureCase} className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
+              {failureCase}
+            </li>
+          ))}
+        </ul>
+      </ReferenceSection>
+      <ReferenceSection title={dictionary.tool.preCopyChecklist} description={dictionary.tool.preCopyChecklistDescription}>
+        <ul className="space-y-2">
+          {preCopyChecklist.map((item) => (
+            <li key={item} className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
+              {item}
             </li>
           ))}
         </ul>
@@ -177,7 +198,10 @@ function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition
         <div className="grid gap-2">
           {relatedTools.map((related) => (
             <Link key={related.slug} href={withLocale(`/tools/${related.slug}`, locale)} className="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-              {related.title}
+              <span className="font-medium">{related.title}</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                {dictionary.tool.nextActionPrefix} {related.shortTitle}
+              </span>
             </Link>
           ))}
         </div>
@@ -196,6 +220,27 @@ function ReferenceSection({ title, description, children }: { title: string; des
       {children}
     </section>
   );
+}
+
+function commonFailureCases(tool: ToolDefinition, dictionary: ClientDictionary) {
+  const category = dictionary.categories[tool.category] ?? tool.category;
+  const inputExample = tool.inputExamples[0] ?? tool.seo.keywords[0] ?? tool.shortTitle;
+  const privacyLabel = tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly;
+  return [
+    `${dictionary.tool.failureCaseInputPrefix} ${inputExample}`,
+    `${dictionary.tool.failureCaseCategoryPrefix} ${category}`,
+    `${dictionary.tool.failureCasePrivacyPrefix} ${privacyLabel}`,
+  ];
+}
+
+function commonPreCopyChecklist(tool: ToolDefinition, dictionary: ClientDictionary, nextRelatedTitle?: string) {
+  const primaryIntent = tool.searchIntents[0] ?? tool.shortTitle;
+  const relatedIntent = nextRelatedTitle ?? tool.guides[0]?.title ?? primaryIntent;
+  return [
+    `${dictionary.tool.preCopyCheckSourcePrefix} ${primaryIntent}`,
+    dictionary.tool.preCopyCheckSecrets,
+    `${dictionary.tool.preCopyCheckRelatedPrefix} ${relatedIntent}`,
+  ];
 }
 
 export function ToolWorkspace({

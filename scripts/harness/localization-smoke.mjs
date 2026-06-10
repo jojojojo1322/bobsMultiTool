@@ -145,6 +145,12 @@ for (const [source, label] of [
 
 for (const fragment of [
   "dictionary.toolUi",
+  "localizedToolDetailText",
+  "failureCases",
+  "failureCasesDescription",
+  "preCopyChecklist",
+  "preCopyChecklistDescription",
+  "nextActionPrefix",
   "copyReadyOutput",
   "jsonInput",
   "formattedJson",
