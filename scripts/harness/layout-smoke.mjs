@@ -36,6 +36,7 @@ for (const fragment of [
 if (!workspace.includes("<Sheet")) failures.push("mobile navigation Sheet fallback missing");
 if (!directory.includes("ToolSearchPanel")) failures.push("tool directory must include shared search panel");
 if (!directory.includes("toolCategories.map")) failures.push("tool directory must expose category sections");
+if (!directory.includes("data-acquisition-clusters")) failures.push("tool directory acquisition clusters must expose a stable QA attribute");
 if (toolsIndex.includes("redirect(") || localizedToolsIndex.includes("redirect(withLocale(\"/tools/regex-tester\"")) failures.push("tools directory pages must not redirect to a single tool");
 if (!workspace.includes("rounded-lg border bg-background")) failures.push("single-shell workbench border missing");
 if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workbench shell must keep a fixed height with internal panel scroll");

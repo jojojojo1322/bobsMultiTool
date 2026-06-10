@@ -9,6 +9,7 @@ const localizedContent = fs.readFileSync(path.join(root, "apps/main/src/features
 const home = fs.readFileSync(path.join(root, "apps/main/src/app/page.tsx"), "utf8");
 const localizedHome = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/page.tsx"), "utf8");
 const layout = fs.readFileSync(path.join(root, "apps/main/src/app/layout.tsx"), "utf8");
+const toolDirectory = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-directory.tsx"), "utf8");
 const toolsIndex = fs.readFileSync(path.join(root, "apps/main/src/app/tools/page.tsx"), "utf8");
 const localizedToolsIndex = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/tools/page.tsx"), "utf8");
 
@@ -41,6 +42,12 @@ if (!searchPanel.includes("getLocalizedRelatedTools(")) failures.push("tool sear
 if (!searchPanel.includes("initialQuery")) failures.push("tool search panel does not accept initial URL query");
 if (!searchPanel.includes("url.searchParams.set(\"q\"")) failures.push("tool search panel does not sync q search param");
 if (!layout.includes("https://www.bobob.app/tools?q={search_term_string}")) failures.push("SearchAction target is not aligned to /tools?q=");
+if (!toolDirectory.includes("acquisitionClusterSlugs")) failures.push("tool directory missing acquisition workflow clusters");
+if (!toolDirectory.includes("data-acquisition-clusters")) failures.push("tool directory acquisition clusters need a stable QA attribute");
+if (!toolDirectory.includes("dictionary.tool.nextActionPrefix")) failures.push("tool directory clusters must expose next-action links");
+for (const slug of ["json-formatter", "jwt-decoder", "http-status-checker", "color-converter", "uuid-generator", "regex-tester"]) {
+  if (!toolDirectory.includes(`"${slug}"`)) failures.push(`tool directory acquisition clusters missing ${slug}`);
+}
 for (const fragment of [
   "commonFailureCases",
   "commonPreCopyChecklist",

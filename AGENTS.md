@@ -15,7 +15,7 @@
 - `apps/main` is the only public product app.
 - Do not restore legacy standalone app directories. The only app workspace is `apps/main`; old entry paths such as `/regax`, `/cron-generator`, `/meta-generator`, `/lorem-generator`, and `/iframe-viewer` should remain permanent redirects to `/tools/{slug}`.
 - Public tool URLs must use `https://www.bobob.app/tools/{slug}`.
-- `/tools` and `/{locale}/tools` must be real 200 tool directory pages with category links and shared search; do not redirect them to the first tool.
+- `/tools` and `/{locale}/tools` must be real 200 tool directory pages with category links, shared search, and localized acquisition workflow clusters; do not redirect them to the first tool.
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
@@ -31,6 +31,7 @@
 - Tool navigation clicks must preserve the sidebar scroll position and must not force the document back to the top while moving between tool detail pages.
 - Internal search must use the shared registry search index across home, `/tools`, locale tool directories, and tool workbench surfaces. URL query `?q=` must stay aligned with the SearchAction schema.
 - Search results and tool detail pages must expose related next-action links so users naturally continue to a second tool in the same session.
+- Tool directory acquisition clusters should reuse localized tool titles, descriptions, category labels, and next-action links so multilingual pages gain session-depth links without new untranslated prose.
 - Post-deploy title/description changes should be driven by Search Console and AdSense page/query CSV exports when available. Use `npm run harness:seo-opportunities` to identify high-impression low-CTR tool and guide pages, low-RPM pages, metadata length/intent issues, and `titleDescriptionRecommendations`.
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.

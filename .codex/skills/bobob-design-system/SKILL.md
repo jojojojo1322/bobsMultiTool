@@ -13,6 +13,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Tool pages use the same frame: left navigation, top context bar, central tool panel, right examples/FAQ/guides/related tools.
 - Tool detail center panels can show a compact quick-start row with registry input examples and use cases; keep it list-like, neutral, and directly above the working tool surface.
 - Tool directory pages at `/tools` and `/{locale}/tools` use the same dense product-lab card system as the home index.
+- Tool directory acquisition clusters should be compact list-like panels that reuse localized tool copy and related next-action links; do not turn them into marketing cards.
 - Related next-action links can appear in search results and directly below a tool panel, but keep them compact and list-like rather than another nested card surface.
 - Desktop tool pages require real resizable left and right sidebars with localStorage persistence: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.
 - Resizable sidebars must clamp to the workbench container width. Narrow desktop widths must not create horizontal overflow; let the center panel shrink before the shell breaks.

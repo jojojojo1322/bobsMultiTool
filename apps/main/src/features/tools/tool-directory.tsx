@@ -10,6 +10,18 @@ import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { toolCategories } from "@/features/tools/registry";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
+import type { ToolDefinition } from "@/features/tools/types";
+
+const acquisitionClusterSlugs = [
+  ["json-formatter", "json-to-typescript", "json-schema-validator", "base64-tool"],
+  ["jwt-decoder", "timestamp-converter", "base64-tool", "hash-generator"],
+  ["http-status-checker", "dns-lookup", "meta-tag-generator", "open-graph-preview"],
+  ["color-converter", "css-formatter", "css-unit-converter", "css-clamp-generator"],
+  ["uuid-generator", "password-generator", "qr-code-generator", "random-token-generator"],
+  ["regex-tester", "javascript-formatter", "sql-formatter", "text-diff"],
+];
+
+const isToolDefinition = (tool: ToolDefinition | undefined): tool is ToolDefinition => Boolean(tool);
 
 export function readSearchQuery(searchParams?: Record<string, string | string[] | undefined>) {
   const value = searchParams?.q;
@@ -30,6 +42,10 @@ export function ToolDirectory({
 }) {
   const localizedTools = getLocalizedTools(locale);
   const coreTools = localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 12);
+  const localizedToolBySlug = new Map(localizedTools.map((tool) => [tool.slug, tool]));
+  const acquisitionClusters = acquisitionClusterSlugs
+    .map((cluster) => cluster.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition))
+    .filter((cluster) => cluster.length >= 3);
 
   return (
     <main className="min-h-screen bg-background" lang={locale} dir={dictionary.dir}>
@@ -89,6 +105,48 @@ export function ToolDirectory({
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+      <section className="border-b" data-acquisition-clusters>
+        <div className="mx-auto max-w-7xl px-4 py-6">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold">{dictionary.nav.relatedTools}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{dictionary.nav.relatedToolsDescription}</p>
+            </div>
+            <Badge>{dictionary.nav.tools}</Badge>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            {acquisitionClusters.map((cluster) => {
+              const [leadTool, ...nextTools] = cluster;
+              if (!leadTool) return null;
+
+              return (
+                <div key={leadTool.slug} className="rounded-md border bg-background p-3">
+                  <Link href={withLocale(`/tools/${leadTool.slug}`, locale)} className="block">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{leadTool.title}</p>
+                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{leadTool.description}</p>
+                      </div>
+                      <Badge>{dictionary.categories[leadTool.category] ?? leadTool.category}</Badge>
+                    </div>
+                  </Link>
+                  <div className="mt-3 flex flex-wrap gap-2 border-t pt-3">
+                    {nextTools.map((tool) => (
+                      <Link
+                        key={tool.slug}
+                        href={withLocale(`/tools/${tool.slug}`, locale)}
+                        className="rounded-sm border bg-card px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      >
+                        {dictionary.tool.nextActionPrefix} {tool.shortTitle}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

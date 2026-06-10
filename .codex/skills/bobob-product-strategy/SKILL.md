@@ -22,6 +22,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Use `reports/README.md` and `reports/templates/*.example.csv` as the safe handoff for Search Console and AdSense export collection; keep `npm run harness:seo-templates` green when export handling changes.
 - Treat JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript as search-led acquisition clusters.
 - Increase session depth before adding thin tools: search results, central tool output, and the right reference panel should all expose related next-action links that lead to a second tool.
+- Use `/tools` and localized tool directories as session-depth hubs: acquisition workflow clusters should connect high-demand tools into second and third tool paths using localized registry copy.
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
 - Do not show ad placeholders before approval. Post-approval candidates are below tool output, right reference panel bottom, and mid-guide content only.
