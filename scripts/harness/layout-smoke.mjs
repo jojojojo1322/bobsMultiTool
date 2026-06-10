@@ -41,6 +41,10 @@ if (!workspace.includes("rounded-lg border bg-background")) failures.push("singl
 if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workbench shell must keep a fixed height with internal panel scroll");
 if (!workspace.includes("h-full min-h-0")) failures.push("workbench panels must use min-h-0 for internal scrolling");
 if (!workspace.includes("withLocale(\"/\", locale)")) failures.push("detail top bar home link missing");
+if (!workspace.includes("function ToolQuickStart")) failures.push("tool detail central quick-start section missing");
+if (!workspace.includes("data-tool-quick-start")) failures.push("tool detail quick-start section must expose a stable QA attribute");
+if (!workspace.includes("tool.inputExamples.slice")) failures.push("tool detail quick-start must use registry inputExamples");
+if (!workspace.includes("tool.useCases.slice")) failures.push("tool detail quick-start must use registry useCases");
 if (!workspace.includes("function ToolNextActions")) failures.push("tool detail center panel next-action strip missing");
 if (!workspace.includes("data-tool-next-actions")) failures.push("tool detail next-action strip must expose a stable QA attribute");
 if (!guideDetail.includes("withLocale(\"/\", defaultLocale)") || !guideDetail.includes("Bob&apos;s Multi Tool")) failures.push("default guide detail home link missing");
@@ -54,6 +58,8 @@ if (!workspace.includes("onPointerDown={saveCurrentScroll}")) failures.push("too
 if (!workspace.includes("window.setTimeout(restore, 80)")) failures.push("tool navigation restore should retry after route hydration");
 if (!workspace.includes("scroll={false}")) failures.push("tool navigation links must not reset document scroll");
 if (workspace.includes("dictionary.tool.demand") || workspace.includes("demandLabel")) failures.push("tool detail must not expose demand wording");
+if (workspace.includes("tool.contentCluster")) failures.push("tool detail must not expose internal contentCluster slugs");
+if (directory.includes("tool.contentCluster")) failures.push("tool directory cards must not expose internal contentCluster slugs");
 if (dictionaries.includes("demand:")) failures.push("visible dictionary must not keep a demand label");
 if (localizedContent.includes("coreChip") || localizedContent.includes("growthChip") || localizedContent.includes("longTailChip")) {
   failures.push("localized content must not keep demand-tier chip copy");

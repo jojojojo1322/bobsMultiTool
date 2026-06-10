@@ -11,6 +11,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Pointer-reactive background motion must stay subtle and lightweight: CSS variables plus React pointer tracking only, reduced-motion aware, and no WebGL, `ogl`, or `framer-motion` dependency unless explicitly approved. Keep it as restrained grid-line motion on home/tool directory and tool detail pages, not decorative blobs.
 - Pointer background edits must preserve real pointer movement behavior covered by `npm run harness:pointer-background`.
 - Tool pages use the same frame: left navigation, top context bar, central tool panel, right examples/FAQ/guides/related tools.
+- Tool detail center panels can show a compact quick-start row with registry input examples and use cases; keep it list-like, neutral, and directly above the working tool surface.
 - Tool directory pages at `/tools` and `/{locale}/tools` use the same dense product-lab card system as the home index.
 - Related next-action links can appear in search results and directly below a tool panel, but keep them compact and list-like rather than another nested card surface.
 - Desktop tool pages require real resizable left and right sidebars with localStorage persistence: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.
@@ -20,6 +21,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Detail top bars must include a locale-aware brand/home link so users can return to the main screen without opening side navigation.
 - Tool navigation clicks must preserve sidebar scroll position across tool detail navigation. Use non-scrolling tool links and restore the navigation scroll container from localStorage.
 - Demand tier is not a user-facing label. Do not show demand wording or raw `core` / `growth` / `long-tail` badges in cards, search results, or detail headers.
+- `contentCluster` is not a user-facing badge. Use localized category labels in cards and tool detail sections instead of raw cluster slugs.
 - Mobile must keep Sheet navigation and single-column content instead of draggable panels.
 - Use lucide icons for actions where an icon exists.
 - Light/Dark/System is required product behavior. Use next-themes, ThemeProvider, ThemeToggle, and class-based `.dark` variables.

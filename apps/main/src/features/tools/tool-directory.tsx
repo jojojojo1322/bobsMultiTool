@@ -109,7 +109,7 @@ export function ToolDirectory({
                     <Card className="h-full transition-colors hover:bg-muted/50">
                       <CardHeader>
                         <div className="mb-2 flex flex-wrap gap-2">
-                          <Badge>{tool.contentCluster}</Badge>
+                          <Badge>{dictionary.categories[tool.category] ?? tool.category}</Badge>
                           <Badge>{tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly}</Badge>
                         </div>
                         <CardTitle>{tool.title}</CardTitle>

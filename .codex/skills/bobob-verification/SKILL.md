@@ -66,6 +66,7 @@ Include:
 - Sitemap index at `/sitemap.xml`, per-locale sitemaps at `/sitemaps/en`, `/sitemaps/ko`, `/sitemaps/ar`, and full locale URL coverage without the old 200 URL static cap.
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
+- Tool detail center panels should expose registry-backed quick-start input examples and use cases before the working tool surface.
 - Tool detail pages should show registry-backed failure cases, pre-copy checklist, and related next actions without exposing raw demand wording.
 - Search results, center tool panel, and right reference panel should all offer related next-action links for session-depth growth.
 - Pointer-reactive background motion should stay subtle, respect reduced motion, render on home/tool directory and tool detail pages, and avoid `ogl`, `framer-motion`, or other heavy animation dependencies.
@@ -83,6 +84,7 @@ Include:
 - Safe measured export instructions and sample headers should stay tracked in `reports/README.md` and `reports/templates/*.example.csv`, while real Search Console/AdSense CSV or TSV exports stay untracked.
 - Desktop left and right sidebar resizing, single-shell panel alignment, clamped panel widths with no horizontal overflow at narrow desktop widths, top brand/home link, preserved sidebar scroll when clicking tool navigation, plus mobile Sheet fallback.
 - No visible demand wording or raw `core` / `growth` / `long-tail` demand badges in home cards, search results, or tool detail headers.
+- No raw `contentCluster` slugs such as `data-conversion` or `code-formatting` in visible badges or section descriptions.
 - A local-only tool and a server route tool.
 - Server route tools reject private/reserved hosts, validate redirect targets, and rate-limit repeated requests.
 - No unused ad placeholder components or fake publisher IDs remain in the public app.

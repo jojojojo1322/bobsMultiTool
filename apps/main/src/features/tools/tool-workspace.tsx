@@ -132,6 +132,7 @@ function ToolNavigation({
 function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
   const relatedTools = getLocalizedRelatedTools(tool.relatedTools, locale);
   const nextRelatedTitle = relatedTools[0]?.shortTitle;
+  const categoryLabel = dictionary.categories[tool.category] ?? tool.category;
   const fallbackFailureCases = React.useMemo(() => commonFailureCases(tool, dictionary), [tool, dictionary]);
   const fallbackPreCopyChecklist = React.useMemo(() => commonPreCopyChecklist(tool, dictionary, nextRelatedTitle), [tool, dictionary, nextRelatedTitle]);
   const failureCases = tool.failureCases?.length ? tool.failureCases : fallbackFailureCases;
@@ -139,7 +140,7 @@ function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition
 
   return (
     <div className="space-y-5">
-      <ReferenceSection title={dictionary.tool.useCases} description={tool.contentCluster}>
+      <ReferenceSection title={dictionary.tool.useCases} description={categoryLabel}>
         <ul className="space-y-2">
           {tool.useCases.map((useCase) => (
             <li key={useCase} className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
@@ -221,6 +222,43 @@ function ReferenceSection({ title, description, children }: { title: string; des
         <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       </div>
       {children}
+    </section>
+  );
+}
+
+function ToolQuickStart({ tool, dictionary }: { tool: ToolDefinition; dictionary: ClientDictionary }) {
+  const inputExamples = tool.inputExamples.slice(0, 3);
+  const useCases = tool.useCases.slice(0, 2);
+  const categoryLabel = dictionary.categories[tool.category] ?? tool.category;
+
+  return (
+    <section className="grid gap-0 border-b bg-background/60 md:grid-cols-[1fr_1fr]" data-tool-quick-start>
+      <div className="border-b p-4 md:border-b-0 md:border-e">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold">{dictionary.nav.examples}</h3>
+          <span className="text-xs text-muted-foreground">{dictionary.tool.examplesDescription}</span>
+        </div>
+        <div className="flex min-w-0 flex-wrap gap-2">
+          {inputExamples.map((example) => (
+            <code key={example} className="max-w-full break-all rounded-md border bg-card px-2 py-1 text-xs text-muted-foreground">
+              {example}
+            </code>
+          ))}
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold">{dictionary.tool.useCases}</h3>
+          <span className="text-xs text-muted-foreground">{categoryLabel}</span>
+        </div>
+        <ul className="grid gap-2">
+          {useCases.map((useCase) => (
+            <li key={useCase} className="text-sm leading-5 text-muted-foreground">
+              {useCase}
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }
@@ -336,6 +374,7 @@ export function ToolWorkspace({
                 <h2 className="mt-4 text-2xl font-semibold tracking-normal">{tool.title}</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{tool.description}</p>
               </div>
+              <ToolQuickStart tool={tool} dictionary={dictionary} />
               <div className="p-5">
                 <ToolPanel component={tool.component} dictionary={dictionary} />
               </div>

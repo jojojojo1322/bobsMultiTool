@@ -21,7 +21,7 @@
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
-- Core tool pages should improve demand through registry-backed `failureCases`, `preCopyChecklist`, and related next actions before broad feature sprawl.
+- Core tool pages should improve demand through registry-backed `inputExamples`, `useCases`, `failureCases`, `preCopyChecklist`, and related next actions before broad feature sprawl. The central work panel should show quick-start input examples before the user reaches the right reference panel.
 - Keep the UI dense, neutral, and workbench-like. Avoid generic AI-generated landing-page patterns, especially raised colored top borders and decorative accent strips.
 - Pointer-reactive visual effects must stay lightweight CSS/React, respect reduced motion, and avoid adding WebGL, `ogl`, or `framer-motion` unless explicitly approved. Home/tool directory and tool detail pages should keep the restrained grid-line pointer background, not decorative blobs.
 - Pointer background changes must keep `npm run harness:pointer-background` green so real pointer movement updates CSS variables on both directory and detail pages.
@@ -42,6 +42,7 @@
 - For measured SEO review handoff, use `BOBOB_SEO_REPORT_FORMAT=markdown` and optionally `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` to generate a readable recommendations artifact. Keep measured CSVs and markdown reports out of git.
 - Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when changing Search Console or AdSense export handling.
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.
+- `contentCluster` is an internal search/SEO grouping field. User-facing badges and section descriptions should use localized category labels instead of raw cluster slugs.
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage. Do not return to a capped static sitemap that drops locale tool pages.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
