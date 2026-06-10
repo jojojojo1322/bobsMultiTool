@@ -21,6 +21,7 @@
     "harness:layout": "node scripts/harness/layout-smoke.mjs",
     "harness:visual": "node scripts/harness/visual-smoke.mjs",
     "harness:agents": "node scripts/harness/agent-skills-sync.mjs",
+    "harness:legacy": "node scripts/harness/legacy-main-only.mjs",
     "harness:seo-opportunities": "node scripts/harness/seo-opportunity-report.mjs",
     "harness:seo-opportunities:smoke": "node scripts/harness/seo-opportunity-report-smoke.mjs"
   },

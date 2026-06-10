@@ -542,12 +542,12 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     },
   },
   hi: {
-    siteDescription: "Data format, encoding, testing, conversion, SEO, network, color, time और text काम के लिए मुफ्त developer उपकरण.",
+    siteDescription: "Data format, encoding, testing, conversion, SEO, network, color, time और text काम के लिए मुफ्त डेवलपर साधन.",
     metadata: {
       homeTitle: "Bob's Multi Tool - व्यावहारिक डेवलपर यूटिलिटी",
-      homeDescription: "JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, color, network और text के लिए मुफ्त online developer उपकरण.",
-      toolDescription: (title) => `${title} Bob's Multi Tool पर. उदाहरण, FAQ, संबंधित उपकरण और जहां संभव हो browser-local privacy के साथ तेज utility.`,
-      guideDescription: (title) => `${title}. Browser-based developer उपकरण को सुरक्षित और प्रभावी तरीके से इस्तेमाल करने की practical guide.`,
+      homeDescription: "JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, color, network और text के लिए मुफ्त ऑनलाइन डेवलपर साधन.",
+      toolDescription: (title) => `${title} Bob's Multi Tool पर. उदाहरण, FAQ, संबंधित साधन और जहां संभव हो ब्राउज़र-स्थानीय गोपनीयता के साथ तेज उपयोगिता.`,
+      guideDescription: (title) => `${title}. ब्राउज़र आधारित डेवलपर साधनों को सुरक्षित और प्रभावी तरीके से इस्तेमाल करने की व्यवहारिक मार्गदर्शिका.`,
     },
   },
   id: {

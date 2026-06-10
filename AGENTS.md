@@ -39,6 +39,7 @@
 - Locale override blocks are part of visible prose. When common dictionary overrides or legal pages are changed, check that they do not reintroduce English scaffolding such as `Workbench`, `workflow`, `metadata`, `locale`, `smoke check`, or `tool/tools` where a local product phrase is already used.
 - Long-tail locale templates must avoid English scaffolding terms in visible prose when a natural local alternative is available. Watch recurring fallback fragments such as `developer tool`, `workflow`, `Input`, `Copy`, `Generated output`, and `secret production` in Hindi, Indonesian, Vietnamese, Thai, and Arabic pages.
 - Hindi acquisition copy should be Devanagari-first for sentence prose. Keep technical tokens like JSON, JWT, Regex, URL, CSS, and API when useful, but do not fall back to full romanized Hinglish templates for descriptions, FAQ, guide descriptions, empty states, or metadata.
+- Hindi reusable templates should avoid English scaffolding such as `input flow`, `output shape`, `Copy`, `result verify`, `practical guide`, `tool browser`, and `server endpoint` when clear Hindi phrasing exists.
 - Vietnamese acquisition copy should use Vietnamese diacritics for sentence prose. Keep technical tokens when useful, but avoid full ASCII fallback templates such as `Dinh dang`, `Kiem tra`, `Huong dan`, `Cong cu`, `Dau vao`, or `Ket qua`.
 - Locale switcher labels must use native language names such as `한국어`, `日本語`, `简体中文`, `हिन्दी`, `ไทย`, and `العربية`, not English-only language names for every locale.
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.
@@ -52,5 +53,6 @@
 - Do not use `next/font/google` or other build-time external font fetches. Vercel builds must pass from a clean install without depending on Google Fonts network access or local font cache.
 - Do not keep unused AdSense placeholder components, `ca-pub-YOUR_ACTUAL_PUBLISHER_ID`, or visible ad preview blocks in the public app.
 - Do not reintroduce `packages/ui`, `turbo`, or standalone legacy app packages unless the product direction explicitly changes and the related skills/harnesses are updated first. Keep the removal rationale in `docs/legacy-apps-archive.md`.
+- `npm run harness:legacy` must pass after architecture or package changes; it proves `apps/main` is the only app workspace and legacy entry paths remain permanent redirects.
 - Use visual screenshot smoke coverage for desktop, mobile, and Arabic RTL when layout, theme, localization, or workbench surfaces change.
 - Run `npm run harness:localization` and `npm run harness:agents` whenever tool copy, guide copy, locale, layout, SEO, AdSense, or verification policy changes.

@@ -17,6 +17,7 @@ npm run harness:search
 npm run harness:layout
 npm run harness:visual
 npm run harness:agents
+npm run harness:legacy
 npm run harness:seo-opportunities
 npm run harness:seo-opportunities:smoke
 ```

@@ -16,9 +16,10 @@ description: Use when adding, renaming, removing, or reorganizing Bob's Multi To
 9. Confirm the dynamic sitemap index and `/sitemaps/{locale}` coverage include the tool. Do not add a static `apps/main/public/sitemap.xml`.
 10. Keep `apps/main` as the only app workspace. Do not add standalone app packages for individual tools; use registry entries and old-path redirects instead.
 11. Update AGENTS.md or this skill when the tool-addition policy changes.
-12. Run `npm run harness:registry`, `npm run harness:localization`, `npm run harness:search`, `npm run harness:tools`, and `npm run harness:agents`.
+12. Run `npm run harness:registry`, `npm run harness:localization`, `npm run harness:search`, `npm run harness:tools`, `npm run harness:agents`, and `npm run harness:legacy`.
 
 Every tool must include title, category, description, component key, SEO title/description/keywords, examples, FAQs, guides, related tools, demandTier, searchIntents, aliases, useCases, inputExamples, contentCluster, monetizationTier, supportedLocales, privacyMode, and requiresServer.
 Locale routes must not fall back to raw English registry prose for sentence copy.
 The `/tools` and `/{locale}/tools` directory pages must stay real indexable pages when tools change.
 Legacy entry paths should be redirects in `apps/main/next.config.ts`, not restored standalone apps.
+After package or architecture changes, run `npm run harness:legacy` so legacy standalone app packages stay archived/deleted.

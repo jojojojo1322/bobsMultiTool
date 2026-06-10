@@ -299,7 +299,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       backToTools: "साधनों पर वापस",
       sections: [
         { heading: "साधनों में संसाधित जानकारी", body: "Bob's Multi Tool स्थानीय ब्राउज़र उपयोगिताओं के लिए बनाया गया है. फॉर्मैट, एन्कोड, डिकोड, जनरेशन और कन्वर्जन के इनपुट जहां संभव हो ब्राउज़र में संसाधित होते हैं और यह साइट उन्हें सहेजती नहीं है." },
-        { heading: "सर्वर जांच", body: "HTTP status और DNS साधन छोटे सर्वर endpoint का उपयोग करते हैं क्योंकि ब्राउज़र ये जांच सीधे नहीं कर सकता. निजी internal hostname या गोपनीय data submit न करें." },
+        { heading: "सर्वर जांच", body: "HTTP status और DNS साधन छोटे सर्वर जांच मार्ग का उपयोग करते हैं क्योंकि ब्राउज़र ये जांच सीधे नहीं कर सकता. निजी internal hostname या गोपनीय data submit न करें." },
         { heading: "Analytics और विज्ञापन", body: "साइट Google Analytics और Google AdSense का उपयोग कर सकती है. ये third-party services अपनी policies के अनुसार cookies या मिलती-जुलती technologies use कर सकती हैं." },
       ],
       contact: { heading: "संपर्क", body: "इस policy के बारे में सवाल यहां भेजे जा सकते हैं" },
@@ -312,7 +312,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       sections: [
         { heading: "सेवा का उपयोग", body: "Bob's Multi Tool विकास कार्यों के लिए मुफ्त ब्राउज़र आधारित उपयोगिताएं देता है. Production systems में उपयोग करने से पहले साधन का output verify करें." },
         { heading: "स्वीकार्य उपयोग", body: "Service disrupt न करें, abusive traffic automate न करें, साधनों को unlawful activity में use न करें, और ऐसा private data submit न करें जिसे browser utility में process करने की अनुमति नहीं है." },
-        { heading: "थर्ड-पार्टी सामग्री", body: "कुछ साधन third-party services या server endpoints use कर सकते हैं. Bob's Multi Tool third-party websites, DNS providers या remote endpoints को control नहीं करता." },
+        { heading: "थर्ड-पार्टी सामग्री", body: "कुछ साधन third-party services या सर्वर जांच मार्ग इस्तेमाल कर सकते हैं. Bob's Multi Tool third-party websites, DNS providers या remote endpoints को control नहीं करता." },
         { heading: "विज्ञापन", body: "Approval के बाद site Google AdSense ads दिखा सकती है. Advertisement content third-party networks से serve होता है और उनकी policies के अनुसार personalize हो सकता है." },
       ],
       contact: { heading: "संपर्क", body: "इन terms के बारे में सवाल यहां भेजे जा सकते हैं" },
