@@ -484,6 +484,47 @@ function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
     .map(({ score, ...item }) => item);
 }
 
+function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
+  const priorityPages = measurementBacklogRows.slice(0, 20).map((row) => ({
+    path: row.path,
+    canonicalUrl: `https://www.bobob.app${row.path}`,
+    title: row.title,
+    contentType: row.contentType,
+    tier: `${row.monetizationTier}/${row.demandTier}`,
+    contentCluster: row.contentCluster,
+    missingInputs: row.missingInputs,
+    searchIntents: row.searchIntents,
+  }));
+
+  return {
+    status: measuredCoverageSummary.pass ? "covered" : "needs-measured-exports",
+    defaultFiles: {
+      searchConsole: searchCsvInput.defaultPaths,
+      adsense: adsenseCsvInput.defaultPaths,
+    },
+    requiredColumns: {
+      searchConsole: ["Page", "Impressions"],
+      adsense: ["Page", "Impressions"],
+    },
+    recommendedColumns: {
+      searchConsole: ["Query", "Clicks", "CTR", "Position"],
+      adsense: ["Page RPM", "Estimated earnings", "CTR"],
+    },
+    exportHints: [
+      "Search Console: export Performance rows grouped by Page and Query for the canonical URLs below.",
+      "AdSense: export page-level URL rows with impressions, page RPM, estimated earnings, and CTR for the same canonical URLs.",
+      "Use unprefixed English canonical paths for final title/description decisions; locale rows can be reviewed after core English rows are covered.",
+    ],
+    commands: [
+      "npm run harness:seo-opportunities",
+      "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md npm run harness:seo-opportunities",
+      "npm run harness:seo-measured",
+    ],
+    requiredMissingPageCount: measuredCoverageSummary.missingRequiredPages.length,
+    priorityPages,
+  };
+}
+
 function measuredCoverage(contentItems, inventoryByPath, searchRowsByPage, adsenseRowsByPage) {
   const requiredPages = requiredMeasuredPaths.length
     ? requiredMeasuredPaths
@@ -586,6 +627,44 @@ function formatMarkdownReport(report) {
         row.contentType,
         `${row.monetizationTier}/${row.demandTier}`,
         row.missingInputs.join(", "),
+      ]),
+    ),
+    "",
+    "## Measured Export Plan",
+    "",
+    markdownTable(
+      ["Field", "Value"],
+      [
+        ["Status", report.measuredExportPlan.status],
+        ["Search Console files", report.measuredExportPlan.defaultFiles.searchConsole.join(", ")],
+        ["AdSense files", report.measuredExportPlan.defaultFiles.adsense.join(", ")],
+        ["Search Console required columns", report.measuredExportPlan.requiredColumns.searchConsole.join(", ")],
+        ["Search Console recommended columns", report.measuredExportPlan.recommendedColumns.searchConsole.join(", ")],
+        ["AdSense required columns", report.measuredExportPlan.requiredColumns.adsense.join(", ")],
+        ["AdSense recommended columns", report.measuredExportPlan.recommendedColumns.adsense.join(", ")],
+        ["Missing required pages", report.measuredExportPlan.requiredMissingPageCount],
+      ],
+    ),
+    "",
+    markdownTable(
+      ["Hint"],
+      report.measuredExportPlan.exportHints.map((hint) => [hint]),
+    ),
+    "",
+    markdownTable(
+      ["Command"],
+      report.measuredExportPlan.commands.map((command) => [command]),
+    ),
+    "",
+    markdownTable(
+      ["Path", "Canonical URL", "Tier", "Cluster", "Missing measured inputs", "Search intents"],
+      report.measuredExportPlan.priorityPages.map((row) => [
+        row.path,
+        row.canonicalUrl,
+        row.tier,
+        row.contentCluster,
+        row.missingInputs.join(", "),
+        row.searchIntents.join(", "),
       ]),
     ),
     "",
@@ -726,6 +805,7 @@ const unsupportedMeasuredPages = measuredRows
   .slice(0, 25);
 const measurementBacklogRows = measurementBacklog(contentInventory.all, searchRowsByPage, adsenseRowsByPage);
 const measuredCoverageSummary = measuredCoverage(contentInventory.all, inventoryByPath, searchRowsByPage, adsenseRowsByPage);
+const measuredExportPlanSummary = measuredExportPlan(measuredCoverageSummary, measurementBacklogRows);
 
 const report = {
   inputs: {
@@ -750,6 +830,7 @@ const report = {
   guideInventoryCount: contentInventory.guides.length,
   inputWarnings,
   measuredCoverage: measuredCoverageSummary,
+  measuredExportPlan: measuredExportPlanSummary,
   searchConsoleOpportunities: scOpportunities,
   adsenseOpportunities: adOpportunities,
   metadataWarnings,

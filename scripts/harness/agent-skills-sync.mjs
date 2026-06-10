@@ -249,7 +249,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
@@ -257,7 +257,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
   failures.push("SEO opportunity report smoke harness missing");
 } else {
   const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
-  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }

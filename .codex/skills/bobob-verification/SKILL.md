@@ -64,7 +64,7 @@ Include:
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - Search Console/AdSense opportunity report behavior. Without CSV inputs it should keep registry metadata warnings at zero when metadata is healthy; with CSV inputs it should report high-impression low-CTR tool and guide pages, low-RPM pages, and `titleDescriptionRecommendations`.
 - SEO measured exports can be provided through env vars or default local files at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; measured CSV/TSV files and generated markdown reports must stay untracked.
-- SEO reports should include `measurementBacklog` for unmeasured or partially measured core pages, and verification should confirm it is not used as a direct title/description rewrite signal.
+- SEO reports should include `measurementBacklog` and `measuredExportPlan` for unmeasured or partially measured core pages, and verification should confirm neither is used as a direct title/description rewrite signal.
 - SEO report `inputWarnings` should flag missing required or recommended Search Console/AdSense CSV headers so empty measured results are not silently trusted.
 - `npm run harness:seo-measured` should be used for post-deploy measured SEO work. It sets `BOBOB_REQUIRE_MEASURED_SEO=1` and should fail until required core pages have both Search Console and AdSense rows.
 - `BOBOB_REQUIRED_MEASURED_PATHS` is acceptable for a targeted page review, but should not be used to claim final core-page measured readiness.

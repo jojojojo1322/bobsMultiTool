@@ -75,6 +75,10 @@ assert(report.toolInventoryCount === 48, "SEO opportunity report should include 
 assert(report.guideInventoryCount === 16, "SEO opportunity report should include 16 guide pages");
 assert(report.measuredCoverage.requiredMode === "tiers", "default measured coverage should use tier mode");
 assert(report.measuredCoverage.requiredSources.includes("search-console") && report.measuredCoverage.requiredSources.includes("adsense"), "measured coverage should require Search Console and AdSense by default");
+assert(report.measuredExportPlan.defaultFiles.searchConsole.includes("reports/search-console.csv"), "measured export plan should list default Search Console CSV path");
+assert(report.measuredExportPlan.defaultFiles.adsense.includes("reports/adsense.csv"), "measured export plan should list default AdSense CSV path");
+assert(report.measuredExportPlan.priorityPages.some((row) => row.path === "/tools/regex-tester" && row.canonicalUrl === "https://www.bobob.app/tools/regex-tester"), "measured export plan should include canonical priority URLs");
+assert(report.measuredExportPlan.commands.includes("npm run harness:seo-measured"), "measured export plan should include strict measured gate command");
 assert(report.searchConsoleOpportunities.some((row) => row.page === "/tools/json-formatter" && row.query === "json formatter online"), "Search Console low-CTR tool opportunity missing");
 assert(report.adsenseOpportunities.some((row) => row.page === "/tools/dns-lookup" && row.rpm === 0.4), "AdSense low-RPM tool opportunity missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/tools/json-formatter" && item.suggestedTitle.includes("JSON Formatter")), "tool title/description recommendation missing");
@@ -169,6 +173,8 @@ const markdownReport = fs.readFileSync(markdownOutput, "utf8");
 assert(markdownReport.includes("## Input Warnings"), "markdown report should include Input Warnings section");
 assert(markdownReport.includes("Search Console CSV missing required column"), "bad Search Console CSV should show required-column warning");
 assert(markdownReport.includes("## Title And Description Recommendations"), "markdown report should include recommendations section");
+assert(markdownReport.includes("## Measured Export Plan"), "markdown report should include measured export plan section");
+assert(markdownReport.includes("reports/search-console.csv"), "markdown measured export plan should include default Search Console path");
 assert(markdownReport.includes("## Measurement Backlog"), "markdown report should include measurement backlog section");
 
 if (failures.length) {

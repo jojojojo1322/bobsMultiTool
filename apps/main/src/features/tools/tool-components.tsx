@@ -100,11 +100,12 @@ function TextTransformTool({
   dictionary: ClientDictionary;
   inputLabel: string;
   defaultInput: string;
-  modes: Array<{ value: string; label: string; transform: (value: string) => string }>;
+  modes: Array<{ value: string; label: string; labelKey?: string; transform: (value: string) => string }>;
 }) {
   const [input, setInput] = React.useState(defaultInput);
   const [mode, setMode] = React.useState(modes[0]?.value ?? "");
   const activeMode = modes.find((item) => item.value === mode) ?? modes[0];
+  const getModeLabel = React.useCallback((item: { label: string; labelKey?: string }) => (item.labelKey ? ui(dictionary, item.labelKey, item.label) : item.label), [dictionary]);
   const result = React.useMemo(() => {
     try {
       return { error: "", value: activeMode?.transform(input) ?? "" };
@@ -125,13 +126,13 @@ function TextTransformTool({
           <Select value={mode} onChange={(event) => setMode(event.target.value)}>
             {modes.map((item) => (
               <option key={item.value} value={item.value}>
-                {item.label}
+                {getModeLabel(item)}
               </option>
             ))}
           </Select>
         </label>
       </div>
-      {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={activeMode?.label ?? ui(dictionary, "output", "Output")} value={result.value} dictionary={dictionary} />}
+      {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={activeMode ? getModeLabel(activeMode) : ui(dictionary, "output", "Output")} value={result.value} dictionary={dictionary} />}
     </div>
   );
 }
@@ -629,8 +630,8 @@ function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
       inputLabel="SQL"
       defaultInput="select id,name from users where active=1 order by created_at desc"
       modes={[
-        { value: "pretty", label: "Pretty print", transform: (value) => formatSql(value, { language: "postgresql" }) },
-        { value: "minify", label: "Minify", transform: (value) => value.replace(/\s+/g, " ").replace(/\s*([(),=<>+-])\s*/g, "$1").trim() },
+        { value: "pretty", label: "Pretty print", labelKey: "prettyPrint", transform: (value) => formatSql(value, { language: "postgresql" }) },
+        { value: "minify", label: "Minify", labelKey: "minify", transform: (value) => value.replace(/\s+/g, " ").replace(/\s*([(),=<>+-])\s*/g, "$1").trim() },
       ]}
     />
   );
@@ -656,8 +657,8 @@ function XmlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
       inputLabel="XML"
       defaultInput={'<root><item id="1">Bob</item></root>'}
       modes={[
-        { value: "pretty", label: "Pretty print", transform: formatXmlLike },
-        { value: "minify", label: "Minify", transform: (value) => value.replace(/>\s+</g, "><").trim() },
+        { value: "pretty", label: "Pretty print", labelKey: "prettyPrint", transform: formatXmlLike },
+        { value: "minify", label: "Minify", labelKey: "minify", transform: (value) => value.replace(/>\s+</g, "><").trim() },
       ]}
     />
   );
@@ -1085,8 +1086,8 @@ function HtmlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
       inputLabel="HTML"
       defaultInput={"<div><span>Bob</span></div>"}
       modes={[
-        { value: "pretty", label: "Pretty print", transform: formatXmlLike },
-        { value: "minify", label: "Minify", transform: (value) => value.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim() },
+        { value: "pretty", label: "Pretty print", labelKey: "prettyPrint", transform: formatXmlLike },
+        { value: "minify", label: "Minify", labelKey: "minify", transform: (value) => value.replace(/>\s+</g, "><").replace(/\s+/g, " ").trim() },
       ]}
     />
   );
@@ -1107,11 +1108,11 @@ function minifyCss(value: string) {
 }
 
 function CssFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="CSS" defaultInput=".card{display:flex;color:#111}" modes={[{ value: "format", label: "Format CSS", transform: formatCss }]} />;
+  return <TextTransformTool dictionary={dictionary} inputLabel="CSS" defaultInput=".card{display:flex;color:#111}" modes={[{ value: "format", label: "Format CSS", labelKey: "prettyPrint", transform: formatCss }]} />;
 }
 
 function CssMinifierTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="CSS" defaultInput=".card { display: flex; color: #111; }" modes={[{ value: "minify", label: "Minify CSS", transform: minifyCss }]} />;
+  return <TextTransformTool dictionary={dictionary} inputLabel="CSS" defaultInput=".card { display: flex; color: #111; }" modes={[{ value: "minify", label: "Minify CSS", labelKey: "minify", transform: minifyCss }]} />;
 }
 
 function formatJs(value: string) {
@@ -1129,11 +1130,11 @@ function minifyJs(value: string) {
 }
 
 function JavaScriptFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="JavaScript" defaultInput="function hi(){console.log('bob');}" modes={[{ value: "format", label: "Format JavaScript", transform: formatJs }]} />;
+  return <TextTransformTool dictionary={dictionary} inputLabel="JavaScript" defaultInput="function hi(){console.log('bob');}" modes={[{ value: "format", label: "Format JavaScript", labelKey: "prettyPrint", transform: formatJs }]} />;
 }
 
 function JavaScriptMinifierTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return <TextTransformTool dictionary={dictionary} inputLabel="JavaScript" defaultInput="function hi() { console.log('bob'); }" modes={[{ value: "minify", label: "Minify JavaScript", transform: minifyJs }]} />;
+  return <TextTransformTool dictionary={dictionary} inputLabel="JavaScript" defaultInput="function hi() { console.log('bob'); }" modes={[{ value: "minify", label: "Minify JavaScript", labelKey: "minify", transform: minifyJs }]} />;
 }
 
 function MarkdownPreviewTool({ dictionary }: { dictionary: ClientDictionary }) {

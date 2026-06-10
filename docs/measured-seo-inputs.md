@@ -48,6 +48,17 @@ Use that list to decide which pages to export first from Search Console and AdSe
 
 Do not rewrite public title or description copy from `measurementBacklog` alone. Use it to collect measured rows, then apply copy changes from `titleDescriptionRecommendations`.
 
+## Measured export plan
+
+The report also includes `measuredExportPlan`. This turns the backlog into a concrete export checklist:
+
+- default local file destinations for Search Console and AdSense exports
+- required and recommended columns for each export
+- canonical URLs to include first, sorted by tool priority and missing measurement inputs
+- commands for JSON report, Markdown report, and strict measured gate review
+
+Use `measuredExportPlan.priorityPages` to collect the next batch of Search Console page/query rows and AdSense page rows. It is still not evidence for a title or description rewrite by itself; it only tells you which measured rows are missing.
+
 ## Strict measured gate
 
 When a task is explicitly about post-deploy measured SEO improvement, run:
