@@ -67,7 +67,7 @@ Include:
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.
-- Tool detail center panels should expose registry-backed quick-start input examples and use cases before the working tool surface.
+- Tool detail center panels should expose registry-backed quick-start input examples and use cases before the working tool surface. Core acquisition tools should have at least two real `inputExamples`.
 - Tool detail pages should show registry-backed failure cases, pre-copy checklist, and related next actions without exposing raw demand wording.
 - Search results, center tool panel, and right reference panel should all offer related next-action links for session-depth growth.
 - Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific priority descriptions for JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript.

@@ -45,6 +45,28 @@ const uniqueSlugs = new Set(slugs);
 const localesMatch = i18nConfig.match(/export const locales = \[([\s\S]*?)\] as const/);
 const locales = localesMatch ? Array.from(localesMatch[1].matchAll(/"([^"]+)"/g)).map((match) => match[1]) : [];
 
+function toolSourceFor(slug) {
+  const start = registry.indexOf(`slug: "${slug}"`);
+  if (start === -1) return "";
+  const nextTool = registry.indexOf("\n  tool({", start + 1);
+  const nextObject = registry.indexOf("\n  {\n    slug:", start + 1);
+  const candidates = [nextTool, nextObject].filter((index) => index > start).sort((a, b) => a - b);
+  return registry.slice(start, candidates[0] ?? registry.indexOf("\n];", start));
+}
+
+function inputExampleCount(source) {
+  const inputStart = source.indexOf("inputExamples:");
+  if (inputStart === -1) return 0;
+  const nextFieldCandidates = ["\n    contentCluster:", "\n    supportedLocales:", "\n    sample:"]
+    .map((field) => source.indexOf(field, inputStart))
+    .filter((index) => index > inputStart)
+    .sort((a, b) => a - b);
+  const inputSource = source.slice(inputStart, nextFieldCandidates[0] ?? source.length);
+  const rawTemplateCount = (inputSource.match(/String\.raw`/g) ?? []).length;
+  const quotedCount = (inputSource.match(/"(?:(?:\\")|[^"])*"/g) ?? []).filter((value) => value !== '"inputExamples"').length;
+  return rawTemplateCount + quotedCount;
+}
+
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
 if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
@@ -82,6 +104,12 @@ for (const fragment of ["priorityDemandDetails", "fallbackDemandDetails", "withD
 }
 for (const slug of priorityDetailSlugs) {
   if (!registry.includes(`"${slug}": demandDetails(`)) failures.push(`${slug} missing priority demand detail override`);
+  const source = toolSourceFor(slug);
+  if (!source.includes("inputExamples:")) {
+    failures.push(`${slug} must define explicit inputExamples for the quick-start panel`);
+  } else if (inputExampleCount(source) < 2) {
+    failures.push(`${slug} should define at least two real inputExamples, found ${inputExampleCount(source)}`);
+  }
 }
 
 for (const [fullBlock, slug, relatedSource] of toolBlocks) {

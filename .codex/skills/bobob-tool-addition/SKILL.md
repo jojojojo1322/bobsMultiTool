@@ -9,7 +9,7 @@ description: Use when adding, renaming, removing, or reorganizing Bob's Multi To
 2. Add the component key type in `apps/main/src/features/tools/types.ts`.
 3. Implement the client component in `apps/main/src/features/tools/tool-components.tsx`.
 4. Set demandTier, searchIntents, aliases, useCases, inputExamples, contentCluster, monetizationTier, supportedLocales, privacyMode, and requiresServer.
-5. Ensure the tool metadata supports failure cases, pre-copy checklist, and related next actions through `failureCases`, `preCopyChecklist`, useCases, inputExamples, searchIntents, relatedTools, and localized labels.
+5. Ensure the tool metadata supports failure cases, pre-copy checklist, and related next actions through `failureCases`, `preCopyChecklist`, useCases, inputExamples, searchIntents, relatedTools, and localized labels. Core acquisition tools need at least two real `inputExamples`, not only a single fallback sample.
 6. Add localized visible prose for every non-English locale through the localized content resolver: description, SEO title/description, keyword chips, use cases, examples, FAQ, guide title, and related display labels.
 7. Add slug-specific long-tail visible descriptions for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`; do not rely on generic translated templates for new tools.
 8. Add guide links that resolve under `/guides/{slug}` and localized routes.
