@@ -39,6 +39,7 @@ const checks = [
   ["agents", "Long-tail acquisition locales"],
   ["agents", "every registered tool"],
   ["agents", "Long-tail guide descriptions"],
+  ["agents", "Long-tail guide lead sections"],
   ["agents", "root `<html lang>`"],
   ["agents", "getLocalizedLegalContent"],
   ["agents", "one aligned shell"],
@@ -63,6 +64,7 @@ const checks = [
   ["agents", "unused AdSense placeholder"],
   ["agents", "legacy standalone app directories"],
   ["agents", "Do not reintroduce `packages/ui`, `turbo`"],
+  ["agents", "package-lock.json"],
   ["agents", "harness:legacy"],
   ["agents", "docs/legacy-apps-archive.md"],
   ["tool", "demandTier"],
@@ -106,6 +108,7 @@ const checks = [
   ["localization", "Long-tail acquisition locales"],
   ["localization", "every registered tool"],
   ["localization", "Long-tail guide descriptions"],
+  ["localization", "Long-tail guide lead sections"],
   ["localization", "root `<html lang>`"],
   ["localization", "getLocalizedLegalContent"],
   ["localization", "guide.description"],
@@ -141,6 +144,7 @@ const checks = [
   ["verification", "getLocalizedLegalContent"],
   ["verification", "privacy/server/local indicators"],
   ["verification", "guide.description"],
+  ["verification", "Long-tail guide lead sections"],
   ["verification", "Twitter title/description"],
   ["verification", "harness:theme"],
   ["verification", "harness:search"],
@@ -168,6 +172,7 @@ const checks = [
   ["verification", "private/reserved hosts"],
   ["verification", "fake publisher IDs"],
   ["verification", "No standalone legacy app directories"],
+  ["verification", "package-lock.json"],
   ["verification", "harness:legacy"],
   ["product", "monetizationTier"],
   ["product", "Post-approval candidates"],
@@ -249,7 +254,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
@@ -257,7 +262,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
   failures.push("SEO opportunity report smoke harness missing");
 } else {
   const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
-  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }
@@ -274,6 +279,11 @@ if (!fs.existsSync(path.join(root, "docs/legacy-apps-archive.md"))) {
   for (const fragment of ["apps/main", "No archived source copy", "/regax", "/tools/regex-tester", "packages/ui", "turbo.json", "harness:legacy"]) {
     if (!legacyArchive.includes(fragment)) failures.push(`legacy apps archive missing ${fragment}`);
   }
+}
+
+const legacyHarness = read("scripts/harness/legacy-main-only.mjs");
+for (const fragment of ["package-lock.json", "stale workspaces", "node_modules/turbo"]) {
+  if (!legacyHarness.includes(fragment)) failures.push(`legacy harness missing ${fragment}`);
 }
 
 const sourceFiles = [
@@ -308,6 +318,9 @@ if (visibleDictionary.includes("demand:")) {
 const localizedContent = read("apps/main/src/features/i18n/localized-content.ts");
 if (localizedContent.includes("coreChip") || localizedContent.includes("growthChip") || localizedContent.includes("longTailChip")) {
   failures.push("localized content must not keep demand-tier chip copy");
+}
+for (const fragment of ["priorityGuideLeadSections", "localizedGuideSections"]) {
+  if (!localizedContent.includes(fragment)) failures.push(`localized content missing ${fragment}`);
 }
 
 if (failures.length) {

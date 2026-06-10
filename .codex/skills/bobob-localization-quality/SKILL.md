@@ -24,6 +24,7 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 - Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific descriptions, SEO descriptions, use cases, FAQ, and guide intro copy rather than only generic templates.
 - Long-tail acquisition locales (`zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, `ar`) need slug-specific visible descriptions for every registered tool, not only generic translated templates.
 - Long-tail guide descriptions should also be slug-specific for high-traffic workflows such as Regex, Cron, SEO meta tags, Hash, JSON/YAML/CSV, Network, CSS, Web SEO, and Text cleanup.
+- Long-tail guide lead sections should be topic-specific for high-value workflows. JSON/YAML/CSV, secure generators, Web SEO, Network, CSS, and Text cleanup guide pages should not share the same generic first paragraph across long-tail locales.
 - Tool components must use dictionary-backed labels for common controls such as input, mode, count, generate, copy-ready output, JSON input, indent, common input, typical output, lookup/check buttons, network result titles, MIME labels, and empty-output placeholders.
 - Locale-specific dictionary overrides must not re-spread English nested objects over common localized text. The merge order should preserve locale common text before applying only true per-locale overrides.
 - Arabic routes must keep `dir="rtl"` and visual QA coverage.

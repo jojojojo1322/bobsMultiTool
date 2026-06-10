@@ -452,6 +452,10 @@ function tierScore(tier) {
   return { core: 3, growth: 2, "long-tail": 1 }[tier] ?? 0;
 }
 
+function escapeRegexLiteral(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
   return contentItems
     .map((item) => {
@@ -485,7 +489,7 @@ function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
 }
 
 function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
-  const priorityPages = measurementBacklogRows.slice(0, 20).map((row) => ({
+  const priorityPages = measurementBacklogRows.slice(0, 25).map((row) => ({
     path: row.path,
     canonicalUrl: `https://www.bobob.app${row.path}`,
     title: row.title,
@@ -495,6 +499,10 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
     missingInputs: row.missingInputs,
     searchIntents: row.searchIntents,
   }));
+  const canonicalUrls = priorityPages.map((row) => row.canonicalUrl);
+  const searchConsolePageRegex = canonicalUrls.length ? `^(${canonicalUrls.map(escapeRegexLiteral).join("|")})$` : "";
+  const requiredMeasuredPathsEnv = priorityPages.map((row) => row.path).join(",");
+  const searchIntentSeedList = Array.from(new Set(priorityPages.flatMap((row) => row.searchIntents))).slice(0, 100);
 
   return {
     status: measuredCoverageSummary.pass ? "covered" : "needs-measured-exports",
@@ -520,6 +528,12 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
       "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md npm run harness:seo-opportunities",
       "npm run harness:seo-measured",
     ],
+    copyTargets: {
+      canonicalUrls,
+      searchConsolePageRegex,
+      requiredMeasuredPathsEnv,
+      searchIntentSeedList,
+    },
     requiredMissingPageCount: measuredCoverageSummary.missingRequiredPages.length,
     priorityPages,
   };
@@ -577,6 +591,10 @@ function markdownTable(headers, rows) {
   const divider = `| ${headers.map(() => "---").join(" | ")} |`;
   const body = rows.map((row) => `| ${row.map(escape).join(" | ")} |`).join("\n");
   return `${headerRow}\n${divider}\n${body}`;
+}
+
+function markdownCodeBlock(value) {
+  return `\`\`\`text\n${String(value ?? "").trim() || "n/a"}\n\`\`\``;
 }
 
 function formatMarkdownReport(report) {
@@ -655,6 +673,24 @@ function formatMarkdownReport(report) {
       ["Command"],
       report.measuredExportPlan.commands.map((command) => [command]),
     ),
+    "",
+    "### Copy Targets",
+    "",
+    "Search Console page regex:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.searchConsolePageRegex),
+    "",
+    "`BOBOB_REQUIRED_MEASURED_PATHS` value for a focused gate:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv),
+    "",
+    "Canonical URL batch:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.canonicalUrls.join("\n")),
+    "",
+    "Search intent seed list:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.searchIntentSeedList.join(", ")),
     "",
     markdownTable(
       ["Path", "Canonical URL", "Tier", "Cluster", "Missing measured inputs", "Search intents"],

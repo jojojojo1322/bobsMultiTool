@@ -46,6 +46,8 @@ for (const fragment of [
   "localFaqQuestion",
   "serverFaqQuestion",
   "guideSections",
+  "priorityGuideLeadSections",
+  "localizedGuideSections",
   "seoDescription",
   "priorityToolIntents",
   "longTailPriorityToolIntents",
@@ -420,6 +422,12 @@ for (const fragment of [
   "Hướng dẫn chuyển đổi JSON, YAML và CSV",
   "ขั้นตอน Web SEO สำหรับ robots.txt",
   "سير عمل لترتيب النص وإزالة التكرار",
+  "डेटा की बनावट पहले तय करें",
+  "Separe identificadores de credenciais reais",
+  "Kiểm tra điểm thu thập dữ liệu trước",
+  "จำกัดปัญหาด้วยสัญญาณสาธารณะ",
+  "حدد هدف التخطيط اولا",
+  "Simpan teks asli lebih dulu",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`long-tail priority guide description missing: ${fragment}`);
 }

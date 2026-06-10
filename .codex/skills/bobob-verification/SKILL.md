@@ -54,6 +54,7 @@ Include:
 - Default English and at least two localized routes.
 - Root `<html lang>` and `<html dir>` must match the active locale; route-level `main` attributes alone are insufficient.
 - Localized visible prose for home, tool detail, sidebar search results, examples, FAQ, guide sections, and metadata.
+- Long-tail guide lead sections should be topic-specific on JSON/YAML/CSV, secure generator, Web SEO, Network, CSS, and Text cleanup guide pages rather than reusing the same generic opening paragraph.
 - Guide detail meta description and OpenGraph description must match the localized `guide.description`, not a generic title-based template.
 - Tool and guide detail pages must expose page-specific OpenGraph and Twitter title/description values, not root default social metadata.
 - Localized privacy and terms prose plus metadata through `getLocalizedLegalContent`.
@@ -64,7 +65,7 @@ Include:
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - Search Console/AdSense opportunity report behavior. Without CSV inputs it should keep registry metadata warnings at zero when metadata is healthy; with CSV inputs it should report high-impression low-CTR tool and guide pages, low-RPM pages, and `titleDescriptionRecommendations`.
 - SEO measured exports can be provided through env vars or default local files at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; measured CSV/TSV files and generated markdown reports must stay untracked.
-- SEO reports should include `measurementBacklog` and `measuredExportPlan` for unmeasured or partially measured core pages, and verification should confirm neither is used as a direct title/description rewrite signal.
+- SEO reports should include `measurementBacklog`, `measuredExportPlan`, and `measuredExportPlan.copyTargets` for unmeasured or partially measured core pages, and verification should confirm none of these fields is used as a direct title/description rewrite signal.
 - SEO report `inputWarnings` should flag missing required or recommended Search Console/AdSense CSV headers so empty measured results are not silently trusted.
 - `npm run harness:seo-measured` should be used for post-deploy measured SEO work. It sets `BOBOB_REQUIRE_MEASURED_SEO=1` and should fail until required core pages have both Search Console and AdSense rows.
 - `BOBOB_REQUIRED_MEASURED_PATHS` is acceptable for a targeted page review, but should not be used to claim final core-page measured readiness.
@@ -75,6 +76,6 @@ Include:
 - A local-only tool and a server route tool.
 - Server route tools reject private/reserved hosts, validate redirect targets, and rate-limit repeated requests.
 - No unused ad placeholder components or fake publisher IDs remain in the public app.
-- No standalone legacy app directories, `packages/ui`, `turbo.json`, or `turbo` dependency remain. Old public entry paths should be verified as permanent redirects to `/tools/{slug}`, with rationale recorded in `docs/legacy-apps-archive.md`.
+- No standalone legacy app directories, `packages/ui`, `turbo.json`, `turbo` dependency, or stale legacy workspace entries in `package-lock.json` remain. Old public entry paths should be verified as permanent redirects to `/tools/{slug}`, with rationale recorded in `docs/legacy-apps-archive.md`.
 - Clean build behavior with no build-time external font downloads.
 - The agent-skills-sync gate whenever feature, policy, SEO, theme, or i18n rules changed.

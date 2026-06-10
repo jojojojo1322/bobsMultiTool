@@ -59,6 +59,13 @@ The report also includes `measuredExportPlan`. This turns the backlog into a con
 
 Use `measuredExportPlan.priorityPages` to collect the next batch of Search Console page/query rows and AdSense page rows. It is still not evidence for a title or description rewrite by itself; it only tells you which measured rows are missing.
 
+`measuredExportPlan.copyTargets` is intended for the actual export step:
+
+- `canonicalUrls`: paste this URL batch into a notes/checklist before exporting.
+- `searchConsolePageRegex`: use it as a Search Console page regex filter when collecting the first measured batch.
+- `requiredMeasuredPathsEnv`: paste this value into `BOBOB_REQUIRED_MEASURED_PATHS` for a focused strict gate after exporting only the listed pages.
+- `searchIntentSeedList`: use these query seeds to sanity-check whether the Search Console export contains the expected search demand.
+
 ## Strict measured gate
 
 When a task is explicitly about post-deploy measured SEO improvement, run:

@@ -1277,6 +1277,75 @@ const priorityGuideDescriptions: Record<string, Partial<Record<Locale, string>>>
   },
 };
 
+const priorityGuideLeadSections: Record<string, Partial<Record<Exclude<Locale, "en">, GuideDefinition["sections"][number]>>> = {
+  "json-yaml-csv-conversion": {
+    "zh-CN": { heading: "先确认数据形状", body: "在 JSON、YAML、CSV 间转换前，先确认数组、对象、空值和分隔符如何表示。转换后再用 formatter 或 validator 检查结构是否仍然一致。" },
+    "zh-TW": { heading: "先確認資料形狀", body: "在 JSON、YAML、CSV 間轉換前，先確認陣列、物件、空值與分隔符如何表示。轉換後再用 formatter 或 validator 檢查結構是否仍然一致。" },
+    "pt-BR": { heading: "Confirme a forma dos dados", body: "Antes de alternar entre JSON, YAML e CSV, confira como listas, objetos, valores vazios e separadores devem aparecer. Depois da conversao, valide a estrutura antes de copiar." },
+    fr: { heading: "Confirmer la forme des donnees", body: "Avant de passer entre JSON, YAML et CSV, verifiez comment listes, objets, valeurs vides et separateurs doivent etre representes. Apres conversion, validez la structure avant copie." },
+    hi: { heading: "डेटा की बनावट पहले तय करें", body: "JSON, YAML और CSV बदलने से पहले सूची, वस्तु, खाली मान और विभाजक कैसे दिखेंगे यह तय करें. रूपांतरण के बाद संरचना को फिर से जांचें." },
+    id: { heading: "Pastikan bentuk data lebih dulu", body: "Sebelum berpindah antara JSON, YAML, dan CSV, pastikan daftar, objek, nilai kosong, dan pemisah sudah jelas. Setelah konversi, periksa struktur sebelum disalin." },
+    vi: { heading: "Xác nhận hình dạng dữ liệu trước", body: "Trước khi chuyển giữa JSON, YAML và CSV, hãy xác định danh sách, đối tượng, giá trị rỗng và dấu phân tách sẽ được biểu diễn thế nào. Sau khi chuyển đổi, kiểm tra lại cấu trúc." },
+    th: { heading: "ยืนยันรูปแบบข้อมูลก่อน", body: "ก่อนแปลงระหว่าง JSON, YAML และ CSV ให้ตรวจว่ารายการ ออบเจกต์ ค่าว่าง และตัวคั่นควรแสดงอย่างไร หลังแปลงแล้วให้ตรวจโครงสร้างก่อนคัดลอก" },
+    ar: { heading: "حدد شكل البيانات اولا", body: "قبل التحويل بين JSON وYAML وCSV، راجع كيفية تمثيل القوائم والكائنات والقيم الفارغة والفواصل. بعد التحويل تحقق من البنية قبل النسخ." },
+  },
+  "secure-generator-workflow": {
+    "zh-CN": { heading: "区分开发标识和真实凭证", body: "密码、token、UUID 和 ULID 适合生成测试值、fixture 和临时标识。不要把本地生成结果描述成生产密钥或长期凭证。" },
+    "zh-TW": { heading: "區分開發識別碼與真實憑證", body: "密碼、token、UUID 與 ULID 適合產生測試值、fixture 與暫時識別碼。不要把本機產生結果描述成正式密鑰或長期憑證。" },
+    "pt-BR": { heading: "Separe identificadores de credenciais reais", body: "Senhas, tokens, UUIDs e ULIDs servem bem para testes, fixtures e identificadores temporarios. Nao trate o resultado local como chave de producao ou credencial duradoura." },
+    fr: { heading: "Separer identifiants de test et vraies credences", body: "Mots de passe, tokens, UUID et ULID conviennent aux tests, fixtures et identifiants temporaires. Ne presentez pas un resultat local comme cle de production ou credence durable." },
+    hi: { heading: "विकास पहचान और असली प्रमाण अलग रखें", body: "Password, token, UUID और ULID परीक्षण मान, fixture और अस्थायी पहचान के लिए उपयोगी हैं. लोकल बने मान को उत्पादन कुंजी या स्थायी प्रमाण न बताएं." },
+    id: { heading: "Pisahkan penanda uji dari kredensial nyata", body: "Password, token, UUID, dan ULID cocok untuk nilai uji, fixture, dan penanda sementara. Jangan anggap hasil lokal sebagai kunci produksi atau kredensial jangka panjang." },
+    vi: { heading: "Tách định danh thử nghiệm khỏi thông tin xác thực thật", body: "Mật khẩu, token, UUID và ULID phù hợp cho dữ liệu thử, fixture và định danh tạm thời. Đừng xem kết quả cục bộ như khóa sản xuất hoặc thông tin xác thực lâu dài." },
+    th: { heading: "แยกตัวระบุทดสอบออกจากข้อมูลยืนยันตัวจริง", body: "password, token, UUID และ ULID เหมาะกับค่าทดสอบ fixture และตัวระบุชั่วคราว อย่าอธิบายค่าที่สร้างในเครื่องว่าเป็นกุญแจระบบจริงหรือข้อมูลยืนยันระยะยาว" },
+    ar: { heading: "افصل معرفات الاختبار عن بيانات الاعتماد الحقيقية", body: "كلمات المرور وtokens وUUID وULID مناسبة لقيم الاختبار والبيانات التجريبية والمعرفات المؤقتة. لا تعامل الناتج المحلي كمفتاح انتاج أو اعتماد طويل الاجل." },
+  },
+  "web-seo-utilities": {
+    "zh-CN": { heading: "先检查抓取入口", body: "robots.txt、sitemap、canonical URL 和社交预览应指向同一组最终页面。先修正状态码与重复入口，再调整页面标题或描述。" },
+    "zh-TW": { heading: "先檢查抓取入口", body: "robots.txt、sitemap、canonical URL 與社群預覽應指向同一組最終頁面。先修正狀態碼與重複入口，再調整頁面標題或描述。" },
+    "pt-BR": { heading: "Revise os pontos de rastreamento", body: "robots.txt, sitemap, canonical URL e previews sociais devem apontar para o mesmo conjunto de paginas finais. Corrija status e entradas duplicadas antes de ajustar titulo ou descricao." },
+    fr: { heading: "Verifier les points de crawl", body: "robots.txt, sitemap, URL canonical et apercus sociaux doivent viser le meme ensemble de pages finales. Corrigez statuts et entrees dupliquees avant de modifier titres ou descriptions." },
+    hi: { heading: "क्रॉल प्रवेश पहले जांचें", body: "robots.txt, sitemap, canonical URL और सामाजिक पूर्वावलोकन एक ही अंतिम पेज समूह की ओर जाने चाहिए. शीर्षक या विवरण बदलने से पहले status code और डुप्लिकेट प्रवेश सुधारें." },
+    id: { heading: "Periksa pintu perayapan lebih dulu", body: "robots.txt, sitemap, canonical URL, dan pratinjau sosial harus mengarah ke kumpulan halaman akhir yang sama. Bereskan status dan pintu duplikat sebelum mengubah judul atau deskripsi." },
+    vi: { heading: "Kiểm tra điểm thu thập dữ liệu trước", body: "robots.txt, sitemap, canonical URL và bản xem trước mạng xã hội nên trỏ về cùng nhóm trang cuối. Sửa mã trạng thái và điểm vào trùng trước khi đổi tiêu đề hoặc mô tả." },
+    th: { heading: "ตรวจทางเข้าการเก็บข้อมูลก่อน", body: "robots.txt, sitemap, canonical URL และพรีวิวโซเชียลควรชี้ไปยังชุดหน้าปลายทางเดียวกัน แก้สถานะและทางเข้าที่ซ้ำก่อนปรับชื่อหน้าหรือคำอธิบาย" },
+    ar: { heading: "افحص مداخل الزحف اولا", body: "يجب أن تشير robots.txt وsitemap وcanonical URL والمعاينات الاجتماعية إلى المجموعة نفسها من الصفحات النهائية. اصلح الحالة والمداخل المكررة قبل تعديل العنوان أو الوصف." },
+  },
+  "network-debugging-tools": {
+    "zh-CN": { heading: "先用公开信号缩小范围", body: "HTTP 状态、重定向链和 DNS 记录可以快速区分部署、域名和缓存问题。只检查公开 URL 或主机，避免输入内部网络名称。" },
+    "zh-TW": { heading: "先用公開訊號縮小範圍", body: "HTTP 狀態、重定向鏈與 DNS 記錄可以快速區分部署、網域與快取問題。只檢查公開 URL 或主機，避免輸入內部網路名稱。" },
+    "pt-BR": { heading: "Isole o problema com sinais publicos", body: "Status HTTP, cadeia de redirecionamento e registros DNS ajudam a separar falhas de deploy, dominio e cache. Consulte apenas URL ou host publico, sem nomes de rede interna." },
+    fr: { heading: "Isoler avec des signaux publics", body: "Statut HTTP, chaine de redirection et enregistrements DNS separent vite problemes de deploiement, domaine et cache. Ne testez que des URL ou hotes publics." },
+    hi: { heading: "सार्वजनिक संकेतों से दायरा घटाएं", body: "HTTP स्थिति, रीडायरेक्ट क्रम और DNS रिकॉर्ड तैनाती, डोमेन और कैश समस्या अलग करने में मदद करते हैं. केवल सार्वजनिक URL या host जांचें." },
+    id: { heading: "Persempit masalah dari sinyal publik", body: "Status HTTP, rantai pengalihan, dan catatan DNS membantu memisahkan masalah rilis, domain, dan cache. Cek hanya URL atau host publik." },
+    vi: { heading: "Khoanh vùng bằng tín hiệu công khai", body: "Trạng thái HTTP, chuỗi chuyển hướng và bản ghi DNS giúp tách lỗi triển khai, domain và bộ nhớ đệm. Chỉ kiểm tra URL hoặc host công khai." },
+    th: { heading: "จำกัดปัญหาด้วยสัญญาณสาธารณะ", body: "สถานะ HTTP ลำดับการเปลี่ยนเส้นทาง และระเบียน DNS ช่วยแยกปัญหาการเผยแพร่ โดเมน และแคช ตรวจเฉพาะ URL หรือ host สาธารณะ" },
+    ar: { heading: "ضيّق المشكلة بإشارات عامة", body: "تساعد حالة HTTP وسلسلة التحويل وسجلات DNS على فصل مشاكل النشر والنطاق والذاكرة المؤقتة. افحص URL أو host عاما فقط." },
+  },
+  "css-utility-workflow": {
+    "zh-CN": { heading: "先固定布局目标", body: "整理 CSS、压缩、换算单位或计算 clamp 前，先确认断点、容器宽度和字体大小边界。这样输出才不会破坏实际界面。" },
+    "zh-TW": { heading: "先固定版面目標", body: "整理 CSS、壓縮、換算單位或計算 clamp 前，先確認斷點、容器寬度與字級邊界。這樣輸出才不會破壞實際介面。" },
+    "pt-BR": { heading: "Defina o alvo de layout", body: "Antes de organizar CSS, reduzir arquivo, converter unidades ou calcular clamp, confirme breakpoints, largura do container e limites de fonte. Assim a saida nao quebra a interface real." },
+    fr: { heading: "Fixer l'objectif de mise en page", body: "Avant de ranger CSS, reduire le fichier, convertir des unites ou calculer clamp, confirmez breakpoints, largeur de conteneur et limites typographiques. La sortie restera compatible avec l'interface." },
+    hi: { heading: "लेआउट लक्ष्य पहले तय करें", body: "CSS सुधारने, छोटा करने, इकाई बदलने या clamp निकालने से पहले breakpoint, container चौड़ाई और font सीमा तय करें. इससे नतीजा वास्तविक स्क्रीन नहीं तोड़ेगा." },
+    id: { heading: "Tentukan target tata letak", body: "Sebelum merapikan CSS, memadatkan, mengubah unit, atau menghitung clamp, pastikan breakpoint, lebar container, dan batas ukuran font. Hasilnya lebih aman untuk antarmuka nyata." },
+    vi: { heading: "Xác định mục tiêu bố cục", body: "Trước khi sắp xếp CSS, rút gọn, đổi đơn vị hoặc tính clamp, hãy xác nhận breakpoint, chiều rộng container và giới hạn cỡ chữ. Như vậy kết quả ít làm vỡ giao diện thật." },
+    th: { heading: "กำหนดเป้าหมายเลย์เอาต์ก่อน", body: "ก่อนจัด CSS ย่อไฟล์ แปลงหน่วย หรือคำนวณ clamp ให้ยืนยัน breakpoint ความกว้าง container และขอบเขตขนาดตัวอักษร เพื่อไม่ให้ผลลัพธ์ทำให้หน้าจอจริงเสีย" },
+    ar: { heading: "حدد هدف التخطيط اولا", body: "قبل ترتيب CSS أو تصغيره أو تحويل الوحدات أو حساب clamp، راجع نقاط التوقف وعرض الحاوية وحدود حجم الخط. بذلك لا يكسر الناتج الواجهة الفعلية." },
+  },
+  "text-cleanup-workflow": {
+    "zh-CN": { heading: "先保留原始文本", body: "排序、去重、计数或生成 slug 前，先保留原始版本。清理后比较行数、空白和大小写变化，避免误删有意义的内容。" },
+    "zh-TW": { heading: "先保留原始文字", body: "排序、去重、計數或產生 slug 前，先保留原始版本。清理後比較行數、空白與大小寫變化，避免誤刪有意義的內容。" },
+    "pt-BR": { heading: "Guarde o texto original", body: "Antes de ordenar, remover duplicatas, contar ou criar slug, preserve a versao original. Depois da limpeza, compare linhas, espacos e caixa para nao perder conteudo importante." },
+    fr: { heading: "Conserver le texte original", body: "Avant tri, deduplication, comptage ou creation de slug, gardez la version d'origine. Apres nettoyage, comparez lignes, espaces et casse pour eviter une suppression utile." },
+    hi: { heading: "मूल पाठ पहले सुरक्षित रखें", body: "छांटने, डुप्लिकेट हटाने, गिनने या slug बनाने से पहले मूल रूप रखें. सफाई के बाद पंक्तियां, खाली जगह और अक्षर रूप की तुलना करें." },
+    id: { heading: "Simpan teks asli lebih dulu", body: "Sebelum mengurutkan, menghapus duplikat, menghitung, atau membuat slug, simpan versi awal. Setelah dibersihkan, bandingkan jumlah baris, spasi, dan huruf besar kecil." },
+    vi: { heading: "Giữ lại văn bản gốc trước", body: "Trước khi sắp xếp, lọc trùng, đếm hoặc tạo slug, hãy giữ phiên bản ban đầu. Sau khi làm sạch, so sánh số dòng, khoảng trắng và chữ hoa chữ thường." },
+    th: { heading: "เก็บข้อความต้นฉบับก่อน", body: "ก่อนจัดเรียง ลบซ้ำ นับ หรือสร้าง slug ให้เก็บเวอร์ชันเดิมไว้ หลังทำความสะอาดแล้วตรวจจำนวนบรรทัด ช่องว่าง และตัวพิมพ์เพื่อไม่ให้ลบเนื้อหาสำคัญ" },
+    ar: { heading: "احتفظ بالنص الاصلي اولا", body: "قبل الترتيب أو إزالة التكرار أو العد أو إنشاء slug، احتفظ بالنسخة الأصلية. بعد التنظيف قارن عدد الأسطر والمسافات وحالة الأحرف حتى لا تفقد محتوى مهما." },
+  },
+};
+
 function priorityUseCases(locale: Exclude<Locale, "en">, title: string, intent: string, privacy: string) {
   const cases: Record<Exclude<Locale, "en">, string[]> = {
     ko: [intent, `${privacy} 방식으로 입력을 다루며 복사 전 결과를 확인합니다.`, `${title}와 관련 도구를 이어서 사용해 작업 흐름을 줄입니다.`],
@@ -1722,6 +1791,13 @@ function localizedGuideTopic(slug: string, locale: Locale, pack: TextPack) {
   return localizedGuideTopics[locale][slug] ?? pack.guideTopics[slug] ?? guideTopicEn[slug] ?? slug;
 }
 
+function localizedGuideSections(slug: string, locale: Locale, topic: string, pack: TextPack) {
+  const baseSections = pack.guideSections(topic);
+  if (locale === defaultLocale) return baseSections;
+  const leadSection = priorityGuideLeadSections[slug]?.[locale];
+  return leadSection ? [leadSection, ...baseSections.slice(1)] : baseSections;
+}
+
 function localizeGuideTitle(href: string, locale: Locale, pack: TextPack) {
   const slug = href.split("/").filter(Boolean).at(-1) ?? "";
   return localizedGuideTopic(slug, locale, pack);
@@ -1836,7 +1912,7 @@ export function getLocalizedGuide(guide: GuideDefinition, locale: Locale): Guide
     ...guide,
     title: topic,
     description: pack.guideDescription(topic),
-    sections: pack.guideSections(topic),
+    sections: localizedGuideSections(guide.slug, locale, topic, pack),
   };
   const priorityDescription = priorityGuideDescriptions[guide.slug]?.[locale];
   if (!priorityDescription) return localizedGuide;

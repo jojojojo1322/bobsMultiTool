@@ -33,6 +33,7 @@ Old public paths remain as permanent redirects from `apps/main/next.config.ts`:
 ## Guardrails
 
 - Root `package.json` workspaces must stay `["apps/main"]`.
+- `package-lock.json` must not keep stale `apps/*`, `packages/*`, or `node_modules/turbo` entries from removed workspaces.
 - Legacy standalone directories must not be restored unless the product architecture changes.
 - Redirects must continue to return permanent redirects to final 200 tool pages.
 - `npm run harness:legacy`, `npm run harness:registry`, `npm run harness:routes`, and `npm run harness:agents` must fail if legacy app surfaces are reintroduced.

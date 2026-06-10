@@ -41,6 +41,22 @@ for (const [scriptName, scriptValue] of Object.entries(packageJson.scripts ?? {}
   if (String(scriptValue).includes("turbo")) failures.push(`script ${scriptName} must not call turbo`);
 }
 
+const packageLockPath = path.join(root, "package-lock.json");
+if (fs.existsSync(packageLockPath)) {
+  const packageLock = JSON.parse(read("package-lock.json"));
+  const packageEntries = Object.keys(packageLock.packages ?? {});
+  const staleWorkspaceEntries = packageEntries.filter((entry) => {
+    if (entry === "apps/main") return false;
+    return entry.startsWith("apps/") || entry.startsWith("packages/");
+  });
+  if (staleWorkspaceEntries.length) {
+    failures.push(`package-lock.json must not keep stale workspaces: ${staleWorkspaceEntries.join(", ")}`);
+  }
+  if (packageLock.packages?.["node_modules/turbo"]) {
+    failures.push("package-lock.json must not keep node_modules/turbo");
+  }
+}
+
 const nextConfig = read("apps/main/next.config.ts");
 for (const [source, destination] of [
   ["/regax", "/tools/regex-tester"],

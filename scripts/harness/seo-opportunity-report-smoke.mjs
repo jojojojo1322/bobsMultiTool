@@ -79,6 +79,10 @@ assert(report.measuredExportPlan.defaultFiles.searchConsole.includes("reports/se
 assert(report.measuredExportPlan.defaultFiles.adsense.includes("reports/adsense.csv"), "measured export plan should list default AdSense CSV path");
 assert(report.measuredExportPlan.priorityPages.some((row) => row.path === "/tools/regex-tester" && row.canonicalUrl === "https://www.bobob.app/tools/regex-tester"), "measured export plan should include canonical priority URLs");
 assert(report.measuredExportPlan.commands.includes("npm run harness:seo-measured"), "measured export plan should include strict measured gate command");
+assert(report.measuredExportPlan.copyTargets.canonicalUrls.includes("https://www.bobob.app/tools/regex-tester"), "measured export plan copy targets should include canonical URL batch");
+assert(report.measuredExportPlan.copyTargets.searchConsolePageRegex.includes("https://www\\.bobob\\.app/tools/regex-tester"), "measured export plan should include escaped Search Console page regex");
+assert(report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv.includes("/tools/regex-tester"), "measured export plan should include focused measured paths env value");
+assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("regex tester"), "measured export plan should include search intent seeds");
 assert(report.searchConsoleOpportunities.some((row) => row.page === "/tools/json-formatter" && row.query === "json formatter online"), "Search Console low-CTR tool opportunity missing");
 assert(report.adsenseOpportunities.some((row) => row.page === "/tools/dns-lookup" && row.rpm === 0.4), "AdSense low-RPM tool opportunity missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/tools/json-formatter" && item.suggestedTitle.includes("JSON Formatter")), "tool title/description recommendation missing");
@@ -174,7 +178,10 @@ assert(markdownReport.includes("## Input Warnings"), "markdown report should inc
 assert(markdownReport.includes("Search Console CSV missing required column"), "bad Search Console CSV should show required-column warning");
 assert(markdownReport.includes("## Title And Description Recommendations"), "markdown report should include recommendations section");
 assert(markdownReport.includes("## Measured Export Plan"), "markdown report should include measured export plan section");
+assert(markdownReport.includes("### Copy Targets"), "markdown report should include measured export copy targets");
 assert(markdownReport.includes("reports/search-console.csv"), "markdown measured export plan should include default Search Console path");
+assert(markdownReport.includes("Search Console page regex"), "markdown measured export plan should include Search Console regex copy target");
+assert(markdownReport.includes("BOBOB_REQUIRED_MEASURED_PATHS"), "markdown measured export plan should include focused gate copy target");
 assert(markdownReport.includes("## Measurement Backlog"), "markdown report should include measurement backlog section");
 
 if (failures.length) {

@@ -29,7 +29,7 @@
 - Post-deploy title/description changes should be driven by Search Console and AdSense page/query CSV exports when available. Use `npm run harness:seo-opportunities` to identify high-impression low-CTR tool and guide pages, low-RPM pages, metadata length/intent issues, and `titleDescriptionRecommendations`.
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.
-- When measured CSV rows are absent or partial, use `measurementBacklog` and `measuredExportPlan` only to decide which core pages need Search Console/AdSense export coverage next. Do not rewrite public title/description copy from backlog alone.
+- When measured CSV rows are absent or partial, use `measurementBacklog` and `measuredExportPlan` only to decide which core pages need Search Console/AdSense export coverage next. Use `measuredExportPlan.copyTargets` for Search Console page regex, canonical URL batches, and focused gate paths, but do not rewrite public title/description copy from backlog alone.
 - When a task claims post-deploy measured SEO improvement is ready, run `npm run harness:seo-measured` or set `BOBOB_REQUIRE_MEASURED_SEO=1`. This strict gate fails until required core pages have both Search Console and AdSense measured rows.
 - For a focused title/description review, narrow the strict gate with `BOBOB_REQUIRED_MEASURED_PATHS=/tools/json-formatter,/tools/dns-lookup`; do not narrow it for final core-page coverage.
 - `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.
@@ -53,13 +53,14 @@
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
 - Long-tail acquisition locales (`zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, `ar`) need slug-specific visible descriptions for every registered tool, not only generic translated templates.
 - Long-tail guide descriptions should also be slug-specific for high-traffic workflows such as Regex, Cron, SEO meta tags, Hash, JSON/YAML/CSV, Network, CSS, Web SEO, and Text cleanup.
+- Long-tail guide lead sections should use topic-specific localized prose for high-value workflows. Do not let JSON/YAML/CSV, secure generators, Web SEO, Network, CSS, or Text cleanup guide pages fall back to the same generic first paragraph across all locales.
 - Locale routes must set the root `<html lang>` and `<html dir>` through the middleware locale handoff; setting only nested page or main attributes is not enough for multilingual SEO.
 - Localized privacy and terms pages must use `getLocalizedLegalContent`; non-English legal routes must not hardcode English policy or terms prose.
 - Desktop workbench layout must use one aligned shell. Do not reintroduce separate rounded bordered left, center, and right cards around the resizable panels.
 - Light/Dark/System theme behavior is a product feature. Do not replace it with only `prefers-color-scheme`.
 - Do not use `next/font/google` or other build-time external font fetches. Vercel builds must pass from a clean install without depending on Google Fonts network access or local font cache.
 - Do not keep unused AdSense placeholder components, `ca-pub-YOUR_ACTUAL_PUBLISHER_ID`, or visible ad preview blocks in the public app.
-- Do not reintroduce `packages/ui`, `turbo`, or standalone legacy app packages unless the product direction explicitly changes and the related skills/harnesses are updated first. Keep the removal rationale in `docs/legacy-apps-archive.md`.
+- Do not reintroduce `packages/ui`, `turbo`, standalone legacy app packages, or stale legacy workspace entries in `package-lock.json` unless the product direction explicitly changes and the related skills/harnesses are updated first. Keep the removal rationale in `docs/legacy-apps-archive.md`.
 - `npm run harness:legacy` must pass after architecture or package changes; it proves `apps/main` is the only app workspace and legacy entry paths remain permanent redirects.
 - Use visual screenshot smoke coverage for desktop, mobile, and Arabic RTL when layout, theme, localization, or workbench surfaces change.
 - Run `npm run harness:localization` and `npm run harness:agents` whenever tool copy, guide copy, locale, layout, SEO, AdSense, or verification policy changes.
