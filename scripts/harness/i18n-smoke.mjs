@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
 const root = process.cwd();
 const config = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/config.ts"), "utf8");
@@ -14,6 +15,17 @@ const toolDirectory = fs.readFileSync(path.join(root, "apps/main/src/features/to
 const localizedContent = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/localized-content.ts"), "utf8");
 
 const failures = [];
+function latestRelevantGitDate() {
+  try {
+    return execSync(
+      "git log -1 --format=%cs -- apps/main/src/app apps/main/src/features/guides apps/main/src/features/i18n apps/main/src/features/tools",
+      { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    ).trim();
+  } catch {
+    return "";
+  }
+}
+
 const requiredLocales = ["en", "ko", "ja", "zh-CN", "zh-TW", "es", "pt-BR", "de", "fr", "hi", "id", "vi", "th", "ar"];
 for (const locale of requiredLocales) {
   if (!config.includes(`"${locale}"`)) failures.push(`locale missing from config: ${locale}`);
@@ -41,6 +53,12 @@ for (const fragment of ["homeTitle", "homeDescription", "toolDescription", "guid
 if (!config.includes('"x-default"')) failures.push("languageAlternates missing x-default hreflang");
 if (!sitemapSource.includes('hreflang="x-default"')) failures.push("localized sitemap missing x-default hreflang links");
 if (!sitemapSource.includes("xmlns:xhtml")) failures.push("localized sitemap missing xhtml alternate namespace");
+const lastmodMatch = sitemapSource.match(/const lastmod = "(\d{4}-\d{2}-\d{2})";/);
+if (!lastmodMatch) failures.push("sitemap source must keep an explicit YYYY-MM-DD lastmod");
+const latestContentDate = latestRelevantGitDate();
+if (lastmodMatch?.[1] && latestContentDate && lastmodMatch[1] < latestContentDate) {
+  failures.push(`sitemap lastmod ${lastmodMatch[1]} is older than latest relevant content commit ${latestContentDate}`);
+}
 if (!sitemapIndexRoute.includes("sitemapIndexXml")) failures.push("sitemap index route missing generator");
 if (!localizedSitemapRoute.includes("generateStaticParams")) failures.push("localized sitemap route missing static params");
 if (!middleware.includes("/sitemaps")) failures.push("middleware must skip sitemap routes");

@@ -59,6 +59,7 @@ Include:
 - Non-English common labels and chips, including privacy/server/local indicators, should be localized and should not show English fallback fragments outside the English source route.
 - Arabic RTL route and visible prose.
 - Sitemap index at `/sitemap.xml`, per-locale sitemaps at `/sitemaps/en`, `/sitemaps/ko`, `/sitemaps/ar`, and full locale URL coverage without the old 200 URL static cap.
+- Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - Search Console/AdSense opportunity report behavior. Without CSV inputs it should keep registry metadata warnings at zero when metadata is healthy; with CSV inputs it should report high-impression low-CTR tool and guide pages, low-RPM pages, and `titleDescriptionRecommendations`.
 - SEO report `inputWarnings` should flag missing required or recommended Search Console/AdSense CSV headers so empty measured results are not silently trusted.

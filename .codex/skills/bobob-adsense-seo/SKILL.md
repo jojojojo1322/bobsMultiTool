@@ -17,6 +17,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Arabic locale routes must keep RTL layout coverage.
 - Locale routing may use NEXT_LOCALE, Accept-Language, and country headers such as x-vercel-ip-country or cf-ipcountry.
 - Do not cap localized sitemap coverage in a single static file. Use the sitemap index to expose every supported locale/tool/guide URL.
+- Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.
 - Localized metadata must use localized tool and guide content. Do not leave non-English title/description pages backed by raw English registry prose.
 - Guide detail meta descriptions and OpenGraph descriptions must use the same localized `guide.description` shown in the page body.

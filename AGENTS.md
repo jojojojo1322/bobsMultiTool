@@ -33,6 +33,7 @@
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage. Do not return to a capped static sitemap that drops locale tool pages.
+- Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.
 - Non-English common dictionary prose must include localized site descriptions, home descriptions, privacy/server/local chips, and legal page copy. Avoid leaving mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server` outside the English source locale.
 - Locale override blocks are part of visible prose. When common dictionary overrides or legal pages are changed, check that they do not reintroduce English scaffolding such as `Workbench`, `workflow`, `metadata`, `locale`, `smoke check`, or `tool/tools` where a local product phrase is already used.
