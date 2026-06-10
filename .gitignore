@@ -65,3 +65,4 @@ vercel-*.log
 reports/*.csv
 reports/*.tsv
 reports/seo-opportunities*.md
+reports/seo-export*.md

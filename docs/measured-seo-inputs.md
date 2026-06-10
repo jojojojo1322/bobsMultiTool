@@ -48,6 +48,34 @@ npm run harness:seo-opportunities
 
 `reports/seo-opportunities.md` is gitignored because it can include query, impression, CTR, RPM, and earnings data.
 
+## Export packet
+
+Generate a short copy/paste packet before collecting measured rows:
+
+```bash
+BOBOB_SEO_REPORT_FORMAT=export-packet \
+npm run harness:seo-opportunities
+```
+
+To save it locally:
+
+```bash
+BOBOB_SEO_REPORT_FORMAT=export-packet \
+BOBOB_SEO_REPORT_OUT=reports/seo-export-packet.md \
+npm run harness:seo-opportunities
+```
+
+The packet includes:
+
+- Search Console page regex
+- canonical URL batch for AdSense page reports
+- expected query seed list
+- CSV headers and safe example rows
+- focused `BOBOB_REQUIRED_MEASURED_PATHS` command
+- `metadataRewriteReadiness` stop rule
+
+The export packet is not evidence for a title or description rewrite. It only shortens the measured export collection step.
+
 ## Measurement backlog
 
 When measured CSV exports are missing or only cover a few pages, the report includes `measurementBacklog`.

@@ -34,6 +34,7 @@
 - When a task claims post-deploy measured SEO improvement is ready, run `npm run harness:seo-measured` or set `BOBOB_REQUIRE_MEASURED_SEO=1`. This strict gate fails until required core pages have both Search Console and AdSense measured rows.
 - For a focused title/description review, narrow the strict gate with `BOBOB_REQUIRED_MEASURED_PATHS=/tools/json-formatter,/tools/dns-lookup`; do not narrow it for final core-page coverage.
 - `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.
+- For Search Console/AdSense collection handoff before private exports exist, use `BOBOB_SEO_REPORT_FORMAT=export-packet`. The export packet must include the page regex, canonical URL batch, CSV headers, focused gate command, and metadata rewrite stop rule; it is not evidence for public title/description edits.
 - For measured SEO review handoff, use `BOBOB_SEO_REPORT_FORMAT=markdown` and optionally `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` to generate a readable recommendations artifact. Keep measured CSVs and markdown reports out of git.
 - Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when changing Search Console or AdSense export handling.
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.

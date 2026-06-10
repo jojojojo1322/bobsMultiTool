@@ -63,6 +63,7 @@ const checks = [
   ["agents", "measurementBacklog"],
   ["agents", "metadataRewriteReadiness"],
   ["agents", "BOBOB_SEO_REPORT_FORMAT"],
+  ["agents", "export-packet"],
   ["agents", "harness:seo-templates"],
   ["agents", "reports/templates/*.example.csv"],
   ["agents", "visual screenshot smoke"],
@@ -143,6 +144,7 @@ const checks = [
   ["seo", "measurementBacklog"],
   ["seo", "metadataRewriteReadiness"],
   ["seo", "BOBOB_SEO_REPORT_FORMAT"],
+  ["seo", "export-packet"],
   ["seo", "harness:seo-templates"],
   ["seo", "reports/templates/*.example.csv"],
   ["seo", "tool and guide pages"],
@@ -176,6 +178,7 @@ const checks = [
   ["verification", "measurementBacklog"],
   ["verification", "metadataRewriteReadiness"],
   ["verification", "BOBOB_SEO_REPORT_FORMAT"],
+  ["verification", "export-packet"],
   ["verification", "harness:seo-templates"],
   ["verification", "reports/templates/*.example.csv"],
   ["verification", "tool and guide pages"],
@@ -278,7 +281,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "csvTemplates", "metadataRewriteReadiness", "canRewritePublicMetadata", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "csvTemplates", "metadataRewriteReadiness", "canRewritePublicMetadata", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "formatExportPacket", "export-packet", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
@@ -286,7 +289,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
   failures.push("SEO opportunity report smoke harness missing");
 } else {
   const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
-  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "csvTemplates", "metadataRewriteReadiness", "canRewritePublicMetadata", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "csvTemplates", "metadataRewriteReadiness", "canRewritePublicMetadata", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "export-packet", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }
@@ -294,7 +297,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-export-templates.mjs")))
   failures.push("SEO export templates harness missing");
 } else {
   const seoExportTemplates = read("scripts/harness/seo-export-templates.mjs");
-  for (const fragment of ["reports/README.md", "search-console.example.csv", "adsense.example.csv", "metadataRewriteReadiness.canRewritePublicMetadata", "measuredExportPlan.copyTargets.searchConsolePageRegex"]) {
+  for (const fragment of ["reports/README.md", "search-console.example.csv", "adsense.example.csv", "metadataRewriteReadiness.canRewritePublicMetadata", "measuredExportPlan.copyTargets.searchConsolePageRegex", "BOBOB_SEO_REPORT_FORMAT=export-packet"]) {
     if (!seoExportTemplates.includes(fragment)) failures.push(`SEO export templates harness missing ${fragment}`);
   }
 }

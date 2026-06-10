@@ -16,6 +16,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Run `npm run harness:seo-measured` before treating Search Console/AdSense-driven title or description work as complete. The gate uses `BOBOB_REQUIRE_MEASURED_SEO=1` and should fail when core measured coverage is missing.
 - Use `BOBOB_REQUIRED_MEASURED_PATHS` only for targeted opportunity review, not for the final core-page monetization readiness claim.
 - Keep `npm run harness:seo-opportunities:smoke` green so the measured SEO workflow is tested without real private exports.
+- Before private measured exports exist, generate the collection handoff with `BOBOB_SEO_REPORT_FORMAT=export-packet`; use it to copy Search Console page regex, canonical URLs, CSV headers, and focused gate paths, not to rewrite public metadata.
 - For stakeholder review, generate the Markdown SEO report with `BOBOB_SEO_REPORT_FORMAT=markdown` and keep title/description changes tied to measured rows.
 - Use `reports/README.md` and `reports/templates/*.example.csv` as the safe handoff for Search Console and AdSense export collection; keep `npm run harness:seo-templates` green when export handling changes.
 - Treat JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript as search-led acquisition clusters.

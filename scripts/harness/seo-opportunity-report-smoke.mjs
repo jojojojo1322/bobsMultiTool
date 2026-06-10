@@ -195,6 +195,23 @@ assert(markdownReport.includes("## Metadata Rewrite Readiness"), "markdown repor
 assert(markdownReport.includes("needs-measured-data-first"), "markdown report should show metadata rewrite is not ready without measured coverage");
 assert(markdownReport.includes("## Measurement Backlog"), "markdown report should include measurement backlog section");
 
+const exportPacketRun = runReport({
+  BOBOB_SEARCH_CONSOLE_CSV: searchConsoleCsv,
+  BOBOB_ADSENSE_CSV: adsenseCsv,
+  BOBOB_SEO_REPORT_FORMAT: "export-packet",
+});
+const exportPacket = exportPacketRun.stdout;
+assert(exportPacket.includes("# Bob's Multi Tool Measured SEO Export Packet"), "export packet should have a clear title");
+assert(exportPacket.includes("not approval to rewrite public title or description metadata"), "export packet should include the metadata rewrite stop rule");
+assert(exportPacket.includes("## Search Console Page Regex"), "export packet should include Search Console regex copy target");
+assert(exportPacket.includes("https://www\\.bobob\\.app/tools/regex-tester"), "export packet should include escaped core page regex values");
+assert(exportPacket.includes("## Canonical URL Batch"), "export packet should include canonical URL batch");
+assert(exportPacket.includes("https://www.bobob.app/tools/regex-tester"), "export packet should include canonical core URLs");
+assert(exportPacket.includes("Page,Query,Impressions,Clicks,CTR,Position"), "export packet should include Search Console CSV header");
+assert(exportPacket.includes("Page,Impressions,Page RPM,Estimated earnings,CTR"), "export packet should include AdSense CSV header");
+assert(exportPacket.includes("BOBOB_REQUIRED_MEASURED_PATHS="), "export packet should include focused gate env copy target");
+assert(exportPacket.includes("metadataRewriteReadiness.canRewritePublicMetadata"), "export packet should include metadata readiness stop rule");
+
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);

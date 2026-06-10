@@ -38,6 +38,7 @@ for (const fragment of [
   "reports/search-console.tsv",
   "reports/adsense.csv",
   "reports/adsense.tsv",
+  "BOBOB_SEO_REPORT_FORMAT=export-packet",
   "metadataRewriteReadiness.canRewritePublicMetadata",
   "measuredExportPlan.copyTargets.searchConsolePageRegex",
   "reports/templates/search-console.example.csv",
@@ -47,7 +48,7 @@ for (const fragment of [
 }
 
 const gitignore = read(".gitignore");
-for (const fragment of ["reports/*.csv", "reports/*.tsv", "reports/seo-opportunities*.md"]) {
+for (const fragment of ["reports/*.csv", "reports/*.tsv", "reports/seo-opportunities*.md", "reports/seo-export*.md"]) {
   assertIncludes(gitignore, fragment, ".gitignore");
 }
 

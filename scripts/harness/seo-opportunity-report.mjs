@@ -865,10 +865,97 @@ function formatMarkdownReport(report) {
   return lines.join("\n");
 }
 
+function formatExportPacket(report) {
+  const requiredPaths = report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv;
+  const lines = [
+    "# Bob's Multi Tool Measured SEO Export Packet",
+    "",
+    "This packet is only for collecting measured Search Console and AdSense rows. It is not approval to rewrite public title or description metadata.",
+    "",
+    "## Save Files Here",
+    "",
+    markdownTable(
+      ["Source", "Destination"],
+      [
+        ["Search Console", report.measuredExportPlan.defaultFiles.searchConsole.join(" or ")],
+        ["AdSense", report.measuredExportPlan.defaultFiles.adsense.join(" or ")],
+      ],
+    ),
+    "",
+    "## Search Console Page Regex",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.searchConsolePageRegex),
+    "",
+    "## Canonical URL Batch",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.canonicalUrls.join("\n")),
+    "",
+    "## Search Intent Seeds",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.copyTargets.searchIntentSeedList.join(", ")),
+    "",
+    "## CSV Headers",
+    "",
+    "Search Console:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.searchConsoleHeader),
+    "",
+    "AdSense:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.adsenseHeader),
+    "",
+    "## Safe Example Rows",
+    "",
+    "Search Console:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.searchConsoleExample),
+    "",
+    "AdSense:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.adsenseExample),
+    "",
+    "## Focused Strict Gate",
+    "",
+    markdownCodeBlock(`BOBOB_REQUIRE_MEASURED_SEO=1 \\
+BOBOB_REQUIRED_MEASURED_PATHS=${requiredPaths} \\
+npm run harness:seo-opportunities`),
+    "",
+    "## Priority Pages",
+    "",
+    markdownTable(
+      ["Path", "Canonical URL", "Tier", "Cluster", "Missing measured inputs", "Search intents"],
+      report.measuredExportPlan.priorityPages.map((row) => [
+        row.path,
+        row.canonicalUrl,
+        row.tier,
+        row.contentCluster,
+        row.missingInputs.join(", "),
+        row.searchIntents.join(", "),
+      ]),
+    ),
+    "",
+    "## Stop Rule",
+    "",
+    markdownTable(
+      ["Field", "Value"],
+      [
+        ["metadataRewriteReadiness.status", report.metadataRewriteReadiness.status],
+        ["metadataRewriteReadiness.canRewritePublicMetadata", report.metadataRewriteReadiness.canRewritePublicMetadata ? "true" : "false"],
+      ],
+    ),
+    "",
+    "If `metadataRewriteReadiness.canRewritePublicMetadata` is false, collect or fix measured exports before editing public title or description copy.",
+    "",
+  ];
+  return lines.join("\n");
+}
+
 function emitReport(report) {
   const output = reportFormat === "markdown" || reportFormat === "md"
     ? formatMarkdownReport(report)
-    : JSON.stringify(report, null, 2);
+    : reportFormat === "export-packet" || reportFormat === "packet"
+      ? formatExportPacket(report)
+      : JSON.stringify(report, null, 2);
   if (reportOutputPath) {
     const outputPath = path.resolve(root, reportOutputPath);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
