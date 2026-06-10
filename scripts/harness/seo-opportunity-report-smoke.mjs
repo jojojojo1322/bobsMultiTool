@@ -69,28 +69,56 @@ assert(report.measurementBacklog.some((item) => item.path === "/tools/regex-test
 assert(report.measurementBacklog.some((item) => item.path === "/tools/json-formatter" && item.missingInputs.includes("AdSense page/RPM rows")), "measurement backlog should include partially measured tool pages");
 assert(report.unsupportedMeasuredPages.some((row) => row.page === "/not-tracked"), "unsupported measured page warning missing");
 
+const searchConsoleTsv = writeFixture(
+  "search-console.tsv",
+  [
+    "\uFEFFPage\tQuery\tImpressions\tClicks\tCTR\tPosition",
+    "https://www.bobob.app/tools/jwt-decoder\tjwt decoder\t1500\t15\t1%\t5",
+  ].join("\n"),
+);
+const adsenseSemicolonCsv = writeFixture(
+  "adsense-semicolon.csv",
+  [
+    "Page;Impressions;Page RPM;Estimated earnings;CTR",
+    "https://www.bobob.app/tools/jwt-decoder;800;0,4;0,32;0,8%",
+  ].join("\n"),
+);
+const flexibleDelimiterRun = runReport({
+  BOBOB_SEARCH_CONSOLE_CSV: searchConsoleTsv,
+  BOBOB_ADSENSE_CSV: adsenseSemicolonCsv,
+});
+const flexibleDelimiterReport = JSON.parse(flexibleDelimiterRun.stdout);
+assert(flexibleDelimiterReport.searchConsoleOpportunities.some((row) => row.page === "/tools/jwt-decoder" && row.query === "jwt decoder"), "TSV Search Console export with BOM should parse");
+assert(flexibleDelimiterReport.adsenseOpportunities.some((row) => row.page === "/tools/jwt-decoder" && row.rpm === 0.4), "semicolon AdSense export with decimal comma should parse");
+
 const defaultReportsDir = path.join(root, "reports");
 const defaultSearchConsoleCsv = path.join(defaultReportsDir, "search-console.csv");
 const defaultAdsenseCsv = path.join(defaultReportsDir, "adsense.csv");
-const defaultInputsAlreadyExist = fs.existsSync(defaultSearchConsoleCsv) || fs.existsSync(defaultAdsenseCsv);
+const defaultSearchConsoleTsv = path.join(defaultReportsDir, "search-console.tsv");
+const defaultAdsenseTsv = path.join(defaultReportsDir, "adsense.tsv");
+const defaultInputsAlreadyExist = fs.existsSync(defaultSearchConsoleCsv) || fs.existsSync(defaultAdsenseCsv) || fs.existsSync(defaultSearchConsoleTsv) || fs.existsSync(defaultAdsenseTsv);
 if (!defaultInputsAlreadyExist) {
   fs.mkdirSync(defaultReportsDir, { recursive: true });
-  fs.writeFileSync(defaultSearchConsoleCsv, fs.readFileSync(searchConsoleCsv, "utf8"));
-  fs.writeFileSync(defaultAdsenseCsv, fs.readFileSync(adsenseCsv, "utf8"));
+  fs.writeFileSync(defaultSearchConsoleTsv, fs.readFileSync(searchConsoleTsv, "utf8"));
+  fs.writeFileSync(defaultAdsenseTsv, "Page\tImpressions\tPage RPM\tEstimated earnings\tCTR\nhttps://www.bobob.app/tools/jwt-decoder\t800\t0.4\t0.32\t0.8%\n");
   try {
     const defaultRun = runReport({
       BOBOB_SEARCH_CONSOLE_CSV: "",
       BOBOB_ADSENSE_CSV: "",
     });
     const defaultReport = JSON.parse(defaultRun.stdout);
-    assert(defaultReport.inputs.searchConsoleCsv === "reports/search-console.csv", "default Search Console CSV path should be auto-detected");
+    assert(defaultReport.inputs.searchConsoleCsv === "reports/search-console.tsv", "default Search Console TSV path should be auto-detected when CSV is absent");
     assert(defaultReport.inputs.searchConsoleCsvSource === "default", "default Search Console CSV source missing");
-    assert(defaultReport.inputs.adsenseCsv === "reports/adsense.csv", "default AdSense CSV path should be auto-detected");
+    assert(defaultReport.inputs.searchConsoleDefaultInputs.includes("reports/search-console.csv") && defaultReport.inputs.searchConsoleDefaultInputs.includes("reports/search-console.tsv"), "default Search Console input candidates missing");
+    assert(defaultReport.inputs.adsenseCsv === "reports/adsense.tsv", "default AdSense TSV path should be auto-detected when CSV is absent");
     assert(defaultReport.inputs.adsenseCsvSource === "default", "default AdSense CSV source missing");
-    assert(defaultReport.searchConsoleOpportunities.some((row) => row.page === "/tools/json-formatter"), "default Search Console CSV should create opportunities");
+    assert(defaultReport.inputs.adsenseDefaultInputs.includes("reports/adsense.csv") && defaultReport.inputs.adsenseDefaultInputs.includes("reports/adsense.tsv"), "default AdSense input candidates missing");
+    assert(defaultReport.searchConsoleOpportunities.some((row) => row.page === "/tools/jwt-decoder"), "default Search Console TSV should create opportunities");
   } finally {
     fs.rmSync(defaultSearchConsoleCsv, { force: true });
     fs.rmSync(defaultAdsenseCsv, { force: true });
+    fs.rmSync(defaultSearchConsoleTsv, { force: true });
+    fs.rmSync(defaultAdsenseTsv, { force: true });
   }
 }
 

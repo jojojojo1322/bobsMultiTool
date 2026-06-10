@@ -2,21 +2,41 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const defaultSearchCsvRelativePath = "reports/search-console.csv";
-const defaultAdsenseCsvRelativePath = "reports/adsense.csv";
-function resolveCsvInput(envName, defaultRelativePath) {
+const defaultSearchInputRelativePaths = ["reports/search-console.csv", "reports/search-console.tsv"];
+const defaultAdsenseInputRelativePaths = ["reports/adsense.csv", "reports/adsense.tsv"];
+function resolveMeasuredInput(envName, defaultRelativePaths) {
   const explicitPath = process.env[envName];
   if (explicitPath) {
-    return { path: explicitPath, displayPath: explicitPath, source: envName, defaultPath: defaultRelativePath };
+    return {
+      path: explicitPath,
+      displayPath: explicitPath,
+      source: envName,
+      defaultPath: defaultRelativePaths[0],
+      defaultPaths: defaultRelativePaths,
+    };
   }
-  const defaultPath = path.join(root, defaultRelativePath);
-  if (fs.existsSync(defaultPath)) {
-    return { path: defaultPath, displayPath: defaultRelativePath, source: "default", defaultPath: defaultRelativePath };
+  for (const defaultRelativePath of defaultRelativePaths) {
+    const defaultPath = path.join(root, defaultRelativePath);
+    if (fs.existsSync(defaultPath)) {
+      return {
+        path: defaultPath,
+        displayPath: defaultRelativePath,
+        source: "default",
+        defaultPath: defaultRelativePath,
+        defaultPaths: defaultRelativePaths,
+      };
+    }
   }
-  return { path: undefined, displayPath: null, source: "missing", defaultPath: defaultRelativePath };
+  return {
+    path: undefined,
+    displayPath: null,
+    source: "missing",
+    defaultPath: defaultRelativePaths[0],
+    defaultPaths: defaultRelativePaths,
+  };
 }
-const searchCsvInput = resolveCsvInput("BOBOB_SEARCH_CONSOLE_CSV", defaultSearchCsvRelativePath);
-const adsenseCsvInput = resolveCsvInput("BOBOB_ADSENSE_CSV", defaultAdsenseCsvRelativePath);
+const searchCsvInput = resolveMeasuredInput("BOBOB_SEARCH_CONSOLE_CSV", defaultSearchInputRelativePaths);
+const adsenseCsvInput = resolveMeasuredInput("BOBOB_ADSENSE_CSV", defaultAdsenseInputRelativePaths);
 const searchCsvPath = searchCsvInput.path;
 const adsenseCsvPath = adsenseCsvInput.path;
 const reportFormat = process.env.BOBOB_SEO_REPORT_FORMAT ?? "json";
@@ -38,20 +58,46 @@ const clusterByCategory = {
   Network: "network-debugging",
 };
 
-function parseCsvTable(source) {
+function countDelimiter(line, delimiter) {
+  let count = 0;
+  let quoted = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    const next = line[index + 1];
+    if (char === '"' && quoted && next === '"') {
+      index += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === delimiter && !quoted) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+function detectDelimiter(source) {
+  const sampleLine = source.split(/\r?\n/).find((line) => line.trim()) ?? "";
+  return [",", "\t", ";"]
+    .map((delimiter) => ({ delimiter, count: countDelimiter(sampleLine, delimiter) }))
+    .sort((a, b) => b.count - a.count)[0]?.delimiter ?? ",";
+}
+
+function parseDelimitedTable(source) {
+  const cleanSource = source.replace(/^\uFEFF/, "");
+  const delimiter = detectDelimiter(cleanSource);
   const rows = [];
   let row = [];
   let cell = "";
   let quoted = false;
-  for (let index = 0; index < source.length; index += 1) {
-    const char = source[index];
-    const next = source[index + 1];
+  for (let index = 0; index < cleanSource.length; index += 1) {
+    const char = cleanSource[index];
+    const next = cleanSource[index + 1];
     if (char === '"' && quoted && next === '"') {
       cell += '"';
       index += 1;
     } else if (char === '"') {
       quoted = !quoted;
-    } else if (char === "," && !quoted) {
+    } else if (char === delimiter && !quoted) {
       row.push(cell.trim());
       cell = "";
     } else if ((char === "\n" || char === "\r") && !quoted) {
@@ -66,11 +112,12 @@ function parseCsvTable(source) {
   }
   row.push(cell.trim());
   if (row.some(Boolean)) rows.push(row);
-  if (!rows.length) return { headers: [], rows: [] };
+  if (!rows.length) return { headers: [], rows: [], delimiter };
   const headers = rows[0].map((header) => header.toLowerCase().replace(/[^a-z0-9]+/g, ""));
   return {
     headers,
     rows: rows.slice(1).map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""]))),
+    delimiter,
   };
 }
 
@@ -79,7 +126,7 @@ function hasAnyHeader(headers, aliases) {
 }
 
 function readCsvTable(csvPath, label, requiredHeaderGroups, recommendedHeaderGroups) {
-  const table = parseCsvTable(fs.readFileSync(csvPath, "utf8"));
+  const table = parseDelimitedTable(fs.readFileSync(csvPath, "utf8"));
   if (!table.headers.length) {
     inputWarnings.push(`${label} CSV has no header row or parseable rows.`);
     return table;
@@ -100,7 +147,10 @@ function readCsvTable(csvPath, label, requiredHeaderGroups, recommendedHeaderGro
 
 function numberValue(value) {
   if (value == null) return 0;
-  const normalized = String(value).replace(/[%,$\s]/g, "").replace(/,/g, "");
+  const compact = String(value).replace(/[%$\s]/g, "");
+  const normalized = /^\d{1,3}(?:\.\d{3})*,\d+$/.test(compact) || /^\d+,\d+$/.test(compact)
+    ? compact.replace(/\./g, "").replace(",", ".")
+    : compact.replace(/,/g, "");
   const number = Number(normalized);
   return Number.isFinite(number) ? number : 0;
 }
@@ -599,9 +649,11 @@ const report = {
     searchConsoleCsv: searchCsvInput.displayPath,
     searchConsoleCsvSource: searchCsvInput.source,
     searchConsoleDefaultCsv: searchCsvInput.defaultPath,
+    searchConsoleDefaultInputs: searchCsvInput.defaultPaths,
     adsenseCsv: adsenseCsvInput.displayPath,
     adsenseCsvSource: adsenseCsvInput.source,
     adsenseDefaultCsv: adsenseCsvInput.defaultPath,
+    adsenseDefaultInputs: adsenseCsvInput.defaultPaths,
     minImpressions,
     lowCtr,
     lowRpm,
@@ -620,6 +672,6 @@ const report = {
 
 emitReport(report);
 
-if (!searchCsvPath) console.error(`No Search Console CSV provided; set BOBOB_SEARCH_CONSOLE_CSV or create ${searchCsvInput.defaultPath}. Search Console CTR opportunities were skipped.`);
-if (!adsenseCsvPath) console.error(`No AdSense CSV provided; set BOBOB_ADSENSE_CSV or create ${adsenseCsvInput.defaultPath}. AdSense RPM opportunities were skipped.`);
+if (!searchCsvPath) console.error(`No Search Console CSV/TSV provided; set BOBOB_SEARCH_CONSOLE_CSV or create one of ${searchCsvInput.defaultPaths.join(", ")}. Search Console CTR opportunities were skipped.`);
+if (!adsenseCsvPath) console.error(`No AdSense CSV/TSV provided; set BOBOB_ADSENSE_CSV or create one of ${adsenseCsvInput.defaultPaths.join(", ")}. AdSense RPM opportunities were skipped.`);
 for (const warning of inputWarnings) console.error(`SEO input warning: ${warning}`);

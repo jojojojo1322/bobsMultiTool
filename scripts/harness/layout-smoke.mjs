@@ -9,6 +9,8 @@ const dictionaries = fs.readFileSync(path.join(root, "apps/main/src/features/i18
 const localizedContent = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/localized-content.ts"), "utf8");
 const toolsIndex = fs.readFileSync(path.join(root, "apps/main/src/app/tools/page.tsx"), "utf8");
 const localizedToolsIndex = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/tools/page.tsx"), "utf8");
+const guideDetail = fs.readFileSync(path.join(root, "apps/main/src/app/guides/[slug]/page.tsx"), "utf8");
+const localizedGuideDetail = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/guides/[slug]/page.tsx"), "utf8");
 
 const failures = [];
 for (const fragment of [
@@ -39,6 +41,8 @@ if (!workspace.includes("rounded-lg border bg-background")) failures.push("singl
 if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workbench shell must keep a fixed height with internal panel scroll");
 if (!workspace.includes("h-full min-h-0")) failures.push("workbench panels must use min-h-0 for internal scrolling");
 if (!workspace.includes("withLocale(\"/\", locale)")) failures.push("detail top bar home link missing");
+if (!guideDetail.includes("withLocale(\"/\", defaultLocale)") || !guideDetail.includes("Bob&apos;s Multi Tool")) failures.push("default guide detail home link missing");
+if (!localizedGuideDetail.includes("withLocale(\"/\", locale)") || !localizedGuideDetail.includes("Bob&apos;s Multi Tool")) failures.push("localized guide detail home link missing");
 if (!workspace.includes("bobob:tool-nav-scroll")) failures.push("tool navigation scroll persistence missing");
 if (!workspace.includes("data-tool-navigation-scroll")) failures.push("tool navigation scroll container should expose a stable QA attribute");
 if (!workspace.includes("React.useLayoutEffect")) failures.push("tool navigation scroll restore must happen before paint");

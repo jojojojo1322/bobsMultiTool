@@ -7,9 +7,11 @@ Use measured exports before changing public title or description copy after depl
 Put private exports here when reviewing opportunities locally:
 
 - `reports/search-console.csv`
+- `reports/search-console.tsv`
 - `reports/adsense.csv`
+- `reports/adsense.tsv`
 
-These CSV files are gitignored. The harness auto-detects them, so this is enough:
+These CSV/TSV files are gitignored. The harness auto-detects them, so this is enough:
 
 ```bash
 npm run harness:seo-opportunities
@@ -24,6 +26,8 @@ BOBOB_SEARCH_CONSOLE_CSV=/path/to/search-console.csv \
 BOBOB_ADSENSE_CSV=/path/to/adsense.csv \
 npm run harness:seo-opportunities
 ```
+
+The parser accepts comma CSV, tab-separated TSV, semicolon-separated CSV, UTF-8 BOM headers, percent CTR values, and decimal comma numbers such as `0,4`.
 
 ## Markdown review artifact
 

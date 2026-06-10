@@ -27,7 +27,7 @@
 - Tool navigation clicks must preserve the sidebar scroll position and must not force the document back to the top while moving between tool detail pages.
 - Internal search must use the shared registry search index across home, `/tools`, locale tool directories, and tool workbench surfaces. URL query `?q=` must stay aligned with the SearchAction schema.
 - Post-deploy title/description changes should be driven by Search Console and AdSense page/query CSV exports when available. Use `npm run harness:seo-opportunities` to identify high-impression low-CTR tool and guide pages, low-RPM pages, metadata length/intent issues, and `titleDescriptionRecommendations`.
-- The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv` and `reports/adsense.csv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
+- The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.
 - When measured CSV rows are absent or partial, use `measurementBacklog` only to decide which core pages need Search Console/AdSense export coverage next. Do not rewrite public title/description copy from backlog alone.
 - `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.

@@ -9,7 +9,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Prioritize 40+ tools with clear search intent, repeat usage, and low server cost.
 - Classify tools by monetizationTier: core, growth, or long-tail. Core tools get the strongest SEO guide, FAQ, examples, and related-link coverage first.
 - After deployment, review Search Console and AdSense CSV exports with `npm run harness:seo-opportunities` before changing title/description copy for tool and guide pages. Real impressions, CTR, position, RPM, and `titleDescriptionRecommendations` should outrank guesses.
-- Prefer default local measured exports at `reports/search-console.csv` and `reports/adsense.csv` for quick review; use env vars only when the files live elsewhere.
+- Prefer default local measured exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv` for quick review; use env vars only when the files live elsewhere.
 - Use `measurementBacklog` to decide which core pages need measured export coverage first, but do not treat it as evidence for title/description rewrites.
 - Treat SEO report `inputWarnings` as a data quality gate; a missing header can make measured opportunities look empty.
 - Keep `npm run harness:seo-opportunities:smoke` green so the measured SEO workflow is tested without real private exports.

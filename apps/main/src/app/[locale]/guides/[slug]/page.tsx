@@ -66,9 +66,14 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
 
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-4 py-10" lang={locale} dir={dictionary.dir}>
-      <Link href={withLocale("/guides", locale)} className="text-sm text-muted-foreground hover:text-foreground">
-        {dictionary.guides.back}
-      </Link>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+        <Link href={withLocale("/", locale)} className="font-semibold text-foreground hover:text-muted-foreground">
+          Bob&apos;s Multi Tool
+        </Link>
+        <Link href={withLocale("/guides", locale)} className="text-muted-foreground hover:text-foreground">
+          {dictionary.guides.back}
+        </Link>
+      </div>
       <Badge className="mt-6 block w-fit">{dictionary.guides.badge}</Badge>
       <h1 className="mt-4 text-3xl font-semibold tracking-normal">{guide.title}</h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{guide.description}</p>
