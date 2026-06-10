@@ -29,6 +29,8 @@ const checks = [
   ["agents", "privacy/server/local chips"],
   ["agents", "Long-tail locale templates"],
   ["agents", "mixed-script accidents"],
+  ["agents", "paste or enter input"],
+  ["agents", "copy only after review"],
   ["agents", "Hindi acquisition copy"],
   ["agents", "Hindi reusable templates"],
   ["agents", "Indonesian reusable templates"],
@@ -69,6 +71,8 @@ const checks = [
   ["agents", "Do not reintroduce `packages/ui`, `turbo`"],
   ["agents", "package-lock.json"],
   ["agents", "harness:legacy"],
+  ["agents", "harness:deployment-status"],
+  ["agents", "BOBOB_REQUIRE_NO_LEGACY_VERCEL"],
   ["agents", "docs/legacy-apps-archive.md"],
   ["tool", "demandTier"],
   ["tool", "aliases"],
@@ -99,6 +103,8 @@ const checks = [
   ["localization", "privacy/server/local chips"],
   ["localization", "Long-tail locale templates"],
   ["localization", "mixed-script accidents"],
+  ["localization", "paste or enter input"],
+  ["localization", "copy only after review"],
   ["localization", "Hindi acquisition copy"],
   ["localization", "Hindi reusable templates"],
   ["localization", "Indonesian reusable templates"],
@@ -143,6 +149,8 @@ const checks = [
   ["seo", "guide.description"],
   ["seo", "Twitter title/description"],
   ["seo", "unused AdSense preview"],
+  ["seo", "harness:deployment-status"],
+  ["seo", "BOBOB_REQUIRE_NO_LEGACY_VERCEL"],
   ["seo", "Legacy standalone apps must not be restored"],
   ["verification", "harness:i18n"],
   ["verification", "harness:localization"],
@@ -183,6 +191,8 @@ const checks = [
   ["verification", "No standalone legacy app directories"],
   ["verification", "package-lock.json"],
   ["verification", "harness:legacy"],
+  ["verification", "harness:deployment-status"],
+  ["verification", "BOBOB_REQUIRE_NO_LEGACY_VERCEL"],
   ["product", "monetizationTier"],
   ["product", "Post-approval candidates"],
   ["product", "40+"],
@@ -300,10 +310,26 @@ if (!fs.existsSync(path.join(root, "docs/legacy-apps-archive.md"))) {
     if (!legacyArchive.includes(fragment)) failures.push(`legacy apps archive missing ${fragment}`);
   }
 }
+if (!fs.existsSync(path.join(root, "docs/vercel-legacy-project-cleanup.md"))) {
+  failures.push("Vercel legacy project cleanup document missing");
+} else {
+  const vercelCleanup = read("docs/vercel-legacy-project-cleanup.md");
+  for (const fragment of ["bobs-multi-tool-main", "bobs-multi-tool-cron-generator", "BOBOB_REQUIRE_NO_LEGACY_VERCEL", "harness:deployment-status"]) {
+    if (!vercelCleanup.includes(fragment)) failures.push(`Vercel legacy cleanup doc missing ${fragment}`);
+  }
+}
 
 const legacyHarness = read("scripts/harness/legacy-main-only.mjs");
 for (const fragment of ["package-lock.json", "stale workspaces", "node_modules/turbo"]) {
   if (!legacyHarness.includes(fragment)) failures.push(`legacy harness missing ${fragment}`);
+}
+if (!fs.existsSync(path.join(root, "scripts/harness/deployment-status.mjs"))) {
+  failures.push("deployment status harness missing");
+} else {
+  const deploymentStatusHarness = read("scripts/harness/deployment-status.mjs");
+  for (const fragment of ["bobs-multi-tool-main", "bobs-multi-tool-cron-generator", "BOBOB_REQUIRE_NO_LEGACY_VERCEL", "docs/vercel-legacy-project-cleanup.md"]) {
+    if (!deploymentStatusHarness.includes(fragment)) failures.push(`deployment status harness missing ${fragment}`);
+  }
 }
 
 const sourceFiles = [
@@ -328,6 +354,9 @@ if (packageJson.scripts?.["harness:seo-templates"] !== "node scripts/harness/seo
 }
 if (packageJson.scripts?.["harness:seo-measured"] !== "BOBOB_REQUIRE_MEASURED_SEO=1 node scripts/harness/seo-opportunity-report.mjs") {
   failures.push("root package scripts must expose harness:seo-measured");
+}
+if (packageJson.scripts?.["harness:deployment-status"] !== "node scripts/harness/deployment-status.mjs") {
+  failures.push("root package scripts must expose harness:deployment-status");
 }
 if (packageJson.devDependencies?.turbo || packageJson.scripts?.clean?.includes("turbo")) {
   failures.push("single-app workspace must not keep turbo dependency or turbo clean script");

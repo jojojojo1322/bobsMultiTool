@@ -420,6 +420,11 @@ for (const fragment of [
   'vi: "Định dạng JSON',
   'th: "จัดรูปแบบ JSON',
   'ar: "نسق JSON',
+  "कॉपी से पहले समीक्षा",
+  "menyalin output",
+  "trực tuyến miễn phí",
+  "ก่อนคัดลอกผลลัพธ์",
+  "قبل نسخ النتيجة",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`long-tail priority locale prose missing: ${fragment}`);
 }

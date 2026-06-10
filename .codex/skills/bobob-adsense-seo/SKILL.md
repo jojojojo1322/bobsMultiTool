@@ -35,5 +35,6 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Use `BOBOB_SEO_REPORT_FORMAT=markdown` and `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` when a human review artifact is needed for measured title/description decisions. Keep measured CSVs and markdown reports out of git.
 - Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when Search Console/AdSense export headers, copy targets, or measured export instructions change.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.
+- Use `npm run harness:deployment-status` to verify that the canonical `bobs-multi-tool-main` Vercel deployment succeeds separately from stale legacy Vercel project statuses. After external project cleanup, run `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status`.
 - Keep privacy and terms pages aligned with the actual local-first utility behavior.
 - If SEO, AdSense, locale, redirect, schema, or country detection policy changes, update AGENTS.md and this skill before handoff.
