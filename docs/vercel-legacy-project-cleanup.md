@@ -28,13 +28,28 @@ npm run harness:deployment-status
 
 Before external cleanup, this command should pass when the main Vercel project is successful and list the legacy contexts as cleanup work. Older commits can keep historical GitHub status entries even after the projects are deleted.
 
+When GitHub no longer exposes a project-specific Vercel commit status, use the Vercel project API fallback:
+
+```bash
+VERCEL_TOKEN=... \
+BOBOB_REQUIRE_MAIN_VERCEL=1 \
+npm run harness:deployment-status
+```
+
 After the legacy Vercel projects are deleted or disconnected from the GitHub repository, run the strict gate:
 
 ```bash
 BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status
 ```
 
-The strict gate should pass only when the main deployment succeeds and no legacy Vercel status contexts remain.
+The full strict gate should pass only when the main deployment succeeds and no legacy Vercel status contexts remain:
+
+```bash
+VERCEL_TOKEN=... \
+BOBOB_REQUIRE_MAIN_VERCEL=1 \
+BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 \
+npm run harness:deployment-status
+```
 
 ## Operational Notes
 

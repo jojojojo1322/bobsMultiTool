@@ -81,6 +81,6 @@ Include:
 - Server route tools reject private/reserved hosts, validate redirect targets, and rate-limit repeated requests.
 - No unused ad placeholder components or fake publisher IDs remain in the public app.
 - No standalone legacy app directories, `packages/ui`, `turbo.json`, `turbo` dependency, or stale legacy workspace entries in `package-lock.json` remain. Old public entry paths should be verified as permanent redirects to `/tools/{slug}`, with rationale recorded in `docs/legacy-apps-archive.md`.
-- Deployment status should show `Vercel – bobs-multi-tool-main` as successful. Stale legacy Vercel project statuses are external cleanup work; after deletion or Git unlinking, `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status` should pass.
+- Deployment status should show `Vercel – bobs-multi-tool-main` as successful or use the Vercel project API fallback with `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1`. Stale legacy Vercel project statuses are external cleanup work; after deletion or Git unlinking, `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status` should pass.
 - Clean build behavior with no build-time external font downloads.
 - The agent-skills-sync gate whenever feature, policy, SEO, theme, or i18n rules changed.
