@@ -199,6 +199,13 @@ for (const locale of nonEnglishLocales) {
     'privacy: "Privacy"',
     'serverRequired: "Server route"',
     'localOnly: "Browser local"',
+    'badge: "Developer workbench"',
+    "Workbench developer",
+    "Workbench lap trinh",
+    "metadata, locale",
+    "metadata、locale",
+    "smoke check",
+    "smoke checks",
   ]) {
     if (block.includes(englishFragment)) failures.push(`${locale} dictionary should not copy exact English fragment: ${englishFragment}`);
   }
@@ -210,9 +217,24 @@ for (const fragment of [
   "route server",
   "route خادم",
   "서버 route",
+  "เครื่องมือ developer",
+  "व्यावहारिक developer utilities",
+  "Browser यह",
+  "developer tool है",
+  "secret production",
+  "workflow development",
+  "Workflow utilitas",
+  "Workflow tien",
+  "workflow เครื่อง",
+  "workflow ใช้",
+  "workflow Web SEO",
+  "Workbench de desenvolvimento",
+  "developer utilities की",
+  "Tool browser cepat",
 ]) {
   if (localizedContent.includes(fragment)) failures.push(`localized content should avoid mixed untranslated visible fragment: ${fragment}`);
   if (legalContent.includes(fragment)) failures.push(`localized legal content should avoid mixed untranslated visible fragment: ${fragment}`);
+  if (dictionaries.includes(fragment)) failures.push(`localized dictionary should avoid mixed untranslated visible fragment: ${fragment}`);
 }
 
 for (const fragment of [
@@ -253,21 +275,21 @@ for (const fragment of [
   "Five-field cron se minute",
   "Guia dos meta tags que importam",
   "MD5, SHA-1, SHA-256 aur SHA-512",
-  "workflow Web SEO สำหรับ robots.txt",
+  "ขั้นตอน Web SEO สำหรับ robots.txt",
   "سير عمل لترتيب النص وإزالة التكرار",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`long-tail priority guide description missing: ${fragment}`);
 }
 
 for (const fragment of [
-  "व्यावहारिक developer utilities",
-  "เครื่องมือ developer ที่ใช้งานจริง",
+  "व्यावहारिक डेवलपर यूटिलिटी",
+  "เครื่องมือนักพัฒนาที่ใช้งานจริง",
   "أدوات مطور عملية",
 ]) {
   if (!dictionaries.includes(fragment)) failures.push(`localized metadata override missing: ${fragment}`);
 }
 
-for (const fragment of ["Sicherer Generator-Workflow", "安全なランダム生成フロー", "보안 랜덤 생성 흐름", "سير عمل generator آمن"]) {
+for (const fragment of ["Sicherer Generator-Ablauf", "安全なランダム生成フロー", "보안 랜덤 생성 흐름", "سير عمل مولد آمن"]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized guide topic sample missing: ${fragment}`);
 }
 

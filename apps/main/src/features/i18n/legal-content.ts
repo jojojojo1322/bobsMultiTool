@@ -294,26 +294,26 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   hi: {
     privacy: {
       title: "गोपनीयता नीति",
-      description: "Bob's Multi Tool developer utilities की गोपनीयता नीति.",
+      description: "Bob's Multi Tool डेवलपर उपयोगिताओं की गोपनीयता नीति.",
       lastUpdated: "अंतिम अपडेट: 5 जून 2026",
-      backToTools: "टूल पर वापस",
+      backToTools: "साधनों पर वापस",
       sections: [
-        { heading: "टूल में process होने वाली जानकारी", body: "Bob's Multi Tool local browser utilities के लिए बनाया गया है. Formatting, encoding, decoding, generation और conversion के input जहां संभव हो browser में process होते हैं और यह site उन्हें store नहीं करती." },
-        { heading: "सर्वर जांच", body: "HTTP status और DNS tools छोटे server endpoint का उपयोग करते हैं क्योंकि browser ये checks सीधे नहीं कर सकता. Private internal hostnames या confidential data submit न करें." },
-        { heading: "Analytics और advertising", body: "Site Google Analytics और Google AdSense use कर सकती है. ये third-party services अपनी policies के अनुसार cookies या similar technologies use कर सकती हैं." },
+        { heading: "साधनों में संसाधित जानकारी", body: "Bob's Multi Tool स्थानीय ब्राउज़र उपयोगिताओं के लिए बनाया गया है. फॉर्मैट, एन्कोड, डिकोड, जनरेशन और कन्वर्जन के इनपुट जहां संभव हो ब्राउज़र में संसाधित होते हैं और यह साइट उन्हें सहेजती नहीं है." },
+        { heading: "सर्वर जांच", body: "HTTP status और DNS साधन छोटे सर्वर endpoint का उपयोग करते हैं क्योंकि ब्राउज़र ये जांच सीधे नहीं कर सकता. निजी internal hostname या गोपनीय data submit न करें." },
+        { heading: "Analytics और विज्ञापन", body: "साइट Google Analytics और Google AdSense का उपयोग कर सकती है. ये third-party services अपनी policies के अनुसार cookies या मिलती-जुलती technologies use कर सकती हैं." },
       ],
       contact: { heading: "संपर्क", body: "इस policy के बारे में सवाल यहां भेजे जा सकते हैं" },
     },
     terms: {
       title: "सेवा शर्तें",
-      description: "Bob's Multi Tool developer utilities की सेवा शर्तें.",
+      description: "Bob's Multi Tool डेवलपर उपयोगिताओं की सेवा शर्तें.",
       lastUpdated: "अंतिम अपडेट: 5 जून 2026",
-      backToTools: "टूल पर वापस",
+      backToTools: "साधनों पर वापस",
       sections: [
-        { heading: "सेवा का उपयोग", body: "Bob's Multi Tool development workflows के लिए free browser-based utilities देता है. Production systems में उपयोग करने से पहले tool output verify करें." },
-        { heading: "स्वीकार्य उपयोग", body: "Service disrupt न करें, abusive traffic automate न करें, tools को unlawful activity में use न करें, और ऐसा private data submit न करें जिसे browser utility में process करने की अनुमति नहीं है." },
-        { heading: "थर्ड-पार्टी सामग्री", body: "कुछ tools third-party services या server endpoints use कर सकते हैं. Bob's Multi Tool third-party websites, DNS providers या remote endpoints को control नहीं करता." },
-        { heading: "Advertising", body: "Approval के बाद site Google AdSense ads दिखा सकती है. Advertisement content third-party networks से serve होता है और उनकी policies के अनुसार personalize हो सकता है." },
+        { heading: "सेवा का उपयोग", body: "Bob's Multi Tool विकास कार्यों के लिए मुफ्त ब्राउज़र आधारित उपयोगिताएं देता है. Production systems में उपयोग करने से पहले साधन का output verify करें." },
+        { heading: "स्वीकार्य उपयोग", body: "Service disrupt न करें, abusive traffic automate न करें, साधनों को unlawful activity में use न करें, और ऐसा private data submit न करें जिसे browser utility में process करने की अनुमति नहीं है." },
+        { heading: "थर्ड-पार्टी सामग्री", body: "कुछ साधन third-party services या server endpoints use कर सकते हैं. Bob's Multi Tool third-party websites, DNS providers या remote endpoints को control नहीं करता." },
+        { heading: "विज्ञापन", body: "Approval के बाद site Google AdSense ads दिखा सकती है. Advertisement content third-party networks से serve होता है और उनकी policies के अनुसार personalize हो सकता है." },
       ],
       contact: { heading: "संपर्क", body: "इन terms के बारे में सवाल यहां भेजे जा सकते हैं" },
     },
@@ -321,25 +321,25 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   id: {
     privacy: {
       title: "Kebijakan privasi",
-      description: "Kebijakan privasi untuk utilitas developer Bob's Multi Tool.",
+      description: "Kebijakan privasi untuk utilitas pengembang Bob's Multi Tool.",
       lastUpdated: "Terakhir diperbarui: 5 Juni 2026",
-      backToTools: "Kembali ke tool",
+      backToTools: "Kembali ke alat",
       sections: [
-        { heading: "Informasi yang diproses tool", body: "Bob's Multi Tool dirancang sebagai utilitas lokal di browser. Input untuk format, encoding, decoding, generation, dan conversion diproses di browser jika memungkinkan dan tidak disimpan oleh situs ini." },
-        { heading: "Pemeriksaan lewat server", body: "Tool HTTP status dan DNS memakai endpoint server kecil karena browser tidak bisa melakukan pemeriksaan itu secara langsung. Jangan kirim hostname internal privat atau data rahasia." },
+        { heading: "Informasi yang diproses alat", body: "Bob's Multi Tool dirancang sebagai utilitas lokal di browser. Masukan untuk format, encoding, decoding, pembuatan, dan konversi diproses di browser jika memungkinkan dan tidak disimpan oleh situs ini." },
+        { heading: "Pemeriksaan lewat server", body: "Alat HTTP status dan DNS memakai endpoint server kecil karena browser tidak bisa melakukan pemeriksaan itu secara langsung. Jangan kirim hostname internal privat atau data rahasia." },
         { heading: "Analitik dan iklan", body: "Situs dapat memakai Google Analytics dan Google AdSense. Layanan pihak ketiga ini dapat memakai cookie atau teknologi serupa sesuai kebijakan mereka." },
       ],
       contact: { heading: "Kontak", body: "Pertanyaan tentang kebijakan ini dapat dikirim ke" },
     },
     terms: {
       title: "Ketentuan layanan",
-      description: "Ketentuan layanan untuk utilitas developer Bob's Multi Tool.",
+      description: "Ketentuan layanan untuk utilitas pengembang Bob's Multi Tool.",
       lastUpdated: "Terakhir diperbarui: 5 Juni 2026",
-      backToTools: "Kembali ke tool",
+      backToTools: "Kembali ke alat",
       sections: [
-        { heading: "Penggunaan layanan", body: "Bob's Multi Tool menyediakan utilitas browser gratis untuk workflow development. Output tool harus diverifikasi sebelum dipakai di sistem produksi." },
-        { heading: "Penggunaan yang diterima", body: "Anda setuju untuk tidak mengganggu layanan, mengotomasi traffic abusif, memakai tool untuk aktivitas ilegal, atau mengirim data privat yang tidak boleh diproses di utilitas browser." },
-        { heading: "Konten pihak ketiga", body: "Beberapa tool dapat memakai layanan pihak ketiga atau endpoint server. Bob's Multi Tool tidak mengontrol website pihak ketiga, provider DNS, atau endpoint remote." },
+        { heading: "Penggunaan layanan", body: "Bob's Multi Tool menyediakan utilitas browser gratis untuk alur kerja pengembangan. Output alat harus diverifikasi sebelum dipakai di sistem produksi." },
+        { heading: "Penggunaan yang diterima", body: "Anda setuju untuk tidak mengganggu layanan, mengotomasi traffic abusif, memakai alat untuk aktivitas ilegal, atau mengirim data privat yang tidak boleh diproses di utilitas browser." },
+        { heading: "Konten pihak ketiga", body: "Beberapa alat dapat memakai layanan pihak ketiga atau endpoint server. Bob's Multi Tool tidak mengontrol website pihak ketiga, provider DNS, atau endpoint remote." },
         { heading: "Iklan", body: "Setelah disetujui, situs dapat menampilkan iklan Google AdSense. Konten iklan disajikan oleh jaringan pihak ketiga dan dapat dipersonalisasi sesuai kebijakan mereka." },
       ],
       contact: { heading: "Kontak", body: "Pertanyaan tentang ketentuan ini dapat dikirim ke" },
@@ -364,7 +364,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       lastUpdated: "Cap nhat lan cuoi: 5 thang 6, 2026",
       backToTools: "Quay lai cong cu",
       sections: [
-        { heading: "Su dung dich vu", body: "Bob's Multi Tool cung cap tien ich mien phi tren trinh duyet cho workflow lap trinh. Can kiem tra output truoc khi dua vao he thong production." },
+        { heading: "Su dung dich vu", body: "Bob's Multi Tool cung cap tien ich mien phi tren trinh duyet cho quy trinh lap trinh. Can kiem tra output truoc khi dua vao he thong production." },
         { heading: "Su dung chap nhan duoc", body: "Ban dong y khong lam gian doan dich vu, khong tu dong hoa traffic lam dung, khong dung cong cu cho hoat dong bat hop phap, va khong gui du lieu rieng tu ma ban khong duoc phep xu ly trong tien ich trinh duyet." },
         { heading: "Noi dung ben thu ba", body: "Mot so cong cu co the dung dich vu ben thu ba hoac endpoint server. Bob's Multi Tool khong kiem soat website ben thu ba, nha cung cap DNS hoac endpoint tu xa." },
         { heading: "Quang cao", body: "Sau khi duoc chap thuan, site co the hien thi quang cao Google AdSense. Noi dung quang cao do mang ben thu ba phuc vu va co the duoc ca nhan hoa theo chinh sach cua ho." },
@@ -375,7 +375,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   th: {
     privacy: {
       title: "นโยบายความเป็นส่วนตัว",
-      description: "นโยบายความเป็นส่วนตัวสำหรับเครื่องมือ developer ของ Bob's Multi Tool",
+      description: "นโยบายความเป็นส่วนตัวสำหรับเครื่องมือนักพัฒนาของ Bob's Multi Tool",
       lastUpdated: "อัปเดตล่าสุด: 5 มิถุนายน 2026",
       backToTools: "กลับไปเครื่องมือ",
       sections: [
@@ -387,11 +387,11 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
     },
     terms: {
       title: "ข้อกำหนดการใช้บริการ",
-      description: "ข้อกำหนดการใช้บริการสำหรับเครื่องมือ developer ของ Bob's Multi Tool",
+      description: "ข้อกำหนดการใช้บริการสำหรับเครื่องมือนักพัฒนาของ Bob's Multi Tool",
       lastUpdated: "อัปเดตล่าสุด: 5 มิถุนายน 2026",
       backToTools: "กลับไปเครื่องมือ",
       sections: [
-        { heading: "การใช้บริการ", body: "Bob's Multi Tool ให้บริการยูทิลิตี้บนเบราว์เซอร์ฟรีสำหรับ workflow นักพัฒนา ควรตรวจ output ก่อนนำไปใช้กับระบบ production" },
+        { heading: "การใช้บริการ", body: "Bob's Multi Tool ให้บริการยูทิลิตี้บนเบราว์เซอร์ฟรีสำหรับขั้นตอนงานนักพัฒนา ควรตรวจผลลัพธ์ก่อนนำไปใช้กับระบบ production" },
         { heading: "การใช้งานที่ยอมรับได้", body: "คุณตกลงว่าจะไม่รบกวนบริการ ไม่ทำ traffic อัตโนมัติแบบละเมิด ไม่ใช้เครื่องมือเพื่อกิจกรรมผิดกฎหมาย และไม่ส่งข้อมูลส่วนตัวที่คุณไม่มีสิทธิ์ประมวลผลในเครื่องมือเบราว์เซอร์" },
         { heading: "เนื้อหาจากภายนอก", body: "บางเครื่องมืออาจใช้บริการภายนอกหรือ endpoint server Bob's Multi Tool ไม่ควบคุมเว็บไซต์ภายนอก ผู้ให้บริการ DNS หรือ endpoint ระยะไกล" },
         { heading: "โฆษณา", body: "หลังได้รับอนุมัติ เว็บไซต์อาจแสดงโฆษณา Google AdSense เนื้อหาโฆษณามาจาก network ภายนอกและอาจถูกปรับให้เหมาะตามนโยบายของบริการนั้น" },
