@@ -44,6 +44,10 @@ const reportOutputPath = process.env.BOBOB_SEO_REPORT_OUT;
 const minImpressions = Number(process.env.BOBOB_MIN_IMPRESSIONS ?? 100);
 const lowCtr = Number(process.env.BOBOB_LOW_CTR ?? 0.025);
 const lowRpm = Number(process.env.BOBOB_LOW_RPM ?? 1);
+const requireMeasuredSeo = process.env.BOBOB_REQUIRE_MEASURED_SEO === "1";
+const requiredMeasuredTiers = parseList(process.env.BOBOB_REQUIRED_MEASURED_TIERS ?? "core");
+const requiredMeasuredPaths = parseList(process.env.BOBOB_REQUIRED_MEASURED_PATHS).map((item) => pathOnly(item) || item);
+const requiredMeasuredSources = new Set(parseList(process.env.BOBOB_REQUIRED_MEASURED_SOURCES ?? "search-console,adsense"));
 const localePrefix = /^\/(?:ko|ja|zh-CN|zh-TW|es|pt-BR|de|fr|hi|id|vi|th|ar)(?=\/)/;
 const inputWarnings = [];
 const clusterByCategory = {
@@ -57,6 +61,13 @@ const clusterByCategory = {
   SEO: "seo-webmaster",
   Network: "network-debugging",
 };
+
+function parseList(value) {
+  return String(value ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
 function countDelimiter(line, delimiter) {
   let count = 0;
@@ -473,6 +484,51 @@ function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
     .map(({ score, ...item }) => item);
 }
 
+function measuredCoverage(contentItems, inventoryByPath, searchRowsByPage, adsenseRowsByPage) {
+  const requiredPages = requiredMeasuredPaths.length
+    ? requiredMeasuredPaths
+    : contentItems
+        .filter((item) => requiredMeasuredTiers.includes(item.monetizationTier) || requiredMeasuredTiers.includes(item.demandTier))
+        .map((item) => item.path);
+
+  const pageRows = requiredPages.map((page) => {
+    const canonicalPath = canonicalContentPath(page) || pathOnly(page);
+    const item = inventoryByPath.get(canonicalPath);
+    const missingInputs = [];
+    if (!item) {
+      missingInputs.push("registered tool/guide page");
+    } else {
+      if (requiredMeasuredSources.has("search-console") && !(searchRowsByPage.get(canonicalPath) ?? []).length) {
+        missingInputs.push("Search Console page/query rows");
+      }
+      if (requiredMeasuredSources.has("adsense") && !(adsenseRowsByPage.get(canonicalPath) ?? []).length) {
+        missingInputs.push("AdSense page/RPM rows");
+      }
+    }
+    return {
+      path: canonicalPath || page,
+      title: item?.toolName ?? "Unknown page",
+      contentType: item?.contentType ?? "unknown",
+      monetizationTier: item?.monetizationTier ?? "unknown",
+      demandTier: item?.demandTier ?? "unknown",
+      missingInputs,
+    };
+  });
+  const missingRequiredPages = pageRows.filter((row) => row.missingInputs.length > 0);
+  return {
+    requiredMode: requiredMeasuredPaths.length ? "paths" : "tiers",
+    requiredTiers: requiredMeasuredPaths.length ? [] : requiredMeasuredTiers,
+    requiredPaths: requiredMeasuredPaths,
+    requiredSources: Array.from(requiredMeasuredSources),
+    requiredPageCount: pageRows.length,
+    coveredPageCount: pageRows.length - missingRequiredPages.length,
+    searchConsoleRows: scRows.length,
+    adsenseRows: adRows.length,
+    pass: inputWarnings.length === 0 && missingRequiredPages.length === 0,
+    missingRequiredPages,
+  };
+}
+
 function markdownTable(headers, rows) {
   if (!rows.length) return "_None._";
   const escape = (value) => String(value ?? "").replace(/\|/g, "\\|").replace(/\n/g, " ");
@@ -505,6 +561,32 @@ function formatMarkdownReport(report) {
     markdownTable(
       ["Warning"],
       report.inputWarnings.map((warning) => [warning]),
+    ),
+    "",
+    "## Measured Coverage",
+    "",
+    markdownTable(
+      ["Field", "Value"],
+      [
+        ["Strict gate enabled", report.inputs.requireMeasuredSeo ? "yes" : "no"],
+        ["Required mode", report.measuredCoverage.requiredMode],
+        ["Required tiers", report.measuredCoverage.requiredTiers.join(", ") || "n/a"],
+        ["Required paths", report.measuredCoverage.requiredPaths.join(", ") || "n/a"],
+        ["Required sources", report.measuredCoverage.requiredSources.join(", ")],
+        ["Covered pages", `${report.measuredCoverage.coveredPageCount}/${report.measuredCoverage.requiredPageCount}`],
+        ["Search Console rows", report.measuredCoverage.searchConsoleRows],
+        ["AdSense rows", report.measuredCoverage.adsenseRows],
+      ],
+    ),
+    "",
+    markdownTable(
+      ["Path", "Type", "Tier", "Missing measured inputs"],
+      report.measuredCoverage.missingRequiredPages.map((row) => [
+        row.path,
+        row.contentType,
+        `${row.monetizationTier}/${row.demandTier}`,
+        row.missingInputs.join(", "),
+      ]),
     ),
     "",
     "## Title And Description Recommendations",
@@ -643,6 +725,7 @@ const unsupportedMeasuredPages = measuredRows
   .filter((row) => row.page && (!row.canonicalPath || !inventoryByPath.has(row.canonicalPath)))
   .slice(0, 25);
 const measurementBacklogRows = measurementBacklog(contentInventory.all, searchRowsByPage, adsenseRowsByPage);
+const measuredCoverageSummary = measuredCoverage(contentInventory.all, inventoryByPath, searchRowsByPage, adsenseRowsByPage);
 
 const report = {
   inputs: {
@@ -657,11 +740,16 @@ const report = {
     minImpressions,
     lowCtr,
     lowRpm,
+    requireMeasuredSeo,
+    requiredMeasuredTiers,
+    requiredMeasuredPaths,
+    requiredMeasuredSources: Array.from(requiredMeasuredSources),
   },
   inventoryCount: contentInventory.all.length,
   toolInventoryCount: contentInventory.tools.length,
   guideInventoryCount: contentInventory.guides.length,
   inputWarnings,
+  measuredCoverage: measuredCoverageSummary,
   searchConsoleOpportunities: scOpportunities,
   adsenseOpportunities: adOpportunities,
   metadataWarnings,
@@ -675,3 +763,17 @@ emitReport(report);
 if (!searchCsvPath) console.error(`No Search Console CSV/TSV provided; set BOBOB_SEARCH_CONSOLE_CSV or create one of ${searchCsvInput.defaultPaths.join(", ")}. Search Console CTR opportunities were skipped.`);
 if (!adsenseCsvPath) console.error(`No AdSense CSV/TSV provided; set BOBOB_ADSENSE_CSV or create one of ${adsenseCsvInput.defaultPaths.join(", ")}. AdSense RPM opportunities were skipped.`);
 for (const warning of inputWarnings) console.error(`SEO input warning: ${warning}`);
+if (requireMeasuredSeo && !measuredCoverageSummary.pass) {
+  console.error(
+    [
+      "Measured SEO gate failed.",
+      `Covered ${measuredCoverageSummary.coveredPageCount}/${measuredCoverageSummary.requiredPageCount} required pages.`,
+      `Required sources: ${measuredCoverageSummary.requiredSources.join(", ")}.`,
+      "Add Search Console/AdSense exports or narrow BOBOB_REQUIRED_MEASURED_PATHS for a targeted review.",
+    ].join(" "),
+  );
+  for (const row of measuredCoverageSummary.missingRequiredPages.slice(0, 20)) {
+    console.error(`${row.path}: missing ${row.missingInputs.join(", ")}`);
+  }
+  process.exit(1);
+}

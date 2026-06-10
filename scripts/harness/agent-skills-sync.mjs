@@ -28,6 +28,7 @@ const checks = [
   ["agents", "Locale override blocks"],
   ["agents", "privacy/server/local chips"],
   ["agents", "Long-tail locale templates"],
+  ["agents", "mixed-script accidents"],
   ["agents", "Hindi acquisition copy"],
   ["agents", "Hindi reusable templates"],
   ["agents", "Indonesian reusable templates"],
@@ -48,6 +49,9 @@ const checks = [
   ["agents", "/{locale}/tools"],
   ["agents", "SearchAction schema"],
   ["agents", "harness:seo-opportunities"],
+  ["agents", "harness:seo-measured"],
+  ["agents", "BOBOB_REQUIRE_MEASURED_SEO"],
+  ["agents", "BOBOB_REQUIRED_MEASURED_PATHS"],
   ["agents", "reports/search-console.csv"],
   ["agents", "reports/search-console.tsv"],
   ["agents", "harness:seo-opportunities:smoke"],
@@ -89,6 +93,7 @@ const checks = [
   ["localization", "Common override blocks"],
   ["localization", "privacy/server/local chips"],
   ["localization", "Long-tail locale templates"],
+  ["localization", "mixed-script accidents"],
   ["localization", "Hindi acquisition copy"],
   ["localization", "Hindi reusable templates"],
   ["localization", "Indonesian reusable templates"],
@@ -115,6 +120,9 @@ const checks = [
   ["seo", "country"],
   ["seo", "SearchAction schema"],
   ["seo", "harness:seo-opportunities"],
+  ["seo", "harness:seo-measured"],
+  ["seo", "BOBOB_REQUIRE_MEASURED_SEO"],
+  ["seo", "BOBOB_REQUIRED_MEASURED_PATHS"],
   ["seo", "reports/search-console.csv"],
   ["seo", "reports/search-console.tsv"],
   ["seo", "harness:seo-opportunities:smoke"],
@@ -139,6 +147,9 @@ const checks = [
   ["verification", "harness:layout"],
   ["verification", "harness:visual"],
   ["verification", "harness:seo-opportunities"],
+  ["verification", "harness:seo-measured"],
+  ["verification", "BOBOB_REQUIRE_MEASURED_SEO"],
+  ["verification", "BOBOB_REQUIRED_MEASURED_PATHS"],
   ["verification", "reports/search-console.csv"],
   ["verification", "reports/search-console.tsv"],
   ["verification", "harness:seo-opportunities:smoke"],
@@ -163,6 +174,9 @@ const checks = [
   ["product", "40+"],
   ["product", "localized tool directories"],
   ["product", "harness:seo-opportunities"],
+  ["product", "harness:seo-measured"],
+  ["product", "BOBOB_REQUIRE_MEASURED_SEO"],
+  ["product", "BOBOB_REQUIRED_MEASURED_PATHS"],
   ["product", "reports/search-console.csv"],
   ["product", "reports/search-console.tsv"],
   ["product", "harness:seo-opportunities:smoke"],
@@ -235,7 +249,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
@@ -243,7 +257,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
   failures.push("SEO opportunity report smoke harness missing");
 } else {
   const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
-  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }
@@ -278,6 +292,9 @@ if (JSON.stringify(packageJson.workspaces) !== JSON.stringify(["apps/main"])) {
 }
 if (packageJson.scripts?.["harness:seo-opportunities:smoke"] !== "node scripts/harness/seo-opportunity-report-smoke.mjs") {
   failures.push("root package scripts must expose harness:seo-opportunities:smoke");
+}
+if (packageJson.scripts?.["harness:seo-measured"] !== "BOBOB_REQUIRE_MEASURED_SEO=1 node scripts/harness/seo-opportunity-report.mjs") {
+  failures.push("root package scripts must expose harness:seo-measured");
 }
 if (packageJson.devDependencies?.turbo || packageJson.scripts?.clean?.includes("turbo")) {
   failures.push("single-app workspace must not keep turbo dependency or turbo clean script");

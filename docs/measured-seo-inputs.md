@@ -47,3 +47,23 @@ When measured CSV exports are missing or only cover a few pages, the report incl
 Use that list to decide which pages to export first from Search Console and AdSense. It is sorted toward core monetization pages, core demand pages, tools before guides, and server-backed checks when ties are close.
 
 Do not rewrite public title or description copy from `measurementBacklog` alone. Use it to collect measured rows, then apply copy changes from `titleDescriptionRecommendations`.
+
+## Strict measured gate
+
+When a task is explicitly about post-deploy measured SEO improvement, run:
+
+```bash
+npm run harness:seo-measured
+```
+
+That command sets `BOBOB_REQUIRE_MEASURED_SEO=1` and fails until required core pages have both Search Console page/query rows and AdSense page/RPM rows. This is expected to fail before private exports exist.
+
+For a focused review of a few pages, narrow the gate:
+
+```bash
+BOBOB_REQUIRE_MEASURED_SEO=1 \
+BOBOB_REQUIRED_MEASURED_PATHS=/tools/json-formatter,/tools/dns-lookup \
+npm run harness:seo-opportunities
+```
+
+Use focused paths only while reviewing a specific title/description change. Final core-page coverage should use the default tier-based gate.

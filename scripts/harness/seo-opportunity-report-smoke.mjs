@@ -26,6 +26,16 @@ function runReport(env) {
   return { stdout: result.stdout, stderr: result.stderr };
 }
 
+function runReportAllowFailure(env) {
+  const result = spawnSync("node", ["scripts/harness/seo-opportunity-report.mjs"], {
+    cwd: root,
+    env: { ...process.env, ...env },
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  return { status: result.status, stdout: result.stdout, stderr: result.stderr };
+}
+
 function assert(condition, message) {
   if (!condition) failures.push(message);
 }
@@ -36,6 +46,7 @@ const searchConsoleCsv = writeFixture(
     "Page,Query,Impressions,Clicks,CTR,Position",
     "https://www.bobob.app/tools/json-formatter,json formatter online,1200,12,1%,8",
     "https://www.bobob.app/ko/tools/dns-lookup,dns lookup,900,9,1%,6",
+    "https://www.bobob.app/tools/uuid-generator,uuid generator,700,7,1%,5",
     "https://www.bobob.app/guides/seo-meta-tags,meta tags guide,800,8,1%,7",
     "https://www.bobob.app/not-tracked,random page,500,5,1%,5",
   ].join("\n"),
@@ -45,6 +56,7 @@ const adsenseCsv = writeFixture(
   "adsense.csv",
   [
     "Page,Impressions,Page RPM,Estimated earnings,CTR",
+    "https://www.bobob.app/tools/json-formatter,1000,0.5,0.50,0.7%",
     "https://www.bobob.app/tools/dns-lookup,700,0.4,0.28,0.8%",
     "https://www.bobob.app/pt-BR/guides/hash-generator-security,400,0.3,0.12,0.7%",
   ].join("\n"),
@@ -61,13 +73,34 @@ assert(!validRun.stderr.includes("SEO input warning"), "valid measured CSV fixtu
 assert(report.inventoryCount === 64, "SEO opportunity report should cover 48 tools plus 16 guides");
 assert(report.toolInventoryCount === 48, "SEO opportunity report should include 48 tool pages");
 assert(report.guideInventoryCount === 16, "SEO opportunity report should include 16 guide pages");
+assert(report.measuredCoverage.requiredMode === "tiers", "default measured coverage should use tier mode");
+assert(report.measuredCoverage.requiredSources.includes("search-console") && report.measuredCoverage.requiredSources.includes("adsense"), "measured coverage should require Search Console and AdSense by default");
 assert(report.searchConsoleOpportunities.some((row) => row.page === "/tools/json-formatter" && row.query === "json formatter online"), "Search Console low-CTR tool opportunity missing");
 assert(report.adsenseOpportunities.some((row) => row.page === "/tools/dns-lookup" && row.rpm === 0.4), "AdSense low-RPM tool opportunity missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/tools/json-formatter" && item.suggestedTitle.includes("JSON Formatter")), "tool title/description recommendation missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/guides/seo-meta-tags" && item.suggestedTitle.includes("Guide")), "guide title/description recommendation missing");
 assert(report.measurementBacklog.some((item) => item.path === "/tools/regex-tester" && item.missingInputs.includes("Search Console page/query rows")), "measurement backlog should include unmeasured core tool pages");
-assert(report.measurementBacklog.some((item) => item.path === "/tools/json-formatter" && item.missingInputs.includes("AdSense page/RPM rows")), "measurement backlog should include partially measured tool pages");
 assert(report.unsupportedMeasuredPages.some((row) => row.page === "/not-tracked"), "unsupported measured page warning missing");
+
+const strictPass = runReport({
+  BOBOB_SEARCH_CONSOLE_CSV: searchConsoleCsv,
+  BOBOB_ADSENSE_CSV: adsenseCsv,
+  BOBOB_REQUIRE_MEASURED_SEO: "1",
+  BOBOB_REQUIRED_MEASURED_PATHS: "/tools/json-formatter,/tools/dns-lookup",
+});
+const strictPassReport = JSON.parse(strictPass.stdout);
+assert(strictPassReport.measuredCoverage.pass === true, "strict measured SEO gate should pass for fully covered fixture pages");
+assert(strictPass.stderr === "", "strict measured SEO gate should not warn when fixture coverage is complete");
+
+const strictFail = runReportAllowFailure({
+  BOBOB_SEARCH_CONSOLE_CSV: searchConsoleCsv,
+  BOBOB_ADSENSE_CSV: adsenseCsv,
+  BOBOB_REQUIRE_MEASURED_SEO: "1",
+  BOBOB_REQUIRED_MEASURED_PATHS: "/tools/uuid-generator",
+});
+assert(strictFail.status === 1, "strict measured SEO gate should fail when required page coverage is partial");
+assert(strictFail.stderr.includes("Measured SEO gate failed."), "strict measured SEO failure should explain the gate failure");
+assert(strictFail.stderr.includes("/tools/uuid-generator: missing AdSense page/RPM rows"), "strict measured SEO failure should list missing AdSense page coverage");
 
 const searchConsoleTsv = writeFixture(
   "search-console.tsv",

@@ -12,6 +12,8 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Prefer default local measured exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv` for quick review; use env vars only when the files live elsewhere.
 - Use `measurementBacklog` to decide which core pages need measured export coverage first, but do not treat it as evidence for title/description rewrites.
 - Treat SEO report `inputWarnings` as a data quality gate; a missing header can make measured opportunities look empty.
+- Run `npm run harness:seo-measured` before treating Search Console/AdSense-driven title or description work as complete. The gate uses `BOBOB_REQUIRE_MEASURED_SEO=1` and should fail when core measured coverage is missing.
+- Use `BOBOB_REQUIRED_MEASURED_PATHS` only for targeted opportunity review, not for the final core-page monetization readiness claim.
 - Keep `npm run harness:seo-opportunities:smoke` green so the measured SEO workflow is tested without real private exports.
 - For stakeholder review, generate the Markdown SEO report with `BOBOB_SEO_REPORT_FORMAT=markdown` and keep title/description changes tied to measured rows.
 - Treat JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript as search-led acquisition clusters.

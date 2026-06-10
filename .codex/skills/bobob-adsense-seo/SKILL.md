@@ -28,6 +28,8 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - Review `inputWarnings` from the SEO opportunity report before trusting empty measured results; missing Search Console/AdSense CSV headers must be fixed or acknowledged before title/description edits.
 - Use `measurementBacklog` only to prioritize which core pages need Search Console/AdSense export coverage next. Do not rewrite public title/description copy from backlog alone.
+- Use `npm run harness:seo-measured` or `BOBOB_REQUIRE_MEASURED_SEO=1` before claiming post-deploy measured SEO improvement is ready. The strict gate should fail until required core pages have both Search Console and AdSense rows.
+- Use `BOBOB_REQUIRED_MEASURED_PATHS` only for targeted page reviews; final core coverage should rely on the default tier-based measured gate.
 - Run `npm run harness:seo-opportunities:smoke` when changing the measured SEO report so valid CSV fixtures still create opportunities and malformed CSV fixtures still create `inputWarnings`.
 - Use `BOBOB_SEO_REPORT_FORMAT=markdown` and `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` when a human review artifact is needed for measured title/description decisions. Keep measured CSVs and markdown reports out of git.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.
