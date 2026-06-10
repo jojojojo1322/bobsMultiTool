@@ -8,6 +8,8 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 - English is the source locale and stays unprefixed.
 - Non-English pages must render localized visible prose through `getLocalizedTool`, `getLocalizedGuide`, `getLocalizedTools`, `getLocalizedGuides`, and `searchLocalizedTools`; they must not expose raw English registry prose.
 - Tool names, slugs, JSON/JWT/UUID/CSS/SQL/Base64, and code sample values may remain technical terms. Sentence copy, descriptions, examples, FAQ, guide sections, search result descriptions, and metadata descriptions must be localized.
+- Common dictionary prose is part of localization quality. Non-English site descriptions, home descriptions, privacy/server/local chips, empty states, and legal page copy must not fall back to mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server`.
+- Locale switcher options should use native language labels so users can find their own locale quickly.
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
 - Locale privacy and terms pages must use `getLocalizedLegalContent`; localized routes must not hardcode English policy prose, "Back to tools", "Privacy Policy", or "Terms of Service" text.

@@ -34,6 +34,8 @@
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage. Do not return to a capped static sitemap that drops locale tool pages.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.
+- Non-English common dictionary prose must include localized site descriptions, home descriptions, privacy/server/local chips, and legal page copy. Avoid leaving mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server` outside the English source locale.
+- Locale switcher labels must use native language names such as `한국어`, `日本語`, `简体中文`, `हिन्दी`, `ไทย`, and `العربية`, not English-only language names for every locale.
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
 - Long-tail acquisition locales (`zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, `ar`) need slug-specific visible descriptions for every registered tool, not only generic translated templates.

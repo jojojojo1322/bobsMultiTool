@@ -51,11 +51,22 @@ function ToolNavigation({
     const storedScrollTop = Number(window.localStorage.getItem(scrollStorageKey) ?? 0);
     if (!Number.isFinite(storedScrollTop) || storedScrollTop <= 0) return;
 
-    const frame = window.requestAnimationFrame(() => {
+    const restore = () => {
       navigation.scrollTop = storedScrollTop;
-    });
-    return () => window.cancelAnimationFrame(frame);
+    };
+    const frame = window.requestAnimationFrame(restore);
+    const timeout = window.setTimeout(restore, 80);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+    };
   }, [activeSlug, scrollStorageKey]);
+
+  const saveCurrentScroll = React.useCallback(() => {
+    const navigation = scrollRef.current;
+    if (!navigation || typeof window === "undefined") return;
+    window.localStorage.setItem(scrollStorageKey, String(navigation.scrollTop));
+  }, [scrollStorageKey]);
 
   const persistScroll = React.useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
@@ -79,7 +90,7 @@ function ToolNavigation({
           className="pl-8"
         />
       </label>
-      <div ref={scrollRef} onScroll={persistScroll} className="min-h-0 space-y-5 overflow-auto pr-1">
+      <div ref={scrollRef} data-tool-navigation-scroll onScroll={persistScroll} className="min-h-0 space-y-5 overflow-auto pr-1">
         {toolCategories.map((category) => {
           const categoryTools = filteredTools.filter((tool) => tool.category === category);
           if (!categoryTools.length) return null;
@@ -92,7 +103,11 @@ function ToolNavigation({
                     key={tool.slug}
                     href={withLocale(`/tools/${tool.slug}`, locale)}
                     scroll={false}
-                    onClick={onNavigate}
+                    onPointerDown={saveCurrentScroll}
+                    onClick={() => {
+                      saveCurrentScroll();
+                      onNavigate?.();
+                    }}
                     className={cn(
                       "block rounded-md border border-transparent px-2 py-2 text-sm transition-colors",
                       activeSlug === tool.slug

@@ -23,19 +23,19 @@ export const localeSet = new Set<string>(locales);
 
 export const localeLabels: Record<Locale, string> = {
   en: "English",
-  ko: "Korean",
-  ja: "Japanese",
-  "zh-CN": "Chinese (Simplified)",
-  "zh-TW": "Chinese (Traditional)",
-  es: "Spanish",
-  "pt-BR": "Portuguese (Brazil)",
-  de: "German",
-  fr: "French",
-  hi: "Hindi",
-  id: "Indonesian",
-  vi: "Vietnamese",
-  th: "Thai",
-  ar: "Arabic",
+  ko: "한국어",
+  ja: "日本語",
+  "zh-CN": "简体中文",
+  "zh-TW": "繁體中文",
+  es: "Español",
+  "pt-BR": "Português (Brasil)",
+  de: "Deutsch",
+  fr: "Français",
+  hi: "हिन्दी",
+  id: "Bahasa Indonesia",
+  vi: "Tiếng Việt",
+  th: "ไทย",
+  ar: "العربية",
 };
 
 export const openGraphLocales: Record<Locale, string> = {

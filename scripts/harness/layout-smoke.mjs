@@ -40,8 +40,12 @@ if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workb
 if (!workspace.includes("h-full min-h-0")) failures.push("workbench panels must use min-h-0 for internal scrolling");
 if (!workspace.includes("withLocale(\"/\", locale)")) failures.push("detail top bar home link missing");
 if (!workspace.includes("bobob:tool-nav-scroll")) failures.push("tool navigation scroll persistence missing");
+if (!workspace.includes("data-tool-navigation-scroll")) failures.push("tool navigation scroll container should expose a stable QA attribute");
 if (!workspace.includes("React.useLayoutEffect")) failures.push("tool navigation scroll restore must happen before paint");
 if (!workspace.includes("onScroll={persistScroll}")) failures.push("tool navigation scroll position is not persisted");
+if (!workspace.includes("saveCurrentScroll")) failures.push("tool navigation must save scroll immediately before navigation");
+if (!workspace.includes("onPointerDown={saveCurrentScroll}")) failures.push("tool navigation pointer navigation must preserve scroll");
+if (!workspace.includes("window.setTimeout(restore, 80)")) failures.push("tool navigation restore should retry after route hydration");
 if (!workspace.includes("scroll={false}")) failures.push("tool navigation links must not reset document scroll");
 if (workspace.includes("dictionary.tool.demand") || workspace.includes("demandLabel")) failures.push("tool detail must not expose demand wording");
 if (dictionaries.includes("demand:")) failures.push("visible dictionary must not keep a demand label");

@@ -56,6 +56,7 @@ Include:
 - Guide detail meta description and OpenGraph description must match the localized `guide.description`, not a generic title-based template.
 - Tool and guide detail pages must expose page-specific OpenGraph and Twitter title/description values, not root default social metadata.
 - Localized privacy and terms prose plus metadata through `getLocalizedLegalContent`.
+- Non-English common labels and chips, including privacy/server/local indicators, should be localized and should not show English fallback fragments outside the English source route.
 - Arabic RTL route and visible prose.
 - Sitemap index at `/sitemap.xml`, per-locale sitemaps at `/sitemaps/en`, `/sitemaps/ko`, `/sitemaps/ar`, and full locale URL coverage without the old 200 URL static cap.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.

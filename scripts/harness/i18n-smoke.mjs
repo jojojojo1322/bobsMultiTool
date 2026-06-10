@@ -19,6 +19,14 @@ for (const locale of requiredLocales) {
   if (!config.includes(`"${locale}"`)) failures.push(`locale missing from config: ${locale}`);
 }
 
+for (const fragment of ['ko: "한국어"', 'ja: "日本語"', '"zh-CN": "简体中文"', '"zh-TW": "繁體中文"', 'hi: "हिन्दी"', 'th: "ไทย"', 'ar: "العربية"']) {
+  if (!config.includes(fragment)) failures.push(`locale switcher should use native language label: ${fragment}`);
+}
+
+for (const fragment of ['ko: "Korean"', 'ja: "Japanese"', '"zh-CN": "Chinese (Simplified)"', '"zh-TW": "Chinese (Traditional)"']) {
+  if (config.includes(fragment)) failures.push(`locale switcher should not use English-only language label: ${fragment}`);
+}
+
 for (const fragment of ["NEXT_LOCALE", "accept-language", "x-vercel-ip-country", "cf-ipcountry"]) {
   if (!middleware.includes(fragment)) failures.push(`middleware missing locale signal: ${fragment}`);
 }

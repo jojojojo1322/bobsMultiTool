@@ -178,22 +178,41 @@ for (const englishFragment of [
 }
 
 function commonTextBlock(locale) {
-  const marker = `  ${locale}: {\n    nav:`;
+  const marker = `  ${locale.includes("-") ? `"${locale}"` : locale}: {\n    nav:`;
   const start = dictionaries.indexOf(marker);
   if (start === -1) return "";
-  const nextStart = dictionaries.indexOf("\n  ", start + marker.length);
+  const nextStart = nonEnglishLocales
+    .map((nextLocale) => `\n  ${nextLocale.includes("-") ? `"${nextLocale}"` : nextLocale}: {\n    nav:`)
+    .map((nextMarker) => dictionaries.indexOf(nextMarker, start + marker.length))
+    .filter((index) => index > start)
+    .sort((a, b) => a - b)[0];
   return dictionaries.slice(start, nextStart === -1 ? undefined : nextStart);
 }
 
-for (const locale of ["hi", "th", "ar"]) {
+for (const locale of nonEnglishLocales) {
   const block = commonTextBlock(locale);
   for (const englishFragment of [
+    "genereez",
     'faqDescription: "Common implementation details"',
     "homeTitle: \"Bob's Multi Tool - Practical Developer Utilities\"",
     'theme: { light: "Light", dark: "Dark", system: "System" }',
+    'privacy: "Privacy"',
+    'serverRequired: "Server route"',
+    'localOnly: "Browser local"',
   ]) {
     if (block.includes(englishFragment)) failures.push(`${locale} dictionary should not copy exact English fragment: ${englishFragment}`);
   }
+}
+
+for (const fragment of [
+  'localChip: "Browser local"',
+  "privacy badge",
+  "route server",
+  "route خادم",
+  "서버 route",
+]) {
+  if (localizedContent.includes(fragment)) failures.push(`localized content should avoid mixed untranslated visible fragment: ${fragment}`);
+  if (legalContent.includes(fragment)) failures.push(`localized legal content should avoid mixed untranslated visible fragment: ${fragment}`);
 }
 
 for (const fragment of [

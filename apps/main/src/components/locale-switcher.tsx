@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { defaultLocale, localeLabels, locales, stripLocale, withLocale, type Locale } from "@/features/i18n/config";
+import { localeLabels, locales, stripLocale, withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 
 export function LocaleSwitcher({
@@ -36,7 +36,7 @@ export function LocaleSwitcher({
       >
         {locales.map((item) => (
           <option key={item} value={item}>
-            {item === defaultLocale ? "English" : localeLabels[item]}
+            {localeLabels[item]}
           </option>
         ))}
       </Select>
