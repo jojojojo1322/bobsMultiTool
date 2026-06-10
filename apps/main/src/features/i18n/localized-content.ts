@@ -551,6 +551,72 @@ const priorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {
     es: "Genera valores CSS clamp() para tipografia y espaciado responsive con limites min/max.",
     de: "Erzeugt CSS clamp()-Werte fuer responsive Schriftgroessen und Abstaende mit Min/Max-Grenzen.",
   },
+  "json-to-typescript": {
+    ko: "예제 JSON에서 TypeScript interface를 추론해 API 응답과 설정 타입 초안을 빠르게 만듭니다.",
+    ja: "サンプル JSON から TypeScript interface を推測し、API レスポンスや設定型の下書きを素早く作ります。",
+    es: "Infere interfaces TypeScript desde JSON de ejemplo para preparar tipos de API y configuracion.",
+    de: "Leitet TypeScript-Interfaces aus Beispiel-JSON ab, um API- und Konfigurationstypen schneller zu skizzieren.",
+  },
+  "json-schema-validator": {
+    ko: "JSON 값을 간단한 JSON Schema 규칙과 비교해 required field와 type mismatch를 확인합니다.",
+    ja: "JSON 値を簡単な JSON Schema ルールと照合し、required field や type mismatch を確認します。",
+    es: "Valida valores JSON con reglas JSON Schema simples y localiza required fields y errores de tipo.",
+    de: "Validiert JSON-Werte mit einfachen JSON-Schema-Regeln und findet Pflichtfelder sowie Typfehler.",
+  },
+  "jsonpath-tester": {
+    ko: "JSONPath 형태의 selector로 중첩 배열과 객체 값을 골라내 API 응답 구조를 확인합니다.",
+    ja: "JSONPath 風の selector でネストした配列やオブジェクト値を抽出し、API レスポンス構造を確認します。",
+    es: "Prueba selectores estilo JSONPath para revisar arrays anidados y valores de objetos en respuestas API.",
+    de: "Prueft JSONPath-aehnliche Selektoren fuer verschachtelte Arrays und Objektwerte in API-Antworten.",
+  },
+  "timestamp-converter": {
+    ko: "Unix seconds, milliseconds, ISO 문자열을 서로 바꾸고 JWT나 cron 디버깅의 시간 차이를 확인합니다.",
+    ja: "Unix seconds、milliseconds、ISO 文字列を相互変換し、JWT や cron の時刻差を確認します。",
+    es: "Convierte Unix seconds, milliseconds e ISO strings para revisar tiempos de JWT, logs y cron.",
+    de: "Konvertiert Unix seconds, Milliseconds und ISO-Strings fuer JWT-, Log- und Cron-Zeitpruefungen.",
+  },
+  "timezone-converter": {
+    ko: "로컬 시간과 여러 timezone을 비교해 배포 일정, cron 실행 시간, 로그 시간을 맞춥니다.",
+    ja: "ローカル時刻と複数 timezone を比較し、リリース時刻、cron 実行、ログ時刻を合わせます。",
+    es: "Compara hora local y zonas horarias para alinear despliegues, cron y tiempos de logs.",
+    de: "Vergleicht lokale Zeit und Zeitzonen, um Deployments, Cron-Laeufe und Logzeiten abzugleichen.",
+  },
+  "url-encoder": {
+    ko: "query string, redirect parameter, callback URL에 넣을 값을 안전하게 encode/decode합니다.",
+    ja: "query string、redirect parameter、callback URL に入れる値を安全に encode/decode します。",
+    es: "Codifica y decodifica valores para query strings, parametros de redireccion y callback URLs.",
+    de: "Kodiert und dekodiert Werte fuer Query Strings, Redirect-Parameter und Callback-URLs.",
+  },
+  "url-parser": {
+    ko: "URL의 protocol, host, path, query, hash를 분해해 redirect와 canonical 문제를 확인합니다.",
+    ja: "URL の protocol、host、path、query、hash を分解し、redirect や canonical の問題を確認します。",
+    es: "Separa protocolo, host, path, query y hash para revisar redirecciones y canonicals.",
+    de: "Zerlegt Protocol, Host, Path, Query und Hash, um Redirect- und Canonical-Probleme zu pruefen.",
+  },
+  "open-graph-preview": {
+    ko: "Open Graph title, description, URL, image 값을 미리 보며 공유 카드가 의도대로 보이는지 확인합니다.",
+    ja: "Open Graph の title、description、URL、image をプレビューし、共有カードの表示を確認します。",
+    es: "Previsualiza title, description, URL e imagen de Open Graph para revisar tarjetas sociales.",
+    de: "Zeigt Open-Graph-Titel, Beschreibung, URL und Bild als Vorschau fuer Social Cards.",
+  },
+  "robots-txt-generator": {
+    ko: "allow, disallow, crawl-delay, sitemap hint를 조합해 robots.txt 초안을 만듭니다.",
+    ja: "allow、disallow、crawl-delay、sitemap hint を組み合わせて robots.txt の下書きを作ります。",
+    es: "Genera borradores robots.txt con allow, disallow, crawl-delay y pistas de sitemap.",
+    de: "Erstellt robots.txt-Entwuerfe mit Allow, Disallow, Crawl-Delay und Sitemap-Hinweisen.",
+  },
+  "sitemap-generator": {
+    ko: "공개 URL 목록에서 XML sitemap 항목을 만들고 loc, lastmod, priority 값을 점검합니다.",
+    ja: "公開 URL 一覧から XML sitemap 項目を作り、loc、lastmod、priority を確認します。",
+    es: "Genera entradas XML sitemap desde URLs publicas y revisa loc, lastmod y priority.",
+    de: "Erzeugt XML-Sitemap-Eintraege aus oeffentlichen URLs und prueft loc, lastmod und priority.",
+  },
+  "random-token-generator": {
+    ko: "hex, Base64, URL-safe 랜덤 토큰을 만들어 nonce, 테스트 secret, 임시 접근값에 사용합니다.",
+    ja: "hex、Base64、URL-safe の random token を生成し、nonce、test secret、一時アクセス値に使います。",
+    es: "Genera tokens aleatorios hex, Base64 y URL-safe para nonce, secretos de prueba y accesos temporales.",
+    de: "Erzeugt zufaellige Tokens in Hex, Base64 und URL-safe fuer Nonces, Test-Secrets und temporaere Zugaenge.",
+  },
 };
 
 const longTailPriorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {

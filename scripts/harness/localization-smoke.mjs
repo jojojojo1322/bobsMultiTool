@@ -78,15 +78,29 @@ const coreAcquisitionSlugs = [
   "css-formatter",
   "javascript-formatter",
 ];
-for (const slug of coreAcquisitionSlugs) {
+const sessionDepthPrioritySlugs = [
+  ...coreAcquisitionSlugs,
+  "json-to-typescript",
+  "json-schema-validator",
+  "jsonpath-tester",
+  "timestamp-converter",
+  "timezone-converter",
+  "url-encoder",
+  "url-parser",
+  "open-graph-preview",
+  "robots-txt-generator",
+  "sitemap-generator",
+  "random-token-generator",
+];
+for (const slug of sessionDepthPrioritySlugs) {
   const toolSource = priorityIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
   if (!toolSource) {
-    failures.push(`core acquisition priority intent missing tool slug: ${slug}`);
+    failures.push(`session-depth priority intent missing tool slug: ${slug}`);
     continue;
   }
   for (const locale of ["ko", "ja", "es", "de"]) {
     if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
-      failures.push(`core acquisition priority intent missing ${locale} for ${slug}`);
+      failures.push(`session-depth priority intent missing ${locale} for ${slug}`);
     }
   }
 }
