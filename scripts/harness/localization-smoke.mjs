@@ -231,6 +231,11 @@ for (const fragment of [
   "Workbench de desenvolvimento",
   "developer utilities की",
   "Tool browser cepat",
+  "ka input kahan process hota hai",
+  "Output yahan dikhega",
+  "Common MIME type nahi mila",
+  "Five-field cron se minute",
+  "HTTP status aur DNS records se public deploy",
 ]) {
   if (localizedContent.includes(fragment)) failures.push(`localized content should avoid mixed untranslated visible fragment: ${fragment}`);
   if (legalContent.includes(fragment)) failures.push(`localized legal content should avoid mixed untranslated visible fragment: ${fragment}`);
@@ -256,7 +261,7 @@ for (const fragment of [
   '"zh-CN": "整理 API 响应',
   '"pt-BR": "Formate JSON',
   'fr: "Formatez le JSON',
-  'hi: "API response',
+  'hi: "API response, config और log JSON',
   'id: "Rapikan JSON',
   'vi: "Dinh dang JSON',
   'th: "จัดรูปแบบ JSON',
@@ -268,13 +273,13 @@ for (const fragment of [
 for (const fragment of [
   "说明 JSON、YAML、CSV 转换时如何检查结构丢失",
   "Criterios para gerar senhas, tokens, UUIDs e ULIDs",
-  "HTTP status aur DNS records se public deploy",
+  "HTTP status और DNS records से public deploy",
   "คู่มือใช้ CSS formatter, minifier, unit conversion",
   "دليل لاستخدام CSS formatting وminification",
   "整理表单验证、route matching",
-  "Five-field cron se minute",
+  "Five-field cron से minute",
   "Guia dos meta tags que importam",
-  "MD5, SHA-1, SHA-256 aur SHA-512",
+  "MD5, SHA-1, SHA-256 और SHA-512",
   "ขั้นตอน Web SEO สำหรับ robots.txt",
   "سير عمل لترتيب النص وإزالة التكرار",
 ]) {
