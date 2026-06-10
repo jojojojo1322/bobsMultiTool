@@ -236,6 +236,13 @@ for (const fragment of [
   "Common MIME type nahi mila",
   "Five-field cron se minute",
   "HTTP status aur DNS records se public deploy",
+  "Dinh dang JSON",
+  "Kiem tra status code",
+  "Huong dan meta tags",
+  "Dau vao cua",
+  "Ket qua se hien thi tai day",
+  "Chinh sach rieng tu",
+  "Cong cu mien phi",
 ]) {
   if (localizedContent.includes(fragment)) failures.push(`localized content should avoid mixed untranslated visible fragment: ${fragment}`);
   if (legalContent.includes(fragment)) failures.push(`localized legal content should avoid mixed untranslated visible fragment: ${fragment}`);
@@ -250,6 +257,8 @@ for (const fragment of [
   '"CSS Clamp Generator": "CSS Clamp 생성기"',
   '"Password Generator": "पासवर्ड जनरेटर"',
   '"Markdown Previewer": "Markdown प्रीव्यू"',
+  '"Text Sort and Dedupe": "Sắp xếp và lọc trùng văn bản"',
+  '"Word Character Counter": "Đếm từ và ký tự"',
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized title override missing: ${fragment}`);
 }
@@ -263,7 +272,7 @@ for (const fragment of [
   'fr: "Formatez le JSON',
   'hi: "API response, config और log JSON',
   'id: "Rapikan JSON',
-  'vi: "Dinh dang JSON',
+  'vi: "Định dạng JSON',
   'th: "จัดรูปแบบ JSON',
   'ar: "نسق JSON',
 ]) {
@@ -280,6 +289,8 @@ for (const fragment of [
   "Five-field cron से minute",
   "Guia dos meta tags que importam",
   "MD5, SHA-1, SHA-256 और SHA-512",
+  "HTTP status và DNS records",
+  "Hướng dẫn chuyển đổi JSON, YAML và CSV",
   "ขั้นตอน Web SEO สำหรับ robots.txt",
   "سير عمل لترتيب النص وإزالة التكرار",
 ]) {
