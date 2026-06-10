@@ -22,6 +22,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Localized metadata must use localized tool and guide content. Do not leave non-English title/description pages backed by raw English registry prose.
 - Guide detail meta descriptions and OpenGraph descriptions must use the same localized `guide.description` shown in the page body.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
+- Tool detail structured data should use registry-backed `SoftwareApplication`, `FAQPage`, and `BreadcrumbList` from visible localized content.
 - Do not add fabricated review, rating, pricing, or availability schema.
 - SearchAction schema must point to a URL that actually accepts `?q=` and renders usable search results.
 - For post-deploy title/description work, use Search Console and AdSense page/query CSV exports with `npm run harness:seo-opportunities`. Prioritize high-impression low-CTR tool and guide pages, low-RPM pages, metadata warnings, and `titleDescriptionRecommendations` before broad copy rewrites.

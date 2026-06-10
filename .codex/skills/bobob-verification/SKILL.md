@@ -59,6 +59,7 @@ Include:
 - Every guide should have topic-specific long-tail guide lead sections for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`, rather than reusing the same generic opening paragraph.
 - Guide detail meta description and OpenGraph description must match the localized `guide.description`, not a generic title-based template.
 - Tool and guide detail pages must expose page-specific OpenGraph and Twitter title/description values, not root default social metadata.
+- Tool detail pages should include registry-backed `SoftwareApplication`, `FAQPage`, and `BreadcrumbList` structured data without fabricated rating or review fields.
 - Localized privacy and terms prose plus metadata through `getLocalizedLegalContent`.
 - Non-English common labels and chips, including privacy/server/local indicators, should be localized and should not show English fallback fragments outside the English source route.
 - Arabic RTL route and visible prose.

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { defaultLocale, languageAlternates, openGraphLocales } from "@/features/i18n/config";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
+import { toolStructuredData } from "@/features/tools/structured-data";
 import { ToolWorkspace } from "@/features/tools/tool-workspace";
 import { getToolBySlug, tools } from "@/features/tools/registry";
 
@@ -48,32 +49,18 @@ export default async function ToolPage({ params }: ToolPageProps) {
   const tool = getToolBySlug(slug);
   if (!tool) notFound();
   const dictionary = getClientDictionary(defaultLocale);
-
-  const softwareJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: tool.title,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web Browser",
+  const jsonLd = toolStructuredData({
+    tool,
+    locale: defaultLocale,
     url: `https://www.bobob.app/tools/${tool.slug}`,
-    description: tool.seo.description,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    isPartOf: {
-      "@type": "WebSite",
-      name: "Bob's Multi Tool",
-      url: "https://www.bobob.app",
-    },
-  };
+    toolsLabel: dictionary.nav.tools,
+  });
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <ToolWorkspace tool={tool} locale={defaultLocale} dictionary={dictionary} />
     </>

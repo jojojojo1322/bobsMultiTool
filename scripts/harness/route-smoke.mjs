@@ -40,6 +40,12 @@ const redirects = [
   ["/lorem-generator", "/tools/lorem-ipsum-generator"],
 ];
 
+const structuredDataPaths = [
+  "/tools/json-formatter",
+  "/ko/tools/json-formatter",
+  "/ar/tools/json-formatter",
+];
+
 const failures = [];
 
 for (const routePath of paths) {
@@ -58,6 +64,17 @@ for (const [source, destination] of redirects) {
   const location = response.headers.get("location") ?? "";
   if (!location.endsWith(destination)) {
     failures.push(`${source} redirects to ${location}, expected ${destination}`);
+  }
+}
+
+for (const routePath of structuredDataPaths) {
+  const response = await fetch(`${baseUrl}${routePath}`);
+  const html = await response.text();
+  for (const fragment of ['"@type":"SoftwareApplication"', '"@type":"FAQPage"', '"@type":"BreadcrumbList"', '"mainEntity"', '"itemListElement"']) {
+    if (!html.includes(fragment)) failures.push(`${routePath} missing structured data fragment ${fragment}`);
+  }
+  if (html.includes("aggregateRating") || html.includes("reviewRating")) {
+    failures.push(`${routePath} must not include fabricated rating or review schema`);
   }
 }
 

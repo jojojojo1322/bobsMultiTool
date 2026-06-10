@@ -9,11 +9,17 @@ const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/rou
 const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
 const toolsIndexPath = path.join(root, "apps/main/src/app/tools/page.tsx");
 const localizedToolsIndexPath = path.join(root, "apps/main/src/app/[locale]/tools/page.tsx");
+const toolDetailPath = path.join(root, "apps/main/src/app/tools/[slug]/page.tsx");
+const localizedToolDetailPath = path.join(root, "apps/main/src/app/[locale]/tools/[slug]/page.tsx");
+const toolStructuredDataPath = path.join(root, "apps/main/src/features/tools/structured-data.ts");
 const i18nConfigPath = path.join(root, "apps/main/src/features/i18n/config.ts");
 const registry = fs.readFileSync(registryPath, "utf8");
 const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
 const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
 const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
+const toolDetail = fs.readFileSync(toolDetailPath, "utf8");
+const localizedToolDetail = fs.readFileSync(localizedToolDetailPath, "utf8");
+const toolStructuredData = fs.readFileSync(toolStructuredDataPath, "utf8");
 const failures = [];
 const priorityDetailSlugs = [
   "regex-tester",
@@ -59,6 +65,18 @@ if (!fs.existsSync(sitemapIndexRoutePath)) failures.push("sitemap index route mi
 if (!fs.existsSync(localizedSitemapRoutePath)) failures.push("localized sitemap route missing");
 if (!fs.existsSync(toolsIndexPath) || !fs.readFileSync(toolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("/tools index directory page missing");
 if (!fs.existsSync(localizedToolsIndexPath) || !fs.readFileSync(localizedToolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("localized tools index directory page missing");
+for (const [source, name] of [
+  [toolDetail, "default tool detail"],
+  [localizedToolDetail, "localized tool detail"],
+]) {
+  if (!source.includes("toolStructuredData(")) failures.push(`${name} must render shared tool structured data`);
+}
+for (const fragment of ["SoftwareApplication", "FAQPage", "BreadcrumbList", "mainEntity", "itemListElement", "isAccessibleForFree", "featureList"]) {
+  if (!toolStructuredData.includes(fragment)) failures.push(`tool structured data missing ${fragment}`);
+}
+if (toolStructuredData.includes("aggregateRating") || toolStructuredData.includes("reviewRating")) {
+  failures.push("tool structured data must not include fabricated rating or review schema");
+}
 for (const fragment of ["priorityDemandDetails", "fallbackDemandDetails", "withDemandDetails", "failureCases", "preCopyChecklist"]) {
   if (!registry.includes(fragment)) failures.push(`registry missing demand detail support: ${fragment}`);
 }

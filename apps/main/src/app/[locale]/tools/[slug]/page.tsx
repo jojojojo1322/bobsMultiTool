@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { defaultLocale, isLocale, languageAlternates, locales, openGraphLocales, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedTool } from "@/features/i18n/localized-content";
+import { toolStructuredData } from "@/features/tools/structured-data";
 import { getToolBySlug, tools } from "@/features/tools/registry";
 import { ToolWorkspace } from "@/features/tools/tool-workspace";
 
@@ -62,31 +63,16 @@ export default async function LocalizedToolPage({ params }: LocalizedToolPagePro
   if (!baseTool) notFound();
   const tool = getLocalizedTool(baseTool, locale);
   const dictionary = getClientDictionary(locale);
-
-  const softwareJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: tool.title,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web Browser",
+  const jsonLd = toolStructuredData({
+    tool,
+    locale,
     url: `https://www.bobob.app${withLocale(`/tools/${tool.slug}`, locale)}`,
-    description: tool.seo.description,
-    inLanguage: locale,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    isPartOf: {
-      "@type": "WebSite",
-      name: "Bob's Multi Tool",
-      url: "https://www.bobob.app",
-    },
-  };
+    toolsLabel: dictionary.nav.tools,
+  });
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ToolWorkspace tool={tool} locale={locale} dictionary={dictionary} />
     </>
   );
