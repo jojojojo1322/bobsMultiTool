@@ -107,8 +107,8 @@ for (const slug of priorityDetailSlugs) {
   const source = toolSourceFor(slug);
   if (!source.includes("inputExamples:")) {
     failures.push(`${slug} must define explicit inputExamples for the quick-start panel`);
-  } else if (inputExampleCount(source) < 2) {
-    failures.push(`${slug} should define at least two real inputExamples, found ${inputExampleCount(source)}`);
+  } else if (inputExampleCount(source) < 3) {
+    failures.push(`${slug} should define at least three real inputExamples, found ${inputExampleCount(source)}`);
   }
 }
 
