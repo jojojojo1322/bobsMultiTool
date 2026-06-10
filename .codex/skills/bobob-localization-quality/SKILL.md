@@ -23,7 +23,7 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
 - Locale privacy and terms pages must use `getLocalizedLegalContent`; localized routes must not hardcode English policy prose, "Back to tools", "Privacy Policy", or "Terms of Service" text.
-- Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific descriptions, SEO descriptions, use cases, FAQ, and guide intro copy rather than only generic templates.
+- Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific descriptions, SEO descriptions, use cases, FAQ, and guide intro copy rather than only generic templates. The required acquisition set is JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript.
 - Long-tail acquisition locales (`zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, `ar`) need slug-specific visible descriptions for every registered tool, not only generic translated templates.
 - Long-tail guide descriptions should also be slug-specific for high-traffic workflows such as Regex, Cron, SEO meta tags, Hash, JSON/YAML/CSV, Network, CSS, Web SEO, and Text cleanup.
 - Every guide needs topic-specific long-tail guide lead sections for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`. Localized guide pages should not share the same generic first paragraph across long-tail locales.

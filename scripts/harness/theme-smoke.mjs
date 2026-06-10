@@ -30,6 +30,7 @@ for (const [source, fragment, message] of [
   [globals, ".bobob-pointer-background", "pointer background CSS missing"],
   [globals, "repeating-linear-gradient", "pointer background should use restrained grid lines rather than decorative blobs"],
   [globals, "--bobob-grid-x", "pointer background grid offset variables missing"],
+  [globals, "--bobob-ray-rotation", "pointer background ray rotation variable missing"],
   [directory, "<PointerBackground />", "tool directory hero missing pointer background"],
   [workspace, "<PointerBackground />", "tool detail workspace missing pointer background"],
 ]) {

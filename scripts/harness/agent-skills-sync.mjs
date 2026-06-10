@@ -21,8 +21,10 @@ const checks = [
   ["agents", "aliases, useCases, inputExamples, contentCluster, and monetizationTier"],
   ["agents", "registry-backed `inputExamples`, `useCases`, `failureCases`, `preCopyChecklist`, and related next actions"],
   ["agents", "central work panel should show quick-start input examples"],
+  ["agents", "Core acquisition tools in Korean, Japanese, Spanish, and German"],
   ["agents", "Pointer-reactive visual effects"],
   ["agents", "restrained grid-line pointer background"],
+  ["agents", "requestAnimationFrame-driven CSS variables"],
   ["agents", "harness:pointer-background"],
   ["agents", "avoid adding WebGL, `ogl`, or `framer-motion`"],
   ["agents", "real resizable left and right sidebars"],
@@ -102,6 +104,7 @@ const checks = [
   ["design", "ThemeToggle"],
   ["design", "Pointer-reactive background motion"],
   ["design", "restrained grid-line motion"],
+  ["design", "requestAnimationFrame-driven smoothing"],
   ["design", "harness:pointer-background"],
   ["design", "no WebGL, `ogl`, or `framer-motion` dependency"],
   ["design", "compact quick-start row"],
@@ -135,6 +138,7 @@ const checks = [
   ["localization", "`failureCases`"],
   ["localization", "`preCopyChecklist`"],
   ["localization", "related next-action labels"],
+  ["localization", "The required acquisition set is JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript"],
   ["localization", "must not re-spread English nested objects"],
   ["localization", "slug-specific descriptions"],
   ["localization", "Long-tail acquisition locales"],
@@ -193,7 +197,9 @@ const checks = [
   ["verification", "quick-start input examples and use cases"],
   ["verification", "failure cases"],
   ["verification", "pre-copy checklist"],
+  ["verification", "Core acquisition tools in Korean, Japanese, Spanish, and German"],
   ["verification", "Pointer-reactive background motion"],
+  ["verification", "requestAnimationFrame-driven CSS variable smoothing"],
   ["verification", "home/tool directory and tool detail pages"],
   ["verification", "harness:pointer-background"],
   ["verification", "Search results, center tool panel, and right reference panel"],
@@ -316,7 +322,7 @@ if (!fs.existsSync(path.join(root, "apps/main/src/components/pointer-background.
   failures.push("pointer background component missing");
 } else {
   const pointerBackground = read("apps/main/src/components/pointer-background.tsx");
-  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x"]) {
+  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x", "--bobob-ray-rotation"]) {
     if (!pointerBackground.includes(fragment)) failures.push(`pointer background missing ${fragment}`);
   }
 }

@@ -479,6 +479,18 @@ const priorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {
     es: "Genera contrasenas ajustando longitud y caracteres para cuentas de desarrollo, fixtures y accesos temporales.",
     de: "Erzeugt Passwoerter mit steuerbarer Laenge und Zeichenauswahl fuer Dev-Konten, Fixtures und temporaere Zugaenge.",
   },
+  "color-converter": {
+    ko: "HEX, RGB, HSL 색상을 서로 변환하고 실제 foreground/background 조합의 WCAG 대비를 확인하는 도구입니다.",
+    ja: "HEX、RGB、HSL の色を相互変換し、実際の foreground/background 組み合わせで WCAG コントラストを確認します。",
+    es: "Convierte colores HEX, RGB y HSL y comprueba contraste WCAG con combinaciones reales de texto y fondo.",
+    de: "Konvertiert HEX, RGB und HSL und prueft WCAG-Kontrast fuer echte Vordergrund- und Hintergrundpaare.",
+  },
+  "qr-code-generator": {
+    ko: "URL, 텍스트, Wi-Fi, 연락처 정보를 QR code로 만들고 다운로드 전에 내용을 다시 확인하는 도구입니다.",
+    ja: "URL、テキスト、Wi-Fi、連絡先情報を QR code にし、ダウンロード前に内容を確認できます。",
+    es: "Genera QR codes para URLs, texto, Wi-Fi y contactos, con vista previa antes de descargar o compartir.",
+    de: "Erzeugt QR Codes fuer URLs, Text, WLAN und Kontaktdaten mit Vorschau vor Download oder Weitergabe.",
+  },
   "dns-lookup": {
     ko: "공개 도메인의 A, AAAA, MX, TXT, NS, CNAME 레코드를 확인해 배포와 도메인 설정을 점검합니다.",
     ja: "公開ドメインの A、AAAA、MX、TXT、NS、CNAME レコードを確認し、deploy と domain 設定を点検します。",

@@ -34,6 +34,8 @@ async function readPointerState(page) {
       pointerY: hostStyle.getPropertyValue("--bobob-pointer-y").trim(),
       gridX: hostStyle.getPropertyValue("--bobob-grid-x").trim(),
       gridY: hostStyle.getPropertyValue("--bobob-grid-y").trim(),
+      sweepX: hostStyle.getPropertyValue("--bobob-sweep-x").trim(),
+      rayRotation: hostStyle.getPropertyValue("--bobob-ray-rotation").trim(),
       transform: layerStyle.transform,
     };
   });
@@ -79,6 +81,10 @@ try {
 
     if (firstState.gridX === secondState.gridX && firstState.gridY === secondState.gridY) {
       failures.push(`${scenario.name} grid offsets did not change after mouse movement`);
+    }
+
+    if (!secondState.sweepX || !secondState.rayRotation) {
+      failures.push(`${scenario.name} pointer sweep variables were not populated`);
     }
 
     if (secondState.transform === "none") {

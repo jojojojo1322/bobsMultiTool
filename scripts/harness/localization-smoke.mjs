@@ -59,7 +59,37 @@ for (const fragment of [
 
 const registrySlugs = Array.from(toolRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guideRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
+const priorityIntentSource = localizedContent.match(/const priorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst longTailPriorityToolIntents/)?.[1] ?? "";
 const longTailIntentSource = localizedContent.match(/const longTailPriorityToolIntents:[\s\S]*?= \{([\s\S]*?)\n\};\n\nconst priorityGuideDescriptions/)?.[1] ?? "";
+const coreAcquisitionSlugs = [
+  "regex-tester",
+  "json-formatter",
+  "jwt-decoder",
+  "base64-tool",
+  "cron-generator",
+  "uuid-generator",
+  "hash-generator",
+  "password-generator",
+  "qr-code-generator",
+  "dns-lookup",
+  "http-status-checker",
+  "color-converter",
+  "sql-formatter",
+  "css-formatter",
+  "javascript-formatter",
+];
+for (const slug of coreAcquisitionSlugs) {
+  const toolSource = priorityIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
+  if (!toolSource) {
+    failures.push(`core acquisition priority intent missing tool slug: ${slug}`);
+    continue;
+  }
+  for (const locale of ["ko", "ja", "es", "de"]) {
+    if (!toolSource.includes(`${locale}:`) && !toolSource.includes(`"${locale}":`)) {
+      failures.push(`core acquisition priority intent missing ${locale} for ${slug}`);
+    }
+  }
+}
 for (const slug of registrySlugs) {
   const toolSource = longTailIntentSource.match(new RegExp(`\\n  "${slug}": \\{([\\s\\S]*?)\\n  \\},`))?.[1];
   if (!toolSource) {
