@@ -525,7 +525,7 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
     ],
     commands: [
       "npm run harness:seo-opportunities",
-      "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md npm run harness:seo-opportunities",
+      "npm run seo:report",
       "npm run harness:seo-measured",
     ],
     copyTargets: {

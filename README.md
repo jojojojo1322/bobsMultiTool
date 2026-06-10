@@ -35,6 +35,8 @@ npm run harness:tools
 npm run harness:agents
 npm run harness:seo-opportunities
 npm run harness:seo-opportunities:smoke
+npm run seo:export-packet
+npm run seo:report
 BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes
 BOBOB_BASE_URL=http://localhost:3000 npm run harness:visual
 ```
@@ -55,14 +57,14 @@ Without CSV inputs, the report still checks registry metadata length and search-
 
 Run `npm run harness:seo-opportunities:smoke` to verify valid measured CSV fixtures produce opportunities and malformed CSV fixtures produce `inputWarnings`.
 
+Before private CSV exports exist, run `npm run seo:export-packet` to generate `reports/seo-export-packet.md` with the Search Console page regex, AdSense canonical URL batch, CSV headers, focused strict-gate command, and metadata rewrite stop rule.
+
 For a human-readable report:
 
 ```bash
 BOBOB_SEARCH_CONSOLE_CSV=/path/to/search-console.csv \
 BOBOB_ADSENSE_CSV=/path/to/adsense.csv \
-BOBOB_SEO_REPORT_FORMAT=markdown \
-BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md \
-npm run harness:seo-opportunities
+npm run seo:report
 ```
 
 Reference docs: Search Console CSV export is documented by Google Search Console Help, and AdSense CSV export is documented by Google AdSense Help.

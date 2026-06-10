@@ -75,8 +75,9 @@ const checks = [
   ["agents", "inputWarnings"],
   ["agents", "measurementBacklog"],
   ["agents", "metadataRewriteReadiness"],
-  ["agents", "BOBOB_SEO_REPORT_FORMAT"],
   ["agents", "export-packet"],
+  ["agents", "npm run seo:export-packet"],
+  ["agents", "npm run seo:report"],
   ["agents", "harness:seo-templates"],
   ["agents", "reports/templates/*.example.csv"],
   ["agents", "visual screenshot smoke"],
@@ -173,8 +174,9 @@ const checks = [
   ["seo", "inputWarnings"],
   ["seo", "measurementBacklog"],
   ["seo", "metadataRewriteReadiness"],
-  ["seo", "BOBOB_SEO_REPORT_FORMAT"],
   ["seo", "export-packet"],
+  ["seo", "npm run seo:export-packet"],
+  ["seo", "npm run seo:report"],
   ["seo", "harness:seo-templates"],
   ["seo", "reports/templates/*.example.csv"],
   ["seo", "tool and guide pages"],
@@ -220,8 +222,9 @@ const checks = [
   ["verification", "inputWarnings"],
   ["verification", "measurementBacklog"],
   ["verification", "metadataRewriteReadiness"],
-  ["verification", "BOBOB_SEO_REPORT_FORMAT"],
   ["verification", "export-packet"],
+  ["verification", "npm run seo:export-packet"],
+  ["verification", "npm run seo:report"],
   ["verification", "harness:seo-templates"],
   ["verification", "reports/templates/*.example.csv"],
   ["verification", "tool and guide pages"],
@@ -262,7 +265,8 @@ const checks = [
   ["product", "inputWarnings"],
   ["product", "measurementBacklog"],
   ["product", "metadataRewriteReadiness"],
-  ["product", "BOBOB_SEO_REPORT_FORMAT"],
+  ["product", "npm run seo:export-packet"],
+  ["product", "npm run seo:report"],
   ["product", "harness:seo-templates"],
   ["product", "reports/templates/*.example.csv"],
   ["product", "tool and guide pages"],
@@ -362,7 +366,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-export-templates.mjs")))
   failures.push("SEO export templates harness missing");
 } else {
   const seoExportTemplates = read("scripts/harness/seo-export-templates.mjs");
-  for (const fragment of ["reports/README.md", "search-console.example.csv", "adsense.example.csv", "metadataRewriteReadiness.canRewritePublicMetadata", "measuredExportPlan.copyTargets.searchConsolePageRegex", "BOBOB_SEO_REPORT_FORMAT=export-packet"]) {
+  for (const fragment of ["reports/README.md", "search-console.example.csv", "adsense.example.csv", "metadataRewriteReadiness.canRewritePublicMetadata", "measuredExportPlan.copyTargets.searchConsolePageRegex", "seo:export-packet", "seo:report"]) {
     if (!seoExportTemplates.includes(fragment)) failures.push(`SEO export templates harness missing ${fragment}`);
   }
 }
@@ -424,6 +428,12 @@ if (packageJson.scripts?.["harness:seo-templates"] !== "node scripts/harness/seo
 }
 if (packageJson.scripts?.["harness:seo-measured"] !== "BOBOB_REQUIRE_MEASURED_SEO=1 node scripts/harness/seo-opportunity-report.mjs") {
   failures.push("root package scripts must expose harness:seo-measured");
+}
+if (packageJson.scripts?.["seo:export-packet"] !== "BOBOB_SEO_REPORT_FORMAT=export-packet BOBOB_SEO_REPORT_OUT=reports/seo-export-packet.md node scripts/harness/seo-opportunity-report.mjs") {
+  failures.push("root package scripts must expose seo:export-packet");
+}
+if (packageJson.scripts?.["seo:report"] !== "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md node scripts/harness/seo-opportunity-report.mjs") {
+  failures.push("root package scripts must expose seo:report");
 }
 if (packageJson.scripts?.["harness:deployment-status"] !== "node scripts/harness/deployment-status.mjs") {
   failures.push("root package scripts must expose harness:deployment-status");

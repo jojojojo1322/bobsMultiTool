@@ -41,9 +41,7 @@ The parser accepts comma CSV, tab-separated TSV, semicolon-separated CSV, UTF-8 
 Generate a local review report when comparing title and description changes:
 
 ```bash
-BOBOB_SEO_REPORT_FORMAT=markdown \
-BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md \
-npm run harness:seo-opportunities
+npm run seo:report
 ```
 
 `reports/seo-opportunities.md` is gitignored because it can include query, impression, CTR, RPM, and earnings data.
@@ -53,17 +51,10 @@ npm run harness:seo-opportunities
 Generate a short copy/paste packet before collecting measured rows:
 
 ```bash
-BOBOB_SEO_REPORT_FORMAT=export-packet \
-npm run harness:seo-opportunities
+npm run seo:export-packet
 ```
 
-To save it locally:
-
-```bash
-BOBOB_SEO_REPORT_FORMAT=export-packet \
-BOBOB_SEO_REPORT_OUT=reports/seo-export-packet.md \
-npm run harness:seo-opportunities
-```
+The command writes `reports/seo-export-packet.md`, which is gitignored because it can include private review targets.
 
 The packet includes:
 

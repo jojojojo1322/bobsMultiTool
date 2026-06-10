@@ -24,6 +24,7 @@ for (const filePath of [reportsReadmePath, searchTemplatePath, adsenseTemplatePa
 const reportsReadme = fs.existsSync(reportsReadmePath) ? read("reports/README.md") : "";
 const searchTemplate = fs.existsSync(searchTemplatePath) ? read("reports/templates/search-console.example.csv") : "";
 const adsenseTemplate = fs.existsSync(adsenseTemplatePath) ? read("reports/templates/adsense.example.csv") : "";
+const packageJson = JSON.parse(read("package.json"));
 
 const searchHeader = "Page,Query,Impressions,Clicks,CTR,Position";
 const adsenseHeader = "Page,Impressions,Page RPM,Estimated earnings,CTR";
@@ -38,7 +39,9 @@ for (const fragment of [
   "reports/search-console.tsv",
   "reports/adsense.csv",
   "reports/adsense.tsv",
-  "BOBOB_SEO_REPORT_FORMAT=export-packet",
+  "reports/seo-export*.md",
+  "npm run seo:export-packet",
+  "npm run seo:report",
   "metadataRewriteReadiness.canRewritePublicMetadata",
   "measuredExportPlan.copyTargets.searchConsolePageRegex",
   "reports/templates/search-console.example.csv",
@@ -50,6 +53,19 @@ for (const fragment of [
 const gitignore = read(".gitignore");
 for (const fragment of ["reports/*.csv", "reports/*.tsv", "reports/seo-opportunities*.md", "reports/seo-export*.md"]) {
   assertIncludes(gitignore, fragment, ".gitignore");
+}
+
+const expectedScripts = {
+  "seo:export-packet":
+    "BOBOB_SEO_REPORT_FORMAT=export-packet BOBOB_SEO_REPORT_OUT=reports/seo-export-packet.md node scripts/harness/seo-opportunity-report.mjs",
+  "seo:report":
+    "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md node scripts/harness/seo-opportunity-report.mjs",
+};
+
+for (const [scriptName, expectedCommand] of Object.entries(expectedScripts)) {
+  if (packageJson.scripts?.[scriptName] !== expectedCommand) {
+    failures.push(`package.json scripts must expose ${scriptName}`);
+  }
 }
 
 if (failures.length) {

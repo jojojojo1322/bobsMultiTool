@@ -27,7 +27,9 @@
     "harness:seo-measured": "BOBOB_REQUIRE_MEASURED_SEO=1 node scripts/harness/seo-opportunity-report.mjs",
     "harness:seo-opportunities:smoke": "node scripts/harness/seo-opportunity-report-smoke.mjs",
     "harness:seo-templates": "node scripts/harness/seo-export-templates.mjs",
-    "harness:deployment-status": "node scripts/harness/deployment-status.mjs"
+    "harness:deployment-status": "node scripts/harness/deployment-status.mjs",
+    "seo:export-packet": "BOBOB_SEO_REPORT_FORMAT=export-packet BOBOB_SEO_REPORT_OUT=reports/seo-export-packet.md node scripts/harness/seo-opportunity-report.mjs",
+    "seo:report": "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md node scripts/harness/seo-opportunity-report.mjs"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
