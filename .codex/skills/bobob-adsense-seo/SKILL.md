@@ -33,6 +33,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Use `BOBOB_REQUIRED_MEASURED_PATHS` only for targeted page reviews; final core coverage should rely on the default tier-based measured gate.
 - Run `npm run harness:seo-opportunities:smoke` when changing the measured SEO report so valid CSV fixtures still create opportunities and malformed CSV fixtures still create `inputWarnings`.
 - Use `BOBOB_SEO_REPORT_FORMAT=markdown` and `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` when a human review artifact is needed for measured title/description decisions. Keep measured CSVs and markdown reports out of git.
+- Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when Search Console/AdSense export headers, copy targets, or measured export instructions change.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.
 - Keep privacy and terms pages aligned with the actual local-first utility behavior.
 - If SEO, AdSense, locale, redirect, schema, or country detection policy changes, update AGENTS.md and this skill before handoff.

@@ -20,6 +20,7 @@ npm run harness:agents
 npm run harness:legacy
 npm run harness:seo-opportunities
 npm run harness:seo-opportunities:smoke
+npm run harness:seo-templates
 ```
 
 Then run implementation checks:
@@ -72,6 +73,7 @@ Include:
 - `BOBOB_REQUIRED_MEASURED_PATHS` is acceptable for a targeted page review, but should not be used to claim final core-page measured readiness.
 - SEO opportunity report smoke should prove valid measured CSV fixtures create opportunities and malformed CSV fixtures create `inputWarnings`.
 - Markdown SEO report behavior with `BOBOB_SEO_REPORT_FORMAT=markdown` should produce a reviewable title/description recommendations table, measured export CSV templates, and metadata rewrite readiness when CSV inputs are present.
+- Safe measured export instructions and sample headers should stay tracked in `reports/README.md` and `reports/templates/*.example.csv`, while real Search Console/AdSense CSV or TSV exports stay untracked.
 - Desktop left and right sidebar resizing, single-shell panel alignment, clamped panel widths with no horizontal overflow at narrow desktop widths, top brand/home link, preserved sidebar scroll when clicking tool navigation, plus mobile Sheet fallback.
 - No visible demand wording or raw `core` / `growth` / `long-tail` demand badges in home cards, search results, or tool detail headers.
 - A local-only tool and a server route tool.

@@ -17,6 +17,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Use `BOBOB_REQUIRED_MEASURED_PATHS` only for targeted opportunity review, not for the final core-page monetization readiness claim.
 - Keep `npm run harness:seo-opportunities:smoke` green so the measured SEO workflow is tested without real private exports.
 - For stakeholder review, generate the Markdown SEO report with `BOBOB_SEO_REPORT_FORMAT=markdown` and keep title/description changes tied to measured rows.
+- Use `reports/README.md` and `reports/templates/*.example.csv` as the safe handoff for Search Console and AdSense export collection; keep `npm run harness:seo-templates` green when export handling changes.
 - Treat JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript as search-led acquisition clusters.
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.

@@ -61,6 +61,8 @@ const checks = [
   ["agents", "measurementBacklog"],
   ["agents", "metadataRewriteReadiness"],
   ["agents", "BOBOB_SEO_REPORT_FORMAT"],
+  ["agents", "harness:seo-templates"],
+  ["agents", "reports/templates/*.example.csv"],
   ["agents", "visual screenshot smoke"],
   ["agents", "unused AdSense placeholder"],
   ["agents", "legacy standalone app directories"],
@@ -135,6 +137,8 @@ const checks = [
   ["seo", "measurementBacklog"],
   ["seo", "metadataRewriteReadiness"],
   ["seo", "BOBOB_SEO_REPORT_FORMAT"],
+  ["seo", "harness:seo-templates"],
+  ["seo", "reports/templates/*.example.csv"],
   ["seo", "tool and guide pages"],
   ["seo", "guide.description"],
   ["seo", "Twitter title/description"],
@@ -164,6 +168,8 @@ const checks = [
   ["verification", "measurementBacklog"],
   ["verification", "metadataRewriteReadiness"],
   ["verification", "BOBOB_SEO_REPORT_FORMAT"],
+  ["verification", "harness:seo-templates"],
+  ["verification", "reports/templates/*.example.csv"],
   ["verification", "tool and guide pages"],
   ["verification", "preserved sidebar scroll"],
   ["verification", "no horizontal overflow at narrow desktop widths"],
@@ -193,6 +199,8 @@ const checks = [
   ["product", "measurementBacklog"],
   ["product", "metadataRewriteReadiness"],
   ["product", "BOBOB_SEO_REPORT_FORMAT"],
+  ["product", "harness:seo-templates"],
+  ["product", "reports/templates/*.example.csv"],
   ["product", "tool and guide pages"],
 ];
 
@@ -270,6 +278,14 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }
+if (!fs.existsSync(path.join(root, "scripts/harness/seo-export-templates.mjs"))) {
+  failures.push("SEO export templates harness missing");
+} else {
+  const seoExportTemplates = read("scripts/harness/seo-export-templates.mjs");
+  for (const fragment of ["reports/README.md", "search-console.example.csv", "adsense.example.csv", "metadataRewriteReadiness.canRewritePublicMetadata", "measuredExportPlan.copyTargets.searchConsolePageRegex"]) {
+    if (!seoExportTemplates.includes(fragment)) failures.push(`SEO export templates harness missing ${fragment}`);
+  }
+}
 
 const resizable = read("apps/main/src/components/ui/resizable.tsx");
 for (const fragment of ["clampLayoutToAvailable", "ResizeObserver", "minmax(0,1fr)", "data-resizable-layout"]) {
@@ -306,6 +322,9 @@ if (JSON.stringify(packageJson.workspaces) !== JSON.stringify(["apps/main"])) {
 }
 if (packageJson.scripts?.["harness:seo-opportunities:smoke"] !== "node scripts/harness/seo-opportunity-report-smoke.mjs") {
   failures.push("root package scripts must expose harness:seo-opportunities:smoke");
+}
+if (packageJson.scripts?.["harness:seo-templates"] !== "node scripts/harness/seo-export-templates.mjs") {
+  failures.push("root package scripts must expose harness:seo-templates");
 }
 if (packageJson.scripts?.["harness:seo-measured"] !== "BOBOB_REQUIRE_MEASURED_SEO=1 node scripts/harness/seo-opportunity-report.mjs") {
   failures.push("root package scripts must expose harness:seo-measured");

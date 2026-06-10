@@ -17,6 +17,13 @@ These CSV/TSV files are gitignored. The harness auto-detects them, so this is en
 npm run harness:seo-opportunities
 ```
 
+Tracked sample headers live in:
+
+- `reports/templates/search-console.example.csv`
+- `reports/templates/adsense.example.csv`
+
+Run `npm run harness:seo-templates` after changing export headers, copy targets, or measured export instructions.
+
 ## Explicit files
 
 Use env vars when the exports live elsewhere:
