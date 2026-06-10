@@ -8,7 +8,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Use shadcn/ui-style local primitives from `apps/main/src/components/ui`.
 - Keep the product-lab tone: neutral zinc palette, compact panels, crisp borders, modest radius, no raised colored top borders, and no decorative accent strips.
 - Avoid oversized heroes, gradient-heavy sections, emoji tool cards, bento marketing layouts, nested cards, explanatory UI copy, and AI-generated-looking card accents.
-- Pointer-reactive background motion must stay subtle and lightweight: CSS variables plus React pointer tracking only, reduced-motion aware, and no WebGL, `ogl`, or `framer-motion` dependency unless explicitly approved. Use requestAnimationFrame-driven smoothing for mouse-following depth, and keep it as restrained grid-line motion on home/tool directory and tool detail pages, not decorative blobs.
+- Pointer-reactive background motion must stay subtle and lightweight: CSS variables plus React pointer tracking only, reduced-motion aware, and no WebGL, `ogl`, or `framer-motion` dependency unless explicitly approved. Use requestAnimationFrame-driven smoothing for mouse-following depth, depth offset variables, and ray opacity, and keep it as restrained grid-line motion on home/tool directory and tool detail pages, not decorative blobs.
 - Pointer background edits must preserve real pointer movement behavior covered by `npm run harness:pointer-background`.
 - Tool pages use the same frame: left navigation, top context bar, central tool panel, right examples/FAQ/guides/related tools.
 - Tool detail center panels can show a compact quick-start row with registry input examples and use cases; keep it list-like, neutral, and directly above the working tool surface.

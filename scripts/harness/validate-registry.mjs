@@ -67,6 +67,22 @@ function inputExampleCount(source) {
   return rawTemplateCount + quotedCount;
 }
 
+function quotedLiteralCount(source) {
+  return (source.match(/"(?:(?:\\")|[^"])*"/g) ?? []).length;
+}
+
+function priorityDemandDetailCounts(slug) {
+  const priorityStart = registry.indexOf("const priorityDemandDetails");
+  const priorityEnd = registry.indexOf("\n};", priorityStart);
+  const prioritySource = registry.slice(priorityStart, priorityEnd);
+  const detailMatch = prioritySource.match(new RegExp(`"${slug}": demandDetails\\(\\s*\\[([\\s\\S]*?)\\]\\s*,\\s*\\[([\\s\\S]*?)\\]`, "m"));
+  if (!detailMatch) return { failureCases: 0, preCopyChecklist: 0 };
+  return {
+    failureCases: quotedLiteralCount(detailMatch[1]),
+    preCopyChecklist: quotedLiteralCount(detailMatch[2]),
+  };
+}
+
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
 if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
@@ -104,6 +120,9 @@ for (const fragment of ["priorityDemandDetails", "fallbackDemandDetails", "withD
 }
 for (const slug of priorityDetailSlugs) {
   if (!registry.includes(`"${slug}": demandDetails(`)) failures.push(`${slug} missing priority demand detail override`);
+  const detailCounts = priorityDemandDetailCounts(slug);
+  if (detailCounts.failureCases < 3) failures.push(`${slug} should define at least three priority failure cases, found ${detailCounts.failureCases}`);
+  if (detailCounts.preCopyChecklist < 3) failures.push(`${slug} should define at least three priority pre-copy checklist items, found ${detailCounts.preCopyChecklist}`);
   const source = toolSourceFor(slug);
   if (!source.includes("inputExamples:")) {
     failures.push(`${slug} must define explicit inputExamples for the quick-start panel`);

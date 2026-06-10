@@ -21,6 +21,8 @@ const checks = [
   ["agents", "aliases, useCases, inputExamples, contentCluster, and monetizationTier"],
   ["agents", "registry-backed `inputExamples`, `useCases`, `failureCases`, `preCopyChecklist`, and related next actions"],
   ["agents", "Core acquisition tools need at least three real `inputExamples`"],
+  ["agents", "three priority `failureCases`"],
+  ["agents", "three priority `preCopyChecklist` items"],
   ["agents", "Core acquisition tools in Korean, Japanese, Spanish, and German"],
   ["agents", "Session-depth related tools"],
   ["agents", "Korean, Japanese, Spanish, and German priority intent copy"],
@@ -101,6 +103,8 @@ const checks = [
   ["tool", "requiresServer"],
   ["tool", "failure cases"],
   ["tool", "Core acquisition tools need at least three real `inputExamples`"],
+  ["tool", "three priority `failureCases`"],
+  ["tool", "three priority `preCopyChecklist` items"],
   ["tool", "pre-copy checklist"],
   ["tool", "related next actions"],
   ["tool", "ordered as the intended next-action path"],
@@ -212,6 +216,8 @@ const checks = [
   ["verification", "harness:visual"],
   ["verification", "quick-start input examples and use cases"],
   ["verification", "Core acquisition tools should have at least three real `inputExamples`"],
+  ["verification", "three priority `failureCases`"],
+  ["verification", "three priority `preCopyChecklist` items"],
   ["verification", "acquisition workflow clusters"],
   ["verification", "failure cases"],
   ["verification", "pre-copy checklist"],
@@ -262,6 +268,8 @@ const checks = [
   ["product", "70/30 split"],
   ["product", "registry-backed `inputExamples`, `useCases`, `failureCases`, `preCopyChecklist`, and related next actions"],
   ["product", "Core acquisition tools should have at least three real `inputExamples`"],
+  ["product", "three priority `failureCases`"],
+  ["product", "three priority `preCopyChecklist` items"],
   ["product", "Post-approval candidates"],
   ["product", "session depth"],
   ["product", "preserve the registry `relatedTools` order"],
@@ -350,12 +358,12 @@ if (!fs.existsSync(path.join(root, "apps/main/src/components/pointer-background.
   failures.push("pointer background component missing");
 } else {
   const pointerBackground = read("apps/main/src/components/pointer-background.tsx");
-  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x", "--bobob-ray-rotation"]) {
+  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x", "--bobob-depth-x", "--bobob-ray-rotation", "--bobob-ray-opacity"]) {
     if (!pointerBackground.includes(fragment)) failures.push(`pointer background missing ${fragment}`);
   }
 }
 const globalsCss = read("apps/main/src/app/globals.css");
-for (const fragment of [".bobob-pointer-background", "@media (prefers-reduced-motion: reduce)", "color-mix"]) {
+for (const fragment of [".bobob-pointer-background", "@media (prefers-reduced-motion: reduce)", "color-mix", "--bobob-depth-x", "--bobob-ray-opacity"]) {
   if (!globalsCss.includes(fragment)) failures.push(`global CSS missing pointer background policy ${fragment}`);
 }
 const directorySource = read("apps/main/src/features/tools/tool-directory.tsx");

@@ -34,8 +34,12 @@ async function readPointerState(page) {
       pointerY: hostStyle.getPropertyValue("--bobob-pointer-y").trim(),
       gridX: hostStyle.getPropertyValue("--bobob-grid-x").trim(),
       gridY: hostStyle.getPropertyValue("--bobob-grid-y").trim(),
+      depthX: hostStyle.getPropertyValue("--bobob-depth-x").trim(),
+      depthY: hostStyle.getPropertyValue("--bobob-depth-y").trim(),
       sweepX: hostStyle.getPropertyValue("--bobob-sweep-x").trim(),
       rayRotation: hostStyle.getPropertyValue("--bobob-ray-rotation").trim(),
+      rayOpacity: hostStyle.getPropertyValue("--bobob-ray-opacity").trim(),
+      lineOpacity: hostStyle.getPropertyValue("--bobob-line-opacity").trim(),
       transform: layerStyle.transform,
     };
   });
@@ -83,8 +87,12 @@ try {
       failures.push(`${scenario.name} grid offsets did not change after mouse movement`);
     }
 
-    if (!secondState.sweepX || !secondState.rayRotation) {
-      failures.push(`${scenario.name} pointer sweep variables were not populated`);
+    if (firstState.depthX === secondState.depthX && firstState.depthY === secondState.depthY) {
+      failures.push(`${scenario.name} depth offsets did not change after mouse movement`);
+    }
+
+    if (!secondState.sweepX || !secondState.rayRotation || !secondState.rayOpacity || !secondState.lineOpacity) {
+      failures.push(`${scenario.name} pointer sweep and ray variables were not populated`);
     }
 
     if (secondState.transform === "none") {
