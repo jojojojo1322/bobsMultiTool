@@ -263,6 +263,42 @@ function ToolQuickStart({ tool, dictionary }: { tool: ToolDefinition; dictionary
   );
 }
 
+function ToolReviewStrip({ tool, dictionary }: { tool: ToolDefinition; dictionary: ClientDictionary }) {
+  const failureCases = (tool.failureCases?.length ? tool.failureCases : commonFailureCases(tool, dictionary)).slice(0, 2);
+  const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary)).slice(0, 2);
+
+  return (
+    <section className="grid gap-0 border-b bg-muted/20 md:grid-cols-[1fr_1fr]" data-tool-review-strip>
+      <div className="border-b p-4 md:border-b-0 md:border-e">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold">{dictionary.tool.failureCases}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{dictionary.tool.failureCasesDescription}</p>
+        </div>
+        <ul className="grid gap-2">
+          {failureCases.map((failureCase) => (
+            <li key={failureCase} className="border-s ps-3 text-sm leading-5 text-muted-foreground">
+              {failureCase}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="p-4">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold">{dictionary.tool.preCopyChecklist}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{dictionary.tool.preCopyChecklistDescription}</p>
+        </div>
+        <ul className="grid gap-2">
+          {preCopyChecklist.map((item) => (
+            <li key={item} className="border-s ps-3 text-sm leading-5 text-muted-foreground">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function ToolNextActions({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
   const relatedTools = getLocalizedRelatedTools(tool.relatedTools.slice(0, 3), locale);
   if (!relatedTools.length) return null;
@@ -375,6 +411,7 @@ export function ToolWorkspace({
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{tool.description}</p>
               </div>
               <ToolQuickStart tool={tool} dictionary={dictionary} />
+              <ToolReviewStrip tool={tool} dictionary={dictionary} />
               <div className="p-5">
                 <ToolPanel component={tool.component} dictionary={dictionary} />
               </div>

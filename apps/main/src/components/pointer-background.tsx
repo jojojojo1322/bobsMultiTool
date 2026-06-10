@@ -16,18 +16,24 @@ export function PointerBackground() {
       const offsetX = x - 50;
       const offsetY = y - 50;
       const distance = Math.min(1, Math.hypot(offsetX, offsetY) / 70);
+      const intensity = 0.42 + distance * 0.16;
 
       element.style.setProperty("--bobob-pointer-x", `${x}%`);
       element.style.setProperty("--bobob-pointer-y", `${y}%`);
+      element.style.setProperty("--bobob-horizon-x", `${50 + offsetX * 0.18}%`);
+      element.style.setProperty("--bobob-horizon-y", `${34 + offsetY * 0.08}%`);
       element.style.setProperty("--bobob-grid-x", `${offsetX * -0.24}px`);
       element.style.setProperty("--bobob-grid-y", `${offsetY * -0.2}px`);
       element.style.setProperty("--bobob-parallax-x", `${offsetX * -0.07}px`);
       element.style.setProperty("--bobob-parallax-y", `${offsetY * -0.06}px`);
       element.style.setProperty("--bobob-depth-x", `${offsetX * -0.34}px`);
       element.style.setProperty("--bobob-depth-y", `${offsetY * -0.3}px`);
+      element.style.setProperty("--bobob-flow-x", `${offsetX * -0.48}px`);
+      element.style.setProperty("--bobob-flow-y", `${offsetY * -0.36}px`);
       element.style.setProperty("--bobob-sweep-x", `${offsetX * 0.12}px`);
       element.style.setProperty("--bobob-sweep-y", `${offsetY * 0.1}px`);
       element.style.setProperty("--bobob-ray-rotation", `${offsetX * 0.018}deg`);
+      element.style.setProperty("--bobob-background-opacity", String(intensity));
       element.style.setProperty("--bobob-ray-opacity", String(0.22 + distance * 0.2));
       element.style.setProperty("--bobob-line-opacity", String(0.38 + distance * 0.18));
     };

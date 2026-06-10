@@ -74,21 +74,23 @@ body {
 .bobob-pointer-background {
   position: absolute;
   inset: -12%;
-  opacity: 0.5;
-  transform: translate3d(var(--bobob-parallax-x, 0), var(--bobob-parallax-y, 0), 0);
+  opacity: var(--bobob-background-opacity, 0.46);
+  transform: translate3d(var(--bobob-parallax-x, 0), var(--bobob-parallax-y, 0), 0) scale(1.015);
   transition: transform 160ms ease-out, opacity 160ms ease-out;
   will-change: transform, background-position;
   background:
     linear-gradient(115deg, transparent 0 42%, color-mix(in srgb, var(--foreground) 5%, transparent) 45%, transparent 53%),
     linear-gradient(126deg, transparent 0 46%, color-mix(in srgb, var(--border) 36%, transparent) 50%, transparent 56%),
+    linear-gradient(86deg, transparent 0 48%, color-mix(in srgb, var(--foreground) 4%, transparent) 50%, transparent 52%),
     repeating-linear-gradient(90deg, color-mix(in srgb, var(--border) 42%, transparent) 0 1px, transparent 1px 72px),
     repeating-linear-gradient(0deg, color-mix(in srgb, var(--border) 34%, transparent) 0 1px, transparent 1px 72px);
   background-position:
     calc(50% + var(--bobob-grid-x, 0px)) calc(0% + var(--bobob-grid-y, 0px)),
     calc(50% + var(--bobob-depth-x, 0px)) calc(0% + var(--bobob-depth-y, 0px)),
+    calc(var(--bobob-horizon-x, 50%) + var(--bobob-flow-x, 0px)) calc(var(--bobob-horizon-y, 34%) + var(--bobob-flow-y, 0px)),
     var(--bobob-grid-x, 0px) var(--bobob-grid-y, 0px),
     var(--bobob-grid-x, 0px) var(--bobob-grid-y, 0px);
-  background-size: 680px 460px, 920px 620px, 72px 72px, 72px 72px;
+  background-size: 680px 460px, 920px 620px, 760px 520px, 72px 72px, 72px 72px;
   mask-image: linear-gradient(to bottom, black, transparent 84%);
 }
 
@@ -113,11 +115,16 @@ body {
   transform-origin: var(--bobob-pointer-x, 50%) var(--bobob-pointer-y, 50%);
   background:
     linear-gradient(118deg, transparent 0 44%, color-mix(in srgb, var(--border) 48%, transparent) 50%, transparent 58% 100%),
-    linear-gradient(92deg, transparent 0 48%, color-mix(in srgb, var(--foreground) 5%, transparent) 50%, transparent 52% 100%);
+    linear-gradient(92deg, transparent 0 48%, color-mix(in srgb, var(--foreground) 5%, transparent) 50%, transparent 52% 100%),
+    repeating-linear-gradient(118deg, transparent 0 84px, color-mix(in srgb, var(--border) 16%, transparent) 85px 86px, transparent 87px 176px);
+  background-position:
+    calc(50% + var(--bobob-flow-x, 0px)) calc(0% + var(--bobob-flow-y, 0px)),
+    calc(var(--bobob-horizon-x, 50%) + var(--bobob-sweep-x, 0px)) var(--bobob-horizon-y, 34%),
+    var(--bobob-depth-x, 0px) var(--bobob-depth-y, 0px);
 }
 
 .dark .bobob-pointer-background {
-  opacity: 0.36;
+  opacity: calc(var(--bobob-background-opacity, 0.46) * 0.76);
 }
 
 @media (prefers-reduced-motion: reduce) {

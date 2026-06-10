@@ -70,6 +70,7 @@ Include:
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.
 - Tool detail center panels should expose registry-backed quick-start input examples and use cases before the working tool surface. Core acquisition tools should have at least three real `inputExamples`, three priority `failureCases`, and three priority `preCopyChecklist` items.
+- Tool detail center panels should expose a localized review strip with failure cases and pre-copy checklist items before the working tool surface, not only in the right reference panel.
 - Tool detail pages should show registry-backed failure cases, pre-copy checklist, and related next actions without exposing raw demand wording.
 - Search results, center tool panel, and right reference panel should all offer related next-action links for session-depth growth.
 - Related next-action links should preserve registry `relatedTools` order and show localized use-case context from the related tool.

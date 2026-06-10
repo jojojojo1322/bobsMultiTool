@@ -34,9 +34,14 @@ async function readPointerState(page) {
       pointerY: hostStyle.getPropertyValue("--bobob-pointer-y").trim(),
       gridX: hostStyle.getPropertyValue("--bobob-grid-x").trim(),
       gridY: hostStyle.getPropertyValue("--bobob-grid-y").trim(),
+      horizonX: hostStyle.getPropertyValue("--bobob-horizon-x").trim(),
+      horizonY: hostStyle.getPropertyValue("--bobob-horizon-y").trim(),
       depthX: hostStyle.getPropertyValue("--bobob-depth-x").trim(),
       depthY: hostStyle.getPropertyValue("--bobob-depth-y").trim(),
+      flowX: hostStyle.getPropertyValue("--bobob-flow-x").trim(),
+      flowY: hostStyle.getPropertyValue("--bobob-flow-y").trim(),
       sweepX: hostStyle.getPropertyValue("--bobob-sweep-x").trim(),
+      backgroundOpacity: hostStyle.getPropertyValue("--bobob-background-opacity").trim(),
       rayRotation: hostStyle.getPropertyValue("--bobob-ray-rotation").trim(),
       rayOpacity: hostStyle.getPropertyValue("--bobob-ray-opacity").trim(),
       lineOpacity: hostStyle.getPropertyValue("--bobob-line-opacity").trim(),
@@ -91,8 +96,16 @@ try {
       failures.push(`${scenario.name} depth offsets did not change after mouse movement`);
     }
 
-    if (!secondState.sweepX || !secondState.rayRotation || !secondState.rayOpacity || !secondState.lineOpacity) {
-      failures.push(`${scenario.name} pointer sweep and ray variables were not populated`);
+    if (firstState.flowX === secondState.flowX && firstState.flowY === secondState.flowY) {
+      failures.push(`${scenario.name} flow offsets did not change after mouse movement`);
+    }
+
+    if (firstState.horizonX === secondState.horizonX && firstState.horizonY === secondState.horizonY) {
+      failures.push(`${scenario.name} horizon point did not change after mouse movement`);
+    }
+
+    if (!secondState.sweepX || !secondState.rayRotation || !secondState.rayOpacity || !secondState.lineOpacity || !secondState.backgroundOpacity) {
+      failures.push(`${scenario.name} pointer sweep, ray, and opacity variables were not populated`);
     }
 
     if (secondState.transform === "none") {

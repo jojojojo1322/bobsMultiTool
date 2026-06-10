@@ -46,6 +46,10 @@ if (!workspace.includes("function ToolQuickStart")) failures.push("tool detail c
 if (!workspace.includes("data-tool-quick-start")) failures.push("tool detail quick-start section must expose a stable QA attribute");
 if (!workspace.includes("tool.inputExamples.slice")) failures.push("tool detail quick-start must use registry inputExamples");
 if (!workspace.includes("tool.useCases.slice")) failures.push("tool detail quick-start must use registry useCases");
+if (!workspace.includes("function ToolReviewStrip")) failures.push("tool detail central review strip missing");
+if (!workspace.includes("data-tool-review-strip")) failures.push("tool detail review strip must expose a stable QA attribute");
+if (!workspace.includes("dictionary.tool.failureCases")) failures.push("tool detail review strip must expose failure cases");
+if (!workspace.includes("dictionary.tool.preCopyChecklist")) failures.push("tool detail review strip must expose pre-copy checklist");
 if (!workspace.includes("function ToolNextActions")) failures.push("tool detail center panel next-action strip missing");
 if (!workspace.includes("data-tool-next-actions")) failures.push("tool detail next-action strip must expose a stable QA attribute");
 if (!workspace.includes("related.useCases[0]")) failures.push("tool detail next-action links must expose localized use-case context");
