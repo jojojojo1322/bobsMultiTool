@@ -54,7 +54,7 @@ Include:
 - Default English and at least two localized routes.
 - Root `<html lang>` and `<html dir>` must match the active locale; route-level `main` attributes alone are insufficient.
 - Localized visible prose for home, tool detail, sidebar search results, examples, FAQ, guide sections, and metadata.
-- Long-tail guide lead sections should be topic-specific on JSON/YAML/CSV, secure generator, Web SEO, Network, CSS, and Text cleanup guide pages rather than reusing the same generic opening paragraph.
+- Long-tail guide lead sections should be topic-specific on Regex, Cron, SEO meta tags, Hash, Text diff, SQL, Color, JSON/YAML/CSV, secure generator, Web SEO, Network, CSS, and Text cleanup guide pages rather than reusing the same generic opening paragraph.
 - Guide detail meta description and OpenGraph description must match the localized `guide.description`, not a generic title-based template.
 - Tool and guide detail pages must expose page-specific OpenGraph and Twitter title/description values, not root default social metadata.
 - Localized privacy and terms prose plus metadata through `getLocalizedLegalContent`.
@@ -66,11 +66,12 @@ Include:
 - Search Console/AdSense opportunity report behavior. Without CSV inputs it should keep registry metadata warnings at zero when metadata is healthy; with CSV inputs it should report high-impression low-CTR tool and guide pages, low-RPM pages, and `titleDescriptionRecommendations`.
 - SEO measured exports can be provided through env vars or default local files at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; measured CSV/TSV files and generated markdown reports must stay untracked.
 - SEO reports should include `measurementBacklog`, `measuredExportPlan`, and `measuredExportPlan.copyTargets` for unmeasured or partially measured core pages, and verification should confirm none of these fields is used as a direct title/description rewrite signal.
+- SEO reports should include `metadataRewriteReadiness`; public title/description edits are not ready unless `canRewritePublicMetadata` is true and measured query recommendations exist.
 - SEO report `inputWarnings` should flag missing required or recommended Search Console/AdSense CSV headers so empty measured results are not silently trusted.
 - `npm run harness:seo-measured` should be used for post-deploy measured SEO work. It sets `BOBOB_REQUIRE_MEASURED_SEO=1` and should fail until required core pages have both Search Console and AdSense rows.
 - `BOBOB_REQUIRED_MEASURED_PATHS` is acceptable for a targeted page review, but should not be used to claim final core-page measured readiness.
 - SEO opportunity report smoke should prove valid measured CSV fixtures create opportunities and malformed CSV fixtures create `inputWarnings`.
-- Markdown SEO report behavior with `BOBOB_SEO_REPORT_FORMAT=markdown` should produce a reviewable title/description recommendations table when CSV inputs are present.
+- Markdown SEO report behavior with `BOBOB_SEO_REPORT_FORMAT=markdown` should produce a reviewable title/description recommendations table, measured export CSV templates, and metadata rewrite readiness when CSV inputs are present.
 - Desktop left and right sidebar resizing, single-shell panel alignment, clamped panel widths with no horizontal overflow at narrow desktop widths, top brand/home link, preserved sidebar scroll when clicking tool navigation, plus mobile Sheet fallback.
 - No visible demand wording or raw `core` / `growth` / `long-tail` demand badges in home cards, search results, or tool detail headers.
 - A local-only tool and a server route tool.

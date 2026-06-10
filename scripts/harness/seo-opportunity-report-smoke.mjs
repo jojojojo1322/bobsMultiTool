@@ -83,6 +83,11 @@ assert(report.measuredExportPlan.copyTargets.canonicalUrls.includes("https://www
 assert(report.measuredExportPlan.copyTargets.searchConsolePageRegex.includes("https://www\\.bobob\\.app/tools/regex-tester"), "measured export plan should include escaped Search Console page regex");
 assert(report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv.includes("/tools/regex-tester"), "measured export plan should include focused measured paths env value");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("regex tester"), "measured export plan should include search intent seeds");
+assert(report.measuredExportPlan.csvTemplates.searchConsoleHeader === "Page,Query,Impressions,Clicks,CTR,Position", "measured export plan should include Search Console CSV template header");
+assert(report.measuredExportPlan.csvTemplates.adsenseHeader === "Page,Impressions,Page RPM,Estimated earnings,CTR", "measured export plan should include AdSense CSV template header");
+assert(report.metadataRewriteReadiness.status === "needs-measured-data-first", "default fixture should not be ready until required measured coverage is complete");
+assert(report.metadataRewriteReadiness.canRewritePublicMetadata === false, "default fixture should not allow metadata rewrites with partial measured coverage");
+assert(report.metadataRewriteReadiness.nextActions.some((action) => action.includes("Search Console rows grouped by Page and Query")), "metadata readiness should tell reviewers how to collect Search Console rows");
 assert(report.searchConsoleOpportunities.some((row) => row.page === "/tools/json-formatter" && row.query === "json formatter online"), "Search Console low-CTR tool opportunity missing");
 assert(report.adsenseOpportunities.some((row) => row.page === "/tools/dns-lookup" && row.rpm === 0.4), "AdSense low-RPM tool opportunity missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/tools/json-formatter" && item.suggestedTitle.includes("JSON Formatter")), "tool title/description recommendation missing");
@@ -98,6 +103,8 @@ const strictPass = runReport({
 });
 const strictPassReport = JSON.parse(strictPass.stdout);
 assert(strictPassReport.measuredCoverage.pass === true, "strict measured SEO gate should pass for fully covered fixture pages");
+assert(strictPassReport.metadataRewriteReadiness.status === "ready-for-measured-copy-review", "strict measured SEO gate should enable measured metadata review when recommendations have queries");
+assert(strictPassReport.metadataRewriteReadiness.canRewritePublicMetadata === true, "strict measured SEO gate should allow measured metadata review when coverage and query recommendations exist");
 assert(strictPass.stderr === "", "strict measured SEO gate should not warn when fixture coverage is complete");
 
 const strictFail = runReportAllowFailure({
@@ -182,6 +189,10 @@ assert(markdownReport.includes("### Copy Targets"), "markdown report should incl
 assert(markdownReport.includes("reports/search-console.csv"), "markdown measured export plan should include default Search Console path");
 assert(markdownReport.includes("Search Console page regex"), "markdown measured export plan should include Search Console regex copy target");
 assert(markdownReport.includes("BOBOB_REQUIRED_MEASURED_PATHS"), "markdown measured export plan should include focused gate copy target");
+assert(markdownReport.includes("Search Console CSV header"), "markdown measured export plan should include Search Console CSV header template");
+assert(markdownReport.includes("AdSense CSV header"), "markdown measured export plan should include AdSense CSV header template");
+assert(markdownReport.includes("## Metadata Rewrite Readiness"), "markdown report should include metadata rewrite readiness section");
+assert(markdownReport.includes("needs-measured-data-first"), "markdown report should show metadata rewrite is not ready without measured coverage");
 assert(markdownReport.includes("## Measurement Backlog"), "markdown report should include measurement backlog section");
 
 if (failures.length) {

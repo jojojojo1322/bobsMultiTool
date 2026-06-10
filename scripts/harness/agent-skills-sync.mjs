@@ -59,6 +59,7 @@ const checks = [
   ["agents", "titleDescriptionRecommendations"],
   ["agents", "inputWarnings"],
   ["agents", "measurementBacklog"],
+  ["agents", "metadataRewriteReadiness"],
   ["agents", "BOBOB_SEO_REPORT_FORMAT"],
   ["agents", "visual screenshot smoke"],
   ["agents", "unused AdSense placeholder"],
@@ -132,6 +133,7 @@ const checks = [
   ["seo", "titleDescriptionRecommendations"],
   ["seo", "inputWarnings"],
   ["seo", "measurementBacklog"],
+  ["seo", "metadataRewriteReadiness"],
   ["seo", "BOBOB_SEO_REPORT_FORMAT"],
   ["seo", "tool and guide pages"],
   ["seo", "guide.description"],
@@ -160,6 +162,7 @@ const checks = [
   ["verification", "titleDescriptionRecommendations"],
   ["verification", "inputWarnings"],
   ["verification", "measurementBacklog"],
+  ["verification", "metadataRewriteReadiness"],
   ["verification", "BOBOB_SEO_REPORT_FORMAT"],
   ["verification", "tool and guide pages"],
   ["verification", "preserved sidebar scroll"],
@@ -188,6 +191,7 @@ const checks = [
   ["product", "titleDescriptionRecommendations"],
   ["product", "inputWarnings"],
   ["product", "measurementBacklog"],
+  ["product", "metadataRewriteReadiness"],
   ["product", "BOBOB_SEO_REPORT_FORMAT"],
   ["product", "tool and guide pages"],
 ];
@@ -254,7 +258,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "csvTemplates", "metadataRewriteReadiness", "canRewritePublicMetadata", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
@@ -262,7 +266,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
   failures.push("SEO opportunity report smoke harness missing");
 } else {
   const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
-  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredCoverage", "measuredExportPlan", "copyTargets", "csvTemplates", "metadataRewriteReadiness", "canRewritePublicMetadata", "searchConsolePageRegex", "requiredMeasuredPathsEnv", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT", "BOBOB_REQUIRE_MEASURED_SEO", "BOBOB_REQUIRED_MEASURED_PATHS"]) {
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }

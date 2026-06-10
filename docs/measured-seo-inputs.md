@@ -66,6 +66,24 @@ Use `measuredExportPlan.priorityPages` to collect the next batch of Search Conso
 - `requiredMeasuredPathsEnv`: paste this value into `BOBOB_REQUIRED_MEASURED_PATHS` for a focused strict gate after exporting only the listed pages.
 - `searchIntentSeedList`: use these query seeds to sanity-check whether the Search Console export contains the expected search demand.
 
+`measuredExportPlan.csvTemplates` gives copyable CSV headers and safe example rows:
+
+- Search Console header: `Page,Query,Impressions,Clicks,CTR,Position`
+- AdSense header: `Page,Impressions,Page RPM,Estimated earnings,CTR`
+
+## Metadata rewrite readiness
+
+The report includes `metadataRewriteReadiness`.
+
+Use `metadataRewriteReadiness.canRewritePublicMetadata` as the stop/go gate for public title and description edits. It should stay `false` until:
+
+- required Search Console rows exist
+- required AdSense rows exist
+- the strict measured coverage gate passes
+- at least one recommendation is tied to a measured Search Console query
+
+If the status is `needs-measured-data-first`, collect or fix exports before editing metadata copy.
+
 ## Strict measured gate
 
 When a task is explicitly about post-deploy measured SEO improvement, run:

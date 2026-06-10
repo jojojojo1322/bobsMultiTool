@@ -30,6 +30,7 @@
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.
 - When measured CSV rows are absent or partial, use `measurementBacklog` and `measuredExportPlan` only to decide which core pages need Search Console/AdSense export coverage next. Use `measuredExportPlan.copyTargets` for Search Console page regex, canonical URL batches, and focused gate paths, but do not rewrite public title/description copy from backlog alone.
+- Public title/description edits from post-deploy SEO work require `metadataRewriteReadiness.canRewritePublicMetadata=true`. If the report says `needs-measured-data-first`, collect or fix Search Console/AdSense exports before changing metadata.
 - When a task claims post-deploy measured SEO improvement is ready, run `npm run harness:seo-measured` or set `BOBOB_REQUIRE_MEASURED_SEO=1`. This strict gate fails until required core pages have both Search Console and AdSense measured rows.
 - For a focused title/description review, narrow the strict gate with `BOBOB_REQUIRED_MEASURED_PATHS=/tools/json-formatter,/tools/dns-lookup`; do not narrow it for final core-page coverage.
 - `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.
@@ -53,7 +54,7 @@
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.
 - Long-tail acquisition locales (`zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, `ar`) need slug-specific visible descriptions for every registered tool, not only generic translated templates.
 - Long-tail guide descriptions should also be slug-specific for high-traffic workflows such as Regex, Cron, SEO meta tags, Hash, JSON/YAML/CSV, Network, CSS, Web SEO, and Text cleanup.
-- Long-tail guide lead sections should use topic-specific localized prose for high-value workflows. Do not let JSON/YAML/CSV, secure generators, Web SEO, Network, CSS, or Text cleanup guide pages fall back to the same generic first paragraph across all locales.
+- Long-tail guide lead sections should use topic-specific localized prose for high-value workflows. Do not let Regex, Cron, SEO meta tags, Hash, Text diff, SQL, Color, JSON/YAML/CSV, secure generators, Web SEO, Network, CSS, or Text cleanup guide pages fall back to the same generic first paragraph across all locales.
 - Locale routes must set the root `<html lang>` and `<html dir>` through the middleware locale handoff; setting only nested page or main attributes is not enough for multilingual SEO.
 - Localized privacy and terms pages must use `getLocalizedLegalContent`; non-English legal routes must not hardcode English policy or terms prose.
 - Desktop workbench layout must use one aligned shell. Do not reintroduce separate rounded bordered left, center, and right cards around the resizable panels.

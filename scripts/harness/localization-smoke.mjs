@@ -428,6 +428,13 @@ for (const fragment of [
   "จำกัดปัญหาด้วยสัญญาณสาธารณะ",
   "حدد هدف التخطيط اولا",
   "Simpan teks asli lebih dulu",
+  "मिलान की सीमा पहले तय करें",
+  "Confirme a semantica do agendamento",
+  "Thống nhất danh tính trang",
+  "อย่าสับสน hash กับการเข้ารหัส",
+  "قلل الضجيج قبل diff",
+  "Preserve a semantica da consulta",
+  "असल background पर जांचें",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`long-tail priority guide description missing: ${fragment}`);
 }

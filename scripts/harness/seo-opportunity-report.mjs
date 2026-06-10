@@ -534,8 +534,47 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
       requiredMeasuredPathsEnv,
       searchIntentSeedList,
     },
+    csvTemplates: {
+      searchConsoleHeader: "Page,Query,Impressions,Clicks,CTR,Position",
+      adsenseHeader: "Page,Impressions,Page RPM,Estimated earnings,CTR",
+      searchConsoleExample: "https://www.bobob.app/tools/json-formatter,json formatter online,1200,24,2%,8",
+      adsenseExample: "https://www.bobob.app/tools/json-formatter,1200,1.25,1.50,0.8%",
+    },
     requiredMissingPageCount: measuredCoverageSummary.missingRequiredPages.length,
     priorityPages,
+  };
+}
+
+function metadataRewriteReadiness(measuredCoverageSummary, titleDescriptionRecommendations) {
+  const recommendationsWithMeasuredQuery = titleDescriptionRecommendations.filter((item) => item.primaryQuery);
+  const canRewritePublicMetadata =
+    measuredCoverageSummary.pass &&
+    measuredCoverageSummary.searchConsoleRows > 0 &&
+    measuredCoverageSummary.adsenseRows > 0 &&
+    recommendationsWithMeasuredQuery.length > 0;
+  const reasons = [];
+  if (!measuredCoverageSummary.pass) reasons.push("Required Search Console and AdSense coverage is incomplete.");
+  if (measuredCoverageSummary.searchConsoleRows === 0) reasons.push("Search Console rows are missing.");
+  if (measuredCoverageSummary.adsenseRows === 0) reasons.push("AdSense rows are missing.");
+  if (!recommendationsWithMeasuredQuery.length) reasons.push("No recommendation is tied to a measured Search Console query yet.");
+
+  return {
+    status: canRewritePublicMetadata ? "ready-for-measured-copy-review" : "needs-measured-data-first",
+    canRewritePublicMetadata,
+    recommendationCount: titleDescriptionRecommendations.length,
+    measuredQueryRecommendationCount: recommendationsWithMeasuredQuery.length,
+    reasons,
+    nextActions: canRewritePublicMetadata
+      ? [
+          "Review titleDescriptionRecommendations with measured query, CTR, position, RPM, and page context.",
+          "Change public title/description copy only for pages whose measured opportunity is clear.",
+          "Run npm run harness:seo-measured after applying metadata changes.",
+        ]
+      : [
+          "Export Search Console rows grouped by Page and Query for measuredExportPlan.copyTargets.searchConsolePageRegex.",
+          "Export AdSense page URL rows for measuredExportPlan.copyTargets.canonicalUrls.",
+          "Save exports to reports/search-console.csv or .tsv and reports/adsense.csv or .tsv, then rerun npm run harness:seo-opportunities.",
+        ],
   };
 }
 
@@ -692,6 +731,22 @@ function formatMarkdownReport(report) {
     "",
     markdownCodeBlock(report.measuredExportPlan.copyTargets.searchIntentSeedList.join(", ")),
     "",
+    "Search Console CSV header:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.searchConsoleHeader),
+    "",
+    "AdSense CSV header:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.adsenseHeader),
+    "",
+    "Search Console example row:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.searchConsoleExample),
+    "",
+    "AdSense example row:",
+    "",
+    markdownCodeBlock(report.measuredExportPlan.csvTemplates.adsenseExample),
+    "",
     markdownTable(
       ["Path", "Canonical URL", "Tier", "Cluster", "Missing measured inputs", "Search intents"],
       report.measuredExportPlan.priorityPages.map((row) => [
@@ -702,6 +757,28 @@ function formatMarkdownReport(report) {
         row.missingInputs.join(", "),
         row.searchIntents.join(", "),
       ]),
+    ),
+    "",
+    "## Metadata Rewrite Readiness",
+    "",
+    markdownTable(
+      ["Field", "Value"],
+      [
+        ["Status", report.metadataRewriteReadiness.status],
+        ["Can rewrite public metadata", report.metadataRewriteReadiness.canRewritePublicMetadata ? "yes" : "no"],
+        ["Recommendations", report.metadataRewriteReadiness.recommendationCount],
+        ["Measured-query recommendations", report.metadataRewriteReadiness.measuredQueryRecommendationCount],
+      ],
+    ),
+    "",
+    markdownTable(
+      ["Reason"],
+      report.metadataRewriteReadiness.reasons.map((reason) => [reason]),
+    ),
+    "",
+    markdownTable(
+      ["Next action"],
+      report.metadataRewriteReadiness.nextActions.map((action) => [action]),
     ),
     "",
     "## Title And Description Recommendations",
@@ -842,6 +919,7 @@ const unsupportedMeasuredPages = measuredRows
 const measurementBacklogRows = measurementBacklog(contentInventory.all, searchRowsByPage, adsenseRowsByPage);
 const measuredCoverageSummary = measuredCoverage(contentInventory.all, inventoryByPath, searchRowsByPage, adsenseRowsByPage);
 const measuredExportPlanSummary = measuredExportPlan(measuredCoverageSummary, measurementBacklogRows);
+const metadataRewriteReadinessSummary = metadataRewriteReadiness(measuredCoverageSummary, titleDescriptionRecommendations);
 
 const report = {
   inputs: {
@@ -867,6 +945,7 @@ const report = {
   inputWarnings,
   measuredCoverage: measuredCoverageSummary,
   measuredExportPlan: measuredExportPlanSummary,
+  metadataRewriteReadiness: metadataRewriteReadinessSummary,
   searchConsoleOpportunities: scOpportunities,
   adsenseOpportunities: adOpportunities,
   metadataWarnings,
