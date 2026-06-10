@@ -27,9 +27,10 @@
 - Tool navigation clicks must preserve the sidebar scroll position and must not force the document back to the top while moving between tool detail pages.
 - Internal search must use the shared registry search index across home, `/tools`, locale tool directories, and tool workbench surfaces. URL query `?q=` must stay aligned with the SearchAction schema.
 - Post-deploy title/description changes should be driven by Search Console and AdSense page/query CSV exports when available. Use `npm run harness:seo-opportunities` to identify high-impression low-CTR tool and guide pages, low-RPM pages, metadata length/intent issues, and `titleDescriptionRecommendations`.
+- The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv` and `reports/adsense.csv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.
 - `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.
-- For measured SEO review handoff, use `BOBOB_SEO_REPORT_FORMAT=markdown` and optionally `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` to generate a readable recommendations artifact.
+- For measured SEO review handoff, use `BOBOB_SEO_REPORT_FORMAT=markdown` and optionally `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` to generate a readable recommendations artifact. Keep measured CSVs and markdown reports out of git.
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage. Do not return to a capped static sitemap that drops locale tool pages.
@@ -40,6 +41,7 @@
 - Long-tail locale templates must avoid English scaffolding terms in visible prose when a natural local alternative is available. Watch recurring fallback fragments such as `developer tool`, `workflow`, `Input`, `Copy`, `Generated output`, and `secret production` in Hindi, Indonesian, Vietnamese, Thai, and Arabic pages.
 - Hindi acquisition copy should be Devanagari-first for sentence prose. Keep technical tokens like JSON, JWT, Regex, URL, CSS, and API when useful, but do not fall back to full romanized Hinglish templates for descriptions, FAQ, guide descriptions, empty states, or metadata.
 - Hindi reusable templates should avoid English scaffolding such as `input flow`, `output shape`, `Copy`, `result verify`, `practical guide`, `tool browser`, and `server endpoint` when clear Hindi phrasing exists.
+- Indonesian reusable templates should prefer visible local phrases such as `masukan`, `hasil`, `rahasia produksi`, and `jalur pemeriksaan` over English scaffolding like `Input`, `Output`, `endpoint`, or `secret` when the phrase is not a technical token.
 - Vietnamese acquisition copy should use Vietnamese diacritics for sentence prose. Keep technical tokens when useful, but avoid full ASCII fallback templates such as `Dinh dang`, `Kiem tra`, `Huong dan`, `Cong cu`, `Dau vao`, or `Ket qua`.
 - Locale switcher labels must use native language names such as `한국어`, `日本語`, `简体中文`, `हिन्दी`, `ไทย`, and `العربية`, not English-only language names for every locale.
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.

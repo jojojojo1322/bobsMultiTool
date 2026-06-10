@@ -60,3 +60,8 @@ analytics-config.json
 # 배포 관련
 deployment-logs/
 vercel-*.log
+
+# local measured SEO exports and reports
+reports/*.csv
+reports/*.tsv
+reports/seo-opportunities*.md

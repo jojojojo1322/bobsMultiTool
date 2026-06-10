@@ -67,6 +67,31 @@ assert(report.titleDescriptionRecommendations.some((item) => item.path === "/too
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/guides/seo-meta-tags" && item.suggestedTitle.includes("Guide")), "guide title/description recommendation missing");
 assert(report.unsupportedMeasuredPages.some((row) => row.page === "/not-tracked"), "unsupported measured page warning missing");
 
+const defaultReportsDir = path.join(root, "reports");
+const defaultSearchConsoleCsv = path.join(defaultReportsDir, "search-console.csv");
+const defaultAdsenseCsv = path.join(defaultReportsDir, "adsense.csv");
+const defaultInputsAlreadyExist = fs.existsSync(defaultSearchConsoleCsv) || fs.existsSync(defaultAdsenseCsv);
+if (!defaultInputsAlreadyExist) {
+  fs.mkdirSync(defaultReportsDir, { recursive: true });
+  fs.writeFileSync(defaultSearchConsoleCsv, fs.readFileSync(searchConsoleCsv, "utf8"));
+  fs.writeFileSync(defaultAdsenseCsv, fs.readFileSync(adsenseCsv, "utf8"));
+  try {
+    const defaultRun = runReport({
+      BOBOB_SEARCH_CONSOLE_CSV: "",
+      BOBOB_ADSENSE_CSV: "",
+    });
+    const defaultReport = JSON.parse(defaultRun.stdout);
+    assert(defaultReport.inputs.searchConsoleCsv === "reports/search-console.csv", "default Search Console CSV path should be auto-detected");
+    assert(defaultReport.inputs.searchConsoleCsvSource === "default", "default Search Console CSV source missing");
+    assert(defaultReport.inputs.adsenseCsv === "reports/adsense.csv", "default AdSense CSV path should be auto-detected");
+    assert(defaultReport.inputs.adsenseCsvSource === "default", "default AdSense CSV source missing");
+    assert(defaultReport.searchConsoleOpportunities.some((row) => row.page === "/tools/json-formatter"), "default Search Console CSV should create opportunities");
+  } finally {
+    fs.rmSync(defaultSearchConsoleCsv, { force: true });
+    fs.rmSync(defaultAdsenseCsv, { force: true });
+  }
+}
+
 const badSearchConsoleCsv = writeFixture("bad-search-console.csv", "Bad,Columns\n/tools/json-formatter,1000\n");
 const markdownOutput = path.join(tempDir, "seo-opportunities.md");
 const badRun = runReport({

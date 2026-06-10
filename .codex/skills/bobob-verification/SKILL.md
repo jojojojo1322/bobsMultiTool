@@ -63,6 +63,7 @@ Include:
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - Search Console/AdSense opportunity report behavior. Without CSV inputs it should keep registry metadata warnings at zero when metadata is healthy; with CSV inputs it should report high-impression low-CTR tool and guide pages, low-RPM pages, and `titleDescriptionRecommendations`.
+- SEO measured exports can be provided through env vars or default local files at `reports/search-console.csv` and `reports/adsense.csv`; measured CSVs and generated markdown reports must stay untracked.
 - SEO report `inputWarnings` should flag missing required or recommended Search Console/AdSense CSV headers so empty measured results are not silently trusted.
 - SEO opportunity report smoke should prove valid measured CSV fixtures create opportunities and malformed CSV fixtures create `inputWarnings`.
 - Markdown SEO report behavior with `BOBOB_SEO_REPORT_FORMAT=markdown` should produce a reviewable title/description recommendations table when CSV inputs are present.

@@ -2,8 +2,23 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const searchCsvPath = process.env.BOBOB_SEARCH_CONSOLE_CSV;
-const adsenseCsvPath = process.env.BOBOB_ADSENSE_CSV;
+const defaultSearchCsvRelativePath = "reports/search-console.csv";
+const defaultAdsenseCsvRelativePath = "reports/adsense.csv";
+function resolveCsvInput(envName, defaultRelativePath) {
+  const explicitPath = process.env[envName];
+  if (explicitPath) {
+    return { path: explicitPath, displayPath: explicitPath, source: envName, defaultPath: defaultRelativePath };
+  }
+  const defaultPath = path.join(root, defaultRelativePath);
+  if (fs.existsSync(defaultPath)) {
+    return { path: defaultPath, displayPath: defaultRelativePath, source: "default", defaultPath: defaultRelativePath };
+  }
+  return { path: undefined, displayPath: null, source: "missing", defaultPath: defaultRelativePath };
+}
+const searchCsvInput = resolveCsvInput("BOBOB_SEARCH_CONSOLE_CSV", defaultSearchCsvRelativePath);
+const adsenseCsvInput = resolveCsvInput("BOBOB_ADSENSE_CSV", defaultAdsenseCsvRelativePath);
+const searchCsvPath = searchCsvInput.path;
+const adsenseCsvPath = adsenseCsvInput.path;
 const reportFormat = process.env.BOBOB_SEO_REPORT_FORMAT ?? "json";
 const reportOutputPath = process.env.BOBOB_SEO_REPORT_OUT;
 const minImpressions = Number(process.env.BOBOB_MIN_IMPRESSIONS ?? 100);
@@ -512,8 +527,12 @@ const unsupportedMeasuredPages = measuredRows
 
 const report = {
   inputs: {
-    searchConsoleCsv: searchCsvPath ?? null,
-    adsenseCsv: adsenseCsvPath ?? null,
+    searchConsoleCsv: searchCsvInput.displayPath,
+    searchConsoleCsvSource: searchCsvInput.source,
+    searchConsoleDefaultCsv: searchCsvInput.defaultPath,
+    adsenseCsv: adsenseCsvInput.displayPath,
+    adsenseCsvSource: adsenseCsvInput.source,
+    adsenseDefaultCsv: adsenseCsvInput.defaultPath,
     minImpressions,
     lowCtr,
     lowRpm,
@@ -531,6 +550,6 @@ const report = {
 
 emitReport(report);
 
-if (!searchCsvPath) console.error("No BOBOB_SEARCH_CONSOLE_CSV provided; Search Console CTR opportunities were skipped.");
-if (!adsenseCsvPath) console.error("No BOBOB_ADSENSE_CSV provided; AdSense RPM opportunities were skipped.");
+if (!searchCsvPath) console.error(`No Search Console CSV provided; set BOBOB_SEARCH_CONSOLE_CSV or create ${searchCsvInput.defaultPath}. Search Console CTR opportunities were skipped.`);
+if (!adsenseCsvPath) console.error(`No AdSense CSV provided; set BOBOB_ADSENSE_CSV or create ${adsenseCsvInput.defaultPath}. AdSense RPM opportunities were skipped.`);
 for (const warning of inputWarnings) console.error(`SEO input warning: ${warning}`);
