@@ -13,11 +13,12 @@ description: Use when adding, renaming, removing, or reorganizing Bob's Multi To
 6. Add localized visible prose for every non-English locale through the localized content resolver: description, SEO title/description, keyword chips, use cases, examples, FAQ, guide title, and related display labels.
 7. Add slug-specific long-tail visible descriptions for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`; do not rely on generic translated templates for new tools.
 8. Add guide links that resolve under `/guides/{slug}` and localized routes.
-9. Add related tools that resolve to registered slugs.
-10. Confirm the dynamic sitemap index and `/sitemaps/{locale}` coverage include the tool. Do not add a static `apps/main/public/sitemap.xml`.
-11. Keep `apps/main` as the only app workspace. Do not add standalone app packages for individual tools; use registry entries and old-path redirects instead.
-12. Update AGENTS.md or this skill when the tool-addition policy changes.
-13. Run `npm run harness:registry`, `npm run harness:localization`, `npm run harness:search`, `npm run harness:tools`, `npm run harness:agents`, and `npm run harness:legacy`.
+9. Add related tools that resolve to registered slugs, ordered as the intended next-action path.
+10. Make sure related tool useCases are strong enough to appear as localized next-action context, not only as bare tool names.
+11. Confirm the dynamic sitemap index and `/sitemaps/{locale}` coverage include the tool. Do not add a static `apps/main/public/sitemap.xml`.
+12. Keep `apps/main` as the only app workspace. Do not add standalone app packages for individual tools; use registry entries and old-path redirects instead.
+13. Update AGENTS.md or this skill when the tool-addition policy changes.
+14. Run `npm run harness:registry`, `npm run harness:localization`, `npm run harness:search`, `npm run harness:tools`, `npm run harness:agents`, and `npm run harness:legacy`.
 
 Every tool must include title, category, description, component key, SEO title/description/keywords, examples, FAQs, guides, related tools, demandTier, searchIntents, aliases, useCases, inputExamples, failureCases, preCopyChecklist, contentCluster, monetizationTier, supportedLocales, privacyMode, and requiresServer.
 Locale routes must not fall back to raw English registry prose for sentence copy.

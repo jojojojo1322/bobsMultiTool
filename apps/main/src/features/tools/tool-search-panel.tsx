@@ -78,9 +78,12 @@ export function ToolSearchPanel({
                     <Link
                       key={related.slug}
                       href={withLocale(`/tools/${related.slug}`, locale)}
-                      className="rounded-sm border bg-background px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="max-w-full rounded-sm border bg-background px-2 py-1 text-xs transition-colors hover:bg-muted"
                     >
-                      {dictionary.tool.nextActionPrefix} {related.shortTitle}
+                      <span className="font-medium text-foreground">
+                        {dictionary.tool.nextActionPrefix} {related.shortTitle}
+                      </span>
+                      <span className="mt-0.5 block max-w-[12rem] truncate text-muted-foreground">{related.useCases[0] ?? related.description}</span>
                     </Link>
                   ))}
                 </div>

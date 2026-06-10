@@ -2057,8 +2057,11 @@ export function getLocalizedTools(locale: Locale) {
 }
 
 export function getLocalizedRelatedTools(slugs: string[], locale: Locale) {
-  const slugSet = new Set(slugs);
-  return tools.filter((tool) => slugSet.has(tool.slug)).map((tool) => getLocalizedTool(tool, locale));
+  const toolBySlug = new Map(tools.map((tool) => [tool.slug, tool]));
+  return slugs
+    .map((slug) => toolBySlug.get(slug))
+    .filter((tool): tool is ToolDefinition => Boolean(tool))
+    .map((tool) => getLocalizedTool(tool, locale));
 }
 
 function localizedSearchText(tool: ToolDefinition) {

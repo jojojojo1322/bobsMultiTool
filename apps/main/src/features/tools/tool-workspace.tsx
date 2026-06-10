@@ -204,7 +204,7 @@ function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition
             <Link key={related.slug} href={withLocale(`/tools/${related.slug}`, locale)} className="rounded-md border px-3 py-2 text-sm hover:bg-muted">
               <span className="font-medium">{related.title}</span>
               <span className="mt-1 block text-xs text-muted-foreground">
-                {dictionary.tool.nextActionPrefix} {related.shortTitle}
+                {dictionary.tool.nextActionPrefix} {related.useCases[0] ?? related.shortTitle}
               </span>
             </Link>
           ))}
@@ -285,7 +285,7 @@ function ToolNextActions({ tool, locale, dictionary }: { tool: ToolDefinition; l
           <Link key={related.slug} href={withLocale(`/tools/${related.slug}`, locale)} className="rounded-md border bg-card px-3 py-2 text-sm transition-colors hover:bg-muted/60">
             <span className="block font-medium">{related.shortTitle}</span>
             <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">
-              {dictionary.tool.nextActionPrefix} {related.description}
+              {dictionary.tool.nextActionPrefix} {related.useCases[0] ?? related.description}
             </span>
           </Link>
         ))}

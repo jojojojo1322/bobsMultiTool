@@ -72,6 +72,7 @@ Include:
 - Tool detail center panels should expose registry-backed quick-start input examples and use cases before the working tool surface. Core acquisition tools should have at least three real `inputExamples`.
 - Tool detail pages should show registry-backed failure cases, pre-copy checklist, and related next actions without exposing raw demand wording.
 - Search results, center tool panel, and right reference panel should all offer related next-action links for session-depth growth.
+- Related next-action links should preserve registry `relatedTools` order and show localized use-case context from the related tool.
 - Core acquisition tools in Korean, Japanese, Spanish, and German should have slug-specific priority descriptions for JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript.
 - Pointer-reactive background motion should stay subtle, respect reduced motion, render on home/tool directory and tool detail pages, use requestAnimationFrame-driven CSS variable smoothing, and avoid `ogl`, `framer-motion`, or other heavy animation dependencies.
 - Run `npm run harness:pointer-background` after pointer background changes to prove CSS variables change on real mouse movement.

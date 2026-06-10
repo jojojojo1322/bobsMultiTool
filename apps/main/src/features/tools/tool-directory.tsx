@@ -133,14 +133,17 @@ export function ToolDirectory({
                       <Badge>{dictionary.categories[leadTool.category] ?? leadTool.category}</Badge>
                     </div>
                   </Link>
-                  <div className="mt-3 flex flex-wrap gap-2 border-t pt-3">
+                  <div className="mt-3 grid gap-2 border-t pt-3">
                     {nextTools.map((tool) => (
                       <Link
                         key={tool.slug}
                         href={withLocale(`/tools/${tool.slug}`, locale)}
-                        className="rounded-sm border bg-card px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        className="rounded-sm border bg-card px-2 py-1.5 text-xs transition-colors hover:bg-muted"
                       >
-                        {dictionary.tool.nextActionPrefix} {tool.shortTitle}
+                        <span className="block font-medium text-foreground">
+                          {dictionary.tool.nextActionPrefix} {tool.shortTitle}
+                        </span>
+                        <span className="mt-0.5 block line-clamp-1 text-muted-foreground">{tool.useCases[0] ?? tool.description}</span>
                       </Link>
                     ))}
                   </div>

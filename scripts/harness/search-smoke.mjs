@@ -37,14 +37,19 @@ for (const [source, name] of [
   if (!source.includes("searchLocalizedTools(")) failures.push(`${name} does not use localized shared search`);
 }
 if (!localizedContent.includes("searchTools(query)")) failures.push("localized search does not reuse registry search ranking");
+if (!localizedContent.includes("const toolBySlug = new Map") || !localizedContent.includes(".map((slug) => toolBySlug.get(slug))")) {
+  failures.push("localized related tools must preserve registry relatedTools order");
+}
 if (!searchPanel.includes("getLocalizedTools(")) failures.push("tool search panel does not localize empty-query results");
 if (!searchPanel.includes("getLocalizedRelatedTools(")) failures.push("tool search panel must expose related next-action links");
+if (!searchPanel.includes("related.useCases[0]")) failures.push("tool search panel related links must expose localized use-case context");
 if (!searchPanel.includes("initialQuery")) failures.push("tool search panel does not accept initial URL query");
 if (!searchPanel.includes("url.searchParams.set(\"q\"")) failures.push("tool search panel does not sync q search param");
 if (!layout.includes("https://www.bobob.app/tools?q={search_term_string}")) failures.push("SearchAction target is not aligned to /tools?q=");
 if (!toolDirectory.includes("acquisitionClusterSlugs")) failures.push("tool directory missing acquisition workflow clusters");
 if (!toolDirectory.includes("data-acquisition-clusters")) failures.push("tool directory acquisition clusters need a stable QA attribute");
 if (!toolDirectory.includes("dictionary.tool.nextActionPrefix")) failures.push("tool directory clusters must expose next-action links");
+if (!toolDirectory.includes("tool.useCases[0]")) failures.push("tool directory clusters must expose localized use-case context");
 for (const slug of ["json-formatter", "jwt-decoder", "http-status-checker", "color-converter", "uuid-generator", "regex-tester"]) {
   if (!toolDirectory.includes(`"${slug}"`)) failures.push(`tool directory acquisition clusters missing ${slug}`);
 }
@@ -54,6 +59,7 @@ for (const fragment of [
   "dictionary.tool.failureCases",
   "dictionary.tool.preCopyChecklist",
   "dictionary.tool.nextActionPrefix",
+  "related.useCases[0]",
 ]) {
   if (!workspace.includes(fragment)) failures.push(`tool workspace missing retention detail ${fragment}`);
 }

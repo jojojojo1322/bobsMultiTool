@@ -48,6 +48,7 @@ if (!workspace.includes("tool.inputExamples.slice")) failures.push("tool detail 
 if (!workspace.includes("tool.useCases.slice")) failures.push("tool detail quick-start must use registry useCases");
 if (!workspace.includes("function ToolNextActions")) failures.push("tool detail center panel next-action strip missing");
 if (!workspace.includes("data-tool-next-actions")) failures.push("tool detail next-action strip must expose a stable QA attribute");
+if (!workspace.includes("related.useCases[0]")) failures.push("tool detail next-action links must expose localized use-case context");
 if (!guideDetail.includes("withLocale(\"/\", defaultLocale)") || !guideDetail.includes("Bob&apos;s Multi Tool")) failures.push("default guide detail home link missing");
 if (!localizedGuideDetail.includes("withLocale(\"/\", locale)") || !localizedGuideDetail.includes("Bob&apos;s Multi Tool")) failures.push("localized guide detail home link missing");
 if (!workspace.includes("bobob:tool-nav-scroll")) failures.push("tool navigation scroll persistence missing");
