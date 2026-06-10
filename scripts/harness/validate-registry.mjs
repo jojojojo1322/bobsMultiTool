@@ -24,6 +24,7 @@ const failures = [];
 const priorityDetailSlugs = [
   "regex-tester",
   "json-formatter",
+  "json-escape-unescape",
   "jwt-decoder",
   "base64-tool",
   "cron-generator",

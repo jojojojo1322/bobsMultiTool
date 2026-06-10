@@ -64,6 +64,7 @@ const longTailIntentSource = localizedContent.match(/const longTailPriorityToolI
 const coreAcquisitionSlugs = [
   "regex-tester",
   "json-formatter",
+  "json-escape-unescape",
   "jwt-decoder",
   "base64-tool",
   "cron-generator",

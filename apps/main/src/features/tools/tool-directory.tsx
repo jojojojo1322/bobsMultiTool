@@ -13,7 +13,7 @@ import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
 import type { ToolDefinition } from "@/features/tools/types";
 
 const acquisitionClusterSlugs = [
-  ["json-formatter", "json-to-typescript", "json-schema-validator", "base64-tool"],
+  ["json-formatter", "json-escape-unescape", "json-to-typescript", "json-schema-validator"],
   ["jwt-decoder", "timestamp-converter", "base64-tool", "hash-generator"],
   ["http-status-checker", "dns-lookup", "meta-tag-generator", "open-graph-preview"],
   ["color-converter", "css-formatter", "css-unit-converter", "css-clamp-generator"],

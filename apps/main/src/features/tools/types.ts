@@ -15,6 +15,7 @@ export type ToolComponentKey =
   | "iframe"
   | "lorem"
   | "json"
+  | "jsonEscape"
   | "jwt"
   | "url"
   | "base64"

@@ -265,6 +265,23 @@ const localizedResultToolUi: Record<Locale, Record<string, string>> = {
   ar: { lineDiff: "فرق حسب السطر", wordDiff: "فرق حسب الكلمة", validationResult: "نتيجة التحقق", pathResult: "نتيجة المسار", text: "النص", textMetrics: "مقاييس النص", characters: "الأحرف", charactersNoSpaces: "الأحرف دون مسافات", words: "الكلمات", lines: "الأسطر", estimatedReadingTime: "وقت القراءة المقدر", minutes: "دقيقة", ulidValues: "قيم ULID", xmlSitemap: "خريطة XML", openGraphTags: "وسوم Open Graph", imageUrl: "URL الصورة", generatedFavicon: "favicon منشأ", faviconMarkup: "وسم favicon", timeZones: "المناطق الزمنية", convertedCssUnits: "وحدات CSS المحولة", cssClamp: "CSS clamp" },
 };
 
+const localizedJsonEscapeToolUi: Record<Locale, Record<string, string>> = {
+  en: { jsonStringInput: "JSON string input", escapeJsonString: "Escape JSON string", unescapeJsonString: "Unescape JSON string" },
+  ko: { jsonStringInput: "JSON 문자열 입력", escapeJsonString: "JSON 문자열 이스케이프", unescapeJsonString: "JSON 문자열 이스케이프 해제" },
+  ja: { jsonStringInput: "JSON文字列入力", escapeJsonString: "JSON文字列をエスケープ", unescapeJsonString: "JSON文字列をアンエスケープ" },
+  "zh-CN": { jsonStringInput: "JSON 字符串输入", escapeJsonString: "转义 JSON 字符串", unescapeJsonString: "反转义 JSON 字符串" },
+  "zh-TW": { jsonStringInput: "JSON 字串輸入", escapeJsonString: "跳脫 JSON 字串", unescapeJsonString: "還原 JSON 字串" },
+  es: { jsonStringInput: "Entrada de cadena JSON", escapeJsonString: "Escapar cadena JSON", unescapeJsonString: "Desescapar cadena JSON" },
+  "pt-BR": { jsonStringInput: "Entrada de string JSON", escapeJsonString: "Escapar string JSON", unescapeJsonString: "Desescapar string JSON" },
+  de: { jsonStringInput: "JSON-String-Eingabe", escapeJsonString: "JSON-String escapen", unescapeJsonString: "JSON-String unescapen" },
+  fr: { jsonStringInput: "Entree de chaine JSON", escapeJsonString: "Echapper la chaine JSON", unescapeJsonString: "Des-echapper la chaine JSON" },
+  hi: { jsonStringInput: "JSON string इनपुट", escapeJsonString: "JSON string escape करें", unescapeJsonString: "JSON string unescape करें" },
+  id: { jsonStringInput: "Masukan string JSON", escapeJsonString: "Escape string JSON", unescapeJsonString: "Unescape string JSON" },
+  vi: { jsonStringInput: "Chuỗi JSON đầu vào", escapeJsonString: "Escape chuỗi JSON", unescapeJsonString: "Unescape chuỗi JSON" },
+  th: { jsonStringInput: "อินพุต JSON string", escapeJsonString: "Escape JSON string", unescapeJsonString: "Unescape JSON string" },
+  ar: { jsonStringInput: "إدخال سلسلة JSON", escapeJsonString: "تهريب سلسلة JSON", unescapeJsonString: "إلغاء تهريب سلسلة JSON" },
+};
+
 const localizedNoOutput: Record<Locale, string> = {
   en: "Output will appear here.",
   ko: "출력이 여기에 표시됩니다.",
@@ -667,7 +684,7 @@ const commonLocaleOverrides = Object.fromEntries(
     {
       ...commonText[locale],
       categories: localizedCategories[locale],
-      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale], ...localizedResultToolUi[locale] },
+      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale], ...localizedResultToolUi[locale], ...localizedJsonEscapeToolUi[locale] },
     },
   ]),
 ) as unknown as Record<Locale, CommonLocaleOverride>;

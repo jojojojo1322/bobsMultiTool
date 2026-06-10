@@ -443,6 +443,12 @@ const priorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {
     es: "Formatea JSON de APIs, configs y logs para leerlo mejor y detectar errores de sintaxis rapidamente.",
     de: "Formatiert JSON aus APIs, Konfigurationen und Logs lesbar und macht Syntaxfehler schneller sichtbar.",
   },
+  "json-escape-unescape": {
+    ko: "JSON 문자열에 넣을 따옴표, 줄바꿈, 백슬래시를 escape/unescape해 로그와 테스트 데이터를 정리합니다.",
+    ja: "JSON 文字列に入れる引用符、改行、バックスラッシュを escape/unescape し、ログやテストデータを整えます。",
+    es: "Escapa y desescapa comillas, saltos de linea y barras invertidas para strings JSON, registros y datos de prueba.",
+    de: "Escaped und unescaped Anfuehrungszeichen, Zeilenumbrueche und Backslashes fuer JSON-Strings, Logs und Testdaten.",
+  },
   "jwt-decoder": {
     ko: "JWT의 header와 payload를 브라우저에서 디코딩해 만료 시간, issuer, scope를 빠르게 확인하는 도구입니다.",
     ja: "JWT の header と payload をブラウザ内でデコードし、有効期限、issuer、scope を素早く確認します。",
@@ -641,6 +647,17 @@ const longTailPriorityToolIntents: Record<string, Partial<Record<Locale, string>
     vi: "Định dạng JSON từ API, cấu hình và nhật ký để đọc cấu trúc rõ hơn và phát hiện lỗi cú pháp nhanh.",
     th: "จัดรูปแบบ JSON จาก API ค่าตั้ง และบันทึกให้อ่านง่ายและเห็นข้อผิดพลาดไวยากรณ์เร็วขึ้น",
     ar: "نسق JSON من API أو ملفات الإعداد أو السجلات لقراءة البنية وكشف أخطاء الصياغة بسرعة.",
+  },
+  "json-escape-unescape": {
+    "zh-CN": "转义和反转义 JSON 字符串中的引号、换行和反斜杠，用于日志、测试数据和嵌入值。",
+    "zh-TW": "跳脫與還原 JSON 字串中的引號、換行與反斜線，用於記錄、測試資料與嵌入值。",
+    "pt-BR": "Escape e desescape aspas, quebras de linha e barras invertidas em strings JSON para logs e dados de teste.",
+    fr: "Echappez et restaurez guillemets, retours ligne et barres obliques inverses dans les chaines JSON.",
+    hi: "लॉग, परीक्षण डेटा और embedded values के लिए JSON strings में quotes, newline और backslash escape/unescape करें.",
+    id: "Escape dan unescape tanda kutip, baris baru, dan backslash dalam string JSON untuk log dan data uji.",
+    vi: "Escape và unescape dấu nháy, xuống dòng và backslash trong chuỗi JSON cho log, dữ liệu thử và giá trị nhúng.",
+    th: "escape และ unescape เครื่องหมายคำพูด บรรทัดใหม่ และ backslash ใน JSON string สำหรับ log และข้อมูลทดสอบ",
+    ar: "اهرب واستعد علامات الاقتباس والأسطر الجديدة والشرطة العكسية داخل سلاسل JSON للسجلات والبيانات الثابتة.",
   },
   "jwt-decoder": {
     "zh-CN": "在浏览器中解码 JWT 标头和载荷，检查过期时间、签发方、权限范围与声明值。",

@@ -392,6 +392,52 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+function escapeJsonString(value: string) {
+  return JSON.stringify(value).slice(1, -1);
+}
+
+function quoteJsonEscapedInput(value: string) {
+  let output = "";
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index];
+    const previous = value[index - 1];
+    if (character === "\"" && previous !== "\\") {
+      output += "\\\"";
+    } else if (character === "\n") {
+      output += "\\n";
+    } else if (character === "\r") {
+      output += "\\r";
+    } else if (character === "\t") {
+      output += "\\t";
+    } else {
+      output += character;
+    }
+  }
+  return `"${output}"`;
+}
+
+function unescapeJsonString(value: string) {
+  const trimmed = value.trim();
+  const candidate = trimmed.startsWith("\"") && trimmed.endsWith("\"") ? trimmed : quoteJsonEscapedInput(value);
+  const parsed = JSON.parse(candidate);
+  if (typeof parsed !== "string") throw new Error("Input must be a JSON string value.");
+  return parsed;
+}
+
+function JsonEscapeTool({ dictionary }: { dictionary: ClientDictionary }) {
+  return (
+    <TextTransformTool
+      dictionary={dictionary}
+      inputLabel={ui(dictionary, "jsonStringInput", "JSON string input")}
+      defaultInput={"{\"message\":\"Hello Bob\",\"path\":\"/tools/json-formatter\"}"}
+      modes={[
+        { value: "escape", label: ui(dictionary, "escapeJsonString", "Escape JSON string"), transform: escapeJsonString },
+        { value: "unescape", label: ui(dictionary, "unescapeJsonString", "Unescape JSON string"), transform: unescapeJsonString },
+      ]}
+    />
+  );
+}
+
 function decodeBase64Url(value: string) {
   const base64 = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
   const binary = globalThis.atob(base64);
@@ -1512,6 +1558,7 @@ export const toolComponentMap: Record<ToolComponentKey, React.ComponentType<{ di
   iframe: IframeTool,
   lorem: LoremTool,
   json: JsonFormatterTool,
+  jsonEscape: JsonEscapeTool,
   jwt: JwtDecoderTool,
   url: UrlEncoderTool,
   base64: Base64Tool,
