@@ -15,6 +15,23 @@ const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
 const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
 const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
 const failures = [];
+const priorityDetailSlugs = [
+  "regex-tester",
+  "json-formatter",
+  "jwt-decoder",
+  "base64-tool",
+  "cron-generator",
+  "uuid-generator",
+  "hash-generator",
+  "password-generator",
+  "qr-code-generator",
+  "dns-lookup",
+  "http-status-checker",
+  "color-converter",
+  "sql-formatter",
+  "css-formatter",
+  "javascript-formatter",
+];
 
 const toolBlocks = Array.from(registry.matchAll(/slug:\s+"([^"]+)"[\s\S]*?relatedTools:\s+\[([^\]]*)\]/g));
 const slugs = toolBlocks.map((match) => match[1]);
@@ -42,6 +59,12 @@ if (!fs.existsSync(sitemapIndexRoutePath)) failures.push("sitemap index route mi
 if (!fs.existsSync(localizedSitemapRoutePath)) failures.push("localized sitemap route missing");
 if (!fs.existsSync(toolsIndexPath) || !fs.readFileSync(toolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("/tools index directory page missing");
 if (!fs.existsSync(localizedToolsIndexPath) || !fs.readFileSync(localizedToolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("localized tools index directory page missing");
+for (const fragment of ["priorityDemandDetails", "fallbackDemandDetails", "withDemandDetails", "failureCases", "preCopyChecklist"]) {
+  if (!registry.includes(fragment)) failures.push(`registry missing demand detail support: ${fragment}`);
+}
+for (const slug of priorityDetailSlugs) {
+  if (!registry.includes(`"${slug}": demandDetails(`)) failures.push(`${slug} missing priority demand detail override`);
+}
 
 for (const [fullBlock, slug, relatedSource] of toolBlocks) {
   const generatedByHelper = fullBlock.includes("keywords:") && fullBlock.includes("guideSlug:");

@@ -145,12 +145,6 @@ for (const [source, label] of [
 
 for (const fragment of [
   "dictionary.toolUi",
-  "localizedToolDetailText",
-  "failureCases",
-  "failureCasesDescription",
-  "preCopyChecklist",
-  "preCopyChecklistDescription",
-  "nextActionPrefix",
   "copyReadyOutput",
   "jsonInput",
   "formattedJson",
@@ -176,6 +170,20 @@ for (const fragment of [
 ]) {
   if (!toolComponents.includes(fragment) && !dictionaries.includes(fragment)) {
     failures.push(`tool component/dictionary localization missing ${fragment}`);
+  }
+}
+
+for (const fragment of [
+  "localizedToolDetailText",
+  "localizedDemandDetails",
+  "failureCases",
+  "failureCasesDescription",
+  "preCopyChecklist",
+  "preCopyChecklistDescription",
+  "nextActionPrefix",
+]) {
+  if (!localizedContent.includes(fragment) && !dictionaries.includes(fragment)) {
+    failures.push(`tool detail localization missing ${fragment}`);
   }
 }
 

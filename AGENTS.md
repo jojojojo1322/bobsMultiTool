@@ -21,7 +21,7 @@
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
-- Core tool pages should improve demand through failure cases, before-copy checklist, and related next actions before broad feature sprawl.
+- Core tool pages should improve demand through registry-backed `failureCases`, `preCopyChecklist`, and related next actions before broad feature sprawl.
 - Keep the UI dense, neutral, and workbench-like. Avoid generic AI-generated landing-page patterns, especially raised colored top borders and decorative accent strips.
 - Pointer-reactive visual effects must stay lightweight CSS/React, respect reduced motion, and avoid adding WebGL, `ogl`, or `framer-motion` unless explicitly approved.
 - Desktop tool pages must keep real resizable left and right sidebars with persisted localStorage widths: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.

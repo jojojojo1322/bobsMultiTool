@@ -59,6 +59,221 @@ const serverFaqs = (toolName: string) => [
   },
 ];
 
+type ToolDemandDetail = Required<Pick<ToolDefinition, "failureCases" | "preCopyChecklist">>;
+
+const demandDetails = (failureCases: string[], preCopyChecklist: string[]): ToolDemandDetail => ({
+  failureCases,
+  preCopyChecklist,
+});
+
+const priorityDemandDetails: Record<string, ToolDemandDetail> = {
+  "regex-tester": demandDetails(
+    [
+      "A pattern works in PCRE or Python but fails in the JavaScript RegExp engine.",
+      "Backslashes are copied from a string literal without escaping them for the target runtime.",
+      "The global flag changes repeated test behavior through lastIndex state.",
+    ],
+    [
+      "Run one positive sample and one negative sample before copying the pattern.",
+      "Confirm each flag is intentional: g, i, m, s, u, or y.",
+      "Copy either the raw pattern or the slash-wrapped form based on the target API.",
+    ],
+  ),
+  "json-formatter": demandDetails(
+    [
+      "Trailing commas, comments, or single quotes make browser JSON parsing fail.",
+      "A huge pasted response contains secrets, tokens, or customer rows that should be redacted first.",
+      "Dates, IDs, and large numbers can look valid but still be wrong for the downstream schema.",
+    ],
+    [
+      "Validate first, then choose formatted or minified output for the next tool.",
+      "Remove bearer tokens, cookies, customer IDs, and private endpoint values.",
+      "Compare the output shape with the API contract before copying it into code or docs.",
+    ],
+  ),
+  "jwt-decoder": demandDetails(
+    [
+      "Decoded JWT content is readable but not signature-verified by this browser tool.",
+      "An exp value can be valid Unix time while still expired for the active environment.",
+      "Base64URL segments may decode even when the token is incomplete or copied from logs.",
+    ],
+    [
+      "Check exp, nbf, iss, aud, scope, and tenant claims before trusting the token.",
+      "Verify the signature in your auth service or backend, not only in the decoder.",
+      "Redact the original token before sharing screenshots or copied payloads.",
+    ],
+  ),
+  "base64-tool": demandDetails(
+    [
+      "URL-safe Base64 and standard Base64 can differ by padding and character set.",
+      "Binary data may not round-trip as readable UTF-8 text.",
+      "Decoded output can expose credentials, cookies, or API keys hidden in transport values.",
+    ],
+    [
+      "Choose encode or decode mode deliberately before pasting the value.",
+      "Confirm the decoded text is expected UTF-8, not binary or compressed data.",
+      "Redact secrets before using the result in bug reports or docs.",
+    ],
+  ),
+  "cron-generator": demandDetails(
+    [
+      "Five-field crontab syntax is different from Quartz cron with seconds or year fields.",
+      "Scheduler timezone settings can make a correct expression run at the wrong local time.",
+      "Day-of-month and day-of-week behavior can differ across schedulers.",
+    ],
+    [
+      "Confirm whether your scheduler expects five, six, or seven fields.",
+      "Check the execution timezone outside the expression itself.",
+      "Test the next run time in staging before using the schedule in production.",
+    ],
+  ),
+  "uuid-generator": demandDetails(
+    [
+      "UUID v4 values are unique identifiers, not secrets or sortable timestamps.",
+      "Fixture data can accidentally reuse copied IDs if bulk output is edited manually.",
+      "Some systems require uppercase GUID formatting or braces around the value.",
+    ],
+    [
+      "Choose the count you need and keep one UUID per line when copying bulk output.",
+      "Use random tokens instead when the value must behave like a secret.",
+      "Confirm the target system accepts lowercase UUID v4 format.",
+    ],
+  ),
+  "hash-generator": demandDetails(
+    [
+      "Hashes are not encryption and should not be used as password storage by themselves.",
+      "Hidden newlines, spaces, or Unicode normalization change the resulting hash.",
+      "MD5 and SHA-1 are weak for security-sensitive integrity checks.",
+    ],
+    [
+      "Normalize the input text exactly as the target system will read it.",
+      "Choose SHA-256 or SHA-512 for modern checksum work unless compatibility requires another algorithm.",
+      "Compare the full hash, not only a short prefix, before trusting the result.",
+    ],
+  ),
+  "password-generator": demandDetails(
+    [
+      "A generated password can still leak through clipboard history, screenshots, or chat logs.",
+      "Some systems reject symbols or long lengths even when the generated value is strong.",
+      "Reusing one generated value across accounts removes most of the security benefit.",
+    ],
+    [
+      "Set length and character classes to match the target system policy.",
+      "Store real credentials in a password manager immediately after generating them.",
+      "Regenerate separate values for separate accounts, environments, and test users.",
+    ],
+  ),
+  "qr-code-generator": demandDetails(
+    [
+      "Long URLs, Wi-Fi payloads, or contact data can produce dense QR codes that scan poorly.",
+      "A typo in the embedded URL is not visible once the QR image is downloaded.",
+      "Some scanners treat plain text, mailto, tel, and Wi-Fi payloads differently.",
+    ],
+    [
+      "Scan the generated QR code with a real device before publishing or printing it.",
+      "Confirm the destination URL, protocol, and tracking parameters before download.",
+      "Use a high-contrast foreground/background pair for physical placement.",
+    ],
+  ),
+  "dns-lookup": demandDetails(
+    [
+      "Public DNS resolvers can show cached records while a migration is still propagating.",
+      "Private, localhost, and reserved hosts are rejected to avoid internal network probing.",
+      "TXT records can be split into multiple strings by DNS providers.",
+    ],
+    [
+      "Query the exact record type you need, such as A, CNAME, MX, TXT, or NS.",
+      "Compare apex and www records when debugging a public site.",
+      "Follow up with HTTP Status Checker after DNS resolves to the expected target.",
+    ],
+  ),
+  "http-status-checker": demandDetails(
+    [
+      "Private, localhost, and reserved URLs are rejected by the server route.",
+      "Redirect chains can end on a different host, path, protocol, or locale than expected.",
+      "Some servers respond differently to HEAD, GET, bot user agents, or cached requests.",
+    ],
+    [
+      "Check status code, final URL, content type, and cache headers together.",
+      "Confirm canonical and redirect behavior for both apex and www domains.",
+      "Use DNS Lookup next when the status result suggests a domain routing issue.",
+    ],
+  ),
+  "color-converter": demandDetails(
+    [
+      "A passing contrast ratio can still fail if the real UI uses smaller text or different weight.",
+      "Alpha, overlays, and background images can change the effective contrast.",
+      "HEX, RGB, and HSL conversions can be copied into the wrong color syntax for the target CSS.",
+    ],
+    [
+      "Check the exact foreground and background pair used in the UI.",
+      "Verify AA normal text and AA large text separately.",
+      "Copy the color format that matches the target codebase convention.",
+    ],
+  ),
+  "sql-formatter": demandDetails(
+    [
+      "Formatting makes SQL readable but does not prove the query is safe or efficient.",
+      "Dialect-specific syntax can be rearranged differently from the database formatter.",
+      "Copied production literals can expose customer IDs, emails, or internal table names.",
+    ],
+    [
+      "Review the formatted query against the original before running it.",
+      "Redact literals and internal identifiers before sharing the formatted SQL.",
+      "Use Text Diff when comparing query revisions after formatting.",
+    ],
+  ),
+  "css-formatter": demandDetails(
+    [
+      "Formatting does not change selector specificity or cascade behavior.",
+      "Vendor hacks, comments, data URLs, and custom properties can look unusual after formatting.",
+      "A copied block can miss surrounding media queries or container context.",
+    ],
+    [
+      "Confirm selectors, media queries, and custom properties stayed attached to the right block.",
+      "Test the formatted CSS at the target breakpoint before copying it into a stylesheet.",
+      "Use Color Converter or CSS Unit Converter when the next issue is visual rather than syntax.",
+    ],
+  ),
+  "javascript-formatter": demandDetails(
+    [
+      "Formatting is not linting, compiling, type checking, or security review.",
+      "Minified snippets can hide side effects, unsafe eval usage, or environment-specific globals.",
+      "Source-map context is lost when only a pasted snippet is formatted.",
+    ],
+    [
+      "Do not run untrusted JavaScript just because it became readable.",
+      "Compare behavior before and after formatting in the real runtime.",
+      "Use Regex Tester or JSON Formatter next when the snippet contains patterns or payloads.",
+    ],
+  ),
+};
+
+function fallbackDemandDetails(toolDefinition: ToolDefinition): ToolDemandDetail {
+  const example = toolDefinition.inputExamples[0] ?? toolDefinition.examples[0]?.value ?? toolDefinition.shortTitle;
+  return demandDetails(
+    [
+      `${toolDefinition.title} can still fail when the pasted input shape differs from ${example}.`,
+      `The output should be reviewed in the target ${toolDefinition.category.toLowerCase()} workflow before reuse.`,
+      toolDefinition.requiresServer ? "Server route checks should only use public hosts or URLs." : "Browser-local processing does not make sensitive production data safe to paste.",
+    ],
+    [
+      "Compare the output against the original input before copying.",
+      "Remove secrets, customer data, and one-off environment values.",
+      `Continue with ${toolDefinition.relatedTools[0] ?? toolDefinition.guides[0]?.title ?? "a related tool"} if the result needs another validation step.`,
+    ],
+  );
+}
+
+function withDemandDetails(toolDefinition: ToolDefinition): ToolDefinition {
+  const details = priorityDemandDetails[toolDefinition.slug] ?? fallbackDemandDetails(toolDefinition);
+  return {
+    ...toolDefinition,
+    failureCases: toolDefinition.failureCases ?? details.failureCases,
+    preCopyChecklist: toolDefinition.preCopyChecklist ?? details.preCopyChecklist,
+  };
+}
+
 const tool = ({
   slug,
   title,
@@ -134,7 +349,7 @@ const tool = ({
   relatedTools,
 });
 
-export const tools: ToolDefinition[] = [
+const baseTools: ToolDefinition[] = [
   {
     slug: "regex-tester",
     title: "Regex Tester",
@@ -1027,6 +1242,8 @@ export const tools: ToolDefinition[] = [
   }),
 ];
 
+export const tools: ToolDefinition[] = baseTools.map(withDemandDetails);
+
 export const toolCategories = Array.from(new Set(tools.map((tool) => tool.category)));
 
 export function getToolBySlug(slug: string) {
@@ -1051,6 +1268,8 @@ export function getToolSearchText(tool: ToolDefinition) {
     ...tool.aliases,
     ...tool.useCases,
     ...tool.inputExamples,
+    ...(tool.failureCases ?? []),
+    ...(tool.preCopyChecklist ?? []),
     ...tool.seo.keywords,
     tool.seo.title,
     tool.seo.description,

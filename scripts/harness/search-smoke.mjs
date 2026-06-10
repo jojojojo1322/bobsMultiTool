@@ -22,6 +22,8 @@ for (const fragment of [
   "tool.aliases",
   "tool.useCases",
   "tool.inputExamples",
+  "tool.failureCases",
+  "tool.preCopyChecklist",
   "demandWeight",
 ]) {
   if (!registry.includes(fragment)) failures.push(`registry search missing ${fragment}`);

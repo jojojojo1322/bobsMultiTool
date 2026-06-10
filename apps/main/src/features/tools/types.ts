@@ -86,6 +86,8 @@ export interface ToolDefinition {
   aliases: string[];
   useCases: string[];
   inputExamples: string[];
+  failureCases?: string[];
+  preCopyChecklist?: string[];
   contentCluster: string;
   monetizationTier: MonetizationTier;
   supportedLocales: Locale[];

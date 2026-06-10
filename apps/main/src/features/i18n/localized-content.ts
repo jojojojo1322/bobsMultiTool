@@ -26,6 +26,8 @@ type TextPack = {
   guideSections: (topic: string) => Array<{ heading: string; body: string }>;
 };
 
+type LocalizedDemandDetails = Required<Pick<ToolDefinition, "failureCases" | "preCopyChecklist">>;
+
 const guideTopicEn: Record<string, string> = {
   "regex-cheat-sheet": "Regex practice",
   "cron-expression-examples": "Cron schedules",
@@ -1475,6 +1477,64 @@ function priorityUseCases(locale: Exclude<Locale, "en">, title: string, intent: 
   return cases[locale];
 }
 
+function localizedDemandDetails(locale: Exclude<Locale, "en">, title: string, intent: string, privacy: string): LocalizedDemandDetails {
+  const details: Record<Exclude<Locale, "en">, LocalizedDemandDetails> = {
+    ko: {
+      failureCases: [intent, `${privacy} 처리 방식과 실제 입력 구조가 맞지 않으면 결과를 그대로 믿기 어렵습니다.`, "복사한 값에 운영 비밀값, 고객 데이터, 내부 URL이 섞여 있으면 공유 전에 제거해야 합니다."],
+      preCopyChecklist: ["원본 입력과 결과 형태를 한 번 더 비교합니다.", "대상 런타임, 인코딩, 시간대, 보안 정책 차이를 확인합니다.", `${title} 결과가 다음 단계에 맞는지 관련 도구로 이어서 검토합니다.`],
+    },
+    ja: {
+      failureCases: [intent, `${privacy}の処理方式と実際の入力構造が合わない場合、出力をそのまま信頼できません。`, "コピーした値に本番の秘密情報、顧客データ、内部 URL が混ざっていないか確認してください。"],
+      preCopyChecklist: ["元の入力と出力の形をもう一度比較します。", "対象ランタイム、文字コード、タイムゾーン、セキュリティ方針の差を確認します。", `${title} の結果が次の作業に合うか関連ツールで続けて確認します。`],
+    },
+    "zh-CN": {
+      failureCases: [intent, `如果${privacy}处理方式和真实输入结构不一致, 输出不能直接信任。`, "复制的值中如果混入生产密钥、客户数据或内部 URL, 分享前必须移除。"],
+      preCopyChecklist: ["再次比较原始输入和输出形态。", "确认目标运行时、编码、时区和安全策略差异。", `继续用相关工具检查 ${title} 的结果是否适合下一步。`],
+    },
+    "zh-TW": {
+      failureCases: [intent, `如果${privacy}處理方式和真實輸入結構不一致, 輸出不能直接信任。`, "複製的值中如果混入正式密鑰、客戶資料或內部 URL, 分享前必須移除。"],
+      preCopyChecklist: ["再次比較原始輸入與輸出形態。", "確認目標執行環境、編碼、時區與安全政策差異。", `繼續用相關工具檢查 ${title} 的結果是否適合下一步。`],
+    },
+    es: {
+      failureCases: [intent, `Si el modo ${privacy} no coincide con la forma real de la entrada, no confies en la salida sin revisarla.`, "Elimina secretos de produccion, datos de clientes y URLs internas antes de compartir cualquier valor copiado."],
+      preCopyChecklist: ["Compara otra vez la entrada original con la forma de salida.", "Revisa diferencias de runtime, codificacion, zona horaria y politica de seguridad.", `Continua con una herramienta relacionada para confirmar que ${title} encaja con el siguiente paso.`],
+    },
+    "pt-BR": {
+      failureCases: [intent, `Se o modo ${privacy} nao combina com o formato real da entrada, nao confie na saida sem revisar.`, "Remova segredos de producao, dados de clientes e URLs internas antes de compartilhar qualquer valor copiado."],
+      preCopyChecklist: ["Compare novamente a entrada original com o formato da saida.", "Confira diferencas de runtime, codificacao, fuso horario e politica de seguranca.", `Use uma ferramenta relacionada para confirmar que ${title} serve para o proximo passo.`],
+    },
+    de: {
+      failureCases: [intent, `Wenn ${privacy} nicht zur echten Eingabeform passt, sollte die Ausgabe nicht ungeprueft uebernommen werden.`, "Entferne Produktionsgeheimnisse, Kundendaten und interne URLs, bevor kopierte Werte geteilt werden."],
+      preCopyChecklist: ["Vergleiche Eingabe und Ausgabeform noch einmal.", "Pruefe Unterschiede bei Runtime, Encoding, Zeitzone und Sicherheitsrichtlinie.", `Pruefe mit einem verwandten Tool, ob ${title} fuer den naechsten Schritt passt.`],
+    },
+    fr: {
+      failureCases: [intent, `Si le mode ${privacy} ne correspond pas a la forme reelle de l'entree, ne faites pas confiance a la sortie sans verification.`, "Retirez secrets de production, donnees client et URL internes avant de partager une valeur copiee."],
+      preCopyChecklist: ["Comparez encore l'entree originale et la forme de sortie.", "Verifiez les differences de runtime, encodage, fuseau horaire et politique de securite.", `Poursuivez avec un outil lie pour confirmer que ${title} convient a l'etape suivante.`],
+    },
+    hi: {
+      failureCases: [intent, `${privacy} तरीका अगर असली इनपुट संरचना से मेल नहीं खाता, तो नतीजे पर सीधे भरोसा न करें.`, "कॉपी किए गए मान में उत्पादन रहस्य, ग्राहक डेटा या अंदरूनी URL हो तो साझा करने से पहले हटाएं."],
+      preCopyChecklist: ["मूल इनपुट और नतीजे की बनावट फिर से मिलाएं.", "लक्षित runtime, encoding, time zone और security policy का फर्क देखें.", `${title} का नतीजा अगले कदम के लिए ठीक है या नहीं, संबंधित साधन से फिर जांचें.`],
+    },
+    id: {
+      failureCases: [intent, `Jika mode ${privacy} tidak cocok dengan bentuk masukan nyata, jangan langsung percaya pada hasil.`, "Hapus rahasia produksi, data pelanggan, dan URL internal sebelum membagikan nilai yang disalin."],
+      preCopyChecklist: ["Bandingkan lagi masukan asli dengan bentuk hasil.", "Cek perbedaan runtime, pengodean, zona waktu, dan kebijakan keamanan.", `Lanjutkan dengan alat terkait untuk memastikan hasil ${title} cocok dengan langkah berikutnya.`],
+    },
+    vi: {
+      failureCases: [intent, `Nếu chế độ ${privacy} không khớp với dạng đầu vào thật, đừng tin kết quả khi chưa kiểm tra.`, "Xóa bí mật sản xuất, dữ liệu khách hàng và URL nội bộ trước khi chia sẻ giá trị đã sao chép."],
+      preCopyChecklist: ["Đối chiếu lại đầu vào gốc với dạng kết quả.", "Kiểm tra khác biệt về runtime, mã hóa, múi giờ và chính sách bảo mật.", `Dùng công cụ liên quan để xác nhận kết quả ${title} phù hợp với bước tiếp theo.`],
+    },
+    th: {
+      failureCases: [intent, `ถ้าโหมด ${privacy} ไม่ตรงกับรูปแบบข้อมูลจริง อย่าเชื่อผลลัพธ์ทันที`, "ลบข้อมูลลับระบบจริง ข้อมูลลูกค้า และ URL ภายในก่อนแชร์ค่าที่คัดลอก"],
+      preCopyChecklist: ["เทียบข้อมูลต้นฉบับกับรูปแบบผลลัพธ์อีกครั้ง", "ตรวจความต่างของ runtime การเข้ารหัส เขตเวลา และนโยบายความปลอดภัย", `ใช้เครื่องมือที่เกี่ยวข้องเพื่อตรวจว่า ${title} เหมาะกับขั้นตอนถัดไปหรือไม่`],
+    },
+    ar: {
+      failureCases: [intent, `إذا لم يتطابق أسلوب ${privacy} مع شكل الإدخال الحقيقي فلا تثق بالناتج دون مراجعة.`, "أزل أسرار الإنتاج وبيانات العملاء والروابط الداخلية قبل مشاركة أي قيمة منسوخة."],
+      preCopyChecklist: ["قارن الإدخال الأصلي بشكل الناتج مرة أخرى.", "راجع اختلافات بيئة التشغيل والترميز والمنطقة الزمنية وسياسة الأمان.", `تابع بأداة مرتبطة للتأكد من أن نتيجة ${title} مناسبة للخطوة التالية.`],
+    },
+  };
+  return details[locale];
+}
+
 function priorityFaqs(locale: Exclude<Locale, "en">, title: string, requiresServer: boolean) {
   const local = !requiresServer;
   const faq: Record<Exclude<Locale, "en">, ToolDefinition["faqs"]> = {
@@ -1921,6 +1981,8 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
   const category = dictionary.categories[tool.category] ?? tool.category;
   const privacy = privacyChip(tool, pack);
   const description = pack.description(title, category, privacy);
+  const localizedLocale = locale as Exclude<Locale, "en">;
+  const fallbackDemandDetails = localizedDemandDetails(localizedLocale, title, description, privacy);
 
   const localizedTool: ToolDefinition = {
     ...tool,
@@ -1931,6 +1993,8 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
     searchIntents: [...tool.searchIntents, title, category],
     aliases: [...tool.aliases, title, category],
     useCases: pack.useCases(title, category, privacy),
+    failureCases: fallbackDemandDetails.failureCases,
+    preCopyChecklist: fallbackDemandDetails.preCopyChecklist,
     seo: {
       title: pack.seoTitle(title, category),
       description: pack.seoDescription(title, category, privacy),
@@ -1953,14 +2017,16 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
     guides: tool.guides.map((guide) => ({ ...guide, title: localizeGuideTitle(guide.href, locale, pack) })),
   };
 
-  const localizedLocale = locale as Exclude<Locale, "en">;
   const priorityIntent = priorityToolIntents[tool.slug]?.[localizedLocale] ?? longTailPriorityToolIntents[tool.slug]?.[localizedLocale];
   if (!priorityIntent) return localizedTool;
+  const priorityDemandDetails = localizedDemandDetails(localizedLocale, title, priorityIntent, privacy);
 
   return {
     ...localizedTool,
     description: priorityIntent,
     useCases: priorityUseCases(localizedLocale, title, priorityIntent, privacy),
+    failureCases: priorityDemandDetails.failureCases,
+    preCopyChecklist: priorityDemandDetails.preCopyChecklist,
     seo: {
       ...localizedTool.seo,
       description: prioritySeoDescription(localizedLocale, title, priorityIntent),
@@ -1994,6 +2060,8 @@ function localizedSearchText(tool: ToolDefinition) {
     ...tool.aliases,
     ...tool.searchIntents,
     ...tool.useCases,
+    ...(tool.failureCases ?? []),
+    ...(tool.preCopyChecklist ?? []),
     ...tool.seo.keywords,
     tool.seo.title,
     tool.seo.description,

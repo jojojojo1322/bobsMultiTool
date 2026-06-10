@@ -131,8 +131,10 @@ function ToolNavigation({
 function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
   const relatedTools = getLocalizedRelatedTools(tool.relatedTools, locale);
   const nextRelatedTitle = relatedTools[0]?.shortTitle;
-  const failureCases = React.useMemo(() => commonFailureCases(tool, dictionary), [tool, dictionary]);
-  const preCopyChecklist = React.useMemo(() => commonPreCopyChecklist(tool, dictionary, nextRelatedTitle), [tool, dictionary, nextRelatedTitle]);
+  const fallbackFailureCases = React.useMemo(() => commonFailureCases(tool, dictionary), [tool, dictionary]);
+  const fallbackPreCopyChecklist = React.useMemo(() => commonPreCopyChecklist(tool, dictionary, nextRelatedTitle), [tool, dictionary, nextRelatedTitle]);
+  const failureCases = tool.failureCases?.length ? tool.failureCases : fallbackFailureCases;
+  const preCopyChecklist = tool.preCopyChecklist?.length ? tool.preCopyChecklist : fallbackPreCopyChecklist;
 
   return (
     <div className="space-y-5">
