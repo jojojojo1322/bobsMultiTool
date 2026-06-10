@@ -669,6 +669,25 @@ function YamlJsonTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [input, setInput] = React.useState("name: Bob\nactive: true\nitems:\n  - json\n  - yaml");
+  const result = React.useMemo(() => {
+    try {
+      const parsed = parseYaml(input);
+      return { error: "", value: `${ui(dictionary, "validYaml", "Valid YAML")}\n\n${ui(dictionary, "parsedPreview", "Parsed preview")}:\n${JSON.stringify(parsed, null, 2)}` };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "YAML validation failed", value: "" };
+    }
+  }, [dictionary, input]);
+
+  return (
+    <div className="space-y-4">
+      <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-48" aria-label={ui(dictionary, "yamlInput", "YAML input")} />
+      {result.error ? <ErrorAlert title={ui(dictionary, "yamlValidationError", "YAML validation error")} message={result.error} /> : <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result.value} dictionary={dictionary} />}
+    </div>
+  );
+}
+
 function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <TextTransformTool
@@ -1567,6 +1586,7 @@ export const toolComponentMap: Record<ToolComponentKey, React.ComponentType<{ di
   hash: HashGeneratorTool,
   diff: TextDiffTool,
   yamlJson: YamlJsonTool,
+  yamlValidator: YamlValidatorTool,
   sqlFormatter: SqlFormatterTool,
   xmlFormatter: XmlFormatterTool,
   csvJson: CsvJsonTool,

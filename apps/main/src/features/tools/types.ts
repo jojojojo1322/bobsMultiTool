@@ -24,6 +24,7 @@ export type ToolComponentKey =
   | "hash"
   | "diff"
   | "yamlJson"
+  | "yamlValidator"
   | "sqlFormatter"
   | "xmlFormatter"
   | "csvJson"

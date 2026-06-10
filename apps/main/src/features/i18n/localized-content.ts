@@ -28,6 +28,24 @@ type TextPack = {
 
 type LocalizedDemandDetails = Required<Pick<ToolDefinition, "failureCases" | "preCopyChecklist">>;
 
+const localizedExampleValues: Record<string, Partial<Record<Exclude<Locale, "en">, string[]>>> = {
+  "yaml-validator": {
+    ko: ["name: Bob\nactive: true", "유효한 YAML / 파싱된 JSON 미리보기"],
+    ja: ["name: Bob\nactive: true", "有効なYAML / 解析済みJSONプレビュー"],
+    "zh-CN": ["name: Bob\nactive: true", "有效 YAML / 解析后的 JSON 预览"],
+    "zh-TW": ["name: Bob\nactive: true", "有效 YAML / 解析後 JSON 預覽"],
+    es: ["name: Bob\nactive: true", "YAML valido / vista previa JSON parseada"],
+    "pt-BR": ["name: Bob\nactive: true", "YAML valido / previa JSON analisada"],
+    de: ["name: Bob\nactive: true", "Gueltiges YAML / geparste JSON-Vorschau"],
+    fr: ["name: Bob\nactive: true", "YAML valide / apercu JSON analyse"],
+    hi: ["name: Bob\nactive: true", "मान्य YAML / पार्स किया JSON पूर्वावलोकन"],
+    id: ["name: Bob\nactive: true", "YAML valid / pratinjau JSON hasil parse"],
+    vi: ["name: Bob\nactive: true", "YAML hợp lệ / xem trước JSON đã phân tích"],
+    th: ["name: Bob\nactive: true", "YAML ถูกต้อง / พรีวิว JSON ที่ parse แล้ว"],
+    ar: ["name: Bob\nactive: true", "YAML صالح / معاينة JSON المحللة"],
+  },
+};
+
 const guideTopicEn: Record<string, string> = {
   "regex-cheat-sheet": "Regex practice",
   "cron-expression-examples": "Cron schedules",
@@ -449,6 +467,12 @@ const priorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {
     es: "Escapa y desescapa comillas, saltos de linea y barras invertidas para strings JSON, registros y datos de prueba.",
     de: "Escaped und unescaped Anfuehrungszeichen, Zeilenumbrueche und Backslashes fuer JSON-Strings, Logs und Testdaten.",
   },
+  "yaml-validator": {
+    ko: "YAML 설정 조각의 들여쓰기와 문법을 확인하고 파싱된 구조를 미리 보며 배포 전 오류를 줄입니다.",
+    ja: "YAML 設定スニペットのインデントと構文を確認し、解析された構造を見てリリース前のミスを減らします。",
+    es: "Valida indentacion y sintaxis YAML y revisa la estructura parseada antes de publicar configs.",
+    de: "Validiert YAML-Einrueckung und Syntax und zeigt die geparste Struktur vor dem Commit.",
+  },
   "jwt-decoder": {
     ko: "JWT의 header와 payload를 브라우저에서 디코딩해 만료 시간, issuer, scope를 빠르게 확인하는 도구입니다.",
     ja: "JWT の header と payload をブラウザ内でデコードし、有効期限、issuer、scope を素早く確認します。",
@@ -658,6 +682,17 @@ const longTailPriorityToolIntents: Record<string, Partial<Record<Locale, string>
     vi: "Escape và unescape dấu nháy, xuống dòng và backslash trong chuỗi JSON cho log, dữ liệu thử và giá trị nhúng.",
     th: "escape และ unescape เครื่องหมายคำพูด บรรทัดใหม่ และ backslash ใน JSON string สำหรับ log และข้อมูลทดสอบ",
     ar: "اهرب واستعد علامات الاقتباس والأسطر الجديدة والشرطة العكسية داخل سلاسل JSON للسجلات والبيانات الثابتة.",
+  },
+  "yaml-validator": {
+    "zh-CN": "验证 YAML 缩进和语法，并预览解析后的结构，适合配置、CI 和文档片段。",
+    "zh-TW": "驗證 YAML 縮排與語法，並預覽解析後結構，適合設定、CI 與文件片段。",
+    "pt-BR": "Valide indentacao e sintaxe YAML e veja a estrutura analisada antes de usar configs e CI.",
+    fr: "Validez indentation et syntaxe YAML puis verifiez la structure analysee avant d'utiliser configs et CI.",
+    hi: "YAML इंडेंटेशन और वाक्य रचना जांचें, फिर कॉन्फ़िग, CI और दस्तावेज़ों के लिए पार्स संरचना देखें.",
+    id: "Validasi indentasi dan sintaks YAML lalu lihat struktur hasil parse untuk konfigurasi, CI, dan dokumen.",
+    vi: "Kiểm tra thụt lề và cú pháp YAML, rồi xem cấu trúc đã phân tích cho cấu hình, CI và tài liệu.",
+    th: "ตรวจการเยื้องและไวยากรณ์ YAML แล้วดูโครงสร้างที่แยกวิเคราะห์แล้วสำหรับการตั้งค่า CI และเอกสาร",
+    ar: "تحقق من المسافات وصياغة YAML ثم راجع البنية المحللة لملفات الإعداد وCI والوثائق.",
   },
   "jwt-decoder": {
     "zh-CN": "在浏览器中解码 JWT 标头和载荷，检查过期时间、签发方、权限范围与声明值。",
@@ -2068,6 +2103,10 @@ function localizeGuideTitle(href: string, locale: Locale, pack: TextPack) {
   return localizedGuideTopic(slug, locale, pack);
 }
 
+function localizeExampleValue(slug: string, index: number, value: string, locale: Exclude<Locale, "en">) {
+  return localizedExampleValues[slug]?.[locale]?.[index] ?? value;
+}
+
 function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
   const pack = packFor(locale);
   if (!pack) return tool;
@@ -2098,6 +2137,7 @@ function localizeTool(tool: ToolDefinition, locale: Locale): ToolDefinition {
     examples: tool.examples.map((example, index) => ({
       ...example,
       label: pack.exampleLabels[Math.min(index, 2)],
+      value: localizeExampleValue(tool.slug, index, example.value, localizedLocale),
       note: index === 0 ? pack.exampleNote(title) : pack.sanityNote,
     })),
     faqs: tool.requiresServer

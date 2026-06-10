@@ -87,7 +87,7 @@ export const guides: GuideDefinition[] = [
     slug: "json-yaml-csv-conversion",
     title: "JSON, YAML, and CSV conversion workflow",
     description: "How to move data between common formats while preserving structure and validating output.",
-    relatedTools: ["json-formatter", "yaml-json-converter", "csv-json-converter", "json-to-typescript"],
+    relatedTools: ["json-formatter", "yaml-validator", "yaml-json-converter", "csv-json-converter"],
     sections: sections("data conversion"),
   },
   {

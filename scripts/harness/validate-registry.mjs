@@ -25,6 +25,7 @@ const priorityDetailSlugs = [
   "regex-tester",
   "json-formatter",
   "json-escape-unescape",
+  "yaml-validator",
   "jwt-decoder",
   "base64-tool",
   "cron-generator",

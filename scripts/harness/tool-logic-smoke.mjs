@@ -37,6 +37,13 @@ check(escapeJsonString("hello \"Bob\"\n") === "hello \\\"Bob\\\"\\n", "json esca
 check(unescapeJsonString("hello \\\"Bob\\\"\\n") === "hello \"Bob\"\n", "json unescape output mismatch");
 check(diffLines("a\nb\n", "a\nc\n").some((part) => part.added), "diff did not detect addition");
 check(parseYaml("name: Bob").name === "Bob", "yaml parse failed");
+let yamlFailed = false;
+try {
+  parseYaml("name: [unterminated");
+} catch {
+  yamlFailed = true;
+}
+check(yamlFailed, "yaml validator did not detect invalid yaml");
 check(formatSql("select * from users").toLowerCase().includes("select"), "sql formatter failed");
 check(Papa.parse("id,name\n1,Bob", { header: true }).data[0].name === "Bob", "csv parser failed");
 const qr = await QRCode.toDataURL("https://www.bobob.app");

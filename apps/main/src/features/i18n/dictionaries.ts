@@ -282,6 +282,23 @@ const localizedJsonEscapeToolUi: Record<Locale, Record<string, string>> = {
   ar: { jsonStringInput: "إدخال سلسلة JSON", escapeJsonString: "تهريب سلسلة JSON", unescapeJsonString: "إلغاء تهريب سلسلة JSON" },
 };
 
+const localizedYamlValidatorToolUi: Record<Locale, Record<string, string>> = {
+  en: { yamlInput: "YAML input", validYaml: "Valid YAML", parsedPreview: "Parsed preview", yamlValidationError: "YAML validation error" },
+  ko: { yamlInput: "YAML 입력", validYaml: "유효한 YAML", parsedPreview: "파싱 미리보기", yamlValidationError: "YAML 검증 오류" },
+  ja: { yamlInput: "YAML入力", validYaml: "有効なYAML", parsedPreview: "解析プレビュー", yamlValidationError: "YAML検証エラー" },
+  "zh-CN": { yamlInput: "YAML 输入", validYaml: "有效 YAML", parsedPreview: "解析预览", yamlValidationError: "YAML 验证错误" },
+  "zh-TW": { yamlInput: "YAML 輸入", validYaml: "有效 YAML", parsedPreview: "解析預覽", yamlValidationError: "YAML 驗證錯誤" },
+  es: { yamlInput: "Entrada YAML", validYaml: "YAML valido", parsedPreview: "Vista previa parseada", yamlValidationError: "Error de validacion YAML" },
+  "pt-BR": { yamlInput: "Entrada YAML", validYaml: "YAML valido", parsedPreview: "Previa analisada", yamlValidationError: "Erro de validacao YAML" },
+  de: { yamlInput: "YAML-Eingabe", validYaml: "Gueltiges YAML", parsedPreview: "Geparste Vorschau", yamlValidationError: "YAML-Validierungsfehler" },
+  fr: { yamlInput: "Entree YAML", validYaml: "YAML valide", parsedPreview: "Apercu analyse", yamlValidationError: "Erreur de validation YAML" },
+  hi: { yamlInput: "YAML इनपुट", validYaml: "मान्य YAML", parsedPreview: "पार्स पूर्वावलोकन", yamlValidationError: "YAML जांच त्रुटि" },
+  id: { yamlInput: "Masukan YAML", validYaml: "YAML valid", parsedPreview: "Pratinjau hasil parse", yamlValidationError: "Error validasi YAML" },
+  vi: { yamlInput: "Nhập YAML", validYaml: "YAML hợp lệ", parsedPreview: "Xem trước đã phân tích", yamlValidationError: "Lỗi xác thực YAML" },
+  th: { yamlInput: "อินพุต YAML", validYaml: "YAML ถูกต้อง", parsedPreview: "พรีวิวที่ parse แล้ว", yamlValidationError: "ข้อผิดพลาดตรวจ YAML" },
+  ar: { yamlInput: "إدخال YAML", validYaml: "YAML صالح", parsedPreview: "معاينة التحليل", yamlValidationError: "خطأ تحقق YAML" },
+};
+
 const localizedNoOutput: Record<Locale, string> = {
   en: "Output will appear here.",
   ko: "출력이 여기에 표시됩니다.",
@@ -684,7 +701,7 @@ const commonLocaleOverrides = Object.fromEntries(
     {
       ...commonText[locale],
       categories: localizedCategories[locale],
-      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale], ...localizedResultToolUi[locale], ...localizedJsonEscapeToolUi[locale] },
+      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale], ...localizedResultToolUi[locale], ...localizedJsonEscapeToolUi[locale], ...localizedYamlValidatorToolUi[locale] },
     },
   ]),
 ) as unknown as Record<Locale, CommonLocaleOverride>;

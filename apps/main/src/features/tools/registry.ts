@@ -103,6 +103,18 @@ const priorityDemandDetails: Record<string, ToolDemandDetail> = {
       "Use JSON Formatter next when the escaped value is part of a larger object payload.",
     ],
   ),
+  "yaml-validator": demandDetails(
+    [
+      "Indentation can look aligned in a copied config while the parsed object nests keys under the wrong parent.",
+      "YAML accepts unquoted values such as yes, no, on, and off differently across tooling versions.",
+      "A file can be syntactically valid YAML while still missing fields required by CI, Docker, Kubernetes, or app config.",
+    ],
+    [
+      "Validate the small pasted block before committing the full config file.",
+      "Preview the parsed JSON shape and check arrays, nested maps, booleans, and null values.",
+      "Continue to YAML JSON Converter or JSON Schema Validator when the config needs conversion or structural checks.",
+    ],
+  ),
   "jwt-decoder": demandDetails(
     [
       "Decoded JWT content is readable but not signature-verified by this browser tool.",
@@ -688,10 +700,28 @@ const baseTools: ToolDefinition[] = [
     keywords: ["yaml to json", "json to yaml", "yaml json converter", "convert yaml"],
     guideSlug: "json-yaml-csv-conversion",
     guideTitle: "JSON, YAML, and CSV conversion workflow",
-    relatedTools: ["json-formatter", "csv-json-converter", "json-schema-validator"],
+    relatedTools: ["yaml-validator", "json-formatter", "csv-json-converter"],
     sample: "name: Bob\nactive: true",
     action: "Convert configuration snippets between YAML and JSON.",
     result: "{\n  \"name\": \"Bob\"\n}",
+  }),
+  tool({
+    slug: "yaml-validator",
+    title: "YAML Validator",
+    shortTitle: "YAML Check",
+    category: "Data",
+    description: "Validate YAML syntax and preview the parsed structure for config, CI, and documentation files.",
+    component: "yamlValidator",
+    accent: "border-yellow-600",
+    demandTier: "core",
+    keywords: ["yaml validator", "validate yaml", "yaml checker", "yaml syntax checker"],
+    guideSlug: "json-yaml-csv-conversion",
+    guideTitle: "JSON, YAML, and CSV conversion workflow",
+    relatedTools: ["yaml-json-converter", "json-formatter", "json-schema-validator"],
+    inputExamples: ["name: Bob\nactive: true", "services:\n  app:\n    image: node:20", "items:\n  - id: 1\n    enabled: true"],
+    sample: "name: Bob\nactive: true",
+    action: "Validate YAML syntax and inspect parsed structure before conversion or commit.",
+    result: "Valid YAML with a parsed JSON preview",
   }),
   tool({
     slug: "sql-formatter",

@@ -53,6 +53,8 @@ for (const fragment of [
   "priorityToolIntents",
   "longTailPriorityToolIntents",
   "priorityGuideDescriptions",
+  "localizedExampleValues",
+  "유효한 YAML / 파싱된 JSON 미리보기",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
 }
@@ -65,6 +67,7 @@ const coreAcquisitionSlugs = [
   "regex-tester",
   "json-formatter",
   "json-escape-unescape",
+  "yaml-validator",
   "jwt-decoder",
   "base64-tool",
   "cron-generator",
