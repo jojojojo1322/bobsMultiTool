@@ -52,6 +52,7 @@ const checks = [
   ["agents", "harness:seo-opportunities:smoke"],
   ["agents", "titleDescriptionRecommendations"],
   ["agents", "inputWarnings"],
+  ["agents", "measurementBacklog"],
   ["agents", "BOBOB_SEO_REPORT_FORMAT"],
   ["agents", "visual screenshot smoke"],
   ["agents", "unused AdSense placeholder"],
@@ -91,6 +92,7 @@ const checks = [
   ["localization", "Hindi reusable templates"],
   ["localization", "Indonesian reusable templates"],
   ["localization", "Vietnamese acquisition copy"],
+  ["localization", "Vietnamese, Thai, and Arabic reusable templates"],
   ["localization", "native language labels"],
   ["localization", "empty-output placeholders"],
   ["localization", "must not re-spread English nested objects"],
@@ -116,6 +118,7 @@ const checks = [
   ["seo", "harness:seo-opportunities:smoke"],
   ["seo", "titleDescriptionRecommendations"],
   ["seo", "inputWarnings"],
+  ["seo", "measurementBacklog"],
   ["seo", "BOBOB_SEO_REPORT_FORMAT"],
   ["seo", "tool and guide pages"],
   ["seo", "guide.description"],
@@ -138,6 +141,7 @@ const checks = [
   ["verification", "harness:seo-opportunities:smoke"],
   ["verification", "titleDescriptionRecommendations"],
   ["verification", "inputWarnings"],
+  ["verification", "measurementBacklog"],
   ["verification", "BOBOB_SEO_REPORT_FORMAT"],
   ["verification", "tool and guide pages"],
   ["verification", "preserved sidebar scroll"],
@@ -160,6 +164,7 @@ const checks = [
   ["product", "harness:seo-opportunities:smoke"],
   ["product", "titleDescriptionRecommendations"],
   ["product", "inputWarnings"],
+  ["product", "measurementBacklog"],
   ["product", "BOBOB_SEO_REPORT_FORMAT"],
   ["product", "tool and guide pages"],
 ];
@@ -226,7 +231,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs")
   failures.push("SEO opportunity report harness missing");
 } else {
   const seoReport = read("scripts/harness/seo-opportunity-report.mjs");
-  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
+  for (const fragment of ["inventoryCount", "toolInventoryCount", "guideInventoryCount", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "measuredMetadataSuggestion", "canonicalContentPath", "readCsvTable", "formatMarkdownReport", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
     if (!seoReport.includes(fragment)) failures.push(`SEO opportunity report missing ${fragment}`);
   }
 }
@@ -234,7 +239,7 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report-smoke
   failures.push("SEO opportunity report smoke harness missing");
 } else {
   const seoReportSmoke = read("scripts/harness/seo-opportunity-report-smoke.mjs");
-  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
+  for (const fragment of ["search-console.csv", "adsense.csv", "inputWarnings", "titleDescriptionRecommendations", "measurementBacklog", "BOBOB_SEO_REPORT_FORMAT", "BOBOB_SEO_REPORT_OUT"]) {
     if (!seoReportSmoke.includes(fragment)) failures.push(`SEO opportunity report smoke missing ${fragment}`);
   }
 }
@@ -248,7 +253,7 @@ if (!fs.existsSync(path.join(root, "docs/legacy-apps-archive.md"))) {
   failures.push("legacy apps archive document missing");
 } else {
   const legacyArchive = read("docs/legacy-apps-archive.md");
-  for (const fragment of ["apps/main", "/regax", "/tools/regex-tester", "packages/ui", "turbo.json"]) {
+  for (const fragment of ["apps/main", "No archived source copy", "/regax", "/tools/regex-tester", "packages/ui", "turbo.json", "harness:legacy"]) {
     if (!legacyArchive.includes(fragment)) failures.push(`legacy apps archive missing ${fragment}`);
   }
 }

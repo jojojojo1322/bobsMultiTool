@@ -399,7 +399,7 @@ const commonText: Record<Locale, CommonLocaleOverride> = {
   ar: {
     nav: { searchPlaceholder: "ابحث عن الأدوات", openNavigation: "افتح التنقل", close: "إغلاق", guides: "الأدلة", tools: "الأدوات", examples: "أمثلة", faq: "FAQ", relatedTools: "أدوات مرتبطة", relatedToolsDescription: "خطوات مفيدة تالية", guideDescription: "محتوى يدعم نية البحث", language: "اللغة", theme: "المظهر" },
     home: { badge: "منضدة المطور", title: "أدوات متصفح عملية لمهام المطور اليومية.", description: "نسق البيانات، اختبر الأنماط، افحص الرموز، أنشئ البيانات الوصفية، قارن النصوص وحول القيم ضمن نطاق واحد.", openTools: "افتح الأدوات", readGuides: "اقرأ الأدلة", toolIndexTitle: "فهرس الأدوات", toolIndexDescription: "أدوات مسجلة مرتبطة بـ SEO والتنقل واللغة والتحقق." },
-    tool: { developerWorkbench: "منضدة المطور", singleDomainTitle: "نطاق واحد", singleDomainBody: "كل الأدوات تحت www.bobob.app لمراجعة AdSense أوضح وسلطة بحث أقوى.", localFirstTitle: "محلي أولا", localFirstBody: "التنسيق وفك الترميز والإنشاء تعمل في المتصفح كلما أمكن.", expandableRegistryTitle: "سجل قابل للتوسع", expandableRegistryBody: "كل أداة جديدة تحتاج بيانات وصفية ولغة وأمثلة وFAQ وأدلة وروابط مرتبطة وفحوصا سريعة.", examplesDescription: "نقاط بداية لهذه الأداة", faqDescription: "تفاصيل تنفيذ شائعة", guidesDescription: "سير عمل مرتبط بهذه الأداة", useCases: "حالات الاستخدام", copy: "نسخ", copied: "تم النسخ", privacy: "الخصوصية", serverRequired: "فحص عبر الخادم", localOnly: "محلي في المتصفح" },
+    tool: { developerWorkbench: "منضدة المطور", singleDomainTitle: "نطاق واحد", singleDomainBody: "كل الأدوات تحت www.bobob.app لمراجعة AdSense أوضح وسلطة بحث أقوى.", localFirstTitle: "محلي أولا", localFirstBody: "التنسيق وفك الترميز والإنشاء تعمل في المتصفح كلما أمكن.", expandableRegistryTitle: "سجل قابل للتوسع", expandableRegistryBody: "كل أداة جديدة تحتاج بيانات وصفية ولغة وأمثلة وأسئلة شائعة وأدلة وروابط مرتبطة وفحوصا سريعة.", examplesDescription: "نقاط بداية لهذه الأداة", faqDescription: "تفاصيل تنفيذ شائعة", guidesDescription: "سير عمل مرتبط بهذه الأداة", useCases: "حالات الاستخدام", copy: "نسخ", copied: "تم النسخ", privacy: "الخصوصية", serverRequired: "فحص عبر الخادم", localOnly: "محلي في المتصفح" },
     guides: { badge: "الأدلة", title: "أدلة عملية لأدوات المتصفح", description: "مقالات قصيرة تشرح سير العمل خلف الأدوات.", back: "العودة إلى الأدلة", relatedTitle: "أدوات مرتبطة", relatedDescription: "افتح الأداة المرتبطة بهذا الدليل." },
     theme: { light: "فاتح", dark: "داكن", system: "النظام" },
   },
@@ -583,7 +583,7 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - أدوات مطور عملية",
       homeDescription: "أدوات مجانية لـ JSON وregex وBase64 وJWT وcron وtimestamps وUUID وSEO والألوان والشبكات والنص.",
-      toolDescription: (title) => `${title} في Bob's Multi Tool مع أمثلة وFAQ وأدوات مرتبطة ومعالجة محلية في المتصفح عندما يكون ذلك ممكنا.`,
+      toolDescription: (title) => `${title} في Bob's Multi Tool مع أمثلة وأسئلة شائعة وأدوات مرتبطة ومعالجة محلية في المتصفح عندما يكون ذلك ممكنا.`,
       guideDescription: (title) => `${title}. دليل عملي لاستخدام أدوات المطور في المتصفح بأمان وكفاءة.`,
     },
   },

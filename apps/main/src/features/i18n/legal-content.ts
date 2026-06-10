@@ -299,7 +299,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       backToTools: "साधनों पर वापस",
       sections: [
         { heading: "साधनों में संसाधित जानकारी", body: "Bob's Multi Tool स्थानीय ब्राउज़र उपयोगिताओं के लिए बनाया गया है. फॉर्मैट, एन्कोड, डिकोड, जनरेशन और कन्वर्जन के इनपुट जहां संभव हो ब्राउज़र में संसाधित होते हैं और यह साइट उन्हें सहेजती नहीं है." },
-        { heading: "सर्वर जांच", body: "HTTP status और DNS साधन छोटे सर्वर जांच मार्ग का उपयोग करते हैं क्योंकि ब्राउज़र ये जांच सीधे नहीं कर सकता. निजी internal hostname या गोपनीय data submit न करें." },
+        { heading: "सर्वर जांच", body: "HTTP status और DNS साधन छोटे सर्वर जांच मार्ग का उपयोग करते हैं क्योंकि ब्राउज़र ये जांच सीधे नहीं कर सकता. निजी आंतरिक host नाम या गोपनीय डेटा न भेजें." },
         { heading: "Analytics और विज्ञापन", body: "साइट Google Analytics और Google AdSense का उपयोग कर सकती है. ये third-party services अपनी policies के अनुसार cookies या मिलती-जुलती technologies use कर सकती हैं." },
       ],
       contact: { heading: "संपर्क", body: "इस policy के बारे में सवाल यहां भेजे जा सकते हैं" },
@@ -312,7 +312,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       sections: [
         { heading: "सेवा का उपयोग", body: "Bob's Multi Tool विकास कार्यों के लिए मुफ्त ब्राउज़र आधारित उपयोगिताएं देता है. Production systems में उपयोग करने से पहले साधन का output verify करें." },
         { heading: "स्वीकार्य उपयोग", body: "Service disrupt न करें, abusive traffic automate न करें, साधनों को unlawful activity में use न करें, और ऐसा private data submit न करें जिसे browser utility में process करने की अनुमति नहीं है." },
-        { heading: "थर्ड-पार्टी सामग्री", body: "कुछ साधन third-party services या सर्वर जांच मार्ग इस्तेमाल कर सकते हैं. Bob's Multi Tool third-party websites, DNS providers या remote endpoints को control नहीं करता." },
+        { heading: "तृतीय-पक्ष सामग्री", body: "कुछ साधन तृतीय-पक्ष सेवाएं या सर्वर जांच मार्ग इस्तेमाल कर सकते हैं. Bob's Multi Tool तृतीय-पक्ष वेबसाइटों, DNS प्रदाताओं या दूरस्थ जांच मार्गों को नियंत्रित नहीं करता." },
         { heading: "विज्ञापन", body: "Approval के बाद site Google AdSense ads दिखा सकती है. Advertisement content third-party networks से serve होता है और उनकी policies के अनुसार personalize हो सकता है." },
       ],
       contact: { heading: "संपर्क", body: "इन terms के बारे में सवाल यहां भेजे जा सकते हैं" },
@@ -326,7 +326,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       backToTools: "Kembali ke alat",
       sections: [
         { heading: "Informasi yang diproses alat", body: "Bob's Multi Tool dirancang sebagai utilitas lokal di browser. Masukan untuk format, encoding, decoding, pembuatan, dan konversi diproses di browser jika memungkinkan dan tidak disimpan oleh situs ini." },
-        { heading: "Pemeriksaan lewat server", body: "Alat HTTP status dan DNS memakai endpoint server kecil karena browser tidak bisa melakukan pemeriksaan itu secara langsung. Jangan kirim hostname internal privat atau data rahasia." },
+        { heading: "Pemeriksaan lewat server", body: "Alat HTTP status dan DNS memakai jalur server kecil karena browser tidak bisa melakukan pemeriksaan itu secara langsung. Jangan kirim nama host internal privat atau data rahasia." },
         { heading: "Analitik dan iklan", body: "Situs dapat memakai Google Analytics dan Google AdSense. Layanan pihak ketiga ini dapat memakai cookie atau teknologi serupa sesuai kebijakan mereka." },
       ],
       contact: { heading: "Kontak", body: "Pertanyaan tentang kebijakan ini dapat dikirim ke" },
@@ -339,7 +339,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       sections: [
         { heading: "Penggunaan layanan", body: "Bob's Multi Tool menyediakan utilitas browser gratis untuk alur kerja pengembangan. Output alat harus diverifikasi sebelum dipakai di sistem produksi." },
         { heading: "Penggunaan yang diterima", body: "Anda setuju untuk tidak mengganggu layanan, mengotomasi traffic abusif, memakai alat untuk aktivitas ilegal, atau mengirim data privat yang tidak boleh diproses di utilitas browser." },
-        { heading: "Konten pihak ketiga", body: "Beberapa alat dapat memakai layanan pihak ketiga atau endpoint server. Bob's Multi Tool tidak mengontrol website pihak ketiga, provider DNS, atau endpoint remote." },
+        { heading: "Konten pihak ketiga", body: "Beberapa alat dapat memakai layanan pihak ketiga atau jalur server. Bob's Multi Tool tidak mengontrol situs pihak ketiga, penyedia DNS, atau jalur remote." },
         { heading: "Iklan", body: "Setelah disetujui, situs dapat menampilkan iklan Google AdSense. Konten iklan disajikan oleh jaringan pihak ketiga dan dapat dipersonalisasi sesuai kebijakan mereka." },
       ],
       contact: { heading: "Kontak", body: "Pertanyaan tentang ketentuan ini dapat dikirim ke" },
@@ -353,7 +353,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       backToTools: "Quay lại công cụ",
       sections: [
         { heading: "Thông tin được công cụ xử lý", body: "Bob's Multi Tool được thiết kế quanh các tiện ích cục bộ trên trình duyệt. Đầu vào dùng cho định dạng, mã hóa, giải mã, tạo và chuyển đổi được xử lý trong trình duyệt khi có thể và không được site này lưu trữ." },
-        { heading: "Kiểm tra qua server", body: "Công cụ HTTP status và DNS cần endpoint server nhỏ vì trình duyệt không thể tự thực hiện trực tiếp. Không gửi hostname nội bộ riêng tư hoặc dữ liệu bảo mật." },
+        { heading: "Kiểm tra qua server", body: "Công cụ HTTP status và DNS cần tuyến kiểm tra server nhỏ vì trình duyệt không thể tự thực hiện trực tiếp. Không gửi tên host nội bộ riêng tư hoặc dữ liệu bảo mật." },
         { heading: "Phân tích và quảng cáo", body: "Site có thể dùng Google Analytics và Google AdSense. Các dịch vụ bên thứ ba này có thể dùng cookie hoặc công nghệ tương tự theo chính sách riêng của họ." },
       ],
       contact: { heading: "Liên hệ", body: "Câu hỏi về chính sách này có thể gửi tới" },
@@ -364,9 +364,9 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       lastUpdated: "Cập nhật lần cuối: 5 tháng 6, 2026",
       backToTools: "Quay lại công cụ",
       sections: [
-        { heading: "Sử dụng dịch vụ", body: "Bob's Multi Tool cung cấp tiện ích miễn phí trên trình duyệt cho quy trình lập trình. Cần kiểm tra output trước khi đưa vào hệ thống production." },
+        { heading: "Sử dụng dịch vụ", body: "Bob's Multi Tool cung cấp tiện ích miễn phí trên trình duyệt cho quy trình lập trình. Cần kiểm tra kết quả trước khi đưa vào hệ thống sản xuất." },
         { heading: "Sử dụng chấp nhận được", body: "Bạn đồng ý không làm gián đoạn dịch vụ, không tự động hóa traffic lạm dụng, không dùng công cụ cho hoạt động bất hợp pháp, và không gửi dữ liệu riêng tư mà bạn không được phép xử lý trong tiện ích trình duyệt." },
-        { heading: "Nội dung bên thứ ba", body: "Một số công cụ có thể dùng dịch vụ bên thứ ba hoặc endpoint server. Bob's Multi Tool không kiểm soát website bên thứ ba, nhà cung cấp DNS hoặc endpoint từ xa." },
+        { heading: "Nội dung bên thứ ba", body: "Một số công cụ có thể dùng dịch vụ bên thứ ba hoặc tuyến server. Bob's Multi Tool không kiểm soát website bên thứ ba, nhà cung cấp DNS hoặc tuyến từ xa." },
         { heading: "Quảng cáo", body: "Sau khi được chấp thuận, site có thể hiển thị quảng cáo Google AdSense. Nội dung quảng cáo do mạng bên thứ ba phục vụ và có thể được cá nhân hóa theo chính sách của họ." },
       ],
       contact: { heading: "Liên hệ", body: "Câu hỏi về điều khoản này có thể gửi tới" },
@@ -380,7 +380,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       backToTools: "กลับไปเครื่องมือ",
       sections: [
         { heading: "ข้อมูลที่เครื่องมือประมวลผล", body: "Bob's Multi Tool ออกแบบให้เป็นยูทิลิตี้ในเบราว์เซอร์เป็นหลัก อินพุตสำหรับ formatting, encoding, decoding, generation และ conversion จะประมวลผลในเบราว์เซอร์เมื่อทำได้ และเว็บไซต์นี้ไม่จัดเก็บข้อมูลเหล่านั้น" },
-        { heading: "การตรวจผ่านเซิร์ฟเวอร์", body: "เครื่องมือ HTTP status และ DNS ใช้ endpoint server ขนาดเล็ก เพราะเบราว์เซอร์ไม่สามารถตรวจสิ่งเหล่านี้ได้โดยตรง ห้ามส่ง hostname ภายในหรือข้อมูลลับ" },
+        { heading: "การตรวจผ่านเซิร์ฟเวอร์", body: "เครื่องมือ HTTP status และ DNS ใช้เส้นทางตรวจสอบบนเซิร์ฟเวอร์ขนาดเล็ก เพราะเบราว์เซอร์ไม่สามารถตรวจสิ่งเหล่านี้ได้โดยตรง ห้ามส่งชื่อ host ภายในหรือข้อมูลลับ" },
         { heading: "Analytics และโฆษณา", body: "เว็บไซต์อาจใช้ Google Analytics และ Google AdSense บริการภายนอกเหล่านี้อาจใช้ cookie หรือเทคโนโลยีใกล้เคียงตามนโยบายของตนเอง" },
       ],
       contact: { heading: "ติดต่อ", body: "คำถามเกี่ยวกับนโยบายนี้ส่งได้ที่" },
@@ -391,9 +391,9 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       lastUpdated: "อัปเดตล่าสุด: 5 มิถุนายน 2026",
       backToTools: "กลับไปเครื่องมือ",
       sections: [
-        { heading: "การใช้บริการ", body: "Bob's Multi Tool ให้บริการยูทิลิตี้บนเบราว์เซอร์ฟรีสำหรับขั้นตอนงานนักพัฒนา ควรตรวจผลลัพธ์ก่อนนำไปใช้กับระบบ production" },
+        { heading: "การใช้บริการ", body: "Bob's Multi Tool ให้บริการยูทิลิตี้บนเบราว์เซอร์ฟรีสำหรับขั้นตอนงานนักพัฒนา ควรตรวจผลลัพธ์ก่อนนำไปใช้กับระบบจริง" },
         { heading: "การใช้งานที่ยอมรับได้", body: "คุณตกลงว่าจะไม่รบกวนบริการ ไม่ทำ traffic อัตโนมัติแบบละเมิด ไม่ใช้เครื่องมือเพื่อกิจกรรมผิดกฎหมาย และไม่ส่งข้อมูลส่วนตัวที่คุณไม่มีสิทธิ์ประมวลผลในเครื่องมือเบราว์เซอร์" },
-        { heading: "เนื้อหาจากภายนอก", body: "บางเครื่องมืออาจใช้บริการภายนอกหรือ endpoint server Bob's Multi Tool ไม่ควบคุมเว็บไซต์ภายนอก ผู้ให้บริการ DNS หรือ endpoint ระยะไกล" },
+        { heading: "เนื้อหาจากภายนอก", body: "บางเครื่องมืออาจใช้บริการภายนอกหรือเส้นทางบนเซิร์ฟเวอร์ Bob's Multi Tool ไม่ควบคุมเว็บไซต์ภายนอก ผู้ให้บริการ DNS หรือเส้นทางระยะไกล" },
         { heading: "โฆษณา", body: "หลังได้รับอนุมัติ เว็บไซต์อาจแสดงโฆษณา Google AdSense เนื้อหาโฆษณามาจาก network ภายนอกและอาจถูกปรับให้เหมาะตามนโยบายของบริการนั้น" },
       ],
       contact: { heading: "ติดต่อ", body: "คำถามเกี่ยวกับข้อกำหนดนี้ส่งได้ที่" },
@@ -407,7 +407,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       backToTools: "العودة إلى الأدوات",
       sections: [
         { heading: "المعلومات التي تعالجها الأدوات", body: "تم تصميم Bob's Multi Tool حول أدوات محلية داخل المتصفح. تتم معالجة الإدخالات المستخدمة في التنسيق والترميز وفك الترميز والإنشاء والتحويل داخل المتصفح عندما يكون ذلك ممكنا، ولا يخزنها هذا الموقع." },
-        { heading: "فحوصات عبر الخادم", body: "تحتاج أدوات HTTP status وDNS إلى endpoint خادم صغير لأن المتصفح لا يستطيع تنفيذ هذه الفحوصات مباشرة. لا ترسل أسماء مضيفين داخلية خاصة أو بيانات سرية." },
+        { heading: "فحوصات عبر الخادم", body: "تحتاج أدوات HTTP status وDNS إلى مسار خادم صغير لأن المتصفح لا يستطيع تنفيذ هذه الفحوصات مباشرة. لا ترسل أسماء مضيفين داخلية خاصة أو بيانات سرية." },
         { heading: "التحليلات والإعلانات", body: "قد يستخدم الموقع Google Analytics وGoogle AdSense. قد تستخدم هذه الخدمات الخارجية cookies أو تقنيات مشابهة وفقا لسياساتها." },
       ],
       contact: { heading: "التواصل", body: "يمكن إرسال الأسئلة حول هذه السياسة إلى" },
@@ -420,7 +420,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
       sections: [
         { heading: "استخدام الخدمة", body: "يوفر Bob's Multi Tool أدوات مجانية داخل المتصفح لسير عمل التطوير. يجب التحقق من مخرجات الأدوات قبل الاعتماد عليها في أنظمة الإنتاج." },
         { heading: "الاستخدام المقبول", body: "توافق على عدم تعطيل الخدمة أو أتمتة حركة مسيئة أو استخدام الأدوات في نشاط غير قانوني أو إرسال بيانات خاصة لا يسمح لك بمعالجتها في أداة متصفح." },
-        { heading: "محتوى الطرف الثالث", body: "قد تستخدم بعض الأدوات خدمات خارجية أو endpoint خادم. لا يتحكم Bob's Multi Tool في مواقع الطرف الثالث أو مزودي DNS أو endpoints البعيدة." },
+        { heading: "محتوى الطرف الثالث", body: "قد تستخدم بعض الأدوات خدمات خارجية أو مسار خادم. لا يتحكم Bob's Multi Tool في مواقع الطرف الثالث أو مزودي DNS أو المسارات البعيدة." },
         { heading: "الإعلانات", body: "بعد الموافقة، قد يعرض الموقع إعلانات Google AdSense. يتم تقديم محتوى الإعلانات عبر شبكات خارجية وقد يتم تخصيصه وفقا لسياساتها." },
       ],
       contact: { heading: "التواصل", body: "يمكن إرسال الأسئلة حول هذه الشروط إلى" },

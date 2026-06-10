@@ -15,6 +15,7 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 - Hindi reusable templates should avoid English scaffolding such as `input flow`, `output shape`, `Copy`, `result verify`, `practical guide`, `tool browser`, and `server endpoint` when clear Hindi phrasing exists.
 - Indonesian reusable templates should prefer visible local phrases such as `masukan`, `hasil`, `rahasia produksi`, and `jalur pemeriksaan` over English scaffolding like `Input`, `Output`, `endpoint`, or `secret` when the phrase is not a technical token.
 - Vietnamese acquisition copy should use Vietnamese diacritics for sentence prose. Technical tokens can stay, but descriptions, FAQ, guide descriptions, empty states, legal pages, and metadata should not fall back to full ASCII templates such as `Dinh dang`, `Kiem tra`, `Huong dan`, `Cong cu`, `Dau vao`, or `Ket qua`.
+- Vietnamese, Thai, and Arabic reusable templates should avoid sentence-level English scaffolding such as `production`, `endpoint`, `hostname`, `flow`, `draft`, `runtime`, or `FAQ` when a natural local phrase is available.
 - Locale switcher options should use native language labels so users can find their own locale quickly.
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.

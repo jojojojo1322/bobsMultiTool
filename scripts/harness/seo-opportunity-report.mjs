@@ -26,6 +26,17 @@ const lowCtr = Number(process.env.BOBOB_LOW_CTR ?? 0.025);
 const lowRpm = Number(process.env.BOBOB_LOW_RPM ?? 1);
 const localePrefix = /^\/(?:ko|ja|zh-CN|zh-TW|es|pt-BR|de|fr|hi|id|vi|th|ar)(?=\/)/;
 const inputWarnings = [];
+const clusterByCategory = {
+  Text: "text-cleanup",
+  Code: "code-formatting",
+  Web: "web-debugging",
+  Data: "data-conversion",
+  Time: "time-scheduling",
+  Security: "security-generators",
+  Color: "color-css",
+  SEO: "seo-webmaster",
+  Network: "network-debugging",
+};
 
 function parseCsvTable(source) {
   const rows = [];
@@ -129,6 +140,8 @@ function readRegistryInventory() {
       const category = pick("category");
       const description = pick("description");
       const demandTier = pick("demandTier") || "growth";
+      const monetizationTier = pick("monetizationTier") || demandTier;
+      const contentCluster = pick("contentCluster") || clusterByCategory[category] || category.toLowerCase();
       const requiresServer = /requiresServer:\s+true/.test(block);
       if (!slug || !title) return null;
       const explicitSeo = block.match(/seo:\s+seo\(\s*"([^"]+)",\s*"([^"]+)"/);
@@ -149,6 +162,8 @@ function readRegistryInventory() {
         descriptionLength: seoDescription.length,
         category,
         demandTier,
+        monetizationTier,
+        contentCluster,
         requiresServer,
         searchIntents: [...pickArray("keywords"), ...pickArray("searchIntents")],
         titleHasIntent,
@@ -186,6 +201,8 @@ function readGuideInventory() {
       descriptionLength: description.length,
       category: "Guide",
       demandTier: "growth",
+      monetizationTier: "growth",
+      contentCluster: "guide",
       requiresServer: false,
       searchIntents: [slug.replace(/-/g, " "), title],
       titleHasIntent: true,
@@ -370,6 +387,42 @@ function measuredMetadataSuggestion(item, pageRows, adsenseRow) {
   };
 }
 
+function tierScore(tier) {
+  return { core: 3, growth: 2, "long-tail": 1 }[tier] ?? 0;
+}
+
+function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
+  return contentItems
+    .map((item) => {
+      const hasSearchConsoleRows = (searchRowsByPage.get(item.path) ?? []).length > 0;
+      const hasAdsenseRows = (adsenseRowsByPage.get(item.path) ?? []).length > 0;
+      const missingInputs = [
+        !hasSearchConsoleRows ? "Search Console page/query rows" : "",
+        !hasAdsenseRows ? "AdSense page/RPM rows" : "",
+      ].filter(Boolean);
+      const score =
+        tierScore(item.monetizationTier) * 100 +
+        tierScore(item.demandTier) * 20 +
+        (item.contentType === "tool" ? 10 : 0) +
+        (item.requiresServer ? 3 : 0);
+      return {
+        path: item.path,
+        contentType: item.contentType,
+        title: item.toolName,
+        monetizationTier: item.monetizationTier,
+        demandTier: item.demandTier,
+        contentCluster: item.contentCluster,
+        missingInputs,
+        score,
+        searchIntents: item.searchIntents.slice(0, 4),
+      };
+    })
+    .filter((item) => item.missingInputs.length > 0)
+    .sort((a, b) => b.score - a.score || a.path.localeCompare(b.path))
+    .slice(0, 25)
+    .map(({ score, ...item }) => item);
+}
+
 function markdownTable(headers, rows) {
   if (!rows.length) return "_None._";
   const escape = (value) => String(value ?? "").replace(/\|/g, "\\|").replace(/\n/g, " ");
@@ -415,6 +468,20 @@ function formatMarkdownReport(report) {
         item.suggestedTitle,
         item.suggestedDescription,
         item.reason,
+      ]),
+    ),
+    "",
+    "## Measurement Backlog",
+    "",
+    markdownTable(
+      ["Path", "Type", "Tier", "Cluster", "Missing measured inputs", "Search intents"],
+      report.measurementBacklog.map((row) => [
+        row.path,
+        row.contentType,
+        `${row.monetizationTier}/${row.demandTier}`,
+        row.contentCluster,
+        row.missingInputs.join(", "),
+        row.searchIntents.join(", "),
       ]),
     ),
     "",
@@ -505,6 +572,7 @@ const metadataWarnings = inventory
   }));
 
 const searchRowsByPage = rowsByCanonicalContentPage(scRows);
+const adsenseRowsByPage = rowsByCanonicalContentPage(adRows);
 const adsenseByPage = new Map(adOpportunities.map((row) => [canonicalContentPath(row.page), row]));
 const recommendationPaths = new Set([
   ...scOpportunities.map((row) => canonicalContentPath(row.page)).filter(Boolean),
@@ -524,6 +592,7 @@ const unsupportedMeasuredPages = measuredRows
   .map((row) => ({ ...row, canonicalPath: canonicalContentPath(row.page) }))
   .filter((row) => row.page && (!row.canonicalPath || !inventoryByPath.has(row.canonicalPath)))
   .slice(0, 25);
+const measurementBacklogRows = measurementBacklog(contentInventory.all, searchRowsByPage, adsenseRowsByPage);
 
 const report = {
   inputs: {
@@ -545,6 +614,7 @@ const report = {
   adsenseOpportunities: adOpportunities,
   metadataWarnings,
   titleDescriptionRecommendations,
+  measurementBacklog: measurementBacklogRows,
   unsupportedMeasuredPages,
 };
 

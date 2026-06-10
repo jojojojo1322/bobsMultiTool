@@ -29,6 +29,7 @@
 - Post-deploy title/description changes should be driven by Search Console and AdSense page/query CSV exports when available. Use `npm run harness:seo-opportunities` to identify high-impression low-CTR tool and guide pages, low-RPM pages, metadata length/intent issues, and `titleDescriptionRecommendations`.
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv` and `reports/adsense.csv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - SEO measurement CSV reports must expose `inputWarnings` for missing required or recommended Search Console/AdSense headers; do not treat empty measured results as trustworthy until warnings are reviewed.
+- When measured CSV rows are absent or partial, use `measurementBacklog` only to decide which core pages need Search Console/AdSense export coverage next. Do not rewrite public title/description copy from backlog alone.
 - `npm run harness:seo-opportunities:smoke` must keep valid measured CSV fixtures producing opportunities and malformed CSV fixtures producing `inputWarnings`.
 - For measured SEO review handoff, use `BOBOB_SEO_REPORT_FORMAT=markdown` and optionally `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` to generate a readable recommendations artifact. Keep measured CSVs and markdown reports out of git.
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.
@@ -43,6 +44,7 @@
 - Hindi reusable templates should avoid English scaffolding such as `input flow`, `output shape`, `Copy`, `result verify`, `practical guide`, `tool browser`, and `server endpoint` when clear Hindi phrasing exists.
 - Indonesian reusable templates should prefer visible local phrases such as `masukan`, `hasil`, `rahasia produksi`, and `jalur pemeriksaan` over English scaffolding like `Input`, `Output`, `endpoint`, or `secret` when the phrase is not a technical token.
 - Vietnamese acquisition copy should use Vietnamese diacritics for sentence prose. Keep technical tokens when useful, but avoid full ASCII fallback templates such as `Dinh dang`, `Kiem tra`, `Huong dan`, `Cong cu`, `Dau vao`, or `Ket qua`.
+- Vietnamese, Thai, and Arabic reusable templates should avoid sentence-level English scaffolding such as `production`, `endpoint`, `hostname`, `flow`, `draft`, `runtime`, or `FAQ` when a natural local phrase is available.
 - Locale switcher labels must use native language names such as `한국어`, `日本語`, `简体中文`, `हिन्दी`, `ไทย`, and `العربية`, not English-only language names for every locale.
 - Guide detail metadata must use the same localized `guide.description` shown on the page, not a generic guide-title template.
 - Tool and guide detail pages must set page-specific OpenGraph and Twitter title/description values instead of inheriting the root default social metadata.

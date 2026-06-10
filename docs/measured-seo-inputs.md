@@ -36,3 +36,10 @@ npm run harness:seo-opportunities
 ```
 
 `reports/seo-opportunities.md` is gitignored because it can include query, impression, CTR, RPM, and earnings data.
+
+## Measurement backlog
+
+When measured CSV exports are missing or only cover a few pages, the report includes `measurementBacklog`.
+Use that list to decide which pages to export first from Search Console and AdSense. It is sorted toward core monetization pages, core demand pages, tools before guides, and server-backed checks when ties are close.
+
+Do not rewrite public title or description copy from `measurementBacklog` alone. Use it to collect measured rows, then apply copy changes from `titleDescriptionRecommendations`.

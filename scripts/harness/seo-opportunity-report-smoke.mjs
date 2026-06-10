@@ -65,6 +65,8 @@ assert(report.searchConsoleOpportunities.some((row) => row.page === "/tools/json
 assert(report.adsenseOpportunities.some((row) => row.page === "/tools/dns-lookup" && row.rpm === 0.4), "AdSense low-RPM tool opportunity missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/tools/json-formatter" && item.suggestedTitle.includes("JSON Formatter")), "tool title/description recommendation missing");
 assert(report.titleDescriptionRecommendations.some((item) => item.path === "/guides/seo-meta-tags" && item.suggestedTitle.includes("Guide")), "guide title/description recommendation missing");
+assert(report.measurementBacklog.some((item) => item.path === "/tools/regex-tester" && item.missingInputs.includes("Search Console page/query rows")), "measurement backlog should include unmeasured core tool pages");
+assert(report.measurementBacklog.some((item) => item.path === "/tools/json-formatter" && item.missingInputs.includes("AdSense page/RPM rows")), "measurement backlog should include partially measured tool pages");
 assert(report.unsupportedMeasuredPages.some((row) => row.page === "/not-tracked"), "unsupported measured page warning missing");
 
 const defaultReportsDir = path.join(root, "reports");
@@ -106,6 +108,7 @@ const markdownReport = fs.readFileSync(markdownOutput, "utf8");
 assert(markdownReport.includes("## Input Warnings"), "markdown report should include Input Warnings section");
 assert(markdownReport.includes("Search Console CSV missing required column"), "bad Search Console CSV should show required-column warning");
 assert(markdownReport.includes("## Title And Description Recommendations"), "markdown report should include recommendations section");
+assert(markdownReport.includes("## Measurement Backlog"), "markdown report should include measurement backlog section");
 
 if (failures.length) {
   console.error(failures.join("\n"));

@@ -27,6 +27,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - For post-deploy title/description work, use Search Console and AdSense page/query CSV exports with `npm run harness:seo-opportunities`. Prioritize high-impression low-CTR tool and guide pages, low-RPM pages, metadata warnings, and `titleDescriptionRecommendations` before broad copy rewrites.
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv` and `reports/adsense.csv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - Review `inputWarnings` from the SEO opportunity report before trusting empty measured results; missing Search Console/AdSense CSV headers must be fixed or acknowledged before title/description edits.
+- Use `measurementBacklog` only to prioritize which core pages need Search Console/AdSense export coverage next. Do not rewrite public title/description copy from backlog alone.
 - Run `npm run harness:seo-opportunities:smoke` when changing the measured SEO report so valid CSV fixtures still create opportunities and malformed CSV fixtures still create `inputWarnings`.
 - Use `BOBOB_SEO_REPORT_FORMAT=markdown` and `BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md` when a human review artifact is needed for measured title/description decisions. Keep measured CSVs and markdown reports out of git.
 - Do not keep unused AdSense preview components, fake publisher IDs, or placeholder ad slots in the public app.

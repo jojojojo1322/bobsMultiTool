@@ -59,7 +59,7 @@ if (!fs.existsSync(archivePath)) {
   failures.push("docs/legacy-apps-archive.md must document the archive decision");
 } else {
   const archive = read("docs/legacy-apps-archive.md");
-  for (const fragment of ["apps/main", "Removed App Packages", "Preserved Public Entry Paths", "apps/regax", "packages/ui", "turbo.json", "permanent redirects"]) {
+  for (const fragment of ["apps/main", "No archived source copy", "Removed App Packages", "Preserved Public Entry Paths", "apps/regax", "packages/ui", "turbo.json", "permanent redirects", "harness:legacy"]) {
     if (!archive.includes(fragment)) failures.push(`legacy archive doc missing ${fragment}`);
   }
 }

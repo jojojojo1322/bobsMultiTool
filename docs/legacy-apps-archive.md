@@ -2,6 +2,8 @@
 
 Bob's Multi Tool now uses `apps/main` as the only public app.
 
+No archived source copy of the legacy apps is kept in this repository. The source archive is git history; the current working tree should only contain the consolidated `apps/main` application.
+
 ## Removed App Packages
 
 - `apps/regax`
@@ -33,4 +35,4 @@ Old public paths remain as permanent redirects from `apps/main/next.config.ts`:
 - Root `package.json` workspaces must stay `["apps/main"]`.
 - Legacy standalone directories must not be restored unless the product architecture changes.
 - Redirects must continue to return permanent redirects to final 200 tool pages.
-- `npm run harness:registry`, `npm run harness:routes`, and `npm run harness:agents` must fail if legacy app surfaces are reintroduced.
+- `npm run harness:legacy`, `npm run harness:registry`, `npm run harness:routes`, and `npm run harness:agents` must fail if legacy app surfaces are reintroduced.
