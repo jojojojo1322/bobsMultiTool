@@ -688,6 +688,71 @@ function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+function parseEnvContent(input: string) {
+  const entries: Array<{ key: string; value: string; line: number }> = [];
+  const warnings: string[] = [];
+  const seenKeys = new Map<string, number>();
+
+  input.split(/\r?\n/).forEach((rawLine, index) => {
+    const line = index + 1;
+    const trimmed = rawLine.trim();
+    if (!trimmed || trimmed.startsWith("#")) return;
+
+    const source = trimmed.startsWith("export ") ? trimmed.slice(7).trimStart() : trimmed;
+    const equalsIndex = source.indexOf("=");
+    if (equalsIndex <= 0) {
+      warnings.push(`Line ${line}: missing KEY=value syntax.`);
+      return;
+    }
+
+    const key = source.slice(0, equalsIndex).trim();
+    let value = source.slice(equalsIndex + 1).trim();
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) warnings.push(`Line ${line}: invalid variable name "${key}".`);
+
+    const firstLine = seenKeys.get(key);
+    if (firstLine) warnings.push(`Line ${line}: duplicate key "${key}" also appears on line ${firstLine}.`);
+    else seenKeys.set(key, line);
+
+    const quote = value[0];
+    if (quote === "\"" || quote === "'") {
+      if (value.length === 1 || !value.endsWith(quote)) {
+        warnings.push(`Line ${line}: unclosed quoted value for "${key}".`);
+      } else {
+        value = value.slice(1, -1);
+        if (quote === "\"") value = value.replace(/\\n/g, "\n").replace(/\\r/g, "\r").replace(/\\t/g, "\t").replace(/\\"/g, "\"").replace(/\\\\/g, "\\");
+      }
+    } else {
+      const commentIndex = value.search(/\s#/);
+      if (commentIndex >= 0) value = value.slice(0, commentIndex).trimEnd();
+      if (/\s/.test(value)) warnings.push(`Line ${line}: unquoted value for "${key}" contains whitespace.`);
+    }
+
+    entries.push({ key, value, line });
+  });
+
+  return {
+    entries,
+    warnings,
+    json: JSON.stringify(Object.fromEntries(entries.map((entry) => [entry.key, entry.value])), null, 2),
+  };
+}
+
+function EnvParserTool({ dictionary }: { dictionary: ClientDictionary }) {
+  const [input, setInput] = React.useState("APP_ENV=production\nAPI_URL=https://api.example.com\nFEATURE_FLAG=true");
+  const result = React.useMemo(() => {
+    const parsed = parseEnvContent(input);
+    const warningBlock = parsed.warnings.length ? `\n\n${ui(dictionary, "envWarnings", "Warnings")}:\n${parsed.warnings.map((warning) => `- ${warning}`).join("\n")}` : "";
+    return `${ui(dictionary, "parsedVariables", "Parsed variables")}: ${parsed.entries.length}${warningBlock}\n\n${ui(dictionary, "parsedJson", "Parsed JSON")}:\n${parsed.json}`;
+  }, [dictionary, input]);
+
+  return (
+    <div className="space-y-4">
+      <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-48" aria-label={ui(dictionary, "envInput", "ENV input")} />
+      <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result} dictionary={dictionary} />
+    </div>
+  );
+}
+
 function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <TextTransformTool
@@ -1587,6 +1652,7 @@ export const toolComponentMap: Record<ToolComponentKey, React.ComponentType<{ di
   diff: TextDiffTool,
   yamlJson: YamlJsonTool,
   yamlValidator: YamlValidatorTool,
+  envParser: EnvParserTool,
   sqlFormatter: SqlFormatterTool,
   xmlFormatter: XmlFormatterTool,
   csvJson: CsvJsonTool,

@@ -55,6 +55,7 @@ for (const fragment of [
   "priorityGuideDescriptions",
   "localizedExampleValues",
   "유효한 YAML / 파싱된 JSON 미리보기",
+  "파싱된 변수와 중복/형식 경고",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
 }
@@ -68,6 +69,7 @@ const coreAcquisitionSlugs = [
   "json-formatter",
   "json-escape-unescape",
   "yaml-validator",
+  "env-parser-validator",
   "jwt-decoder",
   "base64-tool",
   "cron-generator",

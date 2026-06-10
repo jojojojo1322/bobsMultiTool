@@ -44,6 +44,21 @@ const localizedExampleValues: Record<string, Partial<Record<Exclude<Locale, "en"
     th: ["name: Bob\nactive: true", "YAML ถูกต้อง / พรีวิว JSON ที่ parse แล้ว"],
     ar: ["name: Bob\nactive: true", "YAML صالح / معاينة JSON المحللة"],
   },
+  "env-parser-validator": {
+    ko: ["APP_ENV=production\nAPI_URL=https://api.example.com", "파싱된 변수와 중복/형식 경고"],
+    ja: ["APP_ENV=production\nAPI_URL=https://api.example.com", "解析済み変数と重複・形式警告"],
+    "zh-CN": ["APP_ENV=production\nAPI_URL=https://api.example.com", "已解析变量和重复/格式警告"],
+    "zh-TW": ["APP_ENV=production\nAPI_URL=https://api.example.com", "已解析變數與重複/格式警告"],
+    es: ["APP_ENV=production\nAPI_URL=https://api.example.com", "Variables parseadas y avisos de duplicados o formato"],
+    "pt-BR": ["APP_ENV=production\nAPI_URL=https://api.example.com", "Variaveis analisadas e avisos de duplicidade ou formato"],
+    de: ["APP_ENV=production\nAPI_URL=https://api.example.com", "Geparste Variablen und Warnungen zu Duplikaten oder Format"],
+    fr: ["APP_ENV=production\nAPI_URL=https://api.example.com", "Variables analysees et avertissements de doublon ou format"],
+    hi: ["APP_ENV=production\nAPI_URL=https://api.example.com", "पार्स चर और दोहराव या रूप चेतावनियां"],
+    id: ["APP_ENV=production\nAPI_URL=https://api.example.com", "Variabel hasil parse dan peringatan duplikat atau format"],
+    vi: ["APP_ENV=production\nAPI_URL=https://api.example.com", "Biến đã phân tích và cảnh báo trùng lặp hoặc định dạng"],
+    th: ["APP_ENV=production\nAPI_URL=https://api.example.com", "ตัวแปรที่แยกวิเคราะห์แล้วและคำเตือนเรื่องค่าซ้ำหรือรูปแบบ"],
+    ar: ["APP_ENV=production\nAPI_URL=https://api.example.com", "متغيرات محللة وتحذيرات تكرار أو تنسيق"],
+  },
 };
 
 const guideTopicEn: Record<string, string> = {
@@ -473,6 +488,12 @@ const priorityToolIntents: Record<string, Partial<Record<Locale, string>>> = {
     es: "Valida indentacion y sintaxis YAML y revisa la estructura parseada antes de publicar configs.",
     de: "Validiert YAML-Einrueckung und Syntax und zeigt die geparste Struktur vor dem Commit.",
   },
+  "env-parser-validator": {
+    ko: ".env 값을 파싱해 중복 변수, 잘못된 이름, 따옴표 오류를 확인하고 배포 설정에 넣기 전 구조를 검토합니다.",
+    ja: ".env 値を解析し、重複変数、不正な名前、引用符エラーを確認して、デプロイ設定に入れる前に構造を見直します。",
+    es: "Parsea archivos .env, detecta variables duplicadas, nombres invalidos y comillas rotas antes de copiar configuracion.",
+    de: "Parst .env-Dateien, findet doppelte Variablen, ungueltige Namen und kaputte Quotes vor dem Kopieren in Deployment-Settings.",
+  },
   "jwt-decoder": {
     ko: "JWT의 header와 payload를 브라우저에서 디코딩해 만료 시간, issuer, scope를 빠르게 확인하는 도구입니다.",
     ja: "JWT の header と payload をブラウザ内でデコードし、有効期限、issuer、scope を素早く確認します。",
@@ -693,6 +714,17 @@ const longTailPriorityToolIntents: Record<string, Partial<Record<Locale, string>
     vi: "Kiểm tra thụt lề và cú pháp YAML, rồi xem cấu trúc đã phân tích cho cấu hình, CI và tài liệu.",
     th: "ตรวจการเยื้องและไวยากรณ์ YAML แล้วดูโครงสร้างที่แยกวิเคราะห์แล้วสำหรับการตั้งค่า CI และเอกสาร",
     ar: "تحقق من المسافات وصياغة YAML ثم راجع البنية المحللة لملفات الإعداد وCI والوثائق.",
+  },
+  "env-parser-validator": {
+    "zh-CN": "解析 .env 片段，检查重复变量、无效名称和引号问题，再复制到部署或 CI 设置。",
+    "zh-TW": "解析 .env 片段，檢查重複變數、無效名稱與引號問題，再複製到部署或 CI 設定。",
+    "pt-BR": "Analise trechos .env, encontre variaveis duplicadas, nomes invalidos e aspas quebradas antes de copiar.",
+    fr: "Analysez des extraits .env, trouvez variables en double, noms invalides et guillemets casses avant copie.",
+    hi: ".env अंश पार्स करें, दोहराए चर, गलत नाम और quote गलती पकड़ें, फिर deploy या CI में कॉपी करें.",
+    id: "Parse potongan .env, cek variabel duplikat, nama tidak valid, dan kutipan rusak sebelum disalin.",
+    vi: "Phân tích đoạn .env, tìm biến trùng, tên sai và lỗi dấu nháy trước khi sao chép vào deploy hoặc CI.",
+    th: "แยกวิเคราะห์ส่วน .env ตรวจตัวแปรซ้ำ ชื่อไม่ถูกต้อง และเครื่องหมายคำพูดผิดก่อนคัดลอก",
+    ar: "حلل مقاطع .env وافحص المتغيرات المكررة والأسماء غير الصالحة ومشكلات الاقتباس قبل النسخ.",
   },
   "jwt-decoder": {
     "zh-CN": "在浏览器中解码 JWT 标头和载荷，检查过期时间、签发方、权限范围与声明值。",

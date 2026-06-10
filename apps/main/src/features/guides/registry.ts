@@ -66,7 +66,7 @@ export const guides: GuideDefinition[] = [
     slug: "developer-utility-workflow",
     title: "A practical workflow for browser-based developer utilities",
     description: "A simple way to use local browser utilities while keeping sensitive payloads and production data safe.",
-    relatedTools: ["json-formatter", "jwt-decoder", "base64-tool", "uuid-generator"],
+    relatedTools: ["json-formatter", "env-parser-validator", "jwt-decoder", "base64-tool"],
     sections: sections("browser-based utilities"),
   },
   {

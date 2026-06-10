@@ -299,6 +299,23 @@ const localizedYamlValidatorToolUi: Record<Locale, Record<string, string>> = {
   ar: { yamlInput: "إدخال YAML", validYaml: "YAML صالح", parsedPreview: "معاينة التحليل", yamlValidationError: "خطأ تحقق YAML" },
 };
 
+const localizedEnvParserToolUi: Record<Locale, Record<string, string>> = {
+  en: { envInput: "ENV input", envWarnings: "Warnings", parsedVariables: "Parsed variables", parsedJson: "Parsed JSON" },
+  ko: { envInput: "ENV 입력", envWarnings: "경고", parsedVariables: "파싱된 변수", parsedJson: "파싱된 JSON" },
+  ja: { envInput: "ENV入力", envWarnings: "警告", parsedVariables: "解析済み変数", parsedJson: "解析済みJSON" },
+  "zh-CN": { envInput: "ENV 输入", envWarnings: "警告", parsedVariables: "已解析变量", parsedJson: "已解析 JSON" },
+  "zh-TW": { envInput: "ENV 輸入", envWarnings: "警告", parsedVariables: "已解析變數", parsedJson: "已解析 JSON" },
+  es: { envInput: "Entrada ENV", envWarnings: "Advertencias", parsedVariables: "Variables parseadas", parsedJson: "JSON parseado" },
+  "pt-BR": { envInput: "Entrada ENV", envWarnings: "Avisos", parsedVariables: "Variaveis analisadas", parsedJson: "JSON analisado" },
+  de: { envInput: "ENV-Eingabe", envWarnings: "Warnungen", parsedVariables: "Geparste Variablen", parsedJson: "Geparstes JSON" },
+  fr: { envInput: "Entree ENV", envWarnings: "Avertissements", parsedVariables: "Variables analysees", parsedJson: "JSON analyse" },
+  hi: { envInput: "ENV इनपुट", envWarnings: "चेतावनियां", parsedVariables: "पार्स किए चर", parsedJson: "पार्स किया JSON" },
+  id: { envInput: "Masukan ENV", envWarnings: "Peringatan", parsedVariables: "Variabel hasil parse", parsedJson: "JSON hasil parse" },
+  vi: { envInput: "Nhập ENV", envWarnings: "Cảnh báo", parsedVariables: "Biến đã phân tích", parsedJson: "JSON đã phân tích" },
+  th: { envInput: "อินพุต ENV", envWarnings: "คำเตือน", parsedVariables: "ตัวแปรที่แยกวิเคราะห์แล้ว", parsedJson: "JSON ที่แยกวิเคราะห์แล้ว" },
+  ar: { envInput: "إدخال ENV", envWarnings: "تحذيرات", parsedVariables: "متغيرات محللة", parsedJson: "JSON محلل" },
+};
+
 const localizedNoOutput: Record<Locale, string> = {
   en: "Output will appear here.",
   ko: "출력이 여기에 표시됩니다.",
@@ -701,7 +718,7 @@ const commonLocaleOverrides = Object.fromEntries(
     {
       ...commonText[locale],
       categories: localizedCategories[locale],
-      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale], ...localizedResultToolUi[locale], ...localizedJsonEscapeToolUi[locale], ...localizedYamlValidatorToolUi[locale] },
+      toolUi: { ...enToolUi, ...localizedToolUi[locale], ...localizedToolUiSupplement[locale], ...localizedResultToolUi[locale], ...localizedJsonEscapeToolUi[locale], ...localizedYamlValidatorToolUi[locale], ...localizedEnvParserToolUi[locale] },
     },
   ]),
 ) as unknown as Record<Locale, CommonLocaleOverride>;

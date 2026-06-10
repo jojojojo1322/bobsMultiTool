@@ -14,7 +14,7 @@ import type { ToolDefinition } from "@/features/tools/types";
 
 const acquisitionClusterSlugs = [
   ["json-formatter", "json-escape-unescape", "json-to-typescript", "json-schema-validator"],
-  ["yaml-validator", "yaml-json-converter", "json-formatter", "csv-json-converter"],
+  ["yaml-validator", "env-parser-validator", "yaml-json-converter", "json-formatter"],
   ["jwt-decoder", "timestamp-converter", "base64-tool", "hash-generator"],
   ["http-status-checker", "dns-lookup", "meta-tag-generator", "open-graph-preview"],
   ["color-converter", "css-formatter", "css-unit-converter", "css-clamp-generator"],
