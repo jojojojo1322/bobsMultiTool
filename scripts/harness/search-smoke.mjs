@@ -37,6 +37,7 @@ for (const [source, name] of [
 }
 if (!localizedContent.includes("searchTools(query)")) failures.push("localized search does not reuse registry search ranking");
 if (!searchPanel.includes("getLocalizedTools(")) failures.push("tool search panel does not localize empty-query results");
+if (!searchPanel.includes("getLocalizedRelatedTools(")) failures.push("tool search panel must expose related next-action links");
 if (!searchPanel.includes("initialQuery")) failures.push("tool search panel does not accept initial URL query");
 if (!searchPanel.includes("url.searchParams.set(\"q\"")) failures.push("tool search panel does not sync q search param");
 if (!layout.includes("https://www.bobob.app/tools?q={search_term_string}")) failures.push("SearchAction target is not aligned to /tools?q=");

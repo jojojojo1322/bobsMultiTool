@@ -41,6 +41,8 @@ if (!workspace.includes("rounded-lg border bg-background")) failures.push("singl
 if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workbench shell must keep a fixed height with internal panel scroll");
 if (!workspace.includes("h-full min-h-0")) failures.push("workbench panels must use min-h-0 for internal scrolling");
 if (!workspace.includes("withLocale(\"/\", locale)")) failures.push("detail top bar home link missing");
+if (!workspace.includes("function ToolNextActions")) failures.push("tool detail center panel next-action strip missing");
+if (!workspace.includes("data-tool-next-actions")) failures.push("tool detail next-action strip must expose a stable QA attribute");
 if (!guideDetail.includes("withLocale(\"/\", defaultLocale)") || !guideDetail.includes("Bob&apos;s Multi Tool")) failures.push("default guide detail home link missing");
 if (!localizedGuideDetail.includes("withLocale(\"/\", locale)") || !localizedGuideDetail.includes("Bob&apos;s Multi Tool")) failures.push("localized guide detail home link missing");
 if (!workspace.includes("bobob:tool-nav-scroll")) failures.push("tool navigation scroll persistence missing");

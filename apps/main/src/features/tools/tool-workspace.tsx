@@ -224,6 +224,37 @@ function ReferenceSection({ title, description, children }: { title: string; des
   );
 }
 
+function ToolNextActions({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
+  const relatedTools = getLocalizedRelatedTools(tool.relatedTools.slice(0, 3), locale);
+  if (!relatedTools.length) return null;
+
+  return (
+    <section className="border-t bg-background/60 px-5 py-4" data-tool-next-actions>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">{dictionary.nav.relatedTools}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{dictionary.nav.relatedToolsDescription}</p>
+        </div>
+        {tool.guides[0] ? (
+          <Link href={withLocale(tool.guides[0].href, locale)} className="inline-flex min-h-7 min-w-7 items-center justify-center rounded-sm text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
+            {dictionary.nav.guides}
+          </Link>
+        ) : null}
+      </div>
+      <div className="grid gap-2 md:grid-cols-3">
+        {relatedTools.map((related) => (
+          <Link key={related.slug} href={withLocale(`/tools/${related.slug}`, locale)} className="rounded-md border bg-card px-3 py-2 text-sm transition-colors hover:bg-muted/60">
+            <span className="block font-medium">{related.shortTitle}</span>
+            <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">
+              {dictionary.tool.nextActionPrefix} {related.description}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function commonFailureCases(tool: ToolDefinition, dictionary: ClientDictionary) {
   const category = dictionary.categories[tool.category] ?? tool.category;
   const inputExample = tool.inputExamples[0] ?? tool.seo.keywords[0] ?? tool.shortTitle;
@@ -306,6 +337,7 @@ export function ToolWorkspace({
               <div className="p-5">
                 <ToolPanel component={tool.component} dictionary={dictionary} />
               </div>
+              <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />
             </section>
             <Separator />
             <section className="grid gap-0 md:grid-cols-3">

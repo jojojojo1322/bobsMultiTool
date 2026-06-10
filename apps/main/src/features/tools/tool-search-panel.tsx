@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
-import { getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
+import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
 
 export function ToolSearchPanel({
   locale,
@@ -60,17 +60,33 @@ export function ToolSearchPanel({
           />
         </label>
         <div className="grid max-h-80 gap-2 overflow-auto pr-1">
-          {results.length ? results.map((tool) => (
-            <Link key={tool.slug} href={withLocale(`/tools/${tool.slug}`, locale)} className="rounded-md border px-3 py-2 transition-colors hover:bg-muted/60">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{tool.title}</p>
-                  <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+          {results.length ? results.map((tool) => {
+            const relatedTools = getLocalizedRelatedTools(tool.relatedTools.slice(0, 2), locale);
+            return (
+              <div key={tool.slug} className="rounded-md border transition-colors hover:bg-muted/40">
+                <Link href={withLocale(`/tools/${tool.slug}`, locale)} className="block px-3 py-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{tool.title}</p>
+                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+                    </div>
+                    <Badge>{tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly}</Badge>
+                  </div>
+                </Link>
+                <div className="flex flex-wrap gap-1 border-t px-3 py-2">
+                  {relatedTools.map((related) => (
+                    <Link
+                      key={related.slug}
+                      href={withLocale(`/tools/${related.slug}`, locale)}
+                      className="rounded-sm border bg-background px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      {dictionary.tool.nextActionPrefix} {related.shortTitle}
+                    </Link>
+                  ))}
                 </div>
-                <Badge>{tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly}</Badge>
               </div>
-            </Link>
-          )) : (
+            );
+          }) : (
             <div className="rounded-md border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
               {dictionary.nav.tools}
             </div>

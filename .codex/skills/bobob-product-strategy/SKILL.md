@@ -21,6 +21,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - For stakeholder review, generate the Markdown SEO report with `BOBOB_SEO_REPORT_FORMAT=markdown` and keep title/description changes tied to measured rows.
 - Use `reports/README.md` and `reports/templates/*.example.csv` as the safe handoff for Search Console and AdSense export collection; keep `npm run harness:seo-templates` green when export handling changes.
 - Treat JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript as search-led acquisition clusters.
+- Increase session depth before adding thin tools: search results, central tool output, and the right reference panel should all expose related next-action links that lead to a second tool.
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
 - Do not show ad placeholders before approval. Post-approval candidates are below tool output, right reference panel bottom, and mid-guide content only.

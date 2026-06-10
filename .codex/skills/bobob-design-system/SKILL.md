@@ -11,6 +11,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 - Pointer-reactive background motion must stay subtle and lightweight: CSS variables plus React pointer tracking only, reduced-motion aware, and no WebGL, `ogl`, or `framer-motion` dependency unless explicitly approved.
 - Tool pages use the same frame: left navigation, top context bar, central tool panel, right examples/FAQ/guides/related tools.
 - Tool directory pages at `/tools` and `/{locale}/tools` use the same dense product-lab card system as the home index.
+- Related next-action links can appear in search results and directly below a tool panel, but keep them compact and list-like rather than another nested card surface.
 - Desktop tool pages require real resizable left and right sidebars with localStorage persistence: left 280px default / 220px min, right 340px default / 280px min, center 560px target min.
 - Resizable sidebars must clamp to the workbench container width. Narrow desktop widths must not create horizontal overflow; let the center panel shrink before the shell breaks.
 - Desktop tool pages must use one aligned workbench shell around the resizable panels. Do not wrap left, center, and right panels in separate outer rounded bordered cards.
