@@ -470,6 +470,13 @@ function commonTextBlock(locale) {
 
 for (const locale of nonEnglishLocales) {
   const block = commonTextBlock(locale);
+  for (const field of ["copyLink", "copiedLink"]) {
+    const match = block.match(new RegExp(`${field}:\\s*"([^"]+)"`));
+    if (!match) failures.push(`${locale} dictionary missing localized ${field}`);
+    if (match?.[1] === (field === "copyLink" ? "Copy link" : "Link copied")) {
+      failures.push(`${locale} dictionary ${field} must not fall back to English`);
+    }
+  }
   for (const englishFragment of [
     "genereez",
     'faqDescription: "Common implementation details"',

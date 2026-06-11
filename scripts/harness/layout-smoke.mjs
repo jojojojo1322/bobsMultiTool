@@ -47,6 +47,9 @@ if (!directory.includes("toolCategories.map")) failures.push("tool directory mus
 if (!directory.includes("data-acquisition-clusters")) failures.push("tool directory acquisition clusters must expose a stable QA attribute");
 if (toolsIndex.includes("redirect(") || localizedToolsIndex.includes("redirect(withLocale(\"/tools/regex-tester\"")) failures.push("tools directory pages must not redirect to a single tool");
 if (!workspace.includes("rounded-lg border bg-background")) failures.push("single-shell workbench border missing");
+if (!workspace.includes("bobob-workbench-shell")) failures.push("workbench shell must expose dark/light surface separation class");
+if (!workspace.includes("bobob-primary-work-area")) failures.push("primary work area must expose dark/light surface separation class");
+if (!workspace.includes("bobob-support-sections")) failures.push("support sections must expose dark/light surface separation class");
 if (!workspace.includes("lg:h-[calc(100vh-7rem)]")) failures.push("desktop workbench shell must keep a fixed height with internal panel scroll");
 if (!workspace.includes("h-full min-h-0")) failures.push("workbench panels must use min-h-0 for internal scrolling");
 if (!workspace.includes("withLocale(\"/\", locale)")) failures.push("detail top bar home link missing");
@@ -110,6 +113,13 @@ if (!workspace.includes("getLocalizedRelatedTools(favoriteSlugs, locale)")) fail
 if (!workspace.includes("writeFavoriteToolSlugs(locale, nextSlugs)")) failures.push("favorite tools must persist only through the local favorite writer");
 if (!dictionaries.includes("favoriteTools")) failures.push("favorite tools label missing from dictionary");
 if (!dictionaries.includes("addFavorite") || !dictionaries.includes("removeFavorite")) failures.push("favorite action labels missing from dictionary");
+if (!workspace.includes("data-copy-tool-link")) failures.push("tool detail copy-link action should expose a stable QA attribute");
+if (!workspace.includes("copyToolLink")) failures.push("tool detail copy-link action missing");
+if (!workspace.includes("writeClipboardText(toolUrl)")) failures.push("tool detail copy-link action must use the shared clipboard helper");
+if (!workspace.includes("navigator.clipboard?.writeText")) failures.push("copy-link action must use the Clipboard API when available");
+if (!workspace.includes("document.execCommand(\"copy\")")) failures.push("copy-link action must keep a fallback for restricted clipboard environments");
+if (!workspace.includes("dictionary.tool.copyLink") || !workspace.includes("dictionary.tool.copiedLink")) failures.push("copy-link action labels must be localized");
+if (!dictionaries.includes("copyLink") || !dictionaries.includes("copiedLink")) failures.push("copy-link labels missing from dictionary");
 if (!workspace.includes("bobob:tool-session")) failures.push("local-only tool session storage missing");
 if (!workspace.includes("data-tool-session")) failures.push("tool session controls should expose a stable QA attribute");
 if (!workspace.includes("restoreLastWork") || !workspace.includes("clearLocalHistory")) failures.push("tool session restore/clear labels missing from workspace");

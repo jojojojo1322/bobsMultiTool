@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, ClipboardCheck, ListChecks, Menu, RotateCcw, Search, Star, Trash2 } from "lucide-react";
+import { ArrowRight, Check, ClipboardCheck, Link2, ListChecks, Menu, RotateCcw, Search, Star, Trash2 } from "lucide-react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { PointerBackground } from "@/components/pointer-background";
@@ -67,6 +67,27 @@ function writeFavoriteToolSlugs(locale: Locale, slugs: string[]) {
   if (typeof window === "undefined") return;
   const uniqueSlugs = Array.from(new Set(slugs)).slice(0, maxFavoriteTools);
   window.localStorage.setItem(favoriteToolsStorageKey(locale), JSON.stringify(uniqueSlugs));
+}
+
+async function writeClipboardText(value: string) {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return true;
+  }
+  if (typeof document === "undefined") return false;
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.inset = "0 auto auto 0";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    return document.execCommand("copy");
+  } finally {
+    document.body.removeChild(textarea);
+  }
 }
 
 function getSessionControls(root: HTMLElement) {
@@ -626,8 +647,8 @@ function ReferenceSection({ title, description, children }: { title: string; des
 function PrimaryWorkArea({ dictionary, children }: { dictionary: ClientDictionary; children: React.ReactNode }) {
   return (
     <section id="tool-surface" className="border-b bg-background p-4 sm:p-5" data-tool-surface>
-      <div className="overflow-hidden rounded-lg border bg-card shadow-sm ring-1 ring-border/60" data-primary-work-area>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
+      <div className="bobob-primary-work-area overflow-hidden rounded-lg border bg-card shadow-sm ring-1 ring-border/60" data-primary-work-area>
+        <div className="bobob-primary-work-heading flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {dictionary.toolUi.input} / {dictionary.toolUi.output}
           </p>
@@ -836,6 +857,8 @@ export function ToolWorkspace({
   const [query, setQuery] = React.useState("");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [favoriteSlugs, setFavoriteSlugs] = React.useState<string[]>([]);
+  const [copiedToolLink, setCopiedToolLink] = React.useState(false);
+  const copiedToolLinkTimerRef = React.useRef<number | null>(null);
   const privacyLabel = tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly;
   const isFavorite = favoriteSlugs.includes(tool.slug);
   const headerKeywordBadges = locale === defaultLocale ? tool.seo.keywords.slice(0, 4) : [tool.shortTitle, dictionary.categories[tool.category] ?? tool.category];
@@ -856,10 +879,26 @@ export function ToolWorkspace({
     });
   }, [locale, tool.slug]);
 
+  const copyToolLink = React.useCallback(async () => {
+    if (typeof window === "undefined") return;
+    const toolUrl = new URL(withLocale(`/tools/${tool.slug}`, locale), window.location.origin).toString();
+    const copied = await writeClipboardText(toolUrl);
+    if (!copied) return;
+    setCopiedToolLink(true);
+    if (copiedToolLinkTimerRef.current) window.clearTimeout(copiedToolLinkTimerRef.current);
+    copiedToolLinkTimerRef.current = window.setTimeout(() => setCopiedToolLink(false), 1600);
+  }, [locale, tool.slug]);
+
+  React.useEffect(() => {
+    return () => {
+      if (copiedToolLinkTimerRef.current) window.clearTimeout(copiedToolLinkTimerRef.current);
+    };
+  }, []);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
       <PointerBackground />
-      <div className="relative border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="bobob-topbar relative border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto grid max-w-[1600px] gap-3 px-4 py-3 lg:flex lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label={dictionary.nav.openNavigation}>
@@ -874,6 +913,16 @@ export function ToolWorkspace({
             </div>
           </div>
           <div className="flex min-w-0 items-center justify-end gap-2 lg:flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyToolLink}
+              aria-label={copiedToolLink ? dictionary.tool.copiedLink : dictionary.tool.copyLink}
+              data-copy-tool-link
+            >
+              {copiedToolLink ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+              <span className="hidden sm:inline">{copiedToolLink ? dictionary.tool.copiedLink : dictionary.tool.copyLink}</span>
+            </Button>
             <Button variant="outline" size="sm" onClick={toggleFavorite} aria-pressed={isFavorite} aria-label={isFavorite ? dictionary.tool.removeFavorite : dictionary.tool.addFavorite}>
               <Star className={cn("h-4 w-4", isFavorite ? "fill-current" : "")} />
               <span className="hidden sm:inline">{isFavorite ? dictionary.tool.removeFavorite : dictionary.tool.addFavorite}</span>
@@ -888,13 +937,13 @@ export function ToolWorkspace({
         <ToolNavigation activeSlug={tool.slug} query={query} onQueryChange={setQuery} onNavigate={() => setMobileOpen(false)} locale={locale} dictionary={dictionary} favoriteSlugs={favoriteSlugs} />
       </Sheet>
       <div className="relative mx-auto max-w-[1600px] px-4 py-4">
-        <ResizablePanelGroup className="min-h-[calc(100vh-7rem)] rounded-lg border bg-background lg:h-[calc(100vh-7rem)] lg:min-h-0">
+        <ResizablePanelGroup className="bobob-workbench-shell min-h-[calc(100vh-7rem)] rounded-lg border bg-background lg:h-[calc(100vh-7rem)] lg:min-h-0">
           <ResizablePanel className="hidden min-h-0 lg:block">
-            <Sidebar className="h-full min-h-0 p-4">
+            <Sidebar className="bobob-side-panel h-full min-h-0 p-4">
               <ToolNavigation activeSlug={tool.slug} query={query} onQueryChange={setQuery} locale={locale} dictionary={dictionary} favoriteSlugs={favoriteSlugs} />
             </Sidebar>
           </ResizablePanel>
-          <ResizablePanel className="min-h-0 overflow-auto bg-card pb-20 lg:pb-0">
+          <ResizablePanel className="bobob-center-panel min-h-0 overflow-auto bg-card pb-20 lg:pb-0">
             <section>
               <div className="border-b p-5">
                 <div className="flex flex-wrap items-center gap-2">
@@ -911,7 +960,7 @@ export function ToolWorkspace({
                   <ToolPanel component={tool.component} dictionary={dictionary} />
                 </ToolSessionControls>
               </PrimaryWorkArea>
-              <div className="border-t bg-background" data-tool-support-sections>
+              <div className="bobob-support-sections border-t bg-background" data-tool-support-sections>
                 <GoogleAdUnit
                   enabled={adsEnabled}
                   publisherId={adsPublisherId}
@@ -947,7 +996,7 @@ export function ToolWorkspace({
             </section>
           </ResizablePanel>
           <ResizablePanel className="hidden min-h-0 lg:block">
-            <aside className="h-full min-h-0 overflow-auto bg-background p-4">
+            <aside className="bobob-side-panel h-full min-h-0 overflow-auto bg-background p-4">
               <ToolReferencePanel tool={tool} locale={locale} dictionary={dictionary} />
             </aside>
           </ResizablePanel>

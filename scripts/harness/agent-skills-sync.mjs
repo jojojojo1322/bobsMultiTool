@@ -71,6 +71,8 @@ const checks = [
   ["agents", "slug-specific localized priority failure cases and pre-copy checklist items"],
   ["agents", "Session-depth related tools"],
   ["agents", "Korean, Japanese, Spanish, and German priority intent copy"],
+  ["agents", "layered surface tokens"],
+  ["agents", "Scrollbars should stay modern and quiet"],
   ["agents", "Pointer-reactive visual effects"],
   ["agents", "restrained grid-line pointer background"],
   ["agents", "requestAnimationFrame-driven CSS variables"],
@@ -217,6 +219,8 @@ const checks = [
   ["tool", "harness:legacy"],
   ["design", "Light/Dark"],
   ["design", "ThemeToggle"],
+  ["design", "visible workbench layers"],
+  ["design", "Scrollbars should be thin"],
   ["design", "Pointer-reactive background motion"],
   ["design", "restrained grid-line motion"],
   ["design", "requestAnimationFrame-driven smoothing"],
@@ -346,7 +350,7 @@ const checks = [
   ["localization", "related next-action labels"],
   ["localization", "Search result match-signal chips are visible prose"],
   ["localization", "failure case, pre-copy checklist"],
-  ["localization", "`favoriteTools`, `addFavorite`, `removeFavorite`, `localSessionTitle`, `localSessionBody`, `restoreLastWork`, and `clearLocalHistory`"],
+  ["localization", "`favoriteTools`, `addFavorite`, `removeFavorite`, `copyLink`, `copiedLink`, `localSessionTitle`, `localSessionBody`, `restoreLastWork`, and `clearLocalHistory`"],
   ["localization", "show localized use-case context"],
   ["localization", "acquisition-cluster or first-step related next actions"],
   ["localization", "workflow recipe titles, descriptions, and step reasons"],
@@ -661,6 +665,9 @@ const globalsCss = read("apps/main/src/app/globals.css");
 for (const fragment of [".bobob-pointer-background", "@media (prefers-reduced-motion: reduce)", "color-mix", "--bobob-depth-x", "--bobob-ray-opacity"]) {
   if (!globalsCss.includes(fragment)) failures.push(`global CSS missing pointer background policy ${fragment}`);
 }
+for (const fragment of ["--bobob-surface-shell", "--bobob-surface-raised", "--bobob-border-strong", "--bobob-panel-shadow", "--bobob-scrollbar-thumb", "*::-webkit-scrollbar-thumb", "scrollbar-width: thin"]) {
+  if (!globalsCss.includes(fragment)) failures.push(`global CSS missing surface/scrollbar policy ${fragment}`);
+}
 const directorySource = read("apps/main/src/features/tools/tool-directory.tsx");
 if (!directorySource.includes("<PointerBackground />")) {
   failures.push("tool directory hero missing pointer background");
@@ -671,6 +678,9 @@ for (const fragment of ["bobob:recent-tools", "data-recent-tools", "dictionary.n
 }
 for (const fragment of ["bobob:favorite-tools", "data-favorite-tools", "dictionary.nav.favoriteTools", "getLocalizedRelatedTools(favoriteSlugs, locale)", "writeFavoriteToolSlugs(locale, nextSlugs)"]) {
   if (!workspaceSource.includes(fragment)) failures.push(`tool workspace missing local-only favorite tools behavior ${fragment}`);
+}
+for (const fragment of ["data-copy-tool-link", "copyToolLink", "writeClipboardText(toolUrl)", "navigator.clipboard?.writeText", "document.execCommand(\"copy\")", "dictionary.tool.copyLink", "dictionary.tool.copiedLink"]) {
+  if (!workspaceSource.includes(fragment)) failures.push(`tool workspace missing localized browser-only copy-link behavior ${fragment}`);
 }
 for (const fragment of ["bobob:tool-session", "data-tool-session", "restoreLastWork", "clearLocalHistory", "collectToolSession(root)", "applyToolSession(root, session)"]) {
   if (!workspaceSource.includes(fragment)) failures.push(`tool workspace missing local-only tool session behavior ${fragment}`);
