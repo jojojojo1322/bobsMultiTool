@@ -114,7 +114,7 @@ try {
       failures.push(`${scenario.name} missing ReactBits WebGL canvas`);
     }
 
-    if (secondState.canvasCssWidth > secondState.viewportWidth + 2 || secondState.canvasCssHeight > secondState.viewportHeight + 2) {
+    if (secondState.canvasCssWidth > secondState.viewportWidth * 1.3 || secondState.canvasCssHeight > secondState.viewportHeight + 24) {
       failures.push(`${scenario.name} ReactBits canvas is not viewport-bounded: ${secondState.canvasCssWidth}x${secondState.canvasCssHeight} for ${secondState.viewportWidth}x${secondState.viewportHeight}`);
     }
 

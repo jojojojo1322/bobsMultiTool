@@ -299,7 +299,7 @@ function ReactBitsShaderBackground({ variant }: { variant: PointerBackgroundVari
       const resize = () => {
         if (!renderer || !gl) return;
         const width = Math.max(1, element.clientWidth);
-        const height = Math.max(1, element.clientHeight);
+        const height = Math.max(1, Math.min(element.clientHeight, window.innerHeight));
         renderer.setSize(width, height);
         program.uniforms.uResolution.value = [gl.canvas.width, gl.canvas.height];
       };
@@ -363,10 +363,9 @@ export function PointerBackground({ variant = "galaxy" }: { variant?: PointerBac
 
   return (
     <div ref={hostRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" data-reactbits-background={variant}>
-      <div className={`bobob-reactbits-viewport bobob-reactbits-background bobob-reactbits-${variant}`}>
+      <div className={`bobob-pointer-background bobob-reactbits-background bobob-reactbits-${variant}`}>
         <ReactBitsShaderBackground variant={variant} />
       </div>
-      <div className="bobob-pointer-background" />
     </div>
   );
 }
