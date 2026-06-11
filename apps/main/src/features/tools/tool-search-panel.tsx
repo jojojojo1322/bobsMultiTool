@@ -52,21 +52,44 @@ function getSearchMatchSignals(tool: ToolDefinition, query: string, relatedTools
 }
 
 function workflowRecipeMatches(recipe: LocalizedWorkflowRecipe, query: string) {
-  const normalizedQuery = normalizeSearchValue(query);
-  if (!normalizedQuery) return false;
-  const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 1);
-  const candidates = [
-    recipe.title,
-    recipe.description,
-    ...recipe.searchIntents,
-    ...recipe.steps.flatMap((step) => [step.tool.title, step.tool.shortTitle, step.tool.description, step.reason, ...step.tool.searchIntents, ...step.tool.aliases]),
-  ];
+  return scoreWorkflowRecipeSearch(recipe, query) > 0;
+}
 
-  const normalizedCandidates = candidates.map(normalizeSearchValue);
-  return (
-    normalizedCandidates.some((value) => value.includes(normalizedQuery)) ||
-    (queryTokens.length > 1 && queryTokens.every((token) => normalizedCandidates.some((value) => value.includes(token))))
-  );
+function scoreWorkflowRecipeSearch(recipe: LocalizedWorkflowRecipe, query: string) {
+  const normalizedQuery = normalizeSearchValue(query);
+  if (!normalizedQuery) return 0;
+  const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 1);
+  const title = normalizeSearchValue(recipe.title);
+  const description = normalizeSearchValue(recipe.description);
+  const intents = recipe.searchIntents.map(normalizeSearchValue);
+  const stepTitles = recipe.steps.flatMap((step) => [step.tool.title, step.tool.shortTitle]).map(normalizeSearchValue);
+  const stepReasons = recipe.steps.map((step) => normalizeSearchValue(step.reason));
+  const stepToolSignals = recipe.steps.flatMap((step) => [step.tool.description, ...step.tool.searchIntents, ...step.tool.aliases]).map(normalizeSearchValue);
+  const candidates = [title, description, ...intents, ...stepTitles, ...stepReasons, ...stepToolSignals];
+
+  let score = 0;
+  if (title === normalizedQuery) score += 140;
+  if (title.startsWith(normalizedQuery)) score += 90;
+  if (title.includes(normalizedQuery)) score += 70;
+  if (intents.some((intent) => intent === normalizedQuery)) score += 130;
+  if (intents.some((intent) => intent.includes(normalizedQuery))) score += 95;
+  if (description.includes(normalizedQuery)) score += 40;
+  if (stepTitles.some((value) => value.includes(normalizedQuery))) score += 25;
+  if (stepReasons.some((value) => value.includes(normalizedQuery))) score += 25;
+  if (stepToolSignals.some((value) => value.includes(normalizedQuery))) score += 15;
+
+  if (queryTokens.length > 1 && queryTokens.every((token) => [title, ...intents].some((value) => value.includes(token)))) score += 80;
+  if (queryTokens.length > 1 && queryTokens.every((token) => candidates.some((value) => value.includes(token)))) score += 25;
+
+  for (const token of queryTokens) {
+    if (title.includes(token)) score += 18;
+    if (intents.some((intent) => intent.includes(token))) score += 24;
+    if (description.includes(token)) score += 8;
+    if (stepReasons.some((value) => value.includes(token))) score += 6;
+    if (stepToolSignals.some((value) => value.includes(token))) score += 4;
+  }
+
+  return score;
 }
 
 export function ToolSearchPanel({
@@ -86,7 +109,12 @@ export function ToolSearchPanel({
   }, [locale, localizedTools, query]);
   const workflowResults = React.useMemo(() => {
     if (!query.trim()) return [];
-    return getLocalizedWorkflowRecipes(locale, localizedTools).filter((recipe) => workflowRecipeMatches(recipe, query)).slice(0, 3);
+    return getLocalizedWorkflowRecipes(locale, localizedTools)
+      .map((recipe) => ({ recipe, score: scoreWorkflowRecipeSearch(recipe, query) }))
+      .filter((match) => match.score > 0 && workflowRecipeMatches(match.recipe, query))
+      .sort((a, b) => b.score - a.score || a.recipe.title.localeCompare(b.recipe.title))
+      .slice(0, 3)
+      .map((match) => match.recipe);
   }, [locale, localizedTools, query]);
 
   React.useEffect(() => {
