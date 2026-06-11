@@ -19,6 +19,88 @@ type LegalPageContent = {
   };
 };
 
+const legalUpdatedAt: Record<Locale, string> = {
+  en: "Last updated: June 11, 2026",
+  ko: "최종 업데이트: 2026년 6월 11일",
+  ja: "最終更新日: 2026年6月11日",
+  "zh-CN": "最后更新: 2026年6月11日",
+  "zh-TW": "最後更新: 2026年6月11日",
+  es: "Ultima actualizacion: 11 de junio de 2026",
+  "pt-BR": "Ultima atualizacao: 11 de junho de 2026",
+  de: "Zuletzt aktualisiert: 11. Juni 2026",
+  fr: "Derniere mise a jour: 11 juin 2026",
+  hi: "अंतिम अपडेट: 11 जून 2026",
+  id: "Terakhir diperbarui: 11 Juni 2026",
+  vi: "Cập nhật lần cuối: 11 tháng 6, 2026",
+  th: "อัปเดตล่าสุด: 11 มิถุนายน 2026",
+  ar: "آخر تحديث: 11 يونيو 2026",
+};
+
+const advertisingSections: Record<Locale, Record<LegalPageKind, LegalSection>> = {
+  en: {
+    privacy: {
+      heading: "Advertising, cookies, and Google services",
+      body: "The site may use Google advertising services and other third-party services to keep the utilities available for free. These services may use cookies, device identifiers, or similar technologies to serve ads, measure performance, prevent abuse, and comply with their policies.",
+    },
+    terms: {
+      heading: "Advertising and service providers",
+      body: "The site may display advertising or include third-party scripts from service providers. You agree not to interfere with these systems, manipulate traffic quality, or attempt to bypass abuse prevention and measurement features.",
+    },
+  },
+  ko: {
+    privacy: { heading: "광고, 쿠키, Google 서비스", body: "이 사이트는 무료 유틸리티를 유지하기 위해 Google 광고 서비스와 기타 제3자 서비스를 사용할 수 있습니다. 이러한 서비스는 광고 제공, 성과 측정, 남용 방지, 정책 준수를 위해 쿠키, 기기 식별자 또는 유사 기술을 사용할 수 있습니다." },
+    terms: { heading: "광고와 서비스 제공자", body: "이 사이트는 광고를 표시하거나 서비스 제공자의 제3자 스크립트를 포함할 수 있습니다. 사용자는 이러한 시스템을 방해하거나 트래픽 품질을 조작하거나 남용 방지 및 측정 기능을 우회하려고 해서는 안 됩니다." },
+  },
+  ja: {
+    privacy: { heading: "広告、Cookie、Google サービス", body: "このサイトは無料ユーティリティを維持するため、Google 広告サービスやその他の第三者サービスを使用する場合があります。これらのサービスは広告配信、効果測定、不正防止、ポリシー遵守のために cookie、端末識別子、または類似技術を使用することがあります。" },
+    terms: { heading: "広告とサービス提供者", body: "このサイトは広告を表示したり、サービス提供者の第三者スクリプトを含む場合があります。これらの仕組みを妨害したり、トラフィック品質を操作したり、不正防止や測定機能を回避しようとしてはいけません。" },
+  },
+  "zh-CN": {
+    privacy: { heading: "广告、Cookie 和 Google 服务", body: "本站可能使用 Google 广告服务和其他第三方服务来维持免费工具体验。这些服务可能使用 cookie、设备标识符或类似技术来投放广告、衡量效果、防止滥用并遵守其政策。" },
+    terms: { heading: "广告和服务提供方", body: "本站可能展示广告，或包含服务提供方的第三方脚本。你不得干扰这些系统、操纵流量质量，或尝试绕过防滥用和衡量功能。" },
+  },
+  "zh-TW": {
+    privacy: { heading: "廣告、Cookie 與 Google 服務", body: "本站可能使用 Google 廣告服務與其他第三方服務來維持免費工具體驗。這些服務可能使用 cookie、裝置識別碼或類似技術來投放廣告、衡量成效、防止濫用並遵守其政策。" },
+    terms: { heading: "廣告與服務提供者", body: "本站可能顯示廣告，或包含服務提供者的第三方腳本。你不得干擾這些系統、操縱流量品質，或嘗試繞過防濫用與衡量功能。" },
+  },
+  es: {
+    privacy: { heading: "Publicidad, cookies y servicios de Google", body: "El sitio puede usar servicios publicitarios de Google y otros servicios de terceros para mantener gratuitas las utilidades. Estos servicios pueden usar cookies, identificadores de dispositivo o tecnologias similares para servir anuncios, medir rendimiento, prevenir abuso y cumplir sus politicas." },
+    terms: { heading: "Publicidad y proveedores de servicio", body: "El sitio puede mostrar publicidad o incluir scripts de terceros de proveedores de servicio. Aceptas no interferir con estos sistemas, manipular la calidad del trafico ni intentar evitar funciones de prevencion de abuso y medicion." },
+  },
+  "pt-BR": {
+    privacy: { heading: "Publicidade, cookies e servicos do Google", body: "O site pode usar servicos de publicidade do Google e outros servicos de terceiros para manter os utilitarios gratuitos. Esses servicos podem usar cookies, identificadores de dispositivo ou tecnologias semelhantes para veicular anuncios, medir desempenho, prevenir abuso e cumprir suas politicas." },
+    terms: { heading: "Publicidade e provedores de servico", body: "O site pode exibir publicidade ou incluir scripts de terceiros de provedores de servico. Voce concorda em nao interferir nesses sistemas, manipular a qualidade do trafego ou tentar contornar recursos de prevencao de abuso e medicao." },
+  },
+  de: {
+    privacy: { heading: "Werbung, Cookies und Google-Dienste", body: "Die Seite kann Google-Werbedienste und andere Drittanbieter-Dienste nutzen, um die Utilities kostenlos bereitzustellen. Diese Dienste koennen Cookies, Geraetekennungen oder aehnliche Technologien verwenden, um Anzeigen auszuliefern, Leistung zu messen, Missbrauch zu verhindern und ihre Richtlinien einzuhalten." },
+    terms: { heading: "Werbung und Dienstanbieter", body: "Die Seite kann Werbung anzeigen oder Drittanbieter-Skripte von Dienstanbietern enthalten. Du darfst diese Systeme nicht stoeren, die Traffic-Qualitaet nicht manipulieren und keine Missbrauchs- oder Messfunktionen umgehen." },
+  },
+  fr: {
+    privacy: { heading: "Publicite, cookies et services Google", body: "Le site peut utiliser des services publicitaires Google et d'autres services tiers afin de garder les utilitaires gratuits. Ces services peuvent utiliser cookies, identifiants d'appareil ou technologies similaires pour diffuser des annonces, mesurer la performance, prevenir les abus et respecter leurs politiques." },
+    terms: { heading: "Publicite et fournisseurs de service", body: "Le site peut afficher de la publicite ou inclure des scripts tiers de fournisseurs de service. Vous acceptez de ne pas perturber ces systemes, manipuler la qualite du trafic ou tenter de contourner les fonctions de prevention des abus et de mesure." },
+  },
+  hi: {
+    privacy: { heading: "विज्ञापन, cookies और Google सेवाएं", body: "Utilities को free रखने के लिए site Google advertising services और अन्य third-party services इस्तेमाल कर सकती है. ये services ads दिखाने, performance मापने, abuse रोकने और अपनी policies का पालन करने के लिए cookies, device identifiers या मिलती-जुलती technologies इस्तेमाल कर सकती हैं." },
+    terms: { heading: "विज्ञापन और service providers", body: "Site advertising दिखा सकती है या service providers की third-party scripts शामिल कर सकती है. आप इन systems में बाधा नहीं डालेंगे, traffic quality manipulate नहीं करेंगे, और abuse-prevention या measurement features bypass करने की कोशिश नहीं करेंगे." },
+  },
+  id: {
+    privacy: { heading: "Iklan, cookie, dan layanan Google", body: "Situs dapat memakai layanan iklan Google dan layanan pihak ketiga lain agar utilitas tetap gratis. Layanan ini dapat memakai cookie, pengenal perangkat, atau teknologi serupa untuk menayangkan iklan, mengukur performa, mencegah penyalahgunaan, dan mematuhi kebijakan mereka." },
+    terms: { heading: "Iklan dan penyedia layanan", body: "Situs dapat menampilkan iklan atau menyertakan skrip pihak ketiga dari penyedia layanan. Anda setuju untuk tidak mengganggu sistem ini, memanipulasi kualitas trafik, atau mencoba melewati fitur pencegahan penyalahgunaan dan pengukuran." },
+  },
+  vi: {
+    privacy: { heading: "Quảng cáo, cookie và dịch vụ Google", body: "Site có thể dùng dịch vụ quảng cáo Google và dịch vụ bên thứ ba khác để duy trì tiện ích miễn phí. Các dịch vụ này có thể dùng cookie, mã nhận dạng thiết bị hoặc công nghệ tương tự để phân phát quảng cáo, đo hiệu suất, ngăn lạm dụng và tuân thủ chính sách của họ." },
+    terms: { heading: "Quảng cáo và nhà cung cấp dịch vụ", body: "Site có thể hiển thị quảng cáo hoặc bao gồm script bên thứ ba từ nhà cung cấp dịch vụ. Bạn đồng ý không can thiệp vào các hệ thống này, thao túng chất lượng lưu lượng hoặc cố vượt qua tính năng chống lạm dụng và đo lường." },
+  },
+  th: {
+    privacy: { heading: "โฆษณา คุกกี้ และบริการของ Google", body: "เว็บไซต์อาจใช้บริการโฆษณาของ Google และบริการภายนอกอื่นเพื่อให้เครื่องมือใช้งานได้ฟรี บริการเหล่านี้อาจใช้คุกกี้ ตัวระบุอุปกรณ์ หรือเทคโนโลยีใกล้เคียงเพื่อแสดงโฆษณา วัดประสิทธิภาพ ป้องกันการละเมิด และทำตามนโยบายของตน" },
+    terms: { heading: "โฆษณาและผู้ให้บริการ", body: "เว็บไซต์อาจแสดงโฆษณาหรือรวมสคริปต์ภายนอกจากผู้ให้บริการ คุณตกลงว่าจะไม่รบกวนระบบเหล่านี้ ไม่บิดเบือนคุณภาพทราฟฟิก และไม่พยายามข้ามฟีเจอร์ป้องกันการละเมิดหรือการวัดผล" },
+  },
+  ar: {
+    privacy: { heading: "الإعلانات وcookies وخدمات Google", body: "قد يستخدم الموقع خدمات إعلانية من Google وخدمات خارجية أخرى للحفاظ على الأدوات مجانية. قد تستخدم هذه الخدمات cookies أو معرفات الجهاز أو تقنيات مشابهة لعرض الإعلانات وقياس الأداء ومنع الإساءة والالتزام بسياساتها." },
+    terms: { heading: "الإعلانات ومزودو الخدمة", body: "قد يعرض الموقع إعلانات أو يتضمن scripts خارجية من مزودي خدمة. توافق على عدم تعطيل هذه الأنظمة أو التلاعب بجودة الحركة أو محاولة تجاوز ميزات منع الإساءة والقياس." },
+  },
+};
+
 const english: Record<LegalPageKind, LegalPageContent> = {
   privacy: {
     title: "Privacy Policy",
@@ -429,6 +511,13 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
 };
 
 export function getLocalizedLegalContent(locale: Locale, kind: LegalPageKind) {
-  if (locale === defaultLocale) return english[kind];
-  return localized[locale][kind];
+  const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
+  const advertisingSection = advertisingSections[locale][kind];
+  const alreadyIncluded = content.sections.some((section) => section.heading === advertisingSection.heading);
+
+  return {
+    ...content,
+    lastUpdated: legalUpdatedAt[locale],
+    sections: alreadyIncluded ? content.sections : [...content.sections, advertisingSection],
+  };
 }

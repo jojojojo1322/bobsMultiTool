@@ -16,7 +16,8 @@ const rootLayout = fs.readFileSync(path.join(root, "apps/main/src/app/layout.tsx
 const googleAdsense = fs.readFileSync(path.join(root, "apps/main/src/components/GoogleAdsense.tsx"), "utf8");
 
 const failures = [];
-if (!rootLayout.includes("NEXT_PUBLIC_ENABLE_ADSENSE === \"true\"")) failures.push("AdSense script must require an explicit public enable flag");
+if (!rootLayout.includes('"ca-pub-2620992505263949"')) failures.push("AdSense script must default to the real publisher id");
+if (!rootLayout.includes('NEXT_PUBLIC_ENABLE_ADSENSE !== "false"')) failures.push("AdSense script should be disabled only by an explicit public false flag");
 if (!googleAdsense.includes("enabled = false")) failures.push("AdSense component must be disabled by default");
 if (!googleAdsense.includes("export function GoogleAdUnit")) failures.push("GoogleAdUnit must exist for explicit in-flow ad placements");
 if (!googleAdsense.includes("data-bobob-ad-slot")) failures.push("GoogleAdUnit must expose a stable non-visible QA slot attribute");

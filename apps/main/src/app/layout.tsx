@@ -7,6 +7,9 @@ import { defaultLocale, languageAlternates, normalizeLocale, openGraphLocales } 
 import { getDictionary } from "@/features/i18n/dictionaries";
 import "./globals.css";
 
+const adsensePublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-2620992505263949";
+const adsenseEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bobob.app"),
   title: {
@@ -94,7 +97,7 @@ export default async function RootLayout({
       <body className="bg-background text-foreground antialiased">
         <ThemeProvider>
           <GoogleAnalytics />
-          <GoogleAdsense enabled={process.env.NEXT_PUBLIC_ENABLE_ADSENSE === "true"} publisherId={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID} />
+          <GoogleAdsense enabled={adsenseEnabled} publisherId={adsensePublisherId} />
           {children}
         </ThemeProvider>
       </body>

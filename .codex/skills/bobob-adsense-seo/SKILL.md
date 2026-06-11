@@ -8,7 +8,8 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Canonical host is `https://www.bobob.app`.
 - `bobob.app` should permanently redirect to `www.bobob.app` with an explicit 308 canonical host redirect before locale redirects run.
 - Legacy standalone apps must not be restored. Legacy entry paths should redirect from `apps/main` to the matching `/tools/{slug}` page.
-- `/sitemap.xml` must be a sitemap index. Per-locale sitemaps live at `/sitemaps/{locale}` and must include home, tools, guides, privacy, and terms for that locale.
+- `/sitemap.xml` must be a sitemap index. Per-locale sitemaps live at `/sitemaps/{locale}` and must include home, tools, guides, about, contact, privacy, and terms for that locale.
+- `/about` and `/contact` are required trust pages. They must exist for default English and supported locale prefixes, use localized trust content, appear in footer trust navigation, and be reachable as final 200 URLs.
 - `/tools` and `/{locale}/tools` must return 200 as tool directory pages. They are SEO hub pages and must not redirect to a single tool.
 - Sitemap entries must point only to final public URLs expected to return 200.
 - English is the default unprefixed URL set. Non-English locales use path prefixes and require canonical plus hreflang alternates.
@@ -38,8 +39,8 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Use `npm run seo:report` when a human review artifact is needed for measured title/description decisions. Keep measured CSVs and markdown reports out of git.
 - Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when Search Console/AdSense export headers, copy targets, or measured export instructions change.
 - Do not keep unused AdSense preview components, fake publisher IDs, visible preview blocks, or disabled placeholder ad slots in the public app.
-- Public UI, dictionaries, legal pages, and support copy must not expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording. Keep revenue-operation language in governance and measured reports only.
-- AdSense script loading must stay opt-in through `NEXT_PUBLIC_ENABLE_ADSENSE=true`; explicit ad units also require real slot ids such as `NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT` and `NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT`.
+- Public UI, dictionaries, and support copy must not expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording. Keep revenue-operation language in governance and measured reports only. Legal pages may disclose third-party advertising, cookies, and Google advertising services for transparency, but must not discuss approval status.
+- The base Google advertising script should load with the real publisher id `ca-pub-2620992505263949` by default so site connection is not lost when Vercel env vars are absent. `NEXT_PUBLIC_ENABLE_ADSENSE=false` may disable it for controlled builds; explicit ad units still require real slot ids such as `NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT` and `NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT`.
 - Allowed in-flow ad positions are after the primary tool result area, at the bottom of the right reference panel, and in the middle of long guide content. Keep them away from input controls, copy buttons, navigation, and sticky bars so they cannot be confused with product actions.
 - Disabled or unconfigured ad units must render nothing visible. Do not enable bottom overlays or auto-ad UI that can cover tool input/output surfaces.
 - Use `npm run harness:deployment-status` to verify that the canonical `bobs-multi-tool-main` Vercel deployment succeeds separately from stale legacy Vercel project statuses. After external project cleanup, run `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status`.

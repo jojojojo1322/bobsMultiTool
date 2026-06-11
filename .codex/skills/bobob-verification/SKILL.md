@@ -63,6 +63,7 @@ Include:
 - Tool and guide detail pages must expose page-specific OpenGraph and Twitter title/description values, not root default social metadata.
 - Tool detail pages should include registry-backed `SoftwareApplication`, `FAQPage`, and `BreadcrumbList` structured data without fabricated rating or review fields.
 - Localized privacy and terms prose plus metadata through `getLocalizedLegalContent`.
+- Default and localized about/contact trust pages through `getLocalizedTrustContent`, footer trust navigation, and sitemap inclusion.
 - Non-English common labels and chips, including privacy/server/local indicators, should be localized and should not show English fallback fragments outside the English source route.
 - Arabic RTL route and visible prose.
 - Sitemap index at `/sitemap.xml`, per-locale sitemaps at `/sitemaps/en`, `/sitemaps/ko`, `/sitemaps/ar`, and full locale URL coverage without the old 200 URL static cap.
@@ -103,12 +104,12 @@ Include:
 - Desktop left and right sidebar resizing, single-shell panel alignment, clamped panel widths with no horizontal overflow at narrow desktop widths, top brand/home link, preserved sidebar scroll when clicking tool navigation, plus mobile Sheet fallback.
 - Canonical host behavior: `bobob.app` should use a 308 redirect to `www.bobob.app` before any locale redirect, while explicit locale URLs remain final 200 pages.
 - No visible demand wording or raw `core` / `growth` / `long-tail` demand badges in home cards, search results, or tool detail headers.
-- No public UI, dictionary, legal, or support copy should expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording to users.
+- No public UI, dictionary, or support copy should expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording to users. Legal pages may disclose third-party advertising, cookies, and Google advertising services without approval-status wording.
 - No raw `contentCluster` slugs such as `data-conversion` or `code-formatting` in visible badges or section descriptions.
 - A local-only tool and a server route tool.
 - Server route tools reject private/reserved hosts, validate redirect targets, and rate-limit repeated requests. HTTP status checks should expose a `redirectChain` array with hop URL, status, location, content-type, cache-control, and elapsed-time fields, plus allowlisted `finalResponseHeaders`.
 - HTTP Status Checker UI should render a status summary, ordered redirect chain, hop timing/cache details, redirect diagnostics, allowlisted final response headers, a local HTTP header parser for pasted header blocks, a CSP generator with warnings and parser handoff, and raw JSON response.
-- No unused ad placeholder components, fake publisher IDs, visible disabled ad placeholders, or ad preview blocks remain in the public app. Real in-flow ad units must be opt-in, slot-id gated, and placed away from input/output controls.
+- No unused ad placeholder components, fake publisher IDs, visible disabled ad placeholders, or ad preview blocks remain in the public app. The base Google advertising script should load with `ca-pub-2620992505263949` unless explicitly disabled, while real in-flow ad units remain slot-id gated and placed away from input/output controls.
 - No standalone legacy app directories, `packages/ui`, `turbo.json`, `turbo` dependency, or stale legacy workspace entries in `package-lock.json` remain. Old public entry paths should be verified as permanent redirects to `/tools/{slug}`, with rationale recorded in `docs/legacy-apps-archive.md`.
 - Deployment status should show `Vercel – bobs-multi-tool-main` as successful or use the Vercel project API fallback with `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1`. Stale legacy Vercel project statuses are external cleanup work; after deletion or Git unlinking, `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status` should pass.
 - If the latest commit only changes docs, harnesses, or skills and Vercel does not redeploy, use `BOBOB_DEPLOY_SHA` to verify the latest app-affecting production deployment.

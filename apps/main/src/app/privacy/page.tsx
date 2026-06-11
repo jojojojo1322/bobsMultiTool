@@ -1,11 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { defaultLocale, languageAlternates } from "@/features/i18n/config";
+import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
 
-export const metadata = {
-  title: "Privacy Policy",
-  description: "Privacy policy for Bob's Multi Tool developer utilities.",
+const content = getLocalizedLegalContent(defaultLocale, "privacy");
+
+export const metadata: Metadata = {
+  title: content.title,
+  description: content.description,
   alternates: {
     canonical: "https://www.bobob.app/privacy",
+    languages: languageAlternates("/privacy"),
   },
 };
 
@@ -13,40 +19,24 @@ export default function PrivacyPage() {
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-4 py-10">
       <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-        Back to tools
+        {content.backToTools}
       </Link>
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle className="text-3xl">Privacy Policy</CardTitle>
-          <CardDescription>Last updated: June 5, 2026</CardDescription>
+          <CardTitle className="text-3xl">{content.title}</CardTitle>
+          <CardDescription>{content.lastUpdated}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 text-sm leading-6 text-muted-foreground">
+          {content.sections.map((section) => (
+            <section key={section.heading}>
+              <h2 className="mb-2 text-base font-semibold text-foreground">{section.heading}</h2>
+              <p>{section.body}</p>
+            </section>
+          ))}
           <section>
-            <h2 className="mb-2 text-base font-semibold text-foreground">Information processed by tools</h2>
+            <h2 className="mb-2 text-base font-semibold text-foreground">{content.contact.heading}</h2>
             <p>
-              Bob&apos;s Multi Tool is designed around local browser utilities. Inputs used for formatting, encoding, decoding,
-              timestamp conversion, UUID generation, iframe previews, and placeholder text generation are processed in your
-              browser where practical and are not stored by this site.
-            </p>
-          </section>
-          <section>
-            <h2 className="mb-2 text-base font-semibold text-foreground">Analytics and third-party services</h2>
-            <p>
-              The site may use privacy-conscious analytics and third-party services to understand usage patterns and support the
-              free utility experience. These services may use cookies or similar technologies according to their own policies.
-            </p>
-          </section>
-          <section>
-            <h2 className="mb-2 text-base font-semibold text-foreground">Sensitive data</h2>
-            <p>
-              Do not paste production secrets, private keys, live access tokens, or confidential customer data into any online
-              utility. JWT decoding and formatting tools are intended for inspection of safe test data and development payloads.
-            </p>
-          </section>
-          <section>
-            <h2 className="mb-2 text-base font-semibold text-foreground">Contact</h2>
-            <p>
-              Questions about this policy can be sent to{" "}
+              {content.contact.body}{" "}
               <a className="text-foreground underline" href="mailto:bobob935@gmail.com">
                 bobob935@gmail.com
               </a>

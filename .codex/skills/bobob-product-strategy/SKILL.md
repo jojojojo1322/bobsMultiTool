@@ -37,7 +37,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
 - Do not show ad placeholders before approval. Real opt-in ad units may reserve space only with valid publisher and slot ids, and post-approval candidates are below the primary tool output, right reference panel bottom, and mid-guide content only.
-- Do not show AdSense, approval, monetization, or demand-tier wording to users. Keep revenue strategy in AGENTS, skills, reports, and harnesses, while public copy talks only about free utilities, privacy, local processing, and third-party services where legally needed.
+- Do not show AdSense, approval, monetization, or demand-tier wording to users. Keep revenue strategy in AGENTS, skills, reports, and harnesses, while public copy talks only about free utilities, privacy, local processing, trust/contact pages, and third-party advertising or cookie services where legally needed.
 - Favor local-only recency/favorites for repeat usage; do not mix these with analytics or personal tracking.
 - Exclude community or UGC features unless the user explicitly accepts moderation and policy risk.
 - Keep AI features out unless explicitly requested; the current product direction is local-first utilities.

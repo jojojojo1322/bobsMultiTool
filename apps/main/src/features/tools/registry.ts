@@ -1,5 +1,5 @@
 import { locales } from "@/features/i18n/config";
-import type { DemandTier, MonetizationTier, PrivacyMode, ToolCategory, ToolComponentKey, ToolDefinition } from "./types";
+import type { DemandTier, MonetizationTier, PrivacyMode, ToolCategory, ToolComponentKey, ToolDefinition, ToolExample, ToolFaq } from "./types";
 
 const allLocales = [...locales];
 
@@ -60,6 +60,14 @@ const serverFaqs = (toolName: string) => [
 ];
 
 type ToolDemandDetail = Required<Pick<ToolDefinition, "failureCases" | "preCopyChecklist">>;
+type ApprovalContentBoost = {
+  searchIntents?: string[];
+  aliases?: string[];
+  useCases?: string[];
+  inputExamples?: string[];
+  examples?: ToolExample[];
+  faqs?: ToolFaq[];
+};
 
 const demandDetails = (failureCases: string[], preCopyChecklist: string[]): ToolDemandDetail => ({
   failureCases,
@@ -293,6 +301,145 @@ const priorityDemandDetails: Record<string, ToolDemandDetail> = {
   ),
 };
 
+const approvalContentBoosts: Record<string, ApprovalContentBoost> = {
+  "regex-tester": {
+    searchIntents: ["regex tester with examples", "javascript regex capture group tester", "regex from examples", "common regex snippets"],
+    aliases: ["regular expression examples", "capture group inspector", "regex sample tester"],
+    examples: [
+      { label: "Log level capture", value: String.raw`^\[(INFO|WARN|ERROR)\]\s+(.+)$`, note: "Captures a log level and message body from copied application logs." },
+      { label: "Ticket key", value: String.raw`\b[A-Z]{2,10}-\d{1,6}\b`, note: "Finds issue IDs such as API-1234 in release notes and support tickets." },
+    ],
+    faqs: [
+      { question: "Can this generate a final production regex?", answer: "Use generated or preset patterns as a draft, then test positive and negative samples in the JavaScript runtime that will use the pattern." },
+      { question: "Why are capture groups important before copying?", answer: "Capture groups decide which part of the matched text your code receives, so inspect group output before using a pattern in parsing, routing, or validation." },
+    ],
+  },
+  "json-formatter": {
+    searchIntents: ["json formatter for api response", "json error checker", "json structure viewer", "json minify before copy"],
+    aliases: ["api response formatter", "json pretty printer", "json syntax error finder"],
+    examples: [
+      { label: "API error response", value: "{\"error\":{\"code\":\"invalid_request\",\"message\":\"Missing id\"},\"requestId\":\"req_123\"}", note: "Useful for formatting copied API failures before sharing a redacted bug report." },
+      { label: "Feature flag payload", value: "{\"flags\":{\"newCheckout\":true,\"theme\":\"system\"},\"env\":\"staging\"}", note: "Checks nested keys and booleans before moving the payload into fixtures." },
+    ],
+    faqs: [
+      { question: "Why does pasted JSON fail even when it looks close?", answer: "Common causes are trailing commas, comments, single quotes, unescaped newlines, and copied log prefixes before the JSON value." },
+      { question: "Should I format production API responses here?", answer: "Use redacted samples. Remove tokens, cookies, customer IDs, internal URLs, and any one-off environment values before pasting." },
+    ],
+  },
+  "jwt-decoder": {
+    searchIntents: ["jwt exp checker", "jwt claims inspector", "decode jwt payload", "jwt nbf iat checker"],
+    aliases: ["jwt expiration checker", "json web token inspector", "jwt payload viewer"],
+    examples: [
+      { label: "Expiration check", value: "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3ODA2NDY0MDAsImlhdCI6MTc4MDY0MjgwMH0.signature", note: "Inspects exp and iat timestamps when debugging login or API sessions." },
+      { label: "Audience claim", value: "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJhcGkiLCJpc3MiOiJodHRwczovL2F1dGguZXhhbXBsZS5jb20ifQ.signature", note: "Checks issuer and audience mismatch cases without verifying the signature." },
+    ],
+    faqs: [
+      { question: "Does decoded mean verified?", answer: "No. Decoding only reads Base64URL segments. Signature validation must happen in your auth service or backend." },
+      { question: "Which claims should I check first?", answer: "Start with exp, nbf, iat, iss, aud, sub, scope, tenant, and algorithm values, then confirm signature verification outside this page." },
+    ],
+  },
+  "base64-tool": {
+    searchIntents: ["base64 image preview", "base64url decoder", "decode base64 json", "base64 data url decoder"],
+    aliases: ["base64 image decoder", "data url preview", "base64 json detector"],
+    examples: [
+      { label: "JSON transport value", value: "eyJzdGF0dXMiOiJvayIsInNjb3BlIjoicmVhZCJ9", note: "Detects JSON-shaped decoded output before sending it to JSON Formatter." },
+      { label: "Image data URL", value: "data:image/png;base64,iVBORw0KGgo=", note: "Checks whether a copied image payload starts as a valid data URL." },
+    ],
+    faqs: [
+      { question: "Why does decoded Base64 look unreadable?", answer: "The decoded bytes may be binary, compressed, encrypted, or not UTF-8 text. Treat unreadable output as a signal, not a failure." },
+      { question: "When should I use Base64URL mode?", answer: "Use Base64URL for JWT segments, URL-safe tokens, and values that replace plus and slash with URL-safe characters." },
+    ],
+  },
+  "cron-generator": {
+    searchIntents: ["crontab every 5 minutes", "cron weekday schedule", "cron expression examples", "five field cron generator"],
+    aliases: ["crontab examples", "cron schedule examples", "five field crontab"],
+    examples: [
+      { label: "Every 5 minutes", value: "*/5 * * * *", note: "Common heartbeat, sync, and lightweight polling schedule." },
+      { label: "Sunday midnight", value: "0 0 * * 0", note: "Typical weekly maintenance window for five-field crontab systems." },
+    ],
+    faqs: [
+      { question: "Why does the same cron run at a different time?", answer: "The expression usually has no timezone. Your scheduler, container, server, or hosting provider decides the runtime timezone." },
+      { question: "Is this Quartz cron?", answer: "No. This tool focuses on five-field crontab syntax. Quartz usually adds seconds and sometimes a year field." },
+    ],
+  },
+  "uuid-generator": {
+    searchIntents: ["uuid v4 generator", "bulk uuid generator", "guid generator for fixtures", "random id generator"],
+    aliases: ["bulk guid generator", "uuid list generator", "trace id uuid"],
+    examples: [
+      { label: "Bulk fixture IDs", value: "20 UUIDs", note: "Creates one UUID per line for seed data, fixtures, and test rows." },
+      { label: "Trace identifier", value: "1 UUID for trace id", note: "Useful for local debugging IDs that do not need to be secret." },
+    ],
+    faqs: [
+      { question: "Can I use UUIDs as secrets?", answer: "No. UUID v4 values are identifiers, not credentials. Use Random Token Generator for secret-like values." },
+      { question: "Why generate UUIDs in bulk?", answer: "Bulk output is useful for fixtures, migrations, test data, and trace IDs when you need stable-looking unique identifiers quickly." },
+    ],
+  },
+  "hash-generator": {
+    searchIntents: ["sha256 checksum generator", "hmac sha256 generator", "webhook signature checker", "md5 sha1 sha512 hash"],
+    aliases: ["sha256 hash online", "webhook hmac tool", "checksum compare"],
+    examples: [
+      { label: "Artifact checksum", value: "release-v1.2.3.tar.gz", note: "Generates a digest to compare with build or release notes." },
+      { label: "Webhook HMAC draft", value: "{\"event\":\"payment.created\",\"id\":\"evt_123\"}", note: "Pairs with an HMAC secret for local webhook signature testing." },
+    ],
+    faqs: [
+      { question: "Is a hash the same as encryption?", answer: "No. Hashes are one-way digests. They do not protect the original text from guessing if the input is weak or known." },
+      { question: "Which hash should I choose?", answer: "Use SHA-256 or SHA-512 for modern checksum work. Use HMAC when you need a keyed signature such as a webhook verification value." },
+    ],
+  },
+  "password-generator": {
+    searchIntents: ["secure password generator", "random passphrase generator", "password entropy checker", "temporary password generator"],
+    aliases: ["strong password maker", "memorable password generator", "dev password generator"],
+    examples: [
+      { label: "Temporary test account", value: "20 characters, symbols enabled", note: "Creates a short-lived value for staging or local test users." },
+      { label: "Memorable passphrase", value: "5 words with hyphens", note: "Works better when a human must read or type the credential." },
+    ],
+    faqs: [
+      { question: "Where should I store generated passwords?", answer: "Store real credentials in a password manager immediately. Avoid leaving them in clipboard history, screenshots, chats, or issue trackers." },
+      { question: "Are passphrases weaker than random strings?", answer: "Long passphrases can be strong when generated randomly, but some systems reject spaces, long values, or separators." },
+    ],
+  },
+  "qr-code-generator": {
+    searchIntents: ["wifi qr code generator", "vcard qr code generator", "url qr code png", "email qr code generator"],
+    aliases: ["download qr png", "wifi qr maker", "contact qr maker"],
+    examples: [
+      { label: "Wi-Fi network", value: "WIFI:T:WPA;S:Guest Network;P:example-password;;", note: "Builds a scannable Wi-Fi payload without hand-editing all separators." },
+      { label: "Contact card", value: "BEGIN:VCARD\nVERSION:3.0\nFN:Bob\nURL:https://www.bobob.app\nEND:VCARD", note: "Creates a vCard QR for contact pages and printed material." },
+    ],
+    faqs: [
+      { question: "Why should I scan the QR before publishing?", answer: "The image can look correct even when the payload has a typo, bad URL, tracking parameter, or dense scan pattern." },
+      { question: "Can Wi-Fi QR codes expose passwords?", answer: "Yes. Anyone who scans the code can read the embedded network details, so only publish Wi-Fi QR codes intentionally." },
+    ],
+  },
+  "dns-lookup": {
+    searchIntents: ["dns propagation checker", "txt record checker", "spf dmarc checker", "cname lookup", "mx record lookup"],
+    aliases: ["domain dns checker", "public dns record lookup", "dns deployment checker"],
+    examples: [
+      { label: "Apex A record", value: "bobob.app, A", note: "Checks whether the root domain points at the expected public host." },
+      { label: "Verification TXT", value: "bobob.app, TXT", note: "Reviews TXT records used for domain verification, SPF, and ownership checks." },
+    ],
+    faqs: [
+      { question: "Why do different DNS tools show different answers?", answer: "Resolvers cache records for the TTL duration, and propagation can differ while records change across providers." },
+      { question: "Why are private hosts rejected?", answer: "The server route is only for public DNS checks. Private, localhost, and reserved names are blocked to avoid internal network probing." },
+    ],
+  },
+  "http-status-checker": {
+    searchIntents: ["redirect chain checker", "http header checker", "canonical redirect checker", "website status checker", "security header checker"],
+    aliases: ["final url checker", "http response header parser", "redirect diagnostics"],
+    examples: [
+      { label: "Canonical domain", value: "https://bobob.app", note: "Checks whether apex redirects to the final canonical host and protocol." },
+      { label: "Sitemap status", value: "https://www.bobob.app/sitemap.xml", note: "Confirms important crawler files return reachable 200 responses." },
+    ],
+    faqs: [
+      { question: "Why does a browser work while this checker fails?", answer: "Servers can respond differently by method, headers, geolocation, cache, bot filtering, or redirect policy." },
+      { question: "What should I inspect besides status code?", answer: "Check final URL, redirect chain, content type, cache-control, response headers, and whether canonical host or protocol changed." },
+    ],
+  },
+};
+
+function uniqueList(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
 function fallbackDemandDetails(toolDefinition: ToolDefinition): ToolDemandDetail {
   const example = toolDefinition.inputExamples[0] ?? toolDefinition.examples[0]?.value ?? toolDefinition.shortTitle;
   return demandDetails(
@@ -311,8 +458,15 @@ function fallbackDemandDetails(toolDefinition: ToolDefinition): ToolDemandDetail
 
 function withDemandDetails(toolDefinition: ToolDefinition): ToolDefinition {
   const details = priorityDemandDetails[toolDefinition.slug] ?? fallbackDemandDetails(toolDefinition);
+  const boost = approvalContentBoosts[toolDefinition.slug];
   return {
     ...toolDefinition,
+    searchIntents: boost?.searchIntents ? uniqueList([...toolDefinition.searchIntents, ...boost.searchIntents]) : toolDefinition.searchIntents,
+    aliases: boost?.aliases ? uniqueList([...toolDefinition.aliases, ...boost.aliases]) : toolDefinition.aliases,
+    useCases: boost?.useCases ? uniqueList([...toolDefinition.useCases, ...boost.useCases]) : toolDefinition.useCases,
+    inputExamples: boost?.inputExamples ? uniqueList([...toolDefinition.inputExamples, ...boost.inputExamples]) : toolDefinition.inputExamples,
+    examples: boost?.examples ? [...toolDefinition.examples, ...boost.examples] : toolDefinition.examples,
+    faqs: boost?.faqs ? [...toolDefinition.faqs, ...boost.faqs] : toolDefinition.faqs,
     failureCases: toolDefinition.failureCases ?? details.failureCases,
     preCopyChecklist: toolDefinition.preCopyChecklist ?? details.preCopyChecklist,
   };

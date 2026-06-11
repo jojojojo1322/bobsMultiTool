@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { defaultLocale, withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
+import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
+import { getLocalizedTrustContent } from "@/features/i18n/trust-content";
 import { toolCategories } from "@/features/tools/registry";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
 import type { ToolDefinition } from "@/features/tools/types";
@@ -45,6 +47,10 @@ export function ToolDirectory({
   const localizedTools = getLocalizedTools(locale);
   const coreTools = localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 12);
   const localizedToolBySlug = new Map(localizedTools.map((tool) => [tool.slug, tool]));
+  const aboutContent = getLocalizedTrustContent(locale, "about");
+  const contactContent = getLocalizedTrustContent(locale, "contact");
+  const privacyContent = getLocalizedLegalContent(locale, "privacy");
+  const termsContent = getLocalizedLegalContent(locale, "terms");
   const workflowRecipes = getLocalizedWorkflowRecipes(locale, localizedTools);
   const acquisitionClusters = acquisitionClusterSlugs
     .map((cluster) => cluster.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition))
@@ -208,6 +214,25 @@ export function ToolDirectory({
           );
         })}
       </section>
+      <footer className="border-t bg-muted/20">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+          <p>{dictionary.siteDescription}</p>
+          <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="Site information">
+            <Link href={withLocale("/about", locale)} className="hover:text-foreground">
+              {aboutContent.title}
+            </Link>
+            <Link href={withLocale("/contact", locale)} className="hover:text-foreground">
+              {contactContent.title}
+            </Link>
+            <Link href={withLocale("/privacy", locale)} className="hover:text-foreground">
+              {privacyContent.title}
+            </Link>
+            <Link href={withLocale("/terms", locale)} className="hover:text-foreground">
+              {termsContent.title}
+            </Link>
+          </nav>
+        </div>
+      </footer>
     </main>
   );
 }

@@ -22,6 +22,12 @@ const paths = [
   "/ar/tools",
   "/ja/tools/regex-tester",
   "/es/guides/developer-utility-workflow",
+  "/about",
+  "/contact",
+  "/ko/about",
+  "/ko/contact",
+  "/ar/about",
+  "/ar/contact",
   "/privacy",
   "/terms",
   "/robots.txt",
@@ -76,6 +82,24 @@ for (const routePath of structuredDataPaths) {
   if (html.includes("aggregateRating") || html.includes("reviewRating")) {
     failures.push(`${routePath} must not include fabricated rating or review schema`);
   }
+}
+
+const homeHtml = await (await fetch(`${baseUrl}/`)).text();
+for (const fragment of [
+  'name="google-adsense-account" content="ca-pub-2620992505263949"',
+  "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2620992505263949",
+  "/about",
+  "/contact",
+  "/privacy",
+  "/terms",
+]) {
+  if (!homeHtml.includes(fragment)) failures.push(`home page missing approval readiness fragment: ${fragment}`);
+}
+
+const adsTxtResponse = await fetch(`${baseUrl}/ads.txt`);
+const adsTxtBody = await adsTxtResponse.text();
+if (!adsTxtBody.includes("google.com, pub-2620992505263949, DIRECT, f08c47fec0942fa0")) {
+  failures.push("/ads.txt missing Google publisher line");
 }
 
 const httpStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}`);

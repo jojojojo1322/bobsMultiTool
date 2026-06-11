@@ -13,6 +13,7 @@ const localizedSitemapRoute = fs.readFileSync(path.join(root, "apps/main/src/app
 const toolWorkspace = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-workspace.tsx"), "utf8");
 const toolDirectory = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-directory.tsx"), "utf8");
 const localizedContent = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/localized-content.ts"), "utf8");
+const trustContent = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/trust-content.ts"), "utf8");
 
 const failures = [];
 function latestRelevantGitDate() {
@@ -81,9 +82,14 @@ if (!toolDirectory.includes("dir={dictionary.dir}") || !toolDirectory.includes("
 if (!localizedContent.includes("getLocalizedTool") || !localizedContent.includes("getLocalizedGuide")) {
   failures.push("localized content resolvers missing");
 }
+if (!trustContent.includes("getLocalizedTrustContent") || !trustContent.includes("Bob's Multi Tool 소개") || !trustContent.includes("حول Bob's Multi Tool")) {
+  failures.push("localized trust content resolver or locale prose missing");
+}
 
 for (const routeFile of [
   "apps/main/src/app/[locale]/page.tsx",
+  "apps/main/src/app/[locale]/about/page.tsx",
+  "apps/main/src/app/[locale]/contact/page.tsx",
   "apps/main/src/app/[locale]/tools/page.tsx",
   "apps/main/src/app/[locale]/tools/[slug]/page.tsx",
   "apps/main/src/app/[locale]/guides/[slug]/page.tsx",

@@ -7,7 +7,10 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 const localizedContent = read("apps/main/src/features/i18n/localized-content.ts");
 const dictionaries = read("apps/main/src/features/i18n/dictionaries.ts");
 const legalContent = read("apps/main/src/features/i18n/legal-content.ts");
+const trustContent = read("apps/main/src/features/i18n/trust-content.ts");
 const localizedHome = read("apps/main/src/app/[locale]/page.tsx");
+const localizedAboutPage = read("apps/main/src/app/[locale]/about/page.tsx");
+const localizedContactPage = read("apps/main/src/app/[locale]/contact/page.tsx");
 const localizedToolPage = read("apps/main/src/app/[locale]/tools/[slug]/page.tsx");
 const defaultToolPage = read("apps/main/src/app/tools/[slug]/page.tsx");
 const localizedGuidePage = read("apps/main/src/app/[locale]/guides/[slug]/page.tsx");
@@ -233,6 +236,8 @@ for (const slug of guideSlugs) {
 
 for (const fragment of [
   "getLocalizedLegalContent",
+  "Google 광고 서비스",
+  "Advertising, cookies, and Google services",
   "개인정보 처리방침",
   "プライバシーポリシー",
   "隐私政策",
@@ -244,9 +249,23 @@ for (const fragment of [
 ]) {
   if (!legalContent.includes(fragment)) failures.push(`localized legal content missing ${fragment}`);
 }
+for (const fragment of [
+  "getLocalizedTrustContent",
+  "Bob's Multi Tool 소개",
+  "問い合わせ",
+  "关于 Bob's Multi Tool",
+  "Acerca de Bob's Multi Tool",
+  "Ueber Bob's Multi Tool",
+  "ติดต่อ",
+  "حول Bob's Multi Tool",
+]) {
+  if (!trustContent.includes(fragment)) failures.push(`localized trust content missing ${fragment}`);
+}
 
 const pageChecks = [
   [localizedHome, "localized home", "ToolDirectory"],
+  [localizedAboutPage, "localized about page", "getLocalizedTrustContent"],
+  [localizedContactPage, "localized contact page", "getLocalizedTrustContent"],
   [toolDirectory, "tool directory", "getLocalizedTools"],
   [localizedToolPage, "localized tool page", "getLocalizedTool"],
   [localizedGuidePage, "localized guide page", "getLocalizedGuide"],
