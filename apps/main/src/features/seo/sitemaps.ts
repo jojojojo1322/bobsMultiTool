@@ -3,7 +3,7 @@ import { defaultLocale, isLocale, locales, withLocale, type Locale } from "@/fea
 import { tools } from "@/features/tools/registry";
 
 const siteUrl = "https://www.bobob.app";
-const lastmod = "2026-06-10";
+const lastmod = "2026-06-11";
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
 

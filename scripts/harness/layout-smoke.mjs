@@ -18,6 +18,8 @@ const googleAdsense = fs.readFileSync(path.join(root, "apps/main/src/components/
 const failures = [];
 if (!rootLayout.includes("NEXT_PUBLIC_ENABLE_ADSENSE === \"true\"")) failures.push("AdSense script must require an explicit public enable flag");
 if (!googleAdsense.includes("enabled = false")) failures.push("AdSense component must be disabled by default");
+if (!googleAdsense.includes("export function GoogleAdUnit")) failures.push("GoogleAdUnit must exist for explicit in-flow ad placements");
+if (!googleAdsense.includes("data-bobob-ad-slot")) failures.push("GoogleAdUnit must expose a stable non-visible QA slot attribute");
 if (googleAdsense.includes("overlays:")) failures.push("AdSense auto overlay options must not be enabled from the app shell");
 for (const fragment of [
   "bobob:workbench-layout",
@@ -57,6 +59,18 @@ if (!workspace.includes("data-tool-review-strip")) failures.push("tool detail re
 if (!workspace.includes("dictionary.tool.failureCases")) failures.push("tool detail review strip must expose failure cases");
 if (!workspace.includes("dictionary.tool.preCopyChecklist")) failures.push("tool detail review strip must expose pre-copy checklist");
 if (!workspace.includes("id=\"tool-surface\"") || !workspace.includes("data-tool-surface")) failures.push("mobile workbench must anchor the primary tool surface");
+const toolSurfaceRenderIndex = workspace.indexOf("id=\"tool-surface\"");
+const quickStartRenderIndex = workspace.indexOf("<ToolQuickStart tool={tool} dictionary={dictionary} />", toolSurfaceRenderIndex);
+const reviewStripRenderIndex = workspace.indexOf("<ToolReviewStrip tool={tool} dictionary={dictionary} />", toolSurfaceRenderIndex);
+const sessionChildrenIndex = workspace.indexOf("{children}");
+const sessionControlsIndex = workspace.indexOf("data-tool-session-controls");
+if (toolSurfaceRenderIndex === -1 || quickStartRenderIndex === -1 || quickStartRenderIndex < toolSurfaceRenderIndex) failures.push("desktop quick-start support content must render after the primary tool surface");
+if (toolSurfaceRenderIndex === -1 || reviewStripRenderIndex === -1 || reviewStripRenderIndex < toolSurfaceRenderIndex) failures.push("desktop review support content must render after the primary tool surface");
+if (sessionChildrenIndex === -1 || sessionControlsIndex === -1 || sessionControlsIndex < sessionChildrenIndex) failures.push("tool session utility controls must render after the working tool component");
+if (!workspace.includes("NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT")) failures.push("tool result ad unit must be gated by an explicit slot env var");
+if (!workspace.includes("NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT")) failures.push("reference panel ad unit must be gated by an explicit slot env var");
+if (!workspace.includes("position=\"tool-result\"")) failures.push("tool result ad position missing");
+if (!workspace.includes("position=\"reference-panel\"")) failures.push("reference panel ad position missing");
 if (!workspace.includes("function MobileReferenceAccordion")) failures.push("mobile compact reference accordion missing");
 if (!workspace.includes("data-mobile-reference-sections")) failures.push("mobile reference accordion must expose a stable QA attribute");
 if (!workspace.includes("function MobileActionBar")) failures.push("mobile sticky action bar missing");

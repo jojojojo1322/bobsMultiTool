@@ -45,6 +45,9 @@ for (const fragment of ["NEXT_LOCALE", "accept-language", "x-vercel-ip-country",
 for (const fragment of ["x-bobob-locale", "nextWithLocale"]) {
   if (!middleware.includes(fragment)) failures.push(`middleware missing root html locale handoff: ${fragment}`);
 }
+for (const fragment of ['const apexHost = "bobob.app"', 'const canonicalHost = "www.bobob.app"', "canonicalHostRedirect", "NextResponse.redirect(url, 308)"]) {
+  if (!middleware.includes(fragment)) failures.push(`middleware missing canonical host redirect fragment: ${fragment}`);
+}
 
 for (const fragment of ["homeTitle", "homeDescription", "toolDescription", "guideDescription", "categories"]) {
   if (!dictionaries.includes(fragment)) failures.push(`dictionary missing fragment: ${fragment}`);

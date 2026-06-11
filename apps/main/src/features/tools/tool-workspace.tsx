@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, ClipboardCheck, ListChecks, Menu, RotateCcw, Search, Star, Trash2 } from "lucide-react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { PointerBackground } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Accordion } from "@/components/ui/accordion";
@@ -27,6 +28,10 @@ const navigationScrollStorageKey = (locale: Locale) => `bobob:tool-nav-scroll:${
 const recentToolsStorageKey = (locale: Locale) => `bobob:recent-tools:${locale}`;
 const favoriteToolsStorageKey = (locale: Locale) => `bobob:favorite-tools:${locale}`;
 const toolSessionStorageKey = (locale: Locale, slug: string) => `bobob:tool-session:${locale}:${slug}`;
+const adsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE === "true";
+const adsPublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+const toolResultAdSlot = process.env.NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT;
+const referenceAdSlot = process.env.NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT;
 const maxRecentTools = 6;
 const maxFavoriteTools = 12;
 type ToolSessionField = { key: string; value: string; checked?: boolean };
@@ -174,7 +179,8 @@ function ToolSessionControls({
 
   return (
     <div ref={rootRef} className="space-y-4" data-tool-session={hasSession ? "saved" : "empty"}>
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background p-3">
+      {children}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background p-3" data-tool-session-controls>
         <div className="min-w-0">
           <p className="text-sm font-medium">{dictionary.tool.localSessionTitle}</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">{dictionary.tool.localSessionBody}</p>
@@ -190,7 +196,6 @@ function ToolSessionControls({
           </Button>
         </div>
       </div>
-      {children}
     </div>
   );
 }
@@ -450,6 +455,15 @@ function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition
           ))}
         </div>
       </ReferenceSection>
+      <GoogleAdUnit
+        enabled={adsEnabled}
+        publisherId={adsPublisherId}
+        slot={referenceAdSlot}
+        position="reference-panel"
+        format="rectangle"
+        minHeight={280}
+        className="border-t pt-5"
+      />
     </div>
   );
 }
@@ -615,7 +629,7 @@ function ToolQuickStart({ tool, dictionary }: { tool: ToolDefinition; dictionary
   const categoryLabel = dictionary.categories[tool.category] ?? tool.category;
 
   return (
-    <section className="grid gap-0 border-b bg-background/60 md:grid-cols-[1fr_1fr]" data-tool-quick-start>
+    <section className="grid gap-0 border-t bg-background/60 md:grid-cols-[1fr_1fr]" data-tool-quick-start>
       <div className="border-b p-4 md:border-b-0 md:border-e">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-sm font-semibold">{dictionary.nav.examples}</h3>
@@ -651,7 +665,7 @@ function ToolReviewStrip({ tool, dictionary }: { tool: ToolDefinition; dictionar
   const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary)).slice(0, 2);
 
   return (
-    <section className="grid gap-0 border-b bg-muted/20 md:grid-cols-[1fr_1fr]" data-tool-review-strip>
+    <section className="grid gap-0 border-t bg-muted/20 md:grid-cols-[1fr_1fr]" data-tool-review-strip>
       <div className="border-b p-4 md:border-b-0 md:border-e">
         <div className="mb-3">
           <h3 className="text-sm font-semibold">{dictionary.tool.failureCases}</h3>
@@ -874,19 +888,27 @@ export function ToolWorkspace({
                 <h2 className="mt-4 text-2xl font-semibold tracking-normal">{tool.title}</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{tool.description}</p>
               </div>
+              <div id="tool-surface" className="bg-card p-5" data-tool-surface>
+                <ToolSessionControls locale={locale} toolSlug={tool.slug} dictionary={dictionary}>
+                  <ToolPanel component={tool.component} dictionary={dictionary} />
+                </ToolSessionControls>
+              </div>
+              <GoogleAdUnit
+                enabled={adsEnabled}
+                publisherId={adsPublisherId}
+                slot={toolResultAdSlot}
+                position="tool-result"
+                minHeight={90}
+                className="border-t bg-background px-5 py-4"
+              />
+              <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />
               <div className="hidden lg:block">
                 <ToolQuickStart tool={tool} dictionary={dictionary} />
               </div>
               <div className="hidden lg:block">
                 <ToolReviewStrip tool={tool} dictionary={dictionary} />
               </div>
-              <div id="tool-surface" className="p-5" data-tool-surface>
-                <ToolSessionControls locale={locale} toolSlug={tool.slug} dictionary={dictionary}>
-                  <ToolPanel component={tool.component} dictionary={dictionary} />
-                </ToolSessionControls>
-              </div>
               <MobileReferenceAccordion tool={tool} locale={locale} dictionary={dictionary} />
-              <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />
             </section>
             <Separator />
             <section className="grid gap-0 md:grid-cols-3">

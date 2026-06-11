@@ -15,6 +15,7 @@
 - `apps/main` is the only public product app.
 - Do not restore legacy standalone app directories. The only app workspace is `apps/main`; old entry paths such as `/regax`, `/cron-generator`, `/meta-generator`, `/lorem-generator`, and `/iframe-viewer` should remain permanent redirects to `/tools/{slug}`.
 - Public tool URLs must use `https://www.bobob.app/tools/{slug}`.
+- The apex host `bobob.app` must redirect to `www.bobob.app` with an explicit 308 canonical host redirect before locale redirects run.
 - `/tools` and `/{locale}/tools` must be real 200 tool directory pages with category links, shared search, and localized acquisition workflow clusters; do not redirect them to the first tool.
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
@@ -22,7 +23,7 @@
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
 - Core tool pages should improve demand through registry-backed `inputExamples`, `useCases`, `failureCases`, `preCopyChecklist`, and related next actions before broad feature sprawl. Core acquisition tools need at least three real `inputExamples`, three priority `failureCases`, and three priority `preCopyChecklist` items so detail quality beats thin feature breadth.
-- Tool detail center panels must expose a compact review strip with localized failure cases and pre-copy checklist items before the working tool surface, so mobile and desktop users see quality checks without relying only on the right reference panel.
+- Tool detail center panels must be task-first: the primary working tool surface appears immediately after the detail header, and quick-start examples, review checks, reference content, and related next actions render below it so input/output is never buried under support material.
 - Mobile tool detail pages must be task-first: the primary tool surface appears before support/reference content, desktop right-panel material collapses into a compact mobile reference accordion, and a mobile sticky action bar offers fast input/review/next-tool movement without fake copy/download actions.
 - Core tool working surfaces should render structured, task-specific results before raw JSON. Regex must show preset patterns, high-use regex snippets, match count, effective flags, positions, capture groups, and a local regex-from-examples draft generator so visitors can validate patterns without parsing JSON first.
 - JSON Formatter must show practical examples, root type, top-level item count, nesting depth, root structure, JSON path preview with copyable paths, copy formatted/minified actions, and parse error position details before users copy output.
@@ -78,7 +79,8 @@
 - Demand tier is an internal prioritization and ranking field. Do not expose demand wording or raw `core` / `growth` / `long-tail` demand badges in the UI.
 - `contentCluster` is an internal search/SEO grouping field. User-facing badges and section descriptions should use localized category labels instead of raw cluster slugs.
 - Revenue operations are internal. Public UI, common dictionaries, legal pages, and tool detail support copy must not expose `AdSense`, approval/review-status wording, monetization wording, fake ad placeholders, or demand-tier language to users; keep those details in governance, reports, and harnesses.
-- AdSense script loading must be explicitly opt-in with `NEXT_PUBLIC_ENABLE_ADSENSE=true`. Do not enable bottom overlays or other auto-ad UI that can cover tool input/output surfaces.
+- AdSense script loading must be explicitly opt-in with `NEXT_PUBLIC_ENABLE_ADSENSE=true`. Explicit ad units must also require a real slot id such as `NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT` or `NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT`, render no visible disabled placeholder, and avoid fake publisher IDs.
+- In-flow ad positions are allowed only where they do not interrupt the input/output loop: after the primary tool result area, at the bottom of the right reference panel, or in the middle of long guide content. Do not enable bottom overlays or other auto-ad UI that can cover tool input/output surfaces.
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage. Do not return to a capped static sitemap that drops locale tool pages.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
@@ -105,7 +107,7 @@
 - Desktop workbench layout must use one aligned shell. Do not reintroduce separate rounded bordered left, center, and right cards around the resizable panels.
 - Light/Dark/System theme behavior is a product feature. Do not replace it with only `prefers-color-scheme`.
 - Do not use `next/font/google` or other build-time external font fetches. Vercel builds must pass from a clean install without depending on Google Fonts network access or local font cache.
-- Do not keep unused AdSense placeholder components, `ca-pub-YOUR_ACTUAL_PUBLISHER_ID`, or visible ad preview blocks in the public app.
+- Do not keep unused AdSense placeholder components, `ca-pub-YOUR_ACTUAL_PUBLISHER_ID`, visible ad preview blocks, or disabled ad placeholders in the public app.
 - Do not reintroduce `packages/ui`, `turbo`, standalone legacy app packages, or stale legacy workspace entries in `package-lock.json` unless the product direction explicitly changes and the related skills/harnesses are updated first. Keep the removal rationale in `docs/legacy-apps-archive.md`.
 - `npm run harness:legacy` must pass after architecture or package changes; it proves `apps/main` is the only app workspace and legacy entry paths remain permanent redirects.
 - `npm run harness:deployment-status` should distinguish the canonical `bobs-multi-tool-main` Vercel deployment from stale legacy Vercel project statuses. After old Vercel projects are deleted or unlinked, run `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status`.
