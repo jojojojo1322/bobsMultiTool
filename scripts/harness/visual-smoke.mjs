@@ -103,8 +103,18 @@ try {
     if (scenario.rtl && layout.dir !== "rtl") failures.push(`${scenario.name} expected rtl main direction`);
 
     const screenshotPath = path.join(outputDir, `${scenario.name}.png`);
-    const screenshot = await page.screenshot({ path: screenshotPath, fullPage: true });
-    if (screenshot.byteLength < 10_000) failures.push(`${scenario.name} screenshot looks unexpectedly small`);
+    try {
+      const screenshot = await page.screenshot({
+        path: screenshotPath,
+        fullPage: true,
+        animations: "disabled",
+        caret: "hide",
+        timeout: 60_000,
+      });
+      if (screenshot.byteLength < 10_000) failures.push(`${scenario.name} screenshot looks unexpectedly small`);
+    } catch (error) {
+      failures.push(`${scenario.name} screenshot failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
     await context.close();
   }
 } finally {
