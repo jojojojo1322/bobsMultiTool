@@ -23,22 +23,35 @@ const checks = [
   ["agents", "registry-backed `inputExamples`, `useCases`, `failureCases`, `preCopyChecklist`, and related next actions"],
   ["agents", "Tool detail center panels must be task-first"],
   ["agents", "distinct primary work area"],
+  ["agents", "common output cards"],
+  ["agents", "diagnostic cards"],
   ["agents", "Mobile tool detail pages must be task-first"],
   ["agents", "Core tool working surfaces should render structured"],
   ["agents", "Regex must show preset patterns, high-use regex snippets"],
   ["agents", "local regex-from-examples draft generator"],
   ["agents", "JSON Formatter must show practical examples"],
+  ["agents", "JSON diagnostics"],
+  ["agents", "sensitive-looking keys/empty values/duplicate keys/large arrays"],
   ["agents", "JSON path preview with copyable paths"],
+  ["agents", "inline path inspector"],
+  ["agents", "line/column context"],
+  ["agents", "localized repair hints"],
   ["agents", "JSONPath Tester must show example selectors"],
   ["agents", "wildcard and recursive key searches"],
   ["agents", "JWT Decoder must show example tokens"],
   ["agents", "iat/nbf/exp/lifetime time-window summary"],
+  ["agents", "expected issuer/audience/scope comparison"],
+  ["agents", "redacted payload"],
+  ["agents", "registered/public/private claim inspection"],
+  ["agents", "sensitive claim detection"],
   ["agents", "Base64 Encoder Decoder must show practical examples"],
+  ["agents", "formatted JSON preview"],
   ["agents", "copyable data URL output for detected images"],
-  ["agents", "decoded content shape, JSON key count, JWT segment signal"],
+  ["agents", "decoded content shape, JSON key count, formatted JSON preview for decoded JSON, JWT segment signal"],
   ["agents", "Cron Expression Generator must show localized presets"],
   ["agents", "selectable day-of-month/day-of-week OR/AND matching semantics"],
   ["agents", "browser timezone runtime context"],
+  ["agents", "selectable preview timezone"],
   ["agents", "UUID Generator must show count presets"],
   ["agents", "Hash Generator must show example inputs"],
   ["agents", "digest/HMAC mode selection"],
@@ -48,11 +61,13 @@ const checks = [
   ["agents", "Random Token Generator must show session/API/CSRF/webhook presets"],
   ["agents", "QR Code Generator must show URL, Wi-Fi, email, and vCard examples"],
   ["agents", "payload builder for those payload types"],
+  ["agents", "image size and quiet-zone controls"],
   ["agents", "payload type, destination host, tracking parameter count, scan density"],
   ["agents", "Color Converter must actually support HEX, RGB, and HSL input"],
   ["agents", "AA/AAA diagnostics"],
   ["agents", "DNS Lookup must show record examples"],
   ["agents", "record-type diagnostics"],
+  ["agents", "deployment checklist"],
   ["agents", "SQL, CSS, and JavaScript formatters must show realistic examples"],
   ["agents", "SQL surfaces must show query type"],
   ["agents", "table-reference chips"],
@@ -74,15 +89,23 @@ const checks = [
   ["agents", "layered surface tokens"],
   ["agents", "Scrollbars should stay modern and quiet"],
   ["agents", "Pointer-reactive visual effects"],
-  ["agents", "restrained grid-line pointer background"],
+  ["agents", "ReactBits exception uses `ogl`"],
+  ["agents", "Light Rays"],
+  ["agents", "Galaxy"],
+  ["agents", "speed 3, spread 3.35, ray length 4.6"],
+  ["agents", "density 3, glow 0.3"],
+  ["agents", "theme-aware color and alpha"],
   ["agents", "requestAnimationFrame-driven CSS variables"],
   ["agents", "harness:pointer-background"],
-  ["agents", "avoid adding WebGL, `ogl`, or `framer-motion`"],
+  ["agents", "Do not add `framer-motion`"],
   ["agents", "real resizable left and right sidebars"],
+  ["agents", "right reference panel is closed by default"],
+  ["agents", "one stable neutral divider line"],
   ["agents", "clamped to the workbench container"],
   ["agents", "preserve the sidebar scroll position"],
   ["agents", "hop timing/cache details"],
   ["agents", "allowlisted final response headers"],
+  ["agents", "security header readiness"],
   ["agents", "Demand tier is an internal prioritization"],
   ["agents", "`contentCluster` is an internal search/SEO grouping field"],
   ["agents", "Revenue operations are internal"],
@@ -91,8 +114,11 @@ const checks = [
   ["agents", "NEXT_PUBLIC_ENABLE_ADSENSE=false"],
   ["agents", "NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT"],
   ["agents", "NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT"],
+  ["agents", "NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT"],
   ["agents", "after the primary tool result area"],
-  ["agents", "Do not enable bottom overlays"],
+  ["agents", "ad units should lazy-initialize"],
+  ["agents", "Do not initialize page-level auto ads"],
+  ["agents", "primary input/output surface visually dominant"],
   ["agents", "visible prose must pass through localized content resolvers"],
   ["agents", "Non-English common dictionary prose"],
   ["agents", "Locale override blocks"],
@@ -148,6 +174,9 @@ const checks = [
   ["agents", "redirect diagnostics"],
   ["agents", "local HTTP header parser"],
   ["agents", "CSP generator"],
+  ["agents", "Meta Tag Generator and Open Graph Preview must show SEO/social crawler readiness"],
+  ["agents", "robots.txt Generator and Sitemap Generator must act as crawl-readiness tools"],
+  ["agents", "URL Parser must show URL examples"],
   ["agents", "harness:seo-opportunities"],
   ["agents", "harness:seo-measured"],
   ["agents", "BOBOB_REQUIRE_MEASURED_SEO"],
@@ -193,17 +222,29 @@ const checks = [
   ["tool", "workflow recipe"],
   ["tool", "task-shaped search queries"],
   ["tool", "feature-specific intent"],
+  ["tool", "DNS deployment checklist"],
   ["tool", "Base64 image/data URL preview"],
+  ["tool", "JWT claim inspection"],
+  ["tool", "JWT expected issuer/audience/scope comparison"],
+  ["tool", "JWT sensitive-claim redaction"],
+  ["tool", "QR image-size controls"],
+  ["tool", "parse error position, line/column context, and localized repair hints"],
   ["tool", "ordered as the intended next-action path"],
   ["tool", "localized next-action context"],
   ["tool", "Confirm detail behavior stays task-first"],
   ["tool", "Do not add user-facing AdSense"],
   ["tool", "server route tools"],
   ["tool", "redirect-chain details"],
+  ["tool", "security header readiness"],
   ["tool", "cache-control, and elapsed time"],
   ["tool", "allowlisted final-response headers"],
+  ["tool", "meta/social preview tools"],
+  ["tool", "title/description length"],
+  ["tool", "robots.txt and sitemap generator tools"],
+  ["tool", "crawl-readiness diagnostics before raw output"],
   ["tool", "WCAG AA/AAA diagnostics"],
-  ["tool", "data/config tools such as Base64, JSON Escape, YAML Validator, and ENV Parser Validator"],
+  ["tool", "data/config tools such as JSON Formatter, Base64, JSON Escape, YAML Validator, and ENV Parser Validator"],
+  ["tool", "diagnostics for sensitive-looking keys, empty values, duplicate keys, and large arrays"],
   ["tool", "YAML Validator must also expose Docker Compose service/image/build/port/volume/environment/dependency diagnostics"],
   ["tool", "Base64-like tools must expose decoded content shape"],
   ["tool", "Random Token must expose session/API/CSRF/webhook presets"],
@@ -227,10 +268,15 @@ const checks = [
   ["design", "visible workbench layers"],
   ["design", "Scrollbars should be thin"],
   ["design", "Pointer-reactive background motion"],
-  ["design", "restrained grid-line motion"],
+  ["design", "ReactBits background exception uses `ogl`"],
+  ["design", "Light Rays"],
+  ["design", "Galaxy"],
+  ["design", "speed 3, spread 3.35, ray length 4.6"],
+  ["design", "density 3, glow 0.3"],
+  ["design", "Light and dark themes must use separate background colors/alpha"],
   ["design", "requestAnimationFrame-driven smoothing"],
   ["design", "harness:pointer-background"],
-  ["design", "no WebGL, `ogl`, or `framer-motion` dependency"],
+  ["design", "Do not add `framer-motion`"],
   ["design", "Tool detail center panels are task-first"],
   ["design", "data-primary-work-area"],
   ["design", "data-tool-support-sections"],
@@ -239,16 +285,26 @@ const checks = [
   ["design", "Regex result details"],
   ["design", "regex-from-examples generator"],
   ["design", "JSON Formatter summaries"],
+  ["design", "sensitive-looking key, empty value, duplicate key, and large array diagnostics"],
   ["design", "JSON path preview with copyable paths"],
+  ["design", "inline path inspector"],
+  ["design", "parse error line/column context"],
+  ["design", "localized repair hints"],
   ["design", "JSONPath summaries"],
   ["design", "matched paths and values"],
   ["design", "JWT Decoder summaries"],
   ["design", "iat/nbf/exp/lifetime time-window summary"],
+  ["design", "expected issuer/audience/scope comparison"],
+  ["design", "redacted payload copy actions"],
+  ["design", "registered/public/private claim inspection"],
+  ["design", "sensitive claim detection"],
   ["design", "Base64 summaries"],
-  ["design", "decoded content shape, JSON key count, JWT segment signal"],
+  ["design", "formatted JSON preview"],
+  ["design", "decoded content shape, JSON key count, formatted JSON preview, JWT segment signal"],
   ["design", "Cron summaries"],
   ["design", "selectable day-of-month/day-of-week OR/AND semantics"],
   ["design", "browser timezone runtime context"],
+  ["design", "selectable preview timezone"],
   ["design", "UUID summaries"],
   ["design", "Hash summaries"],
   ["design", "digest/HMAC mode selection"],
@@ -258,16 +314,22 @@ const checks = [
   ["design", "Random Token summaries"],
   ["design", "QR Code summaries"],
   ["design", "payload builder fields"],
+  ["design", "image size and quiet-zone controls"],
   ["design", "payload type, destination host, tracking parameter count, scan density"],
   ["design", "Color summaries"],
   ["design", "AA/AAA diagnostics"],
   ["design", "DNS summaries"],
   ["design", "record-type diagnostics"],
+  ["design", "deployment checklist"],
   ["design", "redirect diagnostics"],
   ["design", "hop timing/cache details"],
   ["design", "allowlisted final response headers"],
   ["design", "pasted-header parser"],
+  ["design", "security header readiness"],
   ["design", "CSP generator"],
+  ["design", "Meta Tag and Open Graph summaries"],
+  ["design", "robots.txt and sitemap generator summaries"],
+  ["design", "local/private hosts before raw output"],
   ["design", "SQL/CSS/JavaScript formatter summaries"],
   ["design", "SQL formatter surfaces should include query type"],
   ["design", "CSS formatter and minifier surfaces should include selector preview"],
@@ -283,6 +345,9 @@ const checks = [
   ["design", "deploy config validation"],
   ["design", "CSV cleanup for API payloads"],
   ["design", "resizable left and right sidebars"],
+  ["design", "right reference panel is closed by default"],
+  ["design", "one stable neutral divider line"],
+  ["design", "localized top-bar toggle"],
   ["design", "clamp to the workbench container"],
   ["design", "one aligned workbench shell"],
   ["design", "Search result match-signal chips"],
@@ -297,7 +362,11 @@ const checks = [
   ["design", "`contentCluster` is not a user-facing badge"],
   ["design", "Mobile tool detail pages are task-first"],
   ["design", "no AdSense/review-status/approval/monetization wording"],
-  ["design", "Real ad units may reserve space only when explicitly enabled"],
+  ["design", "Real ad units may reserve space only with a valid publisher id and slot id"],
+  ["design", "common result cards"],
+  ["design", "diagnostic cards"],
+  ["design", "primary input/output surface visually dominant"],
+  ["design", "page-level auto ads"],
   ["design", "harness:layout"],
   ["design", "harness:visual"],
   ["localization", "getLocalizedTool"],
@@ -319,6 +388,8 @@ const checks = [
   ["localization", "native language labels"],
   ["localization", "empty-output placeholders"],
   ["localization", "Tool-specific result labels"],
+  ["localization", "URL Parser structure/query/tracking/canonical/warning labels"],
+  ["localization", "JSON diagnostics for sensitive-looking keys, empty values, duplicate keys, and large arrays"],
   ["localization", "`action`, and `result`"],
   ["localization", "JSON Escape example/metric/warning labels"],
   ["localization", "JSON path preview labels"],
@@ -332,6 +403,7 @@ const checks = [
   ["localization", "regex-from-examples generator labels"],
   ["localization", "JWT claim and status labels"],
   ["localization", "JWT claim, status, iat/nbf/exp/lifetime time-window labels"],
+  ["localization", "expected issuer/audience/scope comparison labels"],
   ["localization", "Base64 variant and padding labels"],
   ["localization", "Base64 variant, padding, decoded shape, JSON key, JWT segment, image/data URL preview, secret-like warning, control-character labels, and decoded image warnings"],
   ["localization", "Cron preset/field/warning labels"],
@@ -344,6 +416,8 @@ const checks = [
   ["localization", "QR payload builder"],
   ["localization", "QR payload type, destination, tracking, scan density, and error-correction diagnostics"],
   ["localization", "HTTP redirect-chain timing/cache and redirect diagnostics labels"],
+  ["localization", "robots.txt/sitemap crawl-readiness labels and warnings"],
+  ["localization", "Meta/Open Graph title, description, canonical, host, robots, HTTPS, noindex, and image-format labels"],
   ["localization", "DNS record-type diagnostics labels"],
   ["localization", "Color WCAG AA/AAA diagnostics"],
   ["localization", "CSS selector/token/compression diagnostics"],
@@ -386,6 +460,10 @@ const checks = [
   ["seo", "RTL"],
   ["seo", "country"],
   ["seo", "SearchAction schema"],
+  ["seo", "Meta Tag Generator and Open Graph Preview pages"],
+  ["seo", "noindex risk"],
+  ["seo", "robots.txt and sitemap generator pages"],
+  ["seo", "localized review messages before raw output"],
   ["seo", "CSP Generator"],
   ["seo", "harness:seo-opportunities"],
   ["seo", "harness:seo-measured"],
@@ -416,7 +494,10 @@ const checks = [
   ["seo", "NEXT_PUBLIC_ENABLE_ADSENSE=false"],
   ["seo", "NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT"],
   ["seo", "NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT"],
+  ["seo", "NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT"],
   ["seo", "Allowed in-flow ad positions"],
+  ["seo", "lazy-initialize"],
+  ["seo", "page-level auto ads"],
   ["seo", "bottom overlays"],
   ["seo", "harness:deployment-status"],
   ["seo", "BOBOB_REQUIRE_NO_LEGACY_VERCEL"],
@@ -438,6 +519,10 @@ const checks = [
   ["verification", "harness:visual"],
   ["verification", "AA/AAA diagnostics"],
   ["verification", "working tool surface before registry-backed quick-start"],
+  ["verification", "primary input/output surface must be visually dominant"],
+  ["verification", "data-desktop-support-accordion"],
+  ["verification", "guide-content"],
+  ["verification", "lazy ad initialization"],
   ["verification", "support sections should render below the primary input/output surface"],
   ["verification", "data-primary-work-area"],
   ["verification", "data-tool-support-sections"],
@@ -458,9 +543,15 @@ const checks = [
   ["verification", "Acquisition-cluster and first-step related tools"],
   ["verification", "Pointer-reactive background motion"],
   ["verification", "requestAnimationFrame-driven CSS variable smoothing"],
-  ["verification", "home/tool directory, tool detail, guide directory, and guide detail pages"],
+  ["verification", "Light Rays on main home routes"],
+  ["verification", "Galaxy on tool directory, tool detail, guide, trust, legal, and other non-home routes"],
+  ["verification", "speed 3, spread 3.35, ray length 4.6"],
+  ["verification", "density 3, glow 0.3"],
+  ["verification", "light and dark modes"],
   ["verification", "harness:pointer-background"],
   ["verification", "Search results, center tool panel, and right reference panel"],
+  ["verification", "right reference panel default-closed state"],
+  ["verification", "stable non-flashing divider handles"],
   ["verification", "Search results should expose compact match-signal chips"],
   ["verification", "failure cases, pre-copy checklist items"],
   ["verification", "preserve registry `relatedTools` order"],
@@ -495,17 +586,27 @@ const checks = [
   ["verification", "Regex should show presets, high-use regex snippets"],
   ["verification", "regex-from-examples generator"],
   ["verification", "JSON Formatter should show example payload buttons"],
+  ["verification", "sensitive-looking key, empty value, duplicate key, and large array diagnostics"],
   ["verification", "JSON path preview with copyable paths"],
+  ["verification", "inline path inspector"],
+  ["verification", "line/column error context"],
+  ["verification", "localized repair hints"],
   ["verification", "JSONPath Tester should show examples, supported syntax, result metrics, matched paths, and warnings"],
   ["verification", "JWT Decoder should show example tokens"],
   ["verification", "iat/nbf/exp/lifetime time-window summary"],
+  ["verification", "expected issuer/audience/scope comparison"],
+  ["verification", "redacted payload copy actions"],
+  ["verification", "registered/public/private claim inspector"],
+  ["verification", "sensitive claim detection"],
   ["verification", "Base64 should show examples"],
-  ["verification", "decoded content shape, JSON key count, JWT segment signal"],
+  ["verification", "formatted JSON preview"],
+  ["verification", "decoded content shape, JSON key count, formatted JSON preview, JWT segment signal"],
   ["verification", "image/data URL preview"],
   ["verification", "copyable data URL output for detected images"],
   ["verification", "Cron should show localized presets"],
   ["verification", "selectable day-of-month/day-of-week OR/AND semantics"],
   ["verification", "browser timezone runtime context"],
+  ["verification", "selectable preview timezone"],
   ["verification", "UUID should show count presets"],
   ["verification", "Hash should show example inputs"],
   ["verification", "digest/HMAC mode selection"],
@@ -515,10 +616,12 @@ const checks = [
   ["verification", "Random Token should show session/API/CSRF/webhook presets"],
   ["verification", "QR Code should show URL, Wi-Fi, email, and vCard examples"],
   ["verification", "payload builder fields"],
+  ["verification", "image size and quiet-zone controls"],
   ["verification", "payload type, destination host, tracking parameter count, scan density"],
   ["verification", "Color should support HEX, RGB, and HSL input"],
   ["verification", "DNS should show record examples"],
   ["verification", "record-type diagnostics"],
+  ["verification", "deployment checklist"],
   ["verification", "SQL/CSS/JavaScript formatters should show realistic examples"],
   ["verification", "SQL formatter verification must include query type"],
   ["verification", "CSS formatter/minifier verification must include selector preview"],
@@ -537,11 +640,17 @@ const checks = [
   ["verification", "`redirectChain` array"],
   ["verification", "allowlisted `finalResponseHeaders`"],
   ["verification", "HTTP Status Checker UI should render"],
+  ["verification", "security header readiness"],
   ["verification", "hop timing/cache details"],
   ["verification", "allowlisted final response headers"],
   ["verification", "redirect diagnostics"],
   ["verification", "local HTTP header parser"],
   ["verification", "CSP generator with warnings"],
+  ["verification", "Meta Tag Generator and Open Graph Preview UIs"],
+  ["verification", "image-format warning before raw tag output"],
+  ["verification", "robots.txt and sitemap generator UIs"],
+  ["verification", "URL Parser should show examples"],
+  ["verification", "localized review labels"],
   ["verification", "Recent/favorite/tool-session repeat-usage sections"],
   ["verification", "`data-recent-tools`, `data-favorite-tools`, `data-tool-session`"],
   ["verification", "fake publisher IDs"],
@@ -581,7 +690,15 @@ const checks = [
   ["product", "deploy config validation"],
   ["product", "CSV cleanup for API payloads"],
   ["product", "feature-specific search surface"],
+  ["product", "DNS deployment checklist"],
   ["product", "Base64 image/data URL preview"],
+  ["product", "JWT claim inspection"],
+  ["product", "JWT expected issuer/audience/scope comparison"],
+  ["product", "JWT sensitive-claim redaction"],
+  ["product", "HTTP security header readiness"],
+  ["product", "QR image-size controls"],
+  ["product", "JSON Formatter parse error line/column context"],
+  ["product", "JSON Formatter sensitive-key/duplicate-key diagnostics"],
   ["product", "JSONPath field extraction"],
   ["product", "40+"],
   ["product", "localized tool directories"],
@@ -667,20 +784,25 @@ if (!fs.existsSync(path.join(root, "apps/main/src/components/pointer-background.
   failures.push("pointer background component missing");
 } else {
   const pointerBackground = read("apps/main/src/components/pointer-background.tsx");
-  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x", "--bobob-depth-x", "--bobob-ray-rotation", "--bobob-ray-opacity"]) {
+  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x", "--bobob-depth-x", "--bobob-ray-rotation", "--bobob-ray-opacity", "ReactBitsShaderBackground", "light-rays", "galaxy", "data-reactbits-background", "ogl", "await import(\"ogl\")", "uniform float uTheme", "readThemeTone", "themeToneRef", "3.0 + seed * 0.12", "float spread = 3.35", "for (int i = 0; i < 5; i++)", "smoothstep(4.6, 0.02, dist)", "smoothstep(0.32, 0.0, length(pointerDelta)) * 0.5"]) {
     if (!pointerBackground.includes(fragment)) failures.push(`pointer background missing ${fragment}`);
   }
 }
 const globalsCss = read("apps/main/src/app/globals.css");
-for (const fragment of [".bobob-pointer-background", "@media (prefers-reduced-motion: reduce)", "color-mix", "--bobob-depth-x", "--bobob-ray-opacity"]) {
+for (const fragment of [".bobob-pointer-background", ".bobob-reactbits-light-rays", ".bobob-reactbits-galaxy", ".dark .bobob-reactbits-light-rays", ".dark .bobob-reactbits-galaxy", ".dark .bobob-reactbits-canvas", "@media (prefers-reduced-motion: reduce)", "color-mix", "--bobob-depth-x", "--bobob-ray-opacity"]) {
   if (!globalsCss.includes(fragment)) failures.push(`global CSS missing pointer background policy ${fragment}`);
 }
 for (const fragment of ["--bobob-surface-shell", "--bobob-surface-raised", "--bobob-border-strong", "--bobob-panel-shadow", "--bobob-scrollbar-thumb", "*::-webkit-scrollbar-thumb", "scrollbar-width: thin"]) {
   if (!globalsCss.includes(fragment)) failures.push(`global CSS missing surface/scrollbar policy ${fragment}`);
 }
 const directorySource = read("apps/main/src/features/tools/tool-directory.tsx");
-if (!directorySource.includes("<PointerBackground />")) {
+if (!directorySource.includes("<PointerBackground variant={backgroundVariant} />")) {
   failures.push("tool directory hero missing pointer background");
+}
+for (const file of ["apps/main/src/app/page.tsx", "apps/main/src/app/[locale]/page.tsx"]) {
+  if (!read(file).includes('backgroundVariant="light-rays"')) {
+    failures.push(`${file} missing Light Rays home background`);
+  }
 }
 const workspaceSource = read("apps/main/src/features/tools/tool-workspace.tsx");
 for (const fragment of ["bobob:recent-tools", "data-recent-tools", "dictionary.nav.recentTools", "getLocalizedRelatedTools(recentSlugs, locale)"]) {
@@ -738,8 +860,50 @@ if (!fs.existsSync(path.join(root, "scripts/harness/seo-export-templates.mjs")))
 }
 
 const resizable = read("apps/main/src/components/ui/resizable.tsx");
-for (const fragment of ["clampLayoutToAvailable", "ResizeObserver", "minmax(0,1fr)", "data-resizable-layout"]) {
+for (const fragment of ["clampLayoutToAvailable", "ResizeObserver", "minmax(0,1fr)", "data-resizable-layout", "rightCollapsed", "data-right-panel-state", "React.useLayoutEffect", "after:bg-border"]) {
   if (!resizable.includes(fragment)) failures.push(`resizable implementation missing ${fragment}`);
+}
+if (resizable.includes("hover:after:") || resizable.includes("after:transition-colors")) {
+  failures.push("resizable implementation must keep divider color stable without hover/transition flash");
+}
+const workspace = read("apps/main/src/features/tools/tool-workspace.tsx");
+for (const fragment of ["React.useState(false)", "data-reference-panel-toggle", "rightCollapsed={!referencePanelOpen}", "data-reference-panel-state", "data-reference-panel", "dictionary.tool.openReferencePanel", "dictionary.tool.closeReferencePanel"]) {
+  if (!workspace.includes(fragment)) failures.push(`tool workspace missing reference-panel toggle policy ${fragment}`);
+}
+if (workspace.includes("bobob:reference-panel")) failures.push("right reference panel open state must not persist; default should stay closed");
+if (read("apps/main/src/components/ui/sidebar.tsx").includes("border-r")) failures.push("left sidebar must not render a duplicate border next to the resizable divider");
+const googleAdsenseSource = read("apps/main/src/components/GoogleAdsense.tsx");
+for (const fragment of ["IntersectionObserver", "rootMargin: '640px 0px'", "data-bobob-ad-loading"]) {
+  if (!googleAdsenseSource.includes(fragment)) failures.push(`GoogleAdUnit missing lazy ad initialization policy ${fragment}`);
+}
+for (const fragment of ["bobob-ad-anchor", "position=\"tool-result\"", "position=\"reference-panel\""]) {
+  if (!workspace.includes(fragment)) failures.push(`tool workspace missing non-intrusive ad anchor policy ${fragment}`);
+}
+const dictionaries = read("apps/main/src/features/i18n/dictionaries.ts");
+for (const fragment of ["openReferencePanel", "closeReferencePanel"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`dictionary missing reference-panel label ${fragment}`);
+}
+for (const fragment of ["localizedSeoGeneratorToolUi", "robotsSitemapUrl", "robotsWarnings", "robotsLooksReady", "sitemapUrlList", "sitemapWarnings", "sitemapLooksReady"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`dictionary missing robots/sitemap localized label ${fragment}`);
+}
+for (const fragment of ["localizedMetaPreviewToolUi", "metaSeoReview", "metaLooksReady", "openGraphReview", "openGraphLooksReady", "titleLength", "descriptionLength", "canonicalHost", "imageHost", "robotsPolicy"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`dictionary missing Meta/Open Graph localized label ${fragment}`);
+}
+for (const fragment of ["localizedUrlParserToolUi", "urlStructure", "queryParameters", "trackingParameters", "canonicalCandidate", "urlReviewNotes", "urlTrackingWarning"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`dictionary missing URL Parser localized label ${fragment}`);
+}
+const toolComponentsSource = read("apps/main/src/features/tools/tool-components.tsx");
+for (const fragment of ["data-tool-output-block", "bobob-tool-result-card", "data-tool-metric-grid", "bobob-diagnostic-card", "data-tool-warning-list"]) {
+  if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing primary result/diagnostic separation ${fragment}`);
+}
+for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {
+  if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing URL Parser readiness implementation ${fragment}`);
+}
+for (const fragment of ["data-robots-diagnostics", "data-sitemap-diagnostics", "escapeXml", "isPrivateOrLocalHostname", "parsePublicUrl", "robotsUnknownDirectiveWarning", "sitemapDuplicateUrlWarning", "sitemapMixedHostWarning"]) {
+  if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing robots/sitemap crawl-readiness implementation ${fragment}`);
+}
+for (const fragment of ["data-meta-diagnostics", "data-og-diagnostics", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning"]) {
+  if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing Meta/Open Graph readiness implementation ${fragment}`);
 }
 
 if (!fs.existsSync(path.join(root, "docs/legacy-apps-archive.md"))) {

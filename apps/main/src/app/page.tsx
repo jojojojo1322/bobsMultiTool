@@ -10,5 +10,5 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const dictionary = getClientDictionary(defaultLocale);
   const initialQuery = readSearchQuery(await searchParams);
 
-  return <ToolDirectory locale={defaultLocale} dictionary={dictionary} initialQuery={initialQuery} />;
+  return <ToolDirectory locale={defaultLocale} dictionary={dictionary} initialQuery={initialQuery} backgroundVariant="light-rays" />;
 }

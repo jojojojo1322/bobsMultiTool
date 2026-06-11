@@ -46,36 +46,46 @@ async function readPointerState(page) {
       rayOpacity: hostStyle.getPropertyValue("--bobob-ray-opacity").trim(),
       lineOpacity: hostStyle.getPropertyValue("--bobob-line-opacity").trim(),
       transform: layerStyle.transform,
+      variant: host.getAttribute("data-reactbits-background") || "",
+      canvasCount: layer.querySelectorAll(".bobob-reactbits-canvas").length,
     };
   });
 }
 
 const scenarios = [
-  { name: "tool-directory", path: "/tools", first: [220, 180], second: [980, 260] },
-  { name: "tool-detail", path: "/tools/json-formatter", first: [260, 220], second: [980, 520] },
-  { name: "guide-directory", path: "/guides", first: [220, 180], second: [980, 260] },
-  { name: "guide-detail", path: "/guides/developer-utility-workflow", first: [260, 220], second: [980, 520] },
-  { name: "localized-guide-detail", path: "/ko/guides/developer-utility-workflow", first: [260, 220], second: [980, 520] },
+  { name: "home", path: "/", variant: "light-rays", first: [220, 180], second: [980, 260] },
+  { name: "localized-home", path: "/ko", variant: "light-rays", first: [220, 180], second: [980, 260] },
+  { name: "tool-directory", path: "/tools", variant: "galaxy", first: [220, 180], second: [980, 260] },
+  { name: "tool-detail", path: "/tools/json-formatter", variant: "galaxy", first: [260, 220], second: [980, 520] },
+  { name: "guide-directory", path: "/guides", variant: "galaxy", first: [220, 180], second: [980, 260] },
+  { name: "guide-detail", path: "/guides/developer-utility-workflow", variant: "galaxy", first: [260, 220], second: [980, 520] },
+  { name: "localized-guide-detail", path: "/ko/guides/developer-utility-workflow", variant: "galaxy", first: [260, 220], second: [980, 520] },
+  { name: "privacy", path: "/privacy", variant: "galaxy", first: [220, 180], second: [980, 260] },
 ];
 
 const browser = await launchBrowser();
 
 try {
   for (const scenario of scenarios) {
-    const page = await browser.newPage({ viewport: { width: 1280, height: 860 } });
-    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "domcontentloaded", timeout: 20_000 });
+    const context = await browser.newContext({
+      locale: "en-US",
+      viewport: { width: 1280, height: 860 },
+      extraHTTPHeaders: { "Accept-Language": "en-US,en;q=0.9" },
+    });
+    const page = await context.newPage();
+    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "load", timeout: 45_000 });
     if (!response || response.status() >= 400) {
       failures.push(`${scenario.name} returned ${response?.status() ?? "no response"}`);
-      await page.close();
+      await context.close();
       continue;
     }
-    await page.waitForSelector(".bobob-pointer-background", { timeout: 20_000 });
+    await page.waitForSelector(".bobob-pointer-background", { state: "attached", timeout: 45_000 });
     await page.waitForFunction(() => {
       const layer = document.querySelector(".bobob-pointer-background");
       const host = layer?.parentElement;
       if (!host) return false;
       return Boolean(getComputedStyle(host).getPropertyValue("--bobob-pointer-x").trim());
-    }, { timeout: 20_000 });
+    }, { timeout: 45_000 });
 
     await page.mouse.move(...scenario.first);
     await page.waitForTimeout(80);
@@ -86,8 +96,16 @@ try {
 
     if (!firstState || !secondState) {
       failures.push(`${scenario.name} missing pointer background layer`);
-      await page.close();
+      await context.close();
       continue;
+    }
+
+    if (secondState.variant !== scenario.variant) {
+      failures.push(`${scenario.name} expected ${scenario.variant} background but rendered ${secondState.variant || "none"}`);
+    }
+
+    if (!secondState.canvasCount) {
+      failures.push(`${scenario.name} missing ReactBits WebGL canvas`);
     }
 
     if (!firstState.pointerX || !secondState.pointerX || !firstState.gridX || !secondState.gridX) {
@@ -122,7 +140,7 @@ try {
       failures.push(`${scenario.name} pointer layer did not compute a transform`);
     }
 
-    await page.close();
+    await context.close();
   }
 } finally {
   await browser.close();

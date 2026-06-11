@@ -36,9 +36,34 @@ export function GoogleAdUnit({
   minHeight = 90,
 }: GoogleAdUnitProps) {
   const shouldRender = enabled && isValidPublisherId(publisherId) && isValidAdSlot(slot);
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [readyToLoad, setReadyToLoad] = React.useState(false);
 
   React.useEffect(() => {
-    if (!shouldRender) return;
+    if (!shouldRender) {
+      setReadyToLoad(false);
+      return;
+    }
+    const element = containerRef.current;
+    if (!element || typeof IntersectionObserver === 'undefined') {
+      setReadyToLoad(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setReadyToLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '640px 0px' },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [shouldRender]);
+
+  React.useEffect(() => {
+    if (!shouldRender || !readyToLoad) return;
     try {
       const win = window as unknown as { adsbygoogle?: unknown[] };
       win.adsbygoogle = win.adsbygoogle ?? [];
@@ -46,14 +71,14 @@ export function GoogleAdUnit({
     } catch {
       // The ad script can be blocked by extensions or privacy tools; the page must keep working.
     }
-  }, [shouldRender, publisherId, slot]);
+  }, [shouldRender, readyToLoad, publisherId, slot]);
 
   if (!shouldRender) {
     return null;
   }
 
   return (
-    <div className={className} data-bobob-ad-slot={position} style={{ minHeight }}>
+    <div ref={containerRef} className={className} data-bobob-ad-slot={position} data-bobob-ad-loading={readyToLoad ? 'ready' : 'deferred'} style={{ minHeight }}>
       <ins
         className="adsbygoogle"
         style={{ display: 'block', minHeight }}
@@ -72,26 +97,12 @@ export default function GoogleAdsense({ enabled = false, publisherId }: GoogleAd
   }
 
   return (
-    <>
-      <Script
-        id="google-adsense-auto"
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
-      <Script
-        id="google-adsense-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (adsbygoogle = window.adsbygoogle || []).push({
-              google_ad_client: "${publisherId}",
-              enable_page_level_ads: true
-            });
-          `
-        }}
-      />
-    </>
+    <Script
+      id="google-adsense-auto"
+      async
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
+      crossOrigin="anonymous"
+      strategy="afterInteractive"
+    />
   );
 } 

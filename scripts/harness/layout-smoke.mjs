@@ -14,6 +14,8 @@ const guideDetail = fs.readFileSync(path.join(root, "apps/main/src/app/guides/[s
 const localizedGuideDetail = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/guides/[slug]/page.tsx"), "utf8");
 const rootLayout = fs.readFileSync(path.join(root, "apps/main/src/app/layout.tsx"), "utf8");
 const googleAdsense = fs.readFileSync(path.join(root, "apps/main/src/components/GoogleAdsense.tsx"), "utf8");
+const dnsRoute = fs.readFileSync(path.join(root, "apps/main/src/app/api/dns-lookup/route.ts"), "utf8");
+const globals = fs.readFileSync(path.join(root, "apps/main/src/app/globals.css"), "utf8");
 
 const failures = [];
 if (!rootLayout.includes('"ca-pub-2620992505263949"')) failures.push("AdSense script must default to the real publisher id");
@@ -21,7 +23,11 @@ if (!rootLayout.includes('NEXT_PUBLIC_ENABLE_ADSENSE !== "false"')) failures.pus
 if (!googleAdsense.includes("enabled = false")) failures.push("AdSense component must be disabled by default");
 if (!googleAdsense.includes("export function GoogleAdUnit")) failures.push("GoogleAdUnit must exist for explicit in-flow ad placements");
 if (!googleAdsense.includes("data-bobob-ad-slot")) failures.push("GoogleAdUnit must expose a stable non-visible QA slot attribute");
+if (!googleAdsense.includes("IntersectionObserver")) failures.push("GoogleAdUnit should lazy-initialize explicit slots near the viewport");
+if (!googleAdsense.includes("rootMargin: '640px 0px'")) failures.push("GoogleAdUnit lazy loading should use a predictable preload margin");
+if (!googleAdsense.includes("data-bobob-ad-loading")) failures.push("GoogleAdUnit must expose deferred/ready loading state for QA");
 if (googleAdsense.includes("overlays:")) failures.push("AdSense auto overlay options must not be enabled from the app shell");
+if (googleAdsense.includes("enable_page_level_ads")) failures.push("AdSense page-level auto ads must not be initialized by the app shell");
 for (const fragment of [
   "bobob:workbench-layout",
   "defaultLeftWidth = 280",
@@ -36,6 +42,10 @@ for (const fragment of [
   "Resize right sidebar",
   "role=\"separator\"",
   "data-resizable-handle",
+  "rightCollapsed",
+  "data-right-panel-state",
+  "right-collapsed",
+  "React.useLayoutEffect",
   "lg:grid-cols-[var(--bobob-grid-columns)]",
   "minmax(0,1fr)",
 ]) {
@@ -67,7 +77,17 @@ if (!workspace.includes("function PrimaryWorkArea")) failures.push("tool detail 
 if (!workspace.includes("data-primary-work-area")) failures.push("primary input/output work area must expose a stable QA attribute");
 if (!workspace.includes("data-primary-work-content")) failures.push("primary work area must isolate the working tool content");
 if (!workspace.includes("dictionary.toolUi.input") || !workspace.includes("dictionary.toolUi.output")) failures.push("primary work area must label input/output with localized tool UI labels");
+if (!workspace.includes("dictionary.tool.primaryWorkTitle") || !workspace.includes("dictionary.tool.primaryWorkDescription")) failures.push("primary work area must include localized task-first guidance");
 if (!workspace.includes("data-tool-support-sections")) failures.push("support sections must be grouped separately from the primary work area");
+if (!toolComponents.includes("data-tool-output-block")) failures.push("common output blocks must expose a stable QA attribute");
+if (!toolComponents.includes("bobob-tool-result-card")) failures.push("common output blocks must use the stronger result card surface");
+if (!toolComponents.includes("data-tool-metric-grid")) failures.push("diagnostic metric grids must expose a stable QA attribute");
+if (!toolComponents.includes("bobob-diagnostic-card")) failures.push("diagnostic metric cards must use the shared diagnostic surface");
+if (!toolComponents.includes("data-tool-warning-list")) failures.push("warning lists must expose a stable QA attribute");
+if (!workspace.includes("bobob-ad-anchor") || !guideDetail.includes("bobob-ad-anchor") || !localizedGuideDetail.includes("bobob-ad-anchor")) failures.push("allowed ad placements must use the shared non-intrusive ad anchor class");
+if (!workspace.includes("function DesktopSupportAccordion")) failures.push("desktop support content must be grouped in an accordion");
+if (!workspace.includes("data-desktop-support-accordion")) failures.push("desktop support accordion must expose a stable QA attribute");
+if (!workspace.includes("dictionary.tool.supportTitle") || !workspace.includes("dictionary.tool.supportDescription")) failures.push("desktop support accordion must include localized support context");
 const toolSurfaceRenderIndex = workspace.indexOf("id=\"tool-surface\"");
 const quickStartRenderIndex = workspace.indexOf("<ToolQuickStart tool={tool} dictionary={dictionary} />", toolSurfaceRenderIndex);
 const reviewStripRenderIndex = workspace.indexOf("<ToolReviewStrip tool={tool} dictionary={dictionary} />", toolSurfaceRenderIndex);
@@ -82,8 +102,21 @@ if (reviewStripRenderIndex === -1 || nextActionsRenderIndex === -1 || nextAction
 if (sessionChildrenIndex === -1 || sessionControlsIndex === -1 || sessionControlsIndex < sessionChildrenIndex) failures.push("tool session utility controls must render after the working tool component");
 if (!workspace.includes("NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT")) failures.push("tool result ad unit must be gated by an explicit slot env var");
 if (!workspace.includes("NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT")) failures.push("reference panel ad unit must be gated by an explicit slot env var");
+if (!workspace.includes("referencePanelOpen")) failures.push("right reference panel toggle state missing");
+if (!workspace.includes("React.useState(false)")) failures.push("right reference panel must start closed by default");
+if (!workspace.includes("data-reference-panel-toggle")) failures.push("right reference panel toggle must expose a stable QA attribute");
+if (!workspace.includes("rightCollapsed={!referencePanelOpen}")) failures.push("right reference panel should be closed by default and collapse the resizable column");
+if (!workspace.includes("data-reference-panel-state")) failures.push("right reference panel state must expose a stable QA attribute");
+if (!workspace.includes("data-reference-panel")) failures.push("right reference panel must expose a stable QA attribute when open");
+if (!workspace.includes("dictionary.tool.openReferencePanel") || !workspace.includes("dictionary.tool.closeReferencePanel")) failures.push("right reference panel toggle labels must be localized");
+if (!dictionaries.includes("openReferencePanel") || !dictionaries.includes("closeReferencePanel")) failures.push("reference panel toggle labels missing from dictionary");
+if (!workspace.includes('"ca-pub-2620992505263949"')) failures.push("explicit tool ad units should default to the real publisher id");
+if (!workspace.includes('NEXT_PUBLIC_ENABLE_ADSENSE !== "false"')) failures.push("explicit tool ad units should be disabled only by an explicit public false flag");
 if (!workspace.includes("position=\"tool-result\"")) failures.push("tool result ad position missing");
 if (!workspace.includes("position=\"reference-panel\"")) failures.push("reference panel ad position missing");
+if (!guideDetail.includes("NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT") || !localizedGuideDetail.includes("NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT")) failures.push("guide content ad unit must be gated by an explicit slot env var");
+if (!guideDetail.includes("position=\"guide-content\"") || !localizedGuideDetail.includes("position=\"guide-content\"")) failures.push("guide content ad position missing");
+if (!guideDetail.includes('NEXT_PUBLIC_ENABLE_ADSENSE !== "false"') || !localizedGuideDetail.includes('NEXT_PUBLIC_ENABLE_ADSENSE !== "false"')) failures.push("guide ad units should be disabled only by an explicit public false flag");
 if (!workspace.includes("function MobileReferenceAccordion")) failures.push("mobile compact reference accordion missing");
 if (!workspace.includes("data-mobile-reference-sections")) failures.push("mobile reference accordion must expose a stable QA attribute");
 if (!workspace.includes("function MobileActionBar")) failures.push("mobile sticky action bar missing");
@@ -147,22 +180,47 @@ if (localizedContent.includes("coreChip") || localizedContent.includes("growthCh
 }
 if (workspace.includes("rounded-lg border bg-card shadow-none")) failures.push("center panel still has separate outer rounded border");
 if (workspace.includes("sticky top-4")) failures.push("desktop panels still use separate sticky card layout");
+if (fs.readFileSync(path.join(root, "apps/main/src/components/ui/sidebar.tsx"), "utf8").includes("border-r")) failures.push("left sidebar must not render its own border next to the resizable divider");
 if (!resizable.includes("after:bg-border")) failures.push("resize handle missing single neutral divider policy");
+if (resizable.includes("hover:after:")) failures.push("resize handle hover divider color can flash during tool navigation");
+if (resizable.includes("after:transition-colors")) failures.push("resize handle divider transition can flash during tool navigation");
+if (resizable.includes("hover:bg-muted/50")) failures.push("resize handle hover background can flash during navigation");
 if (resizable.includes("border-x border-transparent")) failures.push("resize handle still uses extra border columns");
-for (const fragment of ["data-http-status-details", "data-http-redirect-chain", "data-http-redirect-diagnostics", "data-http-response-headers", "data-http-header-parser", "data-http-header-summary", "data-http-header-warnings", "data-http-header-json", "data-csp-generator", "data-csp-directives", "data-csp-warnings", "data-csp-output", "rawResponse", "finalResponseHeaders", "elapsedMs", "cacheControl"]) {
+if (globals.includes("inset 1px 0 0 var(--bobob-divider-soft)") || globals.includes("inset -1px 0 0 var(--bobob-divider-soft)")) failures.push("center panel side inset lines can duplicate the resizable divider and flash during navigation");
+for (const fragment of ["data-http-status-details", "data-http-redirect-chain", "data-http-redirect-diagnostics", "data-http-response-headers", "data-http-header-parser", "data-http-header-summary", "data-http-security-readiness", "data-http-security-checklist", "getSecurityHeaderChecks", "formatHttpStatusError", "presentSecurityHeaders", "missingRequiredSecurityHeaders", "data-http-header-warnings", "data-http-header-json", "data-csp-generator", "data-csp-directives", "data-csp-warnings", "data-csp-output", "rawResponse", "finalResponseHeaders", "elapsedMs", "cacheControl"]) {
   if (!toolComponents.includes(fragment)) failures.push(`HTTP status detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedHttpStatusToolUi")) failures.push("HTTP status tool UI labels must be localized");
+if (!dictionaries.includes("localizedHttpErrorToolUi") || !dictionaries.includes("httpRequestFailedPublic")) failures.push("HTTP status error labels must be localized");
+for (const fragment of ["data-robots-diagnostics", "data-sitemap-diagnostics", "escapeXml", "isPrivateOrLocalHostname", "parsePublicUrl", "robotsUnknownDirectiveWarning", "robotsPrivateSitemapWarning", "sitemapDuplicateUrlWarning", "sitemapMixedHostWarning", "sitemapNonHttpsUrlWarning", "sitemapPrivateUrlWarning"]) {
+  if (!toolComponents.includes(fragment)) failures.push(`robots/sitemap crawl-readiness UI missing ${fragment}`);
+}
+for (const fragment of ["localizedSeoGeneratorToolUi", "robotsSitemapUrl", "robotsWarnings", "robotsLooksReady", "sitemapUrlList", "generatedEntries", "sitemapWarnings", "sitemapLooksReady"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`robots/sitemap dictionary labels missing ${fragment}`);
+}
 if (!dictionaries.includes("redirectDiagnostics") || !dictionaries.includes("redirectCanonicalChangedWarning")) failures.push("HTTP redirect diagnostics labels must be localized");
 if (!dictionaries.includes("localizedHttpRedirectAdvancedToolUi") || !dictionaries.includes("redirectTemporaryWarning")) failures.push("advanced HTTP redirect diagnostics labels must be localized");
 if (!dictionaries.includes("localizedHttpHeaderToolUi")) failures.push("HTTP header parser UI labels must be localized");
+if (!dictionaries.includes("localizedHttpSecurityToolUi") || !dictionaries.includes("securityHeaderReadiness")) failures.push("HTTP security header readiness labels must be localized");
 if (!dictionaries.includes("localizedCspGeneratorToolUi")) failures.push("CSP generator UI labels must be localized");
+for (const fragment of ["data-meta-diagnostics", "data-og-diagnostics", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning", "ogDescriptionTooLongWarning"]) {
+  if (!toolComponents.includes(fragment)) failures.push(`Meta/Open Graph readiness UI missing ${fragment}`);
+}
+for (const fragment of ["localizedMetaPreviewToolUi", "metaSeoReview", "metaLooksReady", "openGraphReview", "openGraphLooksReady", "titleLength", "descriptionLength", "canonicalHost", "imageHost", "robotsPolicy"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`Meta/Open Graph dictionary labels missing ${fragment}`);
+}
+for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {
+  if (!toolComponents.includes(fragment)) failures.push(`URL Parser detail UI missing ${fragment}`);
+}
+for (const fragment of ["localizedUrlParserToolUi", "urlStructure", "copyCleanUrl", "queryParameters", "trackingParameters", "canonicalCandidate", "urlReviewNotes", "urlTrackingWarning"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`URL Parser dictionary labels missing ${fragment}`);
+}
 for (const fragment of ["data-regex-presets", "data-regex-cheat-snippets", "data-regex-result-details", "data-regex-match-list", "data-regex-generator", "data-regex-generator-results", "localizedRegexToolUi", "localizedRegexGeneratorToolUi", "localizedRegexSnippetToolUi"]) {
   const source = fragment === "localizedRegexToolUi" || fragment === "localizedRegexGeneratorToolUi" || fragment === "localizedRegexSnippetToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Regex detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-json-examples", "data-json-result-details", "data-json-structure", "data-json-error-details", "localizedJsonFormatterToolUi"]) {
-  const source = fragment === "localizedJsonFormatterToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-json-examples", "data-json-result-details", "data-json-structure", "data-json-diagnostics", "data-json-diagnostic-paths", "collectJsonDiagnostics", "findDuplicateJsonObjectKeys", "getJsonDiagnosticWarnings", "data-json-error-details", "data-json-error-context", "getJsonErrorHintKey", "jsonRepairHint", "data-json-path-inspector", "localizedJsonFormatterToolUi", "localizedJsonDiagnosticsToolUi", "localizedCoreDepthToolUi"]) {
+  const source = fragment === "localizedJsonFormatterToolUi" || fragment === "localizedJsonDiagnosticsToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`JSON Formatter detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-jsonpath-examples", "data-jsonpath-supported-syntax", "data-jsonpath-result-details", "data-jsonpath-matches", "data-jsonpath-warnings", "localizedJsonPathToolUi"]) {
@@ -185,16 +243,16 @@ for (const fragment of ["data-csv-examples", "data-csv-result-details", "data-cs
   const source = fragment === "localizedCsvToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`CSV JSON detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-jwt-examples", "data-jwt-result-details", "data-jwt-time-window", "data-jwt-claims", "data-jwt-warnings", "localizedJwtToolUi"]) {
-  const source = fragment === "localizedJwtToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-jwt-examples", "data-jwt-result-details", "data-jwt-copy-actions", "data-jwt-time-window", "data-jwt-expected-claims", "getJwtExpectedChecks", "jwtExpectedClaimMismatchWarning", "data-jwt-claim-inspector", "data-jwt-redaction", "data-jwt-redacted-preview", "copyRedactedPayload", "redactedPayloadPreview", "getJwtRedaction", "data-jwt-claims", "data-jwt-warnings", "localizedJwtToolUi", "localizedJwtPrivacyToolUi", "localizedJwtExpectationToolUi", "localizedCoreDepthToolUi"]) {
+  const source = fragment === "localizedJwtToolUi" || fragment === "localizedJwtPrivacyToolUi" || fragment === "localizedJwtExpectationToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`JWT Decoder detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-base64-examples", "base64PngDataUrlExample", "data-base64-result-details", "data-base64-variants", "data-base64-diagnostics", "data-base64-shape", "data-base64-image-preview", "data-base64-warnings", "localizedBase64ToolUi", "localizedBase64DiagnosticsToolUi", "localizedBase64ImageToolUi"]) {
-  const source = fragment.startsWith("localizedBase64") ? dictionaries : toolComponents;
+for (const fragment of ["data-base64-examples", "base64PngDataUrlExample", "data-base64-result-details", "data-base64-variants", "data-base64-diagnostics", "data-base64-shape", "data-base64-json-preview", "data-base64-image-preview", "data-base64-warnings", "localizedBase64ToolUi", "localizedBase64DiagnosticsToolUi", "localizedBase64ImageToolUi", "localizedCoreDepthToolUi"]) {
+  const source = fragment.startsWith("localizedBase64") || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Base64 detail UI missing ${fragment}`);
 }
 if (!toolComponents.includes("result.imagePreview?.dataUrl")) failures.push("Base64 image decode should expose a copyable data URL instead of raw binary output");
-for (const fragment of ["data-cron-presets", "data-cron-scheduler-semantics", "data-cron-result-details", "data-cron-fields", "data-cron-runtime-context", "data-cron-next-runs", "data-cron-warnings", "localizedCronToolUi", "localizedCronRuntimeToolUi", "cronDayOverlapOrWarning"]) {
+for (const fragment of ["data-cron-presets", "data-cron-scheduler-semantics", "data-cron-timezone-select", "data-cron-result-details", "data-cron-fields", "data-cron-runtime-context", "data-cron-next-runs", "data-cron-warnings", "formatCronRun", "localizedCronToolUi", "localizedCronRuntimeToolUi", "cronPreviewTimezone", "cronDayOverlapOrWarning"]) {
   const source = fragment === "localizedCronToolUi" || fragment === "localizedCronRuntimeToolUi" || fragment === "cronDayOverlapOrWarning" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Cron detail UI missing ${fragment}`);
 }
@@ -214,18 +272,21 @@ for (const fragment of ["data-random-token-examples", "data-random-token-diagnos
   const source = fragment === "localizedRandomTokenToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Random Token Generator detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-qr-examples", "data-qr-payload-builder", "data-qr-builder-fields", "data-qr-result-details", "data-qr-diagnostics", "data-qr-payload-type", "data-qr-warnings", "localizedQrBuilderToolUi", "localizedQrDiagnosticsToolUi"]) {
-  const source = fragment === "localizedQrBuilderToolUi" || fragment === "localizedQrDiagnosticsToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-qr-examples", "data-qr-payload-builder", "data-qr-builder-fields", "data-qr-result-details", "data-qr-diagnostics", "data-qr-payload-type", "data-qr-preview", "data-qr-warnings", "localizedQrBuilderToolUi", "localizedQrDiagnosticsToolUi", "localizedCoreDepthToolUi"]) {
+  const source = fragment === "localizedQrBuilderToolUi" || fragment === "localizedQrDiagnosticsToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`QR Code Generator detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedGeneratorToolUi")) failures.push("generator/security tool detail UI labels must be localized");
 for (const fragment of ["data-color-examples", "data-color-preview", "data-color-result-details", "data-color-diagnostics", "data-color-swatches", "data-color-warnings"]) {
   if (!toolComponents.includes(fragment)) failures.push(`Color Converter detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-dns-examples", "data-dns-result-details", "data-dns-diagnostics", "data-dns-record-list", "data-dns-warnings"]) {
+for (const fragment of ["data-dns-examples", "data-dns-result-details", "data-dns-diagnostics", "data-dns-record-list", "data-dns-warnings", "data-dns-deployment-checklist", "data-dns-deployment-results", "runDeploymentCheck", "getDnsDeploymentStatus", "getApexHostname"]) {
   if (!toolComponents.includes(fragment)) failures.push(`DNS Lookup detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedColorDnsToolUi") || !dictionaries.includes("localizedColorDiagnosticsToolUi")) failures.push("Color and DNS detail UI labels must be localized");
+for (const fragment of ["normalizePublicDnsName", "label.includes(\"_\")", "isPrivateOrReservedIp"]) {
+  if (!dnsRoute.includes(fragment)) failures.push(`DNS Lookup API guard missing ${fragment}`);
+}
 for (const fragment of ["data-sql-examples", "data-sql-result-details", "data-sql-diagnostics", "data-sql-clause-checks", "data-sql-table-list", "data-sql-warnings"]) {
   if (!toolComponents.includes(fragment)) failures.push(`SQL Formatter detail UI missing ${fragment}`);
 }

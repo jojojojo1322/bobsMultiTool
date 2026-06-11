@@ -177,14 +177,62 @@ body {
     var(--bobob-depth-x, 0px) var(--bobob-depth-y, 0px);
 }
 
+.bobob-reactbits-background {
+  overflow: hidden;
+}
+
+.bobob-reactbits-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.86;
+}
+
+.bobob-reactbits-light-rays {
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, #1f2937 26%, transparent), transparent 28rem),
+    linear-gradient(180deg, color-mix(in srgb, #334155 18%, transparent), transparent 48%),
+    linear-gradient(104deg, transparent 0 32%, color-mix(in srgb, #334155 12%, transparent) 44%, transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, #e5e7eb 6%), var(--background) 30rem);
+}
+
+.bobob-reactbits-galaxy {
+  background:
+    radial-gradient(circle at 46% 22%, color-mix(in srgb, #1f2937 20%, transparent), transparent 24rem),
+    radial-gradient(circle at 18% 34%, color-mix(in srgb, #111827 14%, transparent), transparent 18rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, #dbe3ef 6%), var(--background) 32rem);
+}
+
 .dark .bobob-pointer-background {
   opacity: calc(var(--bobob-background-opacity, 0.5) * 0.9);
 }
 
+.dark .bobob-reactbits-canvas {
+  opacity: 0.94;
+}
+
+.dark .bobob-reactbits-light-rays {
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, #ffffff 26%, transparent), transparent 28rem),
+    linear-gradient(180deg, color-mix(in srgb, #e8edf8 22%, transparent), transparent 48%),
+    linear-gradient(104deg, transparent 0 32%, color-mix(in srgb, #e8edf8 15%, transparent) 44%, transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 88%, #252938 12%), var(--background) 30rem);
+}
+
+.dark .bobob-reactbits-galaxy {
+  background:
+    radial-gradient(circle at 46% 22%, color-mix(in srgb, #d9ddff 22%, transparent), transparent 24rem),
+    radial-gradient(circle at 18% 34%, color-mix(in srgb, #ffffff 16%, transparent), transparent 18rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 90%, #050510 10%), var(--background) 32rem);
+}
+
 .bobob-workbench-shell {
-  background: var(--bobob-surface-shell);
+  background: color-mix(in srgb, var(--bobob-surface-shell) 84%, transparent);
   border-color: var(--bobob-border-strong);
   box-shadow: var(--bobob-panel-shadow), inset 0 1px 0 var(--bobob-panel-ring);
+  backdrop-filter: blur(10px) saturate(1.05);
 }
 
 .bobob-topbar {
@@ -193,18 +241,16 @@ body {
 }
 
 .bobob-side-panel {
-  background: color-mix(in srgb, var(--bobob-surface-raised) 88%, var(--background) 12%);
+  background: color-mix(in srgb, var(--bobob-surface-raised) 84%, transparent);
 }
 
 .bobob-center-panel {
-  background: var(--card);
-  box-shadow:
-    inset 1px 0 0 var(--bobob-divider-soft),
-    inset -1px 0 0 var(--bobob-divider-soft);
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  box-shadow: none;
 }
 
 .bobob-primary-work-area {
-  background: var(--bobob-surface-raised);
+  background: color-mix(in srgb, var(--bobob-surface-raised) 94%, transparent);
   border-color: var(--bobob-border-strong);
   box-shadow:
     0 10px 30px color-mix(in srgb, var(--foreground) 7%, transparent),
@@ -216,22 +262,67 @@ body {
   border-color: var(--bobob-divider-soft);
 }
 
+.bobob-tool-result-card {
+  border-color: color-mix(in srgb, var(--foreground) 18%, var(--border) 82%);
+  box-shadow:
+    0 12px 34px color-mix(in srgb, var(--foreground) 8%, transparent),
+    inset 0 1px 0 var(--bobob-panel-ring);
+}
+
+.bobob-tool-result-card pre {
+  border-color: var(--bobob-divider-soft);
+}
+
+.bobob-diagnostic-card,
+.bobob-diagnostic-list {
+  border-color: var(--bobob-divider-soft);
+  box-shadow: inset 0 1px 0 var(--bobob-panel-ring);
+}
+
+.bobob-tool-alert {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--destructive) 18%, transparent);
+}
+
+.bobob-ad-anchor {
+  border-color: var(--bobob-divider-soft);
+}
+
 .bobob-support-sections {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--background) 88%, var(--foreground) 12%), var(--background) 14rem);
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 80%, transparent), color-mix(in srgb, var(--background) 88%, transparent) 14rem);
+}
+
+.dark .bobob-workbench-shell {
+  background: color-mix(in srgb, var(--bobob-surface-shell) 76%, transparent);
+}
+
+.dark .bobob-side-panel {
+  background: color-mix(in srgb, var(--bobob-surface-raised) 78%, transparent);
 }
 
 .dark .bobob-center-panel {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, #ffffff 6%), var(--card) 16rem);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card) 84%, transparent), color-mix(in srgb, var(--card) 88%, transparent) 16rem);
+}
+
+.dark .bobob-primary-work-area {
+  background: color-mix(in srgb, var(--bobob-surface-raised) 90%, transparent);
 }
 
 .dark .bobob-primary-work-heading {
   background: color-mix(in srgb, var(--muted) 82%, #ffffff 4%);
 }
 
+.dark .bobob-tool-result-card {
+  border-color: color-mix(in srgb, #ffffff 18%, var(--border) 82%);
+  box-shadow:
+    0 14px 36px color-mix(in srgb, #000000 42%, transparent),
+    inset 0 1px 0 var(--bobob-panel-ring);
+}
+
 .dark .bobob-support-sections {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--background) 72%, #ffffff 5%), var(--background) 16rem);
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 66%, transparent), color-mix(in srgb, var(--background) 78%, transparent) 16rem);
 }
 
 @media (prefers-reduced-motion: reduce) {

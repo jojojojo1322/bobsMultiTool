@@ -74,8 +74,11 @@ if (!workspace.includes("data-tool-workflow-recipes") || !workspace.includes("ge
 for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "review-security-headers", "validate-deploy-config", "clean-csv-for-api"]) {
   if (!workflows.includes(`slug: "${recipeSlug}"`)) failures.push(`workflow recipe registry missing ${recipeSlug}`);
 }
-for (const intent of ["api response formatter", "json field extractor", "json path extractor", "recursive jsonpath", "jwt exp checker", "redirect chain checker", "base64 image decoder", "data url decoder", "dns propagation checklist", "wifi qr code generator", "csrf token generator", "security headers checker", "content security policy generator", "docker compose validator", "deployment config checker", "csv cleaner", "markdown table generator"]) {
+for (const intent of ["api response formatter", "json error line column", "json parse error context", "json field extractor", "json path extractor", "recursive jsonpath", "jwt exp checker", "jwt authorization header", "jwt sensitive claims", "jwt redacted payload", "jwt issuer checker", "jwt audience checker", "jwt scope checker", "redirect chain checker", "base64 image decoder", "download base64 image", "data url decoder", "dns propagation checklist", "dns deployment checker", "dns deployment checklist", "dmarc checker", "name server checker", "wifi qr code generator", "qr quiet zone", "csrf token generator", "security headers checker", "security response header checker", "hsts checker", "referrer policy checker", "content security policy generator", "docker compose validator", "deployment config checker", "csv cleaner", "markdown table generator"]) {
   if (!workflows.includes(intent)) failures.push(`workflow recipe search intent missing ${intent}`);
+}
+for (const intent of ["dns deployment checker", "dns deployment checklist", "dmarc checker", "name server checker"]) {
+  if (!registry.includes(intent)) failures.push(`DNS Lookup registry search surface missing ${intent}`);
 }
 for (const slug of ["json-formatter", "jwt-decoder", "http-status-checker", "color-converter", "uuid-generator", "regex-tester"]) {
   if (!toolDirectory.includes(`"${slug}"`)) failures.push(`tool directory acquisition clusters missing ${slug}`);
@@ -100,17 +103,23 @@ if (!registry.includes("regexp tester")) failures.push("core alias sample missin
 for (const intent of ["email regex", "url regex", "uuid regex", "ipv4 regex", "hex color regex", "slug regex"]) {
   if (!registry.includes(intent)) failures.push(`Regex Tester search intent missing ${intent}`);
 }
-for (const intent of ["base64 image decoder", "base64 to png", "data url decoder", "image data url preview"]) {
+if (!registry.includes("jwt sensitive claims") || !registry.includes("jwt redacted payload") || !registry.includes("jwt redaction checker")) failures.push("JWT Decoder search intents must cover sensitive claim and redacted payload queries");
+if (!registry.includes("jwt issuer checker") || !registry.includes("jwt audience checker") || !registry.includes("jwt scope checker") || !registry.includes("jwt audience mismatch")) failures.push("JWT Decoder search intents must cover issuer, audience, scope, and mismatch debug queries");
+for (const intent of ["security headers checker", "security response header checker", "hsts checker", "x content type options checker", "referrer policy checker"]) {
+  if (!registry.includes(intent)) failures.push(`HTTP Status Checker search intent missing ${intent}`);
+}
+for (const intent of ["base64 image decoder", "base64 to png", "download base64 image", "base64 json formatter", "data url decoder", "image data url preview"]) {
   if (!registry.includes(intent)) failures.push(`Base64 search intent missing ${intent}`);
 }
-for (const intent of ["json path extractor", "json field extractor", "jsonpath wildcard", "recursive jsonpath", "extract json value"]) {
-  if (!registry.includes(intent)) failures.push(`JSONPath Tester search intent missing ${intent}`);
+for (const intent of ["json error line column", "json parse error context", "json sensitive key checker", "json duplicate key checker", "json empty value finder", "json path extractor", "json field extractor", "jsonpath wildcard", "recursive jsonpath", "extract json value"]) {
+  if (!registry.includes(intent)) failures.push(`JSON data cluster search intent missing ${intent}`);
 }
 if (!registry.includes("docker compose validator") || !registry.includes("compose yaml validator")) failures.push("YAML Validator search intents must cover Docker Compose queries");
 if (!registry.includes("csrf token generator") || !registry.includes("api key generator") || !registry.includes("url safe token generator")) failures.push("Random Token search intents must cover CSRF, API key, and URL-safe token queries");
 if (!registry.includes("hmac sha256 generator") || !registry.includes("webhook signature generator") || !registry.includes("webhook hmac")) failures.push("Hash Generator search intents must cover HMAC and webhook signature queries");
 if (!registry.includes("passphrase generator") || !registry.includes("memorable password generator") || !registry.includes("secure passphrase generator")) failures.push("Password Generator search intents must cover passphrase and memorable password queries");
-if (!registry.includes("wifi qr code generator") || !registry.includes("free qr code generator") || !registry.includes("contact qr code generator")) failures.push("QR Code Generator search intents must cover Wi-Fi, free QR, and contact QR queries");
+if (!registry.includes("cron timezone preview") || !registry.includes("cron timezone checker")) failures.push("Cron Generator search intents must cover timezone preview and server-timezone mismatch queries");
+if (!registry.includes("wifi qr code generator") || !registry.includes("free qr code generator") || !registry.includes("contact qr code generator") || !registry.includes("qr quiet zone") || !registry.includes("qr code size")) failures.push("QR Code Generator search intents must cover Wi-Fi, free QR, contact QR, sizing, and quiet-zone queries");
 if (!registry.includes("monetizationTier")) failures.push("monetization tier field missing");
 
 if (failures.length) {

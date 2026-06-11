@@ -5,6 +5,8 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 
 # Bobob AdSense SEO
 
+- AdSense and search acquisition are core product goals, but revenue operations are internal. Public pages should improve trust and utility without showing approval, monetization, fake ad, or demand-tier wording.
+- Never store or print Vercel tokens, AdSense account credentials, API keys, or other secrets in repo files, AGENTS.md, skills, reports, git history, or final answers. Use command-time environment variables such as `VERCEL_TOKEN`.
 - Canonical host is `https://www.bobob.app`.
 - `bobob.app` should permanently redirect to `www.bobob.app` with an explicit 308 canonical host redirect before locale redirects run.
 - Legacy standalone apps must not be restored. Legacy entry paths should redirect from `apps/main` to the matching `/tools/{slug}` page.
@@ -20,6 +22,8 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Do not cap localized sitemap coverage in a single static file. Use the sitemap index to expose every supported locale/tool/guide URL.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.
+- Meta Tag Generator and Open Graph Preview pages should strengthen SEO by checking title/description length, canonical/page host, image host, robots policy, HTTPS status, local/private hosts, noindex risk, and image format before raw tag output.
+- robots.txt and sitemap generator pages should strengthen crawl-readiness SEO by validating sitemap URLs, directive counts, URL counts, duplicate removal, mixed hosts, non-HTTPS entries, and local/private hosts with localized review messages before raw output.
 - Security-header search intent such as CSP Generator should strengthen the HTTP Status Checker page unless measured Search Console data proves a standalone page is needed.
 - Localized metadata must use localized tool and guide content. Do not leave non-English title/description pages backed by raw English registry prose.
 - Guide detail meta descriptions and OpenGraph descriptions must use the same localized `guide.description` shown in the page body.
@@ -40,9 +44,9 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Keep safe measured export instructions and sample headers in `reports/README.md` and `reports/templates/*.example.csv`; run `npm run harness:seo-templates` when Search Console/AdSense export headers, copy targets, or measured export instructions change.
 - Do not keep unused AdSense preview components, fake publisher IDs, visible preview blocks, or disabled placeholder ad slots in the public app.
 - Public UI, dictionaries, and support copy must not expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording. Keep revenue-operation language in governance and measured reports only. Legal pages may disclose third-party advertising, cookies, and Google advertising services for transparency, but must not discuss approval status.
-- The base Google advertising script should load with the real publisher id `ca-pub-2620992505263949` by default so site connection is not lost when Vercel env vars are absent. `NEXT_PUBLIC_ENABLE_ADSENSE=false` may disable it for controlled builds; explicit ad units still require real slot ids such as `NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT` and `NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT`.
+- The base Google advertising script should load with the real publisher id `ca-pub-2620992505263949` by default so site connection is not lost when Vercel env vars are absent. `NEXT_PUBLIC_ENABLE_ADSENSE=false` may disable it for controlled builds; explicit ad units still require real slot ids such as `NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT`, `NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT`, and `NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT`.
 - Allowed in-flow ad positions are after the primary tool result area, at the bottom of the right reference panel, and in the middle of long guide content. Keep them away from input controls, copy buttons, navigation, and sticky bars so they cannot be confused with product actions.
-- Disabled or unconfigured ad units must render nothing visible. Do not enable bottom overlays or auto-ad UI that can cover tool input/output surfaces.
+- Explicit ad units should lazy-initialize near the viewport after a valid slot is configured. Disabled or unconfigured ad units must render nothing visible. Do not initialize page-level auto ads, bottom overlays, or auto-ad UI that can cover tool input/output surfaces.
 - Use `npm run harness:deployment-status` to verify that the canonical `bobs-multi-tool-main` Vercel deployment succeeds separately from stale legacy Vercel project statuses. After external project cleanup, run `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status`.
 - Keep privacy and terms pages aligned with the actual local-first utility behavior.
 - If SEO, AdSense, locale, redirect, schema, or country detection policy changes, update AGENTS.md and this skill before handoff.

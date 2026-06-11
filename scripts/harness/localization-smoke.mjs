@@ -109,6 +109,12 @@ for (const fragment of ["localizedPasswordPassphraseToolUi", "passphraseModeDesc
 for (const fragment of ["localizedQrBuilderToolUi", "qrPayloadBuilder", "qrWifiSsid", "Payload 빌더", "Payloadビルダー", "Constructor de payload", "منشئ payload"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized QR builder content missing fragment: ${fragment}`);
 }
+for (const fragment of ["localizedSeoGeneratorToolUi", "robotsSitemapUrl", "robotsWarnings", "robotsLooksReady", "sitemapUrlList", "sitemapWarnings", "사이트맵 검토", "サイトマップ確認", "Revision del sitemap", "Sitemap-Pruefung", "فحص خريطة الموقع"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`localized robots/sitemap content missing fragment: ${fragment}`);
+}
+for (const fragment of ["localizedMetaPreviewToolUi", "metaSeoReview", "openGraphReview", "titleTooShortWarning", "canonicalHashWarning", "ogDescriptionTooLongWarning", "메타 SEO 검토", "Open Graph確認", "Revision Meta SEO", "Meta-SEO-Pruefung", "فحص Meta SEO"]) {
+  if (!dictionaries.includes(fragment)) failures.push(`localized meta/open-graph content missing fragment: ${fragment}`);
+}
 
 const registrySlugs = Array.from(toolRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guideRegistry.matchAll(/slug: "([^"]+)"/g)).map((match) => match[1]);
@@ -323,6 +329,10 @@ for (const fragment of [
   "jsonPathTruncatedWarning",
   "jwtTimeWindow",
   "jwtTimeWindowDescription",
+  "jwtExpectedClaims",
+  "jwtExpectedClaimsDescription",
+  "jwtExpectedClaimsConfigured",
+  "jwtExpectedClaimMismatchWarning",
   "issuedAge",
   "validAfter",
   "expiresIn",
@@ -341,6 +351,14 @@ for (const fragment of [
   "dnsDiagnostics",
   "dnsPrimarySignal",
   "dnsNoDiagnosticWarnings",
+  "dnsDeploymentChecklist",
+  "runDeploymentCheck",
+  "dnsCheckDmarc",
+  "jsonDiagnostics",
+  "jsonSensitiveKeyWarning",
+  "jsonDuplicateKeyWarning",
+  "jsonNoDiagnosticWarnings",
+  "apiDebugJson",
   "contrastRatio",
   "contrastPreviewText",
   "colorValues",
@@ -349,6 +367,8 @@ for (const fragment of [
   "colorAlphaIgnoredWarning",
   "colorNoDiagnosticWarnings",
   "localizedBase64DiagnosticsToolUi",
+  "localizedJsonDiagnosticsToolUi",
+  "localizedDnsDeploymentToolUi",
   "base64PngDataUrlExample",
   "base64Diagnostics",
   "base64DetectedContent",
@@ -388,9 +408,14 @@ for (const fragment of [
   "localizedRegexGeneratorToolUi",
   "localizedRegexSnippetToolUi",
   "localizedHttpHeaderToolUi",
+  "localizedHttpSecurityToolUi",
+  "localizedHttpErrorToolUi",
   "localizedCspGeneratorToolUi",
   "localizedHttpRedirectAdvancedToolUi",
   "httpHeaderParser",
+  "httpRequestFailedPublic",
+  "securityHeaderReadiness",
+  "hstsHeaderDetail",
   "httpHeadersMissingCspWarning",
   "redirectDiagnostics",
   "redirectCanonicalChangedWarning",

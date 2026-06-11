@@ -68,7 +68,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "จัด JSON ที่วาง ตรวจ path แล้วต่อด้วย type หรือ schema check",
       ar: "نظف JSON الملصق وافحص المسارات ثم أنشئ الانواع أو تحقق من schema.",
     }),
-    searchIntents: ["api response formatter", "json response viewer", "json to typescript workflow", "json schema check"],
+    searchIntents: ["api response formatter", "json response viewer", "json error line column", "json parse error context", "json to typescript workflow", "json schema check"],
     steps: [
       {
         toolSlug: "json-formatter",
@@ -258,7 +258,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "ตรวจ claim JWT เวลา และ segment ที่ encode อย่างปลอดภัย",
       ar: "افحص claims في JWT وحقول الوقت والمقاطع المشفرة بأمان.",
     }),
-    searchIntents: ["jwt exp checker", "api token decoder", "base64url jwt payload", "token expiry debug"],
+    searchIntents: ["jwt exp checker", "api token decoder", "base64url jwt payload", "jwt authorization header", "jwt claim inspector", "jwt sensitive claims", "jwt redacted payload", "jwt issuer checker", "jwt audience checker", "jwt scope checker", "token expiry debug"],
     steps: [
       {
         toolSlug: "jwt-decoder",
@@ -448,7 +448,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "ดูตัวอย่างรูป Base64 ยืนยัน MIME type แล้วตรวจ contrast ก่อนแชร์",
       ar: "عاين صورة Base64 وتأكد من MIME type ثم افحص التباين قبل المشاركة.",
     }),
-    searchIntents: ["base64 image decoder", "data url decoder", "base64 to png", "image data url preview", "png base64 preview"],
+    searchIntents: ["base64 image decoder", "data url decoder", "base64 to png", "download base64 image", "image data url preview", "png base64 preview"],
     steps: [
       {
         toolSlug: "base64-tool",
@@ -543,7 +543,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "ตรวจ record, HTTP, sitemap และ robots หลังเปลี่ยน domain",
       ar: "تحقق من records وHTTP وsitemap وrobots بعد تغيير النطاق.",
     }),
-    searchIntents: ["dns propagation checklist", "domain deployment check", "www apex dns", "sitemap robots check"],
+    searchIntents: ["dns propagation checklist", "dns deployment checker", "dns deployment checklist", "dmarc checker", "name server checker", "ipv6 dns checker", "domain deployment check", "www apex dns", "sitemap robots check"],
     steps: [
       { toolSlug: "dns-lookup", reason: localized({
         en: "Check A, AAAA, CNAME, MX, TXT, and NS records.",
@@ -629,7 +629,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "สร้างรหัสผ่านเครือข่าย ประกอบ Wi-Fi payload แล้วตรวจ contrast",
       ar: "انشئ كلمة مرور شبكة مناسبة وابن payload للواي فاي وافحص التباين.",
     }),
-    searchIntents: ["wifi qr code generator", "wifi password qr", "qr code contrast", "network qr workflow"],
+    searchIntents: ["wifi qr code generator", "wifi password qr", "qr code size", "qr quiet zone", "qr code contrast", "network qr workflow"],
     steps: [
       { toolSlug: "password-generator", reason: localized({
         en: "Generate a password that fits the router policy.",
@@ -801,7 +801,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "ตรวจ header ของ response ร่าง CSP แล้วเช็ก URL และ DNS target ให้ถูกต้อง",
       ar: "افحص رؤوس الاستجابة واكتب مسودة CSP ثم تأكد من الرابط وهدف DNS.",
     }),
-    searchIntents: ["security headers checker", "content security policy generator", "csp header generator", "http headers parser", "strict transport security check"],
+    searchIntents: ["security headers checker", "security response header checker", "content security policy generator", "csp header generator", "http headers parser", "strict transport security check", "hsts checker", "x content type options checker", "referrer policy checker"],
     steps: [
       { toolSlug: "http-status-checker", reason: localized({
         en: "Inspect status, redirects, pasted headers, and CSP warnings in one surface.",

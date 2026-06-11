@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { ArrowRight, Check, ClipboardCheck, Link2, ListChecks, Menu, RotateCcw, Search, Star, Trash2 } from "lucide-react";
+import { ArrowRight, Check, ClipboardCheck, Link2, ListChecks, Menu, PanelRightClose, PanelRightOpen, RotateCcw, Search, Star, Trash2 } from "lucide-react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { PointerBackground } from "@/components/pointer-background";
@@ -12,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Separator } from "@/components/ui/separator";
 import { Sheet } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/ui/sidebar";
 import { defaultLocale, withLocale, type Locale } from "@/features/i18n/config";
@@ -20,7 +20,6 @@ import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
 import { cn } from "@/lib/utils";
 import { toolCategories } from "./registry";
-import { ToolPanel } from "./tool-components";
 import type { ToolDefinition } from "./types";
 import { getWorkflowRecipesForTool, type LocalizedWorkflowRecipe } from "./workflows";
 
@@ -28,12 +27,21 @@ const navigationScrollStorageKey = (locale: Locale) => `bobob:tool-nav-scroll:${
 const recentToolsStorageKey = (locale: Locale) => `bobob:recent-tools:${locale}`;
 const favoriteToolsStorageKey = (locale: Locale) => `bobob:favorite-tools:${locale}`;
 const toolSessionStorageKey = (locale: Locale, slug: string) => `bobob:tool-session:${locale}:${slug}`;
-const adsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE === "true";
-const adsPublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+const adsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
+const adsPublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-2620992505263949";
 const toolResultAdSlot = process.env.NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT;
 const referenceAdSlot = process.env.NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT;
 const maxRecentTools = 6;
 const maxFavoriteTools = 12;
+const ToolPanel = dynamic(() => import("./tool-components").then((module) => module.ToolPanel), {
+  loading: () => (
+    <div className="space-y-3 rounded-md border bg-muted/30 p-4" data-tool-panel-loading aria-hidden="true">
+      <div className="h-4 w-28 rounded bg-muted-foreground/15" />
+      <div className="h-32 rounded bg-background/70" />
+      <div className="h-4 w-40 rounded bg-muted-foreground/15" />
+    </div>
+  ),
+});
 type ToolSessionField = { key: string; value: string; checked?: boolean };
 type ToolSession = { fields: ToolSessionField[]; updatedAt: number };
 
@@ -201,9 +209,9 @@ function ToolSessionControls({
   return (
     <div ref={rootRef} className="space-y-4" data-tool-session={hasSession ? "saved" : "empty"}>
       {children}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background p-3" data-tool-session-controls>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-3" data-tool-session-controls>
         <div className="min-w-0">
-          <p className="text-sm font-medium">{dictionary.tool.localSessionTitle}</p>
+          <p className="text-xs font-medium text-muted-foreground">{dictionary.tool.localSessionTitle}</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">{dictionary.tool.localSessionBody}</p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
@@ -483,7 +491,7 @@ function ToolReferencePanel({ tool, locale, dictionary }: { tool: ToolDefinition
         position="reference-panel"
         format="rectangle"
         minHeight={280}
-        className="border-t pt-5"
+        className="bobob-ad-anchor border-t pt-5"
       />
     </div>
   );
@@ -646,13 +654,19 @@ function ReferenceSection({ title, description, children }: { title: string; des
 
 function PrimaryWorkArea({ dictionary, children }: { dictionary: ClientDictionary; children: React.ReactNode }) {
   return (
-    <section id="tool-surface" className="border-b bg-background p-4 sm:p-5" data-tool-surface>
-      <div className="bobob-primary-work-area overflow-hidden rounded-lg border bg-card shadow-sm ring-1 ring-border/60" data-primary-work-area>
-        <div className="bobob-primary-work-heading flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {dictionary.toolUi.input} / {dictionary.toolUi.output}
-          </p>
-          <span className="text-xs text-muted-foreground">{dictionary.toolUi.copyReadyOutput}</span>
+    <section id="tool-surface" className="bg-background p-4 sm:p-6" data-tool-surface>
+      <div className="bobob-primary-work-area overflow-hidden rounded-lg border bg-card shadow-sm ring-2 ring-foreground/5" data-primary-work-area>
+        <div className="bobob-primary-work-heading border-b bg-background px-4 py-4 md:px-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {dictionary.toolUi.input} / {dictionary.toolUi.output}
+              </p>
+              <h3 className="mt-1 text-base font-semibold">{dictionary.tool.primaryWorkTitle}</h3>
+              <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">{dictionary.tool.primaryWorkDescription}</p>
+            </div>
+            <span className="rounded-md border bg-muted px-2 py-1 text-xs text-muted-foreground">{dictionary.toolUi.copyReadyOutput}</span>
+          </div>
         </div>
         <div className="p-4 md:p-5" data-primary-work-content>
           {children}
@@ -731,6 +745,37 @@ function ToolReviewStrip({ tool, dictionary }: { tool: ToolDefinition; dictionar
           ))}
         </ul>
       </div>
+    </section>
+  );
+}
+
+function DesktopSupportAccordion({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
+  return (
+    <section className="hidden border-t bg-background px-5 py-5 lg:block" data-desktop-support-accordion>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">{dictionary.tool.supportTitle}</h3>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">{dictionary.tool.supportDescription}</p>
+        </div>
+        <Badge>{dictionary.nav.guides}</Badge>
+      </div>
+      <Accordion
+        className="bg-card"
+        items={[
+          {
+            title: dictionary.nav.examples,
+            content: <ToolQuickStart tool={tool} dictionary={dictionary} />,
+          },
+          {
+            title: dictionary.tool.preCopyChecklist,
+            content: <ToolReviewStrip tool={tool} dictionary={dictionary} />,
+          },
+          {
+            title: dictionary.nav.relatedTools,
+            content: <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />,
+          },
+        ]}
+      />
     </section>
   );
 }
@@ -858,6 +903,7 @@ export function ToolWorkspace({
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [favoriteSlugs, setFavoriteSlugs] = React.useState<string[]>([]);
   const [copiedToolLink, setCopiedToolLink] = React.useState(false);
+  const [referencePanelOpen, setReferencePanelOpen] = React.useState(false);
   const copiedToolLinkTimerRef = React.useRef<number | null>(null);
   const privacyLabel = tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly;
   const isFavorite = favoriteSlugs.includes(tool.slug);
@@ -927,6 +973,19 @@ export function ToolWorkspace({
               <Star className={cn("h-4 w-4", isFavorite ? "fill-current" : "")} />
               <span className="hidden sm:inline">{isFavorite ? dictionary.tool.removeFavorite : dictionary.tool.addFavorite}</span>
             </Button>
+            <Button
+              variant={referencePanelOpen ? "secondary" : "outline"}
+              size="sm"
+              className="hidden lg:inline-flex"
+              onClick={() => setReferencePanelOpen((open) => !open)}
+              aria-expanded={referencePanelOpen}
+              aria-controls="tool-reference-panel"
+              aria-label={referencePanelOpen ? dictionary.tool.closeReferencePanel : dictionary.tool.openReferencePanel}
+              data-reference-panel-toggle
+            >
+              {referencePanelOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
+              <span className="hidden xl:inline">{referencePanelOpen ? dictionary.tool.closeReferencePanel : dictionary.tool.openReferencePanel}</span>
+            </Button>
             <ThemeToggle dictionary={dictionary} />
             <LocaleSwitcher locale={locale} dictionary={dictionary} />
             <Badge className="hidden sm:inline-flex">{dictionary.categories[tool.category] ?? tool.category}</Badge>
@@ -937,7 +996,11 @@ export function ToolWorkspace({
         <ToolNavigation activeSlug={tool.slug} query={query} onQueryChange={setQuery} onNavigate={() => setMobileOpen(false)} locale={locale} dictionary={dictionary} favoriteSlugs={favoriteSlugs} />
       </Sheet>
       <div className="relative mx-auto max-w-[1600px] px-4 py-4">
-        <ResizablePanelGroup className="bobob-workbench-shell min-h-[calc(100vh-7rem)] rounded-lg border bg-background lg:h-[calc(100vh-7rem)] lg:min-h-0">
+        <ResizablePanelGroup
+          rightCollapsed={!referencePanelOpen}
+          className="bobob-workbench-shell min-h-[calc(100vh-7rem)] rounded-lg border bg-background lg:h-[calc(100vh-7rem)] lg:min-h-0"
+          data-reference-panel-state={referencePanelOpen ? "open" : "closed"}
+        >
           <ResizablePanel className="hidden min-h-0 lg:block">
             <Sidebar className="bobob-side-panel h-full min-h-0 p-4">
               <ToolNavigation activeSlug={tool.slug} query={query} onQueryChange={setQuery} locale={locale} dictionary={dictionary} favoriteSlugs={favoriteSlugs} />
@@ -967,36 +1030,15 @@ export function ToolWorkspace({
                   slot={toolResultAdSlot}
                   position="tool-result"
                   minHeight={90}
-                  className="border-b bg-background px-5 py-4"
+                  className="bobob-ad-anchor border-b bg-background px-5 py-4"
                 />
-                <div className="hidden lg:block">
-                  <ToolQuickStart tool={tool} dictionary={dictionary} />
-                </div>
-                <div className="hidden lg:block">
-                  <ToolReviewStrip tool={tool} dictionary={dictionary} />
-                </div>
+                <DesktopSupportAccordion tool={tool} locale={locale} dictionary={dictionary} />
                 <MobileReferenceAccordion tool={tool} locale={locale} dictionary={dictionary} />
-                <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />
-              </div>
-            </section>
-            <Separator />
-            <section className="grid gap-0 md:grid-cols-3">
-              <div className="border-b p-4 md:border-b-0 md:border-e">
-                <p className="text-sm font-medium">{dictionary.tool.singleDomainTitle}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{dictionary.tool.singleDomainBody}</p>
-              </div>
-              <div className="border-b p-4 md:border-b-0 md:border-e">
-                <p className="text-sm font-medium">{dictionary.tool.localFirstTitle}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{dictionary.tool.localFirstBody}</p>
-              </div>
-              <div className="p-4">
-                <p className="text-sm font-medium">{dictionary.tool.expandableRegistryTitle}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{dictionary.tool.expandableRegistryBody}</p>
               </div>
             </section>
           </ResizablePanel>
           <ResizablePanel className="hidden min-h-0 lg:block">
-            <aside className="bobob-side-panel h-full min-h-0 overflow-auto bg-background p-4">
+            <aside id="tool-reference-panel" className="bobob-side-panel h-full min-h-0 overflow-auto bg-background p-4" data-reference-panel>
               <ToolReferencePanel tool={tool} locale={locale} dictionary={dictionary} />
             </aside>
           </ResizablePanel>

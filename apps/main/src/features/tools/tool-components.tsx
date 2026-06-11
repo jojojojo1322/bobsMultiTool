@@ -63,19 +63,22 @@ function ResultBlock({
   description?: string;
 }) {
   return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
-        <div>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description ?? ui(dictionary, "copyReadyOutput", "Copy-ready output")}</CardDescription>
+    <Card className="bobob-tool-result-card overflow-hidden border-2" data-tool-output-block>
+      <CardHeader className="border-b bg-muted/35 p-4">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <Badge className="mb-2">{ui(dictionary, "output", "Output")}</Badge>
+            <CardTitle className="break-words">{title}</CardTitle>
+            <CardDescription>{description ?? ui(dictionary, "copyReadyOutput", "Copy-ready output")}</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => copyToClipboard(value)} className="shrink-0">
+            <Copy className="h-4 w-4" />
+            {dictionary.tool.copy}
+          </Button>
         </div>
-        <Button variant="outline" size="sm" onClick={() => copyToClipboard(value)}>
-          <Copy className="h-4 w-4" />
-          {dictionary.tool.copy}
-        </Button>
       </CardHeader>
-      <CardContent>
-        <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs leading-relaxed text-foreground">
+      <CardContent className="bg-background p-4">
+        <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-foreground">
           <code className="break-words">{value || dictionary.tool.noOutput}</code>
         </pre>
       </CardContent>
@@ -85,7 +88,7 @@ function ResultBlock({
 
 function ErrorAlert({ title, message }: { title: string; message: string }) {
   return (
-    <Alert className="border-destructive/40">
+    <Alert className="bobob-tool-alert border-destructive/40 bg-destructive/5">
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>{message}</AlertDescription>
     </Alert>
@@ -104,9 +107,9 @@ function clampInteger(value: number, min: number, max: number) {
 
 function ToolMetricGrid({ items }: { items: Array<{ label: string; value: string; description?: string }> }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4" data-tool-metric-grid>
       {items.map((item) => (
-        <div key={item.label} className="min-w-0 rounded-md border bg-card p-3">
+        <div key={item.label} className="bobob-diagnostic-card min-w-0 rounded-md border bg-card p-3">
           <p className="text-xs text-muted-foreground">{item.label}</p>
           <p className="mt-1 break-words text-sm font-semibold">{item.value}</p>
           {item.description ? <p className="mt-1 text-xs text-muted-foreground">{item.description}</p> : null}
@@ -118,7 +121,7 @@ function ToolMetricGrid({ items }: { items: Array<{ label: string; value: string
 
 function ToolWarningList({ title, warnings, emptyLabel }: { title: string; warnings: string[]; emptyLabel: string }) {
   return (
-    <section className="rounded-md border bg-card p-3">
+    <section className="bobob-diagnostic-list rounded-md border bg-card p-3" data-tool-warning-list>
       <h3 className="text-sm font-semibold">{title}</h3>
       <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
         {(warnings.length ? warnings : [emptyLabel]).map((warning) => (
@@ -680,6 +683,18 @@ function getBrowserTimeZone() {
   }
 }
 
+function formatCronRun(date: Date, timeZone: string) {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone,
+    }).format(date);
+  } catch {
+    return date.toLocaleString();
+  }
+}
+
 function matchesCronDay({
   day,
   dayOfWeek,
@@ -728,7 +743,7 @@ function getCronAnalysis(expression: string, dictionary: ClientDictionary, dayMa
     const cursor = new Date(now);
     cursor.setSeconds(0, 0);
     cursor.setMinutes(cursor.getMinutes() + 1);
-    const nextRuns: string[] = [];
+    const nextRuns: Date[] = [];
     for (let index = 0; index < 200000 && nextRuns.length < 5; index += 1) {
       const month = cursor.getMonth() + 1;
       const day = cursor.getDate();
@@ -743,7 +758,7 @@ function getCronAnalysis(expression: string, dictionary: ClientDictionary, dayMa
         mode: dayMatchingMode,
       });
       if (expanded[0]!.has(cursor.getMinutes()) && expanded[1]!.has(cursor.getHours()) && dayMatches && expanded[3]!.has(month)) {
-        nextRuns.push(cursor.toLocaleString());
+        nextRuns.push(new Date(cursor));
       }
       cursor.setMinutes(cursor.getMinutes() + 1);
     }
@@ -790,7 +805,9 @@ function getCronAnalysis(expression: string, dictionary: ClientDictionary, dayMa
 function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [expression, setExpression] = React.useState(cronPresets[0]!.value);
   const [dayMatchingMode, setDayMatchingMode] = React.useState<CronDayMatchingMode>("or");
+  const [previewTimezone, setPreviewTimezone] = React.useState(getBrowserTimeZone);
   const analysis = React.useMemo(() => getCronAnalysis(expression, dictionary, dayMatchingMode), [dayMatchingMode, dictionary, expression]);
+  const timezoneOptions = React.useMemo(() => Array.from(new Set([analysis.timezone, ...commonTimeZones])), [analysis.timezone]);
   const dayMatchingModeLabel =
     dayMatchingMode === "or"
       ? ui(dictionary, "cronDayMatchingOr", "OR, common crontab")
@@ -802,7 +819,7 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_240px]">
+      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px_220px]">
         <label className="block min-w-0 space-y-2">
           <span className="text-sm font-medium">{ui(dictionary, "cronExpression", "Cron expression")}</span>
           <Input value={expression} onChange={(event) => setExpression(event.target.value)} />
@@ -812,6 +829,16 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
           <Select value={dayMatchingMode} onChange={(event) => setDayMatchingMode(event.target.value as CronDayMatchingMode)}>
             <option value="or">{ui(dictionary, "cronDayMatchingOr", "OR, common crontab")}</option>
             <option value="and">{ui(dictionary, "cronDayMatchingAnd", "AND, strict match")}</option>
+          </Select>
+        </label>
+        <label className="block min-w-0 space-y-2" data-cron-timezone-select>
+          <span className="text-sm font-medium">{ui(dictionary, "cronPreviewTimezone", "Preview timezone")}</span>
+          <Select value={previewTimezone} onChange={(event) => setPreviewTimezone(event.target.value)}>
+            {timezoneOptions.map((timeZone) => (
+              <option key={timeZone} value={timeZone}>
+                {timeZone}
+              </option>
+            ))}
           </Select>
         </label>
       </div>
@@ -845,7 +872,8 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
         </div>
         <ToolMetricGrid
           items={[
-            { label: ui(dictionary, "cronTimezone", "Browser timezone"), value: analysis.timezone },
+            { label: ui(dictionary, "cronBrowserTimezone", "Browser timezone"), value: analysis.timezone },
+            { label: ui(dictionary, "cronPreviewTimezone", "Preview timezone"), value: previewTimezone },
             { label: ui(dictionary, "cronDayMatching", "Day matching"), value: dayMatchingModeLabel },
           ]}
         />
@@ -862,11 +890,17 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
           </Button>
         </div>
         <div className="mt-3 grid gap-2">
-          {(analysis.nextRuns.length ? analysis.nextRuns : [ui(dictionary, "cronNoRunsFound", "No runs found in the preview window.")]).map((run, index) => (
-            <div key={`${run}-${index}`} className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-              {run}
+          {analysis.nextRuns.length ? (
+            analysis.nextRuns.map((run, index) => (
+              <div key={`${run.toISOString()}-${index}`} className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+                {formatCronRun(run, previewTimezone)}
+              </div>
+            ))
+          ) : (
+            <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+              {ui(dictionary, "cronNoRunsFound", "No runs found in the preview window.")}
             </div>
-          ))}
+          )}
         </div>
       </section>
       <section className="rounded-md border bg-card p-3" data-cron-warnings>
@@ -884,22 +918,59 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+function getUrlHostLabel(url: URL | null, dictionary: ClientDictionary) {
+  return url?.hostname || ui(dictionary, "invalidUrl", "Invalid URL");
+}
+
+function getImageExtensionSignal(url: URL | null) {
+  if (!url) return false;
+  return /\.(png|jpe?g|webp|gif|avif)(\?.*)?$/i.test(url.pathname);
+}
+
 function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [title, setTitle] = React.useState("Bob's Multi Tool - Practical Developer Utilities");
   const [description, setDescription] = React.useState("Fast browser tools for developers, built for daily workflows.");
   const [url, setUrl] = React.useState("https://www.bobob.app/tools/meta-tag-generator");
   const [image, setImage] = React.useState("https://www.bobob.app/og-image.png");
   const [robots, setRobots] = React.useState("index,follow");
+  const titleText = title.trim();
+  const descriptionText = description.trim();
+  const canonicalUrl = parsePublicUrl(url.trim());
+  const imageUrl = parsePublicUrl(image.trim());
+  const escapedTitle = escapeXml(titleText);
+  const escapedDescription = escapeXml(descriptionText);
+  const escapedCanonical = escapeXml(canonicalUrl?.href ?? url.trim());
+  const escapedImage = escapeXml(imageUrl?.href ?? image.trim());
+  const warnings = [
+    titleText.length < 30 ? ui(dictionary, "titleTooShortWarning", "Title is short. Add the page type, primary action, or keyword intent.") : "",
+    titleText.length > 60 ? ui(dictionary, "titleTooLongWarning", "Title is long and may truncate in search results.") : "",
+    descriptionText.length < 70 ? ui(dictionary, "descriptionTooShortWarning", "Description is short. Add the main use case and trust signal.") : "",
+    descriptionText.length > 160 ? ui(dictionary, "descriptionTooLongWarning", "Description is long and may be rewritten or truncated.") : "",
+    url.trim() && !canonicalUrl ? ui(dictionary, "canonicalInvalidWarning", "Canonical URL is not a valid absolute URL.") : "",
+    canonicalUrl && canonicalUrl.protocol !== "https:" ? ui(dictionary, "canonicalNonHttpsWarning", "Use HTTPS for canonical URLs on public pages.") : "",
+    canonicalUrl && isPrivateOrLocalHostname(canonicalUrl.hostname) ? ui(dictionary, "canonicalPrivateWarning", "Canonical URL points to a local or private host.") : "",
+    url.includes("#") ? ui(dictionary, "canonicalHashWarning", "Canonical URLs should not include fragment identifiers.") : "",
+    robots.startsWith("noindex") ? ui(dictionary, "noindexWarning", "Noindex prevents the page from appearing in search results.") : "",
+    !image.trim() ? ui(dictionary, "imageMissingWarning", "Add an Open Graph image for richer social previews.") : "",
+    image.trim() && !imageUrl ? ui(dictionary, "imageInvalidWarning", "Image URL is not a valid absolute URL.") : "",
+    imageUrl && imageUrl.protocol !== "https:" ? ui(dictionary, "imageNonHttpsWarning", "Use HTTPS image URLs for social preview crawlers.") : "",
+    imageUrl && isPrivateOrLocalHostname(imageUrl.hostname) ? ui(dictionary, "imagePrivateWarning", "Image URL points to a local or private host.") : "",
+    imageUrl && !getImageExtensionSignal(imageUrl) ? ui(dictionary, "ogImageFormatWarning", "Image URL should usually end with PNG, JPG, WebP, GIF, or AVIF.") : "",
+  ].filter(Boolean);
   const output = [
-    `<title>${title}</title>`,
-    `<meta name="description" content="${description}" />`,
-    `<link rel="canonical" href="${url}" />`,
-    `<meta name="robots" content="${robots}" />`,
-    `<meta property="og:title" content="${title}" />`,
-    `<meta property="og:description" content="${description}" />`,
-    `<meta property="og:url" content="${url}" />`,
-    `<meta property="og:image" content="${image}" />`,
+    `<title>${escapedTitle}</title>`,
+    `<meta name="description" content="${escapedDescription}" />`,
+    `<link rel="canonical" href="${escapedCanonical}" />`,
+    `<meta name="robots" content="${escapeXml(robots)}" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${escapedTitle}" />`,
+    `<meta property="og:description" content="${escapedDescription}" />`,
+    `<meta property="og:url" content="${escapedCanonical}" />`,
+    `<meta property="og:image" content="${escapedImage}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${escapedTitle}" />`,
+    `<meta name="twitter:description" content="${escapedDescription}" />`,
+    `<meta name="twitter:image" content="${escapedImage}" />`,
   ].join("\n");
 
   return (
@@ -929,6 +1000,18 @@ function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
             <option value="noindex,nofollow">noindex,nofollow</option>
           </Select>
         </label>
+      </div>
+      <ToolMetricGrid
+        items={[
+          { label: ui(dictionary, "titleLength", "Title length"), value: String(titleText.length), description: "30-60" },
+          { label: ui(dictionary, "descriptionLength", "Description length"), value: String(descriptionText.length), description: "70-160" },
+          { label: ui(dictionary, "canonicalHost", "Canonical host"), value: getUrlHostLabel(canonicalUrl, dictionary) },
+          { label: ui(dictionary, "imageHost", "Image host"), value: image.trim() ? getUrlHostLabel(imageUrl, dictionary) : "-" },
+          { label: ui(dictionary, "robotsPolicy", "Robots policy"), value: robots },
+        ]}
+      />
+      <div data-meta-diagnostics>
+        <ToolWarningList title={ui(dictionary, "metaSeoReview", "Meta SEO review")} warnings={warnings} emptyLabel={ui(dictionary, "metaLooksReady", "Meta tags look ready for search and social crawlers.")} />
       </div>
       <ResultBlock title={ui(dictionary, "generatedMetaTags", "Generated meta tags")} value={output} dictionary={dictionary} />
     </div>
@@ -1029,6 +1112,11 @@ const jsonFormatterExamples = [
     value: '{"status":"ok","items":[{"id":1,"name":"Bob","roles":["admin","editor"]}],"meta":{"page":1,"total":42}}',
   },
   {
+    labelKey: "apiDebugJson",
+    fallback: "API debug",
+    value: '{"user":{"id":"user_123","sessionToken":"redacted","email":""},"items":[{"id":1},{"id":2}],"meta":{"requestId":"req_123","errors":[]}}',
+  },
+  {
     labelKey: "packageConfigJson",
     fallback: "Package config",
     value: '{"name":"bobob-tools","private":true,"scripts":{"build":"next build","lint":"next lint"},"dependencies":{"next":"15.3.3"}}',
@@ -1085,6 +1173,10 @@ function collectJsonStats(value: unknown, formatted: string) {
   };
 }
 
+function jsonPathKeySegment(key: string) {
+  return /^[A-Za-z_$][\w$]*$/.test(key) ? `.${key}` : `[${JSON.stringify(key)}]`;
+}
+
 function getJsonRootEntries(value: unknown) {
   if (Array.isArray(value)) {
     return value.slice(0, 8).map((item, index) => ({ name: `[${index}]`, type: getJsonValueType(item) }));
@@ -1104,6 +1196,111 @@ function getJsonPreviewValue(value: unknown) {
   return serialized === undefined ? String(value) : serialized;
 }
 
+function findDuplicateJsonObjectKeys(input: string) {
+  const stack: Array<{ keys: Set<string> } | null> = [];
+  const duplicateKeys = new Set<string>();
+  let index = 0;
+
+  while (index < input.length) {
+    const character = input[index];
+    if (character === "\"") {
+      let value = "";
+      index += 1;
+      while (index < input.length) {
+        const current = input[index];
+        if (current === "\\") {
+          value += current + (input[index + 1] ?? "");
+          index += 2;
+          continue;
+        }
+        if (current === "\"") break;
+        value += current;
+        index += 1;
+      }
+      const closeIndex = index;
+      let nextIndex = closeIndex + 1;
+      while (/\s/.test(input[nextIndex] ?? "")) nextIndex += 1;
+      const objectContext = stack.at(-1);
+      if (input[nextIndex] === ":" && objectContext) {
+        let decodedKey = value;
+        try {
+          decodedKey = JSON.parse(`"${value}"`) as string;
+        } catch {
+          decodedKey = value;
+        }
+        if (objectContext.keys.has(decodedKey)) duplicateKeys.add(decodedKey);
+        else objectContext.keys.add(decodedKey);
+      }
+      index = closeIndex + 1;
+      continue;
+    }
+    if (character === "{") stack.push({ keys: new Set() });
+    else if (character === "[") stack.push(null);
+    else if (character === "}" || character === "]") stack.pop();
+    index += 1;
+  }
+
+  return Array.from(duplicateKeys).slice(0, 8);
+}
+
+function collectJsonDiagnostics(value: unknown, formatted: string, input: string) {
+  const sensitivePaths: string[] = [];
+  const emptyValuePaths: string[] = [];
+  const largeArrayPaths: Array<{ path: string; size: number }> = [];
+  const duplicateKeys = findDuplicateJsonObjectKeys(input);
+  const sensitivePattern = /\b(pass(word|wd)?|token|secret|api[_-]?key|authorization|cookie|session|refresh[_-]?token|access[_-]?token|client[_-]?secret)\b/i;
+
+  const walk = (node: unknown, path: string) => {
+    if (Array.isArray(node)) {
+      if (node.length === 0) emptyValuePaths.push(path);
+      if (node.length >= 100) largeArrayPaths.push({ path, size: node.length });
+      node.slice(0, 250).forEach((item, index) => walk(item, `${path}[${index}]`));
+      return;
+    }
+    if (node && typeof node === "object") {
+      const entries = Object.entries(node as Record<string, unknown>);
+      if (entries.length === 0) emptyValuePaths.push(path);
+      entries.forEach(([key, item]) => {
+        const nextPath = `${path}${jsonPathKeySegment(key)}`;
+        if (sensitivePattern.test(key)) sensitivePaths.push(nextPath);
+        walk(item, nextPath);
+      });
+      return;
+    }
+    if (node === null || node === "") emptyValuePaths.push(path);
+  };
+
+  walk(value, "$");
+
+  return {
+    duplicateKeys,
+    sensitivePaths: sensitivePaths.slice(0, 8),
+    emptyValuePaths: emptyValuePaths.slice(0, 8),
+    largeArrayPaths: largeArrayPaths.slice(0, 6),
+    bytes: byteLength(formatted),
+  };
+}
+
+function getJsonDiagnosticWarnings(stats: ReturnType<typeof collectJsonStats>, diagnostics: ReturnType<typeof collectJsonDiagnostics>, dictionary: ClientDictionary) {
+  return [
+    diagnostics.sensitivePaths.length ? ui(dictionary, "jsonSensitiveKeyWarning", "{count} sensitive-looking keys were found. Redact tokens, secrets, cookies, and identifiers before sharing.").replace("{count}", String(diagnostics.sensitivePaths.length)) : "",
+    diagnostics.duplicateKeys.length ? ui(dictionary, "jsonDuplicateKeyWarning", "Duplicate keys can be overwritten by parsers. Review repeated keys before trusting the formatted output.") : "",
+    diagnostics.emptyValuePaths.length ? ui(dictionary, "jsonEmptyValueWarning", "{count} null, empty string, empty array, or empty object values were found. Confirm blanks are intentional.").replace("{count}", String(diagnostics.emptyValuePaths.length)) : "",
+    diagnostics.largeArrayPaths.length ? ui(dictionary, "jsonLargeArrayWarning", "{count} large arrays are present. Use JSONPath or a smaller sample before sharing or converting.").replace("{count}", String(diagnostics.largeArrayPaths.length)) : "",
+    stats.depth >= 8 ? ui(dictionary, "jsonDeepNestingWarning", "This payload is deeply nested. Confirm downstream tools can handle the shape before copying.") : "",
+    diagnostics.bytes > 100_000 ? ui(dictionary, "jsonLargePayloadWarning", "This is a large payload. Formatting is local, but sharing the full output can expose too much data.") : "",
+  ].filter(Boolean);
+}
+
+function getJsonDiagnosticRows(diagnostics: ReturnType<typeof collectJsonDiagnostics>, dictionary: ClientDictionary) {
+  return [
+    ...diagnostics.sensitivePaths.map((path) => ({ label: ui(dictionary, "sensitiveKeys", "Sensitive keys"), value: path })),
+    ...diagnostics.emptyValuePaths.map((path) => ({ label: ui(dictionary, "emptyValues", "Empty values"), value: path })),
+    ...diagnostics.largeArrayPaths.map((item) => ({ label: ui(dictionary, "largeArrays", "Large arrays"), value: `${item.path} (${item.size})` })),
+    ...diagnostics.duplicateKeys.map((key) => ({ label: ui(dictionary, "duplicateKeys", "Duplicate keys"), value: key })),
+  ].slice(0, 10);
+}
+
 function collectJsonPaths(value: unknown, limit = 12) {
   const paths: Array<{ path: string; type: string; preview: string }> = [];
   const walk = (node: unknown, path: string, depth: number) => {
@@ -1119,14 +1316,78 @@ function collectJsonPaths(value: unknown, limit = 12) {
       Object.entries(node as Record<string, unknown>)
         .slice(0, 6)
         .forEach(([key, item]) => {
-          const safeKey = /^[A-Za-z_$][\w$]*$/.test(key) ? `.${key}` : `[${JSON.stringify(key)}]`;
-          walk(item, `${path}${safeKey}`, depth + 1);
+          walk(item, `${path}${jsonPathKeySegment(key)}`, depth + 1);
         });
     }
   };
 
   walk(value, "$", 1);
   return paths;
+}
+
+function parseSimpleJsonPath(path: string) {
+  const trimmed = path.trim();
+  const normalized = !trimmed || trimmed === "$" ? "$" : trimmed.startsWith("$") ? trimmed : trimmed.startsWith(".") || trimmed.startsWith("[") ? `$${trimmed}` : `$.${trimmed}`;
+  const tokens: Array<string | number> = [];
+  let index = 1;
+
+  while (index < normalized.length) {
+    if (normalized[index] === ".") {
+      const match = normalized.slice(index + 1).match(/^[A-Za-z_$][\w$]*/);
+      if (!match?.[0]) throw new Error("Use .key, [0], or [\"key\"] path syntax.");
+      tokens.push(match[0]);
+      index += match[0].length + 1;
+      continue;
+    }
+
+    if (normalized[index] === "[") {
+      const closeIndex = normalized.indexOf("]", index);
+      if (closeIndex === -1) throw new Error("Path bracket is not closed.");
+      const content = normalized.slice(index + 1, closeIndex).trim();
+      if (/^\d+$/.test(content)) {
+        tokens.push(Number(content));
+      } else if ((content.startsWith("\"") && content.endsWith("\"")) || (content.startsWith("'") && content.endsWith("'"))) {
+        const quoted = content.startsWith("'") ? `"${content.slice(1, -1).replace(/"/g, "\\\"")}"` : content;
+        tokens.push(JSON.parse(quoted) as string);
+      } else {
+        throw new Error("Use a numeric index or quoted key inside brackets.");
+      }
+      index = closeIndex + 1;
+      continue;
+    }
+
+    throw new Error("Use .key, [0], or [\"key\"] path syntax.");
+  }
+
+  return { normalized, tokens };
+}
+
+function inspectJsonPath(value: unknown, path: string) {
+  const parsed = parseSimpleJsonPath(path);
+  let current = value;
+
+  for (const token of parsed.tokens) {
+    if (Array.isArray(current) && typeof token === "number") {
+      if (token < 0 || token >= current.length) return { ...parsed, found: false, value: undefined };
+      current = current[token];
+      continue;
+    }
+
+    if (current && typeof current === "object" && typeof token === "string" && Object.prototype.hasOwnProperty.call(current, token)) {
+      current = (current as Record<string, unknown>)[token];
+      continue;
+    }
+
+    return { ...parsed, found: false, value: undefined };
+  }
+
+  return { ...parsed, found: true, value: current };
+}
+
+function formatJsonInspectorValue(value: unknown) {
+  if (typeof value === "string") return value;
+  const serialized = JSON.stringify(value, null, 2);
+  return serialized === undefined ? String(value) : serialized;
 }
 
 function getJsonErrorLocation(message: string, input: string) {
@@ -1139,19 +1400,35 @@ function getJsonErrorLocation(message: string, input: string) {
   const before = input.slice(0, safePosition);
   const line = explicitLineColumn ? Number(explicitLineColumn[1]) : before.split("\n").length;
   const column = explicitLineColumn ? Number(explicitLineColumn[2]) : before.split("\n").at(-1)!.length + 1;
-  const lineText = input.split("\n")[Math.max(0, line - 1)] ?? input.slice(Math.max(0, safePosition - 40), safePosition + 40);
+  const lines = input.split("\n");
+  const lineText = lines[Math.max(0, line - 1)] ?? input.slice(Math.max(0, safePosition - 40), safePosition + 40);
+  const contextLines = lines.slice(Math.max(0, line - 2), Math.min(lines.length, line + 1)).map((text, index) => ({
+    lineNumber: Math.max(1, line - 1) + index,
+    text,
+    isErrorLine: Math.max(1, line - 1) + index === line,
+  }));
 
   return {
     position: safePosition,
     line,
     column,
     excerpt: lineText.trim() || input.slice(Math.max(0, safePosition - 40), safePosition + 40),
+    contextLines,
   };
+}
+
+function getJsonErrorHintKey(message: string) {
+  if (/property name|double-quoted|unexpected token '?[A-Za-z_]/i.test(message)) return "jsonErrorHintQuotesComma";
+  if (/unexpected end|unterminated|end of json input/i.test(message)) return "jsonErrorHintClosing";
+  if (/non-whitespace|after json/i.test(message)) return "jsonErrorHintTrailing";
+  if (/control character|bad character/i.test(message)) return "jsonErrorHintControl";
+  return "jsonErrorHintGeneric";
 }
 
 function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState('{"status":"ok","items":[{"id":1,"name":"Bob"}]}');
   const [space, setSpace] = React.useState("2");
+  const [pathQuery, setPathQuery] = React.useState("$.items[0].name");
   const result = React.useMemo(() => {
     try {
       const parsed = JSON.parse(input);
@@ -1161,15 +1438,25 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
         error: "",
         value,
         minified,
+        parsed,
         stats: collectJsonStats(parsed, value),
+        diagnostics: collectJsonDiagnostics(parsed, value, input),
         rootEntries: getJsonRootEntries(parsed),
         paths: collectJsonPaths(parsed),
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Invalid JSON";
-      return { error: message, value: "", minified: "", stats: null, rootEntries: [], paths: [], errorLocation: getJsonErrorLocation(message, input) };
+      return { error: message, value: "", minified: "", parsed: null, stats: null, diagnostics: null, rootEntries: [], paths: [], errorLocation: getJsonErrorLocation(message, input) };
     }
   }, [input, space]);
+  const pathInspection = React.useMemo(() => {
+    if (result.error) return null;
+    try {
+      return { error: "", ...inspectJsonPath(result.parsed, pathQuery) };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Invalid path", normalized: pathQuery, tokens: [], found: false, value: undefined };
+    }
+  }, [pathQuery, result]);
 
   return (
     <div className="space-y-4">
@@ -1211,6 +1498,23 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
               <p className="mt-2 text-xs text-muted-foreground">
                 {ui(dictionary, "errorLineColumn", "Line / column")}: {result.errorLocation.line}:{result.errorLocation.column}
               </p>
+              <div className="mt-3 rounded-md border bg-muted" data-json-error-context>
+                <div className="border-b px-3 py-2 text-xs font-medium text-muted-foreground">{ui(dictionary, "jsonErrorContext", "Error context")}</div>
+                <pre className="overflow-x-auto p-3 text-xs leading-relaxed">
+                  <code>
+                    {result.errorLocation.contextLines
+                      .map((item) => {
+                        const prefix = `${String(item.lineNumber).padStart(3, " ")} | `;
+                        const caret = item.isErrorLine ? `\n${" ".repeat(prefix.length + Math.max(0, result.errorLocation!.column - 1))}^` : "";
+                        return `${prefix}${item.text}${caret}`;
+                      })
+                      .join("\n")}
+                  </code>
+                </pre>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">{ui(dictionary, "jsonRepairHint", "Repair hint")}:</span> {ui(dictionary, getJsonErrorHintKey(result.error), "Check missing commas, quotes, brackets, or trailing text around the highlighted location.")}
+              </p>
               <pre className="mt-3 overflow-x-auto rounded-md bg-muted p-3 text-xs">
                 <code>{result.errorLocation.excerpt}</code>
               </pre>
@@ -1233,6 +1537,38 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
                 </div>
               ))}
             </div>
+          ) : null}
+          {result.stats && result.diagnostics ? (
+            <section className="space-y-3 rounded-md border bg-card p-3" data-json-diagnostics>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{ui(dictionary, "jsonDiagnostics", "JSON diagnostics")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsonDiagnosticsDescription", "Review sensitive-looking keys, empty values, duplicate keys, and large arrays before copying or sharing.")}</p>
+                </div>
+                <Badge>{ui(dictionary, "jsonLocalOnly", "Local only")}</Badge>
+              </div>
+              <ToolMetricGrid
+                items={[
+                  { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(result.diagnostics.bytes) },
+                  { label: ui(dictionary, "sensitiveKeys", "Sensitive keys"), value: String(result.diagnostics.sensitivePaths.length) },
+                  { label: ui(dictionary, "emptyValues", "Empty values"), value: String(result.diagnostics.emptyValuePaths.length) },
+                  { label: ui(dictionary, "duplicateKeys", "Duplicate keys"), value: String(result.diagnostics.duplicateKeys.length) },
+                ]}
+              />
+              <div data-json-diagnostic-paths>
+                {getJsonDiagnosticRows(result.diagnostics, dictionary).length ? (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {getJsonDiagnosticRows(result.diagnostics, dictionary).map((item) => (
+                      <div key={`${item.label}-${item.value}`} className="min-w-0 rounded-md bg-muted px-3 py-2 text-xs">
+                        <p className="font-medium">{item.label}</p>
+                        <code className="mt-1 block min-w-0 overflow-x-auto whitespace-nowrap text-muted-foreground">{item.value}</code>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <ToolWarningList title={ui(dictionary, "jsonReviewNotes", "JSON review notes")} warnings={getJsonDiagnosticWarnings(result.stats, result.diagnostics, dictionary)} emptyLabel={ui(dictionary, "jsonNoDiagnosticWarnings", "JSON structure looks ready to copy. Still redact real production identifiers before sharing.")} />
+            </section>
           ) : null}
           <section className="rounded-md border bg-card p-3" data-json-structure>
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1285,6 +1621,35 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
                 </div>
               ))}
             </div>
+          </section>
+          <section className="rounded-md border bg-card p-3" data-json-path-inspector>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{ui(dictionary, "jsonPathInspector", "Path inspector")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsonPathInspectorDescription", "Extract one value from the formatted JSON with dot or bracket paths.")}</p>
+              </div>
+              <Badge>{pathInspection?.found ? getJsonValueType(pathInspection.value) : ui(dictionary, "pathNotFound", "Not found")}</Badge>
+            </div>
+            <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+              <label className="space-y-2">
+                <span className="text-sm font-medium">{ui(dictionary, "pathToInspect", "Path to inspect")}</span>
+                <Input value={pathQuery} onChange={(event) => setPathQuery(event.target.value)} placeholder="$.items[0].name" />
+              </label>
+              <div className="flex items-end">
+                <Button variant="outline" size="sm" disabled={!pathInspection?.found} onClick={() => pathInspection?.found && copyToClipboard(formatJsonInspectorValue(pathInspection.value))}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyExtractedValue", "Copy value")}
+                </Button>
+              </div>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">{ui(dictionary, "pathSyntaxHint", "Supported: $, .key, [0], and [\"key with spaces\"].")}</p>
+            {pathInspection?.error ? (
+              <ErrorAlert title={ui(dictionary, "jsonPathInvalid", "Path error")} message={pathInspection.error} />
+            ) : (
+              <pre className="mt-3 max-h-60 overflow-auto rounded-md bg-muted p-3 text-xs">
+                <code>{pathInspection?.found ? formatJsonInspectorValue(pathInspection.value) : ui(dictionary, "pathNotFound", "Not found")}</code>
+              </pre>
+            )}
           </section>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.value)}>
@@ -1491,8 +1856,136 @@ function getJwtTimeWindow(payload: Record<string, unknown>, nowSeconds: number, 
   ];
 }
 
+function normalizeJwtExpectedList(value: string) {
+  return value
+    .split(/[,\s]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeJwtClaimList(value: unknown) {
+  if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+  if (typeof value === "string") return normalizeJwtExpectedList(value);
+  if (value === null || value === undefined) return [];
+  return [String(value)];
+}
+
+function getJwtExpectedChecks(
+  payload: Record<string, unknown>,
+  expected: { issuer: string; audience: string; scope: string },
+  dictionary: ClientDictionary,
+) {
+  const issuerExpected = expected.issuer.trim();
+  const audienceExpected = normalizeJwtExpectedList(expected.audience);
+  const scopeExpected = normalizeJwtExpectedList(expected.scope);
+  const issuerActual = getRecordValue(payload, "iss");
+  const audienceActualList = normalizeJwtClaimList(payload.aud);
+  const scopeActualList = normalizeJwtClaimList(payload.scope);
+  const checks = [
+    {
+      key: "iss",
+      label: ui(dictionary, "issuer", "Issuer"),
+      expected: issuerExpected,
+      actual: issuerActual,
+      configured: Boolean(issuerExpected),
+      matches: issuerExpected ? issuerActual === issuerExpected : false,
+    },
+    {
+      key: "aud",
+      label: ui(dictionary, "audience", "Audience"),
+      expected: audienceExpected.join(", "),
+      actual: audienceActualList.join(", ") || "—",
+      configured: audienceExpected.length > 0,
+      matches: audienceExpected.length > 0 ? audienceExpected.every((item) => audienceActualList.includes(item)) : false,
+    },
+    {
+      key: "scope",
+      label: ui(dictionary, "scope", "Scope"),
+      expected: scopeExpected.join(", "),
+      actual: scopeActualList.join(", ") || "—",
+      configured: scopeExpected.length > 0,
+      matches: scopeExpected.length > 0 ? scopeExpected.every((item) => scopeActualList.includes(item)) : false,
+    },
+  ];
+  const configuredChecks = checks.filter((check) => check.configured);
+  return {
+    checks,
+    configuredCount: configuredChecks.length,
+    matchedCount: configuredChecks.filter((check) => check.matches).length,
+  };
+}
+
+const registeredJwtClaims = new Set(["iss", "sub", "aud", "exp", "nbf", "iat", "jti"]);
+
+function getJwtClaimType(value: unknown) {
+  if (Array.isArray(value)) return "array";
+  if (value === null) return "null";
+  return typeof value;
+}
+
+function getJwtClaimCategoryKey(key: string) {
+  if (registeredJwtClaims.has(key)) return "registeredClaim";
+  if (key.includes(":") || key.includes("/") || key.includes(".")) return "publicClaim";
+  return "privateClaim";
+}
+
+function getJwtClaimInspector(payload: Record<string, unknown>) {
+  return Object.entries(payload)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => ({
+      key,
+      categoryKey: getJwtClaimCategoryKey(key),
+      type: getJwtClaimType(value),
+      preview: getRecordValue(payload, key),
+    }));
+}
+
+function getJwtSensitiveReasonKey(key: string) {
+  if (/password|secret|credential|cookie|session|refresh|access[_-]?token|id[_-]?token|api[_-]?key|private[_-]?key|authorization|auth/i.test(key)) return "jwtSensitiveSecret";
+  if (/^(email|email_verified|name|given_name|family_name|phone|phone_number|address|ip|client_ip|device_id)$/i.test(key)) return "jwtSensitiveIdentity";
+  if (/^(sub|uid|user_id|tenant|tenant_id|account|account_id|org|organization|jti)$/i.test(key)) return "jwtSensitiveIdentifier";
+  return "";
+}
+
+function redactJwtPayloadValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map((item) => redactJwtPayloadValue(item));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => {
+        const reasonKey = getJwtSensitiveReasonKey(key);
+        return [key, reasonKey ? "[redacted]" : redactJwtPayloadValue(nestedValue)];
+      }),
+    );
+  }
+  return "[redacted]";
+}
+
+function getJwtRedaction(payload: Record<string, unknown>) {
+  const sensitiveClaims = Object.entries(payload)
+    .map(([key, value]) => ({
+      key,
+      type: getJwtClaimType(value),
+      reasonKey: getJwtSensitiveReasonKey(key),
+      preview: getRecordValue(payload, key),
+    }))
+    .filter((claim) => Boolean(claim.reasonKey));
+  const redactedPayload = Object.fromEntries(
+    Object.entries(payload).map(([key, value]) => {
+      const reasonKey = getJwtSensitiveReasonKey(key);
+      return [key, reasonKey ? redactJwtPayloadValue(value) : value];
+    }),
+  );
+  return {
+    sensitiveClaims,
+    redactedPayload: JSON.stringify(redactedPayload, null, 2),
+  };
+}
+
 function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [token, setToken] = React.useState(jwtDecoderExamples[0]!.value);
+  const [expectedIssuer, setExpectedIssuer] = React.useState("https://auth.example.com");
+  const [expectedAudience, setExpectedAudience] = React.useState("bobob-api");
+  const [expectedScope, setExpectedScope] = React.useState("read:tools");
   const result = React.useMemo(() => {
     try {
       const [header, payload, signature] = token.trim().split(".");
@@ -1500,22 +1993,35 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
       const headerObject = JSON.parse(decodeBase64Url(header)) as Record<string, unknown>;
       const payloadObject = JSON.parse(decodeBase64Url(payload)) as Record<string, unknown>;
       const nowSeconds = Math.floor(Date.now() / 1000);
+      const expiresAt = getNumericClaim(payloadObject, "exp");
+      const notBefore = getNumericClaim(payloadObject, "nbf");
+      const redaction = getJwtRedaction(payloadObject);
+      const expectedChecks = getJwtExpectedChecks(payloadObject, { issuer: expectedIssuer, audience: expectedAudience, scope: expectedScope }, dictionary);
       const warningKeys = [
         "signatureNotVerified",
         !signature ? "missingSignatureWarning" : "",
         getRecordValue(headerObject, "alg").toLowerCase() === "none" ? "unsignedAlgorithmWarning" : "",
-        getNumericClaim(payloadObject, "exp") === null ? "missingExpirationWarning" : "",
+        expiresAt === null ? "missingExpirationWarning" : "",
+        expiresAt !== null && expiresAt > nowSeconds && expiresAt - nowSeconds < 300 ? "jwtExpiresSoonWarning" : "",
+        notBefore !== null && notBefore > nowSeconds ? "jwtNotBeforeFutureWarning" : "",
+        redaction.sensitiveClaims.length ? "jwtSensitiveClaimWarning" : "",
+        expectedChecks.configuredCount > expectedChecks.matchedCount ? "jwtExpectedClaimMismatchWarning" : "",
       ].filter(Boolean);
 
       return {
         error: "",
         header: JSON.stringify(headerObject, null, 2),
         payload: JSON.stringify(payloadObject, null, 2),
+        redactedPayload: redaction.redactedPayload,
+        authorizationHeader: `Authorization: Bearer ${token.trim()}`,
         summary: {
           algorithm: getRecordValue(headerObject, "alg"),
           type: getRecordValue(headerObject, "typ"),
           status: getJwtStatus(payloadObject, nowSeconds, dictionary),
-          expiresAt: formatJwtDate(getNumericClaim(payloadObject, "exp")),
+          expiresAt: formatJwtDate(expiresAt),
+          claimCount: Object.keys(payloadObject).length,
+          sensitiveClaimCount: redaction.sensitiveClaims.length,
+          expectedMatchCount: expectedChecks.configuredCount ? `${expectedChecks.matchedCount}/${expectedChecks.configuredCount}` : ui(dictionary, "jwtExpectationNotSet", "Not set"),
         },
         claims: [
           { label: ui(dictionary, "subject", "Subject"), value: getRecordValue(payloadObject, "sub") },
@@ -1527,13 +2033,16 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
           { label: ui(dictionary, "expiresAt", "Expires at"), value: formatJwtDate(getNumericClaim(payloadObject, "exp")) },
           { label: ui(dictionary, "signature", "Signature"), value: signature ? ui(dictionary, "present", "Present") : ui(dictionary, "missing", "Missing") },
         ],
+        claimInspector: getJwtClaimInspector(payloadObject),
+        sensitiveClaims: redaction.sensitiveClaims,
         timeWindow: getJwtTimeWindow(payloadObject, nowSeconds, dictionary),
+        expectedChecks,
         warningKeys,
       };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : "Invalid token", header: "", payload: "", summary: null, claims: [], timeWindow: [], warningKeys: [] };
+      return { error: error instanceof Error ? error.message : "Invalid token", header: "", payload: "", redactedPayload: "", authorizationHeader: "", summary: null, claims: [], claimInspector: [], sensitiveClaims: [], timeWindow: [], expectedChecks: { checks: [], configuredCount: 0, matchedCount: 0 }, warningKeys: [] };
     }
-  }, [dictionary, token]);
+  }, [dictionary, expectedAudience, expectedIssuer, expectedScope, token]);
 
   return (
     <div className="space-y-4">
@@ -1551,6 +2060,42 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
         <span className="text-sm font-medium">JWT</span>
         <Textarea value={token} onChange={(event) => setToken(event.target.value)} className="min-h-28" />
       </label>
+      <section className="rounded-md border bg-card p-3" data-jwt-expected-claims>
+        <p className="text-sm font-medium">{ui(dictionary, "jwtExpectedClaims", "Expected claim check")}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtExpectedClaimsDescription", "Compare issuer, audience, and scope against the values your API expects. This is a local debug check, not signature verification.")}</p>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          <label className="space-y-1">
+            <span className="text-xs font-medium text-muted-foreground">{ui(dictionary, "expectedIssuer", "Expected issuer")}</span>
+            <Input value={expectedIssuer} onChange={(event) => setExpectedIssuer(event.target.value)} placeholder="https://auth.example.com" />
+          </label>
+          <label className="space-y-1">
+            <span className="text-xs font-medium text-muted-foreground">{ui(dictionary, "expectedAudience", "Expected audience")}</span>
+            <Input value={expectedAudience} onChange={(event) => setExpectedAudience(event.target.value)} placeholder="bobob-api" />
+          </label>
+          <label className="space-y-1">
+            <span className="text-xs font-medium text-muted-foreground">{ui(dictionary, "expectedScope", "Expected scope")}</span>
+            <Input value={expectedScope} onChange={(event) => setExpectedScope(event.target.value)} placeholder="read:tools write:notes" />
+          </label>
+        </div>
+        {result.expectedChecks.checks.length ? (
+          <div className="mt-3 grid gap-2">
+            {result.expectedChecks.checks.map((check) => (
+              <div key={check.key} className="grid min-w-0 gap-2 rounded-md bg-muted px-3 py-2 text-xs md:grid-cols-[8rem_minmax(0,1fr)_minmax(0,1fr)_7rem] md:items-center">
+                <span className="font-medium">{check.label}</span>
+                <span className="min-w-0 break-words text-muted-foreground">
+                  {ui(dictionary, "expectedClaim", "Expected")}: {check.expected || "—"}
+                </span>
+                <span className="min-w-0 break-words text-muted-foreground">
+                  {ui(dictionary, "actualClaim", "Actual")}: {check.actual}
+                </span>
+                <Badge className={cn("w-fit", check.configured && !check.matches ? "border-destructive/40 bg-destructive/10 text-destructive" : "bg-background")}>
+                  {ui(dictionary, check.configured ? (check.matches ? "jwtExpectationMatch" : "jwtExpectationMismatch") : "jwtExpectationNotSet", check.configured ? (check.matches ? "Match" : "Mismatch") : "Not set")}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </section>
       {result.error ? (
         <ErrorAlert title={ui(dictionary, "decodeError", "Decode error")} message={result.error} />
       ) : (
@@ -1561,7 +2106,8 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
                 { label: ui(dictionary, "algorithm", "Algorithm"), value: result.summary.algorithm },
                 { label: ui(dictionary, "tokenType", "Token type"), value: result.summary.type },
                 { label: ui(dictionary, "tokenStatus", "Token status"), value: result.summary.status },
-                { label: ui(dictionary, "expiresAt", "Expires at"), value: result.summary.expiresAt },
+                { label: ui(dictionary, "jwtExpectedClaimsConfigured", "Expected matches"), value: result.summary.expectedMatchCount },
+                { label: ui(dictionary, "sensitiveClaimCount", "Sensitive claims"), value: `${result.summary.sensitiveClaimCount}/${result.summary.claimCount}` },
               ].map((item) => (
                 <div key={item.label} className="rounded-md border bg-card p-3">
                   <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -1570,6 +2116,32 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
               ))}
             </div>
           ) : null}
+          <section className="rounded-md border bg-card p-3" data-jwt-copy-actions>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{ui(dictionary, "jwtCopyActions", "Copy actions")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "authenticationHeader", "Copy the bearer header or decoded payload without reselecting text.")}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.authorizationHeader)}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyAuthorizationHeader", "Authorization header")}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(token.trim())}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyJwtToken", "Token")}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.payload)}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyJwtPayload", "Payload")}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.redactedPayload)}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyRedactedPayload", "Redacted payload")}
+                </Button>
+              </div>
+            </div>
+          </section>
           <section className="rounded-md border bg-card p-3" data-jwt-time-window>
             <p className="text-sm font-medium">{ui(dictionary, "jwtTimeWindow", "JWT time window")}</p>
             <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtTimeWindowDescription", "Compare iat, nbf, exp, and lifetime against the current browser time before using the token.")}</p>
@@ -1580,6 +2152,52 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
                   <p className="mt-1 break-words font-medium text-foreground">{item.value}</p>
                 </div>
               ))}
+            </div>
+          </section>
+          <section className="rounded-md border bg-card p-3" data-jwt-claim-inspector>
+            <p className="text-sm font-medium">{ui(dictionary, "jwtClaimInspector", "Claim inspector")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtClaimInspectorDescription", "Classify registered, public, and private claims before sharing the decoded payload.")}</p>
+            <div className="mt-3 grid gap-2">
+              {result.claimInspector.map((claim) => (
+                <div key={claim.key} className="grid min-w-0 gap-2 rounded-md bg-muted px-3 py-2 text-xs md:grid-cols-[10rem_8rem_6rem_minmax(0,1fr)] md:items-center">
+                  <code className="min-w-0 overflow-x-auto whitespace-nowrap rounded bg-background px-2 py-1">{claim.key}</code>
+                  <Badge className="w-fit">{ui(dictionary, claim.categoryKey, claim.categoryKey)}</Badge>
+                  <span className="text-muted-foreground">{claim.type}</span>
+                  <span className="min-w-0 truncate text-muted-foreground">{claim.preview}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="rounded-md border bg-card p-3" data-jwt-redaction>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{ui(dictionary, "jwtRedactionReview", "Redaction review")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtRedactionDescription", "Find identity and secret-like claims before sharing a decoded payload in tickets, docs, or chat.")}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.redactedPayload)}>
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copyRedactedPayload", "Redacted payload")}
+              </Button>
+            </div>
+            {result.sensitiveClaims.length ? (
+              <div className="mt-3 grid gap-2">
+                {result.sensitiveClaims.map((claim) => (
+                  <div key={claim.key} className="grid min-w-0 gap-2 rounded-md bg-muted px-3 py-2 text-xs md:grid-cols-[10rem_9rem_6rem_minmax(0,1fr)] md:items-center">
+                    <code className="min-w-0 overflow-x-auto whitespace-nowrap rounded bg-background px-2 py-1">{claim.key}</code>
+                    <Badge className="w-fit">{ui(dictionary, claim.reasonKey, claim.reasonKey)}</Badge>
+                    <span className="text-muted-foreground">{claim.type}</span>
+                    <span className="min-w-0 truncate text-muted-foreground">{claim.preview}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">{ui(dictionary, "noSensitiveClaims", "No obvious identity or secret-like claims detected.")}</p>
+            )}
+            <div className="mt-3" data-jwt-redacted-preview>
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "redactedPayloadPreview", "Redacted preview")}</p>
+              <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
+                <code>{result.redactedPayload}</code>
+              </pre>
             </div>
           </section>
           <section className="rounded-md border bg-card p-3" data-jwt-claims>
@@ -1669,6 +2287,14 @@ function getTextKind(value: string) {
     return "json";
   } catch {
     return /^[\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]*$/.test(value) ? "text" : "binary";
+  }
+}
+
+function formatJsonTextPreview(value: string) {
+  try {
+    return JSON.stringify(JSON.parse(value), null, 2);
+  } catch {
+    return "";
   }
 }
 
@@ -1778,6 +2404,7 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
             jsonKeyCount: countJsonKeys(input),
             controlCharacters: countControlCharacters(input),
           },
+          jsonPreview: formatJsonTextPreview(input),
           imagePreview: null,
         };
       }
@@ -1823,6 +2450,7 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
           jsonKeyCount: countJsonKeys(decoded),
           controlCharacters: countControlCharacters(decoded),
         },
+        jsonPreview: formatJsonTextPreview(decoded),
         imagePreview,
       };
     } catch (error) {
@@ -1833,6 +2461,7 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
         warnings: [],
         stats: null,
         diagnostics: null,
+        jsonPreview: "",
         imagePreview: null,
       };
     }
@@ -1940,6 +2569,23 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
               </div>
             </section>
           ) : null}
+          {result.jsonPreview ? (
+            <section className="rounded-md border bg-card p-3" data-base64-json-preview>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{ui(dictionary, "base64JsonPreview", "JSON preview")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "base64JsonPreviewDescription", "Detected JSON text. Copy the formatted version before moving into JSON tools.")}</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.jsonPreview)}>
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyFormattedJson", "Copy formatted JSON")}
+                </Button>
+              </div>
+              <pre className="mt-3 max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs">
+                <code>{result.jsonPreview}</code>
+              </pre>
+            </section>
+          ) : null}
           {result.imagePreview ? (
             <section className="rounded-md border bg-card p-3" data-base64-image-preview>
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1950,6 +2596,10 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
                 <div className="flex flex-wrap gap-2">
                   <Badge>{result.imagePreview.mime}</Badge>
                   <Badge>{result.imagePreview.bytes} {ui(dictionary, "bytes", "bytes")}</Badge>
+                  <Button variant="outline" size="sm" onClick={() => downloadDataUrl(result.imagePreview!.dataUrl, "bobob-base64-image.png")}>
+                    <Download className="h-4 w-4" />
+                    {ui(dictionary, "downloadImage", "Download image")}
+                  </Button>
                 </div>
               </div>
               <div className="mt-3 flex min-h-48 items-center justify-center overflow-auto rounded-md bg-muted p-3">
@@ -3588,6 +4238,8 @@ function getQrPayloadInfo(value: string, errorCorrection: "L" | "M" | "Q" | "H")
 function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("https://www.bobob.app");
   const [errorCorrection, setErrorCorrection] = React.useState<"L" | "M" | "Q" | "H">("M");
+  const [qrSize, setQrSize] = React.useState("320");
+  const [qrMargin, setQrMargin] = React.useState("2");
   const [builderMode, setBuilderMode] = React.useState<QrBuilderMode>("url");
   const [qrUrl, setQrUrl] = React.useState("https://www.bobob.app");
   const [wifiSecurity, setWifiSecurity] = React.useState("WPA");
@@ -3612,7 +4264,7 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
         mounted = false;
       };
     }
-    QRCode.toDataURL(input, { errorCorrectionLevel: errorCorrection, margin: 2, width: 320 })
+    QRCode.toDataURL(input, { errorCorrectionLevel: errorCorrection, margin: Number(qrMargin), width: Number(qrSize) })
       .then((value) => {
         if (mounted) setDataUrl(value);
       })
@@ -3622,7 +4274,7 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
     return () => {
       mounted = false;
     };
-  }, [errorCorrection, input]);
+  }, [errorCorrection, input, qrMargin, qrSize]);
 
   const trimmed = input.trim();
   const builderPayload = React.useMemo(() => {
@@ -3662,7 +4314,7 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
           ))}
         </div>
       </div>
-      <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_150px_130px_130px]">
         <label className="block space-y-2">
           <span className="text-sm font-medium">{ui(dictionary, "qrContent", "QR content")}</span>
           <Textarea value={input} onChange={(event) => setInput(event.target.value)} />
@@ -3674,6 +4326,24 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
             <option value="M">M</option>
             <option value="Q">Q</option>
             <option value="H">H</option>
+          </Select>
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "qrImageSize", "Image size")}</span>
+          <Select value={qrSize} onChange={(event) => setQrSize(event.target.value)}>
+            <option value="256">256px</option>
+            <option value="320">320px</option>
+            <option value="512">512px</option>
+            <option value="768">768px</option>
+          </Select>
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "qrQuietZone", "Quiet zone")}</span>
+          <Select value={qrMargin} onChange={(event) => setQrMargin(event.target.value)}>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
           </Select>
         </label>
       </div>
@@ -3799,6 +4469,7 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
               { label: ui(dictionary, "qrTrackingParameters", "Tracking parameters"), value: String(payloadInfo.trackingParams) },
               { label: ui(dictionary, "textLines", "Text lines"), value: String(payloadInfo.lineCount) },
               { label: ui(dictionary, "errorCorrection", "Error correction"), value: `${errorCorrection} · ${ui(dictionary, payloadInfo.errorCorrectionKey, payloadInfo.errorCorrectionKey)}` },
+              { label: ui(dictionary, "qrImageSize", "Image size"), value: `${qrSize}px / ${ui(dictionary, "qrQuietZone", "Quiet zone")} ${qrMargin}` },
             ]}
           />
         </div>
@@ -3806,9 +4477,9 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-qr-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={qrWarnings} emptyLabel={ui(dictionary, "qrNoWarnings", "QR content is ready for a local PNG preview.")} />
       </div>
-      <div className="grid gap-4 md:grid-cols-[340px_1fr]">
+      <div className="grid gap-4 md:grid-cols-[340px_1fr]" data-qr-preview>
         <div className="flex min-h-80 items-center justify-center rounded-lg border bg-white p-4">
-          {dataUrl ? <Image src={dataUrl} alt="Generated QR code" width={288} height={288} unoptimized className="h-72 w-72" /> : <span className="text-sm text-zinc-500">{dictionary.tool.noOutput}</span>}
+          {dataUrl ? <Image src={dataUrl} alt="Generated QR code" width={Number(qrSize)} height={Number(qrSize)} unoptimized className="h-auto max-h-72 w-auto max-w-full" /> : <span className="text-sm text-zinc-500">{dictionary.tool.noOutput}</span>}
         </div>
         <Card>
           <CardHeader>
@@ -4898,35 +5569,175 @@ function WordCounterTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+const urlParserExamples = [
+  "https://www.bobob.app/tools/json-formatter?q=json&utm_source=docs#top",
+  "bobob.app/tools/regex-tester?sample=email",
+  "https://api.example.com/v1/users?page=2&sort=created_at",
+];
+
+const trackingParameterPattern = /^(utm_|fbclid$|gclid$|msclkid$|mc_cid$|mc_eid$)/i;
+
+function parseUrlInput(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) throw new Error("Empty URL");
+  return new URL(trimmed.includes("://") ? trimmed : `https://${trimmed}`);
+}
+
+function urlPathSegments(url: URL) {
+  return url.pathname.split("/").filter(Boolean);
+}
+
+function urlQueryRows(url: URL) {
+  return Array.from(url.searchParams.entries()).map(([key, value]) => ({
+    key,
+    value,
+    tracking: trackingParameterPattern.test(key),
+  }));
+}
+
+function cleanUrlCandidate(url: URL) {
+  const clean = new URL(url.toString());
+  clean.hash = "";
+  for (const key of Array.from(clean.searchParams.keys())) {
+    if (trackingParameterPattern.test(key)) clean.searchParams.delete(key);
+  }
+  return clean.toString();
+}
+
+function urlParserWarnings(rawValue: string, url: URL, rows: ReturnType<typeof urlQueryRows>, dictionary: ClientDictionary) {
+  const rawTrimmed = rawValue.trim();
+  return [
+    !rawTrimmed.includes("://") ? ui(dictionary, "urlAssumedHttpsWarning", "No protocol was provided, so HTTPS was assumed for parsing.") : "",
+    url.protocol !== "https:" ? ui(dictionary, "urlNonHttpsWarning", "Public canonical URLs should usually use HTTPS.") : "",
+    url.username || url.password ? ui(dictionary, "urlCredentialsWarning", "Credentials are present in the URL. Remove them before sharing.") : "",
+    isPrivateOrLocalHostname(url.hostname) ? ui(dictionary, "urlPrivateHostWarning", "Host looks local or private. Do not use it for public canonical links.") : "",
+    url.hash ? ui(dictionary, "urlHashWarning", "Fragment identifiers are not sent to servers and should usually stay out of canonical URLs.") : "",
+    rows.some((row) => row.tracking) ? ui(dictionary, "urlTrackingWarning", "Tracking parameters are present. Confirm they are intentional before copying.") : "",
+    rows.length > 10 ? ui(dictionary, "urlManyQueryParamsWarning", "This URL has many query parameters. Check whether the canonical URL should be cleaner.") : "",
+    /\/{2,}/.test(url.pathname) ? ui(dictionary, "urlDoubleSlashPathWarning", "Path contains repeated slashes. Confirm this is intentional.") : "",
+  ].filter(Boolean);
+}
+
 function UrlParserTool({ dictionary }: { dictionary: ClientDictionary }) {
-  return (
-    <TextTransformTool
-      dictionary={dictionary}
-      inputLabel="URL"
-      defaultInput="https://www.bobob.app/tools/json-formatter?q=json#top"
-      modes={[
-        {
-          value: "parse",
-          label: "Parse URL",
-          transform: (value) => {
-            const url = new URL(value.includes("://") ? value : `https://${value}`);
-            return JSON.stringify(
-              {
-                protocol: url.protocol,
-                origin: url.origin,
-                hostname: url.hostname,
-                port: url.port,
-                pathname: url.pathname,
-                search: Object.fromEntries(url.searchParams.entries()),
-                hash: url.hash,
-              },
-              null,
-              2,
-            );
+  const [input, setInput] = React.useState(urlParserExamples[0]!);
+  const result = React.useMemo(() => {
+    try {
+      const url = parseUrlInput(input);
+      const rows = urlQueryRows(url);
+      const pathSegments = urlPathSegments(url);
+      const cleanUrl = cleanUrlCandidate(url);
+      return {
+        error: "",
+        url,
+        rows,
+        pathSegments,
+        cleanUrl,
+        warnings: urlParserWarnings(input, url, rows, dictionary),
+        output: JSON.stringify(
+          {
+            href: url.href,
+            protocol: url.protocol,
+            origin: url.origin,
+            hostname: url.hostname,
+            port: url.port || null,
+            pathname: url.pathname,
+            pathSegments,
+            search: url.search,
+            queryParameters: rows,
+            hash: url.hash,
+            cleanUrl,
           },
-        },
-      ]}
-    />
+          null,
+          2,
+        ),
+      };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : ui(dictionary, "enterValidUrl", "Enter a valid URL."),
+        url: null,
+        rows: [],
+        pathSegments: [],
+        cleanUrl: "",
+        warnings: [],
+        output: "",
+      };
+    }
+  }, [dictionary, input]);
+
+  return (
+    <div className="space-y-4">
+      <section className="space-y-3 rounded-md border bg-card p-3" data-url-parser-examples>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "urlParserExamples", "URL examples")}</p>
+        <div className="flex flex-wrap gap-2">
+          {urlParserExamples.map((example) => (
+            <Button key={example} variant="outline" size="sm" onClick={() => setInput(example)} className="max-w-full justify-start">
+              <span className="truncate">{example}</span>
+            </Button>
+          ))}
+        </div>
+      </section>
+      <label className="space-y-2">
+        <span className="text-sm font-medium">{ui(dictionary, "url", "URL")}</span>
+        <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-28" aria-label={ui(dictionary, "url", "URL")} />
+      </label>
+      {result.error ? (
+        <ErrorAlert title={ui(dictionary, "enterValidUrl", "Enter a valid URL.")} message={result.error} />
+      ) : (
+        <>
+          <section className="space-y-3 rounded-md border bg-card p-3" data-url-parser-diagnostics>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold">{ui(dictionary, "urlStructure", "URL structure")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "urlStructureDescription", "Review host, path, query, tracking, and canonical copy signals before sharing.")}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.cleanUrl)}>
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copyCleanUrl", "Copy clean URL")}
+              </Button>
+            </div>
+            <ToolMetricGrid
+              items={[
+                { label: ui(dictionary, "protocol", "Protocol"), value: result.url?.protocol ?? "—" },
+                { label: ui(dictionary, "host", "Host"), value: result.url?.host ?? "—" },
+                { label: ui(dictionary, "pathSegments", "Path segments"), value: String(result.pathSegments.length), description: result.pathSegments.join(" / ") || "/" },
+                { label: ui(dictionary, "queryParameters", "Query parameters"), value: String(result.rows.length) },
+                { label: ui(dictionary, "trackingParameters", "Tracking parameters"), value: String(result.rows.filter((row) => row.tracking).length) },
+                { label: ui(dictionary, "fragment", "Fragment"), value: result.url?.hash || ui(dictionary, "notApplicable", "Not applicable") },
+              ]}
+            />
+          </section>
+          <section className="rounded-md border bg-card" data-url-query-params>
+            <div className="border-b p-3">
+              <h3 className="text-sm font-semibold">{ui(dictionary, "queryParameters", "Query parameters")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "queryParameterDescription", "Inspect duplicate, empty, and tracking values before copying a URL into docs or metadata.")}</p>
+            </div>
+            {result.rows.length ? (
+              <div className="divide-y">
+                {result.rows.map((row, index) => (
+                  <div key={`${row.key}-${index}`} className="grid gap-2 p-3 text-sm md:grid-cols-[minmax(0,180px)_1fr_auto]">
+                    <code className="min-w-0 break-all font-medium">{row.key}</code>
+                    <code className="min-w-0 break-all text-muted-foreground">{row.value || "—"}</code>
+                    {row.tracking ? <Badge>{ui(dictionary, "trackingParameter", "Tracking")}</Badge> : null}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="p-3 text-sm text-muted-foreground">{ui(dictionary, "noQueryParameters", "No query parameters found.")}</p>
+            )}
+          </section>
+          <section className="space-y-3 rounded-md border bg-card p-3" data-url-canonical-review>
+            <ToolMetricGrid
+              items={[
+                { label: ui(dictionary, "canonicalCandidate", "Canonical candidate"), value: result.url?.origin ? `${result.url.origin}${result.url.pathname}` : "—" },
+                { label: ui(dictionary, "cleanUrl", "Clean URL"), value: result.cleanUrl },
+              ]}
+            />
+            <ToolWarningList title={ui(dictionary, "urlReviewNotes", "URL review notes")} warnings={result.warnings} emptyLabel={ui(dictionary, "urlNoWarnings", "URL structure looks ready for copy or metadata review.")} />
+          </section>
+          <ResultBlock title={ui(dictionary, "parsedUrlDetails", "Parsed URL details")} value={result.output} dictionary={dictionary} />
+        </>
+      )}
+    </div>
   );
 }
 
@@ -5000,18 +5811,81 @@ function UlidTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function isPrivateOrLocalHostname(hostname: string) {
+  const lowerHostname = hostname.toLowerCase();
+  if (["localhost", "127.0.0.1", "0.0.0.0", "::1"].includes(lowerHostname)) return true;
+  if (lowerHostname.endsWith(".local") || lowerHostname.endsWith(".internal") || lowerHostname.endsWith(".test")) return true;
+  const ipv4Parts = lowerHostname.split(".").map((part) => Number(part));
+  if (ipv4Parts.length === 4 && ipv4Parts.every((part) => Number.isInteger(part) && part >= 0 && part <= 255)) {
+    const [first, second] = ipv4Parts;
+    return first === 10 || first === 127 || (first === 172 && second >= 16 && second <= 31) || (first === 192 && second === 168) || (first === 169 && second === 254);
+  }
+  return false;
+}
+
+function parsePublicUrl(value: string) {
+  try {
+    const parsed = new URL(value);
+    parsed.hash = "";
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [sitemap, setSitemap] = React.useState("https://www.bobob.app/sitemap.xml");
   const [mode, setMode] = React.useState("allow");
-  const output = [`User-agent: *`, mode === "allow" ? "Allow: /" : "Disallow: /", "", `Sitemap: ${sitemap}`].join("\n");
+  const [customRules, setCustomRules] = React.useState("Disallow: /api/\nDisallow: /admin/");
+  const sitemapUrl = parsePublicUrl(sitemap.trim());
+  const customRuleLines = customRules
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const output = [
+    "User-agent: *",
+    mode === "allow" ? "Allow: /" : "Disallow: /",
+    ...customRuleLines,
+    "",
+    sitemap.trim() ? `Sitemap: ${sitemap.trim()}` : "",
+  ].filter((line, index, lines) => line || (lines[index - 1] && lines[index + 1])).join("\n");
+  const warnings = [
+    !sitemap.trim() ? ui(dictionary, "robotsMissingSitemapWarning", "Add a sitemap URL so crawlers can discover canonical pages.") : "",
+    sitemap.trim() && !sitemapUrl ? ui(dictionary, "robotsInvalidSitemapWarning", "Sitemap URL is not a valid absolute URL.") : "",
+    sitemapUrl && sitemapUrl.protocol !== "https:" ? ui(dictionary, "robotsNonHttpsSitemapWarning", "Use an HTTPS sitemap URL for the production host.") : "",
+    sitemapUrl && isPrivateOrLocalHostname(sitemapUrl.hostname) ? ui(dictionary, "robotsPrivateSitemapWarning", "Sitemap points to a local or private host. Use the public canonical domain.") : "",
+    mode === "block" ? ui(dictionary, "robotsBlockAllWarning", "Block all prevents normal crawling. Use it only for private or temporary environments.") : "",
+    customRuleLines.some((line) => !/^(allow|disallow|crawl-delay|user-agent):/i.test(line)) ? ui(dictionary, "robotsUnknownDirectiveWarning", "One or more custom lines are not common robots.txt directives.") : "",
+  ].filter(Boolean);
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-[1fr_180px]">
-        <Input value={sitemap} onChange={(event) => setSitemap(event.target.value)} aria-label="Sitemap URL" />
+        <Input value={sitemap} onChange={(event) => setSitemap(event.target.value)} aria-label={ui(dictionary, "robotsSitemapUrl", "Sitemap URL")} />
         <Select value={mode} onChange={(event) => setMode(event.target.value)}>
-          <option value="allow">Allow all</option>
-          <option value="block">Block all</option>
+          <option value="allow">{ui(dictionary, "robotsAllowAll", "Allow all")}</option>
+          <option value="block">{ui(dictionary, "robotsBlockAll", "Block all")}</option>
         </Select>
+      </div>
+      <Textarea value={customRules} onChange={(event) => setCustomRules(event.target.value)} className="min-h-28" aria-label={ui(dictionary, "robotsCustomRules", "Custom crawl directives")} />
+      <ToolMetricGrid
+        items={[
+          { label: ui(dictionary, "crawlPolicy", "Crawl policy"), value: mode === "allow" ? ui(dictionary, "robotsAllowAll", "Allow all") : ui(dictionary, "robotsBlockAll", "Block all") },
+          { label: ui(dictionary, "sitemapUrl", "Sitemap URL"), value: sitemapUrl ? sitemapUrl.hostname : ui(dictionary, "invalidUrl", "Invalid URL") },
+          { label: ui(dictionary, "directiveCount", "Directive count"), value: String(output.split(/\r?\n/).filter((line) => line.trim() && !line.startsWith("#")).length) },
+          { label: ui(dictionary, "userAgentDirective", "User-agent"), value: "*" },
+        ]}
+      />
+      <div data-robots-diagnostics>
+        <ToolWarningList title={ui(dictionary, "robotsWarnings", "robots.txt review")} warnings={warnings} emptyLabel={ui(dictionary, "robotsLooksReady", "robots.txt is ready for a public crawl review.")} />
       </div>
       <ResultBlock title="robots.txt" value={output} dictionary={dictionary} />
     </div>
@@ -5020,15 +5894,39 @@ function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
 
 function SitemapGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [urls, setUrls] = React.useState("https://www.bobob.app/\nhttps://www.bobob.app/tools/json-formatter");
-  const output = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-    .split(/\r?\n/)
-    .map((url) => url.trim())
-    .filter(Boolean)
-    .map((url) => `  <url><loc>${url}</loc></url>`)
+  const rawUrls = urls.split(/\r?\n/).map((url) => url.trim()).filter(Boolean);
+  const parsedUrls = rawUrls.map((value) => ({ value, parsed: parsePublicUrl(value) }));
+  const validUrls = parsedUrls.filter((entry): entry is { value: string; parsed: URL } => Boolean(entry.parsed));
+  const uniqueUrls = Array.from(new Map(validUrls.map((entry) => [entry.parsed.href, entry.parsed])).values());
+  const hostnames = new Set(uniqueUrls.map((url) => url.hostname));
+  const privateUrls = uniqueUrls.filter((url) => isPrivateOrLocalHostname(url.hostname));
+  const nonHttpsUrls = uniqueUrls.filter((url) => url.protocol !== "https:");
+  const duplicateCount = Math.max(0, validUrls.length - uniqueUrls.length);
+  const warnings = [
+    parsedUrls.some((entry) => !entry.parsed) ? ui(dictionary, "sitemapInvalidUrlWarning", "One or more lines are not valid absolute URLs and were omitted.") : "",
+    duplicateCount > 0 ? ui(dictionary, "sitemapDuplicateUrlWarning", "Duplicate URLs were removed from the generated sitemap.") : "",
+    nonHttpsUrls.length > 0 ? ui(dictionary, "sitemapNonHttpsUrlWarning", "Use HTTPS URLs for production sitemap entries.") : "",
+    privateUrls.length > 0 ? ui(dictionary, "sitemapPrivateUrlWarning", "Local or private hosts should not be included in a public sitemap.") : "",
+    hostnames.size > 1 ? ui(dictionary, "sitemapMixedHostWarning", "Multiple hosts are present. Confirm canonical host strategy before submitting.") : "",
+    uniqueUrls.length > 50000 ? ui(dictionary, "sitemapTooManyUrlsWarning", "A sitemap file should stay at or below 50,000 URLs.") : "",
+  ].filter(Boolean);
+  const output = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${uniqueUrls
+    .map((url) => `  <url><loc>${escapeXml(url.href)}</loc></url>`)
     .join("\n")}\n</urlset>`;
   return (
     <div className="space-y-4">
-      <Textarea value={urls} onChange={(event) => setUrls(event.target.value)} className="min-h-44" />
+      <Textarea value={urls} onChange={(event) => setUrls(event.target.value)} className="min-h-44" aria-label={ui(dictionary, "sitemapUrlList", "Sitemap URL list")} />
+      <ToolMetricGrid
+        items={[
+          { label: ui(dictionary, "urlCount", "URL count"), value: String(rawUrls.length) },
+          { label: ui(dictionary, "validUrls", "Valid URLs"), value: String(uniqueUrls.length), description: ui(dictionary, "generatedEntries", "Generated sitemap entries") },
+          { label: ui(dictionary, "duplicateUrls", "Duplicate URLs"), value: String(duplicateCount) },
+          { label: ui(dictionary, "hostCount", "Host count"), value: String(hostnames.size) },
+        ]}
+      />
+      <div data-sitemap-diagnostics>
+        <ToolWarningList title={ui(dictionary, "sitemapWarnings", "Sitemap review")} warnings={warnings} emptyLabel={ui(dictionary, "sitemapLooksReady", "Sitemap entries are ready for a public crawl review.")} />
+      </div>
       <ResultBlock title={ui(dictionary, "xmlSitemap", "XML sitemap")} value={output} dictionary={dictionary} />
     </div>
   );
@@ -5039,7 +5937,35 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
   const [description, setDescription] = React.useState("Practical developer utilities for daily workflows.");
   const [url, setUrl] = React.useState("https://www.bobob.app");
   const [image, setImage] = React.useState("https://www.bobob.app/og-image.png");
-  const tags = [`<meta property="og:title" content="${title}" />`, `<meta property="og:description" content="${description}" />`, `<meta property="og:url" content="${url}" />`, `<meta property="og:image" content="${image}" />`].join("\n");
+  const titleText = title.trim();
+  const descriptionText = description.trim();
+  const pageUrl = parsePublicUrl(url.trim());
+  const imageUrl = parsePublicUrl(image.trim());
+  const warnings = [
+    !titleText ? ui(dictionary, "ogTitleMissingWarning", "Open Graph title is missing.") : "",
+    titleText.length > 70 ? ui(dictionary, "ogTitleTooLongWarning", "Open Graph title is long and may truncate in link previews.") : "",
+    !descriptionText ? ui(dictionary, "ogDescriptionMissingWarning", "Open Graph description is missing.") : "",
+    descriptionText.length > 200 ? ui(dictionary, "ogDescriptionTooLongWarning", "Open Graph description is long and may be clipped.") : "",
+    url.trim() && !pageUrl ? ui(dictionary, "canonicalInvalidWarning", "Canonical URL is not a valid absolute URL.") : "",
+    pageUrl && pageUrl.protocol !== "https:" ? ui(dictionary, "canonicalNonHttpsWarning", "Use HTTPS for canonical URLs on public pages.") : "",
+    pageUrl && isPrivateOrLocalHostname(pageUrl.hostname) ? ui(dictionary, "canonicalPrivateWarning", "Canonical URL points to a local or private host.") : "",
+    !image.trim() ? ui(dictionary, "imageMissingWarning", "Add an Open Graph image for richer social previews.") : "",
+    image.trim() && !imageUrl ? ui(dictionary, "imageInvalidWarning", "Image URL is not a valid absolute URL.") : "",
+    imageUrl && imageUrl.protocol !== "https:" ? ui(dictionary, "imageNonHttpsWarning", "Use HTTPS image URLs for social preview crawlers.") : "",
+    imageUrl && isPrivateOrLocalHostname(imageUrl.hostname) ? ui(dictionary, "imagePrivateWarning", "Image URL points to a local or private host.") : "",
+    imageUrl && !getImageExtensionSignal(imageUrl) ? ui(dictionary, "ogImageFormatWarning", "Image URL should usually end with PNG, JPG, WebP, GIF, or AVIF.") : "",
+  ].filter(Boolean);
+  const tags = [
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${escapeXml(titleText)}" />`,
+    `<meta property="og:description" content="${escapeXml(descriptionText)}" />`,
+    `<meta property="og:url" content="${escapeXml(pageUrl?.href ?? url.trim())}" />`,
+    `<meta property="og:image" content="${escapeXml(imageUrl?.href ?? image.trim())}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${escapeXml(titleText)}" />`,
+    `<meta name="twitter:description" content="${escapeXml(descriptionText)}" />`,
+    `<meta name="twitter:image" content="${escapeXml(imageUrl?.href ?? image.trim())}" />`,
+  ].join("\n");
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
@@ -5055,6 +5981,17 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
           <p className="font-medium">{title}</p>
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
+      </div>
+      <ToolMetricGrid
+        items={[
+          { label: ui(dictionary, "titleLength", "Title length"), value: String(titleText.length), description: "1-70" },
+          { label: ui(dictionary, "descriptionLength", "Description length"), value: String(descriptionText.length), description: "1-200" },
+          { label: ui(dictionary, "pageHost", "Page host"), value: getUrlHostLabel(pageUrl, dictionary) },
+          { label: ui(dictionary, "imageHost", "Image host"), value: image.trim() ? getUrlHostLabel(imageUrl, dictionary) : "-" },
+        ]}
+      />
+      <div data-og-diagnostics>
+        <ToolWarningList title={ui(dictionary, "openGraphReview", "Open Graph review")} warnings={warnings} emptyLabel={ui(dictionary, "openGraphLooksReady", "Open Graph tags look ready for link previews.")} />
       </div>
       <ResultBlock title={ui(dictionary, "openGraphTags", "Open Graph tags")} value={tags} dictionary={dictionary} />
     </div>
@@ -5112,6 +6049,14 @@ type ParsedHttpHeader = {
   value: string;
   categoryKey: string;
   categoryFallback: string;
+};
+
+type SecurityHeaderCheck = {
+  key: string;
+  label: string;
+  present: boolean;
+  required: boolean;
+  detail: string;
 };
 
 type CspDirectiveKey = "defaultSrc" | "scriptSrc" | "styleSrc" | "imgSrc" | "connectSrc" | "fontSrc" | "frameAncestors";
@@ -5231,6 +6176,58 @@ function classifyHttpHeader(name: string) {
   return { categoryKey: "generalHeaderCategory", categoryFallback: "General" };
 }
 
+function getSecurityHeaderChecks(valuesByName: Map<string, string[]>, dictionary: ClientDictionary): SecurityHeaderCheck[] {
+  const valueOf = (name: string) => (valuesByName.get(name) ?? []).join(", ").toLowerCase();
+  const hasHeader = (name: string) => valuesByName.has(name);
+  const cspValue = `${valueOf("content-security-policy")} ${valueOf("content-security-policy-report-only")}`;
+  const xContentTypeOptions = valueOf("x-content-type-options");
+
+  return [
+    {
+      key: "hsts",
+      label: "Strict-Transport-Security",
+      present: hasHeader("strict-transport-security"),
+      required: true,
+      detail: ui(dictionary, "hstsHeaderDetail", "Protects HTTPS users from protocol downgrade after the first visit."),
+    },
+    {
+      key: "csp",
+      label: "Content-Security-Policy",
+      present: hasHeader("content-security-policy") || hasHeader("content-security-policy-report-only"),
+      required: true,
+      detail: ui(dictionary, "cspHeaderDetail", "Restricts script, style, image, connection, and frame sources."),
+    },
+    {
+      key: "x-content-type-options",
+      label: "X-Content-Type-Options",
+      present: xContentTypeOptions.includes("nosniff"),
+      required: true,
+      detail: ui(dictionary, "xContentTypeHeaderDetail", "nosniff helps browsers avoid MIME type confusion."),
+    },
+    {
+      key: "frame-protection",
+      label: "X-Frame-Options / frame-ancestors",
+      present: hasHeader("x-frame-options") || cspValue.includes("frame-ancestors"),
+      required: false,
+      detail: ui(dictionary, "frameProtectionHeaderDetail", "Controls whether other sites can embed the page in a frame."),
+    },
+    {
+      key: "referrer-policy",
+      label: "Referrer-Policy",
+      present: hasHeader("referrer-policy"),
+      required: false,
+      detail: ui(dictionary, "referrerPolicyHeaderDetail", "Limits how much URL information is sent to other origins."),
+    },
+    {
+      key: "permissions-policy",
+      label: "Permissions-Policy",
+      present: hasHeader("permissions-policy"),
+      required: false,
+      detail: ui(dictionary, "permissionsPolicyHeaderDetail", "Restricts access to browser capabilities such as camera, geolocation, and fullscreen."),
+    },
+  ];
+}
+
 function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
   const entries: ParsedHttpHeader[] = [];
   let malformedLines = 0;
@@ -5273,6 +6270,9 @@ function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
   const securityHeaders = entries.filter((entry) => entry.categoryKey === "securityHeaderCategory").length;
   const corsHeaders = entries.filter((entry) => entry.categoryKey === "corsHeaderCategory").length;
   const duplicateHeaderNames = Array.from(valuesByName.values()).filter((values) => values.length > 1).length;
+  const securityChecks = getSecurityHeaderChecks(valuesByName, dictionary);
+  const presentSecurityHeaders = securityChecks.filter((check) => check.present).length;
+  const missingRequiredSecurityHeaders = securityChecks.filter((check) => check.required && !check.present).length;
   const warnings = [
     !entries.length ? ui(dictionary, "httpHeadersEmptyWarning", "Paste response headers before reviewing.") : "",
     malformedLines ? ui(dictionary, "httpHeadersMalformedWarning", "{count} header lines could not be parsed.").replace("{count}", String(malformedLines)) : "",
@@ -5298,7 +6298,11 @@ function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
       securityHeaders,
       corsHeaders,
       cookieHeaders: cookies.length,
+      presentSecurityHeaders,
+      securityCheckCount: securityChecks.length,
+      missingRequiredSecurityHeaders,
     },
+    securityChecks,
     warnings,
   };
 }
@@ -5389,8 +6393,24 @@ function getRedirectDiagnostics(result: HttpStatusResult, dictionary: ClientDict
   };
 }
 
+function formatHttpStatusError(message: string, dictionary: ClientDictionary) {
+  if (/fetch failed/i.test(message)) {
+    return ui(dictionary, "httpRequestFailedPublic", "The request failed before a response was received. The host may block server-side checks; try another public URL.");
+  }
+  if (/too many redirects/i.test(message)) {
+    return ui(dictionary, "httpTooManyRedirects", "Too many redirects were followed. Check the canonical redirect rules for this URL.");
+  }
+  if (/too many requests/i.test(message)) {
+    return ui(dictionary, "httpRateLimited", "Too many checks were made. Wait briefly, then try again.");
+  }
+  if (/public http|public hostname|private|reserved|localhost/i.test(message)) {
+    return ui(dictionary, "httpPublicUrlRequired", "Use a public http or https URL. Local, private, and reserved hosts are blocked.");
+  }
+  return message;
+}
+
 function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
-  const [url, setUrl] = React.useState("https://www.bobob.app");
+  const [url, setUrl] = React.useState("https://www.google.com");
   const [result, setResult] = React.useState<HttpStatusResult | null>(null);
   const [rawResult, setRawResult] = React.useState("");
   const [rawHeaders, setRawHeaders] = React.useState(httpHeaderExamples[0]?.value ?? "");
@@ -5446,7 +6466,7 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
         <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" />
         <Button onClick={check} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
       </div>
-      {result?.error ? <ErrorAlert title={ui(dictionary, "httpCheckFailed", "HTTP check failed")} message={result.error} /> : null}
+      {result?.error ? <ErrorAlert title={ui(dictionary, "httpCheckFailed", "HTTP check failed")} message={formatHttpStatusError(result.error, dictionary)} /> : null}
       {result && !result.error ? (
         <div className="space-y-4" data-http-status-details>
           <div className="grid gap-3 md:grid-cols-4">
@@ -5558,6 +6578,34 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
               ]}
             />
           </div>
+          <section className="rounded-md border bg-background" data-http-security-readiness>
+            <div className="border-b p-3">
+              <h4 className="text-sm font-semibold">{ui(dictionary, "securityHeaderReadiness", "Security header readiness")}</h4>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "securityHeaderReadinessDescription", "Scan the response for the security headers developers usually check before publishing or debugging a public page.")}</p>
+            </div>
+            <div className="space-y-3 p-3">
+              <ToolMetricGrid
+                items={[
+                  { label: ui(dictionary, "securityHeaderScore", "Security header score"), value: `${parsedHeaders.metrics.presentSecurityHeaders}/${parsedHeaders.metrics.securityCheckCount}` },
+                  { label: ui(dictionary, "missingRequiredHeaders", "Missing required"), value: String(parsedHeaders.metrics.missingRequiredSecurityHeaders) },
+                ]}
+              />
+              <div className="divide-y rounded-md border" data-http-security-checklist>
+                {parsedHeaders.securityChecks.map((check) => (
+                  <div key={check.key} className="grid gap-2 p-3 text-sm md:grid-cols-[220px_1fr_auto]">
+                    <div className="min-w-0">
+                      <p className="break-all font-medium">{check.label}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{check.required ? ui(dictionary, "requiredHeader", "Required") : ui(dictionary, "recommendedHeader", "Recommended")}</p>
+                    </div>
+                    <p className="min-w-0 text-xs text-muted-foreground">{check.detail}</p>
+                    <Badge className={check.present ? "border-emerald-500/40 text-emerald-700 dark:text-emerald-300" : "border-amber-500/40 text-amber-700 dark:text-amber-300"}>
+                      {check.present ? ui(dictionary, "headerPresent", "Present") : ui(dictionary, "headerMissing", "Missing")}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
           <section className="rounded-md border bg-background" data-http-header-list>
             <div className="border-b p-3">
               <h4 className="text-sm font-semibold">{ui(dictionary, "parsedHeaders", "Parsed headers")}</h4>
@@ -5658,12 +6706,88 @@ type DnsLookupResponse = {
   error?: string;
 };
 
+type DnsDeploymentCheck = {
+  key: string;
+  labelKey: string;
+  fallbackLabel: string;
+  detailKey: string;
+  fallbackDetail: string;
+  hostname: string;
+  record: string;
+  required: boolean;
+  records: unknown[];
+  error?: string;
+};
+
 const dnsExamples = [
   { labelKey: "dnsAExample", fallbackLabel: "A record", hostname: "bobob.app", record: "A" },
   { labelKey: "dnsMxExample", fallbackLabel: "MX record", hostname: "google.com", record: "MX" },
   { labelKey: "dnsTxtExample", fallbackLabel: "TXT record", hostname: "vercel.com", record: "TXT" },
   { labelKey: "dnsNsExample", fallbackLabel: "NS record", hostname: "example.com", record: "NS" },
 ];
+
+const dnsDeploymentCheckConfigs = [
+  {
+    key: "web-address",
+    labelKey: "dnsCheckWebAddress",
+    fallbackLabel: "Web address",
+    detailKey: "dnsCheckWebAddressDetail",
+    fallbackDetail: "A records show whether the hostname has public IPv4 routing.",
+    record: "A",
+    required: true,
+    host: "input",
+  },
+  {
+    key: "ipv6",
+    labelKey: "dnsCheckIpv6",
+    fallbackLabel: "IPv6",
+    detailKey: "dnsCheckIpv6Detail",
+    fallbackDetail: "AAAA records show whether the hostname is reachable over IPv6.",
+    record: "AAAA",
+    required: false,
+    host: "input",
+  },
+  {
+    key: "canonical",
+    labelKey: "dnsCheckCanonical",
+    fallbackLabel: "Canonical target",
+    detailKey: "dnsCheckCanonicalDetail",
+    fallbackDetail: "CNAME records reveal whether a subdomain points to another canonical host.",
+    record: "CNAME",
+    required: false,
+    host: "input",
+  },
+  {
+    key: "name-servers",
+    labelKey: "dnsCheckNameServers",
+    fallbackLabel: "Name servers",
+    detailKey: "dnsCheckNameServersDetail",
+    fallbackDetail: "NS records help confirm the authoritative DNS provider for the domain.",
+    record: "NS",
+    required: true,
+    host: "apex",
+  },
+  {
+    key: "txt-policy",
+    labelKey: "dnsCheckTxtPolicy",
+    fallbackLabel: "TXT policy",
+    detailKey: "dnsCheckTxtPolicyDetail",
+    fallbackDetail: "TXT records often contain SPF, verification, and provider ownership signals.",
+    record: "TXT",
+    required: false,
+    host: "apex",
+  },
+  {
+    key: "dmarc",
+    labelKey: "dnsCheckDmarc",
+    fallbackLabel: "DMARC",
+    detailKey: "dnsCheckDmarcDetail",
+    fallbackDetail: "DMARC lives under _dmarc and helps protect mail sent from the domain.",
+    record: "TXT",
+    required: false,
+    host: "dmarc",
+  },
+] as const;
 
 function formatDnsRecordValue(record: unknown) {
   if (Array.isArray(record)) return record.join(" ");
@@ -5673,6 +6797,24 @@ function formatDnsRecordValue(record: unknown) {
 
 function getDnsRecordTextValues(records: unknown[]) {
   return records.map((item) => formatDnsRecordValue(item));
+}
+
+function getApexHostname(hostname: string) {
+  const labels = hostname.trim().replace(/\.$/, "").split(".").filter(Boolean);
+  if (labels.length <= 2) return labels.join(".");
+  return labels.slice(-2).join(".");
+}
+
+function getDnsDeploymentHostname(hostname: string, host: (typeof dnsDeploymentCheckConfigs)[number]["host"]) {
+  const apex = getApexHostname(hostname);
+  if (host === "apex") return apex;
+  if (host === "dmarc") return apex ? `_dmarc.${apex}` : "_dmarc";
+  return hostname.trim();
+}
+
+async function fetchDnsLookup(hostname: string, record: string) {
+  const response = await fetch(`/api/dns-lookup?hostname=${encodeURIComponent(hostname)}&record=${encodeURIComponent(record)}`);
+  return (await response.json()) as DnsLookupResponse;
 }
 
 function getDnsPrimarySignal(record: string, hostname: string, values: string[], dictionary: ClientDictionary) {
@@ -5726,25 +6868,76 @@ function getDnsDiagnostics(hostname: string, record: string, result: DnsLookupRe
   };
 }
 
+function getDnsDeploymentStatus(check: DnsDeploymentCheck, dictionary: ClientDictionary) {
+  if (check.records.length > 0) return ui(dictionary, "dnsCheckReady", "Ready");
+  return check.required ? ui(dictionary, "dnsCheckMissing", "Missing") : ui(dictionary, "dnsCheckReview", "Review");
+}
+
 function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [hostname, setHostname] = React.useState("bobob.app");
   const [record, setRecord] = React.useState("A");
   const [loading, setLoading] = React.useState(false);
+  const [deploymentLoading, setDeploymentLoading] = React.useState(false);
   const [result, setResult] = React.useState<DnsLookupResponse | null>(null);
+  const [deploymentChecks, setDeploymentChecks] = React.useState<DnsDeploymentCheck[]>([]);
   const lookup = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/dns-lookup?hostname=${encodeURIComponent(hostname)}&record=${encodeURIComponent(record)}`);
-      setResult((await response.json()) as DnsLookupResponse);
+      setResult(await fetchDnsLookup(hostname, record));
     } catch (error) {
       setResult({ error: error instanceof Error ? error.message : ui(dictionary, "dnsLookupFailed", "DNS lookup failed.") });
     } finally {
       setLoading(false);
     }
   };
+  const runDeploymentCheck = async () => {
+    const trimmedHostname = hostname.trim();
+    setDeploymentLoading(true);
+    try {
+      const checks = await Promise.all(
+        dnsDeploymentCheckConfigs.map(async (config) => {
+          const targetHostname = getDnsDeploymentHostname(trimmedHostname, config.host);
+          try {
+            const body = await fetchDnsLookup(targetHostname, config.record);
+            return {
+              key: config.key,
+              labelKey: config.labelKey,
+              fallbackLabel: config.fallbackLabel,
+              detailKey: config.detailKey,
+              fallbackDetail: config.fallbackDetail,
+              hostname: body.hostname ?? targetHostname,
+              record: body.record ?? config.record,
+              required: config.required,
+              records: Array.isArray(body.records) ? body.records : [],
+              error: body.error,
+            };
+          } catch (error) {
+            return {
+              key: config.key,
+              labelKey: config.labelKey,
+              fallbackLabel: config.fallbackLabel,
+              detailKey: config.detailKey,
+              fallbackDetail: config.fallbackDetail,
+              hostname: targetHostname,
+              record: config.record,
+              required: config.required,
+              records: [],
+              error: error instanceof Error ? error.message : ui(dictionary, "dnsLookupFailed", "DNS lookup failed."),
+            };
+          }
+        }),
+      );
+      setDeploymentChecks(checks);
+    } finally {
+      setDeploymentLoading(false);
+    }
+  };
   const records = Array.isArray(result?.records) ? result.records : [];
   const rawResult = result ? JSON.stringify(result, null, 2) : "";
   const dnsDiagnostics = getDnsDiagnostics(hostname, record, result, dictionary);
+  const deploymentReadyCount = deploymentChecks.filter((check) => check.records.length > 0).length;
+  const deploymentMissingRequiredCount = deploymentChecks.filter((check) => check.required && check.records.length === 0).length;
+  const deploymentReviewCount = deploymentChecks.filter((check) => !check.required && check.records.length === 0).length;
 
   return (
     <div className="space-y-4" data-dns-tool>
@@ -5759,6 +6952,7 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
               onClick={() => {
                 setHostname(example.hostname);
                 setRecord(example.record);
+                setDeploymentChecks([]);
               }}
             >
               {ui(dictionary, example.labelKey, example.fallbackLabel)}
@@ -5767,7 +6961,14 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
         </div>
       </div>
       <div className="grid gap-3 md:grid-cols-[1fr_140px_auto]">
-        <Input value={hostname} onChange={(event) => setHostname(event.target.value)} aria-label={ui(dictionary, "hostname", "Hostname")} />
+        <Input
+          value={hostname}
+          onChange={(event) => {
+            setHostname(event.target.value);
+            setDeploymentChecks([]);
+          }}
+          aria-label={ui(dictionary, "hostname", "Hostname")}
+        />
         <Select value={record} onChange={(event) => setRecord(event.target.value)}>
           {["A", "AAAA", "CNAME", "MX", "TXT", "NS"].map((item) => (
             <option key={item} value={item}>{item}</option>
@@ -5795,6 +6996,56 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
           <div data-dns-warnings>
             <ToolWarningList title={ui(dictionary, "dnsReviewNotes", "DNS review notes")} warnings={dnsDiagnostics.warnings} emptyLabel={ui(dictionary, "dnsNoDiagnosticWarnings", "DNS response looks ready for public deployment review.")} />
           </div>
+        </div>
+      </section>
+      <section className="rounded-md border bg-card" data-dns-deployment-checklist>
+        <div className="border-b p-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">{ui(dictionary, "dnsDeploymentChecklist", "Deployment checklist")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "dnsDeploymentChecklistDescription", "Check the DNS signals developers usually review before connecting a domain to hosting, email, or verification flows.")}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={runDeploymentCheck} disabled={deploymentLoading}>
+              {deploymentLoading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "runDeploymentCheck", "Run deployment check")}
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid
+            items={[
+              { label: ui(dictionary, "dnsDeploymentReady", "Ready"), value: String(deploymentReadyCount) },
+              { label: ui(dictionary, "dnsDeploymentMissingRequired", "Missing required"), value: String(deploymentMissingRequiredCount) },
+              { label: ui(dictionary, "dnsDeploymentReview", "Review"), value: String(deploymentReviewCount) },
+            ]}
+          />
+          {deploymentChecks.length ? (
+            <div className="divide-y rounded-md border" data-dns-deployment-results>
+              {deploymentChecks.map((check) => {
+                const values = getDnsRecordTextValues(check.records);
+                return (
+                  <div key={check.key} className="grid gap-2 p-3 text-sm md:grid-cols-[180px_1fr_auto]">
+                    <div className="min-w-0">
+                      <p className="break-words font-medium">{ui(dictionary, check.labelKey, check.fallbackLabel)}</p>
+                      <p className="mt-1 break-all text-xs text-muted-foreground">{check.hostname} / {check.record}</p>
+                    </div>
+                    <div className="min-w-0 space-y-1">
+                      <p className="text-xs text-muted-foreground">{ui(dictionary, check.detailKey, check.fallbackDetail)}</p>
+                      {values.length ? (
+                        <p className="break-all text-xs font-medium">{values.slice(0, 2).join(" / ")}{values.length > 2 ? ` +${values.length - 2}` : ""}</p>
+                      ) : (
+                        <p className="break-words text-xs text-muted-foreground">{check.error || ui(dictionary, "dnsNoRecordsWarning", "No records returned for this type. Try A, AAAA, TXT, MX, or NS.")}</p>
+                      )}
+                    </div>
+                    <Badge className={check.records.length ? "border-emerald-500/40 text-emerald-700 dark:text-emerald-300" : check.required ? "border-amber-500/40 text-amber-700 dark:text-amber-300" : ""}>
+                      {getDnsDeploymentStatus(check, dictionary)}
+                    </Badge>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">{ui(dictionary, "dnsDeploymentEmpty", "Run the checklist to review web routing, IPv6, name servers, TXT policy, and DMARC signals together.")}</p>
+          )}
         </div>
       </section>
       {records.length ? (

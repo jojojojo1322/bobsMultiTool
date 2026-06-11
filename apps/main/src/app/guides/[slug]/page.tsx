@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { PointerBackground } from "@/components/pointer-background";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,10 @@ import { getRelatedTools } from "@/features/tools/registry";
 interface GuidePageProps {
   params: Promise<{ slug: string }>;
 }
+
+const adsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
+const adsPublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-2620992505263949";
+const guideContentAdSlot = process.env.NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT;
 
 export function generateStaticParams() {
   return guides.map((guide) => ({ slug: guide.slug }));
@@ -53,6 +58,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
   if (!guide) notFound();
   const relatedTools = getRelatedTools(guide.relatedTools);
   const dictionary = getDictionary(defaultLocale);
+  const guideAdIndex = Math.max(1, Math.ceil(guide.sections.length / 2));
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
@@ -70,11 +76,24 @@ export default async function GuidePage({ params }: GuidePageProps) {
         <h1 className="mt-4 text-3xl font-semibold tracking-normal">{guide.title}</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{guide.description}</p>
         <article className="mt-8 space-y-6">
-          {guide.sections.map((section) => (
-            <section key={section.heading} className="rounded-lg border bg-card p-5">
-              <h2 className="text-lg font-semibold">{section.heading}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.body}</p>
-            </section>
+          {guide.sections.map((section, index) => (
+            <div key={section.heading} className="space-y-6">
+              <section className="rounded-lg border bg-card p-5">
+                <h2 className="text-lg font-semibold">{section.heading}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.body}</p>
+              </section>
+              {index + 1 === guideAdIndex ? (
+                <GoogleAdUnit
+                  enabled={adsEnabled}
+                  publisherId={adsPublisherId}
+                  slot={guideContentAdSlot}
+                  position="guide-content"
+                  format="horizontal"
+                  minHeight={120}
+                  className="bobob-ad-anchor rounded-lg border bg-background p-3"
+                />
+              ) : null}
+            </div>
           ))}
         </article>
         <Card className="mt-8">

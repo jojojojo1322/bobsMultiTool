@@ -1,6 +1,7 @@
 import { resolve4, resolve6, resolveCname, resolveMx, resolveNs, resolveTxt } from "node:dns/promises";
+import { isIP } from "node:net";
 import { NextRequest, NextResponse } from "next/server";
-import { consumeRateLimit, isPrivateOrReservedIp, normalizePublicHostname } from "@/features/server/network-guards";
+import { consumeRateLimit, isPrivateOrReservedIp } from "@/features/server/network-guards";
 
 const resolvers = {
   A: resolve4,
@@ -10,6 +11,31 @@ const resolvers = {
   TXT: resolveTxt,
   NS: resolveNs,
 };
+
+function normalizePublicDnsName(value: string) {
+  const hostname = value.trim().toLowerCase().replace(/\.$/, "");
+  if (!hostname || hostname.length > 253) throw new Error("Use a public hostname.");
+  if (hostname === "localhost" || hostname.endsWith(".local")) throw new Error("Use a public hostname.");
+
+  const ipKind = isIP(hostname);
+  if (ipKind) {
+    if (isPrivateOrReservedIp(hostname)) throw new Error("Private or reserved IP addresses are not supported.");
+    return hostname;
+  }
+
+  if (!hostname.includes(".")) throw new Error("Use a public hostname.");
+
+  const labels = hostname.split(".");
+  const invalidLabel = labels.some((label, index) => {
+    if (!label || label.length > 63) return true;
+    if (!/^[a-z0-9_-]+$/.test(label)) return true;
+    if (label.startsWith("-") || label.endsWith("-")) return true;
+    return index === labels.length - 1 && label.includes("_");
+  });
+  if (invalidLabel) throw new Error("Use a public hostname.");
+
+  return hostname;
+}
 
 export async function GET(request: NextRequest) {
   const rateLimit = consumeRateLimit(request, "dns-lookup", 50);
@@ -25,7 +51,7 @@ export async function GET(request: NextRequest) {
   let normalizedHostname: string;
 
   try {
-    normalizedHostname = normalizePublicHostname(hostname);
+    normalizedHostname = normalizePublicDnsName(hostname);
   } catch {
     return NextResponse.json({ error: "Use a public hostname." }, { status: 400 });
   }

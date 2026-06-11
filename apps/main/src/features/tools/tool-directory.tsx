@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { PointerBackground } from "@/components/pointer-background";
+import { PointerBackground, type PointerBackgroundVariant } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,11 +38,13 @@ export function ToolDirectory({
   dictionary,
   initialQuery = "",
   compactHero = false,
+  backgroundVariant = "galaxy",
 }: {
   locale?: Locale;
   dictionary: ClientDictionary;
   initialQuery?: string;
   compactHero?: boolean;
+  backgroundVariant?: PointerBackgroundVariant;
 }) {
   const localizedTools = getLocalizedTools(locale);
   const coreTools = localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 12);
@@ -70,7 +72,7 @@ export function ToolDirectory({
         </div>
       </header>
       <section className="relative overflow-hidden border-b">
-        <PointerBackground />
+        <PointerBackground variant={backgroundVariant} />
         <div className={compactHero ? "relative mx-auto max-w-7xl px-4 py-8" : "relative mx-auto max-w-7xl px-4 py-10"}>
           <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-end">
             <div>

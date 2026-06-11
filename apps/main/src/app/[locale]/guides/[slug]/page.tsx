@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { PointerBackground } from "@/components/pointer-background";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,10 @@ import { getLocalizedGuide, getLocalizedRelatedTools } from "@/features/i18n/loc
 interface LocalizedGuidePageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
+
+const adsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
+const adsPublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-2620992505263949";
+const guideContentAdSlot = process.env.NEXT_PUBLIC_ADSENSE_GUIDE_CONTENT_SLOT;
 
 export function generateStaticParams() {
   return locales
@@ -64,6 +69,7 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
   const guide = getLocalizedGuide(baseGuide, locale);
   const relatedTools = getLocalizedRelatedTools(guide.relatedTools, locale);
   const dictionary = getDictionary(locale);
+  const guideAdIndex = Math.max(1, Math.ceil(guide.sections.length / 2));
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
@@ -81,11 +87,24 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
         <h1 className="mt-4 text-3xl font-semibold tracking-normal">{guide.title}</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{guide.description}</p>
         <article className="mt-8 space-y-6">
-          {guide.sections.map((section) => (
-            <section key={section.heading} className="rounded-lg border bg-card p-5">
-              <h2 className="text-lg font-semibold">{section.heading}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.body}</p>
-            </section>
+          {guide.sections.map((section, index) => (
+            <div key={section.heading} className="space-y-6">
+              <section className="rounded-lg border bg-card p-5">
+                <h2 className="text-lg font-semibold">{section.heading}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.body}</p>
+              </section>
+              {index + 1 === guideAdIndex ? (
+                <GoogleAdUnit
+                  enabled={adsEnabled}
+                  publisherId={adsPublisherId}
+                  slot={guideContentAdSlot}
+                  position="guide-content"
+                  format="horizontal"
+                  minHeight={120}
+                  className="bobob-ad-anchor rounded-lg border bg-background p-3"
+                />
+              ) : null}
+            </div>
           ))}
         </article>
         <Card className="mt-8">
