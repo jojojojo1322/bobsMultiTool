@@ -88,6 +88,10 @@ assert(report.measuredExportPlan.copyTargets.searchConsolePageRegex.includes("ht
 assert(report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv.includes("/tools/regex-tester"), "measured export plan should include focused measured paths env value");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("regex tester"), "measured export plan should include search intent seeds");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("email regex"), "measured export plan should include long-tail Regex snippet search intent seeds");
+assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("content security policy generator"), "measured export plan should include workflow CSP search intent seeds");
+assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("docker compose validator"), "measured export plan should include workflow Docker Compose search intent seeds");
+assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("csv cleaner"), "measured export plan should include workflow CSV cleanup search intent seeds");
+assert(report.measuredExportPlan.copyTargets.workflowSearchIntentSeeds.includes("security headers checker"), "measured export plan should expose workflow search intent seed source");
 assert(report.measuredExportPlan.csvTemplates.searchConsoleHeader === "Page,Query,Impressions,Clicks,CTR,Position", "measured export plan should include Search Console CSV template header");
 assert(report.measuredExportPlan.csvTemplates.adsenseHeader === "Page,Impressions,Page RPM,Estimated earnings,CTR", "measured export plan should include AdSense CSV template header");
 assert(report.metadataRewriteReadiness.status === "needs-measured-data-first", "default fixture should not be ready until required measured coverage is complete");
@@ -216,6 +220,9 @@ assert(exportPacket.includes("Page,Query,Impressions,Clicks,CTR,Position"), "exp
 assert(exportPacket.includes("Page,Impressions,Page RPM,Estimated earnings,CTR"), "export packet should include AdSense CSV header");
 assert(exportPacket.includes("BOBOB_REQUIRED_MEASURED_PATHS="), "export packet should include focused gate env copy target");
 assert(exportPacket.includes("metadataRewriteReadiness.canRewritePublicMetadata"), "export packet should include metadata readiness stop rule");
+assert(exportPacket.includes("content security policy generator"), "export packet should include workflow CSP seed");
+assert(exportPacket.includes("docker compose validator"), "export packet should include workflow config seed");
+assert(exportPacket.includes("csv cleaner"), "export packet should include workflow CSV seed");
 
 if (failures.length) {
   console.error(failures.join("\n"));

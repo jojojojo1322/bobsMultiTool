@@ -280,6 +280,18 @@ function readContentInventory() {
   return { tools, guides, all: [...tools, ...guides] };
 }
 
+function readWorkflowSearchIntentSeeds() {
+  const workflows = fs.readFileSync(path.join(root, "apps/main/src/features/tools/workflows.ts"), "utf8");
+  const searchIntentBlocks = Array.from(workflows.matchAll(/searchIntents:\s*\[([^\]]*)\]/g)).map((match) => match[1] ?? "");
+  return Array.from(
+    new Set(
+      searchIntentBlocks.flatMap((block) =>
+        Array.from(block.matchAll(/"([^"]+)"/g)).map((match) => match[1]).filter(Boolean),
+      ),
+    ),
+  );
+}
+
 function searchConsoleRows() {
   if (!searchCsvPath) return [];
   const { rows } = readCsvTable(
@@ -489,6 +501,7 @@ function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
 }
 
 function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
+  const workflowSearchIntentSeeds = readWorkflowSearchIntentSeeds();
   const priorityPages = measurementBacklogRows.slice(0, 25).map((row) => ({
     path: row.path,
     canonicalUrl: `https://www.bobob.app${row.path}`,
@@ -502,7 +515,7 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
   const canonicalUrls = priorityPages.map((row) => row.canonicalUrl);
   const searchConsolePageRegex = canonicalUrls.length ? `^(${canonicalUrls.map(escapeRegexLiteral).join("|")})$` : "";
   const requiredMeasuredPathsEnv = priorityPages.map((row) => row.path).join(",");
-  const searchIntentSeedList = Array.from(new Set(priorityPages.flatMap((row) => row.searchIntents))).slice(0, 150);
+  const searchIntentSeedList = Array.from(new Set([...workflowSearchIntentSeeds, ...priorityPages.flatMap((row) => row.searchIntents)])).slice(0, 180);
 
   return {
     status: measuredCoverageSummary.pass ? "covered" : "needs-measured-exports",
@@ -533,6 +546,7 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
       searchConsolePageRegex,
       requiredMeasuredPathsEnv,
       searchIntentSeedList,
+      workflowSearchIntentSeeds,
     },
     csvTemplates: {
       searchConsoleHeader: "Page,Query,Impressions,Clicks,CTR,Position",
