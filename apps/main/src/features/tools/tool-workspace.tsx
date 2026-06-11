@@ -476,7 +476,7 @@ function MobileReferenceAccordion({ tool, locale, dictionary }: { tool: ToolDefi
   const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary, nextRelatedTitle)).slice(0, 3);
 
   return (
-    <section id="tool-mobile-reference" className="border-t bg-background lg:hidden" data-mobile-reference-sections>
+    <section id="tool-mobile-reference" className="border-b bg-background lg:hidden" data-mobile-reference-sections>
       <div className="p-4">
         <Accordion
           className="bg-card"
@@ -623,13 +623,31 @@ function ReferenceSection({ title, description, children }: { title: string; des
   );
 }
 
+function PrimaryWorkArea({ dictionary, children }: { dictionary: ClientDictionary; children: React.ReactNode }) {
+  return (
+    <section id="tool-surface" className="border-b bg-background p-4 sm:p-5" data-tool-surface>
+      <div className="overflow-hidden rounded-lg border bg-card shadow-sm ring-1 ring-border/60" data-primary-work-area>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {dictionary.toolUi.input} / {dictionary.toolUi.output}
+          </p>
+          <span className="text-xs text-muted-foreground">{dictionary.toolUi.copyReadyOutput}</span>
+        </div>
+        <div className="p-4 md:p-5" data-primary-work-content>
+          {children}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ToolQuickStart({ tool, dictionary }: { tool: ToolDefinition; dictionary: ClientDictionary }) {
   const inputExamples = tool.inputExamples.slice(0, 3);
   const useCases = tool.useCases.slice(0, 2);
   const categoryLabel = dictionary.categories[tool.category] ?? tool.category;
 
   return (
-    <section className="grid gap-0 border-t bg-background/60 md:grid-cols-[1fr_1fr]" data-tool-quick-start>
+    <section className="grid gap-0 border-b bg-background/60 md:grid-cols-[1fr_1fr]" data-tool-quick-start>
       <div className="border-b p-4 md:border-b-0 md:border-e">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-sm font-semibold">{dictionary.nav.examples}</h3>
@@ -665,7 +683,7 @@ function ToolReviewStrip({ tool, dictionary }: { tool: ToolDefinition; dictionar
   const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary)).slice(0, 2);
 
   return (
-    <section className="grid gap-0 border-t bg-muted/20 md:grid-cols-[1fr_1fr]" data-tool-review-strip>
+    <section className="grid gap-0 border-b bg-muted/20 md:grid-cols-[1fr_1fr]" data-tool-review-strip>
       <div className="border-b p-4 md:border-b-0 md:border-e">
         <div className="mb-3">
           <h3 className="text-sm font-semibold">{dictionary.tool.failureCases}</h3>
@@ -702,7 +720,7 @@ function ToolNextActions({ tool, locale, dictionary }: { tool: ToolDefinition; l
   if (!relatedTools.length && !workflowRecipes.length) return null;
 
   return (
-    <section className="border-t bg-background/60 px-5 py-4" data-tool-next-actions>
+    <section className="bg-muted/20 px-5 py-4" data-tool-next-actions>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold">{dictionary.nav.relatedTools}</h3>
@@ -888,27 +906,29 @@ export function ToolWorkspace({
                 <h2 className="mt-4 text-2xl font-semibold tracking-normal">{tool.title}</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{tool.description}</p>
               </div>
-              <div id="tool-surface" className="bg-card p-5" data-tool-surface>
+              <PrimaryWorkArea dictionary={dictionary}>
                 <ToolSessionControls locale={locale} toolSlug={tool.slug} dictionary={dictionary}>
                   <ToolPanel component={tool.component} dictionary={dictionary} />
                 </ToolSessionControls>
+              </PrimaryWorkArea>
+              <div className="border-t bg-background" data-tool-support-sections>
+                <GoogleAdUnit
+                  enabled={adsEnabled}
+                  publisherId={adsPublisherId}
+                  slot={toolResultAdSlot}
+                  position="tool-result"
+                  minHeight={90}
+                  className="border-b bg-background px-5 py-4"
+                />
+                <div className="hidden lg:block">
+                  <ToolQuickStart tool={tool} dictionary={dictionary} />
+                </div>
+                <div className="hidden lg:block">
+                  <ToolReviewStrip tool={tool} dictionary={dictionary} />
+                </div>
+                <MobileReferenceAccordion tool={tool} locale={locale} dictionary={dictionary} />
+                <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />
               </div>
-              <GoogleAdUnit
-                enabled={adsEnabled}
-                publisherId={adsPublisherId}
-                slot={toolResultAdSlot}
-                position="tool-result"
-                minHeight={90}
-                className="border-t bg-background px-5 py-4"
-              />
-              <ToolNextActions tool={tool} locale={locale} dictionary={dictionary} />
-              <div className="hidden lg:block">
-                <ToolQuickStart tool={tool} dictionary={dictionary} />
-              </div>
-              <div className="hidden lg:block">
-                <ToolReviewStrip tool={tool} dictionary={dictionary} />
-              </div>
-              <MobileReferenceAccordion tool={tool} locale={locale} dictionary={dictionary} />
             </section>
             <Separator />
             <section className="grid gap-0 md:grid-cols-3">
