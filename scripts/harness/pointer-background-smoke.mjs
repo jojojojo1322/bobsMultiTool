@@ -29,6 +29,8 @@ async function readPointerState(page) {
 
     const hostStyle = getComputedStyle(host);
     const layerStyle = getComputedStyle(layer);
+    const canvas = host.querySelector(".bobob-reactbits-canvas");
+    const canvasRect = canvas?.getBoundingClientRect();
     return {
       pointerX: hostStyle.getPropertyValue("--bobob-pointer-x").trim(),
       pointerY: hostStyle.getPropertyValue("--bobob-pointer-y").trim(),
@@ -47,7 +49,11 @@ async function readPointerState(page) {
       lineOpacity: hostStyle.getPropertyValue("--bobob-line-opacity").trim(),
       transform: layerStyle.transform,
       variant: host.getAttribute("data-reactbits-background") || "",
-      canvasCount: layer.querySelectorAll(".bobob-reactbits-canvas").length,
+      canvasCount: host.querySelectorAll(".bobob-reactbits-canvas").length,
+      canvasCssWidth: canvasRect ? Math.round(canvasRect.width) : 0,
+      canvasCssHeight: canvasRect ? Math.round(canvasRect.height) : 0,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
     };
   });
 }
@@ -106,6 +112,10 @@ try {
 
     if (!secondState.canvasCount) {
       failures.push(`${scenario.name} missing ReactBits WebGL canvas`);
+    }
+
+    if (secondState.canvasCssWidth > secondState.viewportWidth + 2 || secondState.canvasCssHeight > secondState.viewportHeight + 2) {
+      failures.push(`${scenario.name} ReactBits canvas is not viewport-bounded: ${secondState.canvasCssWidth}x${secondState.canvasCssHeight} for ${secondState.viewportWidth}x${secondState.viewportHeight}`);
     }
 
     if (!firstState.pointerX || !secondState.pointerX || !firstState.gridX || !secondState.gridX) {

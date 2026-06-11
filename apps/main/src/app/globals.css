@@ -124,8 +124,8 @@ body {
 }
 
 .bobob-pointer-background {
-  position: absolute;
-  inset: -12%;
+  position: fixed;
+  inset: -12vh -12vw;
   opacity: var(--bobob-background-opacity, 0.5);
   transform: translate3d(var(--bobob-parallax-x, 0), var(--bobob-parallax-y, 0), 0) scale(1.015);
   transition: transform 160ms ease-out, opacity 160ms ease-out;
@@ -179,6 +179,12 @@ body {
 
 .bobob-reactbits-background {
   overflow: hidden;
+}
+
+.bobob-reactbits-viewport {
+  position: fixed;
+  inset: 0;
+  contain: paint;
 }
 
 .bobob-reactbits-canvas {

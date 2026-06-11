@@ -270,8 +270,9 @@ function ReactBitsShaderBackground({ variant }: { variant: PointerBackgroundVari
       const { Mesh, Program, Renderer, Triangle } = await import("ogl");
       if (disposed || !element.isConnected) return;
 
+      const isSmallViewport = window.innerWidth < 768;
       renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio || 1, 1.5),
+        dpr: isSmallViewport ? 1 : Math.min(window.devicePixelRatio || 1, 1.25),
         alpha: true,
         premultipliedAlpha: false,
       });
@@ -311,14 +312,19 @@ function ReactBitsShaderBackground({ variant }: { variant: PointerBackgroundVari
         targetPointer.y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
       };
 
+      let lastRenderTime = 0;
+      const minFrameGap = isSmallViewport && variant === "galaxy" ? 1000 / 30 : 1000 / 60;
       const render = (time: number) => {
         if (!renderer) return;
         smoothPointer.x += (targetPointer.x - smoothPointer.x) * 0.06;
         smoothPointer.y += (targetPointer.y - smoothPointer.y) * 0.06;
-        program.uniforms.uTime.value = reducedMotion ? 0 : time * 0.001;
-        program.uniforms.uTheme.value = themeToneRef.current;
-        program.uniforms.uPointer.value = [smoothPointer.x, smoothPointer.y];
-        renderer.render({ scene: mesh });
+        if (reducedMotion || time - lastRenderTime >= minFrameGap) {
+          lastRenderTime = time;
+          program.uniforms.uTime.value = reducedMotion ? 0 : time * 0.001;
+          program.uniforms.uTheme.value = themeToneRef.current;
+          program.uniforms.uPointer.value = [smoothPointer.x, smoothPointer.y];
+          renderer.render({ scene: mesh });
+        }
         if (!reducedMotion) animationFrame = requestAnimationFrame(render);
       };
 
@@ -357,9 +363,10 @@ export function PointerBackground({ variant = "galaxy" }: { variant?: PointerBac
 
   return (
     <div ref={hostRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" data-reactbits-background={variant}>
-      <div className={`bobob-pointer-background bobob-reactbits-background bobob-reactbits-${variant}`}>
+      <div className={`bobob-reactbits-viewport bobob-reactbits-background bobob-reactbits-${variant}`}>
         <ReactBitsShaderBackground variant={variant} />
       </div>
+      <div className="bobob-pointer-background" />
     </div>
   );
 }
