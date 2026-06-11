@@ -52,10 +52,10 @@ void main() {
   float horizon = smoothstep(1.45, 0.05, length((uv - source) * vec2(0.82, 1.0)));
   float topWash = smoothstep(0.42, 1.08, uv.y) * smoothstep(0.96, 0.0, abs(uv.x - 0.5));
   float verticalWash = smoothstep(1.12, 0.06, length((uv - vec2(0.5, 0.82)) * vec2(0.72, 1.12)));
-  vec3 rayColor = mix(vec3(0.10, 0.12, 0.17), vec3(1.0, 1.0, 1.0), uTheme);
-  vec3 hazeColor = mix(vec3(0.38, 0.44, 0.55), vec3(0.66, 0.70, 0.80), uTheme);
-  vec3 color = rayColor * glow * 1.80 + hazeColor * horizon * 0.48 + hazeColor * topWash * 0.34 + rayColor * verticalWash * 0.16;
-  float alpha = clamp(glow * mix(0.68, 0.96, uTheme) + horizon * mix(0.24, 0.34, uTheme) + topWash * mix(0.16, 0.22, uTheme) + verticalWash * mix(0.08, 0.12, uTheme), 0.0, mix(0.76, 0.94, uTheme));
+  vec3 rayColor = mix(vec3(0.12, 0.28, 0.58), vec3(0.78, 0.94, 1.0), uTheme);
+  vec3 hazeColor = mix(vec3(0.32, 0.46, 0.74), vec3(0.38, 0.62, 0.92), uTheme);
+  vec3 color = rayColor * glow * 2.28 + hazeColor * horizon * 0.64 + hazeColor * topWash * 0.48 + rayColor * verticalWash * 0.24;
+  float alpha = clamp(glow * mix(0.88, 1.14, uTheme) + horizon * mix(0.34, 0.46, uTheme) + topWash * mix(0.24, 0.32, uTheme) + verticalWash * mix(0.12, 0.18, uTheme), 0.0, mix(0.90, 0.98, uTheme));
   gl_FragColor = vec4(color, alpha);
 }
 `;
@@ -119,10 +119,10 @@ void main() {
   stars += starLayer(uv * 1.52 + vec2(0.8, -0.2), 92.0, 8.0) * 0.44;
 
   float nebula = smoothstep(0.9, 0.0, length((uv - vec2(-0.22, 0.14)) * vec2(1.1, 0.75)));
-  vec3 starColor = mix(vec3(0.10, 0.12, 0.16), vec3(1.0, 0.99, 0.92), uTheme);
-  vec3 hazeColor = mix(vec3(0.32, 0.38, 0.48), vec3(0.10, 0.11, 0.18), uTheme);
-  vec3 color = starColor * stars * mix(1.0, 1.28, uTheme) + hazeColor * nebula * 0.44;
-  float alpha = clamp(length(stars) * mix(0.74, 1.72, uTheme) + nebula * mix(0.12, 0.22, uTheme), 0.0, mix(0.62, 0.90, uTheme));
+  vec3 starColor = mix(vec3(0.08, 0.20, 0.42), vec3(0.86, 0.97, 1.0), uTheme);
+  vec3 hazeColor = mix(vec3(0.34, 0.48, 0.74), vec3(0.24, 0.42, 0.70), uTheme);
+  vec3 color = starColor * stars * mix(1.46, 1.68, uTheme) + hazeColor * nebula * 0.62;
+  float alpha = clamp(length(stars) * mix(1.08, 1.92, uTheme) + nebula * mix(0.18, 0.30, uTheme), 0.0, mix(0.78, 0.96, uTheme));
   gl_FragColor = vec4(color, alpha);
 }
 `;
@@ -175,7 +175,7 @@ function usePointerVariables(ref: React.RefObject<HTMLDivElement | null>) {
       const offsetX = x - 50;
       const offsetY = y - 50;
       const distance = Math.min(1, Math.hypot(offsetX, offsetY) / 70);
-      const intensity = 0.44 + distance * 0.18;
+      const intensity = 0.52 + distance * 0.2;
 
       element.style.setProperty("--bobob-pointer-x", `${x}%`);
       element.style.setProperty("--bobob-pointer-y", `${y}%`);
@@ -193,8 +193,8 @@ function usePointerVariables(ref: React.RefObject<HTMLDivElement | null>) {
       element.style.setProperty("--bobob-sweep-y", `${offsetY * 0.1}px`);
       element.style.setProperty("--bobob-ray-rotation", `${offsetX * 0.018}deg`);
       element.style.setProperty("--bobob-background-opacity", String(intensity));
-      element.style.setProperty("--bobob-ray-opacity", String(0.24 + distance * 0.22));
-      element.style.setProperty("--bobob-line-opacity", String(0.28 + distance * 0.14));
+      element.style.setProperty("--bobob-ray-opacity", String(0.34 + distance * 0.24));
+      element.style.setProperty("--bobob-line-opacity", String(0.32 + distance * 0.16));
     };
 
     const animatePointer = () => {
