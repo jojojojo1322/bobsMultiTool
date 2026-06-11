@@ -69,7 +69,7 @@ Include:
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.
-- Tool directory and tool detail pages should expose local-first workflow recipe cards for task paths such as API response formatting, API token debugging, redirect debugging, DNS deployment checks, Wi-Fi QR creation, and secure token generation.
+- Tool directory and tool detail pages should expose local-first workflow recipe cards for task paths such as API response formatting, API token debugging, redirect debugging, DNS deployment checks, Wi-Fi QR creation, secure token generation, security-header review, deploy config validation, and CSV cleanup for API payloads.
 - Search results should surface workflow recipe matches for task-shaped queries and show localized recipe title, description, step chips, and step reasons. task-shaped search query recipe results must be checked in the search panel.
 - Tool detail center panels should expose the working tool surface before registry-backed quick-start input examples, use cases, localized failure cases, and pre-copy checklist items. Core acquisition tools should have at least three real `inputExamples`, three priority `failureCases`, and three priority `preCopyChecklist` items.
 - Tool detail support sections should render below the primary input/output surface, not only in the right reference panel and not above the tool.

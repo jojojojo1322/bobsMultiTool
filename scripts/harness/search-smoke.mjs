@@ -68,10 +68,10 @@ if (!searchPanel.includes("data-search-workflow-recipes") || !searchPanel.includ
 if (!workspace.includes("data-tool-workflow-recipes") || !workspace.includes("getWorkflowRecipesForTool")) {
   failures.push("tool detail pages must surface workflow recipes connected to the active tool");
 }
-for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "review-security-headers", "validate-deploy-config", "clean-csv-for-api"]) {
   if (!workflows.includes(`slug: "${recipeSlug}"`)) failures.push(`workflow recipe registry missing ${recipeSlug}`);
 }
-for (const intent of ["api response formatter", "json field extractor", "json path extractor", "recursive jsonpath", "jwt exp checker", "redirect chain checker", "base64 image decoder", "data url decoder", "dns propagation checklist", "wifi qr code generator", "csrf token generator"]) {
+for (const intent of ["api response formatter", "json field extractor", "json path extractor", "recursive jsonpath", "jwt exp checker", "redirect chain checker", "base64 image decoder", "data url decoder", "dns propagation checklist", "wifi qr code generator", "csrf token generator", "security headers checker", "content security policy generator", "docker compose validator", "deployment config checker", "csv cleaner", "markdown table generator"]) {
   if (!workflows.includes(intent)) failures.push(`workflow recipe search intent missing ${intent}`);
 }
 for (const slug of ["json-formatter", "jwt-decoder", "http-status-checker", "color-converter", "uuid-generator", "regex-tester"]) {
