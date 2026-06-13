@@ -10,10 +10,10 @@ import { withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
 import type { ToolDefinition } from "./types";
-import { getLocalizedWorkflowRecipes, type LocalizedWorkflowRecipe } from "./workflows";
+import { getLocalizedWorkflowRecipes, normalizeWorkflowSearchValue, scoreWorkflowRecipeSearch, workflowRecipeMatches } from "./workflows";
 
 function normalizeSearchValue(value: string) {
-  return value.toLowerCase().replace(/\s+/g, " ").trim();
+  return normalizeWorkflowSearchValue(value);
 }
 
 function getSearchMatchSignals(tool: ToolDefinition, query: string, relatedTools: ToolDefinition[] = []) {
@@ -49,47 +49,6 @@ function getSearchMatchSignals(tool: ToolDefinition, query: string, relatedTools
   return Array.from(new Set(matched))
     .filter((value) => !suppressed.has(normalizeSearchValue(value)))
     .slice(0, 3);
-}
-
-function workflowRecipeMatches(recipe: LocalizedWorkflowRecipe, query: string) {
-  return scoreWorkflowRecipeSearch(recipe, query) > 0;
-}
-
-function scoreWorkflowRecipeSearch(recipe: LocalizedWorkflowRecipe, query: string) {
-  const normalizedQuery = normalizeSearchValue(query);
-  if (!normalizedQuery) return 0;
-  const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 1);
-  const title = normalizeSearchValue(recipe.title);
-  const description = normalizeSearchValue(recipe.description);
-  const intents = recipe.searchIntents.map(normalizeSearchValue);
-  const stepTitles = recipe.steps.flatMap((step) => [step.tool.title, step.tool.shortTitle]).map(normalizeSearchValue);
-  const stepReasons = recipe.steps.map((step) => normalizeSearchValue(step.reason));
-  const stepToolSignals = recipe.steps.flatMap((step) => [step.tool.description, ...step.tool.searchIntents, ...step.tool.aliases]).map(normalizeSearchValue);
-  const candidates = [title, description, ...intents, ...stepTitles, ...stepReasons, ...stepToolSignals];
-
-  let score = 0;
-  if (title === normalizedQuery) score += 140;
-  if (title.startsWith(normalizedQuery)) score += 90;
-  if (title.includes(normalizedQuery)) score += 70;
-  if (intents.some((intent) => intent === normalizedQuery)) score += 130;
-  if (intents.some((intent) => intent.includes(normalizedQuery))) score += 95;
-  if (description.includes(normalizedQuery)) score += 40;
-  if (stepTitles.some((value) => value.includes(normalizedQuery))) score += 25;
-  if (stepReasons.some((value) => value.includes(normalizedQuery))) score += 25;
-  if (stepToolSignals.some((value) => value.includes(normalizedQuery))) score += 15;
-
-  if (queryTokens.length > 1 && queryTokens.every((token) => [title, ...intents].some((value) => value.includes(token)))) score += 80;
-  if (queryTokens.length > 1 && queryTokens.every((token) => candidates.some((value) => value.includes(token)))) score += 25;
-
-  for (const token of queryTokens) {
-    if (title.includes(token)) score += 18;
-    if (intents.some((intent) => intent.includes(token))) score += 24;
-    if (description.includes(token)) score += 8;
-    if (stepReasons.some((value) => value.includes(token))) score += 6;
-    if (stepToolSignals.some((value) => value.includes(token))) score += 4;
-  }
-
-  return score;
 }
 
 export function ToolSearchPanel({
@@ -157,7 +116,12 @@ export function ToolSearchPanel({
               const firstStep = recipe.steps[0];
               if (!firstStep) return null;
               return (
-                <Link key={recipe.slug} href={withLocale(`/tools/${firstStep.tool.slug}`, locale)} className="rounded-md border bg-muted/20 px-3 py-2 text-sm transition-colors hover:bg-muted/50">
+                <Link
+                  key={recipe.slug}
+                  href={withLocale(`/tools/${firstStep.tool.slug}`, locale)}
+                  className="rounded-md border bg-muted/20 px-3 py-2 text-sm transition-colors hover:bg-muted/50"
+                  data-search-workflow-slug={recipe.slug}
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="truncate font-medium">{recipe.title}</p>

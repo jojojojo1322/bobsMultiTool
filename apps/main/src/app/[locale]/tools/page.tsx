@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { defaultLocale, isLocale, languageAlternates, locales, openGraphLocales, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary, getDictionary } from "@/features/i18n/dictionaries";
+import { getLocalizedTools } from "@/features/i18n/localized-content";
+import { toolDirectoryStructuredData } from "@/features/tools/structured-data";
 import { readSearchQuery, ToolDirectory } from "@/features/tools/tool-directory";
 
 interface LocalizedToolsIndexPageProps {
@@ -43,6 +45,11 @@ export async function generateMetadata({ params }: LocalizedToolsIndexPageProps)
       title,
       description,
     },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -51,23 +58,18 @@ export default async function LocalizedToolsIndexPage({ params, searchParams }: 
   const locale = validLocale(value);
   const dictionary = getClientDictionary(locale);
   const initialQuery = readSearchQuery(await searchParams);
-  const collectionJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: dictionary.home.toolIndexTitle,
+  const jsonLd = toolDirectoryStructuredData({
+    tools: getLocalizedTools(locale),
+    locale,
     url: `https://www.bobob.app${withLocale("/tools", locale)}`,
+    title: dictionary.home.toolIndexTitle,
     description: dictionary.home.toolIndexDescription,
-    inLanguage: locale,
-    isPartOf: {
-      "@type": "WebSite",
-      name: "Bob's Multi Tool",
-      url: "https://www.bobob.app",
-    },
-  };
+    toolsLabel: dictionary.nav.tools,
+  });
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ToolDirectory locale={locale} dictionary={dictionary} initialQuery={initialQuery} compactHero />
     </>
   );

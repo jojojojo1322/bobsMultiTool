@@ -65,8 +65,14 @@ if (!toolDirectory.includes("data-workflow-recipes") || !toolDirectory.includes(
 if (!searchPanel.includes("data-search-workflow-recipes") || !searchPanel.includes("workflowRecipeMatches")) {
   failures.push("tool search panel must surface workflow recipe matches for task-shaped queries");
 }
+if (!searchPanel.includes("data-search-workflow-slug")) {
+  failures.push("tool search workflow cards need stable slug QA attributes");
+}
 if (!searchPanel.includes("scoreWorkflowRecipeSearch") || !searchPanel.includes(".sort((a, b) => b.score - a.score")) {
   failures.push("tool search panel must rank workflow recipe matches by exact title and intent score");
+}
+for (const fragment of ["export function scoreWorkflowRecipeSearch", "title === normalizedQuery", "intents.some((intent) => intent === normalizedQuery)", "stepToolSignals", "score += 1000"]) {
+  if (!workflows.includes(fragment)) failures.push(`workflow search ranking helper missing ${fragment}`);
 }
 if (!workspace.includes("data-tool-workflow-recipes") || !workspace.includes("getWorkflowRecipesForTool")) {
   failures.push("tool detail pages must surface workflow recipes connected to the active tool");

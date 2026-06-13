@@ -52,6 +52,12 @@ const structuredDataPaths = [
   "/ar/tools/json-formatter",
 ];
 
+const directoryStructuredDataPaths = [
+  ["/tools", '"inLanguage":"en"'],
+  ["/ko/tools", '"inLanguage":"ko"'],
+  ["/ar/tools", '"inLanguage":"ar"'],
+];
+
 const failures = [];
 
 for (const routePath of paths) {
@@ -81,6 +87,24 @@ for (const routePath of structuredDataPaths) {
   }
   if (html.includes("aggregateRating") || html.includes("reviewRating")) {
     failures.push(`${routePath} must not include fabricated rating or review schema`);
+  }
+}
+
+for (const [routePath, localeFragment] of directoryStructuredDataPaths) {
+  const response = await fetch(`${baseUrl}${routePath}`);
+  const html = await response.text();
+  for (const fragment of [
+    '"@type":"CollectionPage"',
+    '"@type":"ItemList"',
+    '"@type":"SearchAction"',
+    '"@type":"BreadcrumbList"',
+    '"@type":"SoftwareApplication"',
+    '"numberOfItems":',
+    '"mainEntity"',
+    '"itemListElement"',
+    localeFragment,
+  ]) {
+    if (!html.includes(fragment)) failures.push(`${routePath} missing directory structured data fragment ${fragment}`);
   }
 }
 

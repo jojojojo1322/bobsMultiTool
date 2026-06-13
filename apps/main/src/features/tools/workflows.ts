@@ -1047,6 +1047,65 @@ function localizeRecipe(recipe: WorkflowRecipe, locale: Locale, tools: ToolDefin
   };
 }
 
+export function normalizeWorkflowSearchValue(value: string) {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function hasAllTokens(tokens: string[], values: string[]) {
+  return tokens.length > 1 && tokens.every((token) => values.some((value) => value.includes(token)));
+}
+
+export function scoreWorkflowRecipeSearch(recipe: LocalizedWorkflowRecipe, query: string) {
+  const normalizedQuery = normalizeWorkflowSearchValue(query);
+  if (!normalizedQuery) return 0;
+
+  const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 1);
+  const title = normalizeWorkflowSearchValue(recipe.title);
+  const description = normalizeWorkflowSearchValue(recipe.description);
+  const intents = recipe.searchIntents.map(normalizeWorkflowSearchValue);
+  const titleAndIntentValues = [title, ...intents];
+  const stepTitles = recipe.steps.flatMap((step) => [step.tool.title, step.tool.shortTitle]).map(normalizeWorkflowSearchValue);
+  const stepReasons = recipe.steps.map((step) => normalizeWorkflowSearchValue(step.reason));
+  const stepToolSignals = recipe.steps
+    .flatMap((step) => [step.tool.description, ...step.tool.searchIntents, ...step.tool.aliases, ...step.tool.useCases])
+    .map(normalizeWorkflowSearchValue);
+  const stepValues = [description, ...stepTitles, ...stepReasons, ...stepToolSignals];
+  const allValues = [...titleAndIntentValues, ...stepValues];
+
+  let score = 0;
+
+  if (title === normalizedQuery) score += 1000;
+  if (title.startsWith(normalizedQuery)) score += 850;
+  if (intents.some((intent) => intent === normalizedQuery)) score += 820;
+  if (intents.some((intent) => intent.startsWith(normalizedQuery))) score += 760;
+  if (title.includes(normalizedQuery)) score += 700;
+  if (intents.some((intent) => intent.includes(normalizedQuery))) score += 660;
+  if (hasAllTokens(queryTokens, titleAndIntentValues)) score += 600;
+
+  if (description.includes(normalizedQuery)) score += 220;
+  if (hasAllTokens(queryTokens, [description])) score += 180;
+
+  if (stepTitles.some((value) => value.includes(normalizedQuery))) score += 90;
+  if (stepReasons.some((value) => value.includes(normalizedQuery))) score += 75;
+  if (stepToolSignals.some((value) => value.includes(normalizedQuery))) score += 45;
+  if (hasAllTokens(queryTokens, stepValues)) score += 35;
+
+  for (const token of queryTokens) {
+    if (title.includes(token)) score += 38;
+    if (intents.some((intent) => intent.includes(token))) score += 42;
+    if (description.includes(token)) score += 14;
+    if (stepTitles.some((value) => value.includes(token))) score += 8;
+    if (stepReasons.some((value) => value.includes(token))) score += 7;
+    if (stepToolSignals.some((value) => value.includes(token))) score += 4;
+  }
+
+  return score > 0 || allValues.some((value) => value.includes(normalizedQuery)) ? score : 0;
+}
+
+export function workflowRecipeMatches(recipe: LocalizedWorkflowRecipe, query: string) {
+  return scoreWorkflowRecipeSearch(recipe, query) > 0;
+}
+
 export function getLocalizedWorkflowRecipes(locale: Locale, tools: ToolDefinition[]) {
   return workflowRecipes
     .map((recipe) => localizeRecipe(recipe, locale, tools))

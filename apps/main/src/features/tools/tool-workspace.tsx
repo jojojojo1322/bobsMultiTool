@@ -21,6 +21,7 @@ import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } fro
 import { cn } from "@/lib/utils";
 import { toolCategories } from "./registry";
 import type { ToolDefinition } from "./types";
+import type { ToolActionContextValue } from "./tool-components";
 import { getWorkflowRecipesForTool, type LocalizedWorkflowRecipe } from "./workflows";
 
 const navigationScrollStorageKey = (locale: Locale) => `bobob:tool-nav-scroll:${locale}`;
@@ -908,6 +909,19 @@ export function ToolWorkspace({
   const privacyLabel = tool.requiresServer ? dictionary.tool.serverRequired : dictionary.tool.localOnly;
   const isFavorite = favoriteSlugs.includes(tool.slug);
   const headerKeywordBadges = locale === defaultLocale ? tool.seo.keywords.slice(0, 4) : [tool.shortTitle, dictionary.categories[tool.category] ?? tool.category];
+  const localizedTools = React.useMemo(() => getLocalizedTools(locale), [locale]);
+  const actionRelatedTools = React.useMemo(() => getLocalizedRelatedTools(tool.relatedTools, locale), [locale, tool.relatedTools]);
+  const actionWorkflowRecipes = React.useMemo(() => getWorkflowRecipesForTool(tool.slug, locale, localizedTools, 3), [locale, localizedTools, tool.slug]);
+  const actionContext = React.useMemo<ToolActionContextValue>(
+    () => ({
+      tool,
+      locale,
+      relatedTools: actionRelatedTools,
+      workflowRecipes: actionWorkflowRecipes,
+      allTools: localizedTools,
+    }),
+    [actionRelatedTools, actionWorkflowRecipes, locale, localizedTools, tool],
+  );
 
   React.useEffect(() => {
     writeRecentToolSlug(locale, tool.slug);
@@ -1020,7 +1034,7 @@ export function ToolWorkspace({
               </div>
               <PrimaryWorkArea dictionary={dictionary}>
                 <ToolSessionControls locale={locale} toolSlug={tool.slug} dictionary={dictionary}>
-                  <ToolPanel component={tool.component} dictionary={dictionary} />
+                  <ToolPanel component={tool.component} dictionary={dictionary} actionContext={actionContext} />
                 </ToolSessionControls>
               </PrimaryWorkArea>
               <div className="bobob-support-sections border-t bg-background" data-tool-support-sections>

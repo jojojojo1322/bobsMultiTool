@@ -106,11 +106,16 @@ if (!fs.existsSync(sitemapIndexRoutePath)) failures.push("sitemap index route mi
 if (!fs.existsSync(localizedSitemapRoutePath)) failures.push("localized sitemap route missing");
 if (!fs.existsSync(toolsIndexPath) || !fs.readFileSync(toolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("/tools index directory page missing");
 if (!fs.existsSync(localizedToolsIndexPath) || !fs.readFileSync(localizedToolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("localized tools index directory page missing");
+if (!fs.readFileSync(toolsIndexPath, "utf8").includes("toolDirectoryStructuredData(")) failures.push("/tools index must render shared directory structured data");
+if (!fs.readFileSync(localizedToolsIndexPath, "utf8").includes("toolDirectoryStructuredData(")) failures.push("localized tools index must render shared directory structured data");
 for (const [source, name] of [
   [toolDetail, "default tool detail"],
   [localizedToolDetail, "localized tool detail"],
 ]) {
   if (!source.includes("toolStructuredData(")) failures.push(`${name} must render shared tool structured data`);
+}
+for (const fragment of ["toolDirectoryStructuredData", "CollectionPage", "ItemList", "SearchAction", "numberOfItems"]) {
+  if (!toolStructuredData.includes(fragment)) failures.push(`tool directory structured data missing ${fragment}`);
 }
 for (const fragment of ["SoftwareApplication", "FAQPage", "BreadcrumbList", "mainEntity", "itemListElement", "isAccessibleForFree", "featureList"]) {
   if (!toolStructuredData.includes(fragment)) failures.push(`tool structured data missing ${fragment}`);

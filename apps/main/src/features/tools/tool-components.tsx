@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import CryptoJS from "crypto-js";
 import { diffLines, diffWords } from "diff";
 import { Copy, Download, ExternalLink, RefreshCcw } from "lucide-react";
@@ -18,9 +19,11 @@ import { Kbd } from "@/components/ui/kbd";
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { cn } from "@/lib/utils";
-import type { ToolComponentKey } from "./types";
+import type { ToolComponentKey, ToolDefinition } from "./types";
+import type { LocalizedWorkflowRecipe } from "./workflows";
 
 const commonTimeZones = ["UTC", "Asia/Seoul", "Asia/Tokyo", "America/New_York", "America/Los_Angeles", "Europe/London", "Europe/Berlin", "Asia/Kolkata"];
 const sampleTimestampSeconds = "1704067200";
@@ -130,6 +133,102 @@ function ToolWarningList({ title, warnings, emptyLabel }: { title: string; warni
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+export interface ToolActionContextValue {
+  tool: ToolDefinition;
+  locale: Locale;
+  relatedTools: ToolDefinition[];
+  workflowRecipes: LocalizedWorkflowRecipe[];
+  allTools: ToolDefinition[];
+}
+
+type ResultNextActionSignal =
+  | "json-valid"
+  | "jwt-decoded"
+  | "base64-json"
+  | "base64-jwt"
+  | "base64-image"
+  | "http-result"
+  | "dns-result"
+  | "yaml-valid"
+  | "yaml-compose"
+  | "csv-converted"
+  | "qr-generated"
+  | "regex-tested";
+
+const resultNextActionRules: Record<ResultNextActionSignal, string[]> = {
+  "json-valid": ["jsonpath-tester", "json-to-typescript", "json-schema-validator"],
+  "jwt-decoded": ["timestamp-converter", "base64-tool", "json-formatter"],
+  "base64-json": ["json-formatter", "jsonpath-tester", "jwt-decoder"],
+  "base64-jwt": ["jwt-decoder", "json-formatter", "timestamp-converter"],
+  "base64-image": ["mime-type-lookup", "color-converter", "open-graph-preview"],
+  "http-result": ["dns-lookup", "url-parser", "open-graph-preview"],
+  "dns-result": ["http-status-checker", "url-parser", "sitemap-generator"],
+  "yaml-valid": ["env-parser-validator", "yaml-json-converter", "json-formatter"],
+  "yaml-compose": ["env-parser-validator", "yaml-json-converter", "json-formatter"],
+  "csv-converted": ["text-sort-dedupe", "markdown-previewer", "json-formatter"],
+  "qr-generated": ["url-parser", "open-graph-preview", "color-converter"],
+  "regex-tested": ["url-encoder", "text-diff", "json-formatter"],
+};
+
+const ToolActionContext = React.createContext<ToolActionContextValue | null>(null);
+
+function useToolActionContext() {
+  return React.useContext(ToolActionContext);
+}
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function ResultNextActions({ signals, dictionary, limit = 3 }: { signals: ResultNextActionSignal[]; dictionary: ClientDictionary; limit?: number }) {
+  const context = useToolActionContext();
+  if (!context || signals.length === 0) return null;
+
+  const toolBySlug = new Map([...context.allTools, ...context.relatedTools].map((tool) => [tool.slug, tool]));
+  const actionSlugs = uniqueValues(signals.flatMap((signal) => resultNextActionRules[signal] ?? [])).filter((slug) => slug !== context.tool.slug);
+  const toolActions = actionSlugs
+    .map((slug) => toolBySlug.get(slug))
+    .filter((tool): tool is ToolDefinition => Boolean(tool))
+    .slice(0, limit);
+  const recipeActions = context.workflowRecipes
+    .filter((recipe) => recipe.steps.some((step) => step.tool.slug === context.tool.slug))
+    .slice(0, Math.max(0, limit - toolActions.length));
+
+  if (!toolActions.length && !recipeActions.length) return null;
+
+  return (
+    <section className="rounded-md border bg-muted/20 p-3" data-result-next-actions>
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">{dictionary.nav.relatedTools}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">{dictionary.nav.relatedToolsDescription}</p>
+        </div>
+        <Badge>{dictionary.tool.nextActionPrefix}</Badge>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        {toolActions.map((tool) => (
+          <Link key={tool.slug} href={withLocale(`/tools/${tool.slug}`, context.locale)} className="min-w-0 rounded-md border bg-card px-3 py-2 text-sm transition-colors hover:bg-muted/60">
+            <span className="block truncate font-medium">{tool.shortTitle}</span>
+            <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">
+              {dictionary.tool.nextActionPrefix} {tool.useCases[0] ?? tool.description}
+            </span>
+          </Link>
+        ))}
+        {recipeActions.map((recipe) => {
+          const firstStep = recipe.steps[0];
+          if (!firstStep) return null;
+          return (
+            <Link key={recipe.slug} href={withLocale(`/tools/${firstStep.tool.slug}`, context.locale)} className="min-w-0 rounded-md border bg-card px-3 py-2 text-sm transition-colors hover:bg-muted/60">
+              <span className="block truncate font-medium">{recipe.title}</span>
+              <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">{recipe.description}</span>
+            </Link>
+          );
+        })}
+      </div>
     </section>
   );
 }
@@ -551,6 +650,7 @@ function RegexTool({ dictionary }: { dictionary: ClientDictionary }) {
               <p className="p-3 text-sm text-muted-foreground">{ui(dictionary, "noRegexMatches", "No matches for this sample.")}</p>
             )}
           </section>
+          <ResultNextActions signals={["regex-tested"]} dictionary={dictionary} />
           <ResultBlock title={ui(dictionary, "rawMatchJson", "Raw match JSON")} value={JSON.stringify(result.matches, null, 2)} dictionary={dictionary} />
         </div>
       )}
@@ -1661,6 +1761,7 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
               {ui(dictionary, "copyMinifiedJson", "Copy minified JSON")}
             </Button>
           </div>
+          <ResultNextActions signals={["json-valid"]} dictionary={dictionary} />
           <ResultBlock title={ui(dictionary, "formattedJson", "Formatted JSON")} value={result.value} dictionary={dictionary} />
         </div>
       )}
@@ -2221,6 +2322,7 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
               ))}
             </ul>
           </section>
+          <ResultNextActions signals={["jwt-decoded"]} dictionary={dictionary} />
           <Tabs
             tabs={[
               { value: "header", label: ui(dictionary, "header", "Header"), content: <ResultBlock title={ui(dictionary, "header", "Header")} value={result.header} dictionary={dictionary} /> },
@@ -2466,6 +2568,14 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
       };
     }
   }, [dictionary, input, mode]);
+  const base64NextActionSignals = React.useMemo<ResultNextActionSignal[]>(() => {
+    if (result.error) return [];
+    const warningKeys: string[] = result.warnings;
+    if (result.imagePreview) return ["base64-image"];
+    if (warningKeys.includes("base64JwtSegmentWarning") || result.diagnostics?.shapeKey.toLowerCase().includes("jwt")) return ["base64-jwt"];
+    if (result.jsonPreview || (result.diagnostics?.jsonKeyCount ?? 0) > 0) return ["base64-json"];
+    return [];
+  }, [result]);
 
   return (
     <div className="space-y-4">
@@ -2615,6 +2725,7 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
               ))}
             </ul>
           </section>
+          <ResultNextActions signals={base64NextActionSignals} dictionary={dictionary} />
           <ResultBlock
             title={result.imagePreview ? ui(dictionary, "dataUrl", "Data URL") : mode === "encode" ? ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64") : ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8")}
             value={result.imagePreview?.dataUrl ?? result.value}
@@ -3134,9 +3245,12 @@ function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
       {result.error ? (
         <ErrorAlert title={ui(dictionary, "yamlValidationError", "YAML validation error")} message={result.error} />
       ) : (
-        <div className="grid gap-3 xl:grid-cols-2">
-          <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result.value} dictionary={dictionary} />
-          <ResultBlock title={ui(dictionary, "formattedYaml", "Formatted YAML")} value={result.formattedYaml} dictionary={dictionary} />
+        <div className="space-y-3">
+          <ResultNextActions signals={[composeDiagnostics?.isCompose ? "yaml-compose" : "yaml-valid"]} dictionary={dictionary} />
+          <div className="grid gap-3 xl:grid-cols-2">
+            <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result.value} dictionary={dictionary} />
+            <ResultBlock title={ui(dictionary, "formattedYaml", "Formatted YAML")} value={result.formattedYaml} dictionary={dictionary} />
+          </div>
         </div>
       )}
     </div>
@@ -3645,7 +3759,14 @@ function CsvJsonTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-csv-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "csvNoWarnings", "CSV output looks ready for conversion or cleanup.")} />
       </div>
-      {result.error ? <ErrorAlert title={ui(dictionary, "conversionError", "Conversion error")} message={result.error} /> : <ResultBlock title={ui(dictionary, "convertedOutput", "Converted output")} value={result.value} dictionary={dictionary} />}
+      {result.error ? (
+        <ErrorAlert title={ui(dictionary, "conversionError", "Conversion error")} message={result.error} />
+      ) : (
+        <>
+          <ResultNextActions signals={["csv-converted"]} dictionary={dictionary} />
+          <ResultBlock title={ui(dictionary, "convertedOutput", "Converted output")} value={result.value} dictionary={dictionary} />
+        </>
+      )}
     </div>
   );
 }
@@ -4486,7 +4607,7 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
             <CardTitle>{ui(dictionary, "download", "Download")}</CardTitle>
             <CardDescription>{ui(dictionary, "qrDownloadDescription", "PNG data URL generated in the browser.")}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" disabled={!dataUrl} onClick={() => dataUrl && window.open(dataUrl, "_blank")}>
                 <Download className="h-4 w-4" />
@@ -4497,6 +4618,7 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
                 {ui(dictionary, "downloadPng", "Download PNG")}
               </Button>
             </div>
+            {dataUrl ? <ResultNextActions signals={["qr-generated"]} dictionary={dictionary} /> : null}
             <ResultBlock title={ui(dictionary, "dataUrl", "Data URL")} value={dataUrl} dictionary={dictionary} />
           </CardContent>
         </Card>
@@ -6694,6 +6816,7 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
           </Button>
         </div>
       </section>
+      {result && !result.error && !loading ? <ResultNextActions signals={["http-result"]} dictionary={dictionary} /> : null}
       <ResultBlock title={ui(dictionary, "rawResponse", "Raw response")} value={rawResult} dictionary={dictionary} />
     </div>
   );
@@ -7066,6 +7189,7 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
       ) : result?.error ? (
         <ErrorAlert title={ui(dictionary, "dnsLookupFailed", "DNS lookup failed.")} message={result.error} />
       ) : null}
+      {result && !result.error && !loading ? <ResultNextActions signals={["dns-result"]} dictionary={dictionary} /> : null}
       <ResultBlock title={ui(dictionary, "rawResponse", "Raw response")} value={rawResult} dictionary={dictionary} />
     </div>
   );
@@ -7225,7 +7349,16 @@ export function ToolBadges({ values }: { values: string[] }) {
   );
 }
 
-export function ToolPanel({ component, dictionary }: { component: ToolComponentKey; dictionary: ClientDictionary }) {
+export function ToolPanel({
+  component,
+  dictionary,
+  actionContext,
+}: {
+  component: ToolComponentKey;
+  dictionary: ClientDictionary;
+  actionContext?: ToolActionContextValue;
+}) {
   const Component = toolComponentMap[component];
-  return Component ? <Component dictionary={dictionary} /> : <ToolEmptyState />;
+  const content = Component ? <Component dictionary={dictionary} /> : <ToolEmptyState />;
+  return <ToolActionContext.Provider value={actionContext ?? null}>{content}</ToolActionContext.Provider>;
 }

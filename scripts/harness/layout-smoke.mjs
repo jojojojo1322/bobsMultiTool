@@ -56,6 +56,9 @@ if (!workspace.includes("<Sheet")) failures.push("mobile navigation Sheet fallba
 if (!directory.includes("ToolSearchPanel")) failures.push("tool directory must include shared search panel");
 if (!directory.includes("toolCategories.map")) failures.push("tool directory must expose category sections");
 if (!directory.includes("data-acquisition-clusters")) failures.push("tool directory acquisition clusters must expose a stable QA attribute");
+if (!toolsIndex.includes("toolDirectoryStructuredData(")) failures.push("default tool directory must render shared structured data");
+if (!localizedToolsIndex.includes("toolDirectoryStructuredData(")) failures.push("localized tool directory must render shared structured data");
+if (!toolsIndex.includes("twitter:") || !localizedToolsIndex.includes("twitter:")) failures.push("tool directory metadata must include page-specific Twitter metadata");
 if (toolsIndex.includes("redirect(") || localizedToolsIndex.includes("redirect(withLocale(\"/tools/regex-tester\"")) failures.push("tools directory pages must not redirect to a single tool");
 if (!workspace.includes("rounded-lg border bg-background")) failures.push("single-shell workbench border missing");
 if (!workspace.includes("bobob-workbench-shell")) failures.push("workbench shell must expose dark/light surface separation class");
