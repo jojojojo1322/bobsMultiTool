@@ -1,6 +1,6 @@
 const defaultHost = "www.bobob.app";
 const defaultKey = "ac3d32921a2fa361bd499222bff28abf";
-const endpoint = process.env.BOBOB_INDEXNOW_ENDPOINT ?? "https://www.bing.com/indexnow";
+const endpoint = process.env.BOBOB_INDEXNOW_ENDPOINT ?? "https://api.indexnow.org/indexnow";
 const host = process.env.BOBOB_INDEXNOW_HOST ?? defaultHost;
 const key = process.env.BOBOB_INDEXNOW_KEY ?? defaultKey;
 const baseUrl = `https://${host}`;
