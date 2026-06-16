@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { GoogleAdUnit } from "@/components/GoogleAdsense";
-import { PointerBackground } from "@/components/pointer-background";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getGuideBySlug, guides } from "@/features/guides/registry";
@@ -73,7 +72,6 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
-      <PointerBackground />
       <div className="relative mx-auto max-w-4xl px-4 py-10">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
           <Link href={withLocale("/", locale)} className="font-semibold text-foreground hover:text-muted-foreground">

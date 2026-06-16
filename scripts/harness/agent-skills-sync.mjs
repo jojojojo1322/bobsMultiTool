@@ -88,14 +88,11 @@ const checks = [
   ["agents", "Korean, Japanese, Spanish, and German priority intent copy"],
   ["agents", "layered surface tokens"],
   ["agents", "Scrollbars should stay modern and quiet"],
-  ["agents", "Pointer-reactive visual effects"],
-  ["agents", "ReactBits exception uses `ogl`"],
-  ["agents", "Light Rays"],
-  ["agents", "Galaxy"],
-  ["agents", "speed 3, spread 3.35, ray length 4.6"],
-  ["agents", "density 3, glow 0.3"],
-  ["agents", "theme-aware color and alpha"],
-  ["agents", "requestAnimationFrame-driven CSS variables"],
+  ["agents", "Decorative WebGL and pointer-reactive backgrounds are disabled"],
+  ["agents", "Do not reintroduce ReactBits, Light Rays, Galaxy, `ogl`"],
+  ["agents", "shader canvases"],
+  ["agents", "pointermove/requestAnimationFrame background listeners"],
+  ["agents", "static and token-based"],
   ["agents", "harness:pointer-background"],
   ["agents", "Do not add `framer-motion`"],
   ["agents", "real resizable left and right sidebars"],
@@ -267,14 +264,11 @@ const checks = [
   ["design", "ThemeToggle"],
   ["design", "visible workbench layers"],
   ["design", "Scrollbars should be thin"],
-  ["design", "Pointer-reactive background motion"],
-  ["design", "ReactBits background exception uses `ogl`"],
-  ["design", "Light Rays"],
-  ["design", "Galaxy"],
-  ["design", "speed 3, spread 3.35, ray length 4.6"],
-  ["design", "density 3, glow 0.3"],
-  ["design", "Light and dark themes must use separate background colors/alpha"],
-  ["design", "requestAnimationFrame-driven smoothing"],
+  ["design", "Decorative WebGL and pointer-reactive backgrounds are disabled"],
+  ["design", "Do not reintroduce ReactBits, Light Rays, Galaxy, `ogl`"],
+  ["design", "shader canvases"],
+  ["design", "pointermove/requestAnimationFrame background listeners"],
+  ["design", "static and token-based"],
   ["design", "harness:pointer-background"],
   ["design", "Do not add `framer-motion`"],
   ["design", "Tool detail center panels are task-first"],
@@ -541,13 +535,11 @@ const checks = [
   ["verification", "Core acquisition tools in Korean, Japanese, Spanish, and German"],
   ["verification", "slug-specific localized priority failure cases and pre-copy checklist items"],
   ["verification", "Acquisition-cluster and first-step related tools"],
-  ["verification", "Pointer-reactive background motion"],
-  ["verification", "requestAnimationFrame-driven CSS variable smoothing"],
-  ["verification", "Light Rays on main home routes"],
-  ["verification", "Galaxy on tool directory, tool detail, guide, trust, legal, and other non-home routes"],
-  ["verification", "speed 3, spread 3.35, ray length 4.6"],
-  ["verification", "density 3, glow 0.3"],
-  ["verification", "light and dark modes"],
+  ["verification", "Decorative WebGL and pointer-reactive backgrounds should stay absent"],
+  ["verification", "Do not reintroduce ReactBits, Light Rays, Galaxy, `ogl`"],
+  ["verification", "shader canvases"],
+  ["verification", "pointermove/requestAnimationFrame background listeners"],
+  ["verification", "static surface tokens"],
   ["verification", "harness:pointer-background"],
   ["verification", "Search results, center tool panel, and right reference panel"],
   ["verification", "right reference panel default-closed state"],
@@ -780,31 +772,26 @@ for (const file of [
 if (!fs.existsSync(path.join(root, "scripts/harness/visual-smoke.mjs"))) {
   failures.push("visual smoke harness missing");
 }
-if (!fs.existsSync(path.join(root, "apps/main/src/components/pointer-background.tsx"))) {
-  failures.push("pointer background component missing");
-} else {
-  const pointerBackground = read("apps/main/src/components/pointer-background.tsx");
-  for (const fragment of ["prefers-reduced-motion: reduce", "window.addEventListener(\"pointermove\"", "--bobob-pointer-x", "--bobob-parallax-x", "--bobob-depth-x", "--bobob-ray-rotation", "--bobob-ray-opacity", "ReactBitsShaderBackground", "light-rays", "galaxy", "data-reactbits-background", "ogl", "await import(\"ogl\")", "uniform float uTheme", "readThemeTone", "themeToneRef", "3.0 + seed * 0.12", "float spread = 3.35", "for (int i = 0; i < 5; i++)", "smoothstep(4.6, 0.02, dist)", "smoothstep(0.32, 0.0, length(pointerDelta)) * 0.5"]) {
-    if (!pointerBackground.includes(fragment)) failures.push(`pointer background missing ${fragment}`);
-  }
+if (fs.existsSync(path.join(root, "apps/main/src/components/pointer-background.tsx"))) {
+  failures.push("removed pointer background component should not exist");
 }
 const globalsCss = read("apps/main/src/app/globals.css");
-for (const fragment of [".bobob-pointer-background", ".bobob-reactbits-light-rays", ".bobob-reactbits-galaxy", ".dark .bobob-reactbits-light-rays", ".dark .bobob-reactbits-galaxy", ".dark .bobob-reactbits-canvas", "@media (prefers-reduced-motion: reduce)", "color-mix", "--bobob-depth-x", "--bobob-ray-opacity"]) {
-  if (!globalsCss.includes(fragment)) failures.push(`global CSS missing pointer background policy ${fragment}`);
+for (const fragment of [".bobob-pointer-background", ".bobob-reactbits-light-rays", ".bobob-reactbits-galaxy", ".dark .bobob-reactbits-light-rays", ".dark .bobob-reactbits-galaxy", ".dark .bobob-reactbits-canvas", "--bobob-depth-x", "--bobob-ray-opacity"]) {
+  if (globalsCss.includes(fragment)) failures.push(`global CSS still includes removed pointer background policy ${fragment}`);
 }
 for (const fragment of ["--bobob-surface-shell", "--bobob-surface-raised", "--bobob-border-strong", "--bobob-panel-shadow", "--bobob-scrollbar-thumb", "*::-webkit-scrollbar-thumb", "scrollbar-width: thin"]) {
   if (!globalsCss.includes(fragment)) failures.push(`global CSS missing surface/scrollbar policy ${fragment}`);
 }
 const directorySource = read("apps/main/src/features/tools/tool-directory.tsx");
-if (!directorySource.includes("<PointerBackground variant={backgroundVariant} />")) {
-  failures.push("tool directory hero missing pointer background");
+if (directorySource.includes("PointerBackground") || directorySource.includes("backgroundVariant")) {
+  failures.push("tool directory still includes removed pointer background");
 }
 for (const file of ["apps/main/src/app/page.tsx", "apps/main/src/app/[locale]/page.tsx"]) {
-  if (!read(file).includes('backgroundVariant="light-rays"')) {
-    failures.push(`${file} missing Light Rays home background`);
-  }
+  const source = read(file);
+  if (source.includes("PointerBackground") || source.includes("backgroundVariant")) failures.push(`${file} still includes removed home background`);
 }
 const workspaceSource = read("apps/main/src/features/tools/tool-workspace.tsx");
+if (workspaceSource.includes("PointerBackground")) failures.push("tool workspace still includes removed pointer background");
 for (const fragment of ["bobob:recent-tools", "data-recent-tools", "dictionary.nav.recentTools", "getLocalizedRelatedTools(recentSlugs, locale)"]) {
   if (!workspaceSource.includes(fragment)) failures.push(`tool workspace missing local-only recent tools behavior ${fragment}`);
 }
@@ -826,9 +813,7 @@ for (const file of [
   "apps/main/src/app/guides/[slug]/page.tsx",
   "apps/main/src/app/[locale]/guides/[slug]/page.tsx",
 ]) {
-  if (!read(file).includes("<PointerBackground />")) {
-    failures.push(`${file} missing guide pointer background`);
-  }
+  if (read(file).includes("PointerBackground")) failures.push(`${file} still includes removed guide pointer background`);
 }
 const httpStatusRoute = read("apps/main/src/app/api/http-status/route.ts");
   for (const fragment of ["redirectChain", "statusText", "contentType", "location", "cacheControl", "elapsedMs", "finalResponseHeaders", "finalHeaderAllowlist"]) {

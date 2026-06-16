@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { PointerBackground } from "@/components/pointer-background";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { defaultLocale, isLocale, languageAlternates, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
@@ -38,7 +37,6 @@ export default async function LocalizedTermsPage({ params }: LocalizedTermsProps
   const content = getLocalizedLegalContent(locale, "terms");
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
-      <PointerBackground />
       <div className="relative mx-auto max-w-4xl px-4 py-10">
         <Link href={withLocale("/", locale)} className="text-sm text-muted-foreground hover:text-foreground">
           {content.backToTools}

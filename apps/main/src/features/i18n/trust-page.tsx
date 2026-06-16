@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PointerBackground } from "@/components/pointer-background";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { withLocale, type Locale } from "@/features/i18n/config";
 import { getLocalizedTrustContent, type TrustPageContent } from "@/features/i18n/trust-content";
@@ -18,7 +17,6 @@ export function TrustPage({
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dir}>
-      <PointerBackground />
       <div className="relative mx-auto max-w-4xl px-4 py-10">
         <nav className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <Link href={withLocale("/", locale)} className="hover:text-foreground">

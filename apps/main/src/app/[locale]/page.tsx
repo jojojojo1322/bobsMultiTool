@@ -48,5 +48,5 @@ export default async function LocalizedHomePage({ params, searchParams }: Locale
   const dictionary = getClientDictionary(locale);
   const initialQuery = readSearchQuery(await searchParams);
 
-  return <ToolDirectory locale={locale} dictionary={dictionary} initialQuery={initialQuery} backgroundVariant="light-rays" />;
+  return <ToolDirectory locale={locale} dictionary={dictionary} initialQuery={initialQuery} />;
 }

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { PointerBackground } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +22,6 @@ export const metadata = {
 export default function GuidesPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
-      <PointerBackground />
       <div className="relative mx-auto max-w-5xl px-4 py-10">
         <header className="mb-8 flex items-center justify-between gap-3">
           <Link href="/" className="text-sm font-semibold tracking-tight">

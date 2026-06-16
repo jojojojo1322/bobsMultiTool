@@ -6,7 +6,6 @@ import Link from "next/link";
 import { ArrowRight, Check, ClipboardCheck, Link2, ListChecks, Menu, PanelRightClose, PanelRightOpen, RotateCcw, Search, Star, Trash2 } from "lucide-react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { GoogleAdUnit } from "@/components/GoogleAdsense";
-import { PointerBackground } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Accordion } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
@@ -957,7 +956,6 @@ export function ToolWorkspace({
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
-      <PointerBackground />
       <div className="bobob-topbar relative border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto grid max-w-[1600px] gap-3 px-4 py-3 lg:flex lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-3">

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { PointerBackground } from "@/components/pointer-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +46,6 @@ export default async function LocalizedGuidesPage({ params }: LocalizedGuidesPag
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background" lang={locale} dir={dictionary.dir}>
-      <PointerBackground />
       <div className="relative mx-auto max-w-5xl px-4 py-10">
         <header className="mb-8 flex items-center justify-between gap-3">
           <Link href={withLocale("/", locale)} className="text-sm font-semibold tracking-tight">
