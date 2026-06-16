@@ -3,7 +3,7 @@ import { defaultLocale, isLocale, locales, withLocale, type Locale } from "@/fea
 import { tools } from "@/features/tools/registry";
 
 const siteUrl = "https://www.bobob.app";
-const lastmod = "2026-06-13";
+const lastmod = "2026-06-16";
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
 
@@ -29,6 +29,7 @@ function escapeXml(value: string) {
 function basePaths(): SitemapPath[] {
   return [
     { path: "/", changefreq: "weekly", priority: "1.0" },
+    { path: "/tools", changefreq: "weekly", priority: "0.9" },
     ...tools.map((tool) => ({
       path: `/tools/${tool.slug}`,
       changefreq: "weekly" as const,

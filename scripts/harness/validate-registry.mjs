@@ -177,6 +177,7 @@ for (const fragment of [
   "localizedSitemapXml",
   "xmlns:xhtml",
   "hreflang=\"x-default\"",
+  'path: "/tools"',
   "tools.map",
   "guides.map",
   "sitemapLocales",
@@ -184,7 +185,7 @@ for (const fragment of [
   if (!sitemapSource.includes(fragment)) failures.push(`sitemap source missing ${fragment}`);
 }
 
-const urlsPerLocale = slugs.length + guideSlugs.size + 4;
+const urlsPerLocale = slugs.length + guideSlugs.size + 7;
 const totalLocalizedUrls = urlsPerLocale * locales.length;
 if (totalLocalizedUrls < 900) failures.push(`expected at least 900 localized sitemap URLs, found ${totalLocalizedUrls}`);
 
