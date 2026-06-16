@@ -2102,8 +2102,36 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - 実用的な開発者ユーティリティ",
       homeDescription: "JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、color、network、text 変換の無料オンライン開発者ツール。",
+      guidesTitle: "開発者ユーティリティガイド",
+      guidesDescription: "Bob's Multi Tool の各ブラウザツールを実務で使うための短いガイド。",
       toolDescription: (title) => `${title} を Bob's Multi Tool で使えます。例、FAQ、関連ツール、ローカル優先のプライバシーを備えています。`,
       guideDescription: (title) => `${title}。ブラウザベースの開発者ツールを安全かつ効率的に使うための実用ガイドです。`,
+    },
+  },
+  "zh-CN": {
+    home: {
+      toolIndexTitle: "简体中文工具索引",
+    },
+    metadata: {
+      homeTitle: "Bob's Multi Tool - 实用开发者工具",
+      homeDescription: "用于 JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、颜色、网络和文本处理的免费在线开发者工具。",
+      guidesTitle: "开发者工具指南",
+      guidesDescription: "围绕 Bob's Multi Tool 浏览器工具的实用工作流指南。",
+      toolDescription: (title) => `在 Bob's Multi Tool 使用 ${title}。包含示例、FAQ、相关工具，并尽可能在浏览器本地处理。`,
+      guideDescription: (title) => `${title}。安全高效使用浏览器开发者工具的实用指南。`,
+    },
+  },
+  "zh-TW": {
+    home: {
+      toolIndexTitle: "繁體中文工具索引",
+    },
+    metadata: {
+      homeTitle: "Bob's Multi Tool - 實用開發者工具",
+      homeDescription: "用於 JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、色彩、網路與文字處理的免費線上開發者工具。",
+      guidesTitle: "開發者工具指南",
+      guidesDescription: "圍繞 Bob's Multi Tool 瀏覽器工具的實用工作流程指南。",
+      toolDescription: (title) => `在 Bob's Multi Tool 使用 ${title}。包含範例、FAQ、相關工具，並盡可能在瀏覽器本機處理。`,
+      guideDescription: (title) => `${title}。安全有效使用瀏覽器開發者工具的實用指南。`,
     },
   },
   es: {
@@ -2118,6 +2146,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - Utilidades practicas para desarrolladores",
       homeDescription: "Herramientas gratis para JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, color, red y texto.",
+      guidesTitle: "Guias de utilidades para desarrolladores",
+      guidesDescription: "Guias breves para aplicar las herramientas de Bob's Multi Tool en flujos reales.",
       toolDescription: (title) => `${title} en Bob's Multi Tool. Usa una utilidad rapida con ejemplos, FAQ, herramientas relacionadas y privacidad local cuando sea posible.`,
       guideDescription: (title) => `${title}. Guia practica para usar utilidades de navegador de forma segura y eficiente.`,
     },
@@ -2132,6 +2162,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - Utilitarios praticos para desenvolvedores",
       homeDescription: "Ferramentas gratis para JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, cor, rede e texto.",
+      guidesTitle: "Guias de utilitarios para desenvolvedores",
+      guidesDescription: "Guias curtos para aplicar as ferramentas do Bob's Multi Tool em fluxos reais.",
       toolDescription: (title) => `${title} no Bob's Multi Tool. Use uma ferramenta rapida com exemplos, FAQ, ferramentas relacionadas e privacidade local quando possivel.`,
       guideDescription: (title) => `${title}. Guia pratica para usar utilitarios de navegador com seguranca e eficiencia.`,
     },
@@ -2141,6 +2173,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - Praktische Entwicklerwerkzeuge",
       homeDescription: "Kostenlose Online-Tools fuer JSON, Regex, Base64, JWT, Cron, Zeitstempel, UUID, SEO, Farben, Netzwerk und Text.",
+      guidesTitle: "Leitfaeden fuer Entwicklerwerkzeuge",
+      guidesDescription: "Kurze Praxisleitfaeden fuer die Tools und Workflows in Bob's Multi Tool.",
       toolDescription: (title) => `${title} in Bob's Multi Tool. Schnelle Entwicklerhilfe mit Beispielen, FAQ, verwandten Tools und lokaler Verarbeitung wenn moeglich.`,
       guideDescription: (title) => `${title}. Praktischer Leitfaden fuer sichere und effiziente Browser-Entwicklertools.`,
     },
@@ -2150,6 +2184,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - Utilitaires pratiques pour developpeurs",
       homeDescription: "Outils gratuits pour JSON, regex, Base64, JWT, cron, timestamps, UUID, SEO, couleur, reseau et texte.",
+      guidesTitle: "Guides d'utilitaires developpeur",
+      guidesDescription: "Guides courts pour appliquer les outils Bob's Multi Tool dans des flux reels.",
       toolDescription: (title) => `${title} dans Bob's Multi Tool. Utilitaire rapide avec exemples, FAQ, outils lies et traitement local quand possible.`,
       guideDescription: (title) => `${title}. Guide pratique pour utiliser les outils developpeur du navigateur de facon sure et efficace.`,
     },
@@ -2159,6 +2195,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - व्यावहारिक डेवलपर यूटिलिटी",
       homeDescription: "JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, color, network और text के लिए मुफ्त ऑनलाइन डेवलपर साधन.",
+      guidesTitle: "डेवलपर साधन गाइड",
+      guidesDescription: "Bob's Multi Tool के ब्राउज़र साधनों को वास्तविक काम में इस्तेमाल करने के छोटे गाइड.",
       toolDescription: (title) => `${title} Bob's Multi Tool पर. उदाहरण, FAQ, संबंधित साधन और जहां संभव हो ब्राउज़र-स्थानीय गोपनीयता के साथ तेज उपयोगिता.`,
       guideDescription: (title) => `${title}. ब्राउज़र आधारित डेवलपर साधनों को सुरक्षित और प्रभावी तरीके से इस्तेमाल करने की व्यवहारिक मार्गदर्शिका.`,
     },
@@ -2168,6 +2206,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - Utilitas developer praktis",
       homeDescription: "Alat gratis untuk JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, warna, jaringan, dan teks.",
+      guidesTitle: "Panduan utilitas developer",
+      guidesDescription: "Panduan singkat untuk memakai alat Bob's Multi Tool dalam alur kerja nyata.",
       toolDescription: (title) => `${title} di Bob's Multi Tool. Utilitas cepat dengan contoh, FAQ, alat terkait, dan privasi lokal bila memungkinkan.`,
       guideDescription: (title) => `${title}. Panduan praktis untuk memakai utilitas browser developer dengan aman dan efisien.`,
     },
@@ -2177,6 +2217,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - Tiện ích lập trình thực dụng",
       homeDescription: "Công cụ miễn phí cho JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, màu sắc, mạng và văn bản.",
+      guidesTitle: "Hướng dẫn tiện ích lập trình",
+      guidesDescription: "Hướng dẫn ngắn để dùng công cụ Bob's Multi Tool trong quy trình thực tế.",
       toolDescription: (title) => `${title} trên Bob's Multi Tool. Công cụ nhanh với ví dụ, FAQ, công cụ liên quan và xử lý cục bộ khi có thể.`,
       guideDescription: (title) => `${title}. Hướng dẫn thực tế để dùng công cụ lập trình trên trình duyệt an toàn và hiệu quả.`,
     },
@@ -2186,6 +2228,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - เครื่องมือนักพัฒนาที่ใช้งานจริง",
       homeDescription: "เครื่องมือฟรีสำหรับ JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, สี, เครือข่าย และข้อความ.",
+      guidesTitle: "คู่มือเครื่องมือนักพัฒนา",
+      guidesDescription: "คู่มือสั้นสำหรับใช้เครื่องมือ Bob's Multi Tool ใน workflow จริง",
       toolDescription: (title) => `${title} ใน Bob's Multi Tool พร้อมตัวอย่าง FAQ เครื่องมือที่เกี่ยวข้อง และการประมวลผลในเบราว์เซอร์เมื่อทำได้.`,
       guideDescription: (title) => `${title}. คู่มือใช้งานเครื่องมือนักพัฒนาบนเบราว์เซอร์อย่างปลอดภัยและมีประสิทธิภาพ.`,
     },
@@ -2196,6 +2240,8 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     metadata: {
       homeTitle: "Bob's Multi Tool - أدوات مطور عملية",
       homeDescription: "أدوات مجانية لـ JSON وregex وBase64 وJWT وcron وtimestamps وUUID وSEO والألوان والشبكات والنص.",
+      guidesTitle: "أدلة أدوات المطور",
+      guidesDescription: "أدلة قصيرة لاستخدام أدوات Bob's Multi Tool في سير عمل حقيقي.",
       toolDescription: (title) => `${title} في Bob's Multi Tool مع أمثلة وأسئلة شائعة وأدوات مرتبطة ومعالجة محلية في المتصفح عندما يكون ذلك ممكنا.`,
       guideDescription: (title) => `${title}. دليل عملي لاستخدام أدوات المطور في المتصفح بأمان وكفاءة.`,
     },

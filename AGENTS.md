@@ -111,6 +111,7 @@
 - Tool detail pages must keep the primary input/output surface visually dominant. Examples, failure cases, pre-copy checks, recipes, guides, and related tools belong in desktop/mobile support accordions or right reference panels, not directly attached to the working surface.
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Search crawlers must receive final 200 responses on canonical unprefixed sitemap URLs such as `/`, `/tools`, and `/tools/{slug}`; do not geolocation-redirect known bots away from the sitemap URL set.
+- IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage, including home, tools, guides, about, contact, privacy, and terms. Do not return to a capped static sitemap that drops locale tool pages.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.

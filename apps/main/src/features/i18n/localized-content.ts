@@ -261,7 +261,7 @@ const localizedGuideTopics: Record<Exclude<Locale, "en">, Record<string, string>
   es: {
     "regex-cheat-sheet": "Patrones practicos de Regex",
     "cron-expression-examples": "Ejemplos de horarios Cron",
-    "seo-meta-tags": "Meta tags SEO",
+    "seo-meta-tags": "Meta tags SEO para Web",
     "iframe-preview-limitations": "Limitaciones de preview iframe",
     "placeholder-text-for-design": "Texto placeholder para diseno",
     "developer-utility-workflow": "Flujo de utilidades en navegador",

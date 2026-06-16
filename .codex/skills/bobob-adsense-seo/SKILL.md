@@ -20,6 +20,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Search crawlers must receive final 200 responses on canonical unprefixed sitemap URLs such as `/`, `/tools`, and `/tools/{slug}`; do not geolocation-redirect known bots away from the sitemap URL set.
 - Arabic locale routes must keep RTL layout coverage.
 - Locale routing may use NEXT_LOCALE, Accept-Language, and country headers such as x-vercel-ip-country or cf-ipcountry.
+- IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
 - Do not cap localized sitemap coverage in a single static file. Use the sitemap index to expose every supported locale/tool/guide URL.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.

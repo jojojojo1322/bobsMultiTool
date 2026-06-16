@@ -267,7 +267,7 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
       primaryLink: { label: "Ouvrir l'index des outils", href: "/tools" },
     },
     contact: {
-      title: "Contact",
+      title: "Contact Bob's Multi Tool",
       description: "Contactez Bob's Multi Tool pour questions du site, problemes d'outils, corrections de contenu et demandes de politique.",
       lastUpdated: "Derniere mise a jour: 11 juin 2026",
       backToTools: "Retour aux outils",
