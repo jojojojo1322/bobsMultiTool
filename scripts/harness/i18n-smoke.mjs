@@ -43,6 +43,9 @@ for (const fragment of ['ko: "Korean"', 'ja: "Japanese"', '"zh-CN": "Chinese (Si
 for (const fragment of ["NEXT_LOCALE", "accept-language", "x-vercel-ip-country", "cf-ipcountry"]) {
   if (!middleware.includes(fragment)) failures.push(`middleware missing locale signal: ${fragment}`);
 }
+for (const fragment of ["bingbot", "isSearchCrawler", "defaultLocale"]) {
+  if (!middleware.includes(fragment)) failures.push(`middleware missing search crawler canonical bypass: ${fragment}`);
+}
 for (const fragment of ["x-bobob-locale", "nextWithLocale"]) {
   if (!middleware.includes(fragment)) failures.push(`middleware missing root html locale handoff: ${fragment}`);
 }

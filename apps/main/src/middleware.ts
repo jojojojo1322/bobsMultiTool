@@ -5,6 +5,8 @@ const PUBLIC_FILE = /\.(.*)$/;
 const apexHost = "bobob.app";
 const canonicalHost = "www.bobob.app";
 const skippedPrefixes = ["/_next", "/api", "/sitemaps"];
+const searchCrawlerPattern =
+  /googlebot|bingbot|bingpreview|duckduckbot|slurp|baiduspider|yandexbot|applebot|petalbot|seznambot|facebookexternalhit|twitterbot|linkedinbot/i;
 
 function localeFromCookie(request: NextRequest): Locale | undefined {
   return normalizeLocale(request.cookies.get("NEXT_LOCALE")?.value);
@@ -34,6 +36,10 @@ function localeFromCountry(request: NextRequest): Locale | undefined {
 
 function preferredLocale(request: NextRequest): Locale {
   return localeFromCookie(request) ?? localeFromAcceptLanguage(request) ?? localeFromCountry(request) ?? defaultLocale;
+}
+
+function isSearchCrawler(request: NextRequest) {
+  return searchCrawlerPattern.test(request.headers.get("user-agent") ?? "");
 }
 
 function nextWithLocale(request: NextRequest, locale: Locale) {
@@ -73,6 +79,8 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathHasLocale(pathname)) return nextWithLocale(request, firstSegment as Locale);
+
+  if (isSearchCrawler(request)) return nextWithLocale(request, defaultLocale);
 
   const locale = preferredLocale(request);
   if (locale === defaultLocale) return nextWithLocale(request, defaultLocale);

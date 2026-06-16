@@ -17,6 +17,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - English is the default unprefixed URL set. Non-English locales use path prefixes and require canonical plus hreflang alternates.
 - Hreflang alternates must include `x-default` pointing to the canonical unprefixed English URL.
 - Locale pages must render the correct root `<html lang>` and `<html dir>` via the middleware locale handoff, not only nested route attributes.
+- Search crawlers must receive final 200 responses on canonical unprefixed sitemap URLs such as `/`, `/tools`, and `/tools/{slug}`; do not geolocation-redirect known bots away from the sitemap URL set.
 - Arabic locale routes must keep RTL layout coverage.
 - Locale routing may use NEXT_LOCALE, Accept-Language, and country headers such as x-vercel-ip-country or cf-ipcountry.
 - Do not cap localized sitemap coverage in a single static file. Use the sitemap index to expose every supported locale/tool/guide URL.
