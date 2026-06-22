@@ -150,10 +150,33 @@ for (const [source, label] of [
 for (const fragment of [
   "Core utility coverage",
   "International coverage",
+  "Review workflow before copying",
+  "Public trust surface",
   "Useful issue reports",
   "Response priorities",
+  "What to include in content feedback",
+  "Requests this inbox cannot handle",
+  "trustUpdatedAt",
+  "localizedTrustExpansionSections",
+  "localizedTrustDepthSections",
+  "...expansionSections",
+  "...depthSections",
 ]) {
   if (!trustContent.includes(fragment)) failures.push(`trust content missing expanded trust section: ${fragment}`);
+}
+
+const trustExpansionSource = trustContent.match(/const localizedTrustExpansionSections[\s\S]*?export function getLocalizedTrustContent/)?.[0] ?? "";
+for (const locale of nonEnglishLocales) {
+  if (!trustExpansionSource.includes(`${locale}:`) && !trustExpansionSource.includes(`"${locale}":`)) {
+    failures.push(`localized trust expansion sections missing locale ${locale}`);
+  }
+}
+
+const trustDepthSource = trustContent.match(/const localizedTrustDepthSections[\s\S]*?export function getLocalizedTrustContent/)?.[0] ?? "";
+for (const locale of ["ko", "ja", "zh-CN", "zh-TW", "ar"]) {
+  if (!trustDepthSource.includes(`${locale}:`) && !trustDepthSource.includes(`"${locale}":`)) {
+    failures.push(`localized trust depth sections missing locale ${locale}`);
+  }
 }
 
 for (const fragment of [

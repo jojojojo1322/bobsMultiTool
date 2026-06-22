@@ -45,6 +45,8 @@ const paths = [
     { path: `/${locale}/tools`, kind: "localized-directory", minChars: 1800 },
     { path: `/${locale}/tools/json-formatter`, kind: "localized-tool", minChars: 2200 },
     { path: `/${locale}/guides/regex-cheat-sheet`, kind: "localized-guide", minChars: 1100 },
+    { path: `/${locale}/about`, kind: "localized-trust", minChars: 1200 },
+    { path: `/${locale}/contact`, kind: "localized-trust", minChars: 1100 },
     { path: `/${locale}/privacy`, kind: "localized-legal", minChars: 800 },
     { path: `/${locale}/terms`, kind: "localized-legal", minChars: 800 },
   ]),

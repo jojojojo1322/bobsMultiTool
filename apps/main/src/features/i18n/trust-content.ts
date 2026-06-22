@@ -58,6 +58,14 @@ const english: Record<TrustPageKind, TrustPageContent> = {
         heading: "International coverage",
         body: "Default English pages stay unprefixed, while localized routes provide translated tool titles, descriptions, examples, FAQ, guide leads, trust pages, legal pages, and sitemap entries. Locale support is checked so non-English visitors are not sent to a page made only from raw English registry text.",
       },
+      {
+        heading: "Review workflow before copying",
+        body: "Formatter, validator, generator, network, and SEO pages are written around a review loop: paste or enter a safe example, inspect diagnostics and warnings, compare the result with the target runtime or platform, then copy only the part that still fits the task.",
+      },
+      {
+        heading: "Public trust surface",
+        body: "The site keeps crawlable about, contact, privacy, terms, tool directory, tool detail, guide, and localized pages in the sitemap. Canonical routes, locale alternates, redirects, and public verification files are maintained so crawlers and visitors can reach complete pages instead of dead ends.",
+      },
     ],
     primaryLink: {
       label: "Open the tool index",
@@ -101,6 +109,14 @@ const english: Record<TrustPageKind, TrustPageContent> = {
       {
         heading: "Safety boundaries",
         body: "Requests that would require handling live secrets, private network targets, customer records, account recovery data, or unlawful activity are not suitable for this public utility site. Use redacted examples and run private checks inside your own environment.",
+      },
+      {
+        heading: "What to include in content feedback",
+        body: "For guide or tool copy feedback, include the exact page, the sentence or label that is confusing, the language route if localization is involved, and the safer wording or source behavior you expected. This keeps corrections tied to visible user impact.",
+      },
+      {
+        heading: "Requests this inbox cannot handle",
+        body: "This contact channel cannot recover accounts, inspect private infrastructure, receive live credentials, provide legal decisions, or replace a production security review. Reports should use safe public examples and stay focused on site quality or tool behavior.",
       },
     ],
     primaryLink: {
@@ -451,7 +467,240 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
   },
 };
 
+const trustUpdatedAt: Record<Locale, string> = {
+  en: "Last updated: June 22, 2026",
+  ko: "최종 업데이트: 2026년 6월 22일",
+  ja: "最終更新日: 2026年6月22日",
+  "zh-CN": "最后更新: 2026年6月22日",
+  "zh-TW": "最後更新: 2026年6月22日",
+  es: "Ultima actualizacion: 22 de junio de 2026",
+  "pt-BR": "Ultima atualizacao: 22 de junho de 2026",
+  de: "Zuletzt aktualisiert: 22. Juni 2026",
+  fr: "Derniere mise a jour: 22 juin 2026",
+  hi: "अंतिम अपडेट: 22 जून 2026",
+  id: "Terakhir diperbarui: 22 Juni 2026",
+  vi: "Cập nhật lần cuối: 22 tháng 6, 2026",
+  th: "อัปเดตล่าสุด: 22 มิถุนายน 2026",
+  ar: "آخر تحديث: 22 يونيو 2026",
+};
+
+const localizedTrustExpansionSections: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustSection[]>> = {
+  ko: {
+    about: [
+      { heading: "복사 전 검토 흐름", body: "도구 페이지는 안전한 예시 입력, 진단, 경고, 결과 확인, 관련 다음 작업으로 이어지도록 구성됩니다. 결과는 초안이므로 대상 런타임, 스케줄러, 파서, 크롤러 또는 배포 환경과 비교한 뒤 필요한 부분만 복사해야 합니다." },
+      { heading: "공개 신뢰 경로", body: "소개, 문의, 개인정보처리방침, 이용약관, 도구 목록, 가이드, locale 페이지는 sitemap에 포함되어 크롤러와 사용자가 완성된 페이지로 이동할 수 있게 합니다. canonical URL, locale alternate, redirect, 공개 검증 파일도 함께 관리합니다." },
+    ],
+    contact: [
+      { heading: "재현 가능한 보고", body: "문제를 보낼 때는 페이지 URL, 브라우저, 안전하게 바꾼 입력 예시, 기대한 결과, 실제 결과, 화면에 보인 경고를 함께 적어 주세요. 그래야 민감정보 없이 같은 흐름을 다시 확인할 수 있습니다." },
+      { heading: "처리할 수 없는 요청", body: "이 연락 채널은 계정 복구, 비공개 인프라 조사, 실제 인증정보 처리, 법률 판단, 운영 보안 검토를 대신하지 않습니다. 공개 가능한 예시와 사이트 품질 또는 도구 동작에 관한 내용으로 제한해 주세요." },
+    ],
+  },
+  ja: {
+    about: [
+      { heading: "コピー前の確認フロー", body: "各ツールページは、安全な入力例、診断、警告、結果確認、関連する次の作業へ進める形で構成されています。出力は下書きなので、対象 runtime、scheduler、parser、crawler、deployment 環境と照合してから必要な部分だけコピーしてください。" },
+      { heading: "公開された信頼経路", body: "about、contact、privacy、terms、ツール一覧、ガイド、locale ページは sitemap に含め、crawler と利用者が完了したページへ到達できるようにしています。canonical URL、locale alternate、redirect、公開 verification file も合わせて管理します。" },
+    ],
+    contact: [
+      { heading: "再現できる報告", body: "問題を送るときは、ページ URL、ブラウザ、安全な入力例、期待した結果、実際の結果、表示された警告を含めてください。機密情報を出さずに同じ流れを確認しやすくなります。" },
+      { heading: "対応できない依頼", body: "この連絡先では、アカウント復旧、非公開インフラ調査、実際の認証情報の処理、法的判断、本番セキュリティレビューの代行はできません。公開可能な例とサイト品質またはツール動作に関する内容に限定してください。" },
+    ],
+  },
+  "zh-CN": {
+    about: [
+      { heading: "复制前的复核流程", body: "工具页面围绕安全样例输入、诊断、警告、结果检查和相关下一步组织。输出只是草稿，应先与目标 runtime、scheduler、parser、crawler 或部署环境比对，再复制仍适合任务的部分。" },
+      { heading: "公开信任路径", body: "关于、联系、隐私、条款、工具目录、指南和本地化页面都会进入 sitemap，让爬虫和访问者能到达完整页面。canonical URL、locale alternate、redirect 和公开验证文件也会一起维护。" },
+    ],
+    contact: [
+      { heading: "可复现的问题报告", body: "报告问题时，请提供页面 URL、浏览器、安全替换后的输入样例、预期结果、实际结果和页面显示的警告。这样可以在不暴露敏感数据的情况下复查同一流程。" },
+      { heading: "无法处理的请求", body: "此联系渠道不能处理账号恢复、私有基础设施调查、真实凭证、法律判断或生产安全审查。请使用可公开分享的样例，并聚焦站点质量或工具行为。" },
+    ],
+  },
+  "zh-TW": {
+    about: [
+      { heading: "複製前的複核流程", body: "工具頁面圍繞安全範例輸入、診斷、警告、結果檢查與相關下一步組織。輸出只是草稿，應先與目標 runtime、scheduler、parser、crawler 或部署環境比對，再複製仍適合任務的部分。" },
+      { heading: "公開信任路徑", body: "關於、聯絡、隱私、條款、工具目錄、指南與在地化頁面都會進入 sitemap，讓爬蟲與訪客能到達完整頁面。canonical URL、locale alternate、redirect 和公開驗證檔也會一起維護。" },
+    ],
+    contact: [
+      { heading: "可重現的問題回報", body: "回報問題時，請提供頁面 URL、瀏覽器、安全替換後的輸入範例、預期結果、實際結果和頁面顯示的警告。這樣可以在不暴露敏感資料的情況下複查同一流程。" },
+      { heading: "無法處理的請求", body: "此聯絡管道不能處理帳號復原、私有基礎設施調查、真實憑證、法律判斷或正式安全審查。請使用可公開分享的範例，並聚焦站點品質或工具行為。" },
+    ],
+  },
+  es: {
+    about: [
+      { heading: "Revision antes de copiar", body: "Las paginas de herramientas se organizan alrededor de ejemplo seguro, diagnosticos, avisos, revision del resultado y siguiente paso relacionado. El resultado es un borrador: comparalo con el runtime, scheduler, parser, crawler o entorno de despliegue antes de copiar solo lo que encaja." },
+      { heading: "Superficie publica de confianza", body: "About, contact, privacy, terms, indice de herramientas, guias y paginas localizadas estan en el sitemap para que crawlers y visitantes lleguen a paginas completas. Tambien se cuidan canonical URL, locale alternates, redirects y archivos publicos de verificacion." },
+    ],
+    contact: [
+      { heading: "Reporte reproducible", body: "Incluye URL de pagina, navegador, ejemplo seguro, resultado esperado, resultado obtenido y aviso visible. Asi se puede repetir el flujo sin exponer datos sensibles." },
+      { heading: "Solicitudes fuera de alcance", body: "Este contacto no recupera cuentas, no investiga infraestructura privada, no recibe credenciales reales, no emite decisiones legales y no reemplaza una revision de seguridad. Usa ejemplos publicos y enfoca el reporte en calidad del sitio o comportamiento de la herramienta." },
+    ],
+  },
+  "pt-BR": {
+    about: [
+      { heading: "Revisao antes de copiar", body: "As paginas de ferramentas seguem um fluxo de exemplo seguro, diagnosticos, avisos, revisao do resultado e proxima etapa relacionada. O resultado e um rascunho: compare com runtime, scheduler, parser, crawler ou ambiente de deploy antes de copiar apenas o que serve." },
+      { heading: "Superficie publica de confianca", body: "About, contact, privacy, terms, indice de ferramentas, guias e paginas localizadas entram no sitemap para que crawlers e visitantes alcancem paginas completas. Canonical URL, locale alternates, redirects e arquivos publicos de verificacao tambem sao mantidos." },
+    ],
+    contact: [
+      { heading: "Relato reproduzivel", body: "Inclua URL da pagina, navegador, exemplo seguro, resultado esperado, resultado obtido e aviso visivel. Assim o fluxo pode ser repetido sem expor dados sensiveis." },
+      { heading: "Pedidos fora de escopo", body: "Este contato nao recupera contas, nao investiga infraestrutura privada, nao recebe credenciais reais, nao emite decisoes legais e nao substitui revisao de seguranca. Use exemplos publicos e foque em qualidade do site ou comportamento da ferramenta." },
+    ],
+  },
+  de: {
+    about: [
+      { heading: "Pruefung vor dem Kopieren", body: "Tool-Seiten folgen einem Ablauf aus sicherem Beispiel, Diagnosen, Warnungen, Ergebnispruefung und verwandtem naechsten Schritt. Das Ergebnis ist ein Entwurf: Vergleiche es mit Runtime, Scheduler, Parser, Crawler oder Deployment-Umgebung, bevor du nur den passenden Teil kopierst." },
+      { heading: "Oeffentliche Vertrauensflaeche", body: "About, Contact, Privacy, Terms, Tool-Index, Guides und lokalisierte Seiten stehen in der Sitemap, damit Crawler und Besucher vollstaendige Seiten erreichen. Canonical URLs, Locale Alternates, Redirects und oeffentliche Verifikationsdateien werden ebenfalls gepflegt." },
+    ],
+    contact: [
+      { heading: "Reproduzierbarer Bericht", body: "Nenne Seiten-URL, Browser, sicheres Beispiel, erwartetes Ergebnis, erhaltenes Ergebnis und sichtbare Warnung. So laesst sich der Ablauf pruefen, ohne sensible Daten offenzulegen." },
+      { heading: "Anfragen ausserhalb des Umfangs", body: "Dieser Kontakt stellt keine Konten wieder her, untersucht keine private Infrastruktur, nimmt keine echten Zugangsdaten an, trifft keine Rechtsentscheidungen und ersetzt keine Sicherheitspruefung. Nutze oeffentliche Beispiele und fokussiere Site-Qualitaet oder Tool-Verhalten." },
+    ],
+  },
+  fr: {
+    about: [
+      { heading: "Verification avant copie", body: "Les pages d'outils suivent un flux avec exemple sur, diagnostics, alertes, verification du resultat et etape liee. Le resultat est un brouillon: comparez-le avec le runtime, scheduler, parser, crawler ou environnement de deploiement avant de copier seulement la partie utile." },
+      { heading: "Surface publique de confiance", body: "About, contact, privacy, terms, index des outils, guides et pages localisees sont dans le sitemap pour que crawlers et visiteurs atteignent des pages completes. Canonical URL, locale alternates, redirects et fichiers publics de verification sont aussi maintenus." },
+    ],
+    contact: [
+      { heading: "Rapport reproductible", body: "Incluez URL de page, navigateur, exemple sur, resultat attendu, resultat obtenu et alerte visible. Le flux peut alors etre reproduit sans exposer de donnees sensibles." },
+      { heading: "Demandes hors perimetre", body: "Ce contact ne recupere pas de comptes, n'analyse pas d'infrastructure privee, ne recoit pas d'identifiants reels, ne rend pas d'avis juridique et ne remplace pas une revue securite. Utilisez des exemples publics et restez sur la qualite du site ou le comportement de l'outil." },
+    ],
+  },
+  hi: {
+    about: [
+      { heading: "कॉपी से पहले जांच", body: "Tool pages सुरक्षित example, diagnostics, warnings, result review और related next step के flow पर बने हैं. Result एक draft है; copy करने से पहले उसे target runtime, scheduler, parser, crawler या deploy environment से मिलाकर देखें." },
+      { heading: "सार्वजनिक trust surface", body: "About, contact, privacy, terms, tool index, guides और localized pages sitemap में रहते हैं ताकि crawler और visitor complete pages तक पहुंच सकें. Canonical URL, locale alternates, redirects और public verification files भी maintain होते हैं." },
+    ],
+    contact: [
+      { heading: "दोहराया जा सकने वाला report", body: "Page URL, browser, सुरक्षित example, expected result, actual result और visible warning शामिल करें. इससे sensitive data दिए बिना वही flow दोबारा जांचा जा सकता है." },
+      { heading: "इस संपर्क से बाहर अनुरोध", body: "यह channel account recovery, private infrastructure जांच, real credentials, legal decision या production security review नहीं संभालता. Public examples इस्तेमाल करें और site quality या tool behavior पर report रखें." },
+    ],
+  },
+  id: {
+    about: [
+      { heading: "Pemeriksaan sebelum menyalin", body: "Halaman alat disusun dengan contoh aman, diagnostik, peringatan, pemeriksaan hasil, dan langkah terkait berikutnya. Hasil adalah draft; bandingkan dengan runtime, scheduler, parser, crawler, atau lingkungan deploy sebelum menyalin bagian yang tepat." },
+      { heading: "Permukaan kepercayaan publik", body: "About, contact, privacy, terms, indeks alat, panduan, dan halaman lokal masuk ke sitemap agar crawler dan pengunjung mencapai halaman lengkap. Canonical URL, locale alternates, redirect, dan file verifikasi publik juga dipelihara." },
+    ],
+    contact: [
+      { heading: "Laporan yang bisa direproduksi", body: "Sertakan URL halaman, browser, contoh aman, hasil yang diharapkan, hasil yang didapat, dan peringatan yang terlihat. Dengan begitu alur bisa dicek ulang tanpa membuka data sensitif." },
+      { heading: "Permintaan di luar cakupan", body: "Kontak ini tidak memulihkan akun, tidak memeriksa infrastruktur privat, tidak menerima kredensial asli, tidak memberi keputusan hukum, dan tidak menggantikan review keamanan. Gunakan contoh publik dan fokus pada kualitas situs atau perilaku alat." },
+    ],
+  },
+  vi: {
+    about: [
+      { heading: "Kiểm tra trước khi sao chép", body: "Trang công cụ được xây theo luồng ví dụ an toàn, chẩn đoán, cảnh báo, kiểm tra kết quả và bước tiếp theo liên quan. Kết quả là bản nháp; hãy so với runtime, scheduler, parser, crawler hoặc môi trường triển khai trước khi chỉ sao chép phần phù hợp." },
+      { heading: "Bề mặt tin cậy công khai", body: "About, contact, privacy, terms, danh mục công cụ, hướng dẫn và trang bản địa hóa nằm trong sitemap để crawler và người dùng tới được trang đầy đủ. Canonical URL, locale alternates, redirect và file xác minh công khai cũng được duy trì." },
+    ],
+    contact: [
+      { heading: "Báo cáo có thể tái hiện", body: "Hãy kèm URL trang, trình duyệt, ví dụ an toàn, kết quả mong đợi, kết quả nhận được và cảnh báo hiển thị. Nhờ vậy có thể kiểm tra lại luồng mà không lộ dữ liệu nhạy cảm." },
+      { heading: "Yêu cầu ngoài phạm vi", body: "Kênh liên hệ này không khôi phục tài khoản, không điều tra hạ tầng riêng, không nhận thông tin đăng nhập thật, không đưa ra quyết định pháp lý và không thay thế review bảo mật. Hãy dùng ví dụ công khai và tập trung vào chất lượng site hoặc hành vi công cụ." },
+    ],
+  },
+  th: {
+    about: [
+      { heading: "ตรวจทานก่อนคัดลอก", body: "หน้าเครื่องมือจัดตามลำดับตัวอย่างที่ปลอดภัย การวินิจฉัย คำเตือน การตรวจผลลัพธ์ และขั้นตอนถัดไปที่เกี่ยวข้อง ผลลัพธ์เป็นฉบับร่าง ควรเทียบกับ runtime, scheduler, parser, crawler หรือสภาพแวดล้อม deploy ก่อนคัดลอกเฉพาะส่วนที่เหมาะสม" },
+      { heading: "พื้นผิวความน่าเชื่อถือสาธารณะ", body: "About, contact, privacy, terms, ดัชนีเครื่องมือ คู่มือ และหน้า localized อยู่ใน sitemap เพื่อให้ crawler และผู้ใช้เข้าถึงหน้าที่สมบูรณ์ได้ Canonical URL, locale alternates, redirect และไฟล์ยืนยันสาธารณะก็ได้รับการดูแลด้วย" },
+    ],
+    contact: [
+      { heading: "รายงานที่ทำซ้ำได้", body: "โปรดใส่ URL หน้า เบราว์เซอร์ ตัวอย่างที่ปลอดภัย ผลที่คาดหวัง ผลที่ได้รับ และคำเตือนที่เห็น เพื่อให้ตรวจซ้ำได้โดยไม่เปิดเผยข้อมูลอ่อนไหว" },
+      { heading: "คำขอนอกขอบเขต", body: "ช่องทางนี้ไม่กู้บัญชี ไม่ตรวจโครงสร้างพื้นฐานส่วนตัว ไม่รับข้อมูลเข้าสู่ระบบจริง ไม่ให้คำตัดสินทางกฎหมาย และไม่แทนที่การ review ความปลอดภัย โปรดใช้ตัวอย่างสาธารณะและเน้นคุณภาพไซต์หรือพฤติกรรมเครื่องมือ" },
+    ],
+  },
+  ar: {
+    about: [
+      { heading: "المراجعة قبل النسخ", body: "صفحات الأدوات مبنية حول مثال آمن وتشخيصات وتحذيرات ومراجعة للنتيجة وخطوة تالية مرتبطة. النتيجة مسودة؛ قارنها مع runtime أو scheduler أو parser أو crawler أو بيئة النشر قبل نسخ الجزء المناسب فقط." },
+      { heading: "سطح الثقة العام", body: "صفحات about وcontact وprivacy وterms وفهرس الأدوات والأدلة والصفحات المترجمة تدخل في sitemap حتى يصل crawler والزائر إلى صفحات كاملة. تتم صيانة canonical URL وlocale alternates وredirects وملفات التحقق العامة كذلك." },
+    ],
+    contact: [
+      { heading: "بلاغ قابل للإعادة", body: "أرسل رابط الصفحة والمتصفح ومثالا آمنا والنتيجة المتوقعة والنتيجة الفعلية والتحذير الظاهر. بذلك يمكن إعادة فحص المسار دون كشف بيانات حساسة." },
+      { heading: "طلبات خارج النطاق", body: "قناة التواصل هذه لا تستعيد الحسابات ولا تفحص بنية خاصة ولا تستقبل credentials حقيقية ولا تصدر قرارات قانونية ولا تستبدل review أمني. استخدم أمثلة عامة وركز على جودة الموقع أو سلوك الأداة." },
+    ],
+  },
+};
+
+const localizedTrustDepthSections: Partial<Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustSection[]>>> = {
+  ko: {
+    about: [
+      { heading: "도구별 실제 콘텐츠", body: "주요 도구는 단순 입력창만 제공하지 않습니다. JSON, Regex, JWT, Base64, Cron, DNS, HTTP, SEO, SQL, CSS, JavaScript 같은 핵심 흐름에는 예시 입력, 구조화된 결과, 실패 사례, 복사 전 점검, 관련 가이드와 다음 도구 링크가 함께 제공됩니다." },
+      { heading: "언어별 페이지 완성도", body: "locale 페이지는 제목과 메뉴만 번역한 얇은 route가 되지 않도록 설명, FAQ, 예제, guide lead, 법적 안내, trust 문구를 함께 관리합니다. 사용자는 자신의 언어에서 도구 목적, 입력 범위, 결과 검토 방법을 바로 확인할 수 있어야 합니다." },
+      { heading: "서버 도구의 경계", body: "DNS 조회와 HTTP 상태 확인처럼 서버가 필요한 도구는 공개 대상 확인에 한정됩니다. private host, localhost, 예약 주소, 인증이 필요한 내부 URL은 공용 유틸리티의 대상이 아니며, 그런 점검은 조직 내부 환경에서 수행해야 합니다." },
+    ],
+    contact: [
+      { heading: "콘텐츠 수정 요청", body: "문구가 부정확하거나 오래된 경우에는 route, 언어, 문제가 되는 문장, 더 안전한 표현을 함께 보내 주세요. 단순히 '틀림'이라고만 적는 것보다 어느 도구나 가이드에서 사용자가 오해할 수 있는지 알려 주는 보고가 더 빨리 반영됩니다." },
+      { heading: "도구 동작 보고", body: "formatter, parser, generator, network check 문제가 있다면 입력의 구조, 선택한 옵션, 표시된 경고, 결과를 사용할 대상 환경을 함께 적어 주세요. 공개 URL 검사 문제라면 redirect, DNS, header, robots, canonical 같은 관련 신호도 함께 확인하면 재현이 쉬워집니다." },
+      { heading: "민감정보 제거 기준", body: "문제 재현에 실제 값이 필요해 보이더라도 토큰, 비밀번호, 개인 키, 고객 식별자, 내부 host, 일회용 링크는 보내지 마세요. 같은 길이와 구조를 가진 테스트 값으로 바꾸고, 원본 값이 무엇을 의미하는지만 짧게 설명하는 방식이 안전합니다." },
+    ],
+  },
+  ja: {
+    about: [
+      { heading: "ツールごとの実用コンテンツ", body: "主要ツールは入力欄だけではありません。JSON、Regex、JWT、Base64、Cron、DNS、HTTP、SEO、SQL、CSS、JavaScript の流れには、入力例、構造化された結果、失敗ケース、コピー前チェック、関連ガイド、次のツールへの導線を組み合わせています。" },
+      { heading: "言語別ページの完成度", body: "locale ページはタイトルやメニューだけを翻訳した薄い route にしません。説明、FAQ、例、guide lead、法的説明、trust 文言を一緒に管理し、利用者が自分の言語でツールの目的、入力範囲、結果の確認方法を理解できるようにします。" },
+      { heading: "サーバーツールの境界", body: "DNS lookup や HTTP status のように server が必要なツールは、公開対象の確認に限定されます。private host、localhost、reserved address、認証が必要な内部 URL は公開ユーティリティの対象ではなく、組織内の環境で確認してください。" },
+    ],
+    contact: [
+      { heading: "コンテンツ修正依頼", body: "文言が不正確または古い場合は、route、言語、問題の文、より安全な表現を送ってください。単に間違いと書くより、どのツールやガイドで利用者が誤解しやすいかが分かる報告のほうが反映しやすくなります。" },
+      { heading: "ツール動作の報告", body: "formatter、parser、generator、network check の問題では、入力の構造、選択した option、表示された警告、結果を使う対象環境を含めてください。公開 URL の検査なら redirect、DNS、header、robots、canonical などの信号もあると再現しやすくなります。" },
+      { heading: "機密情報の削除基準", body: "再現に実際の値が必要に見えても、token、password、private key、customer identifier、internal host、one-time link は送らないでください。同じ長さや構造を持つテスト値に置き換え、元の値が何を表すかだけを短く説明してください。" },
+      { heading: "対応優先度", body: "結果の正確性、公開ページの到達性、localization の欠落、keyboard 操作、mobile 表示、誤解を招く警告に関する報告は優先して確認します。見た目だけの好みより、作業を完了できない具体的な理由を添えてください。" },
+    ],
+  },
+  "zh-CN": {
+    about: [
+      { heading: "每个工具的实际内容", body: "核心工具不只是输入框。JSON、Regex、JWT、Base64、Cron、DNS、HTTP、SEO、SQL、CSS、JavaScript 等流程会结合输入示例、结构化结果、失败场景、复制前检查、相关指南和下一步工具链接，帮助用户完成真实任务。" },
+      { heading: "语言页面完整性", body: "locale 页面不会只翻译标题和菜单。说明、FAQ、示例、guide lead、法律说明和信任页面文案会一起维护，让用户在自己的语言中理解工具目的、输入范围、隐私边界和结果复核方法。" },
+      { heading: "服务器工具边界", body: "DNS lookup 和 HTTP status 这类需要服务器的工具只适合检查公开目标。private host、localhost、保留地址、需要登录的内部 URL 不属于公共工具的检查对象，应在组织自己的可信环境中处理。" },
+      { heading: "避免薄内容的维护方式", body: "页面更新时会优先补充可操作的内容，而不是堆叠空泛段落。新增或调整工具时，应该同时提供真实示例、限制说明、错误提示、复制风险、相关下一步和可索引的 guide 入口，让搜索访客进入页面后能直接完成任务。" },
+      { heading: "变更后的可检查性", body: "公开页面变更会通过构建、路由、可视化、内容字符数和本地化检查来验证。这样可以减少空白页面、错误重定向、locale 混杂、横向溢出、未完成 route 或只剩英文模板的情况。" },
+      { heading: "从搜索到下一步", body: "访问者从搜索结果进入某个工具后，应能看到当前任务、输入限制、结果含义、常见失败原因和后续工具，而不是被迫返回搜索结果重新判断。这个连续工作流是页面质量维护的核心。" },
+    ],
+    contact: [
+      { heading: "内容修正请求", body: "如果页面文案不准确或已经过时，请提供 route、语言、具体句子和建议的安全表达。只写“错误”很难定位；说明哪个工具或指南会让用户误解，修正会更容易评估和处理。" },
+      { heading: "工具行为报告", body: "报告 formatter、parser、generator 或 network check 问题时，请提供输入结构、所选选项、页面警告和结果将用于哪个目标环境。公开 URL 检查问题最好同时说明 redirect、DNS、header、robots、canonical 等可观察信号。" },
+      { heading: "敏感信息移除标准", body: "即使复现问题似乎需要真实值，也不要发送 token、密码、私钥、客户标识、内部主机或一次性链接。请换成长度和结构相似的测试值，并简短说明原值代表的类型。" },
+      { heading: "优先处理的信息", body: "会优先查看影响结果准确性、公开页面可访问性、本地化质量、移动布局、键盘操作、错误警告或工具无法完成核心任务的报告。只描述个人偏好通常不够，请说明它阻止了哪个实际工作流。" },
+      { heading: "报告后的处理方式", body: "可复现的问题会先对照相同页面和安全样例验证，再决定是修正文案、调整工具逻辑、补充警告、改进 guide，还是更新相关下一步链接。无法安全复现的问题会要求去除敏感值后再提交。" },
+      { heading: "不适合邮件发送的内容", body: "请不要把完整日志、账号恢复截图、客户数据导出、内部监控 URL、一次性下载链接或未遮罩的配置文件作为附件发送。如果必须说明结构，请提取最小片段并替换所有真实标识，同时说明哪些字段只是示例占位，哪些值已被安全替换。" },
+    ],
+  },
+  "zh-TW": {
+    about: [
+      { heading: "每個工具的實際內容", body: "核心工具不只是輸入框。JSON、Regex、JWT、Base64、Cron、DNS、HTTP、SEO、SQL、CSS、JavaScript 等流程會結合輸入範例、結構化結果、失敗情境、複製前檢查、相關指南和下一步工具連結，協助使用者完成真實任務。" },
+      { heading: "語言頁面完整性", body: "locale 頁面不會只翻譯標題和選單。說明、FAQ、範例、guide lead、法律說明和信任頁面文案會一起維護，讓使用者在自己的語言中理解工具目的、輸入範圍、隱私邊界和結果複核方法。" },
+      { heading: "伺服器工具邊界", body: "DNS lookup 和 HTTP status 這類需要伺服器的工具只適合檢查公開目標。private host、localhost、保留位址、需要登入的內部 URL 不屬於公共工具的檢查對象，應在組織自己的可信環境中處理。" },
+      { heading: "避免薄內容的維護方式", body: "頁面更新時會優先補充可操作內容，而不是堆疊空泛段落。新增或調整工具時，應同時提供真實範例、限制說明、錯誤提示、複製風險、相關下一步和可索引的 guide 入口，讓搜尋訪客進入頁面後能直接完成任務。" },
+      { heading: "變更後的可檢查性", body: "公開頁面變更會透過建置、路由、視覺、內容字數和在地化檢查來驗證。這能減少空白頁、錯誤重定向、locale 混雜、橫向溢出、未完成 route 或只剩英文模板的情況。" },
+      { heading: "從搜尋到下一步", body: "訪客從搜尋結果進入某個工具後，應能看到目前任務、輸入限制、結果含義、常見失敗原因和後續工具，而不是被迫回到搜尋結果重新判斷。這個連續工作流是頁面品質維護的核心。" },
+    ],
+    contact: [
+      { heading: "內容修正請求", body: "如果頁面文案不準確或已經過時，請提供 route、語言、具體句子和建議的安全表達。只寫「錯誤」很難定位；說明哪個工具或指南會讓使用者誤解，修正會更容易評估和處理。" },
+      { heading: "工具行為回報", body: "回報 formatter、parser、generator 或 network check 問題時，請提供輸入結構、所選選項、頁面警告和結果將用於哪個目標環境。公開 URL 檢查問題最好同時說明 redirect、DNS、header、robots、canonical 等可觀察訊號。" },
+      { heading: "敏感資訊移除標準", body: "即使重現問題似乎需要真實值，也不要傳送 token、密碼、私鑰、客戶識別、內部主機或一次性連結。請換成長度和結構相似的測試值，並簡短說明原值代表的類型。" },
+      { heading: "優先處理的資訊", body: "會優先查看影響結果準確性、公開頁面可訪問性、在地化品質、行動版排版、鍵盤操作、錯誤警告或工具無法完成核心任務的回報。只描述個人偏好通常不夠，請說明它阻止了哪個實際工作流。" },
+      { heading: "回報後的處理方式", body: "可重現的問題會先對照相同頁面和安全範例驗證，再決定是修正文案、調整工具邏輯、補充警告、改進 guide，還是更新相關下一步連結。無法安全重現的問題會要求移除敏感值後再提交。" },
+      { heading: "不適合郵件傳送的內容", body: "請不要把完整日誌、帳號復原截圖、客戶資料匯出、內部監控 URL、一次性下載連結或未遮罩的設定檔作為附件傳送。如果必須說明結構，請擷取最小片段並替換所有真實識別，同時說明哪些欄位只是範例佔位，哪些值已被安全替換。" },
+    ],
+  },
+  ar: {
+    about: [
+      { heading: "محتوى عملي لكل أداة", body: "الأدوات الأساسية ليست مجرد مربع إدخال. مسارات JSON وRegex وJWT وBase64 وCron وDNS وHTTP وSEO وSQL وCSS وJavaScript تجمع أمثلة إدخال ونتائج منظمة وحالات فشل وفحوصا قبل النسخ وروابط إلى أدلة وأدوات تالية حتى ينجز المستخدم مهمة حقيقية." },
+      { heading: "اكتمال صفحات اللغة", body: "صفحات locale لا تترجم العنوان والقائمة فقط. تتم صيانة الوصف وFAQ والأمثلة ومقدمة الدليل والنصوص القانونية ونصوص الثقة معا حتى يفهم المستخدم بلغته هدف الأداة ونطاق الإدخال وحدود الخصوصية وطريقة مراجعة النتيجة." },
+      { heading: "حدود أدوات الخادم", body: "أدوات مثل DNS lookup وHTTP status التي تحتاج خادما مخصصة للأهداف العامة فقط. private host وlocalhost والعناوين المحجوزة وURL الداخلي الذي يحتاج تسجيل دخول ليست هدفا مناسبا لأداة عامة، ويجب فحصها داخل بيئة موثوقة خاصة بالمؤسسة." },
+    ],
+    contact: [
+      { heading: "طلب تصحيح محتوى", body: "إذا كان النص غير دقيق أو قديما، أرسل route واللغة والجملة المحددة والصياغة الأكثر أمانا التي تقترحها. تقرير يوضح أين قد يسيء المستخدم فهم أداة أو دليل يكون أسهل في المراجعة من رسالة عامة تقول إن الصفحة خاطئة فقط." },
+      { heading: "تقرير سلوك الأداة", body: "عند الإبلاغ عن مشكلة formatter أو parser أو generator أو network check، أرفق شكل الإدخال والخيارات المختارة والتحذير الظاهر والبيئة التي ستستخدم فيها النتيجة. لمشكلة URL عام، تساعد إشارات مثل redirect وDNS وheader وrobots وcanonical في إعادة الفحص." },
+      { heading: "إزالة المعلومات الحساسة", body: "حتى إذا بدا أن إعادة المشكلة تحتاج قيمة حقيقية، لا ترسل token أو password أو private key أو معرف عميل أو host داخلي أو رابطا يستخدم مرة واحدة. استبدلها بقيمة اختبار لها الطول والبنية نفسها واشرح باختصار نوع القيمة الأصلية." },
+    ],
+  },
+};
+
 export function getLocalizedTrustContent(locale: Locale = defaultLocale, kind: TrustPageKind) {
-  if (locale === defaultLocale) return english[kind];
-  return localized[locale][kind];
+  const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
+  const expansionSections = locale === defaultLocale ? [] : localizedTrustExpansionSections[locale][kind];
+  const depthSections = locale === defaultLocale ? [] : (localizedTrustDepthSections[locale]?.[kind] ?? []);
+
+  return {
+    ...content,
+    lastUpdated: trustUpdatedAt[locale],
+    sections: [...content.sections, ...expansionSections, ...depthSections],
+  };
 }
