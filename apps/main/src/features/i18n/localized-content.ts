@@ -1761,8 +1761,16 @@ const priorityGuideDescriptions: Record<string, Partial<Record<Locale, string>>>
 
 const priorityGuideLeadSections: Record<string, Partial<Record<Exclude<Locale, "en">, GuideDefinition["sections"][number]>>> = {
   "regex-cheat-sheet": {
-    "zh-CN": { heading: "先锁定要匹配的边界", body: "编写 Regex 前，先列出必须匹配和必须排除的样例。再检查 flag、捕获组和转义字符，避免模式在表单、日志或路由中误匹配。" },
-    "zh-TW": { heading: "先鎖定要比對的邊界", body: "撰寫 Regex 前，先列出必須比對和必須排除的樣例。再檢查 flag、捕獲群組與跳脫字元，避免模式在表單、日誌或路由中誤判。" },
+    "zh-CN": {
+      heading: "先锁定要匹配的边界",
+      body: "编写 Regex 前，先列出必须匹配和必须排除的样例。再检查 flag、捕获组和转义字符，避免模式在表单、日志或路由中误匹配。把边界写清楚之后，再考虑是否需要完整验证、局部提取或只是快速查找。",
+      bullets: ["保留一个必须通过的样例和一个必须失败的样例。", "记录目标运行环境是否使用 JavaScript RegExp。", "把业务验证和文本查找分开，不要让一个 pattern 承担所有规则。"],
+    },
+    "zh-TW": {
+      heading: "先鎖定要比對的邊界",
+      body: "撰寫 Regex 前，先列出必須比對和必須排除的樣例。再檢查 flag、捕獲群組與跳脫字元，避免模式在表單、日誌或路由中誤判。把邊界寫清楚之後，再考慮是否需要完整驗證、局部擷取或只是快速查找。",
+      bullets: ["保留一個必須通過的範例和一個必須失敗的範例。", "記錄目標執行環境是否使用 JavaScript RegExp。", "把業務驗證和文字查找分開，不要讓一個 pattern 承擔所有規則。"],
+    },
     "pt-BR": { heading: "Defina os limites do padrao", body: "Antes de escrever Regex, liste exemplos que devem combinar e exemplos que devem falhar. Depois revise flags, grupos de captura e escapes para evitar falsos positivos." },
     fr: { heading: "Definir les limites du motif", body: "Avant d'ecrire une Regex, listez les exemples qui doivent correspondre et ceux qui doivent echouer. Verifiez ensuite flags, groupes de capture et caracteres echappes." },
     hi: { heading: "मिलान की सीमा पहले तय करें", body: "Regex लिखने से पहले वे नमूने रखें जिन्हें मिलना चाहिए और जिन्हें नहीं मिलना चाहिए. फिर flag, capture group और escape character जांचें." },
@@ -2543,6 +2551,16 @@ function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: s
         body: "实用工具不应停在一次转换。格式化后提取字段，生成后验证结果，检查公开 URL 后继续看 header、DNS、robots 或 sitemap，才能留下可复用的工作记录。",
         bullets: ["格式化结果继续做 diff 或 schema 检查。", "URL 和网络结果要结合 redirect、robots、sitemap 状态查看。", "分享前移除密钥、内部主机名和客户数据。"],
       },
+      {
+        heading: "用多组样例防止过度匹配",
+        body: "Regex 最常见的问题不是完全不匹配，而是在看似相似的文本中匹配太多或太少。把正常值、边界值、空值、带空格值、带标点值和明显错误值放进同一轮测试，可以更快发现锚点、量词和字符类的问题。",
+        bullets: ["用 ^ 和 $ 明确整段匹配，或故意不加锚点做局部查找。", "把贪婪量词和非贪婪量词的结果分开比较。", "检查大小写 flag 是否会改变真实输入的判断。"],
+      },
+      {
+        heading: "复制前检查捕获组",
+        body: "很多应用代码真正使用的是捕获组结果，而不是整段匹配本身。增加可选组、嵌套组或替代分支后，应重新确认每个组的顺序、名称和空值行为，避免把错误字段传给路由、日志解析或表单处理代码。",
+        bullets: ["只为需要读取的值保留捕获组。", "用于分组但不读取的部分改成非捕获组。", "复制到 JSON、字符串字面量或配置文件前再次检查反斜杠。"],
+      },
     ],
     "zh-TW": [
       {
@@ -2554,6 +2572,16 @@ function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: s
         heading: "連接到下一步任務",
         body: "實用工具不應停在一次轉換。格式化後擷取欄位，產生後驗證結果，檢查公開 URL 後繼續看 header、DNS、robots 或 sitemap，才能留下可重用的工作記錄。",
         bullets: ["格式化結果繼續做 diff 或 schema 檢查。", "URL 與網路結果要結合 redirect、robots、sitemap 狀態查看。", "分享前移除密鑰、內部主機名稱與客戶資料。"],
+      },
+      {
+        heading: "用多組範例防止過度比對",
+        body: "Regex 最常見的問題不是完全不比對，而是在看似相似的文字中比對太多或太少。把正常值、邊界值、空值、帶空格值、帶標點值和明顯錯誤值放進同一輪測試，可以更快發現錨點、量詞與字元類別的問題。",
+        bullets: ["用 ^ 與 $ 明確整段比對，或刻意不加錨點做局部查找。", "把貪婪量詞和非貪婪量詞的結果分開比較。", "檢查大小寫 flag 是否會改變真實輸入的判斷。"],
+      },
+      {
+        heading: "複製前檢查捕獲群組",
+        body: "很多應用程式真正使用的是捕獲群組結果，而不是整段比對本身。增加可選群組、巢狀群組或替代分支後，應重新確認每個群組的順序、名稱和空值行為，避免把錯誤欄位傳給路由、日誌解析或表單處理程式碼。",
+        bullets: ["只為需要讀取的值保留捕獲群組。", "用於分組但不讀取的部分改成非捕獲群組。", "複製到 JSON、字串字面量或設定檔前再次檢查反斜線。"],
       },
     ],
     es: [
