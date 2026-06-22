@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { GuideReviewSections } from "@/features/guides/guide-review-sections";
 import { getGuideBySlug, guides } from "@/features/guides/registry";
 import { defaultLocale, isLocale, languageAlternates, locales, openGraphLocales, withLocale, type Locale } from "@/features/i18n/config";
 import { getDictionary } from "@/features/i18n/dictionaries";
@@ -115,6 +116,7 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
             </div>
           ))}
         </article>
+        <GuideReviewSections dictionary={dictionary} locale={locale} tools={relatedTools} />
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>{dictionary.guides.relatedTitle}</CardTitle>

@@ -5,6 +5,7 @@ import { GoogleAdUnit } from "@/components/GoogleAdsense";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { defaultLocale, languageAlternates, openGraphLocales, withLocale } from "@/features/i18n/config";
+import { GuideReviewSections } from "@/features/guides/guide-review-sections";
 import { getDictionary } from "@/features/i18n/dictionaries";
 import { getGuideBySlug, guides } from "@/features/guides/registry";
 import { getRelatedTools } from "@/features/tools/registry";
@@ -104,6 +105,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
             </div>
           ))}
         </article>
+        <GuideReviewSections dictionary={dictionary} locale={defaultLocale} tools={relatedTools} />
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>{dictionary.guides.relatedTitle}</CardTitle>

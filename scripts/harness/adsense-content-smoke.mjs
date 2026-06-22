@@ -29,6 +29,7 @@ const localizedTermsPage = read("apps/main/src/app/[locale]/terms/page.tsx");
 const appLayout = read("apps/main/src/app/layout.tsx");
 const toolWorkspace = read("apps/main/src/features/tools/tool-workspace.tsx");
 const googleAdsense = read("apps/main/src/components/GoogleAdsense.tsx");
+const guideReviewSections = read("apps/main/src/features/guides/guide-review-sections.tsx");
 
 const nonEnglishLocales = ["ko", "ja", "zh-CN", "zh-TW", "es", "pt-BR", "de", "fr", "hi", "id", "vi", "th", "ar"];
 const publicSourceFiles = [
@@ -45,6 +46,7 @@ const publicSourceFiles = [
   "apps/main/src/app/terms/page.tsx",
   "apps/main/src/app/[locale]/privacy/page.tsx",
   "apps/main/src/app/[locale]/terms/page.tsx",
+  "apps/main/src/features/guides/guide-review-sections.tsx",
   "apps/main/src/components/GoogleAdsense.tsx",
 ];
 
@@ -116,9 +118,13 @@ for (const [source, label] of [
   [guidePage, "default guide detail"],
   [localizedGuidePage, "localized guide detail"],
 ]) {
-  for (const fragment of ["section.bullets", "tool.description", "tool.useCases", "tool.examples[0]", "tool.faqs[0]"]) {
+  for (const fragment of ["section.bullets", "GuideReviewSections", "tool.description", "tool.useCases", "tool.examples[0]", "tool.faqs[0]"]) {
     if (!source.includes(fragment)) failures.push(`${label} missing visible guide support fragment: ${fragment}`);
   }
+}
+
+for (const fragment of ["data-guide-review-sections", "tool.failureCases", "tool.preCopyChecklist", "dictionary.tool.failureCases", "dictionary.tool.preCopyChecklist"]) {
+  if (!guideReviewSections.includes(fragment)) failures.push(`guide review sections missing ${fragment}`);
 }
 
 for (const [source, label] of [
