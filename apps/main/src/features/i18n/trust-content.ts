@@ -38,6 +38,26 @@ const english: Record<TrustPageKind, TrustPageContent> = {
         heading: "Content and maintenance",
         body: "Each tool is paired with examples, failure cases, copy checks, FAQs, and related next tools so visitors can complete a real workflow instead of reading generic filler content.",
       },
+      {
+        heading: "How tools are selected",
+        body: "New utilities are prioritized when they solve repeat developer tasks with deterministic output, clear review steps, and low privacy risk. Formatters, validators, generators, conversion helpers, SEO checks, and public network checks fit the site because users can verify the result immediately.",
+      },
+      {
+        heading: "Core utility coverage",
+        body: "The current workbench focuses on high-demand task clusters: JSON and data cleanup, regex and text review, JWT and token inspection, Base64 and encoding, cron and time conversion, UUID and password generation, hash and HMAC checks, QR payload building, DNS and HTTP diagnostics, color contrast, SEO metadata, sitemap and robots review, plus SQL, CSS, and JavaScript formatting.",
+      },
+      {
+        heading: "How pages stay useful",
+        body: "Tool pages are maintained as working surfaces first. The input and output area appears before reference material, while examples, diagnostics, failure cases, copy checklists, guides, and related tools explain how to review the result before using it elsewhere.",
+      },
+      {
+        heading: "Accessibility and navigation",
+        body: "The site keeps keyboard-reachable controls, localized route paths, sitemap coverage, trust links, and predictable navigation so users can move from a search query to a tool, then continue into the next related task without landing on empty or unfinished pages.",
+      },
+      {
+        heading: "International coverage",
+        body: "Default English pages stay unprefixed, while localized routes provide translated tool titles, descriptions, examples, FAQ, guide leads, trust pages, legal pages, and sitemap entries. Locale support is checked so non-English visitors are not sent to a page made only from raw English registry text.",
+      },
     ],
     primaryLink: {
       label: "Open the tool index",
@@ -61,6 +81,26 @@ const english: Record<TrustPageKind, TrustPageContent> = {
       {
         heading: "Site operation",
         body: "The site is maintained as a free developer utility workbench. Feedback that improves accuracy, navigation, accessibility, localization, or practical workflow coverage is prioritized.",
+      },
+      {
+        heading: "Useful issue reports",
+        body: "The most useful reports include the exact page URL, the browser or device, a small redacted input sample, the output you expected, and the output you received. This makes it possible to reproduce formatter, parser, validation, or layout problems without exposing private data.",
+      },
+      {
+        heading: "Before sending a report",
+        body: "If the issue is about a public URL, check whether the target URL itself returns a final response and whether redirects, DNS, robots rules, or security headers explain the result. If the issue is about generated text or code, include the runtime, parser, scheduler, browser, or platform where the copied output will be used.",
+      },
+      {
+        heading: "Content corrections",
+        body: "Corrections are welcome for inaccurate examples, unclear warnings, outdated browser behavior, localization mistakes, broken guide links, and places where a tool needs a stronger review checklist before output is copied into a project.",
+      },
+      {
+        heading: "Response priorities",
+        body: "Reports that affect core tool accuracy, privacy expectations, public crawlability, accessibility, localization quality, broken navigation, or misleading output are handled before cosmetic requests. Reproducible examples are more useful than screenshots alone because they can be tested against the same tool surface.",
+      },
+      {
+        heading: "Safety boundaries",
+        body: "Requests that would require handling live secrets, private network targets, customer records, account recovery data, or unlawful activity are not suitable for this public utility site. Use redacted examples and run private checks inside your own environment.",
       },
     ],
     primaryLink: {

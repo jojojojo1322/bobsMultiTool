@@ -120,6 +120,26 @@ const english: Record<LegalPageKind, LegalPageContent> = {
         heading: "Analytics and third-party services",
         body: "The site may use privacy-conscious analytics and third-party services to understand usage patterns and support the free utility experience. These services may use cookies or similar technologies according to their own policies.",
       },
+      {
+        heading: "Local utility inputs",
+        body: "Browser-local tools are intended for temporary transformation and review. Inputs for JSON formatting, Base64 conversion, JWT inspection, hashing, password generation, color conversion, text cleanup, and similar utilities should be reviewed before pasting, and sensitive production values should be redacted or replaced with safe samples.",
+      },
+      {
+        heading: "Public network checks",
+        body: "DNS lookup and HTTP status checks are designed for public hostnames and public URLs. The server route rejects private, reserved, localhost, and unsafe targets, but users should still avoid submitting internal names, secret query parameters, private headers, or URLs that should not be requested by a public service.",
+      },
+      {
+        heading: "Generated output",
+        body: "Generated or transformed output is shown so you can inspect, copy, and use it in your own workflow. The site does not guarantee that output is appropriate for every runtime, scheduler, parser, browser, deployment provider, or security policy, so review warnings and examples before using the result.",
+      },
+      {
+        heading: "Browser storage",
+        body: "Favorite tools, recent tools, and optional tool-session restore behavior are kept in local browser storage so repeat visitors can continue work without creating an account. You can clear local history from the interface or through your browser storage controls.",
+      },
+      {
+        heading: "Data not suitable for this site",
+        body: "Do not paste passwords you actively use, private keys, unredacted access tokens, confidential customer records, private network addresses, account recovery data, or regulated personal information. Use representative test data when a tool result needs to be shared with another person.",
+      },
     ],
     contact: {
       heading: "Contact",
@@ -147,6 +167,26 @@ const english: Record<LegalPageKind, LegalPageContent> = {
       {
         heading: "Third-party services",
         body: "The site may include third-party services that help operate and support the free utility experience. Third-party content is governed by the policies of the providers that serve it.",
+      },
+      {
+        heading: "Verification before use",
+        body: "Tool output is provided for developer review, not as a substitute for project-specific testing. You are responsible for checking generated regex patterns, cron schedules, hashes, formatted code, DNS results, HTTP headers, SEO tags, and configuration snippets in the environment where they will be used.",
+      },
+      {
+        heading: "Network and security boundaries",
+        body: "Do not use public route tools to probe private infrastructure, bypass access controls, test targets you do not control, or send secrets in URLs or headers. Public network utilities are limited to ordinary diagnostic checks for publicly reachable hosts and pages.",
+      },
+      {
+        heading: "Content accuracy",
+        body: "Guides, examples, FAQs, and checklist items are maintained to make the tools easier to review, but web standards, browser behavior, hosted schedulers, and platform rules can change. Treat guide content as practical reference material and verify critical decisions against the official system you are configuring.",
+      },
+      {
+        heading: "No account or professional service",
+        body: "The site does not create user accounts, store project workspaces, provide managed monitoring, or act as a legal, financial, security, or compliance advisor. The tools are lightweight developer utilities that help you inspect and prepare data for your own review.",
+      },
+      {
+        heading: "Changes to the service",
+        body: "Tools, examples, guide pages, localization coverage, route behavior, and third-party service integrations may change as the site is improved. Updated pages should keep the same goal: clear input, useful diagnostics, reviewable output, and safe navigation to the next related utility.",
       },
     ],
     contact: {
@@ -510,14 +550,166 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   },
 };
 
+const localizedLegalExpansionSections: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalSection[]>> = {
+  ko: {
+    privacy: [
+      { heading: "입력값 검토와 삭제", body: "도구에 붙여 넣는 값은 사용자가 직접 관리합니다. 운영 비밀값, 고객 정보, 내부 주소는 예시값으로 바꾸고, 결과를 공유하기 전에 브라우저 로컬 기록과 복사한 텍스트를 함께 확인하세요." },
+      { heading: "공개 네트워크 확인 범위", body: "DNS와 HTTP 확인은 공개 도메인과 공개 URL을 대상으로 합니다. 비공개 시스템 점검, 접근 권한 확인, 내부 장애 분석은 조직 내부 도구에서 처리해야 합니다." },
+    ],
+    terms: [
+      { heading: "결과 검증 책임", body: "포맷, 변환, 생성, 진단 결과는 작업을 돕는 초안입니다. 실제 배포, 문서, 보안 설정, 스케줄러, 데이터 처리에 쓰기 전에는 대상 환경에서 다시 검증해야 합니다." },
+      { heading: "보안 경계", body: "공개 도구를 이용해 사설 인프라를 조회하거나 접근 제어를 우회하거나 권한 없는 대상을 점검해서는 안 됩니다. 공유 가능한 예시와 공개적으로 확인 가능한 대상만 사용하세요." },
+    ],
+  },
+  ja: {
+    privacy: [
+      { heading: "入力値の確認と削除", body: "ツールに貼り付ける値は利用者が管理します。本番の秘密情報、顧客情報、内部アドレスは安全なサンプルに置き換え、共有前にブラウザ内の履歴とコピーした文字列を確認してください。" },
+      { heading: "公開ネットワーク確認の範囲", body: "DNS と HTTP の確認は公開ドメインと公開 URL を対象にしています。非公開システムの調査、権限確認、内部障害分析は組織内の信頼できるツールで行ってください。" },
+    ],
+    terms: [
+      { heading: "結果を検証する責任", body: "整形、変換、生成、診断の結果は作業を助ける下書きです。デプロイ、文書、セキュリティ設定、スケジューラ、データ処理で使う前に、対象環境で再確認してください。" },
+      { heading: "セキュリティ境界", body: "公開ツールで private infrastructure を調査したり、アクセス制御を回避したり、権限のない対象を確認したりしてはいけません。共有可能なサンプルと公開対象だけを使用してください。" },
+      { heading: "共有前の確認", body: "コピーした出力を issue、pull request、設計資料、運用メモに貼る前に、入力条件、対象 runtime、警告、redaction の有無を短く残してください。結果だけを貼ると、後から正しい使い方だったか判断しにくくなります。" },
+      { heading: "サービス変更", body: "ツール、例、ガイド、対応 locale、network route、第三者サービスは改善のために変更されることがあります。変更後も、明確な入力、有用な診断、確認可能な出力、関連ツールへの安全な導線を維持します。" },
+    ],
+  },
+  "zh-CN": {
+    privacy: [
+      { heading: "输入检查与删除", body: "你负责管理粘贴到工具中的内容。生产密钥、客户信息和内部地址应替换为安全样例；共享结果前，也要检查浏览器本地记录和已复制的文本。" },
+      { heading: "公开网络检查范围", body: "DNS 和 HTTP 检查面向公开域名和公开 URL。私有系统排查、权限验证和内部故障分析应在组织自己的受信任工具中完成。" },
+      { heading: "本地存储与重复使用", body: "收藏、最近使用和可选的会话恢复保存在浏览器本地存储中，用来帮助你再次打开常用工具。它们不是账号资料，也不会把项目内容上传为服务器端工作区。" },
+      { heading: "不适合粘贴的数据", body: "请不要粘贴正在使用的密码、私钥、未脱敏 token、客户记录、内部网络地址或受监管的个人信息。需要复现问题时，使用结构相同但可公开分享的样例数据。" },
+      { heading: "结果复制与浏览器行为", body: "复制按钮只把当前页面显示的结果交给你的浏览器剪贴板。站点不会创建可供他人访问的共享链接，也不会把格式化后的项目内容保存为服务器端历史记录。" },
+      { heading: "内容与服务说明", body: "指南、示例、FAQ 和检查清单用于帮助你理解工具输出，但它们不会替代官方平台文档或项目内部规则。重要配置应以你实际使用的系统说明为准。" },
+    ],
+    terms: [
+      { heading: "结果验证责任", body: "格式化、转换、生成和诊断结果只是帮助工作的草稿。用于部署、文档、安全设置、调度器或数据处理前，必须在目标环境中重新验证。" },
+      { heading: "安全边界", body: "不得使用公开工具探测私有基础设施、绕过访问控制或检查无权处理的目标。请只使用可共享样例和公开可访问的对象。" },
+      { heading: "共享前检查", body: "将输出粘贴到 issue、pull request、文档或运维记录前，请保留输入条件、目标运行环境、重要警告和脱敏说明。只有结果而没有上下文，其他人很难判断是否适合使用。" },
+      { heading: "服务变更", body: "工具、示例、指南、本地化内容、网络路由和第三方服务可能会随着站点改进而调整。更新后的页面仍应保持清晰输入、可用诊断、可检查输出和安全的下一步工具链接。" },
+      { heading: "不提供托管工作区", body: "本站不创建账号、不保存项目工作区、不提供持续监控，也不代表你执行安全、合规或法律判断。它提供的是可立即检查的轻量开发者工具。" },
+      { heading: "页面内容优先", body: "工具页面应先提供可用的输入、诊断和输出，再展示参考内容或广告服务。任何第三方脚本都不得掩盖主要工具流程或伪装成产品操作。" },
+    ],
+  },
+  "zh-TW": {
+    privacy: [
+      { heading: "輸入檢查與刪除", body: "貼到工具中的內容由使用者自行管理。正式密鑰、客戶資訊與內部位址應替換為安全範例；分享結果前，也要檢查瀏覽器本機記錄與已複製文字。" },
+      { heading: "公開網路檢查範圍", body: "DNS 與 HTTP 檢查面向公開網域與公開 URL。私有系統排查、權限驗證與內部故障分析應在組織自己的可信工具中完成。" },
+      { heading: "本機儲存與重複使用", body: "收藏、最近使用與選用的工作階段恢復會保存在瀏覽器本機儲存中，用來協助再次開啟常用工具。它們不是帳號資料，也不會把專案內容上傳為伺服器端工作區。" },
+      { heading: "不適合貼上的資料", body: "請不要貼上正在使用的密碼、私鑰、未遮罩 token、客戶紀錄、內部網路位址或受管制的個人資訊。需要重現問題時，使用結構相同但可公開分享的範例資料。" },
+      { heading: "結果複製與瀏覽器行為", body: "複製按鈕只會把目前頁面顯示的結果交給你的瀏覽器剪貼簿。本站不會建立可供他人存取的分享連結，也不會把格式化後的專案內容保存為伺服器端歷史紀錄。" },
+      { heading: "內容與服務說明", body: "指南、範例、FAQ 與檢查清單用來協助理解工具輸出，但不會取代官方平台文件或專案內部規則。重要設定應以你實際使用的系統說明為準。" },
+    ],
+    terms: [
+      { heading: "結果驗證責任", body: "格式化、轉換、產生與診斷結果只是協助工作的草稿。用於部署、文件、安全設定、排程器或資料處理前，必須在目標環境重新驗證。" },
+      { heading: "安全邊界", body: "不得使用公開工具探測私有基礎設施、繞過存取控制或檢查無權處理的目標。請只使用可分享範例與公開可存取的對象。" },
+      { heading: "分享前檢查", body: "將輸出貼到 issue、pull request、文件或維運紀錄前，請保留輸入條件、目標執行環境、重要警告與遮罩說明。只有結果而沒有脈絡時，其他人很難判斷是否適合使用。" },
+      { heading: "服務變更", body: "工具、範例、指南、本地化內容、網路路由與第三方服務可能會隨站點改善而調整。更新後的頁面仍應保持清楚輸入、可用診斷、可檢查輸出與安全的下一步工具連結。" },
+      { heading: "不提供託管工作區", body: "本站不建立帳號、不保存專案工作區、不提供持續監控，也不代表你執行安全、合規或法律判斷。它提供的是可立即檢查的輕量開發者工具。" },
+      { heading: "頁面內容優先", body: "工具頁面應先提供可用的輸入、診斷與輸出，再顯示參考內容或廣告服務。任何第三方腳本都不得遮住主要工具流程或偽裝成產品操作。" },
+    ],
+  },
+  es: {
+    privacy: [
+      { heading: "Revision y eliminacion de entradas", body: "Tu controlas los valores que pegas en las herramientas. Sustituye secretos de produccion, datos de clientes y direcciones internas por ejemplos seguros; antes de compartir, revisa tambien el historial local del navegador y el texto copiado." },
+      { heading: "Alcance de las comprobaciones publicas", body: "Las comprobaciones DNS y HTTP estan pensadas para dominios publicos y URL publicas. La revision de sistemas privados, permisos o incidentes internos debe hacerse con herramientas confiables de tu organizacion." },
+    ],
+    terms: [
+      { heading: "Responsabilidad de verificar resultados", body: "Los resultados de formato, conversion, generacion y diagnostico son borradores de trabajo. Antes de usarlos en despliegues, documentacion, seguridad, planificadores o datos, verificalos en el entorno final." },
+      { heading: "Limites de seguridad", body: "No uses herramientas publicas para sondear infraestructura privada, evitar controles de acceso o comprobar objetivos sin permiso. Usa solo ejemplos compartibles y destinos publicamente accesibles." },
+    ],
+  },
+  "pt-BR": {
+    privacy: [
+      { heading: "Revisao e remocao de entradas", body: "Voce controla os valores colados nas ferramentas. Troque segredos de producao, dados de clientes e enderecos internos por exemplos seguros; antes de compartilhar, confira tambem o historico local do navegador e o texto copiado." },
+      { heading: "Escopo das checagens publicas", body: "As checagens de DNS e HTTP sao feitas para dominios publicos e URLs publicas. Revisao de sistemas privados, permissoes ou incidentes internos deve ocorrer nas ferramentas confiaveis da sua organizacao." },
+    ],
+    terms: [
+      { heading: "Responsabilidade de verificar resultados", body: "Resultados de formatacao, conversao, geracao e diagnostico sao rascunhos de trabalho. Antes de usar em deploy, documentacao, seguranca, agendadores ou dados, valide no ambiente final." },
+      { heading: "Limites de seguranca", body: "Nao use ferramentas publicas para sondar infraestrutura privada, contornar controle de acesso ou verificar alvos sem permissao. Use apenas exemplos compartilhaveis e destinos publicamente acessiveis." },
+    ],
+  },
+  de: {
+    privacy: [
+      { heading: "Eingaben pruefen und entfernen", body: "Du kontrollierst die Werte, die du in die Tools einfuegst. Ersetze Produktionsgeheimnisse, Kundendaten und interne Adressen durch sichere Beispiele und pruefe vor dem Teilen auch den lokalen Browserverlauf und den kopierten Text." },
+      { heading: "Umfang oeffentlicher Netzwerkpruefungen", body: "DNS- und HTTP-Pruefungen sind fuer oeffentliche Domains und oeffentliche URLs gedacht. Private Systeme, Berechtigungen und interne Stoerungen sollten mit vertrauenswuerdigen Werkzeugen deiner Organisation geprueft werden." },
+    ],
+    terms: [
+      { heading: "Verantwortung fuer Ergebnispruefung", body: "Formatierungs-, Konvertierungs-, Generator- und Diagnoseergebnisse sind Arbeitsentwuerfe. Vor Nutzung in Deployment, Dokumentation, Sicherheitseinstellungen, Zeitplaenen oder Daten muessen sie in der Zielumgebung geprueft werden." },
+      { heading: "Sicherheitsgrenzen", body: "Nutze oeffentliche Tools nicht, um private Infrastruktur zu sondieren, Zugriffskontrollen zu umgehen oder Ziele ohne Berechtigung zu pruefen. Verwende nur teilbare Beispiele und oeffentlich erreichbare Ziele." },
+    ],
+  },
+  fr: {
+    privacy: [
+      { heading: "Verifier et supprimer les entrees", body: "Vous gardez le controle des valeurs collees dans les outils. Remplacez secrets de production, donnees client et adresses internes par des exemples surs; avant partage, verifiez aussi l'historique local du navigateur et le texte copie." },
+      { heading: "Perimetre des controles publics", body: "Les controles DNS et HTTP sont destines aux domaines publics et aux URL publiques. Les systemes prives, permissions et incidents internes doivent etre verifies avec les outils de confiance de votre organisation." },
+    ],
+    terms: [
+      { heading: "Responsabilite de verification", body: "Les resultats de formatage, conversion, generation et diagnostic sont des brouillons de travail. Avant usage en deploiement, documentation, securite, planification ou traitement de donnees, verifiez-les dans l'environnement cible." },
+      { heading: "Limites de securite", body: "N'utilisez pas les outils publics pour sonder une infrastructure privee, contourner des controles d'acces ou verifier des cibles sans autorisation. Utilisez seulement des exemples partageables et des destinations publiques." },
+    ],
+  },
+  hi: {
+    privacy: [
+      { heading: "इनपुट की जांच और हटाना", body: "टूल में चिपकाए गए मान आपके नियंत्रण में रहते हैं. उत्पादन secrets, ग्राहक डेटा और आंतरिक addresses को सुरक्षित उदाहरणों से बदलें; साझा करने से पहले browser की local history और copied text भी जांचें." },
+      { heading: "सार्वजनिक network जांच की सीमा", body: "DNS और HTTP जांच सार्वजनिक domains और public URLs के लिए हैं. private systems, permissions या internal incidents की जांच अपनी organization के trusted tools में करें." },
+    ],
+    terms: [
+      { heading: "नतीजे जांचने की जिम्मेदारी", body: "format, conversion, generation और diagnostic results काम के drafts हैं. deployment, documentation, security settings, schedulers या data processing में इस्तेमाल से पहले target environment में दोबारा जांचें." },
+      { heading: "सुरक्षा सीमा", body: "public tools से private infrastructure probe करना, access controls bypass करना या बिना अनुमति targets जांचना मना है. केवल share करने योग्य examples और public targets इस्तेमाल करें." },
+    ],
+  },
+  id: {
+    privacy: [
+      { heading: "Memeriksa dan menghapus masukan", body: "Anda mengontrol nilai yang ditempel ke alat. Ganti rahasia produksi, data pelanggan, dan alamat internal dengan contoh aman; sebelum berbagi, periksa juga riwayat lokal browser dan teks yang disalin." },
+      { heading: "Cakupan pemeriksaan jaringan publik", body: "Pemeriksaan DNS dan HTTP ditujukan untuk domain publik dan URL publik. Sistem privat, izin akses, dan insiden internal harus diperiksa dengan alat tepercaya milik organisasi Anda." },
+    ],
+    terms: [
+      { heading: "Tanggung jawab memverifikasi hasil", body: "Hasil format, konversi, pembuatan, dan diagnosis adalah draf kerja. Sebelum dipakai untuk deploy, dokumentasi, pengaturan keamanan, penjadwal, atau data, verifikasi lagi di lingkungan tujuan." },
+      { heading: "Batas keamanan", body: "Jangan memakai alat publik untuk menyelidiki infrastruktur privat, melewati kontrol akses, atau memeriksa target tanpa izin. Gunakan hanya contoh yang dapat dibagikan dan tujuan yang dapat diakses publik." },
+    ],
+  },
+  vi: {
+    privacy: [
+      { heading: "Kiểm tra và xóa đầu vào", body: "Bạn kiểm soát giá trị được dán vào công cụ. Hãy thay bí mật sản xuất, dữ liệu khách hàng và địa chỉ nội bộ bằng ví dụ an toàn; trước khi chia sẻ, kiểm tra cả lịch sử cục bộ của trình duyệt và văn bản đã sao chép." },
+      { heading: "Phạm vi kiểm tra mạng công khai", body: "Kiểm tra DNS và HTTP dành cho miền công khai và URL công khai. Hệ thống riêng, quyền truy cập và sự cố nội bộ nên được kiểm tra bằng công cụ tin cậy của tổ chức bạn." },
+    ],
+    terms: [
+      { heading: "Trách nhiệm xác minh kết quả", body: "Kết quả định dạng, chuyển đổi, tạo và chẩn đoán là bản nháp hỗ trợ công việc. Trước khi dùng cho triển khai, tài liệu, bảo mật, lịch chạy hoặc dữ liệu, hãy xác minh trong môi trường đích." },
+      { heading: "Ranh giới bảo mật", body: "Không dùng công cụ công khai để dò hạ tầng riêng, vượt kiểm soát truy cập hoặc kiểm tra mục tiêu không có quyền. Chỉ dùng ví dụ có thể chia sẻ và đích truy cập công khai." },
+    ],
+  },
+  th: {
+    privacy: [
+      { heading: "ตรวจและลบอินพุต", body: "คุณเป็นผู้ควบคุมค่าที่วางลงในเครื่องมือ เปลี่ยนความลับของระบบจริง ข้อมูลลูกค้า และที่อยู่ภายในเป็นตัวอย่างที่ปลอดภัย และก่อนแชร์ให้ตรวจประวัติในเบราว์เซอร์กับข้อความที่คัดลอกด้วย" },
+      { heading: "ขอบเขตการตรวจเครือข่ายสาธารณะ", body: "การตรวจ DNS และ HTTP ใช้กับโดเมนสาธารณะและ URL สาธารณะ ระบบส่วนตัว สิทธิ์เข้าถึง และเหตุขัดข้องภายในควรตรวจด้วยเครื่องมือที่องค์กรของคุณเชื่อถือ" },
+    ],
+    terms: [
+      { heading: "ความรับผิดชอบในการตรวจผลลัพธ์", body: "ผลจากการจัดรูปแบบ แปลง สร้าง และวินิจฉัยเป็นร่างสำหรับช่วยทำงาน ก่อนใช้กับการ deploy เอกสาร การตั้งค่าความปลอดภัย ตัวตั้งเวลา หรือข้อมูล ต้องตรวจซ้ำในสภาพแวดล้อมปลายทาง" },
+      { heading: "ขอบเขตความปลอดภัย", body: "ห้ามใช้เครื่องมือสาธารณะตรวจโครงสร้างพื้นฐานส่วนตัว เลี่ยงการควบคุมสิทธิ์ หรือทดสอบเป้าหมายที่ไม่มีสิทธิ์ ใช้เฉพาะตัวอย่างที่แชร์ได้และปลายทางสาธารณะเท่านั้น" },
+    ],
+  },
+  ar: {
+    privacy: [
+      { heading: "مراجعة المدخلات وحذفها", body: "أنت تتحكم في القيم التي تلصقها داخل الأدوات. استبدل أسرار الإنتاج وبيانات العملاء والعناوين الداخلية بأمثلة آمنة، وراجع سجل المتصفح المحلي والنص المنسوخ قبل المشاركة." },
+      { heading: "نطاق فحوصات الشبكة العامة", body: "فحوصات DNS وHTTP مخصصة للنطاقات العامة والروابط العامة. يجب فحص الأنظمة الخاصة والصلاحيات والحوادث الداخلية باستخدام أدوات موثوقة داخل مؤسستك." },
+    ],
+    terms: [
+      { heading: "مسؤولية التحقق من النتائج", body: "نتائج التنسيق والتحويل والإنشاء والتشخيص مسودات تساعد على العمل. قبل استخدامها في النشر أو التوثيق أو إعدادات الأمان أو الجداول أو البيانات، تحقق منها في البيئة المقصودة." },
+      { heading: "حدود الأمان", body: "لا تستخدم الأدوات العامة لاستطلاع بنية خاصة أو تجاوز ضوابط الوصول أو فحص أهداف لا تملك إذنا بها. استخدم فقط أمثلة قابلة للمشاركة وأهدافا متاحة للعامة." },
+    ],
+  },
+};
+
 export function getLocalizedLegalContent(locale: Locale, kind: LegalPageKind) {
   const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
   const advertisingSection = advertisingSections[locale][kind];
+  const expansionSections = locale === defaultLocale ? [] : localizedLegalExpansionSections[locale][kind];
   const alreadyIncluded = content.sections.some((section) => section.heading === advertisingSection.heading);
 
   return {
     ...content,
     lastUpdated: legalUpdatedAt[locale],
-    sections: alreadyIncluded ? content.sections : [...content.sections, advertisingSection],
+    sections: alreadyIncluded ? [...content.sections, ...expansionSections] : [...content.sections, ...expansionSections, advertisingSection],
   };
 }

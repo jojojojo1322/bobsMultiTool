@@ -23,7 +23,7 @@ type TextPack = {
   secretQuestion: string;
   secretAnswer: string;
   guideDescription: (topic: string) => string;
-  guideSections: (topic: string) => Array<{ heading: string; body: string }>;
+  guideSections: (topic: string) => GuideDefinition["sections"];
 };
 
 type LocalizedDemandDetails = Required<Pick<ToolDefinition, "failureCases" | "preCopyChecklist">>;
@@ -2448,11 +2448,233 @@ function localizedGuideTopic(slug: string, locale: Locale, pack: TextPack) {
   return localizedGuideTopics[locale][slug] ?? pack.guideTopics[slug] ?? guideTopicEn[slug] ?? slug;
 }
 
+function localizedGuideSupportSections(locale: Exclude<Locale, "en">, topic: string): GuideDefinition["sections"] {
+  const support: Record<Exclude<Locale, "en">, GuideDefinition["sections"]> = {
+    ko: [
+      { heading: "관련 도구로 한 번 더 확인", body: `${topic} 결과는 단독으로 끝내기보다 관련 도구로 이어서 확인할 때 더 안전합니다. 형식, 시간대, 인코딩, 공개 URL 상태처럼 다음 단계에서 달라질 수 있는 조건을 복사 전에 다시 봅니다.` },
+      { heading: "공유 가능한 결과만 남기기", body: "운영 비밀값, 고객 데이터, 내부 호스트명, 일회성 토큰은 제거하고 결과의 전제 조건을 짧게 남기세요. 이렇게 정리한 출력은 문서, 이슈, 코드 리뷰에서 재사용하기 쉽습니다." },
+    ],
+    ja: [
+      { heading: "関連ツールで再確認する", body: `${topic} の結果は単独で終えず、関連ツールで確認すると安全です。形式、タイムゾーン、エンコード、公開 URL の状態など、次の工程で変わる条件をコピー前に確認します。` },
+      { heading: "共有できる結果だけを残す", body: "本番の秘密情報、顧客データ、内部ホスト名、一時トークンは削除し、結果の前提を短く残します。整理した出力はドキュメント、Issue、コードレビューで再利用しやすくなります。" },
+    ],
+    "zh-CN": [
+      { heading: "用相关工具再检查", body: `${topic} 的结果不要单独结束。继续用相关工具检查格式、时区、编码和公开 URL 状态，能在复制前发现下一步可能变化的条件。` },
+      { heading: "只保留可分享结果", body: "移除生产密钥、客户数据、内部主机名和一次性 token，并简短记录结果前提。这样整理后的输出更适合放进文档、issue 或代码评审。" },
+    ],
+    "zh-TW": [
+      { heading: "用相關工具再檢查", body: `${topic} 的結果不要單獨結束。繼續用相關工具檢查格式、時區、編碼與公開 URL 狀態，能在複製前發現下一步可能變化的條件。` },
+      { heading: "只保留可分享結果", body: "移除正式密鑰、客戶資料、內部主機名與一次性 token，並簡短記錄結果前提。整理後的輸出更適合放進文件、issue 或程式碼審查。" },
+    ],
+    es: [
+      { heading: "Revisa con herramientas relacionadas", body: `No cierres ${topic} como un paso aislado. Comprueba formato, zona horaria, codificacion y estado de URL publica con herramientas relacionadas antes de copiar.` },
+      { heading: "Deja solo resultados compartibles", body: "Quita secretos de produccion, datos de clientes, hosts internos y tokens de un solo uso. Anota la suposicion principal para que el resultado sirva en docs, issues o revision de codigo." },
+    ],
+    "pt-BR": [
+      { heading: "Revise com ferramentas relacionadas", body: `Nao trate ${topic} como etapa isolada. Verifique formato, fuso horario, codificacao e status de URL publica com ferramentas relacionadas antes de copiar.` },
+      { heading: "Mantenha apenas resultados compartilháveis", body: "Remova segredos de producao, dados de clientes, hosts internos e tokens de uso unico. Registre a premissa principal para reutilizar em docs, issues ou revisao de codigo." },
+    ],
+    de: [
+      { heading: "Mit verwandten Werkzeugen gegenpruefen", body: `${topic} sollte nicht als isolierter Schritt enden. Pruefe Format, Zeitzone, Encoding und Status oeffentlicher URLs mit verwandten Werkzeugen, bevor du kopierst.` },
+      { heading: "Nur teilbare Ergebnisse behalten", body: "Entferne Produktionsgeheimnisse, Kundendaten, interne Hosts und Einmal-Tokens. Notiere die wichtigste Annahme, damit die Ausgabe in Doku, Issues oder Code-Review nutzbar bleibt." },
+    ],
+    fr: [
+      { heading: "Verifier avec les outils lies", body: `Ne terminez pas ${topic} comme une etape isolee. Controlez format, fuseau horaire, encodage et statut d'URL publique avec les outils lies avant copie.` },
+      { heading: "Garder seulement un resultat partageable", body: "Retirez secrets de production, donnees client, hotes internes et tokens a usage unique. Notez l'hypothese principale pour reutiliser le resultat dans docs, tickets ou revue de code." },
+    ],
+    hi: [
+      { heading: "संबंधित साधन से दोबारा जांचें", body: `${topic} को अकेले कदम की तरह खत्म न करें. कॉपी से पहले format, time zone, encoding और public URL status को संबंधित साधन से फिर जांचें.` },
+      { heading: "सिर्फ साझा करने योग्य नतीजा रखें", body: "उत्पादन रहस्य, ग्राहक डेटा, आंतरिक host और एक-बार token हटाएं. मुख्य अनुमान छोटा लिखें ताकि नतीजा docs, issue या code review में उपयोगी रहे." },
+    ],
+    id: [
+      { heading: "Periksa lagi dengan alat terkait", body: `Jangan akhiri ${topic} sebagai langkah tunggal. Cek format, zona waktu, pengodean, dan status URL publik dengan alat terkait sebelum menyalin.` },
+      { heading: "Sisakan hasil yang aman dibagikan", body: "Hapus rahasia produksi, data pelanggan, host internal, dan token sekali pakai. Catat asumsi utama agar hasil mudah dipakai di dokumen, issue, atau review kode." },
+    ],
+    vi: [
+      { heading: "Kiểm tra lại bằng công cụ liên quan", body: `Đừng kết thúc ${topic} như một bước riêng lẻ. Trước khi sao chép, hãy kiểm tra định dạng, múi giờ, mã hóa và trạng thái URL công khai bằng công cụ liên quan.` },
+      { heading: "Chỉ giữ kết quả có thể chia sẻ", body: "Xóa bí mật sản xuất, dữ liệu khách hàng, host nội bộ và token dùng một lần. Ghi ngắn giả định chính để kết quả dùng được trong tài liệu, issue hoặc review mã." },
+    ],
+    th: [
+      { heading: "ตรวจซ้ำด้วยเครื่องมือที่เกี่ยวข้อง", body: `อย่าจบ ${topic} เป็นขั้นตอนเดี่ยว ก่อนคัดลอกให้ตรวจรูปแบบ เขตเวลา การเข้ารหัส และสถานะ URL สาธารณะด้วยเครื่องมือที่เกี่ยวข้อง` },
+      { heading: "เหลือเฉพาะผลลัพธ์ที่แชร์ได้", body: "ลบข้อมูลลับระบบจริง ข้อมูลลูกค้า host ภายใน และ token ใช้ครั้งเดียว เขียนสมมติฐานหลักสั้น ๆ เพื่อใช้ต่อในเอกสาร issue หรือ code review" },
+    ],
+    ar: [
+      { heading: "راجع بأداة مرتبطة", body: `لا تجعل ${topic} خطوة منفصلة تنتهي وحدها. قبل النسخ راجع التنسيق والمنطقة الزمنية والترميز وحالة URL عام بأدوات مرتبطة.` },
+      { heading: "اترك نتيجة قابلة للمشاركة فقط", body: "أزل أسرار الإنتاج وبيانات العملاء والمضيفين الداخليين وtokens أحادية الاستخدام. اكتب الفرضية الأساسية باختصار لتصلح النتيجة للوثائق أو issues أو مراجعة الكود." },
+    ],
+  };
+  return support[locale];
+}
+
+function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: string): GuideDefinition["sections"] {
+  const expansion: Record<Exclude<Locale, "en">, GuideDefinition["sections"]> = {
+    ko: [
+      {
+        heading: "검토 기준을 먼저 정하기",
+        body: `${topic}을 사용할 때는 결과를 복사하기 전에 성공 기준을 짧게 정해 두면 실수를 줄일 수 있습니다. 입력 형태, 대상 런타임, 보안 경계, 공유 범위를 한 번에 확인하면 도구 결과가 실제 작업에 맞는지 빠르게 판단할 수 있습니다.`,
+        bullets: ["입력 샘플이 실제 문제를 대표하는지 확인합니다.", "대상 브라우저, 스케줄러, 파서, 배포 환경을 함께 적습니다.", "경고가 하나라도 있으면 복사 전에 관련 도구로 다시 확인합니다."],
+      },
+      {
+        heading: "다음 작업까지 이어가기",
+        body: "좋은 유틸리티 사용 흐름은 한 번의 변환에서 끝나지 않습니다. 포맷한 뒤 추출하고, 생성한 뒤 검증하고, 공개 URL을 확인한 뒤 헤더나 DNS를 다시 보는 식으로 두 번째 확인 단계를 붙이면 얇은 결과가 아니라 재사용 가능한 작업 기록이 됩니다.",
+        bullets: ["포맷 결과는 diff나 schema 검토로 이어갑니다.", "URL과 네트워크 결과는 redirect, robots, sitemap 상태와 함께 봅니다.", "공유 전에는 비밀값, 내부 호스트명, 고객 데이터를 제거합니다."],
+      },
+    ],
+    ja: [
+      {
+        heading: "確認基準を先に決める",
+        body: `${topic} を使う前に、コピーしてよい状態を短く決めておくとミスを減らせます。入力の形、対象ランタイム、セキュリティ境界、共有範囲をまとめて確認すると、ツールの結果が実作業に合うか判断しやすくなります。`,
+        bullets: ["入力サンプルが実際の問題を代表しているか確認します。", "対象ブラウザ、スケジューラ、パーサー、デプロイ環境を一緒に記録します。", "警告があれば、コピー前に関連ツールでもう一度確認します。"],
+      },
+      {
+        heading: "次の作業へつなげる",
+        body: "実用的なユーティリティ利用は一回の変換で終わりません。整形したら抽出し、生成したら検証し、公開 URL を確認したら header や DNS を確認することで、結果を再利用しやすい作業記録にできます。",
+        bullets: ["整形結果は diff や schema 確認につなげます。", "URL とネットワーク結果は redirect、robots、sitemap と一緒に確認します。", "共有前に秘密情報、内部ホスト名、顧客データを削除します。"],
+      },
+    ],
+    "zh-CN": [
+      {
+        heading: "先定义复核标准",
+        body: `使用${topic}时，先写清楚什么结果可以复制，能减少误用。把输入形状、目标运行环境、安全边界和可分享范围放在一起检查，才能判断工具结果是否适合实际任务。`,
+        bullets: ["确认样例输入能代表真实问题。", "记录目标浏览器、调度器、解析器或部署环境。", "出现任何警告时，复制前用相关工具再检查一次。"],
+      },
+      {
+        heading: "连接到下一步任务",
+        body: "实用工具不应停在一次转换。格式化后提取字段，生成后验证结果，检查公开 URL 后继续看 header、DNS、robots 或 sitemap，才能留下可复用的工作记录。",
+        bullets: ["格式化结果继续做 diff 或 schema 检查。", "URL 和网络结果要结合 redirect、robots、sitemap 状态查看。", "分享前移除密钥、内部主机名和客户数据。"],
+      },
+    ],
+    "zh-TW": [
+      {
+        heading: "先定義複核標準",
+        body: `使用${topic}時，先寫清楚什麼結果可以複製，能減少誤用。把輸入形狀、目標執行環境、安全邊界與可分享範圍放在一起檢查，才能判斷工具結果是否適合實際任務。`,
+        bullets: ["確認範例輸入能代表真實問題。", "記錄目標瀏覽器、排程器、解析器或部署環境。", "出現任何警告時，複製前用相關工具再檢查一次。"],
+      },
+      {
+        heading: "連接到下一步任務",
+        body: "實用工具不應停在一次轉換。格式化後擷取欄位，產生後驗證結果，檢查公開 URL 後繼續看 header、DNS、robots 或 sitemap，才能留下可重用的工作記錄。",
+        bullets: ["格式化結果繼續做 diff 或 schema 檢查。", "URL 與網路結果要結合 redirect、robots、sitemap 狀態查看。", "分享前移除密鑰、內部主機名稱與客戶資料。"],
+      },
+    ],
+    es: [
+      {
+        heading: "Define el criterio de revision",
+        body: `Antes de usar ${topic}, decide que resultado seria seguro copiar. Revisar forma de entrada, entorno destino, limite de seguridad y alcance compartible ayuda a saber si la salida encaja con el trabajo real.`,
+        bullets: ["Confirma que la muestra representa el problema real.", "Anota navegador, scheduler, parser o entorno de despliegue.", "Si aparece una advertencia, revisa con una herramienta relacionada antes de copiar."],
+      },
+      {
+        heading: "Conecta la siguiente tarea",
+        body: "Un flujo util no termina en una transformacion. Formatea y luego extrae, genera y luego valida, revisa una URL publica y luego comprueba headers, DNS, robots o sitemap para dejar una evidencia reutilizable.",
+        bullets: ["Lleva el resultado formateado a diff o schema cuando haga falta.", "Revisa URL y red junto con redirect, robots y sitemap.", "Antes de compartir, elimina secretos, hosts internos y datos de clientes."],
+      },
+    ],
+    "pt-BR": [
+      {
+        heading: "Defina o criterio de revisao",
+        body: `Antes de usar ${topic}, defina qual resultado e seguro copiar. Conferir formato da entrada, ambiente destino, limite de seguranca e escopo compartilhavel ajuda a saber se a saida serve para a tarefa real.`,
+        bullets: ["Confirme que a amostra representa o problema real.", "Registre navegador, agendador, parser ou ambiente de deploy.", "Se houver aviso, revise com uma ferramenta relacionada antes de copiar."],
+      },
+      {
+        heading: "Conecte a proxima tarefa",
+        body: "Um fluxo util nao termina em uma transformacao. Formate e depois extraia, gere e depois valide, confira uma URL publica e depois revise headers, DNS, robots ou sitemap para manter evidencia reutilizavel.",
+        bullets: ["Leve o resultado formatado para diff ou schema quando necessario.", "Revise URL e rede junto com redirect, robots e sitemap.", "Antes de compartilhar, remova segredos, hosts internos e dados de clientes."],
+      },
+    ],
+    de: [
+      {
+        heading: "Pruefkriterien vorher festlegen",
+        body: `Bevor du ${topic} nutzt, lege fest, welches Ergebnis kopierbar ist. Eingabeform, Zielumgebung, Sicherheitsgrenze und teilbarer Umfang zeigen, ob die Ausgabe zur echten Aufgabe passt.`,
+        bullets: ["Pruefe, ob das Beispiel das reale Problem abbildet.", "Notiere Browser, Scheduler, Parser oder Deployment-Umgebung.", "Bei Warnungen vor dem Kopieren ein verwandtes Werkzeug nutzen."],
+      },
+      {
+        heading: "Den naechsten Schritt verbinden",
+        body: "Ein nuetzlicher Ablauf endet nicht mit einer Transformation. Erst formatieren und extrahieren, dann generieren und validieren, danach bei oeffentlichen URLs Header, DNS, robots oder sitemap pruefen.",
+        bullets: ["Formatierte Ausgabe bei Bedarf mit diff oder schema pruefen.", "URL- und Netzwerkbefunde mit redirect, robots und sitemap verbinden.", "Vor dem Teilen Geheimnisse, interne Hosts und Kundendaten entfernen."],
+      },
+    ],
+    fr: [
+      {
+        heading: "Definir le critere de controle",
+        body: `Avant d'utiliser ${topic}, decidez quel resultat peut etre copie. La forme d'entree, l'environnement cible, la limite de securite et le perimetre partageable indiquent si la sortie convient au travail reel.`,
+        bullets: ["Verifiez que l'echantillon represente le probleme reel.", "Notez navigateur, planificateur, parseur ou environnement de deploiement.", "En cas d'avertissement, controlez avec un outil lie avant copie."],
+      },
+      {
+        heading: "Relier la tache suivante",
+        body: "Un flux utile ne s'arrete pas a une transformation. Formatez puis extrayez, genere puis validez, controlez une URL publique puis verifiez headers, DNS, robots ou sitemap.",
+        bullets: ["Poursuivez avec diff ou schema si la sortie formattee doit etre prouvee.", "Reliez URL et reseau aux controles redirect, robots et sitemap.", "Avant partage, retirez secrets, hotes internes et donnees client."],
+      },
+    ],
+    hi: [
+      {
+        heading: "जांच का मानदंड पहले तय करें",
+        body: `${topic} इस्तेमाल करने से पहले तय करें कि कौन सा नतीजा कॉपी करने योग्य है. इनपुट का आकार, लक्ष्य वातावरण, सुरक्षा सीमा और साझा करने की सीमा साथ देखने से पता चलता है कि नतीजा असली काम के लिए सही है या नहीं.`,
+        bullets: ["देखें कि नमूना इनपुट असली समस्या को दिखाता है या नहीं.", "लक्ष्य browser, scheduler, parser या deploy वातावरण लिखें.", "चेतावनी दिखे तो कॉपी से पहले संबंधित साधन से फिर जांचें."],
+      },
+      {
+        heading: "अगले काम से जोड़ें",
+        body: "उपयोगी साधन का काम एक बदलाव पर खत्म नहीं होता. पहले format करें फिर field निकालें, generate करें फिर validate करें, public URL देखें फिर header, DNS, robots या sitemap जांचें.",
+        bullets: ["जरूरत हो तो formatted नतीजे को diff या schema जांच तक ले जाएं.", "URL और network नतीजे को redirect, robots और sitemap के साथ देखें.", "साझा करने से पहले रहस्य, internal host और ग्राहक डेटा हटाएं."],
+      },
+    ],
+    id: [
+      {
+        heading: "Tetapkan kriteria pemeriksaan",
+        body: `Sebelum memakai ${topic}, tentukan hasil seperti apa yang aman disalin. Bentuk masukan, lingkungan tujuan, batas keamanan, dan cakupan berbagi membantu memastikan hasil cocok untuk tugas nyata.`,
+        bullets: ["Pastikan contoh masukan mewakili masalah asli.", "Catat browser, penjadwal, parser, atau lingkungan deploy.", "Jika ada peringatan, periksa lagi dengan alat terkait sebelum menyalin."],
+      },
+      {
+        heading: "Sambungkan ke tugas berikutnya",
+        body: "Alur berguna tidak berhenti pada satu transformasi. Rapikan lalu ekstrak, buat lalu validasi, cek URL publik lalu lanjutkan ke header, DNS, robots, atau sitemap.",
+        bullets: ["Bawa hasil format ke diff atau schema jika perlu bukti.", "Gabungkan temuan URL dan jaringan dengan redirect, robots, dan sitemap.", "Sebelum berbagi, hapus rahasia, host internal, dan data pelanggan."],
+      },
+    ],
+    vi: [
+      {
+        heading: "Đặt tiêu chí kiểm tra trước",
+        body: `Trước khi dùng ${topic}, hãy xác định kết quả nào đủ an toàn để sao chép. Kiểm tra dạng đầu vào, môi trường đích, ranh giới bảo mật và phạm vi chia sẻ giúp biết kết quả có hợp với việc thật không.`,
+        bullets: ["Xác nhận mẫu đầu vào đại diện cho vấn đề thật.", "Ghi lại trình duyệt, bộ lập lịch, parser hoặc môi trường triển khai.", "Nếu có cảnh báo, kiểm tra lại bằng công cụ liên quan trước khi sao chép."],
+      },
+      {
+        heading: "Nối sang bước tiếp theo",
+        body: "Một luồng hữu ích không dừng ở một lần chuyển đổi. Định dạng rồi trích xuất, tạo rồi xác thực, kiểm tra URL công khai rồi xem thêm header, DNS, robots hoặc sitemap.",
+        bullets: ["Đưa kết quả đã định dạng sang diff hoặc schema khi cần đối chiếu.", "Kết hợp kết quả URL và mạng với redirect, robots và sitemap.", "Trước khi chia sẻ, xóa bí mật, host nội bộ và dữ liệu khách hàng."],
+      },
+    ],
+    th: [
+      {
+        heading: "กำหนดเกณฑ์ตรวจผลก่อน",
+        body: `ก่อนใช้ ${topic} ให้กำหนดว่าผลลัพธ์แบบใดจึงคัดลอกได้อย่างปลอดภัย การดูรูปแบบข้อมูลเข้า สภาพแวดล้อมปลายทาง ขอบเขตความปลอดภัย และขอบเขตการแชร์ร่วมกันช่วยบอกว่าผลลัพธ์เหมาะกับงานจริงหรือไม่`,
+        bullets: ["ตรวจว่าตัวอย่าง input แทนปัญหาจริงได้หรือไม่", "จด browser, scheduler, parser หรือสภาพแวดล้อม deploy ที่เกี่ยวข้อง", "ถ้ามีคำเตือน ให้ตรวจซ้ำด้วยเครื่องมือที่เกี่ยวข้องก่อนคัดลอก"],
+      },
+      {
+        heading: "เชื่อมไปงานถัดไป",
+        body: "งานที่ดีไม่หยุดแค่การแปลงครั้งเดียว จัดรูปแบบแล้วค่อยดึงข้อมูล สร้างแล้วตรวจความถูกต้อง ตรวจ URL สาธารณะแล้วดู header, DNS, robots หรือ sitemap ต่อ",
+        bullets: ["นำผลที่จัดรูปแบบแล้วไปเทียบ diff หรือ schema เมื่อจำเป็น", "ดูผล URL และ network คู่กับ redirect, robots และ sitemap", "ก่อนแชร์ให้ลบ secret, host ภายใน และข้อมูลลูกค้า"],
+      },
+    ],
+    ar: [
+      {
+        heading: "حدد معيار المراجعة أولا",
+        body: `قبل استخدام ${topic} حدد شكل النتيجة التي يصح نسخها. مراجعة شكل الإدخال وبيئة الاستخدام وحدود الأمان ونطاق المشاركة توضح هل تناسب النتيجة المهمة الحقيقية أم لا.`,
+        bullets: ["تأكد أن عينة الإدخال تمثل المشكلة الفعلية.", "سجل المتصفح أو المجدول أو parser أو بيئة النشر.", "إذا ظهرت أي تحذيرات فراجع بأداة مرتبطة قبل النسخ."],
+      },
+      {
+        heading: "اربطها بالخطوة التالية",
+        body: "الاستخدام الجيد لا ينتهي بتحويل واحد. نسق ثم استخرج، أنشئ ثم تحقق، افحص URL عاما ثم راجع headers أو DNS أو robots أو sitemap.",
+        bullets: ["انقل الناتج المنسق إلى diff أو schema عند الحاجة.", "اربط نتائج URL والشبكة مع redirect وrobots وsitemap.", "قبل المشاركة أزل الأسرار والمضيفين الداخليين وبيانات العملاء."],
+      },
+    ],
+  };
+  return expansion[locale];
+}
+
 function localizedGuideSections(slug: string, locale: Locale, topic: string, pack: TextPack) {
   const baseSections = pack.guideSections(topic);
   if (locale === defaultLocale) return baseSections;
-  const leadSection = priorityGuideLeadSections[slug]?.[locale];
-  return leadSection ? [leadSection, ...baseSections.slice(1)] : baseSections;
+  const localizedLocale = locale as Exclude<Locale, "en">;
+  const leadSection = priorityGuideLeadSections[slug]?.[localizedLocale];
+  const sections = leadSection ? [leadSection, ...baseSections.slice(1)] : baseSections;
+  return [...sections, ...localizedGuideSupportSections(localizedLocale, topic), ...localizedGuideExpansionSections(localizedLocale, topic)];
 }
 
 function localizeGuideTitle(href: string, locale: Locale, pack: TextPack) {

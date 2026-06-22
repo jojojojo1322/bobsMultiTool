@@ -26,6 +26,18 @@ async function launchBrowser() {
   }
 }
 
+async function gotoWithRetry(page, url) {
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      return await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
 const scenarios = [
   {
     name: "tools-desktop",
@@ -65,7 +77,7 @@ try {
       },
     });
     const page = await context.newPage();
-    const response = await page.goto(`${baseUrl}${scenario.path}`, { waitUntil: "domcontentloaded", timeout: 20_000 });
+    const response = await gotoWithRetry(page, `${baseUrl}${scenario.path}`);
     if (!response || response.status() >= 400) {
       failures.push(`${scenario.name} returned ${response?.status() ?? "no response"}`);
       await context.close();

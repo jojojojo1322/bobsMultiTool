@@ -434,6 +434,174 @@ const approvalContentBoosts: Record<string, ApprovalContentBoost> = {
       { question: "What should I inspect besides status code?", answer: "Check final URL, redirect chain, content type, cache-control, response headers, and whether canonical host or protocol changed." },
     ],
   },
+  "color-converter": {
+    searchIntents: ["hex rgb hsl converter", "wcag contrast checker", "foreground background contrast", "accessible color checker"],
+    aliases: ["contrast ratio checker", "hex to hsl", "rgb to hex", "color accessibility checker"],
+    examples: [
+      { label: "Button contrast", value: "#2563eb on #ffffff", note: "Checks a common primary button color against a light surface." },
+      { label: "Muted text review", value: "rgb(82,82,91) on #fafafa", note: "Useful for checking subdued text before it appears in dense panels." },
+    ],
+    faqs: [
+      { question: "Why can a passing color still look weak?", answer: "Contrast depends on the real background, font size, font weight, alpha, and UI state, so review the actual component after converting values." },
+      { question: "Which format should I copy?", answer: "Copy the format your codebase uses for tokens or CSS variables. HEX is compact, while RGB and HSL can be easier to adjust programmatically." },
+    ],
+  },
+  "sql-formatter": {
+    searchIntents: ["sql query formatter", "format select query", "sql where clause checker", "sql join review"],
+    aliases: ["pretty sql", "sql query beautifier", "sql mutation review"],
+    examples: [
+      { label: "Join review", value: "select u.id,o.total from users u join orders o on o.user_id=u.id where o.status='paid'", note: "Formats table aliases, join condition, and filter clauses for review." },
+      { label: "Mutation warning", value: "update users set active=false", note: "Highlights why mutation queries need a WHERE review before running." },
+    ],
+    faqs: [
+      { question: "Does formatting make SQL safe?", answer: "No. Formatting improves readability only. Review query type, WHERE clauses, joins, parameters, and database behavior before running it." },
+      { question: "Should I paste production SQL here?", answer: "Use redacted snippets. Remove customer data, credentials, internal table names, and one-off production literals before sharing formatted output." },
+    ],
+  },
+  "yaml-validator": {
+    searchIntents: ["docker compose checker", "yaml format checker", "yaml indentation validator", "compose service diagnostics"],
+    aliases: ["compose validator", "yaml formatter", "yaml syntax linter"],
+    examples: [
+      { label: "Compose service", value: "services:\n  web:\n    image: nginx\n    ports:\n      - \"8080:80\"", note: "Checks service, image, and port structure before copying a Compose file." },
+      { label: "Nested config", value: "app:\n  features:\n    login: true\n    audit: false", note: "Shows how indentation changes the parsed object shape." },
+    ],
+    faqs: [
+      { question: "Can YAML be valid but still wrong?", answer: "Yes. Syntax can pass while required service fields, config keys, or runtime-specific values are missing." },
+      { question: "Why include Docker Compose diagnostics here?", answer: "Compose files are YAML, but deployment review also needs services, images, build paths, ports, volumes, environment, and dependencies." },
+    ],
+  },
+  "env-parser-validator": {
+    searchIntents: ["dotenv parser", "env duplicate key checker", "env to json preview", "ci environment variable validator"],
+    aliases: ["dotenv checker", "environment variable parser", "env file linter"],
+    examples: [
+      { label: "Duplicate key", value: "API_URL=https://api.example.com\nAPI_URL=https://staging.example.com", note: "Shows how repeated variables can override earlier values." },
+      { label: "Quoted value", value: "FEATURE_NAME=\"Bob tools\"\nTIMEOUT_MS=5000", note: "Checks spaces, quotes, and parsed JSON preview before copying." },
+    ],
+    faqs: [
+      { question: "Why do .env files fail after copying?", answer: "Common causes are duplicate keys, unclosed quotes, spaces around equals, export prefixes, and loader-specific comment behavior." },
+      { question: "Can I paste real secrets?", answer: "No. Use redacted examples and check structure only. Real production secrets belong in your hosting or secret-management system." },
+    ],
+  },
+  "csv-json-converter": {
+    searchIntents: ["csv cleaner", "csv to json array", "json to csv converter", "dedupe csv rows", "trim csv columns"],
+    aliases: ["csv cleanup", "spreadsheet to json", "json array to csv"],
+    examples: [
+      { label: "Messy export", value: " id , name , status \n 1 , Bob , active \n 1 , Bob , active ", note: "Trims cells and exposes duplicate rows before conversion." },
+      { label: "API fixture", value: "[{\"id\":\"1\",\"name\":\"Bob\"},{\"id\":\"2\",\"name\":\"Alice\"}]", note: "Converts small JSON arrays into a CSV preview for docs or QA." },
+    ],
+    faqs: [
+      { question: "What gets lost when CSV becomes JSON?", answer: "CSV is flat table data, so nested objects, arrays, types, and empty values need explicit review after conversion." },
+      { question: "When should I clean before converting?", answer: "Clean when copied spreadsheet rows include extra spaces, blank rows, duplicate records, or uneven columns." },
+    ],
+  },
+  "jsonpath-tester": {
+    searchIntents: ["jsonpath field extractor", "extract nested json value", "jsonpath wildcard tester", "recursive json key search"],
+    aliases: ["json path extractor", "json selector checker", "json value finder"],
+    examples: [
+      { label: "Array field", value: "$.items[*].name", note: "Extracts the same property from each item in a list." },
+      { label: "Recursive ids", value: "$..id", note: "Finds repeated id keys at any depth in an API response." },
+    ],
+    faqs: [
+      { question: "Why does a selector return no matches?", answer: "Check whether the path starts at the root, whether the key needs bracket syntax, and whether the value is inside an array." },
+      { question: "Should I use JSONPath before formatting?", answer: "Format and validate JSON first so you can inspect the root shape before writing a selector." },
+    ],
+  },
+  "css-formatter": {
+    searchIntents: ["css selector inspector", "format css with diagnostics", "css custom property checker", "css token review"],
+    aliases: ["css pretty printer", "css readability checker", "css rule formatter"],
+    examples: [
+      { label: "Token block", value: ":root{--gap:16px;--brand:#2563eb}.card{padding:var(--gap);color:var(--brand)}", note: "Formats custom properties and shows token usage before copying." },
+      { label: "Responsive rule", value: "@media (min-width:768px){.grid{display:grid;grid-template-columns:repeat(3,1fr)}}", note: "Keeps media query context visible during review." },
+    ],
+    faqs: [
+      { question: "Does CSS formatting change cascade behavior?", answer: "No. Formatting should preserve text, but selector specificity, source order, and media context still decide the real result." },
+      { question: "What should I check after formatting?", answer: "Review selectors, at-rules, custom properties, color tokens, duplicate blocks, ID specificity, and whether the snippet lost surrounding context." },
+    ],
+  },
+  "javascript-formatter": {
+    searchIntents: ["javascript beautifier with diagnostics", "format js snippet", "javascript fetch checker", "javascript eval warning"],
+    aliases: ["pretty javascript", "js snippet inspector", "javascript cleanup"],
+    examples: [
+      { label: "Async fetch", value: "async function load(){const res=await fetch('/api/data');return res.json()}", note: "Formats network code and exposes fetch plus async usage." },
+      { label: "Unsafe snippet review", value: "const run=(code)=>eval(code)", note: "Shows why readable JavaScript still needs a safety review." },
+    ],
+    faqs: [
+      { question: "Is formatted JavaScript safe to run?", answer: "No. Formatting is not linting, type checking, sandboxing, or security review. Do not run untrusted code just because it is readable." },
+      { question: "What diagnostics matter before copying?", answer: "Check module syntax, async usage, browser APIs, fetch calls, console statements, TODOs, eval, and comments that may be removed during minification." },
+    ],
+  },
+  "markdown-previewer": {
+    searchIntents: ["markdown table generator", "csv to markdown table", "preview markdown readme", "tsv markdown table"],
+    aliases: ["readme table maker", "markdown table converter", "markdown preview tool"],
+    examples: [
+      { label: "Issue table", value: "Name,Owner,Status\nJSON,Alice,Ready\nDNS,Bob,Review", note: "Turns CSV into a Markdown table for issue comments or README files." },
+      { label: "Docs snippet", value: "## Release notes\n- Added JSON diagnostics\n- Fixed DNS warnings", note: "Previews headings and list spacing before publishing docs." },
+    ],
+    faqs: [
+      { question: "Why does my Markdown table render incorrectly?", answer: "Uneven columns, unescaped pipes, mixed delimiters, and blank rows often break the rendered table." },
+      { question: "When should I preview before copying?", answer: "Preview whenever the output will be pasted into a README, changelog, issue, pull request, or CMS field." },
+    ],
+  },
+  "meta-tag-generator": {
+    searchIntents: ["seo title description checker", "canonical tag generator", "robots meta generator", "open graph meta tags"],
+    aliases: ["seo snippet generator", "canonical meta tool", "social card tags"],
+    examples: [
+      { label: "Tool page metadata", value: "JSON Formatter | Format API responses locally | https://www.bobob.app/tools/json-formatter", note: "Connects title, description, and canonical URL for one final page." },
+      { label: "Robots review", value: "index,follow with canonical URL", note: "Checks whether generated robots tags match the page indexing intent." },
+    ],
+    faqs: [
+      { question: "Can metadata fix thin visible content?", answer: "No. Metadata should summarize useful visible content; it cannot replace examples, FAQs, guides, and working page functionality." },
+      { question: "What should match across meta tags?", answer: "Title, description, canonical URL, Open Graph URL, and visible page content should describe the same final page." },
+    ],
+  },
+  "url-parser": {
+    searchIntents: ["url query parser", "tracking parameter checker", "canonical url inspector", "clean url copy"],
+    aliases: ["parse query string", "url component inspector", "utm cleaner"],
+    examples: [
+      { label: "Tracking URL", value: "https://example.com/path?utm_source=newsletter&id=123#details", note: "Separates query parameters, tracking keys, and hash fragments." },
+      { label: "Callback URL", value: "https://app.example.com/callback?state=a%20b&code=redacted", note: "Helps inspect encoded callback parameters without exposing real tokens." },
+    ],
+    faqs: [
+      { question: "Why parse a URL before checking status?", answer: "Parsing exposes credentials, tracking parameters, hash fragments, and malformed query values before a network request is made." },
+      { question: "What makes a URL unsafe to share?", answer: "Credentials, tokens, private hostnames, internal paths, and one-off callback codes should be removed before sharing." },
+    ],
+  },
+  "robots-txt-generator": {
+    searchIntents: ["robots txt crawl readiness", "robots sitemap directive", "robots allow disallow checker"],
+    aliases: ["robots file generator", "crawl directive builder", "robots sitemap helper"],
+    examples: [
+      { label: "Public sitemap", value: "User-agent: *\nAllow: /\nSitemap: https://www.bobob.app/sitemap.xml", note: "Creates a crawl-friendly default for an indexable public site." },
+      { label: "Draft block", value: "User-agent: *\nDisallow: /drafts/", note: "Shows a narrow block for temporary draft paths without blocking the whole site." },
+    ],
+    faqs: [
+      { question: "Can robots.txt force indexing?", answer: "No. It controls crawl instructions. Pages still need reachable URLs, useful visible content, metadata, and internal links." },
+      { question: "What should I check before copying?", answer: "Confirm sitemap URL, directive count, duplicate rules, HTTPS host, and whether any important public page is accidentally blocked." },
+    ],
+  },
+  "sitemap-generator": {
+    searchIntents: ["xml sitemap builder", "sitemap url validator", "canonical url sitemap", "remove duplicate sitemap urls"],
+    aliases: ["sitemap xml generator", "url list to sitemap", "crawl url list"],
+    examples: [
+      { label: "Canonical tool URLs", value: "https://www.bobob.app/tools\nhttps://www.bobob.app/tools/json-formatter", note: "Builds XML entries from final public URLs only." },
+      { label: "Mixed host warning", value: "https://bobob.app/\nhttps://www.bobob.app/tools", note: "Shows why apex and www should be normalized before copying." },
+    ],
+    faqs: [
+      { question: "Should sitemap URLs redirect?", answer: "Prefer final canonical URLs that return 200. Avoid listing URLs that immediately redirect or point at private/local hosts." },
+      { question: "Does a valid XML sitemap guarantee indexing?", answer: "No. It helps discovery, but pages still need useful content, crawl access, canonical consistency, and time for search processing." },
+    ],
+  },
+  "open-graph-preview": {
+    searchIntents: ["og image checker", "social preview checker", "open graph card preview", "twitter card preview"],
+    aliases: ["social card preview", "og tag inspector", "link preview checker"],
+    examples: [
+      { label: "Guide preview", value: "Title, description, image URL, canonical URL", note: "Reviews whether a guide link looks complete when shared." },
+      { label: "Image host check", value: "https://www.bobob.app/og-image.png", note: "Checks public HTTPS image host and preview assumptions." },
+    ],
+    faqs: [
+      { question: "Why does a social preview differ from the page?", answer: "Platforms cache previews, rewrite snippets, and require public image URLs, so regenerate after changing tags and allow cache refresh time." },
+      { question: "What should I inspect before copying tags?", answer: "Check title, description, canonical/page host, image host, HTTPS, robots policy, and whether preview text matches visible content." },
+    ],
+  },
 };
 
 function uniqueList(values: string[]) {

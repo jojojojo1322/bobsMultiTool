@@ -23,6 +23,8 @@ npm run harness:layout
 npm run harness:visual
 npm run harness:agents
 npm run harness:legacy
+npm run harness:adsense-content
+npm run harness:rendered-content
 npm run harness:seo-opportunities
 npm run harness:seo-opportunities:smoke
 npm run harness:seo-templates
@@ -114,6 +116,8 @@ Include:
 - Canonical host behavior: `bobob.app` should use a 308 redirect to `www.bobob.app` before any locale redirect, while explicit locale URLs remain final 200 pages.
 - No visible demand wording or raw `core` / `growth` / `long-tail` demand badges in home cards, search results, or tool detail headers.
 - No public UI, dictionary, or support copy should expose AdSense, approval/review-status, monetization, fake ad placeholder, or demand-tier wording to users. Legal pages may disclose third-party advertising, cookies, and Google advertising services without approval-status wording.
+- `npm run harness:adsense-content` should pass after AdSense, guide, legal, trust, or visible-content changes; it guards against thin guide pages, fake ad placeholders, public approval-status wording, static sitemap regressions, and missing localized guide expansion sections.
+- `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` should pass after low-value-content or visible-content changes; it checks rendered text length, public-policy wording, and horizontal overflow across default tools/guides plus representative localized pages.
 - No raw `contentCluster` slugs such as `data-conversion` or `code-formatting` in visible badges or section descriptions.
 - A local-only tool and a server route tool.
 - Server route tools reject private/reserved hosts, validate redirect targets, and rate-limit repeated requests. HTTP status checks should expose a `redirectChain` array with hop URL, status, location, content-type, cache-control, and elapsed-time fields, plus allowlisted `finalResponseHeaders` and security header readiness UI.

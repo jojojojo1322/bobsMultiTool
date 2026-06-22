@@ -90,6 +90,16 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
               <section className="rounded-lg border bg-card p-5">
                 <h2 className="text-lg font-semibold">{section.heading}</h2>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.body}</p>
+                {section.bullets?.length ? (
+                  <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
+                    {section.bullets.map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground/60" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </section>
               {index + 1 === guideAdIndex ? (
                 <GoogleAdUnit
@@ -112,8 +122,14 @@ export default async function LocalizedGuidePage({ params }: LocalizedGuidePageP
           </CardHeader>
           <CardContent className="grid gap-2 sm:grid-cols-2">
             {relatedTools.map((tool) => (
-              <Link key={tool.slug} href={withLocale(`/tools/${tool.slug}`, locale)} className="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-                {tool.title}
+              <Link key={tool.slug} href={withLocale(`/tools/${tool.slug}`, locale)} className="rounded-md border bg-background/60 p-3 text-sm hover:bg-muted">
+                <span className="font-medium text-foreground">{tool.title}</span>
+                <span className="mt-2 block leading-6 text-muted-foreground">{tool.description}</span>
+                {tool.useCases.length ? (
+                  <span className="mt-3 block text-xs uppercase tracking-normal text-muted-foreground">{tool.useCases.slice(0, 2).join(" · ")}</span>
+                ) : null}
+                {tool.examples[0] ? <span className="mt-3 block leading-6 text-muted-foreground">{tool.examples[0].note}</span> : null}
+                {tool.faqs[0] ? <span className="mt-2 block leading-6 text-muted-foreground">{tool.faqs[0].answer}</span> : null}
               </Link>
             ))}
           </CardContent>

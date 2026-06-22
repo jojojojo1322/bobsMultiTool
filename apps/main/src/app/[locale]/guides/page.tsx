@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientDictionary, getDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedGuides } from "@/features/i18n/localized-content";
 import { defaultLocale, isLocale, languageAlternates, locales, withLocale, type Locale } from "@/features/i18n/config";
@@ -67,6 +67,23 @@ export default async function LocalizedGuidesPage({ params }: LocalizedGuidesPag
                   <CardTitle>{guide.title}</CardTitle>
                   <CardDescription>{guide.description}</CardDescription>
                 </CardHeader>
+                <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
+                  <p>{guide.sections[0]?.body}</p>
+                  <div className="rounded-md border bg-background/60 p-3">
+                    <p className="font-medium text-foreground">{guide.sections[1]?.heading}</p>
+                    <ul className="mt-2 space-y-1">
+                      {guide.sections
+                        .flatMap((section) => section.bullets ?? [])
+                        .slice(0, 3)
+                        .map((item) => (
+                          <li key={item} className="flex gap-2">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground/60" aria-hidden="true" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                </CardContent>
               </Card>
             </Link>
           ))}

@@ -47,6 +47,7 @@ export default async function LocalizedTermsPage({ params }: LocalizedTermsProps
             <CardDescription>{content.lastUpdated}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 text-sm leading-6 text-muted-foreground">
+            <p>{content.description}</p>
             {content.sections.map((section) => (
               <section key={section.heading}>
                 <h2 className="mb-2 text-base font-semibold text-foreground">{section.heading}</h2>

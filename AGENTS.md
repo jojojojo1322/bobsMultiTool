@@ -134,6 +134,7 @@
 - Every guide needs topic-specific long-tail guide lead sections for `zh-CN`, `zh-TW`, `pt-BR`, `fr`, `hi`, `id`, `vi`, `th`, and `ar`. Do not let localized guide pages fall back to the same generic first paragraph across all locales.
 - Locale routes must set the root `<html lang>` and `<html dir>` through the middleware locale handoff; setting only nested page or main attributes is not enough for multilingual SEO.
 - Localized privacy and terms pages must use `getLocalizedLegalContent`; non-English legal routes must not hardcode English policy or terms prose.
+- Localized privacy and terms pages must include localized support sections for input handling, public network boundaries, result verification, and security boundaries so non-English legal pages are not thin generic policy pages.
 - Desktop workbench layout must use one aligned shell. Do not reintroduce separate rounded bordered left, center, and right cards around the resizable panels.
 - Light/Dark/System theme behavior is a product feature. Do not replace it with only `prefers-color-scheme`.
 - Do not use `next/font/google` or other build-time external font fetches. Vercel builds must pass from a clean install without depending on Google Fonts network access or local font cache.
@@ -143,4 +144,6 @@
 - `npm run harness:deployment-status` should distinguish the canonical `bobs-multi-tool-main` Vercel deployment from stale legacy Vercel project statuses. After old Vercel projects are deleted or unlinked, run `BOBOB_REQUIRE_NO_LEGACY_VERCEL=1 npm run harness:deployment-status`.
 - Use visual screenshot smoke coverage for desktop, mobile, and Arabic RTL when layout, theme, localization, or workbench surfaces change.
 - Run `npm run harness:localization` and `npm run harness:agents` whenever tool copy, guide copy, locale, layout, SEO, AdSense, or verification policy changes.
+- Run `npm run harness:adsense-content` after low-value-content, guide, trust, legal, AdSense readiness, or visible-content changes so thin guide content, fake ad placeholders, public approval-status wording, static sitemap regressions, and missing localized guide expansion sections are caught before handoff.
+- Run `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` after broad content fixes to prove actual rendered tools, guides, trust pages, legal pages, and representative localized pages have enough visible content and no forbidden public policy wording.
 - Work in small validated slices: Audit -> One Slice -> Harness -> Browser Check -> Stop. Prefer focused source harnesses while iterating and run full lint/build at the end of a slice.
