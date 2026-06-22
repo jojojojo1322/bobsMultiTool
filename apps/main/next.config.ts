@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/tools/base64-encoder-decoder",
+        destination: "/tools/base64-tool",
+        permanent: true,
+      },
+      {
+        source: "/:locale/tools/base64-encoder-decoder",
+        destination: "/:locale/tools/base64-tool",
+        permanent: true,
+      },
+      {
         source: "/regax",
         destination: "/tools/regex-tester",
         permanent: true,
