@@ -96,14 +96,16 @@ if (guideBulletEntries < guideSlugEntries * 5) {
 for (const fragment of [
   "localizedGuideSupportSections",
   "localizedGuideExpansionSections",
+  "priorityGuideExtraSections",
   "...localizedGuideSupportSections(localizedLocale, topic)",
   "...localizedGuideExpansionSections(localizedLocale, topic)",
+  "...extraSections",
   "bullets:",
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized guide content missing ${fragment}`);
 }
 
-const expansionSource = localizedContent.match(/function localizedGuideExpansionSections[\s\S]*?\n}\n\nfunction localizedGuideSections/)?.[0] ?? "";
+const expansionSource = localizedContent.match(/function localizedGuideExpansionSections[\s\S]*?\n}\n\nconst priorityGuideExtraSections/)?.[0] ?? "";
 for (const locale of nonEnglishLocales) {
   if (!expansionSource.includes(`${locale}:`) && !expansionSource.includes(`"${locale}":`)) {
     failures.push(`localized guide expansion sections missing locale ${locale}`);
@@ -157,12 +159,14 @@ for (const fragment of [
   "Network and security boundaries",
   "No account or professional service",
   "localizedLegalExpansionSections",
+  "localizedLegalDepthSections",
   "...expansionSections",
+  "...depthSections",
 ]) {
   if (!legalContent.includes(fragment)) failures.push(`legal content missing expanded policy section: ${fragment}`);
 }
 
-const legalExpansionSource = legalContent.match(/const localizedLegalExpansionSections[\s\S]*?;\n\nexport function getLocalizedLegalContent/)?.[0] ?? "";
+const legalExpansionSource = legalContent.match(/const localizedLegalExpansionSections[\s\S]*?export function getLocalizedLegalContent/)?.[0] ?? "";
 for (const locale of nonEnglishLocales) {
   if (!legalExpansionSource.includes(`${locale}:`) && !legalExpansionSource.includes(`"${locale}":`)) {
     failures.push(`localized legal expansion sections missing locale ${locale}`);

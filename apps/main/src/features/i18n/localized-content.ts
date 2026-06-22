@@ -2696,13 +2696,67 @@ function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: s
   return expansion[locale];
 }
 
+const priorityGuideExtraSections: Record<string, Partial<Record<Exclude<Locale, "en">, GuideDefinition["sections"]>>> = {
+  "regex-cheat-sheet": {
+    ko: [
+      {
+        heading: "검증과 추출을 분리하기",
+        body: "Regex를 하나로 크게 만들수록 검증, 추출, 하이라이트, 검색 목적이 섞이기 쉽습니다. 이메일 형식 확인처럼 실패해야 하는 입력이 중요한 경우와 로그에서 후보 문자열만 찾는 경우는 다른 패턴으로 다루는 편이 안전합니다.",
+        bullets: ["검증 패턴에는 시작과 끝 anchor를 명확히 둡니다.", "추출 패턴은 너무 넓은 .* 사용을 피하고 주변 구분자를 같이 봅니다.", "후보를 찾은 뒤 JSON, URL, 날짜 같은 전용 파서로 한 번 더 확인합니다."],
+      },
+      {
+        heading: "코드에 옮길 때 다시 테스트",
+        body: "브라우저 입력창에서 맞던 Regex도 JavaScript 문자열, JSON 설정, shell 명령, 백엔드 언어로 옮기면 escape 규칙이 바뀔 수 있습니다. 복사한 뒤에는 실제 코드가 읽는 최종 문자열과 flag를 다시 출력해 확인하는 과정이 필요합니다.",
+        bullets: ["문자열 리터럴에서는 역슬래시가 한 번 더 필요할 수 있습니다.", "슬래시로 감싼 literal과 생성자 문자열을 구분합니다.", "캡처 그룹 번호가 바뀌면 사용 중인 코드도 함께 수정합니다."],
+      },
+    ],
+    ja: [
+      {
+        heading: "検証と抽出を分けて考える",
+        body: "一つの Regex に検証、抽出、強調表示、検索をまとめると、意図しない一致が増えます。メール形式を拒否するための pattern と、ログから候補文字列だけを拾う pattern は、目的を分けて管理したほうが確認しやすくなります。",
+        bullets: ["検証では先頭と末尾の anchor を明確にします。", "抽出では広すぎる .* を避け、前後の区切りも確認します。", "候補を見つけた後は JSON、URL、日付など専用 parser で再確認します。"],
+      },
+      {
+        heading: "コードへ移した後に再テストする",
+        body: "ブラウザの入力欄で合っていた Regex でも、JavaScript 文字列、JSON 設定、shell コマンド、別言語の backend へ移すと escape の規則が変わります。コピー後は実際のコードが読む最終文字列と flag をもう一度確認してください。",
+        bullets: ["文字列リテラルではバックスラッシュがさらに必要な場合があります。", "slash literal と RegExp constructor の文字列を区別します。", "capture group の番号が変わったら利用側のコードも確認します。"],
+      },
+    ],
+    "zh-CN": [
+      {
+        heading: "把验证和提取分开",
+        body: "一个 Regex 同时承担验证、提取、高亮和搜索时，很容易在相似文本中匹配过多。用于拒绝错误输入的模式，和用于从日志中找候选字符串的模式，应按目标分开维护，再把结果交给 JSON、URL 或日期解析器复核。",
+        bullets: ["验证模式明确使用开头和结尾锚点。", "提取模式避免过宽的 .*，同时检查前后分隔符。", "找到候选值后，用对应专用工具或代码再次确认。"],
+      },
+      {
+        heading: "复制进代码后再测试",
+        body: "在浏览器输入框中通过的 Regex，放进 JavaScript 字符串、JSON 配置、shell 命令或后端语言后，转义规则可能已经不同。复制后应确认实际代码读取到的最终 pattern 与 flag，而不只看页面上显示的版本。",
+        bullets: ["字符串字面量可能需要额外反斜杠。", "区分斜杠 literal 与 RegExp constructor 字符串。", "捕获组顺序变化时，同步检查读取结果的代码。"],
+      },
+    ],
+    "zh-TW": [
+      {
+        heading: "把驗證和擷取分開",
+        body: "一個 Regex 同時承擔驗證、擷取、高亮與搜尋時，很容易在相似文字中比對過多。用於拒絕錯誤輸入的模式，和用於從日誌找候選字串的模式，應按目標分開維護，再把結果交給 JSON、URL 或日期解析器複核。",
+        bullets: ["驗證模式明確使用開頭與結尾錨點。", "擷取模式避免過寬的 .*，同時檢查前後分隔符。", "找到候選值後，用對應專用工具或程式碼再次確認。"],
+      },
+      {
+        heading: "複製進程式後再測試",
+        body: "在瀏覽器輸入框中通過的 Regex，放進 JavaScript 字串、JSON 設定、shell 指令或後端語言後，跳脫規則可能已經不同。複製後應確認實際程式讀到的最終 pattern 與 flag，而不只看頁面上顯示的版本。",
+        bullets: ["字串 literal 可能需要額外反斜線。", "區分斜線 literal 與 RegExp constructor 字串。", "捕獲群組順序變化時，同步檢查讀取結果的程式碼。"],
+      },
+    ],
+  },
+};
+
 function localizedGuideSections(slug: string, locale: Locale, topic: string, pack: TextPack) {
   const baseSections = pack.guideSections(topic);
   if (locale === defaultLocale) return baseSections;
   const localizedLocale = locale as Exclude<Locale, "en">;
   const leadSection = priorityGuideLeadSections[slug]?.[localizedLocale];
   const sections = leadSection ? [leadSection, ...baseSections.slice(1)] : baseSections;
-  return [...sections, ...localizedGuideSupportSections(localizedLocale, topic), ...localizedGuideExpansionSections(localizedLocale, topic)];
+  const extraSections = priorityGuideExtraSections[slug]?.[localizedLocale] ?? [];
+  return [...sections, ...localizedGuideSupportSections(localizedLocale, topic), ...localizedGuideExpansionSections(localizedLocale, topic), ...extraSections];
 }
 
 function localizeGuideTitle(href: string, locale: Locale, pack: TextPack) {

@@ -739,15 +739,221 @@ const localizedLegalExpansionSections: Record<Exclude<Locale, "en">, Record<Lega
   },
 };
 
+const localizedLegalDepthSections: Partial<Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalSection[]>>> = {
+  ko: {
+    privacy: [
+      { heading: "로컬 처리와 서버 확인 구분", body: "JSON, Regex, Base64, JWT, Hash, Password, Color, CSV, Markdown 같은 대부분의 작업은 브라우저에서 즉시 처리됩니다. DNS 조회와 HTTP 상태 확인처럼 공개 네트워크 응답을 확인해야 하는 기능만 제한된 서버 경로를 사용하며, 이 경우에도 공개 URL 또는 공개 호스트 이름만 입력해야 합니다." },
+      { heading: "최근 사용 기록 관리", body: "즐겨찾기와 최근 도구 기록은 사용자가 같은 브라우저에서 작업 흐름을 이어가기 위한 편의 기능입니다. 이 기록은 계정 프로필로 합쳐지지 않고, 다른 기기와 동기화되는 서비스 기록으로 취급되지 않으며, 사용자가 직접 삭제할 수 있습니다." },
+      { heading: "공유 전 마스킹 기준", body: "도구 결과를 이슈, 문서, 채팅, 코드 리뷰에 붙여 넣기 전에는 token, cookie, 고객 식별자, 내부 host, 비공개 URL, 일회성 링크를 제거해야 합니다. 구조가 필요한 경우에는 같은 필드 이름을 가진 테스트 값이나 짧은 샘플을 사용하세요." },
+      { heading: "제3자 서비스와 도구 결과", body: "제3자 서비스는 사이트 운영, 보안, 성능 이해 또는 무료 도구 제공을 돕기 위해 포함될 수 있습니다. 이러한 서비스는 도구가 생성한 결과처럼 표시되어서는 안 되며, 사용자는 실제 입력과 출력 영역을 기준으로 결과를 검토해야 합니다." },
+    ],
+    terms: [
+      { heading: "결과 검증 범위", body: "이 사이트의 출력은 개발자가 빠르게 확인할 수 있는 초안입니다. Regex, cron, DNS, HTTP header, SEO tag, SQL, CSS, JavaScript, YAML, ENV 결과를 운영 환경에 반영하기 전에는 대상 시스템의 공식 문서와 실제 런타임에서 다시 확인해야 합니다." },
+      { heading: "공용 네트워크 도구 제한", body: "DNS와 HTTP 상태 확인은 공개 도메인, 공개 URL, 공개 배포 상태를 진단하기 위한 기능입니다. 사설망, 사내 관리자 페이지, 인증이 필요한 리소스, 권한 없는 대상의 상태를 확인하거나 스캔하는 용도로 사용할 수 없습니다." },
+      { heading: "자동화와 남용 금지", body: "반복 요청을 자동화해 서비스 품질을 떨어뜨리거나, 오해를 유발하는 트래픽을 만들거나, 원격 서비스를 방해하는 방식으로 도구를 사용할 수 없습니다. 서버 경로가 있는 기능은 일반적인 수동 진단을 전제로 설계되어 있습니다." },
+      { heading: "문제 신고 시 필요한 정보", body: "도구 결과가 예상과 다르면 실제 비밀값을 보내지 말고, 재현 가능한 공개 샘플, 사용한 도구 경로, 브라우저, 기대한 결과, 표시된 경고를 함께 알려주세요. 이렇게 해야 입력 구조를 보존하면서도 민감한 정보를 보호할 수 있습니다." },
+    ],
+  },
+  ja: {
+    privacy: [
+      { heading: "ローカル処理とサーバー確認の区別", body: "JSON、Regex、Base64、JWT、Hash、Password、Color、CSV、Markdown など多くの作業はブラウザ内で処理されます。DNS 検索や HTTP 状態確認のように公開ネットワークの応答が必要な機能だけ、制限されたサーバー経路を使います。その場合も公開 URL または公開ホスト名だけを入力してください。" },
+      { heading: "最近の利用履歴の管理", body: "お気に入りと最近使ったツールは、同じブラウザで作業を続けやすくするための機能です。この履歴はアカウントプロフィールに統合されず、別端末と同期されるサービス履歴として扱われず、利用者が画面またはブラウザ設定から削除できます。" },
+      { heading: "共有前のマスキング基準", body: "結果を issue、文書、チャット、コードレビューに貼る前に、token、cookie、顧客識別子、内部 host、非公開 URL、一回限りの link を削除してください。構造が必要な場合は、同じ field 名を持つテスト値や短いサンプルを使います。" },
+      { heading: "第三者サービスとツール結果", body: "第三者サービスはサイト運営、保護、性能理解、無料ツール提供を支える目的で含まれることがあります。これらのサービスはツールが生成した結果のように表示されるべきではなく、利用者は実際の入力と出力の領域を基準に結果を確認してください。" },
+    ],
+    terms: [
+      { heading: "結果検証の範囲", body: "このサイトの出力は、開発者が素早く確認するための下書きです。Regex、cron、DNS、HTTP header、SEO tag、SQL、CSS、JavaScript、YAML、ENV の結果を本番環境へ反映する前に、対象システムの公式文書と実際の runtime で再確認してください。" },
+      { heading: "公開ネットワークツールの制限", body: "DNS と HTTP 状態確認は、公開ドメイン、公開 URL、公開デプロイ状態を診断するための機能です。私有ネットワーク、社内管理画面、認証が必要な resource、権限のない対象の確認や scan には使用できません。" },
+      { heading: "自動化と乱用の禁止", body: "繰り返しリクエストを自動化してサービス品質を下げたり、誤解を招く traffic を作ったり、遠隔サービスを妨害したりする形でツールを使うことはできません。サーバー経路を持つ機能は、通常の手動診断を前提にしています。" },
+      { heading: "問題報告に必要な情報", body: "結果が期待と異なる場合は、本物の秘密情報を送らず、再現できる公開サンプル、使用したツール path、ブラウザ、期待した結果、表示された警告を共有してください。これにより入力構造を保ちながら機密情報を守れます。" },
+    ],
+  },
+  "zh-CN": {
+    privacy: [
+      { heading: "区分本地处理和服务器检查", body: "JSON、Regex、Base64、JWT、Hash、Password、Color、CSV、Markdown 等大多数操作在浏览器内完成。只有 DNS 查询和 HTTP 状态检查这类需要观察公开网络响应的功能，会使用受限服务器路径；即使如此，也只应提交公开 URL 或公开主机名。" },
+      { heading: "管理最近使用记录", body: "收藏和最近工具记录只是为了让你在同一浏览器继续工作。它们不会合并成账号资料，也不会作为跨设备同步的服务历史处理。你可以从界面或浏览器存储设置中清除这些本地记录。" },
+      { heading: "分享前的脱敏标准", body: "把结果贴到 issue、文档、聊天或代码评审前，请删除 token、cookie、客户标识、内部 host、非公开 URL 和一次性链接。如果需要保留结构，请使用字段相同但可公开的测试值或短样例。" },
+      { heading: "第三方服务与工具结果", body: "第三方服务可能用于运行站点、保护服务、理解性能或支持免费工具体验。这些服务不应伪装成工具生成的结果；判断输出是否可用时，应以页面中的实际输入、诊断和输出区域为准。" },
+    ],
+    terms: [
+      { heading: "结果验证范围", body: "本站输出是帮助开发者快速检查的草稿。Regex、cron、DNS、HTTP header、SEO tag、SQL、CSS、JavaScript、YAML、ENV 等结果在进入生产环境前，都应结合目标系统官方说明和真实运行环境再次验证。" },
+      { heading: "公开网络工具限制", body: "DNS 和 HTTP 状态检查用于诊断公开域名、公开 URL 和公开部署状态。不得用于检查私有网络、公司内部管理页面、需要认证的资源，或你没有权限处理的目标。" },
+      { heading: "禁止自动化和滥用", body: "不得通过自动化重复请求降低服务质量、制造误导性流量，或以影响远程服务的方式使用工具。带服务器路径的功能只面向普通手动诊断，不适合作为扫描、压测或权限绕过工具。" },
+      { heading: "报告问题所需信息", body: "如果结果不符合预期，请不要发送真实密钥。请提供可公开复现的样例、工具路径、浏览器、期望结果和页面显示的警告。这样可以保留输入结构，同时保护敏感信息。" },
+    ],
+  },
+  "zh-TW": {
+    privacy: [
+      { heading: "區分本機處理和伺服器檢查", body: "JSON、Regex、Base64、JWT、Hash、Password、Color、CSV、Markdown 等多數操作在瀏覽器內完成。只有 DNS 查詢和 HTTP 狀態檢查這類需要觀察公開網路回應的功能，會使用受限伺服器路徑；即使如此，也只應提交公開 URL 或公開主機名稱。" },
+      { heading: "管理最近使用紀錄", body: "收藏與最近工具紀錄只是為了讓你在同一瀏覽器繼續工作。它們不會合併成帳號資料，也不會作為跨裝置同步的服務歷史處理。你可以從介面或瀏覽器儲存設定中清除這些本機紀錄。" },
+      { heading: "分享前的遮罩標準", body: "把結果貼到 issue、文件、聊天或程式碼審查前，請刪除 token、cookie、客戶識別、內部 host、非公開 URL 和一次性連結。如果需要保留結構，請使用欄位相同但可公開的測試值或短範例。" },
+      { heading: "第三方服務與工具結果", body: "第三方服務可能用於運行站點、保護服務、理解效能或支援免費工具體驗。這些服務不應偽裝成工具產生的結果；判斷輸出是否可用時，應以頁面中的實際輸入、診斷和輸出區域為準。" },
+    ],
+    terms: [
+      { heading: "結果驗證範圍", body: "本站輸出是協助開發者快速檢查的草稿。Regex、cron、DNS、HTTP header、SEO tag、SQL、CSS、JavaScript、YAML、ENV 等結果在進入正式環境前，都應結合目標系統官方說明和真實執行環境再次驗證。" },
+      { heading: "公開網路工具限制", body: "DNS 與 HTTP 狀態檢查用於診斷公開網域、公開 URL 與公開部署狀態。不得用於檢查私有網路、公司內部管理頁面、需要認證的資源，或你沒有權限處理的目標。" },
+      { heading: "禁止自動化和濫用", body: "不得透過自動化重複請求降低服務品質、製造誤導性流量，或以影響遠端服務的方式使用工具。帶伺服器路徑的功能只面向一般手動診斷，不適合作為掃描、壓測或權限繞過工具。" },
+      { heading: "回報問題所需資訊", body: "如果結果不符合預期，請不要傳送真實密鑰。請提供可公開重現的範例、工具路徑、瀏覽器、預期結果和頁面顯示的警告。這樣可以保留輸入結構，同時保護敏感資訊。" },
+    ],
+  },
+  th: {
+    privacy: [
+      { heading: "แยกงานในเบราว์เซอร์กับการตรวจผ่านเซิร์ฟเวอร์", body: "งานส่วนใหญ่ เช่น JSON, Regex, Base64, JWT, Hash, Password, Color, CSV และ Markdown จะประมวลผลในเบราว์เซอร์ทันที เฉพาะ DNS lookup และ HTTP status ที่ต้องดูคำตอบจากเครือข่ายสาธารณะเท่านั้นที่ใช้เส้นทางเซิร์ฟเวอร์แบบจำกัด และควรใส่เฉพาะ URL หรือชื่อ host สาธารณะ" },
+      { heading: "การจัดการประวัติการใช้ล่าสุด", body: "รายการโปรดและเครื่องมือที่ใช้ล่าสุดมีไว้เพื่อให้กลับมาทำงานต่อในเบราว์เซอร์เดิมได้ง่าย ข้อมูลนี้ไม่รวมเป็นโปรไฟล์บัญชี ไม่ถือเป็นประวัติบริการที่ sync ข้ามเครื่อง และผู้ใช้สามารถลบจากหน้าจอหรือการตั้งค่า storage ของเบราว์เซอร์ได้" },
+      { heading: "เกณฑ์ลบข้อมูลก่อนแชร์", body: "ก่อนนำผลลัพธ์ไปวางใน issue เอกสาร แชท หรือ code review ให้ลบ token, cookie, รหัสลูกค้า, host ภายใน, URL ที่ไม่สาธารณะ และลิงก์ใช้ครั้งเดียว หากต้องการคงโครงสร้าง ให้ใช้ค่าทดสอบที่มีชื่อ field เดียวกันแทน" },
+      { heading: "บริการภายนอกกับผลลัพธ์ของเครื่องมือ", body: "บริการภายนอกอาจถูกใช้เพื่อช่วยให้เว็บไซต์ทำงาน ป้องกันการละเมิด เข้าใจประสิทธิภาพ หรือสนับสนุนเครื่องมือฟรี บริการเหล่านี้ไม่ควรถูกแสดงเหมือนเป็นผลลัพธ์จากเครื่องมือ ผู้ใช้ควรตรวจจากพื้นที่ input, diagnostic และ output จริงบนหน้า" },
+    ],
+    terms: [
+      { heading: "ขอบเขตการตรวจผลลัพธ์", body: "ผลลัพธ์ของเว็บไซต์นี้เป็นร่างสำหรับช่วยนักพัฒนาตรวจเร็ว ก่อนนำ Regex, cron, DNS, HTTP header, SEO tag, SQL, CSS, JavaScript, YAML หรือ ENV ไปใช้กับระบบจริง ต้องตรวจซ้ำกับเอกสารทางการของระบบปลายทางและ runtime จริง" },
+      { heading: "ข้อจำกัดของเครื่องมือเครือข่ายสาธารณะ", body: "การตรวจ DNS และ HTTP status ใช้สำหรับโดเมนสาธารณะ URL สาธารณะ และสถานะ deployment ที่เปิดเผยเท่านั้น ห้ามใช้ตรวจ private network หน้า admin ภายใน resource ที่ต้อง login หรือเป้าหมายที่คุณไม่มีสิทธิ์จัดการ" },
+      { heading: "ห้าม automation และการใช้งานเกินขอบเขต", body: "ห้ามทำคำขอซ้ำอัตโนมัติจนกระทบคุณภาพบริการ สร้าง traffic ที่ทำให้เข้าใจผิด หรือใช้เครื่องมือไปรบกวนบริการอื่น ฟีเจอร์ที่มีเส้นทางเซิร์ฟเวอร์ออกแบบมาเพื่อการวินิจฉัยด้วยมือ ไม่ใช่การ scan, load test หรือ bypass สิทธิ์" },
+      { heading: "ข้อมูลที่ควรมีเมื่อรายงานปัญหา", body: "หากผลลัพธ์ไม่ตรงที่คาด อย่าส่ง secret จริง ให้ส่งตัวอย่างที่เปิดเผยได้ path ของเครื่องมือ browser ที่ใช้ ผลลัพธ์ที่คาดหวัง และคำเตือนที่เห็นบนหน้า วิธีนี้ช่วยรักษารูปร่างของ input โดยไม่เปิดเผยข้อมูลอ่อนไหว" },
+    ],
+  },
+  ar: {
+    privacy: [
+      { heading: "الفصل بين المعالجة المحلية وفحص الخادم", body: "معظم أعمال JSON وRegex وBase64 وJWT وHash وPassword وColor وCSV وMarkdown تتم داخل المتصفح. تستخدم وظائف مثل DNS lookup وHTTP status مسار خادم محدودا فقط لأنها تحتاج إلى قراءة استجابة شبكة عامة، وفي هذه الحالة يجب إدخال URL عام أو host عام فقط." },
+      { heading: "إدارة سجل الاستخدام الأخير", body: "المفضلات والأدوات الأخيرة تساعدك على متابعة العمل في المتصفح نفسه. لا تتحول هذه القيم إلى ملف حساب، ولا تعامل كتاريخ خدمة متزامن بين الأجهزة، ويمكن حذفها من الواجهة أو من إعدادات تخزين المتصفح." },
+      { heading: "معايير الإخفاء قبل المشاركة", body: "قبل لصق النتيجة في issue أو وثيقة أو محادثة أو code review، احذف token وcookie ومعرفات العملاء وhosts الداخلية وURLs غير العامة والروابط أحادية الاستخدام. إذا كانت البنية مهمة، استخدم قيما اختبارية بنفس أسماء الحقول." },
+      { heading: "الخدمات الخارجية ونتائج الأدوات", body: "قد تستخدم خدمات خارجية لتشغيل الموقع وحمايته وفهم الأداء ودعم الأدوات المجانية. يجب ألا تظهر هذه الخدمات وكأنها نتيجة أداة، وعلى المستخدم مراجعة مناطق الإدخال والتشخيص والإخراج الفعلية عند الحكم على النتيجة." },
+    ],
+    terms: [
+      { heading: "نطاق التحقق من النتائج", body: "مخرجات الموقع مسودات تساعد المطور على الفحص السريع. قبل استخدام نتائج Regex أو cron أو DNS أو HTTP header أو SEO tag أو SQL أو CSS أو JavaScript أو YAML أو ENV في الإنتاج، تحقق منها مع وثائق النظام المقصود وبيئة التشغيل الفعلية." },
+      { heading: "حدود أدوات الشبكة العامة", body: "فحوصات DNS وHTTP status مخصصة للنطاقات العامة وURLs العامة وحالة النشر العامة. لا يجوز استخدامها لفحص شبكات خاصة أو صفحات إدارة داخلية أو موارد تحتاج مصادقة أو أهداف لا تملك صلاحية التعامل معها." },
+      { heading: "منع الأتمتة والإساءة", body: "لا يجوز أتمتة الطلبات المتكررة بما يخفض جودة الخدمة أو يصنع traffic مضللا أو يزعج خدمات بعيدة. الوظائف التي تستخدم مسار خادم مصممة للتشخيص اليدوي العادي، وليست للمسح أو اختبار الضغط أو تجاوز الصلاحيات." },
+      { heading: "معلومات بلاغات المشاكل", body: "إذا لم تكن النتيجة كما توقعت، لا ترسل أسرارا حقيقية. أرسل عينة عامة قابلة لإعادة الإنتاج، ومسار الأداة، والمتصفح، والنتيجة المتوقعة، والتحذير الظاهر في الصفحة. هكذا تبقى بنية الإدخال واضحة مع حماية البيانات الحساسة." },
+    ],
+  },
+};
+
+const localizedLegalAuditSections: Partial<Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalSection[]>>> = {
+  ko: {
+    privacy: [
+      { heading: "사용자가 통제하는 값", body: "이 사이트는 계정 기반 편집 공간이 아니라 즉시 실행하는 개발자 유틸리티 모음입니다. 사용자는 어떤 값을 붙여 넣고, 어떤 결과를 복사하며, 어떤 로컬 기록을 남길지 직접 결정합니다. 민감한 값은 입력 전에 줄이거나 바꾸는 방식으로 관리해야 합니다." },
+      { heading: "공개 페이지 품질 유지", body: "도구, 가이드, FAQ, 법적 안내는 사용자가 결과를 이해하고 다음 작업을 고르도록 돕기 위해 계속 보강됩니다. 페이지가 단순한 링크 모음이나 빈 생성기처럼 보이지 않도록 실제 예시, 경고, 체크리스트, 관련 도구 흐름을 함께 제공합니다." },
+    ],
+    terms: [
+      { heading: "사용자 판단의 책임", body: "도구는 형식 오류, 시간대 차이, encoding 문제, header 누락, DNS 상태처럼 검토 지점을 빠르게 드러냅니다. 그러나 최종 복사, 배포, 공유 여부는 사용자의 판단이며, 중요한 변경은 코드 리뷰, 운영 로그, 플랫폼 문서와 함께 확인해야 합니다." },
+      { heading: "품질 유지와 변경 기준", body: "새 도구나 가이드가 추가될 때는 실제 입력, 구조화된 결과, 실패 사례, 복사 전 점검, 관련 다음 단계가 함께 제공되어야 합니다. 단순 placeholder, 빈 페이지, 사용하지 않는 legacy route는 공용 서비스 품질을 떨어뜨리므로 유지하지 않습니다." },
+    ],
+  },
+  ja: {
+    privacy: [
+      { heading: "利用者が管理する値", body: "このサイトはアカウント型の編集スペースではなく、すぐ使える開発者ユーティリティ集です。利用者は何を貼り付け、どの結果をコピーし、どのローカル履歴を残すかを自分で決めます。機密値は入力前に短くするか、安全な値へ置き換えてください。" },
+      { heading: "公開ページ品質の維持", body: "ツール、ガイド、FAQ、法的説明は、結果の意味と次の作業を判断しやすくするために更新されます。単なるリンク集や空の生成器に見えないよう、実例、警告、チェックリスト、関連ツールへの流れを一緒に提供します。" },
+    ],
+    terms: [
+      { heading: "利用者判断の責任", body: "ツールは形式エラー、タイムゾーン差、encoding 問題、header 不足、DNS 状態などの確認点を素早く示します。ただし最終的にコピー、デプロイ、共有するかは利用者の判断であり、重要な変更は code review、運用 log、platform 文書と合わせて確認してください。" },
+      { heading: "品質維持と変更基準", body: "新しいツールやガイドを追加する場合は、実際の入力、構造化された結果、失敗例、コピー前チェック、関連する次の手順を一緒に提供する必要があります。placeholder、空ページ、使わない legacy route は公開サービスの品質を下げるため維持しません。" },
+    ],
+  },
+  "zh-CN": {
+    privacy: [
+      { heading: "由用户控制的值", body: "本站不是账号式编辑空间，而是一组可立即使用的开发者工具。你决定粘贴什么、复制什么结果、保留哪些本地历史。敏感值应在输入前缩短、替换或脱敏，避免把真实项目资料带入公开网页。" },
+      { heading: "维护公开页面质量", body: "工具、指南、FAQ 和法律说明会持续补充，帮助用户理解结果并选择下一步。页面不应只是链接集合或空生成器，而应提供真实示例、警告、检查清单和相关工具流程。" },
+    ],
+    terms: [
+      { heading: "用户判断责任", body: "工具可以快速暴露格式错误、时区差异、encoding 问题、header 缺失和 DNS 状态等复核点。但最终是否复制、部署或分享由用户决定，重要变更应结合代码评审、运维日志和平台文档确认。" },
+      { heading: "质量维护和变更标准", body: "新增工具或指南时，应同时提供真实输入、结构化结果、失败案例、复制前检查和相关下一步。placeholder、空页面和不用的 legacy route 会降低公共服务质量，因此不应保留。" },
+      { heading: "普通工具使用范围", body: "本站不提供托管监控、账号审计、合规认证或替代专业评审的服务。它的作用是帮助你把公开样例、配置片段和可分享结果整理清楚，再带回自己的项目环境继续验证。" },
+    ],
+  },
+  "zh-TW": {
+    privacy: [
+      { heading: "由使用者控制的值", body: "本站不是帳號式編輯空間，而是一組可立即使用的開發者工具。你決定貼上什麼、複製什麼結果、保留哪些本機歷史。敏感值應在輸入前縮短、替換或遮罩，避免把真實專案資料帶入公開網頁。" },
+      { heading: "維護公開頁面品質", body: "工具、指南、FAQ 與法律說明會持續補充，協助使用者理解結果並選擇下一步。頁面不應只是連結集合或空產生器，而應提供真實範例、警告、檢查清單與相關工具流程。" },
+    ],
+    terms: [
+      { heading: "使用者判斷責任", body: "工具可以快速暴露格式錯誤、時區差異、encoding 問題、header 缺失和 DNS 狀態等複核點。但最終是否複製、部署或分享由使用者決定，重要變更應結合程式碼審查、維運記錄和平台文件確認。" },
+      { heading: "品質維護和變更標準", body: "新增工具或指南時，應同時提供真實輸入、結構化結果、失敗案例、複製前檢查和相關下一步。placeholder、空頁面和不用的 legacy route 會降低公共服務品質，因此不應保留。" },
+      { heading: "一般工具使用範圍", body: "本站不提供託管監控、帳號稽核、合規認證或取代專業審查的服務。它的作用是協助你把公開範例、設定片段和可分享結果整理清楚，再帶回自己的專案環境繼續驗證。" },
+    ],
+  },
+  es: {
+    privacy: [
+      { heading: "Valores controlados por el usuario", body: "Este sitio no es un espacio de edicion con cuenta, sino una coleccion de utilidades que se ejecutan al momento. Tu decides que pegar, que resultado copiar y que historial local conservar. Los valores sensibles deben reducirse, reemplazarse o anonimizarse antes de entrar a una pagina publica." },
+      { heading: "Calidad de paginas publicas", body: "Las herramientas, guias, FAQ y textos legales se amplian para que el usuario entienda el resultado y elija el siguiente paso. Una pagina util no debe ser solo una lista de enlaces o un generador vacio; debe incluir ejemplos, avisos, checklist y flujo hacia herramientas relacionadas." },
+    ],
+    terms: [
+      { heading: "Responsabilidad de decision del usuario", body: "Las herramientas revelan rapido errores de formato, diferencias de zona horaria, problemas de encoding, headers faltantes o estado DNS. La decision final de copiar, desplegar o compartir sigue siendo del usuario y los cambios importantes deben revisarse con codigo, logs y documentacion de la plataforma." },
+      { heading: "Criterio de calidad y cambios", body: "Cada herramienta o guia nueva debe traer entradas reales, resultados estructurados, casos de fallo, revision antes de copiar y un siguiente paso relacionado. Placeholder, paginas vacias o rutas legacy sin uso reducen la calidad del servicio publico y no deben mantenerse." },
+    ],
+  },
+  "pt-BR": {
+    privacy: [
+      { heading: "Valores controlados pelo usuario", body: "Este site nao e um espaco de edicao com conta, mas uma colecao de utilitarios executados no momento. Voce decide o que colar, qual resultado copiar e que historico local manter. Valores sensiveis devem ser reduzidos, trocados ou mascarados antes de entrar em uma pagina publica." },
+      { heading: "Qualidade das paginas publicas", body: "Ferramentas, guias, FAQ e textos legais sao ampliados para que o usuario entenda o resultado e escolha a proxima etapa. Uma pagina util nao deve ser apenas lista de links ou gerador vazio; precisa de exemplos, avisos, checklist e fluxo para ferramentas relacionadas." },
+    ],
+    terms: [
+      { heading: "Responsabilidade de decisao do usuario", body: "As ferramentas revelam rapidamente erros de formato, diferencas de fuso, problemas de encoding, headers ausentes ou estado DNS. A decisao final de copiar, publicar ou compartilhar continua sendo do usuario, e mudancas importantes devem ser revistas com codigo, logs e documentacao da plataforma." },
+      { heading: "Criterio de qualidade e mudancas", body: "Cada ferramenta ou guia novo deve trazer entradas reais, resultados estruturados, casos de falha, revisao antes de copiar e um proximo passo relacionado. Placeholder, paginas vazias ou rotas legacy sem uso reduzem a qualidade do servico publico e nao devem ser mantidos." },
+    ],
+  },
+  de: {
+    privacy: [
+      { heading: "Vom Nutzer kontrollierte Werte", body: "Diese Seite ist kein kontobasierter Editor, sondern eine Sammlung sofort nutzbarer Entwickler-Utilities. Du entscheidest, welche Werte eingefuegt, welche Ergebnisse kopiert und welche lokalen Verlaeufe behalten werden. Sensible Werte sollten vor der Eingabe gekuerzt, ersetzt oder maskiert werden." },
+      { heading: "Qualitaet oeffentlicher Seiten", body: "Tools, Guides, FAQ und rechtliche Hinweise werden erweitert, damit Nutzer Ergebnisse verstehen und den naechsten Schritt waehlen koennen. Eine nuetzliche Seite ist nicht nur Linkliste oder leerer Generator, sondern enthaelt Beispiele, Warnungen, Checklisten und verwandte Tool-Flows." },
+    ],
+    terms: [
+      { heading: "Verantwortung der Nutzerentscheidung", body: "Die Tools zeigen schnell Formatfehler, Zeitzonenunterschiede, Encoding-Probleme, fehlende Header oder DNS-Zustaende. Die Entscheidung zum Kopieren, Deployen oder Teilen bleibt beim Nutzer; wichtige Aenderungen sollten mit Code Review, Betriebslogs und Plattformdokumentation geprueft werden." },
+      { heading: "Qualitaets- und Aenderungskriterien", body: "Neue Tools oder Guides brauchen reale Eingaben, strukturierte Ergebnisse, Fehlerfaelle, Pruefung vor dem Kopieren und einen verwandten naechsten Schritt. Placeholder, leere Seiten oder ungenutzte Legacy-Routen senken die Qualitaet des oeffentlichen Dienstes und werden nicht gepflegt." },
+    ],
+  },
+  fr: {
+    privacy: [
+      { heading: "Valeurs controlees par l'utilisateur", body: "Ce site n'est pas un espace d'edition avec compte, mais une collection d'utilitaires executables immediatement. Vous decidez quoi coller, quel resultat copier et quel historique local garder. Les valeurs sensibles doivent etre reduites, remplacees ou masquees avant d'entrer dans une page publique." },
+      { heading: "Qualite des pages publiques", body: "Les outils, guides, FAQ et textes legaux sont enrichis pour aider a comprendre le resultat et choisir l'etape suivante. Une page utile ne doit pas etre une simple liste de liens ou un generateur vide; elle doit fournir exemples, alertes, checklist et flux vers les outils lies." },
+    ],
+    terms: [
+      { heading: "Responsabilite de decision utilisateur", body: "Les outils montrent vite erreurs de format, decalages de fuseau, problemes d'encoding, headers manquants ou etat DNS. La decision finale de copier, deployer ou partager reste a l'utilisateur; les changements importants doivent etre verifies avec code review, logs et documentation plateforme." },
+      { heading: "Critere de qualite et changements", body: "Chaque nouvel outil ou guide doit fournir entrees reelles, resultats structures, cas d'echec, controle avant copie et etape suivante liee. Placeholder, pages vides ou routes legacy inutilisees reduisent la qualite du service public et ne doivent pas etre conserves." },
+    ],
+  },
+  hi: {
+    privacy: [
+      { heading: "उपयोगकर्ता के नियंत्रण वाले मान", body: "यह साइट account based editing space नहीं है, बल्कि तुरंत चलने वाले developer utilities का समूह है. आप तय करते हैं कि क्या paste करना है, कौन सा result copy करना है और कौन सा local history रखना है. Sensitive values को public page में डालने से पहले छोटा, replace या mask करना चाहिए." },
+      { heading: "सार्वजनिक पेज की गुणवत्ता", body: "Tools, guides, FAQ और legal notes को इसलिए बढ़ाया जाता है ताकि user result समझ सके और अगला step चुन सके. उपयोगी पेज सिर्फ links या खाली generator नहीं होना चाहिए; उसमें real examples, warnings, checklist और related tools का flow होना चाहिए." },
+    ],
+    terms: [
+      { heading: "User decision की जिम्मेदारी", body: "Tools format error, time zone difference, encoding issue, missing header और DNS status जैसे review points जल्दी दिखाते हैं. Copy, deploy या share करने का अंतिम निर्णय user का है; critical change को code review, operations log और platform docs के साथ दोबारा जांचना चाहिए." },
+      { heading: "Quality और change criteria", body: "हर नए tool या guide में real input, structured result, failure cases, copy से पहले review और related next step होना चाहिए. Placeholder, empty pages या unused legacy routes public service की quality घटाते हैं, इसलिए उन्हें बनाए नहीं रखा जाता." },
+    ],
+  },
+  id: {
+    privacy: [
+      { heading: "Nilai yang dikendalikan pengguna", body: "Situs ini bukan ruang edit berbasis akun, melainkan kumpulan utilitas developer yang langsung berjalan. Anda menentukan nilai apa yang ditempel, hasil apa yang disalin, dan riwayat lokal apa yang disimpan. Nilai sensitif perlu dipersingkat, diganti, atau dimasker sebelum masuk ke halaman publik." },
+      { heading: "Menjaga kualitas halaman publik", body: "Alat, panduan, FAQ, dan teks legal diperluas agar pengguna memahami hasil dan memilih langkah berikutnya. Halaman yang berguna tidak cukup berupa daftar tautan atau generator kosong; perlu contoh nyata, peringatan, checklist, dan alur ke alat terkait." },
+    ],
+    terms: [
+      { heading: "Tanggung jawab keputusan pengguna", body: "Alat membantu menemukan error format, perbedaan zona waktu, masalah encoding, header yang hilang, atau status DNS dengan cepat. Keputusan akhir untuk menyalin, menerapkan, atau berbagi tetap ada pada pengguna dan perubahan penting harus dicek dengan review kode, log operasi, serta dokumentasi platform." },
+      { heading: "Kriteria kualitas dan perubahan", body: "Setiap alat atau panduan baru harus membawa input nyata, hasil terstruktur, kasus gagal, pemeriksaan sebelum salin, dan langkah terkait berikutnya. Placeholder, halaman kosong, atau route legacy yang tidak dipakai menurunkan kualitas layanan publik dan tidak dipertahankan." },
+    ],
+  },
+  vi: {
+    privacy: [
+      { heading: "Giá trị do người dùng kiểm soát", body: "Site này không phải không gian chỉnh sửa theo tài khoản, mà là tập hợp tiện ích lập trình chạy ngay. Bạn quyết định dán gì, sao chép kết quả nào và giữ lịch sử cục bộ nào. Giá trị nhạy cảm nên được rút gọn, thay thế hoặc che trước khi đưa vào trang công khai." },
+      { heading: "Duy trì chất lượng trang công khai", body: "Công cụ, hướng dẫn, FAQ và ghi chú pháp lý được mở rộng để người dùng hiểu kết quả và chọn bước tiếp theo. Một trang hữu ích không chỉ là danh sách link hay bộ tạo rỗng; cần ví dụ thật, cảnh báo, checklist và luồng sang công cụ liên quan." },
+    ],
+    terms: [
+      { heading: "Trách nhiệm quyết định của người dùng", body: "Công cụ giúp lộ nhanh lỗi định dạng, lệch múi giờ, vấn đề encoding, thiếu header hoặc trạng thái DNS. Quyết định cuối cùng về sao chép, triển khai hoặc chia sẻ vẫn thuộc về người dùng; thay đổi quan trọng nên được kiểm tra với review mã, log vận hành và tài liệu nền tảng." },
+      { heading: "Tiêu chí chất lượng và thay đổi", body: "Mỗi công cụ hoặc hướng dẫn mới cần có đầu vào thật, kết quả có cấu trúc, trường hợp lỗi, kiểm tra trước khi sao chép và bước tiếp theo liên quan. Placeholder, trang rỗng hoặc route legacy không dùng làm giảm chất lượng dịch vụ công khai và không được giữ lại." },
+    ],
+  },
+};
+
 export function getLocalizedLegalContent(locale: Locale, kind: LegalPageKind) {
   const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
   const advertisingSection = advertisingSections[locale][kind];
   const expansionSections = locale === defaultLocale ? [] : localizedLegalExpansionSections[locale][kind];
+  const depthSections = locale === defaultLocale ? [] : (localizedLegalDepthSections[locale]?.[kind] ?? []);
+  const auditSections = locale === defaultLocale ? [] : (localizedLegalAuditSections[locale]?.[kind] ?? []);
   const alreadyIncluded = content.sections.some((section) => section.heading === advertisingSection.heading);
 
   return {
     ...content,
     lastUpdated: legalUpdatedAt[locale],
-    sections: alreadyIncluded ? [...content.sections, ...expansionSections] : [...content.sections, ...expansionSections, advertisingSection],
+    sections: alreadyIncluded
+      ? [...content.sections, ...expansionSections, ...depthSections, ...auditSections]
+      : [...content.sections, ...expansionSections, ...depthSections, ...auditSections, advertisingSection],
   };
 }
