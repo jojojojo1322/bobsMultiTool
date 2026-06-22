@@ -5,6 +5,10 @@ const baseUrl = process.env.BOBOB_BASE_URL || "http://localhost:3000";
 const root = process.cwd();
 const registry = fs.readFileSync(path.join(root, "apps/main/src/features/tools/registry.ts"), "utf8");
 const guides = fs.readFileSync(path.join(root, "apps/main/src/features/guides/registry.ts"), "utf8");
+const smokeHeaders = {
+  "user-agent": process.env.BOBOB_ROUTE_USER_AGENT || "Googlebot",
+  "accept-language": process.env.BOBOB_ROUTE_ACCEPT_LANGUAGE || "en-US,en;q=0.9",
+};
 
 const toolSlugs = Array.from(registry.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guides.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
@@ -61,14 +65,14 @@ const directoryStructuredDataPaths = [
 const failures = [];
 
 for (const routePath of paths) {
-  const response = await fetch(`${baseUrl}${routePath}`, { redirect: "manual" });
+  const response = await fetch(`${baseUrl}${routePath}`, { redirect: "manual", headers: smokeHeaders });
   if (response.status < 200 || response.status >= 400) {
     failures.push(`${routePath} returned ${response.status}`);
   }
 }
 
 for (const [source, destination] of redirects) {
-  const response = await fetch(`${baseUrl}${source}`, { redirect: "manual" });
+  const response = await fetch(`${baseUrl}${source}`, { redirect: "manual", headers: smokeHeaders });
   if (![301, 308].includes(response.status)) {
     failures.push(`${source} should be a permanent redirect, got ${response.status}`);
     continue;
@@ -80,7 +84,7 @@ for (const [source, destination] of redirects) {
 }
 
 for (const routePath of structuredDataPaths) {
-  const response = await fetch(`${baseUrl}${routePath}`);
+  const response = await fetch(`${baseUrl}${routePath}`, { headers: smokeHeaders });
   const html = await response.text();
   for (const fragment of ['"@type":"SoftwareApplication"', '"@type":"FAQPage"', '"@type":"BreadcrumbList"', '"mainEntity"', '"itemListElement"']) {
     if (!html.includes(fragment)) failures.push(`${routePath} missing structured data fragment ${fragment}`);
@@ -91,7 +95,7 @@ for (const routePath of structuredDataPaths) {
 }
 
 for (const [routePath, localeFragment] of directoryStructuredDataPaths) {
-  const response = await fetch(`${baseUrl}${routePath}`);
+  const response = await fetch(`${baseUrl}${routePath}`, { headers: smokeHeaders });
   const html = await response.text();
   for (const fragment of [
     '"@type":"CollectionPage"',
@@ -108,7 +112,7 @@ for (const [routePath, localeFragment] of directoryStructuredDataPaths) {
   }
 }
 
-const homeHtml = await (await fetch(`${baseUrl}/`)).text();
+const homeHtml = await (await fetch(`${baseUrl}/`, { headers: smokeHeaders })).text();
 for (const fragment of [
   'name="google-adsense-account" content="ca-pub-2620992505263949"',
   "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2620992505263949",
@@ -120,7 +124,7 @@ for (const fragment of [
   if (!homeHtml.includes(fragment)) failures.push(`home page missing approval readiness fragment: ${fragment}`);
 }
 
-const adsTxtResponse = await fetch(`${baseUrl}/ads.txt`);
+const adsTxtResponse = await fetch(`${baseUrl}/ads.txt`, { headers: smokeHeaders });
 const adsTxtBody = await adsTxtResponse.text();
 if (!adsTxtBody.includes("google.com, pub-2620992505263949, DIRECT, f08c47fec0942fa0")) {
   failures.push("/ads.txt missing Google publisher line");
@@ -153,3 +157,4 @@ if (failures.length) {
 }
 
 console.log(`Route smoke passed for ${paths.length} paths at ${baseUrl}.`);
+process.exit(0);
