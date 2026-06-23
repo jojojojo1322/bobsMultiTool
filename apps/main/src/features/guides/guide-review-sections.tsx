@@ -75,6 +75,39 @@ export function GuideReviewSections({ dictionary, locale, tools }: GuideReviewSe
                 </ul>
               </div>
             ) : null}
+
+            {tool.examples.length || tool.faqs.length ? (
+              <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                {tool.examples.length ? (
+                  <div className="rounded-md border bg-card/70 p-3">
+                    <h4 className="text-xs font-semibold uppercase tracking-normal text-muted-foreground">{dictionary.nav.examples}</h4>
+                    <div className="mt-3 space-y-3">
+                      {tool.examples.slice(0, 3).map((example) => (
+                        <div key={`${tool.slug}-${example.label}`} className="text-sm leading-6">
+                          <p className="font-medium text-foreground">{example.label}</p>
+                          <p className="text-muted-foreground">{example.note}</p>
+                          <code className="mt-2 block whitespace-pre-wrap break-words rounded-md bg-muted px-2 py-1 text-xs leading-5 text-foreground">{example.value}</code>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {tool.faqs.length ? (
+                  <div className="rounded-md border bg-card/70 p-3">
+                    <h4 className="text-xs font-semibold uppercase tracking-normal text-muted-foreground">{dictionary.nav.faq}</h4>
+                    <div className="mt-3 space-y-3 text-sm leading-6">
+                      {tool.faqs.slice(0, 3).map((faq) => (
+                        <div key={`${tool.slug}-${faq.question}`}>
+                          <p className="font-medium text-foreground">{faq.question}</p>
+                          <p className="mt-1 text-muted-foreground">{faq.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </article>
         ))}
       </div>
