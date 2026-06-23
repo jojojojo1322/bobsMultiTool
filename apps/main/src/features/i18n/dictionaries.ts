@@ -1899,21 +1899,21 @@ const commonText: Record<Locale, CommonLocaleOverride> = {
   },
   ja: {
     nav: { searchPlaceholder: "ツールを検索", openNavigation: "ナビゲーションを開く", close: "閉じる", guides: "ガイド", tools: "ツール", examples: "例", faq: "FAQ", relatedTools: "関連ツール", relatedToolsDescription: "次に使いやすいツール", guideDescription: "検索意図を補足するガイド", recentTools: "最近のツール", favoriteTools: "保存したツール", language: "言語", theme: "テーマ" },
-    home: { openTools: "ツールを開く", readGuides: "ガイドを読む", toolIndexTitle: "ツール一覧", toolIndexDescription: "整形、検証、デコード、生成、ネットワーク確認、SEOツールを一つのワークベンチから探せます。" },
+    home: { openTools: "ツールを開く", readGuides: "ガイドを読む", toolIndexTitle: "ツール一覧", toolIndexDescription: "整形、検証、デコード、生成、ネットワーク確認、SEOツールを、例と関連ワークフロー付きで一つのワークベンチから探せます。" },
     tool: { developerWorkbench: "開発者ワークベンチ", singleDomainTitle: "単一ドメイン", singleDomainBody: "すべてのツールを www.bobob.app 配下に置き、ナビゲーション、検索インデックス、関連フローを一貫させます。", localFirstTitle: "ローカル優先", localFirstBody: "可能な整形、デコード、生成処理はブラウザ内で実行します。", expandableRegistryTitle: "拡張可能な登録構造", expandableRegistryBody: "新しいツールにはメタデータ、言語、例、FAQ、ガイド、関連リンク、簡易検証が必要です。", examplesDescription: "このツールを始めるための入力例", faqDescription: "よく確認する実装詳細", guidesDescription: "このツールに関連する作業フロー", useCases: "利用シーン", copy: "コピー", copied: "コピー済み", copyLink: "リンクをコピー", copiedLink: "リンクをコピー済み", addFavorite: "保存", removeFavorite: "保存済み", privacy: "プライバシー", serverRequired: "サーバー確認", localOnly: "ブラウザ内処理", localSessionTitle: "ローカルセッション", localSessionBody: "入力状態はこのブラウザだけに保存され、アカウントなしで前回の作業を復元できます。", restoreLastWork: "前回の作業を復元", clearLocalHistory: "ローカル履歴を消去" },
     guides: { badge: "ガイド", title: "ブラウザユーティリティ実践ガイド", description: "一般的なブログではなく、ツール利用の文脈を補足する短いガイドです。", back: "ガイドへ戻る", relatedTitle: "関連ツール", relatedDescription: "このガイドに関連するツールを開きます。" },
     theme: { light: "ライト", dark: "ダーク", system: "システム" },
   },
   "zh-CN": {
     nav: { searchPlaceholder: "搜索工具", openNavigation: "打开导航", close: "关闭", guides: "指南", tools: "工具", examples: "示例", faq: "FAQ", relatedTools: "相关工具", relatedToolsDescription: "下一步可用工具", guideDescription: "补充搜索意图的指南", recentTools: "最近工具", favoriteTools: "收藏工具", language: "语言", theme: "主题" },
-    home: { badge: "开发者工作台", title: "面向日常开发流程的实用浏览器工具。", description: "在单一域名中格式化数据、测试模式、检查令牌、生成元数据、比较文本并转换值。", openTools: "打开工具", readGuides: "阅读指南", toolIndexTitle: "工具索引", toolIndexDescription: "从一个工作台查找格式化、验证、解码、生成、网络检查和 SEO 工具。" },
+    home: { badge: "开发者工作台", title: "面向日常开发流程的实用浏览器工具。", description: "在单一域名中格式化数据、测试模式、检查令牌、生成元数据、比较文本并转换值。", openTools: "打开工具", readGuides: "阅读指南", toolIndexTitle: "工具索引", toolIndexDescription: "从一个工作台查找格式化、验证、解码、生成、网络检查和 SEO 工具，并继续进入示例、检查清单和相关工作流。" },
     tool: { developerWorkbench: "开发者工作台", singleDomainTitle: "单一域名", singleDomainBody: "所有工具位于 www.bobob.app 下，让导航、索引和相关流程保持一致。", localFirstTitle: "本地优先", localFirstBody: "可行的格式化、解码和生成操作都在浏览器中执行。", expandableRegistryTitle: "可扩展注册结构", expandableRegistryBody: "新工具必须包含元数据、语言、示例、FAQ、指南、相关链接和基础验证。", examplesDescription: "此工具的起始示例", faqDescription: "常见实现细节", guidesDescription: "与此工具相关的工作流", useCases: "使用场景", copy: "复制", copied: "已复制", copyLink: "复制链接", copiedLink: "链接已复制", addFavorite: "保存", removeFavorite: "已保存", privacy: "隐私", serverRequired: "服务器检查", localOnly: "浏览器本地", localSessionTitle: "本地会话", localSessionBody: "输入状态只保存在此浏览器中，可在无账号时恢复上次工作区。", restoreLastWork: "恢复上次工作", clearLocalHistory: "清除本地记录" },
     guides: { badge: "指南", title: "浏览器工具实践指南", description: "短篇支持内容，用于补充工具的使用场景，而不是泛泛的博客。", back: "返回指南", relatedTitle: "相关工具", relatedDescription: "打开与此指南相关的工具。" },
     theme: { light: "浅色", dark: "深色", system: "系统" },
   },
   "zh-TW": {
     nav: { searchPlaceholder: "搜尋工具", openNavigation: "開啟導覽", close: "關閉", guides: "指南", tools: "工具", examples: "範例", faq: "FAQ", relatedTools: "相關工具", relatedToolsDescription: "下一步可用工具", guideDescription: "補充搜尋意圖的指南", recentTools: "最近工具", favoriteTools: "收藏工具", language: "語言", theme: "主題" },
-    home: { badge: "開發者工作台", title: "面向日常開發流程的實用瀏覽器工具。", description: "在單一網域中格式化資料、測試模式、檢查權杖、產生中繼資料、比較文字並轉換數值。", openTools: "開啟工具", readGuides: "閱讀指南", toolIndexTitle: "工具索引", toolIndexDescription: "從一個工作台查找格式化、驗證、解碼、產生、網路檢查與 SEO 工具。" },
+    home: { badge: "開發者工作台", title: "面向日常開發流程的實用瀏覽器工具。", description: "在單一網域中格式化資料、測試模式、檢查權杖、產生中繼資料、比較文字並轉換數值。", openTools: "開啟工具", readGuides: "閱讀指南", toolIndexTitle: "工具索引", toolIndexDescription: "從一個工作台查找格式化、驗證、解碼、產生、網路檢查與 SEO 工具，並繼續進入範例、檢查清單與相關工作流程。" },
     tool: { developerWorkbench: "開發者工作台", singleDomainTitle: "單一網域", singleDomainBody: "所有工具位於 www.bobob.app 下，讓導覽、索引與相關流程保持一致。", localFirstTitle: "本機優先", localFirstBody: "可行的格式化、解碼與生成操作都在瀏覽器中執行。", expandableRegistryTitle: "可擴充註冊結構", expandableRegistryBody: "新工具必須包含中繼資料、語言、範例、FAQ、指南、相關連結與基礎驗證。", examplesDescription: "此工具的起始範例", faqDescription: "常見實作細節", guidesDescription: "與此工具相關的工作流程", useCases: "使用情境", copy: "複製", copied: "已複製", copyLink: "複製連結", copiedLink: "連結已複製", addFavorite: "儲存", removeFavorite: "已儲存", privacy: "隱私", serverRequired: "伺服器檢查", localOnly: "瀏覽器本機", localSessionTitle: "本機工作階段", localSessionBody: "輸入狀態只保存在此瀏覽器中，可在無帳號時恢復上次工作區。", restoreLastWork: "恢復上次工作", clearLocalHistory: "清除本機記錄" },
     guides: { badge: "指南", title: "瀏覽器工具實務指南", description: "短篇支援內容，用來補充工具使用情境，而不是泛泛的部落格。", back: "返回指南", relatedTitle: "相關工具", relatedDescription: "開啟與此指南相關的工具。" },
     theme: { light: "淺色", dark: "深色", system: "系統" },
@@ -2101,7 +2101,7 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     },
     metadata: {
       homeTitle: "Bob's Multi Tool - 実用的な開発者ユーティリティ",
-      homeDescription: "JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、color、network、text 変換の無料オンライン開発者ツール。",
+      homeDescription: "JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、color、network、text 変換を、例と確認手順付きで使える無料オンライン開発者ツール集。",
       guidesTitle: "開発者ユーティリティガイド",
       guidesDescription: "Bob's Multi Tool の各ブラウザツールを実務で使うための短いガイド。",
       toolDescription: (title) => `${title} を Bob's Multi Tool で使えます。例、FAQ、関連ツール、ローカル優先のプライバシーを備えています。`,
@@ -2114,11 +2114,11 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     },
     metadata: {
       homeTitle: "Bob's Multi Tool - 实用开发者工具",
-      homeDescription: "用于 JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、颜色、网络和文本处理的免费在线开发者工具。",
+      homeDescription: "用于 JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、颜色、网络和文本处理的免费在线开发者工具，包含示例、检查项和相关下一步。",
       guidesTitle: "开发者工具指南",
       guidesDescription: "围绕 Bob's Multi Tool 浏览器工具的实用工作流指南。",
       toolDescription: (title) => `在 Bob's Multi Tool 使用 ${title}。包含示例、FAQ、相关工具，并尽可能在浏览器本地处理。`,
-      guideDescription: (title) => `${title}。安全高效使用浏览器开发者工具的实用指南。`,
+      guideDescription: (title) => `${title}。安全高效使用浏览器开发者工具的实用指南，包含输入示例、检查步骤、风险提示和相关工具路径。`,
     },
   },
   "zh-TW": {
@@ -2127,11 +2127,11 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     },
     metadata: {
       homeTitle: "Bob's Multi Tool - 實用開發者工具",
-      homeDescription: "用於 JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、色彩、網路與文字處理的免費線上開發者工具。",
+      homeDescription: "用於 JSON、regex、Base64、JWT、cron、timestamp、UUID、SEO、色彩、網路與文字處理的免費線上開發者工具，包含範例、檢查項與相關下一步。",
       guidesTitle: "開發者工具指南",
       guidesDescription: "圍繞 Bob's Multi Tool 瀏覽器工具的實用工作流程指南。",
       toolDescription: (title) => `在 Bob's Multi Tool 使用 ${title}。包含範例、FAQ、相關工具，並盡可能在瀏覽器本機處理。`,
-      guideDescription: (title) => `${title}。安全有效使用瀏覽器開發者工具的實用指南。`,
+      guideDescription: (title) => `${title}。安全有效使用瀏覽器開發者工具的實用指南，包含輸入範例、檢查步驟、風險提示與相關工具路徑。`,
     },
   },
   es: {

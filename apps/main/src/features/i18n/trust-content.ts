@@ -156,7 +156,7 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
   ja: {
     about: {
       title: "Bob's Multi Tool について",
-      description: "整形、デコード、検証、生成、SEO、ネットワーク確認のための開発者ユーティリティワークベンチです。",
+      description: "整形、デコード、検証、生成、SEO、ネットワーク確認を、ブラウザ中心の例と確認手順付きで扱う開発者ユーティリティワークベンチです。",
       lastUpdated: "最終更新日: 2026年6月11日",
       backToTools: "ツールへ戻る",
       sections: [
@@ -182,7 +182,7 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
   "zh-CN": {
     about: {
       title: "关于 Bob's Multi Tool",
-      description: "用于格式化、解码、验证、生成、SEO 和网络检查的开发者工具工作台。",
+      description: "用于格式化、解码、验证、生成、SEO 和网络检查的开发者工具工作台，强调浏览器本地处理、示例、检查项和相关工具路径。",
       lastUpdated: "最后更新: 2026年6月11日",
       backToTools: "返回工具",
       sections: [
@@ -194,7 +194,7 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
     },
     contact: {
       title: "联系",
-      description: "向 Bob's Multi Tool 发送网站问题、工具问题、内容修正和政策请求。",
+      description: "向 Bob's Multi Tool 发送网站问题、工具问题、内容修正和政策请求，并了解报告工具错误时应提供的页面、输入、浏览器和预期结果。",
       lastUpdated: "最后更新: 2026年6月11日",
       backToTools: "返回工具",
       sections: [
@@ -208,7 +208,7 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
   "zh-TW": {
     about: {
       title: "關於 Bob's Multi Tool",
-      description: "用於格式化、解碼、驗證、產生、SEO 與網路檢查的開發者工具工作台。",
+      description: "用於格式化、解碼、驗證、產生、SEO 與網路檢查的開發者工具工作台，強調瀏覽器本機處理、範例、檢查項與相關工具路徑。",
       lastUpdated: "最後更新: 2026年6月11日",
       backToTools: "返回工具",
       sections: [
@@ -220,7 +220,7 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
     },
     contact: {
       title: "聯絡",
-      description: "向 Bob's Multi Tool 傳送網站問題、工具問題、內容修正與政策請求。",
+      description: "向 Bob's Multi Tool 傳送網站問題、工具問題、內容修正與政策請求，並了解回報工具錯誤時應提供的頁面、輸入、瀏覽器與預期結果。",
       lastUpdated: "最後更新: 2026年6月11日",
       backToTools: "返回工具",
       sections: [

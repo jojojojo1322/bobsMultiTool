@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { defaultLocale, isLocale, languageAlternates, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
@@ -43,7 +43,7 @@ export default async function LocalizedPrivacyPage({ params }: LocalizedPolicyPr
         </Link>
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle className="text-3xl">{content.title}</CardTitle>
+            <h1 className="text-3xl font-semibold tracking-normal text-foreground">{content.title}</h1>
             <CardDescription>{content.lastUpdated}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 text-sm leading-6 text-muted-foreground">

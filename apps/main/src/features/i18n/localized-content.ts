@@ -1556,8 +1556,8 @@ const priorityGuideDescriptions: Record<string, Partial<Record<Locale, string>>>
   "regex-cheat-sheet": {
     ko: "폼 검증, 라우트 매칭, 로그 검색에서 자주 쓰는 JavaScript Regex 패턴을 실수 없이 확인하는 실전 가이드입니다.",
     ja: "フォーム検証、ルート一致、ログ検索でよく使う JavaScript Regex pattern を安全に確認する実用ガイドです。",
-    "zh-CN": "整理表单验证、路由匹配和日志搜索中常用的 JavaScript Regex 模式与检查要点。",
-    "zh-TW": "整理表單驗證、路由比對與日誌搜尋中常用的 JavaScript Regex 模式與檢查重點。",
+    "zh-CN": "整理表单验证、路由匹配和日志搜索中常用的 JavaScript Regex 模式、边界样例、flag 检查与复制前复核步骤。",
+    "zh-TW": "整理表單驗證、路由比對與日誌搜尋中常用的 JavaScript Regex 模式、邊界範例、flag 檢查與複製前複核步驟。",
     es: "Guia practica para validar patrones Regex de JavaScript usados en formularios, rutas y busqueda de logs.",
     "pt-BR": "Guia pratica para validar Regex de JavaScript usado em formularios, rotas e busca em logs.",
     de: "Praxisguide fuer JavaScript-RegEx in Formularen, Route Matching und Logsuche mit weniger Fehlgriffen.",

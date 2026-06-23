@@ -200,7 +200,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   ko: {
     privacy: {
       title: "개인정보 처리방침",
-      description: "Bob's Multi Tool 개발자 유틸리티의 개인정보 처리방침입니다.",
+      description: "Bob's Multi Tool 개발자 유틸리티의 개인정보 처리방침입니다. 브라우저 로컬 처리, 서버 검사, 광고 쿠키, 보관하지 말아야 할 입력 범위를 설명합니다.",
       lastUpdated: "최종 업데이트: 2026년 6월 5일",
       backToTools: "도구로 돌아가기",
       sections: [
@@ -212,7 +212,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
     },
     terms: {
       title: "서비스 약관",
-      description: "Bob's Multi Tool 개발자 유틸리티의 서비스 약관입니다.",
+      description: "Bob's Multi Tool 개발자 유틸리티의 서비스 약관입니다. 도구 결과 검증, 허용되는 사용, 공개 네트워크 검사와 제3자 서비스 범위를 안내합니다.",
       lastUpdated: "최종 업데이트: 2026년 6월 5일",
       backToTools: "도구로 돌아가기",
       sections: [
@@ -227,7 +227,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   ja: {
     privacy: {
       title: "プライバシーポリシー",
-      description: "Bob's Multi Tool 開発者ユーティリティのプライバシーポリシーです。",
+      description: "Bob's Multi Tool 開発者ユーティリティのプライバシーポリシーです。ブラウザ内処理、サーバー確認、広告 cookie、送信すべきでない入力範囲を説明します。",
       lastUpdated: "最終更新日: 2026年6月5日",
       backToTools: "ツールへ戻る",
       sections: [
@@ -239,7 +239,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
     },
     terms: {
       title: "利用規約",
-      description: "Bob's Multi Tool 開発者ユーティリティの利用規約です。",
+      description: "Bob's Multi Tool 開発者ユーティリティの利用規約です。出力確認、許容される利用、公開ネットワーク確認、第三者サービスの範囲を説明します。",
       lastUpdated: "最終更新日: 2026年6月5日",
       backToTools: "ツールへ戻る",
       sections: [
@@ -254,7 +254,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   "zh-CN": {
     privacy: {
       title: "隐私政策",
-      description: "Bob's Multi Tool 开发者工具的隐私政策。",
+      description: "Bob's Multi Tool 开发者工具的隐私政策，说明浏览器本地处理、服务器检查、广告 cookie，以及不应提交的敏感输入范围。",
       lastUpdated: "最后更新: 2026年6月5日",
       backToTools: "返回工具",
       sections: [
@@ -266,7 +266,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
     },
     terms: {
       title: "服务条款",
-      description: "Bob's Multi Tool 开发者工具的服务条款。",
+      description: "Bob's Multi Tool 开发者工具的服务条款，说明工具输出验证、可接受使用、公开网络检查和第三方服务边界。",
       lastUpdated: "最后更新: 2026年6月5日",
       backToTools: "返回工具",
       sections: [
@@ -281,7 +281,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   "zh-TW": {
     privacy: {
       title: "隱私權政策",
-      description: "Bob's Multi Tool 開發者工具的隱私權政策。",
+      description: "Bob's Multi Tool 開發者工具的隱私權政策，說明瀏覽器本機處理、伺服器檢查、廣告 cookie，以及不應提交的敏感輸入範圍。",
       lastUpdated: "最後更新: 2026年6月5日",
       backToTools: "返回工具",
       sections: [
@@ -293,7 +293,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
     },
     terms: {
       title: "服務條款",
-      description: "Bob's Multi Tool 開發者工具的服務條款。",
+      description: "Bob's Multi Tool 開發者工具的服務條款，說明工具輸出驗證、可接受使用、公開網路檢查與第三方服務邊界。",
       lastUpdated: "最後更新: 2026年6月5日",
       backToTools: "返回工具",
       sections: [
@@ -524,7 +524,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
   ar: {
     privacy: {
       title: "سياسة الخصوصية",
-      description: "سياسة الخصوصية لأدوات المطور في Bob's Multi Tool.",
+      description: "سياسة الخصوصية لأدوات المطور في Bob's Multi Tool، وتشرح المعالجة المحلية في المتصفح وفحوص الخادم وملفات cookie الإعلانية وحدود الإدخال الحساس.",
       lastUpdated: "آخر تحديث: 5 يونيو 2026",
       backToTools: "العودة إلى الأدوات",
       sections: [
@@ -536,7 +536,7 @@ const localized: Record<Exclude<Locale, "en">, Record<LegalPageKind, LegalPageCo
     },
     terms: {
       title: "شروط الخدمة",
-      description: "شروط الخدمة لأدوات المطور في Bob's Multi Tool.",
+      description: "شروط الخدمة لأدوات المطور في Bob's Multi Tool، وتوضح التحقق من المخرجات والاستخدام المقبول وفحوص الشبكة العامة وخدمات الطرف الثالث.",
       lastUpdated: "آخر تحديث: 5 يونيو 2026",
       backToTools: "العودة إلى الأدوات",
       sections: [

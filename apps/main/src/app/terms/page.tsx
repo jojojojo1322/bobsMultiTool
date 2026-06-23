@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { defaultLocale, languageAlternates } from "@/features/i18n/config";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
 
@@ -24,7 +24,7 @@ export default function TermsPage() {
         </Link>
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle className="text-3xl">{content.title}</CardTitle>
+            <h1 className="text-3xl font-semibold tracking-normal text-foreground">{content.title}</h1>
             <CardDescription>{content.lastUpdated}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 text-sm leading-6 text-muted-foreground">

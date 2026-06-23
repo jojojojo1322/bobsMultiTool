@@ -91,10 +91,14 @@ try {
     const data = await page.evaluate(() => {
       const main = document.querySelector("main");
       const text = (main?.innerText || document.body.innerText || "").replace(/\s+/g, " ").trim();
+      const description = document.querySelector('meta[name="description"]')?.getAttribute("content")?.trim() || "";
       return {
         chars: text.length,
         words: text.split(/\s+/).filter(Boolean).length,
+        h1: document.querySelectorAll("main h1").length,
         h2: document.querySelectorAll("main h2").length,
+        title: document.title.trim(),
+        description,
         lang: document.documentElement.lang,
         dir: document.documentElement.dir || "ltr",
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -103,13 +107,49 @@ try {
     });
     await context.close();
 
-    rows.push({ ...item, chars: data.chars, words: data.words, h2: data.h2, lang: data.lang, dir: data.dir, overflow: data.overflow });
+    rows.push({
+      ...item,
+      chars: data.chars,
+      words: data.words,
+      h1: data.h1,
+      h2: data.h2,
+      title: data.title,
+      description: data.description,
+      lang: data.lang,
+      dir: data.dir,
+      overflow: data.overflow,
+    });
     if (data.chars < item.minChars) failures.push(`${item.path} ${item.kind} visible chars ${data.chars} < ${item.minChars}`);
+    if (data.h1 < 1) failures.push(`${item.path} missing main h1`);
+    if (!data.title || data.title.length < 12) failures.push(`${item.path} document title is missing or too short`);
+    if (!data.description || data.description.length < 50) failures.push(`${item.path} meta description is missing or too short`);
     if (data.overflow > 2) failures.push(`${item.path} horizontal overflow ${data.overflow}px`);
     if (forbiddenPublicText.test(data.text)) failures.push(`${item.path} exposes forbidden public wording`);
   }
 } finally {
   await browser.close();
+}
+
+const duplicatedTitles = Object.entries(
+  rows.reduce((acc, row) => {
+    if (row.title) (acc[row.title] ??= []).push(row.path);
+    return acc;
+  }, {}),
+).filter(([, paths]) => paths.length > 1);
+
+const duplicatedDescriptions = Object.entries(
+  rows.reduce((acc, row) => {
+    if (row.description) (acc[row.description] ??= []).push(row.path);
+    return acc;
+  }, {}),
+).filter(([, paths]) => paths.length > 1);
+
+for (const [title, pathsWithTitle] of duplicatedTitles) {
+  failures.push(`duplicate document title "${title}" on ${pathsWithTitle.join(", ")}`);
+}
+
+for (const [description, pathsWithDescription] of duplicatedDescriptions) {
+  failures.push(`duplicate meta description "${description}" on ${pathsWithDescription.join(", ")}`);
 }
 
 const summary = Object.values(
