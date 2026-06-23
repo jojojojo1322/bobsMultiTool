@@ -127,6 +127,14 @@ for (const fragment of ["data-guide-review-sections", "tool.failureCases", "tool
   if (!guideReviewSections.includes(fragment)) failures.push(`guide review sections missing ${fragment}`);
 }
 
+for (const fragment of ["data-guide-workflow-map", "workflowTools", "dictionary.tool.nextActionPrefix"]) {
+  if (!guideReviewSections.includes(fragment)) failures.push(`guide review sections missing visible workflow fragment: ${fragment}`);
+}
+
+for (const fragment of ["data-tool-workflow-summary", "data-tool-workflow-recipes-visible", "step.reason", "data-tool-related-summary", "data-tool-guide-summary"]) {
+  if (!toolWorkspace.includes(fragment)) failures.push(`tool workspace missing always-visible workflow fragment: ${fragment}`);
+}
+
 for (const [source, label] of [
   [guidesIndexPage, "default guides index"],
   [localizedGuidesIndexPage, "localized guides index"],

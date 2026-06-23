@@ -13,12 +13,34 @@ interface GuideReviewSectionsProps {
 
 export function GuideReviewSections({ dictionary, locale, tools }: GuideReviewSectionsProps) {
   if (!tools.length) return null;
+  const workflowTools = tools.slice(0, 4);
 
   return (
     <section className="mt-8 rounded-lg border bg-card p-5" data-guide-review-sections>
       <div className="max-w-2xl">
         <h2 className="text-lg font-semibold">{dictionary.tool.preCopyChecklist}</h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{dictionary.tool.preCopyChecklistDescription}</p>
+      </div>
+      <div className="mt-5 grid gap-3 lg:grid-cols-2" data-guide-workflow-map>
+        {workflowTools.map((tool, index) => (
+          <Link key={`workflow-${tool.slug}`} href={withLocale(`/tools/${tool.slug}`, locale)} className="rounded-md border bg-background/70 p-4 text-sm transition-colors hover:bg-muted/60">
+            <span className="flex items-start justify-between gap-3">
+              <span className="min-w-0">
+                <span className="block font-semibold text-foreground">
+                  {index + 1}. {tool.title}
+                </span>
+                <span className="mt-1 block leading-6 text-muted-foreground">{tool.description}</span>
+              </span>
+              <span className="shrink-0 rounded-md border px-2 py-1 text-xs text-muted-foreground">{dictionary.categories[tool.category] ?? tool.category}</span>
+            </span>
+            {tool.useCases[0] ? (
+              <span className="mt-3 block border-s ps-3 leading-6 text-muted-foreground">
+                {dictionary.tool.nextActionPrefix} {tool.useCases[0]}
+              </span>
+            ) : null}
+            {tool.preCopyChecklist?.[0] ? <span className="mt-2 block border-s ps-3 leading-6 text-muted-foreground">{tool.preCopyChecklist[0]}</span> : null}
+          </Link>
+        ))}
       </div>
       <div className="mt-5 divide-y rounded-md border bg-background/60">
         {tools.map((tool) => {

@@ -749,6 +749,116 @@ function ToolReviewStrip({ tool, dictionary }: { tool: ToolDefinition; dictionar
   );
 }
 
+function ToolWorkflowSummary({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
+  const localizedTools = React.useMemo(() => getLocalizedTools(locale), [locale]);
+  const workflowRecipes = React.useMemo(() => getWorkflowRecipesForTool(tool.slug, locale, localizedTools, 3), [locale, localizedTools, tool.slug]);
+  const relatedTools = React.useMemo(() => getLocalizedRelatedTools(tool.relatedTools.slice(0, 3), locale), [locale, tool.relatedTools]);
+  const failureCases = (tool.failureCases?.length ? tool.failureCases : commonFailureCases(tool, dictionary)).slice(0, 2);
+  const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary, relatedTools[0]?.shortTitle)).slice(0, 3);
+  const visibleUseCases = tool.useCases.slice(0, 3);
+  const visibleGuides = tool.guides.slice(0, 2);
+
+  return (
+    <section className="border-b bg-background px-5 py-5" data-tool-workflow-summary>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">{dictionary.tool.supportTitle}</h3>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">{dictionary.tool.supportDescription}</p>
+        </div>
+        <Badge>{dictionary.tool.developerWorkbench}</Badge>
+      </div>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.7fr)]">
+        <div className="grid gap-3" data-tool-workflow-recipes-visible>
+          {workflowRecipes.length ? (
+            workflowRecipes.map((recipe) => (
+              <article key={recipe.slug} className="rounded-md border bg-card p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{recipe.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{recipe.description}</p>
+                  </div>
+                  <Badge>{recipe.steps.length} {dictionary.nav.tools}</Badge>
+                </div>
+                <ol className="mt-3 grid gap-2">
+                  {recipe.steps.map((step, index) => (
+                    <li key={`${recipe.slug}-${step.tool.slug}`} className="rounded-md border bg-background px-3 py-2">
+                      <Link href={withLocale(`/tools/${step.tool.slug}`, locale)} className="text-sm font-medium hover:text-muted-foreground">
+                        {index + 1}. {step.tool.shortTitle}
+                      </Link>
+                      <p className="mt-1 text-xs leading-5 text-muted-foreground">{step.reason}</p>
+                    </li>
+                  ))}
+                </ol>
+              </article>
+            ))
+          ) : (
+            <article className="rounded-md border bg-card p-4">
+              <p className="text-sm font-semibold">{dictionary.tool.useCases}</p>
+              <ul className="mt-3 grid gap-2">
+                {visibleUseCases.map((useCase) => (
+                  <li key={useCase} className="rounded-md border bg-background px-3 py-2 text-sm leading-5 text-muted-foreground">
+                    {useCase}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          )}
+        </div>
+        <div className="grid gap-3">
+          <article className="rounded-md border bg-card p-4">
+            <p className="text-sm font-semibold">{dictionary.tool.preCopyChecklist}</p>
+            <ul className="mt-3 grid gap-2">
+              {preCopyChecklist.map((item) => (
+                <li key={item} className="border-s ps-3 text-sm leading-5 text-muted-foreground">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </article>
+          <article className="rounded-md border bg-card p-4">
+            <p className="text-sm font-semibold">{dictionary.tool.failureCases}</p>
+            <ul className="mt-3 grid gap-2">
+              {failureCases.map((failureCase) => (
+                <li key={failureCase} className="border-s ps-3 text-sm leading-5 text-muted-foreground">
+                  {failureCase}
+                </li>
+              ))}
+            </ul>
+          </article>
+          {relatedTools.length ? (
+            <article className="rounded-md border bg-card p-4" data-tool-related-summary>
+              <p className="text-sm font-semibold">{dictionary.nav.relatedTools}</p>
+              <div className="mt-3 grid gap-2">
+                {relatedTools.map((related) => (
+                  <Link key={related.slug} href={withLocale(`/tools/${related.slug}`, locale)} className="rounded-md border bg-background px-3 py-2 text-sm hover:bg-muted">
+                    <span className="block font-medium">{related.shortTitle}</span>
+                    <span className="mt-1 block text-xs leading-5 text-muted-foreground">{related.description}</span>
+                    <span className="mt-2 block text-xs leading-5 text-muted-foreground">
+                      {dictionary.tool.nextActionPrefix} {related.useCases[0] ?? related.shortTitle}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </article>
+          ) : null}
+          {visibleGuides.length ? (
+            <article className="rounded-md border bg-card p-4" data-tool-guide-summary>
+              <p className="text-sm font-semibold">{dictionary.nav.guides}</p>
+              <div className="mt-3 grid gap-2">
+                {visibleGuides.map((guide) => (
+                  <Link key={guide.href} href={withLocale(guide.href, locale)} className="rounded-md border bg-background px-3 py-2 text-sm hover:bg-muted">
+                    {guide.title}
+                  </Link>
+                ))}
+              </div>
+            </article>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function DesktopSupportAccordion({ tool, locale, dictionary }: { tool: ToolDefinition; locale: Locale; dictionary: ClientDictionary }) {
   return (
     <section className="hidden border-t bg-background px-5 py-5 lg:block" data-desktop-support-accordion>
@@ -1044,6 +1154,7 @@ export function ToolWorkspace({
                   minHeight={90}
                   className="bobob-ad-anchor border-b bg-background px-5 py-4"
                 />
+                <ToolWorkflowSummary tool={tool} locale={locale} dictionary={dictionary} />
                 <DesktopSupportAccordion tool={tool} locale={locale} dictionary={dictionary} />
                 <MobileReferenceAccordion tool={tool} locale={locale} dictionary={dictionary} />
               </div>
