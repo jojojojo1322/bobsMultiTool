@@ -44,7 +44,7 @@ const paths = [
   ...locales.flatMap((locale) => [
     { path: `/${locale}/tools`, kind: "localized-directory", minChars: 1800 },
     { path: `/${locale}/tools/json-formatter`, kind: "localized-tool", minChars: 2200 },
-    { path: `/${locale}/guides/regex-cheat-sheet`, kind: "localized-guide", minChars: 1100 },
+    ...guideSlugs.map((slug) => ({ path: `/${locale}/guides/${slug}`, kind: "localized-guide", minChars: 3000 })),
     { path: `/${locale}/about`, kind: "localized-trust", minChars: 1800 },
     { path: `/${locale}/contact`, kind: "localized-trust", minChars: 1800 },
     { path: `/${locale}/privacy`, kind: "localized-legal", minChars: 2400 },

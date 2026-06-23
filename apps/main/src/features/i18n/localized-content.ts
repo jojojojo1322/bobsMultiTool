@@ -2127,7 +2127,7 @@ const packs: Record<Exclude<Locale, "en">, TextPack> = {
     serverFaqAnswer: "브라우저만으로 안정적으로 확인하기 어려운 작업이라 입력한 공개 URL 또는 호스트만 작은 서버 엔드포인트로 확인합니다.",
     secretQuestion: "운영 비밀값을 넣어도 되나요?",
     secretAnswer: "운영 비밀값, 고객 데이터, 내부 호스트명은 넣지 마세요. 테스트 데이터나 마스킹된 값만 사용하세요.",
-    guideDescription: (topic) => `${topic}을 실무에서 안전하게 쓰기 위한 짧은 가이드입니다.`,
+    guideDescription: (topic) => `${topic}을 실무에서 안전하게 쓰기 위한 가이드입니다. 입력 준비, 민감정보 제거, 결과 검토, 관련 도구로 이어지는 다음 확인 흐름을 함께 정리합니다.`,
     guideSections: (topic) => [
       { heading: "작고 신뢰 가능한 입력으로 시작", body: `${topic}은 짧은 실제 샘플로 먼저 확인하세요. 작은 입력은 문법, 인코딩, 포맷 문제를 더 빨리 드러냅니다.` },
       { heading: "민감한 데이터는 제외", body: "브라우저 도구는 빠르지만 운영 비밀값, 개인 정보, 내부 호스트명은 항상 제거하거나 마스킹해야 합니다." },
@@ -2152,7 +2152,7 @@ const packs: Record<Exclude<Locale, "en">, TextPack> = {
     serverFaqAnswer: "ブラウザだけでは安定して確認できないため、入力された公開URLまたはホストだけを小さなサーバーrouteで確認します。",
     secretQuestion: "本番の秘密情報を使えますか？",
     secretAnswer: "本番の秘密情報、顧客データ、内部ホスト名は入力しないでください。テスト値またはマスク済みの値を使ってください。",
-    guideDescription: (topic) => `${topic} を安全かつ効率的に使うための短い実用ガイドです。`,
+    guideDescription: (topic) => `${topic} を安全かつ効率的に使うための実用ガイドです。入力準備、機密情報の除外、結果確認、関連ツールでの次の確認までまとめて見直せます。大きな入力を貼る前に短い実例で条件を確認し、共有前の記録にも使えます。`,
     guideSections: (topic) => [
       { heading: "小さく信頼できる入力から始める", body: `${topic} は短い実例で先に確認します。小さな入力は構文、エンコード、整形の問題を見つけやすくします。` },
       { heading: "機密データを入れない", body: "ブラウザツールは便利ですが、本番の秘密情報、個人情報、内部ホスト名は必ず削除またはマスクしてください。" },
@@ -2177,7 +2177,7 @@ const packs: Record<Exclude<Locale, "en">, TextPack> = {
     serverFaqAnswer: "浏览器无法可靠完成此检查，因此只把输入的公共 URL 或主机发送到小型服务器端点。",
     secretQuestion: "可以输入生产密钥吗？",
     secretAnswer: "不要输入生产密钥、客户数据或内部主机名。请使用测试数据或已脱敏的值。",
-    guideDescription: (topic) => `关于安全高效使用${topic}的简短实践指南。`,
+    guideDescription: (topic) => `关于安全高效使用${topic}的实践指南，覆盖输入准备、敏感信息排除、结果复核、常见失败信号和相关工具的下一步检查。适合在复制输出前用短样例确认条件，并把警告、目标环境和后续工具记录到团队交接中。`,
     guideSections: (topic) => [
       { heading: "从小而可靠的输入开始", body: `先用短小真实样例测试${topic}，更容易发现语法、编码和格式问题。` },
       { heading: "排除敏感数据", body: "浏览器工具很快，但生产密钥、客户数据和内部主机名仍应删除或脱敏。" },
@@ -2202,7 +2202,7 @@ const packs: Record<Exclude<Locale, "en">, TextPack> = {
     serverFaqAnswer: "瀏覽器無法可靠完成此檢查，因此只會把輸入的公開 URL 或主機送到小型伺服器端點。",
     secretQuestion: "可以輸入正式環境密鑰嗎？",
     secretAnswer: "不要輸入正式環境密鑰、客戶資料或內部主機名。請使用測試資料或已遮罩的值。",
-    guideDescription: (topic) => `安全高效使用${topic}的短篇實務指南。`,
+    guideDescription: (topic) => `安全高效使用${topic}的實務指南，涵蓋輸入準備、敏感資料排除、結果複核、常見失敗訊號和相關工具的下一步檢查。適合在複製輸出前用短範例確認條件，並把警告、目標環境和後續工具記錄到團隊交接中。`,
     guideSections: (topic) => [
       { heading: "從小而可靠的輸入開始", body: `先用短小真實樣例測試${topic}，更容易發現語法、編碼和格式問題。` },
       { heading: "排除敏感資料", body: "瀏覽器工具很快，但正式密鑰、客戶資料和內部主機名仍應刪除或遮罩。" },
@@ -2552,14 +2552,14 @@ function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: s
         bullets: ["格式化结果继续做 diff 或 schema 检查。", "URL 和网络结果要结合 redirect、robots、sitemap 状态查看。", "分享前移除密钥、内部主机名和客户数据。"],
       },
       {
-        heading: "用多组样例防止过度匹配",
-        body: "Regex 最常见的问题不是完全不匹配，而是在看似相似的文本中匹配太多或太少。把正常值、边界值、空值、带空格值、带标点值和明显错误值放进同一轮测试，可以更快发现锚点、量词和字符类的问题。",
-        bullets: ["用 ^ 和 $ 明确整段匹配，或故意不加锚点做局部查找。", "把贪婪量词和非贪婪量词的结果分开比较。", "检查大小写 flag 是否会改变真实输入的判断。"],
+        heading: "补充边界和异常样例",
+        body: "只用一个成功样例会让结果看起来比实际更稳定。把正常值、边界值、空值、带空格值、带标点值和明显错误值放进同一轮检查，可以更快发现格式、编码、时间或安全边界上的问题。",
+        bullets: ["至少保留一个应该通过和一个应该失败的样例。", "检查空输入、过长输入和带特殊字符的输入。", "如果结果会进入代码、配置或文档，复制前再看目标环境限制。"],
       },
       {
-        heading: "复制前检查捕获组",
-        body: "很多应用代码真正使用的是捕获组结果，而不是整段匹配本身。增加可选组、嵌套组或替代分支后，应重新确认每个组的顺序、名称和空值行为，避免把错误字段传给路由、日志解析或表单处理代码。",
-        bullets: ["只为需要读取的值保留捕获组。", "用于分组但不读取的部分改成非捕获组。", "复制到 JSON、字符串字面量或配置文件前再次检查反斜杠。"],
+        heading: "保留可复核记录",
+        body: "复制结果时，不要只留下最终字符串或数字。记录输入来源、选择的选项、看到的警告、目标平台和下一步验证工具，能让团队成员知道这个结果为什么可信，也能在问题复现时快速回到同一条件。",
+        bullets: ["把输入样例、输出摘要和警告放在同一段记录里。", "说明结果是否来自浏览器本地处理或公开网络检查。", "分享前再次移除密钥、内部主机名和客户数据。"],
       },
     ],
     "zh-TW": [
@@ -2574,14 +2574,14 @@ function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: s
         bullets: ["格式化結果繼續做 diff 或 schema 檢查。", "URL 與網路結果要結合 redirect、robots、sitemap 狀態查看。", "分享前移除密鑰、內部主機名稱與客戶資料。"],
       },
       {
-        heading: "用多組範例防止過度比對",
-        body: "Regex 最常見的問題不是完全不比對，而是在看似相似的文字中比對太多或太少。把正常值、邊界值、空值、帶空格值、帶標點值和明顯錯誤值放進同一輪測試，可以更快發現錨點、量詞與字元類別的問題。",
-        bullets: ["用 ^ 與 $ 明確整段比對，或刻意不加錨點做局部查找。", "把貪婪量詞和非貪婪量詞的結果分開比較。", "檢查大小寫 flag 是否會改變真實輸入的判斷。"],
+        heading: "補充邊界與異常範例",
+        body: "只用一個成功範例會讓結果看起來比實際更穩定。把正常值、邊界值、空值、帶空格值、帶標點值和明顯錯誤值放進同一輪檢查，可以更快發現格式、編碼、時間或安全邊界上的問題。",
+        bullets: ["至少保留一個應該通過和一個應該失敗的範例。", "檢查空輸入、過長輸入和帶特殊字元的輸入。", "如果結果會進入程式、設定或文件，複製前再看目標環境限制。"],
       },
       {
-        heading: "複製前檢查捕獲群組",
-        body: "很多應用程式真正使用的是捕獲群組結果，而不是整段比對本身。增加可選群組、巢狀群組或替代分支後，應重新確認每個群組的順序、名稱和空值行為，避免把錯誤欄位傳給路由、日誌解析或表單處理程式碼。",
-        bullets: ["只為需要讀取的值保留捕獲群組。", "用於分組但不讀取的部分改成非捕獲群組。", "複製到 JSON、字串字面量或設定檔前再次檢查反斜線。"],
+        heading: "保留可複核記錄",
+        body: "複製結果時，不要只留下最終字串或數字。記錄輸入來源、選擇的選項、看到的警告、目標平台和下一步驗證工具，能讓團隊成員知道這個結果為什麼可信，也能在問題重現時快速回到同一條件。",
+        bullets: ["把輸入範例、輸出摘要和警告放在同一段記錄裡。", "說明結果是否來自瀏覽器本機處理或公開網路檢查。", "分享前再次移除密鑰、內部主機名稱與客戶資料。"],
       },
     ],
     es: [
@@ -2696,6 +2696,312 @@ function localizedGuideExpansionSections(locale: Exclude<Locale, "en">, topic: s
   return expansion[locale];
 }
 
+type GuideDeepDiveLocale = "ja" | "zh-CN" | "zh-TW";
+
+const localizedGuideDeepDiveFocus: Record<string, Record<GuideDeepDiveLocale, GuideDefinition["sections"][number]>> = {
+  "regex-cheat-sheet": {
+    ja: {
+      heading: "パターンを用途別に分ける",
+      body: "フォーム検証、ログ抽出、検索ハイライトでは失敗してよい条件が違います。同じ Regex を広く使い回す前に、対象入力、許容する空白、文字種、capture group の利用先を分けて確認してください。",
+      bullets: ["検証用には失敗サンプルを必ず残します。", "抽出用には前後の区切り文字も一緒に確認します。", "コードへ移す前に escape 後の最終文字列を見ます。"],
+    },
+    "zh-CN": {
+      heading: "按用途拆分 pattern",
+      body: "表单验证、日志提取和搜索高亮的失败条件并不相同。不要把同一个 Regex 无限制复用，先确认目标输入、允许的空白、字符范围以及 capture group 会被哪段代码读取。",
+      bullets: ["验证用 pattern 必须保留失败样例。", "提取用 pattern 要同时检查前后分隔符。", "复制到代码前查看转义后的最终字符串。"],
+    },
+    "zh-TW": {
+      heading: "按用途拆分 pattern",
+      body: "表單驗證、日誌擷取和搜尋高亮的失敗條件並不相同。不要把同一個 Regex 無限制重用，先確認目標輸入、允許的空白、字元範圍以及 capture group 會被哪段程式讀取。",
+      bullets: ["驗證用 pattern 必須保留失敗範例。", "擷取用 pattern 要同時檢查前後分隔符。", "複製到程式前查看跳脫後的最終字串。"],
+    },
+  },
+  "cron-expression-examples": {
+    ja: {
+      heading: "実行される時刻を複数回で見る",
+      body: "Cron は次の一回だけを見ると誤解しやすい形式です。月末、週末、祝日明け、夏時間の切り替わり、サーバー timezone 変更後も想定どおり動くかを複数の予定時刻で確認してください。",
+      bullets: ["five-field と Quartz の差を先に確認します。", "timezone は式の外にある設定も確認します。", "月次や年次ジョブは数回分の予定を見ます。"],
+    },
+    "zh-CN": {
+      heading: "用多次运行时间验证",
+      body: "Cron 只看下一次执行很容易误判。请同时检查月末、周末、节假日之后、夏令时切换和服务器时区变更后的运行时间，确认表达式不会在真实调度器中提前或延后。",
+      bullets: ["先区分 five-field 和 Quartz 字段。", "时区可能在表达式之外配置。", "月度和年度任务要预览多次运行。"],
+    },
+    "zh-TW": {
+      heading: "用多次執行時間驗證",
+      body: "Cron 只看下一次執行很容易誤判。請同時檢查月底、週末、假日之後、夏令時間切換和伺服器時區變更後的執行時間，確認表達式不會在真實排程器中提前或延後。",
+      bullets: ["先區分 five-field 和 Quartz 欄位。", "時區可能在表達式之外設定。", "月度和年度任務要預覽多次執行。"],
+    },
+  },
+  "seo-meta-tags": {
+    ja: {
+      heading: "表示内容と metadata を一致させる",
+      body: "検索や SNS の preview は title と description だけで決まりません。canonical URL、Open Graph URL、visible heading、robots 方針、locale alternate が同じページを指すかを確認し、重複した入口を減らします。",
+      bullets: ["canonical は最終 200 URL に合わせます。", "description はページ固有の作業内容を含めます。", "noindex や重複 URL を先に取り除きます。"],
+    },
+    "zh-CN": {
+      heading: "让可见内容和 metadata 对齐",
+      body: "搜索和社交预览不只依赖 title 与 description。需要确认 canonical URL、Open Graph URL、页面主标题、robots 策略和 locale alternate 是否指向同一个最终页面，并减少重复入口。",
+      bullets: ["canonical 应指向最终 200 URL。", "description 要包含页面自己的任务内容。", "先排除 noindex 和重复 URL 问题。"],
+    },
+    "zh-TW": {
+      heading: "讓可見內容和 metadata 對齊",
+      body: "搜尋和社群預覽不只依賴 title 與 description。需要確認 canonical URL、Open Graph URL、頁面主標題、robots 策略和 locale alternate 是否指向同一個最終頁面，並減少重複入口。",
+      bullets: ["canonical 應指向最終 200 URL。", "description 要包含頁面自己的任務內容。", "先排除 noindex 和重複 URL 問題。"],
+    },
+  },
+  "iframe-preview-limitations": {
+    ja: {
+      heading: "埋め込み失敗を障害と決めつけない",
+      body: "Iframe が表示されない原因はページ障害ではなく、CSP frame-ancestors、X-Frame-Options、login redirect、mixed content、sandbox 制限であることが多いです。preview と本番埋め込み判断を分けて確認します。",
+      bullets: ["公開 URL の status と redirect を先に見ます。", "frame を拒否する header は安全機能として扱います。", "本番では fallback link も用意します。"],
+    },
+    "zh-CN": {
+      heading: "不要把嵌入失败等同于故障",
+      body: "Iframe 无法显示通常不是页面宕机，而是 CSP frame-ancestors、X-Frame-Options、登录重定向、mixed content 或 sandbox 限制。预览结果和生产嵌入决策要分开判断。",
+      bullets: ["先检查公开 URL 的 status 与 redirect。", "拒绝 frame 的 header 通常是安全功能。", "生产嵌入需要准备 fallback link。"],
+    },
+    "zh-TW": {
+      heading: "不要把嵌入失敗等同於故障",
+      body: "Iframe 無法顯示通常不是頁面當機，而是 CSP frame-ancestors、X-Frame-Options、登入重定向、mixed content 或 sandbox 限制。預覽結果和正式嵌入決策要分開判斷。",
+      bullets: ["先檢查公開 URL 的 status 與 redirect。", "拒絕 frame 的 header 通常是安全功能。", "正式嵌入需要準備 fallback link。"],
+    },
+  },
+  "placeholder-text-for-design": {
+    ja: {
+      heading: "実際の UI 密度に近づける",
+      body: "Placeholder は見た目を埋めるためだけではなく、overflow、empty state、長い label、error text、button wrapping を早く見つけるための材料です。実際の画面密度に近い短文と長文を混ぜて確認します。",
+      bullets: ["button、tab、chip には短い語を使います。", "card や modal には長い説明も入れます。", "公開前に filler 文言を検索して置き換えます。"],
+    },
+    "zh-CN": {
+      heading: "贴近真实 UI 密度",
+      body: "Placeholder 不只是填满画面，它应帮助发现 overflow、空状态、长 label、错误说明和按钮换行问题。把接近真实界面密度的短句、长句、无空格 token 放在同一轮检查中。",
+      bullets: ["按钮、tab、chip 使用短文本测试。", "卡片和 modal 同时测试较长说明。", "上线前搜索并替换 filler 文案。"],
+    },
+    "zh-TW": {
+      heading: "貼近真實 UI 密度",
+      body: "Placeholder 不只是填滿畫面，它應幫助發現 overflow、空狀態、長 label、錯誤說明和按鈕換行問題。把接近真實介面密度的短句、長句、無空格 token 放在同一輪檢查中。",
+      bullets: ["按鈕、tab、chip 使用短文字測試。", "卡片和 modal 同時測試較長說明。", "上線前搜尋並替換 filler 文案。"],
+    },
+  },
+  "developer-utility-workflow": {
+    ja: {
+      heading: "一回の変換を作業記録にする",
+      body: "便利ツールは貼り付けて終わりではありません。入力を redaction し、変換理由を残し、警告を読んで、次の tool で確認した結果まで残すと、issue や code review で再利用できる記録になります。",
+      bullets: ["秘密情報を消してから貼り付けます。", "使ったツールと設定を記録します。", "次の確認手順も一緒に残します。"],
+    },
+    "zh-CN": {
+      heading: "把一次转换变成工作记录",
+      body: "开发者工具不应只是粘贴后复制。先脱敏输入，记录转换原因，阅读警告，再用下一步工具确认结果，才能把输出变成 issue、文档或代码评审中可复用的证据。",
+      bullets: ["粘贴前移除密钥和客户数据。", "记录使用的工具和选项。", "把下一步验证结果一起保留。"],
+    },
+    "zh-TW": {
+      heading: "把一次轉換變成工作記錄",
+      body: "開發者工具不應只是貼上後複製。先去識別化輸入，記錄轉換原因，閱讀警告，再用下一步工具確認結果，才能把輸出變成 issue、文件或程式碼審查中可重用的證據。",
+      bullets: ["貼上前移除密鑰和客戶資料。", "記錄使用的工具和選項。", "把下一步驗證結果一起保留。"],
+    },
+  },
+  "hash-generator-security": {
+    ja: {
+      heading: "用途別に digest を読む",
+      body: "Hash は改ざん検出、cache key、file fingerprint、HMAC 署名など用途で見方が変わります。password 保護や秘密情報の隠蔽とは別物なので、algorithm、salt、secret、保管場所を混同しないでください。",
+      bullets: ["MD5 と SHA-1 は互換確認用として慎重に扱います。", "HMAC では secret の保管先を別に管理します。", "password には専用の password hashing を使います。"],
+    },
+    "zh-CN": {
+      heading: "按用途阅读 digest",
+      body: "Hash 在防篡改、cache key、文件指纹、HMAC 签名中的判断方式不同。它不是加密，也不是密码存储方案本身，因此要分清 algorithm、salt、secret 和保存位置。",
+      bullets: ["MD5 与 SHA-1 只适合兼容检查。", "HMAC secret 的保存位置要单独管理。", "密码应使用专用 password hashing 方案。"],
+    },
+    "zh-TW": {
+      heading: "按用途閱讀 digest",
+      body: "Hash 在防竄改、cache key、檔案指紋、HMAC 簽名中的判斷方式不同。它不是加密，也不是密碼儲存方案本身，因此要分清 algorithm、salt、secret 和保存位置。",
+      bullets: ["MD5 與 SHA-1 只適合相容檢查。", "HMAC secret 的保存位置要單獨管理。", "密碼應使用專用 password hashing 方案。"],
+    },
+  },
+  "text-diff-for-developers": {
+    ja: {
+      heading: "差分の前処理を明示する",
+      body: "Text diff は入力の整え方で結論が変わります。改行、indent、sort、case、空白除去を行ったなら、その前処理も一緒に残してください。そうしないと設定差分や log 差分が過小評価されます。",
+      bullets: ["元の text と整形後 text を分けて保存します。", "空白だけの変更か意味のある変更か分けます。", "共有時は削除された値に秘密情報がないか確認します。"],
+    },
+    "zh-CN": {
+      heading: "明确 diff 前处理",
+      body: "Text diff 的结论会被输入整理方式影响。如果做过换行、缩进、排序、大小写或空白清理，请把前处理步骤一起记录，否则配置差异或日志差异可能被低估。比较 API 响应、配置文件或构建日志时，还要说明是否已先格式化或排序，避免把处理步骤误当成真实差异，同时保留最终采用版本。",
+      bullets: ["分开保留原始文本和整理后文本。", "区分空白变化和语义变化。", "分享删除行前检查是否包含密钥或客户数据。", "把预处理选项写在 diff 摘要旁边。"],
+    },
+    "zh-TW": {
+      heading: "明確 diff 前處理",
+      body: "Text diff 的結論會被輸入整理方式影響。如果做過換行、縮排、排序、大小寫或空白清理，請把前處理步驟一起記錄，否則設定差異或日誌差異可能被低估。比較 API 回應、設定檔或建置日誌時，還要說明是否已先格式化或排序，避免把處理步驟誤當成真實差異。",
+      bullets: ["分開保留原始文字和整理後文字。", "區分空白變化和語意變化。", "分享刪除行前檢查是否包含密鑰或客戶資料。", "把前處理選項寫在 diff 摘要旁邊。"],
+    },
+  },
+  "json-yaml-csv-conversion": {
+    ja: {
+      heading: "形式変換後に構造を再検査する",
+      body: "JSON、YAML、CSV は同じ情報を持てるように見えても、array、null、quote、delimiter、indent の扱いが違います。変換後は目視だけでなく validator や formatter で構造をもう一度確認します。",
+      bullets: ["CSV の空セルと null を区別します。", "YAML の indent と type 推論を確認します。", "JSON の root type と item count を見ます。"],
+    },
+    "zh-CN": {
+      heading: "转换后重新检查结构",
+      body: "JSON、YAML、CSV 看起来能表达同一份数据，但 array、null、quote、delimiter 和 indentation 的规则不同。转换后不要只看文本外观，要用 validator 或 formatter 再检查结构。",
+      bullets: ["区分 CSV 空单元格和 null。", "检查 YAML indentation 与类型推断。", "确认 JSON root type 和 item count。"],
+    },
+    "zh-TW": {
+      heading: "轉換後重新檢查結構",
+      body: "JSON、YAML、CSV 看起來能表達同一份資料，但 array、null、quote、delimiter 和 indentation 的規則不同。轉換後不要只看文字外觀，要用 validator 或 formatter 再檢查結構。",
+      bullets: ["區分 CSV 空儲存格和 null。", "檢查 YAML indentation 與型別推斷。", "確認 JSON root type 和 item count。"],
+    },
+  },
+  "sql-formatting-workflow": {
+    ja: {
+      heading: "整形で query の意味を変えない",
+      body: "SQL formatting は読みやすくする作業であり、条件、join、subquery、literal を直す作業ではありません。整形後に diff を見て、変更が whitespace と改行だけかを確認してから共有します。",
+      bullets: ["WHERE の有無と mutation query を確認します。", "table reference と join 条件を読み直します。", "parameter や literal の quote が変わっていないか見ます。"],
+    },
+    "zh-CN": {
+      heading: "格式化不能改变查询语义",
+      body: "SQL formatting 是提高可读性，不是修改条件、join、subquery 或 literal。格式化后请用 diff 确认变化只发生在 whitespace 和换行上，再把结果交给评审或生产配置。",
+      bullets: ["检查 WHERE 是否存在，特别是 mutation query。", "重新阅读 table reference 与 join 条件。", "确认 parameter 和 literal quote 没有变化。"],
+    },
+    "zh-TW": {
+      heading: "格式化不能改變查詢語意",
+      body: "SQL formatting 是提高可讀性，不是修改條件、join、subquery 或 literal。格式化後請用 diff 確認變化只發生在 whitespace 和換行上，再把結果交給審查或正式設定。",
+      bullets: ["檢查 WHERE 是否存在，特別是 mutation query。", "重新閱讀 table reference 與 join 條件。", "確認 parameter 和 literal quote 沒有變化。"],
+    },
+  },
+  "color-contrast-checking": {
+    ja: {
+      heading: "色値だけで可読性を判断しない",
+      body: "HEX、RGB、HSL の変換が正しくても、実際の背景、font size、disabled state、focus ring、dark mode で contrast は変わります。数値と UI の状態を一緒に見て AA/AAA の判断をします。",
+      bullets: ["本文、補助 text、button label を別々に確認します。", "alpha を含む色は背景と合成して見ます。", "hover と focus の状態も確認します。"],
+    },
+    "zh-CN": {
+      heading: "不要只用色值判断可读性",
+      body: "HEX、RGB、HSL 转换正确，也不代表真实 UI 可读。背景、字号、disabled state、focus ring 和 dark mode 都会改变 contrast，应把数值和界面状态一起检查。",
+      bullets: ["正文、辅助文字和按钮 label 分开检查。", "带 alpha 的颜色要和背景合成后判断。", "同时检查 hover 与 focus 状态。"],
+    },
+    "zh-TW": {
+      heading: "不要只用色值判斷可讀性",
+      body: "HEX、RGB、HSL 轉換正確，也不代表真實 UI 可讀。背景、字級、disabled state、focus ring 和 dark mode 都會改變 contrast，應把數值和介面狀態一起檢查。",
+      bullets: ["正文、輔助文字和按鈕 label 分開檢查。", "帶 alpha 的色彩要和背景合成後判斷。", "同時檢查 hover 與 focus 狀態。"],
+    },
+  },
+  "secure-generator-workflow": {
+    ja: {
+      heading: "生成値の寿命を先に決める",
+      body: "Password、token、UUID、ULID は同じ generator に見えても、使い道と寿命が違います。session、fixture、API key draft、CSRF token、public identifier のどれかを決めてから長さと形式を選びます。",
+      bullets: ["本番の secret とサンプル値を混ぜません。", "URL-safe や padding の要件を確認します。", "保存先と rotation 方針を別に決めます。"],
+    },
+    "zh-CN": {
+      heading: "先决定生成值的生命周期",
+      body: "Password、token、UUID、ULID 看起来都来自 generator，但用途和生命周期不同。先判断它是 session、fixture、API key draft、CSRF token 还是 public identifier，再选择长度和格式。",
+      bullets: ["不要混用生产 secret 和示例值。", "确认 URL-safe 与 padding 要求。", "保存位置和 rotation 策略要单独决定。"],
+    },
+    "zh-TW": {
+      heading: "先決定產生值的生命週期",
+      body: "Password、token、UUID、ULID 看起來都來自 generator，但用途和生命週期不同。先判斷它是 session、fixture、API key draft、CSRF token 還是 public identifier，再選擇長度和格式。",
+      bullets: ["不要混用正式 secret 和範例值。", "確認 URL-safe 與 padding 要求。", "保存位置和 rotation 策略要單獨決定。"],
+    },
+  },
+  "web-seo-utilities": {
+    ja: {
+      heading: "crawl 入口を一つの地図として見る",
+      body: "robots.txt、sitemap、canonical、Open Graph、HTTP status は別々の設定に見えても、検索 crawler からは同じ site map の手がかりです。最終 200 URL と locale alternate がずれていないかを先に確認します。",
+      bullets: ["sitemap URL と canonical URL を照合します。", "リダイレクト経路が意図したホストに着地するか見ます。", "robots で重要ページを塞いでいないか確認します。"],
+    },
+    "zh-CN": {
+      heading: "把 crawl 入口当成一张地图",
+      body: "robots.txt、sitemap、canonical、Open Graph、HTTP status 看起来是不同配置，但对搜索 crawler 来说都是理解站点结构的线索。先确认最终 200 URL 与 locale alternate 没有错位。",
+      bullets: ["对照 sitemap URL 与 canonical URL。", "检查重定向路径是否落到预期主机。", "确认 robots 没有阻挡重要页面。"],
+    },
+    "zh-TW": {
+      heading: "把 crawl 入口當成一張地圖",
+      body: "robots.txt、sitemap、canonical、Open Graph、HTTP status 看起來是不同設定，但對搜尋 crawler 來說都是理解網站結構的線索。先確認最終 200 URL 與 locale alternate 沒有錯位。",
+      bullets: ["對照 sitemap URL 與 canonical URL。", "檢查重定向路徑是否落到預期主機。", "確認 robots 沒有阻擋重要頁面。"],
+    },
+  },
+  "network-debugging-tools": {
+    ja: {
+      heading: "公開信号で問題の層を分ける",
+      body: "DNS、HTTP status、redirect、security header は、それぞれ domain、deployment、cache、browser policy の層を示します。公開 URL だけを使い、内部 host や credential を入力しない前提で切り分けます。",
+      bullets: ["名前解決と HTTP 応答を分けて見ます。", "redirect の各 hop を記録します。", "CSP、HSTS、frame policy は header として確認します。"],
+    },
+    "zh-CN": {
+      heading: "用公开信号区分问题层",
+      body: "DNS、HTTP status、redirect、security header 分别指向 domain、deployment、cache、browser policy 等层面。请只使用公开 URL，避免输入内部 host 或 credential。",
+      bullets: ["把 DNS 解析和 HTTP 响应分开判断。", "记录重定向路径的每一步。", "CSP、HSTS、frame policy 要从 header 查看。"],
+    },
+    "zh-TW": {
+      heading: "用公開訊號區分問題層",
+      body: "DNS、HTTP status、redirect、security header 分別指向 domain、deployment、cache、browser policy 等層面。請只使用公開 URL，避免輸入內部 host 或 credential。",
+      bullets: ["把 DNS 解析和 HTTP 回應分開判斷。", "記錄重定向路徑的每一步。", "CSP、HSTS、frame policy 要從 header 查看。"],
+    },
+  },
+  "css-utility-workflow": {
+    ja: {
+      heading: "数値変換を layout 条件に戻す",
+      body: "CSS の unit、clamp、minify、selector 整理は、画面幅、container、font size、theme token と一緒に見ないと判断できません。変換した値が実際の component を壊さないかを確認します。",
+      bullets: ["px、rem、em の基準を記録します。", "min/max の境界 viewport を確認します。", "minify 後も comment や duplicate selector の扱いを見ます。"],
+    },
+    "zh-CN": {
+      heading: "把数值转换放回布局条件",
+      body: "CSS unit、clamp、minify、selector 整理都需要结合 viewport、container、font size 和 theme token 判断。转换后的值必须回到真实 component 中检查，不能只看计算结果。",
+      bullets: ["记录 px、rem、em 的基准。", "检查 min/max 边界 viewport。", "minify 后确认 comment 和 duplicate selector 处理。"],
+    },
+    "zh-TW": {
+      heading: "把數值轉換放回版面條件",
+      body: "CSS unit、clamp、minify、selector 整理都需要結合 viewport、container、font size 和 theme token 判斷。轉換後的值必須回到真實 component 中檢查，不能只看計算結果。",
+      bullets: ["記錄 px、rem、em 的基準。", "檢查 min/max 邊界 viewport。", "minify 後確認 comment 和 duplicate selector 處理。"],
+    },
+  },
+  "text-cleanup-workflow": {
+    ja: {
+      heading: "削除された文字を確認する",
+      body: "Text cleanup は重複行、空白、case、slug、sort を整えますが、削除した内容が本当に不要とは限りません。line count、unique count、長い token、locale 固有の文字を比較してから結果を使います。",
+      bullets: ["元の行数と整理後の行数を記録します。", "slug 化でアクセントや記号が失われるか確認します。", "重複削除前に意味のある繰り返しかを見ます。"],
+    },
+    "zh-CN": {
+      heading: "检查被删除的字符",
+      body: "Text cleanup 会整理重复行、空白、大小写、slug 和排序，但被删除的内容不一定都无用。使用结果前请比较 line count、unique count、长 token 和 locale 特有字符。",
+      bullets: ["记录原始行数和清理后行数。", "检查 slug 化是否丢失重音或符号。", "去重前确认重复是否有业务意义。"],
+    },
+    "zh-TW": {
+      heading: "檢查被刪除的字元",
+      body: "Text cleanup 會整理重複行、空白、大小寫、slug 和排序，但被刪除的內容不一定都無用。使用結果前請比較 line count、unique count、長 token 和 locale 特有字元。",
+      bullets: ["記錄原始行數和清理後行數。", "檢查 slug 化是否丟失重音或符號。", "去重前確認重複是否有業務意義。"],
+    },
+  },
+};
+
+function localizedGuideHandoffSection(locale: GuideDeepDiveLocale, topic: string): GuideDefinition["sections"][number] {
+  if (locale === "ja") {
+    return {
+      heading: "共有前の記録を整える",
+      body: `${topic} の結果を課題、文書、pull request に貼る前に、入力の出所、選択した設定、出た警告、対象環境、次に確認した関連ツールを短く残します。結果だけを貼るより、後から同じ条件を再現しやすくなります。`,
+      bullets: ["共有用の値から秘密情報と内部ホストを除きます。", "ブラウザ内処理かサーバー確認かを明記します。", "次に使うツールと確認理由を一緒に書きます。"],
+    };
+  }
+  if (locale === "zh-CN") {
+    return {
+      heading: "分享前整理复核记录",
+      body: `把${topic}结果放进工单、文档或 pull request 前，请简短记录输入来源、选择的选项、出现的警告、目标环境，以及下一步使用的相关工具。只复制最终结果很难复现问题，也不利于团队判断可信度。对于会影响部署、搜索、样式或数据结构的结果，还要写明是否已经在目标浏览器、调度器、解析器或公开 URL 上复核。`,
+      bullets: ["从分享值中移除密钥、客户数据和内部主机。", "说明结果来自浏览器本地处理还是服务器检查。", "写清楚下一步工具和复核原因。", "把未解决的警告留在记录中，避免被当作已验证结果。"],
+    };
+  }
+  return {
+    heading: "分享前整理複核記錄",
+    body: `把${topic}結果放進工單、文件或 pull request 前，請簡短記錄輸入來源、選擇的選項、出現的警告、目標環境，以及下一步使用的相關工具。只複製最終結果很難重現問題，也不利於團隊判斷可信度。對於會影響部署、搜尋、樣式或資料結構的結果，還要寫明是否已經在目標瀏覽器、排程器、解析器或公開 URL 上複核。`,
+    bullets: ["從分享值中移除密鑰、客戶資料和內部主機。", "說明結果來自瀏覽器本機處理還是伺服器檢查。", "寫清楚下一步工具和複核原因。", "把未解決的警告留在記錄中，避免被當作已驗證結果。"],
+  };
+}
+
+function localizedGuideDeepDiveSections(slug: string, locale: Exclude<Locale, "en">, topic: string): GuideDefinition["sections"] {
+  if (locale !== "ja" && locale !== "zh-CN" && locale !== "zh-TW") return [];
+  const focus = localizedGuideDeepDiveFocus[slug]?.[locale];
+  if (!focus) return [];
+  return [focus, localizedGuideHandoffSection(locale, topic)];
+}
+
 const priorityGuideExtraSections: Record<string, Partial<Record<Exclude<Locale, "en">, GuideDefinition["sections"]>>> = {
   "regex-cheat-sheet": {
     ko: [
@@ -2756,7 +3062,27 @@ function localizedGuideSections(slug: string, locale: Locale, topic: string, pac
   const leadSection = priorityGuideLeadSections[slug]?.[localizedLocale];
   const sections = leadSection ? [leadSection, ...baseSections.slice(1)] : baseSections;
   const extraSections = priorityGuideExtraSections[slug]?.[localizedLocale] ?? [];
-  return [...sections, ...localizedGuideSupportSections(localizedLocale, topic), ...localizedGuideExpansionSections(localizedLocale, topic), ...extraSections];
+  return [...sections, ...localizedGuideSupportSections(localizedLocale, topic), ...localizedGuideExpansionSections(localizedLocale, topic), ...localizedGuideDeepDiveSections(slug, localizedLocale, topic), ...extraSections];
+}
+
+function localizedGuideMetaDescription(description: string, locale: Locale) {
+  if (locale === defaultLocale || description.length >= 50) return description;
+  const suffixes: Record<Exclude<Locale, "en">, string> = {
+    ko: "입력 조건, 민감정보 제외, 결과 경고, 관련 도구 복습까지 함께 확인합니다.",
+    ja: "入力条件、機密情報の除外、結果の警告、関連ツールでの再確認まで扱います。",
+    "zh-CN": "同时覆盖输入条件、敏感信息排除、结果警告和相关工具复核。",
+    "zh-TW": "同時涵蓋輸入條件、敏感資料排除、結果警告和相關工具複核。",
+    es: "Incluye condiciones de entrada, datos sensibles, avisos y revision con herramientas relacionadas.",
+    "pt-BR": "Inclui condicoes de entrada, dados sensiveis, avisos e revisao com ferramentas relacionadas.",
+    de: "Behandelt Eingabebedingungen, sensible Daten, Warnungen und Pruefung mit verwandten Werkzeugen.",
+    fr: "Couvre conditions d'entree, donnees sensibles, alertes et verification avec outils lies.",
+    hi: "इनपुट शर्त, संवेदनशील डेटा, चेतावनी और संबंधित साधन से दोबारा जांच भी शामिल है.",
+    id: "Mencakup syarat masukan, data sensitif, peringatan, dan pemeriksaan dengan alat terkait.",
+    vi: "Bao gồm điều kiện đầu vào, dữ liệu nhạy cảm, cảnh báo và kiểm tra bằng công cụ liên quan.",
+    th: "ครอบคลุมเงื่อนไขอินพุต ข้อมูลอ่อนไหว คำเตือน และการตรวจด้วยเครื่องมือที่เกี่ยวข้อง",
+    ar: "يشمل شروط الإدخال والبيانات الحساسة والتنبيهات والمراجعة بأدوات مرتبطة.",
+  };
+  return `${description} ${suffixes[locale as Exclude<Locale, "en">]}`;
 }
 
 function localizeGuideTitle(href: string, locale: Locale, pack: TextPack) {
@@ -2896,14 +3222,14 @@ export function getLocalizedGuide(guide: GuideDefinition, locale: Locale): Guide
   const localizedGuide = {
     ...guide,
     title: topic,
-    description: pack.guideDescription(topic),
+    description: localizedGuideMetaDescription(pack.guideDescription(topic), locale),
     sections: localizedGuideSections(guide.slug, locale, topic, pack),
   };
   const priorityDescription = priorityGuideDescriptions[guide.slug]?.[locale];
   if (!priorityDescription) return localizedGuide;
   return {
     ...localizedGuide,
-    description: priorityDescription,
+    description: localizedGuideMetaDescription(priorityDescription, locale),
   };
 }
 
