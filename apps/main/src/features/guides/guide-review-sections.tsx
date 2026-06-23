@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Dictionary } from "@/features/i18n/dictionaries";
 import type { Locale } from "@/features/i18n/config";
 import { withLocale } from "@/features/i18n/config";
+import { getLocalizedRelatedTools } from "@/features/i18n/localized-content";
 import type { ToolDefinition } from "@/features/tools/types";
 
 interface GuideReviewSectionsProps {
@@ -20,19 +21,22 @@ export function GuideReviewSections({ dictionary, locale, tools }: GuideReviewSe
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{dictionary.tool.preCopyChecklistDescription}</p>
       </div>
       <div className="mt-5 divide-y rounded-md border bg-background/60">
-        {tools.map((tool) => (
-          <article key={tool.slug} className="p-4" data-guide-tool-review={tool.slug}>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h3 className="text-sm font-semibold">
-                  <Link href={withLocale(`/tools/${tool.slug}`, locale)} className="hover:text-muted-foreground">
-                    {tool.title}
-                  </Link>
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{tool.description}</p>
+        {tools.map((tool) => {
+          const nextTools = getLocalizedRelatedTools(tool.relatedTools.slice(0, 2), locale);
+
+          return (
+            <article key={tool.slug} className="p-4" data-guide-tool-review={tool.slug}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold">
+                    <Link href={withLocale(`/tools/${tool.slug}`, locale)} className="hover:text-muted-foreground">
+                      {tool.title}
+                    </Link>
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{tool.description}</p>
+                </div>
+                <span className="rounded-md border px-2 py-1 text-xs text-muted-foreground">{dictionary.categories[tool.category] ?? tool.category}</span>
               </div>
-              <span className="rounded-md border px-2 py-1 text-xs text-muted-foreground">{dictionary.categories[tool.category] ?? tool.category}</span>
-            </div>
 
             {tool.useCases.length ? (
               <div className="mt-4">
@@ -45,6 +49,23 @@ export function GuideReviewSections({ dictionary, locale, tools }: GuideReviewSe
                     </li>
                   ))}
                 </ul>
+              </div>
+            ) : null}
+
+            {nextTools.length ? (
+              <div className="mt-4">
+                <h4 className="text-xs font-semibold uppercase tracking-normal text-muted-foreground">{dictionary.nav.relatedTools}</h4>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {nextTools.map((nextTool) => (
+                    <Link key={`${tool.slug}-${nextTool.slug}`} href={withLocale(`/tools/${nextTool.slug}`, locale)} className="rounded-md border bg-card/70 p-3 text-sm leading-6 hover:bg-muted/60">
+                      <span className="block font-medium text-foreground">{nextTool.title}</span>
+                      <span className="mt-1 block text-muted-foreground">{nextTool.description}</span>
+                      <span className="mt-2 block text-xs uppercase tracking-normal text-muted-foreground">
+                        {dictionary.tool.nextActionPrefix} {nextTool.useCases[0] ?? nextTool.description}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             ) : null}
 
@@ -108,8 +129,9 @@ export function GuideReviewSections({ dictionary, locale, tools }: GuideReviewSe
                 ) : null}
               </div>
             ) : null}
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );
