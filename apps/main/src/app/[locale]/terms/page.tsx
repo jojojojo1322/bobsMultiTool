@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import { defaultLocale, isLocale, languageAlternates, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
+import { LegalToolCoverage } from "@/features/i18n/policy-tool-coverage";
 
 interface LocalizedTermsProps {
   params: Promise<{ locale: string }>;
@@ -54,6 +55,7 @@ export default async function LocalizedTermsPage({ params }: LocalizedTermsProps
                 <p>{section.body}</p>
               </section>
             ))}
+            <LegalToolCoverage locale={locale} kind="terms" />
             <section>
               <h2 className="mb-2 text-base font-semibold text-foreground">{content.contact.heading}</h2>
               <p>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { defaultLocale, languageAlternates } from "@/features/i18n/config";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
+import { LegalToolCoverage } from "@/features/i18n/policy-tool-coverage";
 
 const content = getLocalizedLegalContent(defaultLocale, "privacy");
 
@@ -35,6 +36,7 @@ export default function PrivacyPage() {
                 <p>{section.body}</p>
               </section>
             ))}
+            <LegalToolCoverage locale={defaultLocale} kind="privacy" />
             <section>
               <h2 className="mb-2 text-base font-semibold text-foreground">{content.contact.heading}</h2>
               <p>

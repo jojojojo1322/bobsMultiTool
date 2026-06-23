@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { withLocale, type Locale } from "@/features/i18n/config";
+import { TrustToolCoverage } from "@/features/i18n/policy-tool-coverage";
 import { getLocalizedTrustContent, type TrustPageContent } from "@/features/i18n/trust-content";
 
 export function TrustPage({
@@ -44,6 +45,7 @@ export function TrustPage({
                 <p>{section.body}</p>
               </section>
             ))}
+            <TrustToolCoverage locale={locale} />
             <Link
               href={content.primaryLink.href.startsWith("/") ? withLocale(content.primaryLink.href, locale) : content.primaryLink.href}
               className="inline-flex h-9 items-center rounded-md border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted"
