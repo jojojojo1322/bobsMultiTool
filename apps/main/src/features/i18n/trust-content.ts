@@ -468,20 +468,20 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
 };
 
 const trustUpdatedAt: Record<Locale, string> = {
-  en: "Last updated: June 22, 2026",
-  ko: "최종 업데이트: 2026년 6월 22일",
-  ja: "最終更新日: 2026年6月22日",
-  "zh-CN": "最后更新: 2026年6月22日",
-  "zh-TW": "最後更新: 2026年6月22日",
-  es: "Ultima actualizacion: 22 de junio de 2026",
-  "pt-BR": "Ultima atualizacao: 22 de junho de 2026",
-  de: "Zuletzt aktualisiert: 22. Juni 2026",
-  fr: "Derniere mise a jour: 22 juin 2026",
-  hi: "अंतिम अपडेट: 22 जून 2026",
-  id: "Terakhir diperbarui: 22 Juni 2026",
-  vi: "Cập nhật lần cuối: 22 tháng 6, 2026",
-  th: "อัปเดตล่าสุด: 22 มิถุนายน 2026",
-  ar: "آخر تحديث: 22 يونيو 2026",
+  en: "Last updated: June 23, 2026",
+  ko: "최종 업데이트: 2026년 6월 23일",
+  ja: "最終更新日: 2026年6月23日",
+  "zh-CN": "最后更新: 2026年6月23日",
+  "zh-TW": "最後更新: 2026年6月23日",
+  es: "Ultima actualizacion: 23 de junio de 2026",
+  "pt-BR": "Ultima atualizacao: 23 de junho de 2026",
+  de: "Zuletzt aktualisiert: 23. Juni 2026",
+  fr: "Derniere mise a jour: 23 juin 2026",
+  hi: "अंतिम अपडेट: 23 जून 2026",
+  id: "Terakhir diperbarui: 23 Juni 2026",
+  vi: "Cập nhật lần cuối: 23 tháng 6, 2026",
+  th: "อัปเดตล่าสุด: 23 มิถุนายน 2026",
+  ar: "آخر تحديث: 23 يونيو 2026",
 };
 
 const localizedTrustExpansionSections: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustSection[]>> = {
@@ -693,14 +693,207 @@ const localizedTrustDepthSections: Partial<Record<Exclude<Locale, "en">, Record<
   },
 };
 
+const localizedTrustQualitySections: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustSection[]>> = {
+  ko: {
+    about: [
+      { heading: "작업 흐름 중심의 페이지 구성", body: "각 도구는 검색 방문자가 바로 작업을 시작할 수 있도록 입력 예시, 옵션, 결과 요약, 경고, 복사 전 확인을 한 화면 흐름으로 배치합니다. 단순 설명 문단보다 실제로 값을 붙여 넣고 결과를 판단하는 과정이 먼저 보이도록 유지합니다." },
+      { heading: "검증 가능한 결과", body: "formatter, validator, generator, parser 결과에는 입력 크기, 구조, 감지된 위험, 제한 사항, 다음 확인 지점을 함께 표시합니다. 사용자는 결과를 그대로 신뢰하는 대신 대상 런타임, 문서, 배포 환경과 비교할 수 있습니다." },
+      { heading: "검색 방문자를 위한 다음 단계", body: "한 도구에서 끝나지 않는 작업은 관련 도구와 가이드로 이어집니다. API 응답 정리, token 확인, redirect 점검, DNS 배포 확인, 보안 header 검토처럼 실제 개발 흐름을 연결해 빈 페이지 이동을 줄입니다." },
+      { heading: "품질 점검 기준", body: "공개 페이지는 제목, 설명, h1, 본문량, locale alternate, canonical, sitemap 포함 여부, 모바일 표시, 금지된 placeholder 노출 여부를 함께 확인합니다. 새 콘텐츠는 검색엔진만 위한 반복 문장이 아니라 사용자가 판단에 쓸 수 있는 기준을 담아야 합니다." },
+    ],
+    contact: [
+      { heading: "수정 요청에 포함할 맥락", body: "문구 수정이나 번역 오류를 보낼 때는 페이지 경로, 언어, 문제가 되는 문장, 실제 사용자가 오해할 수 있는 이유, 제안 표현을 함께 적어 주세요. 이렇게 보내면 단순 철자 수정인지, 도구 결과 해석에 영향을 주는 문제인지 빠르게 분리할 수 있습니다." },
+      { heading: "네트워크와 SEO 점검 보고", body: "DNS, HTTP, robots, sitemap, meta, Open Graph 관련 문제는 공개 URL, 확인한 시간, 예상 상태, 실제 상태, redirect chain, response header, canonical 신호를 같이 적으면 좋습니다. 내부 관리자 주소나 인증이 필요한 URL은 공개 메일로 보내지 마세요." },
+      { heading: "입력 예시를 안전하게 만드는 방법", body: "실제 token, cookie, customer id, 내부 host, 일회성 링크가 들어간 예시는 같은 구조의 테스트 값으로 바꿔 주세요. 필드 이름과 길이, 인코딩 방식, 줄바꿈 구조는 남겨도 되지만 식별 가능한 값은 제거해야 합니다." },
+      { heading: "우선 확인하는 문제", body: "결과가 틀리게 계산되는 경우, 복사가 잘못되는 경우, locale 페이지에 영어 placeholder가 남은 경우, 모바일에서 입력 영역이 가려지는 경우, 공개 route가 404 또는 redirect loop를 만드는 경우를 우선 확인합니다." },
+    ],
+  },
+  ja: {
+    about: [
+      { heading: "作業フロー中心のページ構成", body: "各ツールは、検索から来た利用者がすぐ作業を始められるよう、入力例、option、結果 summary、警告、コピー前確認を一つの流れで配置します。説明文だけを増やすのではなく、値を貼り付けて判断する手順が先に見える状態を保ちます。" },
+      { heading: "検証できる結果", body: "formatter、validator、generator、parser の結果には、入力サイズ、構造、検出したリスク、制限、次に確認すべき点を合わせて表示します。利用者は出力をそのまま信じるのではなく、対象 runtime、文書、deploy 環境と照合できます。" },
+      { heading: "検索訪問者の次の一手", body: "一つのツールで終わらない作業は、関連ツールとガイドへつながります。API 応答の整形、token 確認、redirect 調査、DNS deploy 確認、security header review のような実際の開発フローをつなげ、空の移動を減らします。" },
+      { heading: "品質確認の基準", body: "公開ページは title、description、h1、本文量、locale alternate、canonical、sitemap 収録、mobile 表示、placeholder 露出をまとめて確認します。新しい文章は検索エンジン向けの繰り返しではなく、利用者が判断に使える基準を含める必要があります。" },
+    ],
+    contact: [
+      { heading: "修正依頼に含める文脈", body: "文言や翻訳の修正を送る場合は、ページ path、言語、問題の文、利用者が誤解しそうな理由、提案表現を含めてください。単なる表記揺れか、ツール結果の理解に影響する問題かを分けやすくなります。" },
+      { heading: "ネットワークと SEO の報告", body: "DNS、HTTP、robots、sitemap、meta、Open Graph の問題では、公開 URL、確認時刻、期待した状態、実際の状態、redirect chain、response header、canonical signal を添えると確認しやすくなります。内部管理 URL や認証が必要な URL は送らないでください。" },
+      { heading: "入力例を安全にする方法", body: "実際の token、cookie、customer id、internal host、一回限りの link が入る例は、同じ構造のテスト値へ置き換えてください。field 名、長さ、encoding、改行構造は残せますが、識別できる値は削除する必要があります。" },
+      { heading: "優先して確認する問題", body: "結果が誤って計算される場合、コピー内容が壊れる場合、locale ページに英語 placeholder が残る場合、mobile で入力領域が隠れる場合、公開 route が 404 や redirect loop になる場合を優先して確認します。" },
+      { heading: "確認後の反映方法", body: "再現できた問題は、同じ安全な入力例で確認したあと、文言修正、警告追加、tool logic 調整、guide 補足、関連リンク更新のどれが適切かを分けて対応します。再現できない場合は、機密値を除いた最小例の再送をお願いすることがあります。" },
+    ],
+  },
+  "zh-CN": {
+    about: [
+      { heading: "围绕任务流程组织页面", body: "每个工具都会把输入示例、选项、结果摘要、警告和复制前检查放在同一个操作流程里，让来自搜索的用户可以直接开始处理数据。页面不会只堆说明文字，而是优先呈现粘贴、检查、判断和继续下一步的真实路径。" },
+      { heading: "可验证的结果", body: "formatter、validator、generator、parser 的结果会同时展示输入大小、结构、检测到的风险、已知限制和下一步检查点。用户不需要盲目信任输出，而可以把结果带回目标运行环境、平台文档或部署配置中复核。" },
+      { heading: "从搜索进入后的下一步", body: "很多开发任务不会停在单个工具。API 响应整理、token 检查、redirect 调试、DNS 部署确认、安全 header 复核等流程会链接到相关工具和指南，帮助用户继续完成任务，而不是跳到空洞的说明页。" },
+      { heading: "页面质量检查标准", body: "公开页面会检查 title、description、h1、可见正文量、locale alternate、canonical、sitemap 覆盖、移动端展示和 placeholder 暴露。新增内容必须提供可操作判断标准，不能只是为了增加字数而重复相似句子。" },
+      { heading: "内容更新后的维护", body: "当工具说明、指南或信任页面更新时，站点会同时关注用户能否完成任务、搜索爬虫能否看到完整正文、不同语言是否仍然保持同等信息量。这样可以避免某些 locale 只剩短介绍，而核心页面却承担过多解释的情况。" },
+    ],
+    contact: [
+      { heading: "修正请求需要的上下文", body: "提交文案或翻译修正时，请写明页面路径、语言、具体句子、为什么会让用户误解，以及建议替换的表达。这样可以区分普通拼写问题和会影响工具结果理解的质量问题。" },
+      { heading: "网络和 SEO 问题报告", body: "DNS、HTTP、robots、sitemap、meta、Open Graph 相关问题最好包含公开 URL、检查时间、预期状态、实际状态、redirect chain、response header 和 canonical 信号。请不要通过邮件发送内部管理地址或需要登录的 URL。" },
+      { heading: "安全准备输入示例", body: "如果示例里包含真实 token、cookie、customer id、内部 host 或一次性链接，请先替换成相同结构的测试值。字段名、长度、编码方式和换行结构可以保留，但任何能识别项目或个人的值都应该删除。" },
+      { heading: "优先核查的问题类型", body: "会优先核查计算结果明显错误、复制结果损坏、locale 页面残留英文 placeholder、移动端输入区域被遮挡、公开 route 返回 404 或形成 redirect loop 的问题。这些问题会直接阻止用户完成核心任务。" },
+      { heading: "核查后的处理方式", body: "可复现的问题会先用同一个安全输入重新确认，再判断应该修改文案、补充警告、调整工具逻辑、扩展指南，还是更新相关下一步链接。无法安全复现的报告会要求去除真实值后再提交最小示例。" },
+      { heading: "不适合公开联系渠道的内容", body: "请不要发送完整生产日志、未遮罩的配置文件、客户资料导出、内部监控截图或账号恢复资料。若这些信息与问题有关，请只提取最小结构，替换所有真实标识，并说明哪些字段是示例占位。" },
+    ],
+  },
+  "zh-TW": {
+    about: [
+      { heading: "圍繞任務流程組織頁面", body: "每個工具都會把輸入範例、選項、結果摘要、警告和複製前檢查放在同一個操作流程裡，讓來自搜尋的使用者可以直接開始處理資料。頁面不會只堆說明文字，而是優先呈現貼上、檢查、判斷和繼續下一步的真實路徑。" },
+      { heading: "可驗證的結果", body: "formatter、validator、generator、parser 的結果會同時展示輸入大小、結構、偵測到的風險、已知限制和下一步檢查點。使用者不需要盲目信任輸出，而可以把結果帶回目標執行環境、平台文件或部署設定中複核。" },
+      { heading: "從搜尋進入後的下一步", body: "很多開發任務不會停在單個工具。API 回應整理、token 檢查、redirect 調試、DNS 部署確認、安全 header 複核等流程會連結到相關工具和指南，協助使用者繼續完成任務，而不是跳到空洞的說明頁。" },
+      { heading: "頁面品質檢查標準", body: "公開頁面會檢查 title、description、h1、可見正文量、locale alternate、canonical、sitemap 覆蓋、行動端顯示和 placeholder 暴露。新增內容必須提供可操作判斷標準，不能只是為了增加字數而重複相似句子。" },
+      { heading: "內容更新後的維護", body: "當工具說明、指南或信任頁面更新時，站點會同時關注使用者能否完成任務、搜尋爬蟲能否看到完整正文、不同語言是否仍保持同等資訊量。這樣可以避免某些 locale 只剩短介紹，而核心頁面卻承擔過多解釋的情況。" },
+    ],
+    contact: [
+      { heading: "修正請求需要的上下文", body: "提交文案或翻譯修正時，請寫明頁面路徑、語言、具體句子、為什麼會讓使用者誤解，以及建議替換的表達。這樣可以區分普通拼寫問題和會影響工具結果理解的品質問題。" },
+      { heading: "網路和 SEO 問題回報", body: "DNS、HTTP、robots、sitemap、meta、Open Graph 相關問題最好包含公開 URL、檢查時間、預期狀態、實際狀態、redirect chain、response header 和 canonical 信號。請不要透過郵件傳送內部管理位址或需要登入的 URL。" },
+      { heading: "安全準備輸入範例", body: "如果範例裡包含真實 token、cookie、customer id、內部 host 或一次性連結，請先替換成相同結構的測試值。欄位名、長度、編碼方式和換行結構可以保留，但任何能識別專案或個人的值都應該刪除。" },
+      { heading: "優先核查的問題類型", body: "會優先核查計算結果明顯錯誤、複製結果損壞、locale 頁面殘留英文 placeholder、行動端輸入區域被遮擋、公開 route 回傳 404 或形成 redirect loop 的問題。這些問題會直接阻止使用者完成核心任務。" },
+      { heading: "核查後的處理方式", body: "可重現的問題會先用同一個安全輸入重新確認，再判斷應該修改文案、補充警告、調整工具邏輯、擴展指南，還是更新相關下一步連結。無法安全重現的回報會要求移除真實值後再提交最小範例。" },
+      { heading: "不適合公開聯絡管道的內容", body: "請不要傳送完整正式環境記錄、未遮罩的設定檔、客戶資料匯出、內部監控截圖或帳號復原資料。若這些資訊與問題有關，請只擷取最小結構，替換所有真實識別，並說明哪些欄位是範例佔位。" },
+    ],
+  },
+  es: {
+    about: [
+      { heading: "Paginas orientadas al flujo de trabajo", body: "Cada herramienta coloca ejemplos de entrada, opciones, resumen del resultado, avisos y revision antes de copiar dentro de un mismo flujo. La prioridad no es llenar la pagina con texto general, sino mostrar como pegar un valor seguro, leer el diagnostico, decidir si sirve y continuar con la siguiente tarea." },
+      { heading: "Resultados que se pueden comprobar", body: "Los resultados de formatter, validator, generator y parser muestran tamano de entrada, estructura, riesgos detectados, limites conocidos y puntos de revision. Asi el usuario puede comparar la salida con el runtime, la documentacion de la plataforma o el despliegue real antes de usarla." },
+      { heading: "Siguiente paso desde la busqueda", body: "Muchas tareas no terminan en una sola utilidad. Formatear una respuesta API, revisar un token, depurar redirects, comprobar DNS de despliegue o revisar security headers enlaza con herramientas y guias relacionadas para mantener una ruta de trabajo completa." },
+      { heading: "Criterios de calidad publica", body: "Las paginas publicas se revisan por title, description, h1, texto visible, locale alternate, canonical, sitemap, lectura movil y ausencia de placeholders. El contenido nuevo debe aportar criterios utiles de decision, no frases repetidas solo para aumentar longitud." },
+    ],
+    contact: [
+      { heading: "Contexto para pedir correcciones", body: "Para corregir texto o traduccion, incluye ruta de la pagina, idioma, frase concreta, motivo por el que puede confundir al usuario y propuesta de reemplazo. Eso ayuda a separar un detalle de redaccion de un problema que afecta la interpretacion del resultado." },
+      { heading: "Reportes de red y SEO", body: "Para DNS, HTTP, robots, sitemap, meta u Open Graph, indica URL publica, hora de comprobacion, estado esperado, estado real, redirect chain, response headers y senales canonical cuando existan. No envies URLs internas de administracion ni recursos que requieran login." },
+      { heading: "Como preparar ejemplos seguros", body: "Si un ejemplo contiene token real, cookie, customer id, host interno o enlace de un solo uso, cambialo por un valor de prueba con la misma estructura. Puedes conservar nombres de campos, longitud, encoding y saltos de linea, pero elimina cualquier valor identificable." },
+      { heading: "Problemas que se revisan primero", body: "Se priorizan calculos incorrectos, copias rotas, placeholders en ingles dentro de paginas localizadas, entrada tapada en movil, rutas publicas con 404 y redirect loops. Son fallos que impiden completar la tarea principal del usuario." },
+    ],
+  },
+  "pt-BR": {
+    about: [
+      { heading: "Paginas orientadas ao fluxo de trabalho", body: "Cada ferramenta coloca exemplos de entrada, opcoes, resumo do resultado, avisos e revisao antes de copiar dentro de um fluxo unico. A prioridade nao e encher a pagina com texto generico, mas mostrar como colar um valor seguro, ler o diagnostico, decidir se serve e seguir para a proxima tarefa." },
+      { heading: "Resultados que podem ser conferidos", body: "Resultados de formatter, validator, generator e parser mostram tamanho da entrada, estrutura, riscos detectados, limites conhecidos e pontos de revisao. Assim o usuario compara a saida com runtime, documentacao da plataforma ou deploy real antes de usar." },
+      { heading: "Proximo passo a partir da busca", body: "Muitas tarefas nao terminam em uma unica utilidade. Formatar resposta de API, revisar token, depurar redirects, conferir DNS de deploy ou revisar security headers conecta ferramentas e guias relacionados para manter uma rota de trabalho completa." },
+      { heading: "Criterios de qualidade publica", body: "Paginas publicas sao revisadas por title, description, h1, texto visivel, locale alternate, canonical, sitemap, leitura mobile e ausencia de placeholders. Conteudo novo deve trazer criterios uteis de decisao, nao frases repetidas apenas para aumentar tamanho." },
+    ],
+    contact: [
+      { heading: "Contexto para pedir correcoes", body: "Para corrigir texto ou traducao, inclua rota da pagina, idioma, frase exata, motivo de possivel confusao e proposta de substituicao. Isso ajuda a separar um ajuste de redacao de um problema que afeta a leitura do resultado." },
+      { heading: "Relatos de rede e SEO", body: "Para DNS, HTTP, robots, sitemap, meta ou Open Graph, informe URL publica, horario da verificacao, estado esperado, estado real, redirect chain, response headers e sinais canonical quando existirem. Nao envie URLs internas de administracao nem recursos que exigem login." },
+      { heading: "Como preparar exemplos seguros", body: "Se um exemplo contem token real, cookie, customer id, host interno ou link de uso unico, troque por valor de teste com a mesma estrutura. Voce pode manter nomes de campos, comprimento, encoding e quebras de linha, mas remova qualquer valor identificavel." },
+      { heading: "Problemas revisados primeiro", body: "Sao priorizados calculos incorretos, copia quebrada, placeholders em ingles dentro de paginas localizadas, entrada escondida no mobile, rotas publicas com 404 e redirect loops. Esses problemas impedem o usuario de concluir a tarefa principal." },
+    ],
+  },
+  de: {
+    about: [
+      { heading: "Seiten nach Arbeitsablauf", body: "Jedes Tool ordnet Beispieleingabe, Optionen, Ergebniszusammenfassung, Warnungen und Pruefung vor dem Kopieren in einem Ablauf an. Es geht nicht darum, allgemeine Texte zu stapeln, sondern zu zeigen, wie ein sicherer Wert eingefuegt, die Diagnose gelesen, das Ergebnis bewertet und der naechste Schritt gewaehlt wird." },
+      { heading: "Pruefbare Ergebnisse", body: "Ergebnisse von Formatter, Validator, Generator und Parser zeigen Eingabegroesse, Struktur, erkannte Risiken, bekannte Grenzen und naechste Pruefpunkte. So kann der Nutzer die Ausgabe mit Runtime, Plattformdokumentation oder echtem Deployment vergleichen, bevor sie verwendet wird." },
+      { heading: "Naechster Schritt nach der Suche", body: "Viele Aufgaben enden nicht in einem einzelnen Utility. API-Antworten formatieren, Token pruefen, Redirects debuggen, DNS-Deployment bestaetigen oder Security Headers reviewen verbindet verwandte Tools und Guides zu einem vollstaendigen Arbeitsweg." },
+      { heading: "Kriterien fuer oeffentliche Qualitaet", body: "Oeffentliche Seiten werden nach title, description, h1, sichtbarem Text, locale alternate, canonical, sitemap, mobiler Lesbarkeit und fehlenden Placeholders geprueft. Neuer Inhalt muss brauchbare Entscheidungskriterien liefern, nicht nur wiederholte Saetze fuer mehr Laenge." },
+    ],
+    contact: [
+      { heading: "Kontext fuer Korrekturen", body: "Bei Text- oder Uebersetzungsfehlern nenne Seitenroute, Sprache, genauen Satz, moegliche Nutzerverwirrung und einen Ersatzvorschlag. So laesst sich ein Schreibdetail von einem Problem trennen, das das Verstaendnis des Tool-Ergebnisses beeinflusst." },
+      { heading: "Berichte zu Netzwerk und SEO", body: "Bei DNS, HTTP, robots, sitemap, meta oder Open Graph helfen oeffentliche URL, Pruefzeit, erwarteter Status, tatsaechlicher Status, redirect chain, response headers und canonical Signale. Interne Admin-URLs oder Ressourcen mit Login gehoeren nicht in die Mail." },
+      { heading: "Sichere Beispiele vorbereiten", body: "Enthaelt ein Beispiel echtes Token, Cookie, customer id, internen Host oder Einmal-Link, ersetze es durch einen Testwert mit gleicher Struktur. Feldnamen, Laenge, Encoding und Zeilenumbrueche koennen bleiben, identifizierbare Werte muessen entfernt werden." },
+      { heading: "Zuerst gepruefte Probleme", body: "Prioritaet haben falsche Berechnungen, defekte Kopien, englische Placeholder in lokalisierten Seiten, verdeckte Eingaben auf Mobilgeraeten, oeffentliche Routen mit 404 und redirect loops. Solche Fehler blockieren den Kernablauf des Nutzers." },
+    ],
+  },
+  fr: {
+    about: [
+      { heading: "Pages organisees par flux de travail", body: "Chaque outil place exemple d'entree, options, resume du resultat, alertes et controle avant copie dans un meme flux. L'objectif n'est pas d'ajouter du texte general, mais de montrer comment coller une valeur sure, lire le diagnostic, juger le resultat et continuer vers la prochaine etape." },
+      { heading: "Resultats verifiables", body: "Les resultats de formatter, validator, generator et parser indiquent taille d'entree, structure, risques detectes, limites connues et points de verification. L'utilisateur peut ainsi comparer la sortie avec le runtime, la documentation plateforme ou le deploiement reel avant utilisation." },
+      { heading: "Etape suivante depuis la recherche", body: "Beaucoup de taches ne finissent pas dans un seul outil. Formater une reponse API, verifier un token, debugger des redirects, controler un DNS de deploiement ou relire des security headers relie outils et guides pour garder un parcours complet." },
+      { heading: "Criteres de qualite publique", body: "Les pages publiques sont verifiees par title, description, h1, texte visible, locale alternate, canonical, sitemap, lecture mobile et absence de placeholders. Un nouveau contenu doit apporter des criteres de decision utiles, pas des phrases repetees pour allonger la page." },
+    ],
+    contact: [
+      { heading: "Contexte pour demander une correction", body: "Pour corriger un texte ou une traduction, indiquez route de page, langue, phrase exacte, raison de confusion possible et proposition de remplacement. Cela separe une simple formulation d'un probleme qui change l'interpretation du resultat." },
+      { heading: "Signalements reseau et SEO", body: "Pour DNS, HTTP, robots, sitemap, meta ou Open Graph, fournissez URL publique, heure de verification, etat attendu, etat observe, redirect chain, response headers et signaux canonical. N'envoyez pas d'URL d'administration interne ni de ressource demandant une connexion." },
+      { heading: "Preparer des exemples surs", body: "Si un exemple contient token reel, cookie, customer id, host interne ou lien a usage unique, remplacez-le par une valeur de test de meme structure. Vous pouvez garder noms de champs, longueur, encoding et retours ligne, mais supprimez toute valeur identifiable." },
+      { heading: "Problemes examines en priorite", body: "Sont prioritaires les calculs faux, copies cassees, placeholders anglais dans pages localisees, zones d'entree masquees sur mobile, routes publiques en 404 et redirect loops. Ces defauts empechent l'utilisateur de terminer sa tache principale." },
+    ],
+  },
+  hi: {
+    about: [
+      { heading: "कार्य प्रवाह पर बने पेज", body: "हर टूल में सुरक्षित इनपुट उदाहरण, विकल्प, परिणाम सारांश, चेतावनी और कॉपी से पहले जांच एक ही क्रम में रखी जाती है। उद्देश्य सामान्य वाक्य बढ़ाना नहीं, बल्कि यह दिखाना है कि उपयोगकर्ता मान कैसे चिपकाए, निदान कैसे पढ़े, परिणाम कैसे परखे और अगला कदम कैसे चुने।" },
+      { heading: "जांचे जा सकने वाले परिणाम", body: "formatter, validator, generator और parser के परिणाम में इनपुट आकार, संरचना, मिली हुई जोखिम सूचना, ज्ञात सीमा और अगले जांच बिंदु दिखते हैं। उपयोगकर्ता output को सीधे मानने के बजाय उसे अपने runtime, platform दस्तावेज़ या deploy setup से मिला सकता है।" },
+      { heading: "खोज से आने वाले उपयोगकर्ता का अगला कदम", body: "कई developer काम एक ही tool पर समाप्त नहीं होते। API response साफ करना, token जांचना, redirect समस्या देखना, DNS deployment पुष्टि करना और security header review करना संबंधित tools और guides से जुड़ता है, ताकि user workflow अधूरा न रहे।" },
+      { heading: "सार्वजनिक गुणवत्ता जांच", body: "Public pages में title, description, h1, visible text, locale alternate, canonical, sitemap coverage, mobile reading और placeholder exposure जांचे जाते हैं। नया content केवल लंबाई बढ़ाने के लिए दोहराया नहीं जाना चाहिए; उसमें निर्णय लेने योग्य जांच बिंदु होने चाहिए।" },
+    ],
+    contact: [
+      { heading: "सुधार अनुरोध का संदर्भ", body: "Text या translation सुधार भेजते समय page path, language, exact sentence, user confusion का कारण और suggested replacement लिखें। इससे spelling issue और result समझने पर असर डालने वाली quality issue अलग करना आसान होता है।" },
+      { heading: "Network और SEO report", body: "DNS, HTTP, robots, sitemap, meta या Open Graph समस्या के लिए public URL, check time, expected state, actual state, redirect chain, response headers और canonical संकेत दें। Internal admin URL या login वाली resource ईमेल में न भेजें।" },
+      { heading: "सुरक्षित input example बनाना", body: "अगर example में real token, cookie, customer id, internal host या one-time link है, तो उसे समान structure वाले test value से बदलें। Field names, length, encoding और line breaks रखे जा सकते हैं, लेकिन पहचान योग्य values हटानी चाहिए।" },
+      { heading: "पहले देखी जाने वाली समस्याएं", body: "गलत calculation, टूटे copy result, localized page में English placeholder, mobile पर ढका input area, public route का 404 और redirect loop पहले जांचे जाते हैं। ये issues user को core task पूरा करने से रोकते हैं।" },
+    ],
+  },
+  id: {
+    about: [
+      { heading: "Halaman berbasis alur kerja", body: "Setiap alat menempatkan contoh masukan, opsi, ringkasan hasil, peringatan, dan pemeriksaan sebelum salin dalam satu alur. Tujuannya bukan menambah teks umum, tetapi menunjukkan cara menempel nilai aman, membaca diagnosis, menilai hasil, lalu melanjutkan ke langkah berikutnya." },
+      { heading: "Hasil yang bisa diperiksa", body: "Hasil formatter, validator, generator, dan parser menampilkan ukuran masukan, struktur, risiko yang terdeteksi, batas yang diketahui, dan titik pemeriksaan berikutnya. Pengguna bisa membandingkan keluaran dengan runtime, dokumentasi platform, atau deploy sebenarnya sebelum dipakai." },
+      { heading: "Langkah berikut dari pencarian", body: "Banyak tugas developer tidak selesai di satu utilitas. Merapikan respons API, memeriksa token, menelusuri redirect, memastikan DNS deploy, atau meninjau security header dihubungkan ke alat dan panduan terkait agar alur kerja tetap lengkap." },
+      { heading: "Kriteria kualitas publik", body: "Halaman publik diperiksa lewat title, description, h1, teks terlihat, locale alternate, canonical, sitemap, keterbacaan mobile, dan tidak adanya placeholder. Konten baru harus memberi kriteria keputusan yang berguna, bukan pengulangan kalimat untuk menambah panjang." },
+    ],
+    contact: [
+      { heading: "Konteks untuk koreksi", body: "Saat mengirim koreksi teks atau terjemahan, sertakan path halaman, bahasa, kalimat persis, alasan pengguna bisa salah paham, dan usulan pengganti. Ini membantu memisahkan masalah ejaan dari masalah kualitas yang memengaruhi pemahaman hasil." },
+      { heading: "Laporan jaringan dan SEO", body: "Untuk DNS, HTTP, robots, sitemap, meta, atau Open Graph, sertakan URL publik, waktu pengecekan, status yang diharapkan, status aktual, redirect chain, response headers, dan sinyal canonical. Jangan kirim URL admin internal atau resource yang butuh login." },
+      { heading: "Menyiapkan contoh aman", body: "Jika contoh memuat token nyata, cookie, customer id, host internal, atau tautan sekali pakai, ganti dengan nilai uji yang strukturnya sama. Nama field, panjang, encoding, dan baris baru boleh dipertahankan, tetapi nilai yang bisa mengidentifikasi harus dihapus." },
+      { heading: "Masalah yang dicek lebih dulu", body: "Prioritas diberikan pada perhitungan salah, hasil salin rusak, placeholder Inggris di halaman lokal, area masukan tertutup di mobile, route publik 404, dan redirect loop. Masalah seperti ini langsung menghalangi tugas utama pengguna." },
+    ],
+  },
+  vi: {
+    about: [
+      { heading: "Trang theo luồng công việc", body: "Mỗi công cụ đặt ví dụ đầu vào, tùy chọn, tóm tắt kết quả, cảnh báo và kiểm tra trước khi sao chép trong cùng một luồng. Mục tiêu không phải thêm đoạn chung chung, mà là cho thấy cách dán giá trị an toàn, đọc chẩn đoán, đánh giá kết quả và đi tiếp." },
+      { heading: "Kết quả có thể kiểm chứng", body: "Kết quả formatter, validator, generator và parser hiển thị kích thước đầu vào, cấu trúc, rủi ro phát hiện, giới hạn đã biết và điểm cần kiểm tra tiếp. Người dùng có thể so sánh đầu ra với runtime, tài liệu nền tảng hoặc môi trường triển khai thật trước khi dùng." },
+      { heading: "Bước tiếp theo từ tìm kiếm", body: "Nhiều việc của lập trình viên không kết thúc ở một tiện ích. Làm sạch phản hồi API, kiểm tra token, gỡ redirect, xác nhận DNS triển khai hoặc rà security header được nối với công cụ và hướng dẫn liên quan để giữ luồng làm việc đầy đủ." },
+      { heading: "Tiêu chí chất lượng công khai", body: "Trang công khai được kiểm tra title, description, h1, chữ hiển thị, locale alternate, canonical, sitemap, đọc trên mobile và placeholder. Nội dung mới phải đưa ra tiêu chí quyết định hữu ích, không lặp câu giống nhau chỉ để tăng độ dài." },
+    ],
+    contact: [
+      { heading: "Bối cảnh cho yêu cầu sửa", body: "Khi gửi sửa văn bản hoặc bản dịch, hãy kèm path trang, ngôn ngữ, câu chính xác, lý do người dùng có thể hiểu sai và đề xuất thay thế. Điều này giúp tách lỗi chính tả khỏi vấn đề chất lượng ảnh hưởng đến cách hiểu kết quả." },
+      { heading: "Báo cáo mạng và SEO", body: "Với DNS, HTTP, robots, sitemap, meta hoặc Open Graph, hãy gửi URL công khai, thời điểm kiểm tra, trạng thái mong đợi, trạng thái thực tế, redirect chain, response headers và tín hiệu canonical. Không gửi URL quản trị nội bộ hay tài nguyên cần đăng nhập." },
+      { heading: "Chuẩn bị ví dụ an toàn", body: "Nếu ví dụ có token thật, cookie, customer id, host nội bộ hoặc link dùng một lần, hãy đổi sang giá trị thử nghiệm cùng cấu trúc. Có thể giữ tên field, độ dài, encoding và xuống dòng, nhưng mọi giá trị nhận diện được phải xóa." },
+      { heading: "Vấn đề được kiểm tra trước", body: "Ưu tiên gồm tính toán sai, nội dung copy bị hỏng, placeholder tiếng Anh trong trang bản địa hóa, vùng nhập bị che trên mobile, route công khai trả 404 và redirect loop. Các lỗi này trực tiếp chặn tác vụ chính của người dùng." },
+    ],
+  },
+  th: {
+    about: [
+      { heading: "หน้าที่จัดตามลำดับงาน", body: "แต่ละเครื่องมือวางตัวอย่างข้อมูล ตัวเลือก สรุปผล คำเตือน และการตรวจทานก่อนคัดลอกไว้ในลำดับเดียว เป้าหมายไม่ใช่การเพิ่มข้อความทั่วไป แต่คือการแสดงวิธีวางค่าที่ปลอดภัย อ่านการวินิจฉัย ตัดสินผลลัพธ์ และไปต่อยังขั้นตอนถัดไป" },
+      { heading: "ผลลัพธ์ที่ตรวจซ้ำได้", body: "ผลจาก formatter, validator, generator และ parser จะแสดงขนาด input โครงสร้าง ความเสี่ยงที่พบ ข้อจำกัดที่รู้ และจุดตรวจถัดไป ผู้ใช้จึงเทียบ output กับ runtime เอกสาร platform หรือสภาพแวดล้อม deploy จริงก่อนใช้งานได้" },
+      { heading: "ขั้นตอนถัดไปจากการค้นหา", body: "งานของนักพัฒนาหลายอย่างไม่จบที่เครื่องมือเดียว เช่น การจัดรูป API response การตรวจ token การ debug redirect การยืนยัน DNS deploy หรือการ review security header จะเชื่อมไปยังเครื่องมือและคู่มือที่เกี่ยวข้องเพื่อให้ workflow สมบูรณ์" },
+      { heading: "เกณฑ์คุณภาพของหน้าสาธารณะ", body: "หน้าสาธารณะตรวจ title, description, h1, ข้อความที่มองเห็น, locale alternate, canonical, sitemap, การอ่านบน mobile และ placeholder ที่หลงเหลือ เนื้อหาใหม่ต้องให้เกณฑ์ตัดสินที่ใช้ได้จริง ไม่ใช่ประโยคซ้ำเพื่อเพิ่มความยาวเท่านั้น" },
+    ],
+    contact: [
+      { heading: "บริบทสำหรับคำขอแก้ไข", body: "เมื่อส่งการแก้ข้อความหรือคำแปล โปรดใส่ path ของหน้า ภาษา ประโยคที่ต้องแก้ เหตุผลที่ผู้ใช้อาจเข้าใจผิด และคำแทนที่ที่แนะนำ วิธีนี้ช่วยแยกปัญหาสะกดคำออกจากปัญหาคุณภาพที่มีผลต่อการเข้าใจผลลัพธ์" },
+      { heading: "รายงาน network และ SEO", body: "สำหรับ DNS, HTTP, robots, sitemap, meta หรือ Open Graph ให้ใส่ URL สาธารณะ เวลาที่ตรวจ สถานะที่คาดหวัง สถานะจริง redirect chain, response headers และสัญญาณ canonical ห้ามส่ง URL ผู้ดูแลภายในหรือ resource ที่ต้อง login" },
+      { heading: "เตรียมตัวอย่างที่ปลอดภัย", body: "ถ้าตัวอย่างมี token จริง cookie, customer id, host ภายใน หรือลิงก์ใช้ครั้งเดียว ให้เปลี่ยนเป็นค่าทดสอบที่มีโครงสร้างเดียวกัน ชื่อ field ความยาว encoding และการขึ้นบรรทัดใหม่คงไว้ได้ แต่ค่าที่ระบุตัวตนต้องถูกลบ" },
+      { heading: "ปัญหาที่ตรวจเป็นลำดับแรก", body: "จะให้ความสำคัญกับการคำนวณผิด ผล copy เสีย placeholder ภาษาอังกฤษในหน้าท้องถิ่น พื้นที่ input ถูกบังบน mobile, route สาธารณะเป็น 404 และ redirect loop เพราะปัญหาเหล่านี้ขัดขวางงานหลักของผู้ใช้โดยตรง" },
+    ],
+  },
+  ar: {
+    about: [
+      { heading: "صفحات مبنية حول سير العمل", body: "كل أداة تضع مثال الإدخال والخيارات وملخص النتيجة والتحذيرات وفحص ما قبل النسخ في مسار واحد. الهدف ليس زيادة نص عام، بل توضيح كيف يلصق المستخدم قيمة آمنة، يقرأ التشخيص، يقيم النتيجة، ثم ينتقل إلى الخطوة التالية." },
+      { heading: "نتائج قابلة للتحقق", body: "نتائج formatter وvalidator وgenerator وparser تعرض حجم الإدخال والبنية والمخاطر المكتشفة والحدود المعروفة ونقاط الفحص التالية. يستطيع المستخدم مقارنة المخرجات مع runtime أو وثائق المنصة أو بيئة النشر الفعلية قبل استخدامها." },
+      { heading: "الخطوة التالية من البحث", body: "كثير من مهام المطور لا ينتهي في أداة واحدة. تنسيق API response وفحص token وتتبع redirect وتأكيد DNS deploy ومراجعة security header ترتبط بأدوات وأدلة قريبة حتى يبقى سير العمل كاملا." },
+      { heading: "معايير جودة الصفحة العامة", body: "تراجع الصفحات العامة من خلال title وdescription وh1 والنص المرئي وlocale alternate وcanonical وsitemap والقراءة على mobile وغياب placeholder. المحتوى الجديد يجب أن يقدم معايير قرار مفيدة، لا جملا مكررة لزيادة الطول فقط." },
+    ],
+    contact: [
+      { heading: "السياق المطلوب للتصحيح", body: "عند إرسال تصحيح نص أو ترجمة، اذكر path الصفحة واللغة والجملة المحددة وسبب الالتباس المحتمل واقتراح الاستبدال. يساعد ذلك على فصل خطأ الكتابة عن مشكلة جودة تؤثر في فهم نتيجة الأداة." },
+      { heading: "بلاغات الشبكة وSEO", body: "لمشكلات DNS أو HTTP أو robots أو sitemap أو meta أو Open Graph، أرسل URL عاما ووقت الفحص والحالة المتوقعة والحالة الفعلية وredirect chain وresponse headers وإشارات canonical. لا ترسل URL إداريا داخليا أو موردا يحتاج login." },
+      { heading: "إعداد أمثلة آمنة", body: "إذا احتوى المثال على token حقيقي أو cookie أو customer id أو host داخلي أو رابط يستخدم مرة واحدة، فاستبدله بقيمة اختبار لها البنية نفسها. يمكن إبقاء أسماء الحقول والطول وencoding وفواصل الأسطر، لكن يجب حذف أي قيمة يمكن التعرف منها على مشروع أو شخص." },
+      { heading: "المشكلات ذات الأولوية", body: "تراجع أولا الحسابات الخاطئة، ونسخ النتائج المعطوب، ووجود placeholder إنجليزي في صفحة مترجمة، وحجب منطقة الإدخال على mobile، وroute عام يعيد 404 أو redirect loop. هذه الأخطاء تمنع المستخدم من إنهاء المهمة الأساسية." },
+    ],
+  },
+};
+
 export function getLocalizedTrustContent(locale: Locale = defaultLocale, kind: TrustPageKind) {
   const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
   const expansionSections = locale === defaultLocale ? [] : localizedTrustExpansionSections[locale][kind];
   const depthSections = locale === defaultLocale ? [] : (localizedTrustDepthSections[locale]?.[kind] ?? []);
+  const qualitySections = locale === defaultLocale ? [] : localizedTrustQualitySections[locale][kind];
 
   return {
     ...content,
     lastUpdated: trustUpdatedAt[locale],
-    sections: [...content.sections, ...expansionSections, ...depthSections],
+    sections: [...content.sections, ...expansionSections, ...depthSections, ...qualitySections],
   };
 }
