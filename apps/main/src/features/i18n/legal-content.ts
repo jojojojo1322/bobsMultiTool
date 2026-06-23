@@ -20,20 +20,20 @@ type LegalPageContent = {
 };
 
 const legalUpdatedAt: Record<Locale, string> = {
-  en: "Last updated: June 22, 2026",
-  ko: "최종 업데이트: 2026년 6월 22일",
-  ja: "最終更新日: 2026年6月22日",
-  "zh-CN": "最后更新: 2026年6月22日",
-  "zh-TW": "最後更新: 2026年6月22日",
-  es: "Ultima actualizacion: 22 de junio de 2026",
-  "pt-BR": "Ultima atualizacao: 22 de junho de 2026",
-  de: "Zuletzt aktualisiert: 22. Juni 2026",
-  fr: "Derniere mise a jour: 22 juin 2026",
-  hi: "अंतिम अपडेट: 22 जून 2026",
-  id: "Terakhir diperbarui: 22 Juni 2026",
-  vi: "Cập nhật lần cuối: 22 tháng 6, 2026",
-  th: "อัปเดตล่าสุด: 22 มิถุนายน 2026",
-  ar: "آخر تحديث: 22 يونيو 2026",
+  en: "Last updated: June 23, 2026",
+  ko: "최종 업데이트: 2026년 6월 23일",
+  ja: "最終更新日: 2026年6月23日",
+  "zh-CN": "最后更新: 2026年6月23日",
+  "zh-TW": "最後更新: 2026年6月23日",
+  es: "Ultima actualizacion: 23 de junio de 2026",
+  "pt-BR": "Ultima atualizacao: 23 de junho de 2026",
+  de: "Zuletzt aktualisiert: 23. Juni 2026",
+  fr: "Derniere mise a jour: 23 juin 2026",
+  hi: "अंतिम अपडेट: 23 जून 2026",
+  id: "Terakhir diperbarui: 23 Juni 2026",
+  vi: "Cập nhật lần cuối: 23 tháng 6, 2026",
+  th: "อัปเดตล่าสุด: 23 มิถุนายน 2026",
+  ar: "آخر تحديث: 23 يونيو 2026",
 };
 
 const advertisingSections: Record<Locale, Record<LegalPageKind, LegalSection>> = {
@@ -941,19 +941,169 @@ const localizedLegalAuditSections: Partial<Record<Exclude<Locale, "en">, Record<
   },
 };
 
+const legalQualitySections: Record<Locale, Record<LegalPageKind, LegalSection[]>> = {
+  en: {
+    privacy: [
+      { heading: "How utility inputs are handled", body: "Use the tools with examples that are safe to inspect in a browser. Formatting, encoding, decoding, token inspection, text cleanup, color checks, and generator workflows are meant for temporary review, not long-term storage or account-based editing." },
+      { heading: "Public request boundaries", body: "Network tools should receive only public domains or public URLs. Do not include secret query strings, private headers, internal hostnames, customer records, or links that should not be requested by a public diagnostic service." },
+    ],
+    terms: [
+      { heading: "Review before copying", body: "Every output should be treated as a working draft. Check regex patterns, cron schedules, formatted code, SEO tags, DNS answers, HTTP headers, and generated values against your target runtime, platform documentation, and project review process." },
+      { heading: "Quality-preserving use", body: "The service is intended for ordinary manual utility work. Do not automate repeated requests, create misleading traffic, probe systems without permission, or use generated output in a way that bypasses your own testing and approval workflow." },
+    ],
+  },
+  ko: {
+    privacy: [
+      { heading: "도구 입력 처리 방식", body: "브라우저에서 확인해도 되는 예시 값으로 도구를 사용하세요. 포맷팅, 인코딩, 디코딩, token 확인, 텍스트 정리, 색상 점검, 생성기 작업은 임시 검토를 위한 흐름이며 장기 저장 공간이나 계정 기반 편집 공간이 아닙니다." },
+      { heading: "공개 요청 경계", body: "네트워크 도구에는 공개 도메인이나 공개 URL만 입력해야 합니다. 비밀 query string, private header, 내부 host, 고객 기록, 공개 진단 서비스가 요청해서는 안 되는 링크는 포함하지 마세요." },
+    ],
+    terms: [
+      { heading: "복사 전 검토", body: "모든 출력은 작업 초안으로 다뤄야 합니다. regex 패턴, cron 일정, 포맷된 코드, SEO tag, DNS 응답, HTTP header, 생성 값을 대상 runtime, 플랫폼 문서, 프로젝트 검토 절차와 비교한 뒤 사용하세요." },
+      { heading: "품질을 해치지 않는 사용", body: "이 서비스는 일반적인 수동 유틸리티 작업을 위한 것입니다. 반복 요청을 자동화하거나, 오해를 일으키는 traffic을 만들거나, 권한 없는 시스템을 살피거나, 자체 테스트와 승인 흐름을 우회하는 방식으로 결과를 사용하지 마세요." },
+    ],
+  },
+  ja: {
+    privacy: [
+      { heading: "ツール入力の扱い", body: "ブラウザで確認してもよい安全な例を使ってください。format、encode、decode、token 確認、text cleanup、color check、generator の作業は一時的な確認のための流れであり、長期保存場所やアカウント型の編集スペースではありません。" },
+      { heading: "公開リクエストの境界", body: "ネットワーク系ツールには公開ドメインまたは公開 URL だけを入力してください。secret query string、private header、内部 host、顧客記録、公開診断サービスが取得すべきでない link を含めないでください。" },
+    ],
+    terms: [
+      { heading: "コピー前の再確認", body: "すべての出力は作業用の下書きとして扱ってください。regex pattern、cron schedule、整形済み code、SEO tag、DNS response、HTTP header、生成値は、対象 runtime、platform documentation、project review process と照合してから使用します。" },
+      { heading: "品質を保つ利用", body: "このサービスは通常の手動ユーティリティ作業を目的としています。繰り返し request の自動化、誤解を招く traffic、権限のない system の調査、または自分の testing と approval workflow を回避する使い方はできません。" },
+    ],
+  },
+  "zh-CN": {
+    privacy: [
+      { heading: "工具输入的处理方式", body: "请使用适合在浏览器中检查的安全示例值。格式化、编码、解码、token 检查、文本清理、颜色检查和生成器流程用于临时复核，不是长期保存空间，也不是账号式编辑环境。" },
+      { heading: "公开请求边界", body: "网络工具只应接收公开域名或公开 URL。不要包含秘密 query string、private header、内部 host、客户记录，或任何不应由公共诊断服务请求的链接。" },
+      { heading: "本地记录和共享前检查", body: "收藏、最近使用和恢复上次工作等便利功能只保存在当前浏览器。把输出发送到 issue、聊天、文档或代码 review 前，请再次确认复制内容里没有真实凭证、内部主机、客户标识或一次性访问链接。" },
+    ],
+    terms: [
+      { heading: "复制前复核", body: "所有输出都应视为工作草稿。regex 模式、cron 计划、格式化代码、SEO 标签、DNS 回答、HTTP header 和生成值，都应先与目标 runtime、平台文档和项目 review 流程比对后再使用。" },
+      { heading: "保持质量的使用方式", body: "本服务面向普通手动工具使用。不得自动化重复请求、制造误导性 traffic、探测没有权限的系统，或用生成结果绕过你自己的测试、review 和发布流程。" },
+      { heading: "公共工具的责任边界", body: "本站不会替代安全审计、法律意见、生产监控或平台官方验证。它帮助你整理公开样例和可分享片段；最终是否发布、部署、提交或共享，仍应由你在自己的项目流程中确认。" },
+      { heading: "问题报告与权限", body: "如果工具结果不符合预期，请使用可公开复现的样例报告问题。不要把第三方系统、账号、私有网络或客户数据作为测试目标，也不要发送你没有权限处理的输入或输出。" },
+    ],
+  },
+  "zh-TW": {
+    privacy: [
+      { heading: "工具輸入的處理方式", body: "請使用適合在瀏覽器中檢查的安全範例值。格式化、編碼、解碼、token 檢查、文字清理、顏色檢查和產生器流程用於暫時複核，不是長期保存空間，也不是帳號式編輯環境。" },
+      { heading: "公開請求邊界", body: "網路工具只應接收公開網域或公開 URL。不要包含秘密 query string、private header、內部 host、客戶記錄，或任何不應由公共診斷服務請求的連結。" },
+      { heading: "本機紀錄和分享前檢查", body: "收藏、最近使用和恢復上次工作等便利功能只保存在目前瀏覽器。把輸出傳到 issue、聊天、文件或程式碼 review 前，請再次確認複製內容裡沒有真實憑證、內部主機、客戶識別或一次性存取連結。" },
+    ],
+    terms: [
+      { heading: "複製前複核", body: "所有輸出都應視為工作草稿。regex 模式、cron 排程、格式化程式碼、SEO 標籤、DNS 回答、HTTP header 和產生值，都應先與目標 runtime、平台文件和專案 review 流程比對後再使用。" },
+      { heading: "保持品質的使用方式", body: "本服務面向一般手動工具使用。不得自動化重複請求、製造誤導性 traffic、探測沒有權限的系統，或用產生結果繞過你自己的測試、review 和發布流程。" },
+      { heading: "公共工具的責任邊界", body: "本站不會取代安全稽核、法律意見、正式環境監控或平台官方驗證。它協助你整理公開範例和可分享片段；最終是否發布、部署、提交或共享，仍應由你在自己的專案流程中確認。" },
+      { heading: "問題回報與權限", body: "如果工具結果不符合預期，請使用可公開重現的範例回報問題。不要把第三方系統、帳號、私有網路或客戶資料作為測試目標，也不要傳送你沒有權限處理的輸入或輸出。" },
+    ],
+  },
+  es: {
+    privacy: [
+      { heading: "Tratamiento de entradas", body: "Usa ejemplos seguros para revisar en el navegador. Formateo, codificacion, decodificacion, revision de tokens, limpieza de texto, comprobacion de color y generadores son flujos temporales de revision, no almacenamiento permanente ni un editor con cuenta." },
+      { heading: "Limites de solicitudes publicas", body: "Las herramientas de red deben recibir solo dominios publicos o URLs publicas. No incluyas query strings secretos, headers privados, hosts internos, registros de clientes ni enlaces que no deban solicitarse desde un servicio publico de diagnostico." },
+    ],
+    terms: [
+      { heading: "Revision antes de copiar", body: "Todo resultado debe tratarse como borrador de trabajo. Revisa patrones regex, cron, codigo formateado, SEO tags, respuestas DNS, headers HTTP y valores generados contra el runtime, documentacion de plataforma y proceso de revision de tu proyecto." },
+      { heading: "Uso que conserva calidad", body: "El servicio esta pensado para trabajo manual normal. No automatices solicitudes repetidas, no generes trafico enganoso, no examines sistemas sin permiso y no uses salidas generadas para saltar tus pruebas, review o proceso de publicacion." },
+    ],
+  },
+  "pt-BR": {
+    privacy: [
+      { heading: "Tratamento das entradas", body: "Use exemplos seguros para revisar no navegador. Formatacao, codificacao, decodificacao, revisao de tokens, limpeza de texto, checagem de cor e geradores sao fluxos temporarios de revisao, nao armazenamento permanente nem editor com conta." },
+      { heading: "Limites de requisicoes publicas", body: "Ferramentas de rede devem receber apenas dominios publicos ou URLs publicas. Nao inclua query strings secretas, headers privados, hosts internos, registros de clientes ou links que nao devem ser requisitados por um servico publico de diagnostico." },
+    ],
+    terms: [
+      { heading: "Revisao antes de copiar", body: "Todo resultado deve ser tratado como rascunho de trabalho. Confira regex, cron, codigo formatado, SEO tags, respostas DNS, headers HTTP e valores gerados contra o runtime, documentacao da plataforma e processo de revisao do projeto." },
+      { heading: "Uso que preserva qualidade", body: "O servico foi feito para trabalho manual comum. Nao automatize requisicoes repetidas, nao crie trafego enganoso, nao investigue sistemas sem permissao e nao use saidas geradas para pular testes, review ou processo de publicacao." },
+    ],
+  },
+  de: {
+    privacy: [
+      { heading: "Umgang mit Tool-Eingaben", body: "Nutze Beispiele, die sicher im Browser geprueft werden koennen. Formatieren, Encodieren, Decodieren, Token-Pruefung, Textbereinigung, Farbpruefung und Generatoren sind temporaere Review-Flows, kein dauerhafter Speicher und kein kontoabhaengiger Editor." },
+      { heading: "Grenzen oeffentlicher Anfragen", body: "Netzwerk-Tools sollten nur oeffentliche Domains oder oeffentliche URLs erhalten. Fuege keine geheimen Query Strings, privaten Header, internen Hosts, Kundendaten oder Links ein, die ein oeffentlicher Diagnosedienst nicht anfragen sollte." },
+    ],
+    terms: [
+      { heading: "Pruefung vor dem Kopieren", body: "Jede Ausgabe ist als Arbeitsentwurf zu behandeln. Pruefe Regex-Muster, Cron-Zeitplaene, formatierten Code, SEO-Tags, DNS-Antworten, HTTP-Header und generierte Werte gegen Runtime, Plattformdokumentation und Review-Prozess deines Projekts." },
+      { heading: "Qualitaetserhaltende Nutzung", body: "Der Dienst ist fuer normale manuelle Utility-Arbeit gedacht. Automatisiere keine wiederholten Anfragen, erzeuge keinen irrefuehrenden Traffic, untersuche keine Systeme ohne Erlaubnis und nutze Ergebnisse nicht, um Testing, Review oder Release-Prozesse zu umgehen." },
+    ],
+  },
+  fr: {
+    privacy: [
+      { heading: "Traitement des entrees", body: "Utilisez des exemples surs a verifier dans le navigateur. Formatage, encodage, decodage, verification de token, nettoyage de texte, controle couleur et generateurs sont des flux temporaires de revue, pas un stockage durable ni un editeur avec compte." },
+      { heading: "Limites des requetes publiques", body: "Les outils reseau doivent recevoir uniquement des domaines publics ou URL publiques. N'incluez pas de query string secrete, header prive, host interne, dossier client ou lien qui ne devrait pas etre demande par un service public de diagnostic." },
+    ],
+    terms: [
+      { heading: "Verification avant copie", body: "Tout resultat doit etre traite comme brouillon de travail. Verifiez regex, cron, code formate, SEO tags, reponses DNS, headers HTTP et valeurs generees avec le runtime, la documentation plateforme et le processus de revue du projet." },
+      { heading: "Utilisation qui preserve la qualite", body: "Le service vise un travail manuel ordinaire. N'automatisez pas les requetes repetees, ne creez pas de trafic trompeur, n'examinez pas de systeme sans permission et n'utilisez pas les sorties pour contourner vos tests, review ou publication." },
+    ],
+  },
+  hi: {
+    privacy: [
+      { heading: "Tool input कैसे संभाले जाते हैं", body: "Browser में जांचने योग्य सुरक्षित examples इस्तेमाल करें. Formatting, encoding, decoding, token inspection, text cleanup, color check और generator flows अस्थायी review के लिए हैं; ये long-term storage या account based editor नहीं हैं." },
+      { heading: "Public request की सीमा", body: "Network tools में केवल public domain या public URL डालें. Secret query string, private header, internal host, customer record या ऐसा link शामिल न करें जिसे public diagnostic service से request नहीं किया जाना चाहिए." },
+    ],
+    terms: [
+      { heading: "Copy से पहले review", body: "हर output को working draft मानें. Regex pattern, cron schedule, formatted code, SEO tag, DNS answer, HTTP header और generated value को target runtime, platform docs और project review process से मिलाकर ही इस्तेमाल करें." },
+      { heading: "Quality बचाने वाला use", body: "Service सामान्य manual utility work के लिए है. Repeated requests automate न करें, misleading traffic न बनाएं, permission बिना systems probe न करें, और generated output से अपने testing, review या release process को bypass न करें." },
+    ],
+  },
+  id: {
+    privacy: [
+      { heading: "Cara masukan alat diproses", body: "Gunakan contoh yang aman untuk diperiksa di browser. Format, encoding, decoding, pemeriksaan token, pembersihan teks, cek warna, dan generator adalah alur review sementara, bukan penyimpanan jangka panjang atau editor berbasis akun." },
+      { heading: "Batas permintaan publik", body: "Alat jaringan hanya boleh menerima domain publik atau URL publik. Jangan sertakan query string rahasia, header privat, host internal, catatan pelanggan, atau tautan yang tidak seharusnya diminta oleh layanan diagnostik publik." },
+    ],
+    terms: [
+      { heading: "Periksa sebelum menyalin", body: "Setiap keluaran harus dianggap draft kerja. Cek pola regex, jadwal cron, kode terformat, SEO tag, jawaban DNS, header HTTP, dan nilai yang dibuat terhadap runtime, dokumentasi platform, dan proses review proyek." },
+      { heading: "Penggunaan yang menjaga kualitas", body: "Layanan ini ditujukan untuk kerja utilitas manual biasa. Jangan otomatisasi permintaan berulang, membuat trafik menyesatkan, memeriksa sistem tanpa izin, atau memakai hasil untuk melewati pengujian, review, dan proses rilis." },
+    ],
+  },
+  vi: {
+    privacy: [
+      { heading: "Cách xử lý đầu vào công cụ", body: "Hãy dùng ví dụ an toàn để kiểm tra trong trình duyệt. Định dạng, mã hóa, giải mã, kiểm tra token, làm sạch văn bản, kiểm tra màu và bộ tạo là luồng review tạm thời, không phải nơi lưu dài hạn hay trình chỉnh sửa theo tài khoản." },
+      { heading: "Ranh giới yêu cầu công khai", body: "Công cụ mạng chỉ nên nhận domain công khai hoặc URL công khai. Không đưa query string bí mật, header riêng, host nội bộ, hồ sơ khách hàng hay link không nên được yêu cầu bởi dịch vụ chẩn đoán công khai." },
+    ],
+    terms: [
+      { heading: "Kiểm tra trước khi sao chép", body: "Mọi kết quả nên được xem là bản nháp làm việc. Hãy kiểm tra regex, cron, mã đã định dạng, SEO tag, câu trả lời DNS, HTTP header và giá trị tạo ra với runtime, tài liệu nền tảng và quy trình review dự án." },
+      { heading: "Cách dùng giữ chất lượng", body: "Dịch vụ dành cho công việc tiện ích thủ công thông thường. Không tự động hóa yêu cầu lặp lại, tạo lưu lượng gây hiểu lầm, kiểm tra hệ thống không có quyền, hoặc dùng kết quả để bỏ qua test, review hay quy trình phát hành." },
+    ],
+  },
+  th: {
+    privacy: [
+      { heading: "วิธีจัดการ input ของเครื่องมือ", body: "ใช้ตัวอย่างที่ปลอดภัยต่อการตรวจในเบราว์เซอร์ งาน format, encode, decode, ตรวจ token, cleanup ข้อความ, ตรวจสี และ generator เป็น flow review ชั่วคราว ไม่ใช่ที่เก็บระยะยาวหรือ editor แบบมีบัญชี" },
+      { heading: "ขอบเขต request สาธารณะ", body: "เครื่องมือ network ควรรับเฉพาะ domain สาธารณะหรือ URL สาธารณะ ห้ามใส่ query string ลับ header ส่วนตัว host ภายใน บันทึกลูกค้า หรือลิงก์ที่ไม่ควรถูกเรียกโดยบริการวินิจฉัยสาธารณะ" },
+    ],
+    terms: [
+      { heading: "ตรวจทานก่อนคัดลอก", body: "ทุก output ควรถูกมองเป็นร่างงาน ตรวจ regex pattern, cron schedule, code ที่ format แล้ว, SEO tag, คำตอบ DNS, HTTP header และค่าที่สร้างขึ้นกับ runtime เอกสาร platform และขั้นตอน review ของ project ก่อนใช้" },
+      { heading: "การใช้งานที่รักษาคุณภาพ", body: "บริการนี้มีไว้สำหรับงาน utility แบบ manual ทั่วไป ห้าม automate request ซ้ำ สร้าง traffic ที่ทำให้เข้าใจผิด ตรวจระบบโดยไม่มีสิทธิ์ หรือใช้ผลลัพธ์เพื่อข้าม testing, review หรือ release process ของคุณเอง" },
+    ],
+  },
+  ar: {
+    privacy: [
+      { heading: "كيفية التعامل مع مدخلات الأدوات", body: "استخدم أمثلة آمنة للفحص داخل المتصفح. التنسيق وencoding وdecoding وفحص token وتنظيف النص وفحص الألوان وgenerator هي مسارات مراجعة مؤقتة، وليست تخزينا طويل الأمد أو محررا قائما على حساب." },
+      { heading: "حدود الطلبات العامة", body: "يجب أن تتلقى أدوات الشبكة نطاقات عامة أو URLs عامة فقط. لا تضف query string سريا أو header خاصا أو host داخليا أو سجلات عملاء أو رابطا لا ينبغي أن يطلبه service تشخيص عام." },
+    ],
+    terms: [
+      { heading: "المراجعة قبل النسخ", body: "يجب التعامل مع كل نتيجة كمسودة عمل. راجع regex patterns وcron schedules والكود المنسق وSEO tags وإجابات DNS وHTTP headers والقيم المولدة مع runtime ووثائق المنصة وعملية review في مشروعك." },
+      { heading: "استخدام يحافظ على الجودة", body: "الخدمة مخصصة لعمل utility يدوي عادي. لا تؤتمت الطلبات المتكررة ولا تنشئ traffic مضللا ولا تفحص أنظمة بلا إذن ولا تستخدم المخرجات لتجاوز testing أو review أو release process الخاص بك." },
+    ],
+  },
+};
+
 export function getLocalizedLegalContent(locale: Locale, kind: LegalPageKind) {
   const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
   const advertisingSection = advertisingSections[locale][kind];
   const expansionSections = locale === defaultLocale ? [] : localizedLegalExpansionSections[locale][kind];
   const depthSections = locale === defaultLocale ? [] : (localizedLegalDepthSections[locale]?.[kind] ?? []);
   const auditSections = locale === defaultLocale ? [] : (localizedLegalAuditSections[locale]?.[kind] ?? []);
+  const qualitySections = legalQualitySections[locale][kind];
   const alreadyIncluded = content.sections.some((section) => section.heading === advertisingSection.heading);
 
   return {
     ...content,
     lastUpdated: legalUpdatedAt[locale],
     sections: alreadyIncluded
-      ? [...content.sections, ...expansionSections, ...depthSections, ...auditSections]
-      : [...content.sections, ...expansionSections, ...depthSections, ...auditSections, advertisingSection],
+      ? [...content.sections, ...expansionSections, ...depthSections, ...auditSections, ...qualitySections]
+      : [...content.sections, ...expansionSections, ...depthSections, ...auditSections, ...qualitySections, advertisingSection],
   };
 }

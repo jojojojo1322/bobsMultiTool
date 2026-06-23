@@ -39,16 +39,16 @@ const paths = [
   ...guideSlugs.map((slug) => ({ path: `/guides/${slug}`, kind: "guide", minChars: 3000 })),
   { path: "/about", kind: "trust", minChars: 1400 },
   { path: "/contact", kind: "trust", minChars: 1200 },
-  { path: "/privacy", kind: "legal", minChars: 2000 },
-  { path: "/terms", kind: "legal", minChars: 1700 },
+  { path: "/privacy", kind: "legal", minChars: 2600 },
+  { path: "/terms", kind: "legal", minChars: 2600 },
   ...locales.flatMap((locale) => [
     { path: `/${locale}/tools`, kind: "localized-directory", minChars: 1800 },
     { path: `/${locale}/tools/json-formatter`, kind: "localized-tool", minChars: 2200 },
     { path: `/${locale}/guides/regex-cheat-sheet`, kind: "localized-guide", minChars: 1100 },
     { path: `/${locale}/about`, kind: "localized-trust", minChars: 1800 },
     { path: `/${locale}/contact`, kind: "localized-trust", minChars: 1800 },
-    { path: `/${locale}/privacy`, kind: "localized-legal", minChars: 800 },
-    { path: `/${locale}/terms`, kind: "localized-legal", minChars: 800 },
+    { path: `/${locale}/privacy`, kind: "localized-legal", minChars: 2400 },
+    { path: `/${locale}/terms`, kind: "localized-legal", minChars: 2400 },
   ]),
 ];
 
