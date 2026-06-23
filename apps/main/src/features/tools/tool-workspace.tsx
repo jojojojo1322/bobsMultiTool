@@ -678,7 +678,7 @@ function PrimaryWorkArea({ dictionary, children }: { dictionary: ClientDictionar
 
 function ToolQuickStart({ tool, dictionary }: { tool: ToolDefinition; dictionary: ClientDictionary }) {
   const inputExamples = tool.inputExamples.slice(0, 3);
-  const useCases = tool.useCases.slice(0, 2);
+  const useCases = tool.useCases.slice(0, 3);
   const categoryLabel = dictionary.categories[tool.category] ?? tool.category;
 
   return (
@@ -714,8 +714,8 @@ function ToolQuickStart({ tool, dictionary }: { tool: ToolDefinition; dictionary
 }
 
 function ToolReviewStrip({ tool, dictionary }: { tool: ToolDefinition; dictionary: ClientDictionary }) {
-  const failureCases = (tool.failureCases?.length ? tool.failureCases : commonFailureCases(tool, dictionary)).slice(0, 2);
-  const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary)).slice(0, 2);
+  const failureCases = (tool.failureCases?.length ? tool.failureCases : commonFailureCases(tool, dictionary)).slice(0, 3);
+  const preCopyChecklist = (tool.preCopyChecklist?.length ? tool.preCopyChecklist : commonPreCopyChecklist(tool, dictionary)).slice(0, 3);
 
   return (
     <section className="grid gap-0 border-b bg-muted/20 md:grid-cols-[1fr_1fr]" data-tool-review-strip>
