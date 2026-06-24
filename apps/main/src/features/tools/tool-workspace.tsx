@@ -18,6 +18,7 @@ import { defaultLocale, withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
 import { cn } from "@/lib/utils";
+import { creativeTextToolSlugs } from "./creative-cluster";
 import { toolCategories } from "./registry";
 import type { ToolDefinition } from "./types";
 import type { ToolActionContextValue } from "./tool-components";
@@ -33,6 +34,7 @@ const toolResultAdSlot = process.env.NEXT_PUBLIC_ADSENSE_TOOL_RESULT_SLOT;
 const referenceAdSlot = process.env.NEXT_PUBLIC_ADSENSE_REFERENCE_SLOT;
 const maxRecentTools = 6;
 const maxFavoriteTools = 12;
+const creativeTextToolSlugSet = new Set<string>(creativeTextToolSlugs);
 const ToolPanel = dynamic(() => import("./tool-components").then((module) => module.ToolPanel), {
   loading: () => (
     <div className="space-y-3 rounded-md border bg-muted/30 p-4" data-tool-panel-loading aria-hidden="true">
@@ -254,8 +256,10 @@ function ToolNavigation({
   const scrollStorageKey = navigationScrollStorageKey(locale);
   const recentTools = React.useMemo(() => getLocalizedRelatedTools(recentSlugs, locale), [locale, recentSlugs]);
   const favoriteTools = React.useMemo(() => getLocalizedRelatedTools(favoriteSlugs, locale), [favoriteSlugs, locale]);
+  const creativeTools = React.useMemo(() => getLocalizedRelatedTools(creativeTextToolSlugs, locale), [locale]);
   const showFavoriteTools = !query.trim() && favoriteTools.length > 0;
   const showRecentTools = !query.trim() && recentTools.length > 0;
+  const showCreativeTools = !query.trim() && creativeTools.length > 0;
 
   React.useEffect(() => {
     setRecentSlugs(readRecentToolSlugs(locale).filter((slug) => slug !== activeSlug));
@@ -360,8 +364,39 @@ function ToolNavigation({
             </div>
           </div>
         ) : null}
+        {showCreativeTools ? (
+          <div className="space-y-2" data-creative-tool-navigation>
+            <div className="px-2">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{dictionary.toolUi.creativeHubNavTitle}</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">{dictionary.toolUi.creativeHubNavDescription}</p>
+            </div>
+            <div className="space-y-1">
+              {creativeTools.map((tool) => (
+                <Link
+                  key={tool.slug}
+                  href={withLocale(`/tools/${tool.slug}`, locale)}
+                  scroll={false}
+                  onPointerDown={saveCurrentScroll}
+                  onClick={() => {
+                    saveCurrentScroll();
+                    onNavigate?.();
+                  }}
+                  className={cn(
+                    "block rounded-md border border-transparent px-2 py-2 text-sm transition-colors",
+                    activeSlug === tool.slug
+                      ? "border-border bg-muted text-foreground"
+                      : "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+                  )}
+                >
+                  <span className="font-medium">{tool.shortTitle}</span>
+                  <span className="mt-0.5 block line-clamp-2 text-xs">{tool.description}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
         {toolCategories.map((category) => {
-          const categoryTools = filteredTools.filter((tool) => tool.category === category);
+          const categoryTools = filteredTools.filter((tool) => tool.category === category && (query.trim() || !creativeTextToolSlugSet.has(tool.slug)));
           if (!categoryTools.length) return null;
           return (
             <div key={category} className="space-y-2">

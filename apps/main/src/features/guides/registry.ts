@@ -445,6 +445,38 @@ const guideSections = {
       bullets: ["Count titles and descriptions before publishing.", "Diff repeated guide sections to find boilerplate.", "Use slug generation to keep URL names readable."],
     },
   ],
+  "creative-text-symbol-workflow": [
+    {
+      heading: "Treat decorative text as real output",
+      body: "Symbols, ASCII banners, and dot art look playful, but they still need the same review loop as other copy-ready tools. The destination app, font, field width, and line-break handling decide whether the art survives after copying.",
+      bullets: ["Preview the result in the target field before publishing.", "Keep mobile width in mind for bios, comments, and profile labels.", "Use ASCII-safe output when the destination does not support Unicode symbols."],
+    },
+    {
+      heading: "Start from symbols, then build larger art",
+      body: "A good creative text workflow starts with individual symbols and code points, then moves into fancy text, ASCII banners, kaomoji, emoji combos, or dot grids only when the small pieces render correctly. This keeps a decorative string from becoming a broken block of missing glyphs.",
+      bullets: ["Pick arrows, stars, brackets, and box drawing characters first.", "Check code points for uncommon symbols before embedding them in docs or HTML.", "Move to fancy text, ASCII, or dot art after the destination font is known."],
+    },
+    {
+      heading: "Match the joke to the surface",
+      body: "Funny text is useful when it fits the place where it will be pasted. Meme case, upside-down text, kaomoji, and emoji combos work well in comments and short captions, while profile bios need a cleaner line with stricter length checks.",
+      bullets: ["Use meme and upside-down output for short comments.", "Use bio templates when the destination has tight profile limits.", "Keep emoji combos short enough to read at mobile sizes."],
+    },
+    {
+      heading: "Control width before copying",
+      body: "Most failures in text art come from wrapping rather than generation. Count rows and columns, avoid very wide banners, and choose compact presets when the output will be pasted into a narrow mobile surface.",
+      bullets: ["Short words make better ASCII banners.", "Small grids survive better in comments and chat fields.", "Check fancy text, kaomoji, and emoji combos before using them in proportional fonts."],
+    },
+    {
+      heading: "Keep copy-paste content original",
+      body: "Do not rely on scraped art collections or copied galleries. Generated symbols, browser-local grids, and original presets keep the page useful without duplicating another site's catalog.",
+      bullets: ["Use generated output and hand-authored presets.", "Avoid collecting third-party art blocks as source content.", "Let users build their own copyable result in the browser."],
+    },
+    {
+      heading: "Continue with adjacent text tools",
+      body: "After the creative output is ready, use counters, HTML entity conversion, QR codes, or text cleanup tools depending on where the content will be used. This turns a one-off decoration into a practical multi-step workflow.",
+      bullets: ["Use Aesthetic Bio Builder, Fancy Text Generator, Emoji Combo Builder, and Kaomoji Maker for profile copy.", "Use Meme Text Transformer and Upside Down Text Generator for comments and captions.", "Use Word Character Counter for profile and title limits before posting."],
+    },
+  ],
 } satisfies Record<string, GuideSection[]>;
 
 export const guides: GuideDefinition[] = [
@@ -559,6 +591,13 @@ export const guides: GuideDefinition[] = [
     description: "Sort, dedupe, count, preview, and normalize text before using it in code or content systems.",
     relatedTools: ["case-converter", "slug-generator", "text-sort-dedupe", "word-character-counter"],
     sections: guideSections["text-cleanup-workflow"],
+  },
+  {
+    slug: "creative-text-symbol-workflow",
+    title: "Creative text and symbol workflow",
+    description: "How to create copy-paste symbols, fancy text, ASCII banners, kaomoji, emoji combos, bios, and dot art while checking width, rendering, and originality.",
+    relatedTools: ["special-character-picker", "fancy-text-generator", "aesthetic-bio-builder", "emoji-combo-builder", "kaomoji-maker", "meme-text-transformer", "upside-down-text-generator", "ascii-art-generator", "dot-art-editor", "word-character-counter"],
+    sections: guideSections["creative-text-symbol-workflow"],
   },
 ];
 

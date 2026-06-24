@@ -9,6 +9,7 @@ import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
 import { getLocalizedTrustContent } from "@/features/i18n/trust-content";
+import { creativeTextToolSlugs } from "@/features/tools/creative-cluster";
 import { toolCategories } from "@/features/tools/registry";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
 import type { ToolDefinition } from "@/features/tools/types";
@@ -24,6 +25,7 @@ const acquisitionClusterSlugs = [
   ["regex-tester", "javascript-formatter", "sql-formatter", "text-diff"],
 ];
 
+const creativeTextToolSlugSet = new Set<string>(creativeTextToolSlugs);
 const isToolDefinition = (tool: ToolDefinition | undefined): tool is ToolDefinition => Boolean(tool);
 
 export function readSearchQuery(searchParams?: Record<string, string | string[] | undefined>) {
@@ -46,6 +48,8 @@ export function ToolDirectory({
   const localizedTools = getLocalizedTools(locale);
   const coreTools = localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 12);
   const localizedToolBySlug = new Map(localizedTools.map((tool) => [tool.slug, tool]));
+  const creativeTools = creativeTextToolSlugs.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition);
+  const [leadCreativeTool, ...supportCreativeTools] = creativeTools;
   const aboutContent = getLocalizedTrustContent(locale, "about");
   const contactContent = getLocalizedTrustContent(locale, "contact");
   const privacyContent = getLocalizedLegalContent(locale, "privacy");
@@ -115,6 +119,52 @@ export function ToolDirectory({
           </div>
         </div>
       </section>
+      {leadCreativeTool ? (
+        <section className="border-b bg-background" data-creative-tool-hub>
+          <div className="mx-auto max-w-7xl px-4 py-6">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{dictionary.toolUi.creativeHubEyebrow}</p>
+                <h2 className="mt-1 text-lg font-semibold">{dictionary.toolUi.creativeHubTitle}</h2>
+                <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{dictionary.toolUi.creativeHubDescription}</p>
+              </div>
+              <Badge>{creativeTools.length} {dictionary.nav.tools}</Badge>
+            </div>
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <Link href={withLocale(`/tools/${leadCreativeTool.slug}`, locale)} className="rounded-md border bg-muted/20 p-4 transition-colors hover:bg-muted/40">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <Badge>{dictionary.toolUi.creativeHubLeadLabel}</Badge>
+                    <h3 className="mt-3 text-base font-semibold">{leadCreativeTool.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{leadCreativeTool.description}</p>
+                  </div>
+                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
+                </div>
+                <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                  {leadCreativeTool.inputExamples.slice(0, 3).map((example) => (
+                    <span key={example} className="min-w-0 rounded-sm border bg-background px-2 py-1.5 text-xs text-muted-foreground">
+                      <span className="line-clamp-1">{example}</span>
+                    </span>
+                  ))}
+                </div>
+              </Link>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {supportCreativeTools.map((tool) => (
+                  <Link key={tool.slug} href={withLocale(`/tools/${tool.slug}`, locale)} className="rounded-md border bg-background px-3 py-2.5 transition-colors hover:bg-muted/60">
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium">{tool.shortTitle}</span>
+                        <span className="mt-1 block line-clamp-2 text-xs leading-5 text-muted-foreground">{tool.useCases[0] ?? tool.description}</span>
+                      </span>
+                      <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
       <section className="border-b" data-workflow-recipes>
         <div className="mx-auto max-w-7xl px-4 py-6">
           <div className="mb-3 flex items-center justify-between gap-3">
@@ -178,7 +228,7 @@ export function ToolDirectory({
       </section>
       <section className="mx-auto max-w-7xl px-4 py-8">
         {toolCategories.map((category) => {
-          const categoryTools = localizedTools.filter((tool) => tool.category === category);
+          const categoryTools = localizedTools.filter((tool) => tool.category === category && !creativeTextToolSlugSet.has(tool.slug));
           if (!categoryTools.length) return null;
 
           return (

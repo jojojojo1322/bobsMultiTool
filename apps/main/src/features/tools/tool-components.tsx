@@ -24,6 +24,7 @@ import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { cn } from "@/lib/utils";
 import type { ToolComponentKey, ToolDefinition } from "./types";
 import type { LocalizedWorkflowRecipe } from "./workflows";
+import { AestheticBioBuilderTool, AsciiArtGeneratorTool, DotArtEditorTool, EmojiComboBuilderTool, FancyTextGeneratorTool, KaomojiMakerTool, MemeTextTransformerTool, SpecialCharacterPickerTool, UpsideDownTextTool } from "./creative-text-tools";
 
 const commonTimeZones = ["UTC", "Asia/Seoul", "Asia/Tokyo", "America/New_York", "America/Los_Angeles", "Europe/London", "Europe/Berlin", "Asia/Kolkata"];
 const sampleTimestampSeconds = "1704067200";
@@ -7305,6 +7306,15 @@ export const toolComponentMap: Record<ToolComponentKey, React.ComponentType<{ di
   javascriptFormatter: JavaScriptFormatterTool,
   javascriptMinifier: JavaScriptMinifierTool,
   markdownPreview: MarkdownPreviewTool,
+  specialCharacterPicker: SpecialCharacterPickerTool,
+  asciiArtGenerator: AsciiArtGeneratorTool,
+  dotArtEditor: DotArtEditorTool,
+  fancyTextGenerator: FancyTextGeneratorTool,
+  upsideDownText: UpsideDownTextTool,
+  memeTextTransformer: MemeTextTransformerTool,
+  kaomojiMaker: KaomojiMakerTool,
+  emojiComboBuilder: EmojiComboBuilderTool,
+  aestheticBioBuilder: AestheticBioBuilderTool,
   textSortDedupe: TextSortDedupeTool,
   wordCounter: WordCounterTool,
   urlParser: UrlParserTool,
