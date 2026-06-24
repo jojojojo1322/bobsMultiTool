@@ -1,9 +1,9 @@
-import { guides } from "@/features/guides/registry";
-import { defaultLocale, isLocale, locales, withLocale, type Locale } from "@/features/i18n/config";
-import { tools } from "@/features/tools/registry";
+import { defaultLocale, type Locale } from "@/features/i18n/config";
+import { getBlogPosts } from "@/features/content/blog";
 
 const siteUrl = "https://www.bobob.app";
-const lastmod = "2026-06-23";
+const lastmod = "2026-06-24";
+const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
 
@@ -29,39 +29,24 @@ function escapeXml(value: string) {
 function basePaths(): SitemapPath[] {
   return [
     { path: "/", changefreq: "weekly", priority: "1.0" },
-    { path: "/tools", changefreq: "weekly", priority: "0.9" },
-    ...tools.map((tool) => ({
-      path: `/tools/${tool.slug}`,
-      changefreq: "weekly" as const,
-      priority: tool.monetizationTier === "core" ? "0.9" : tool.monetizationTier === "growth" ? "0.8" : "0.7",
-    })),
-    { path: "/guides", changefreq: "monthly", priority: "0.7" },
-    ...guides.map((guide) => ({
-      path: `/guides/${guide.slug}`,
+    { path: "/blog", changefreq: "weekly", priority: "0.8" },
+    ...getBlogPosts().map((post) => ({
+      path: `/blog/${post.slug}`,
       changefreq: "monthly" as const,
       priority: "0.7",
     })),
-    { path: "/about", changefreq: "yearly", priority: "0.4" },
-    { path: "/contact", changefreq: "yearly", priority: "0.4" },
-    { path: "/privacy", changefreq: "yearly", priority: "0.3" },
-    { path: "/terms", changefreq: "yearly", priority: "0.3" },
+    { path: "/play", changefreq: "weekly", priority: "0.8" },
+    { path: "/play/office-survival", changefreq: "weekly", priority: "0.9" },
+    { path: "/tools", changefreq: "monthly", priority: "0.5" },
   ];
 }
 
 function alternateLinks(path: string) {
-  const xDefault = `<xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(absoluteUrl(withLocale(path, defaultLocale)))}" />`;
-  const localeLinks = locales
-    .map((locale) => {
-      const href = absoluteUrl(withLocale(path, locale));
-      return `<xhtml:link rel="alternate" hreflang="${locale}" href="${escapeXml(href)}" />`;
-    })
-    .join("");
-
-  return `${xDefault}${localeLinks}`;
+  return `<xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(absoluteUrl(path))}" />`;
 }
 
 export function sitemapLocales() {
-  return [...locales];
+  return [...sitemapSubmissionLocales];
 }
 
 export function sitemapIndexXml() {
@@ -75,10 +60,11 @@ export function sitemapIndexXml() {
   return `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries}</sitemapindex>`;
 }
 
-export function localizedSitemapXml(locale: Locale) {
+export function localizedSitemapXml(_locale: Locale) {
+  void _locale;
   const entries = basePaths()
     .map((entry) => {
-      const loc = absoluteUrl(withLocale(entry.path, locale));
+      const loc = absoluteUrl(entry.path);
       return [
         "<url>",
         `<loc>${escapeXml(loc)}</loc>`,
@@ -95,7 +81,7 @@ export function localizedSitemapXml(locale: Locale) {
 }
 
 export function isSitemapLocale(value: string): value is Locale {
-  return isLocale(value);
+  return (sitemapSubmissionLocales as readonly string[]).includes(value);
 }
 
 export function sitemapUrlCountPerLocale() {

@@ -5,12 +5,12 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 
 # Bobob AdSense SEO
 
-- AdSense and search acquisition are core product goals, but revenue operations are internal. Public pages should improve trust and utility without showing approval, monetization, fake ad, or demand-tier wording.
+- Search acquisition and safe content quality remain core goals, but revenue operations are internal. Public pages should improve trust, utility, and Play engagement without showing approval, monetization, fake ad, or demand-tier wording.
 - Never store or print Vercel tokens, AdSense account credentials, API keys, or other secrets in repo files, AGENTS.md, skills, reports, git history, or final answers. Use command-time environment variables such as `VERCEL_TOKEN`.
 - Canonical host is `https://www.bobob.app`.
 - `bobob.app` should permanently redirect to `www.bobob.app` with an explicit 308 canonical host redirect before locale redirects run.
 - Legacy standalone apps must not be restored. Legacy entry paths should redirect from `apps/main` to the matching `/tools/{slug}` page.
-- `/sitemap.xml` must be a sitemap index. Per-locale sitemaps live at `/sitemaps/{locale}` and must include home, tools, guides, about, contact, privacy, and terms for that locale.
+- `/sitemap.xml` must be a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small through `/sitemaps/{locale}` routes: `/`, `/blog`, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore full per-locale URL coverage until localized Blog/Play pages exist and there is measured demand.
 - `/about` and `/contact` are required trust pages. They must exist for default English and supported locale prefixes, use localized trust content, appear in footer trust navigation, and be reachable as final 200 URLs.
 - `/tools` and `/{locale}/tools` must return 200 as tool directory pages. They are SEO hub pages and must not redirect to a single tool.
 - Sitemap entries must point only to final public URLs expected to return 200.
@@ -21,7 +21,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Arabic locale routes must keep RTL layout coverage.
 - Locale routing may use NEXT_LOCALE, Accept-Language, and country headers such as x-vercel-ip-country or cf-ipcountry.
 - IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
-- Do not cap localized sitemap coverage in a single static file. Use the sitemap index to expose every supported locale/tool/guide URL.
+- Do not add a static sitemap file. Use the sitemap index even when the current submitted URL set is intentionally reduced.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.
 - Meta Tag Generator and Open Graph Preview pages should strengthen SEO by checking title/description length, canonical/page host, image host, robots policy, HTTPS status, local/private hosts, noindex risk, and image format before raw tag output.

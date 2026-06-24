@@ -177,17 +177,22 @@ for (const fragment of [
   "localizedSitemapXml",
   "xmlns:xhtml",
   "hreflang=\"x-default\"",
+  "getBlogPosts",
+  'path: "/"',
+  'path: "/blog"',
+  'path: "/play"',
+  'path: "/play/office-survival"',
   'path: "/tools"',
-  "tools.map",
-  "guides.map",
   "sitemapLocales",
+  "sitemapSubmissionLocales",
 ]) {
   if (!sitemapSource.includes(fragment)) failures.push(`sitemap source missing ${fragment}`);
 }
 
-const urlsPerLocale = slugs.length + guideSlugs.size + 7;
-const totalLocalizedUrls = urlsPerLocale * locales.length;
-if (totalLocalizedUrls < 900) failures.push(`expected at least 900 localized sitemap URLs, found ${totalLocalizedUrls}`);
+const reducedSitemapCountMatch = sitemapSource.match(/function basePaths\(\)[\s\S]*?\n}\n\nfunction alternateLinks/);
+if (!reducedSitemapCountMatch?.[0]?.includes("/play/office-survival")) {
+  failures.push("reduced content sitemap should include the first priority Play page");
+}
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 if (JSON.stringify(packageJson.workspaces) !== JSON.stringify(["apps/main"])) failures.push("root workspaces must stay apps/main only");
@@ -198,4 +203,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Registry harness passed for ${slugs.length} tools, ${guideSlugs.size} guides, ${locales.length} locale sitemaps, and ${totalLocalizedUrls} localized sitemap URLs.`);
+console.log(`Registry harness passed for ${slugs.length} archived tools, ${guideSlugs.size} guides, ${locales.length} configured locales, and the reduced Blog + Play sitemap policy.`);

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { countryLocaleMap, defaultLocale, isLocale, normalizeLocale, pathHasLocale, withLocale, type Locale } from "@/features/i18n/config";
+import { countryLocaleMap, defaultLocale, isLocale, normalizeLocale, pathHasLocale, type Locale } from "@/features/i18n/config";
 
 const PUBLIC_FILE = /\.(.*)$/;
 const apexHost = "bobob.app";
 const canonicalHost = "www.bobob.app";
 const skippedPrefixes = ["/_next", "/api", "/sitemaps"];
+const contentExperimentPrefixes = ["/blog", "/play"];
 const searchCrawlerPattern =
   /googlebot|bingbot|bingpreview|duckduckbot|slurp|baiduspider|yandexbot|applebot|petalbot|seznambot|facebookexternalhit|twitterbot|linkedinbot/i;
 
@@ -40,6 +41,10 @@ function preferredLocale(request: NextRequest): Locale {
 
 function isSearchCrawler(request: NextRequest) {
   return searchCrawlerPattern.test(request.headers.get("user-agent") ?? "");
+}
+
+function isContentExperimentPath(pathname: string) {
+  return pathname === "/" || contentExperimentPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 function nextWithLocale(request: NextRequest, locale: Locale) {
@@ -80,14 +85,12 @@ export function middleware(request: NextRequest) {
 
   if (pathHasLocale(pathname)) return nextWithLocale(request, firstSegment as Locale);
 
+  if (isContentExperimentPath(pathname)) return nextWithLocale(request, "ko");
+
   if (isSearchCrawler(request)) return nextWithLocale(request, defaultLocale);
 
-  const locale = preferredLocale(request);
-  if (locale === defaultLocale) return nextWithLocale(request, defaultLocale);
-
-  const url = request.nextUrl.clone();
-  url.pathname = withLocale(pathname, locale);
-  return NextResponse.redirect(url);
+  preferredLocale(request);
+  return nextWithLocale(request, defaultLocale);
 }
 
 export const config = {

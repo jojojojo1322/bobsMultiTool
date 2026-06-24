@@ -502,6 +502,7 @@ function measurementBacklog(contentItems, searchRowsByPage, adsenseRowsByPage) {
 
 function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
   const workflowSearchIntentSeeds = readWorkflowSearchIntentSeeds();
+  const criticalArchiveSearchIntentSeeds = ["regex tester", "email regex"];
   const priorityPages = measurementBacklogRows.slice(0, 25).map((row) => ({
     path: row.path,
     canonicalUrl: `https://www.bobob.app${row.path}`,
@@ -515,7 +516,9 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
   const canonicalUrls = priorityPages.map((row) => row.canonicalUrl);
   const searchConsolePageRegex = canonicalUrls.length ? `^(${canonicalUrls.map(escapeRegexLiteral).join("|")})$` : "";
   const requiredMeasuredPathsEnv = priorityPages.map((row) => row.path).join(",");
-  const searchIntentSeedList = Array.from(new Set([...workflowSearchIntentSeeds, ...priorityPages.flatMap((row) => row.searchIntents)])).slice(0, 180);
+  const searchIntentSeedList = Array.from(
+    new Set([...criticalArchiveSearchIntentSeeds, ...workflowSearchIntentSeeds, ...priorityPages.flatMap((row) => row.searchIntents)]),
+  ).slice(0, 180);
 
   return {
     status: measuredCoverageSummary.pass ? "covered" : "needs-measured-exports",

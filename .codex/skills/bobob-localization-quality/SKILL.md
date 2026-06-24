@@ -6,6 +6,7 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 # Bobob Localization Quality
 
 - English is the source locale and stays unprefixed.
+- During the Blog + Play MVP, unprefixed Blog/Play pages are the submitted canonical content set. Do not add localized Blog/Play routes or hreflang alternates unless the visible prose, metadata, and content data are localized for that route.
 - Non-English pages must render localized visible prose through `getLocalizedTool`, `getLocalizedGuide`, `getLocalizedTools`, `getLocalizedGuides`, and `searchLocalizedTools`; they must not expose raw English registry prose.
 - Tool names, slugs, JSON/JWT/UUID/CSS/SQL/Base64, and code sample values may remain technical terms. Sentence copy, descriptions, examples, FAQ, guide sections, search result descriptions, and metadata descriptions must be localized.
 - Common dictionary prose is part of localization quality. Non-English site descriptions, home descriptions, privacy/server/local chips, empty states, and legal page copy must not fall back to mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server`.
@@ -46,5 +47,5 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 - Locale-specific dictionary overrides must not re-spread English nested objects over common localized text. The merge order should preserve locale common text before applying only true per-locale overrides.
 - Arabic routes must keep `dir="rtl"` and visual QA coverage.
 - Locale routes must set the root `<html lang>` and `<html dir>` through the middleware locale handoff. A localized `<main>` alone is not enough for multilingual SEO or accessibility.
-- When visible prose, metadata copy, tool registry copy, guide copy, or locale policy changes, update AGENTS.md, this skill, and the localization harness.
+- When visible prose, metadata copy, tool registry copy, guide copy, Blog/Play copy, or locale policy changes, update AGENTS.md, this skill, and the localization harness.
 - Run `npm run harness:localization`, `npm run harness:i18n`, and browser or visual harness checks for `/ko`, `/ja`, `/de`, `/es`, `/hi`, `/th`, and `/ar`.

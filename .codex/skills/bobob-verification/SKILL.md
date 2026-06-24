@@ -7,6 +7,7 @@ description: Use before handing off Bob's Multi Tool changes, especially route, 
 
 - Keep handoff/status text short unless the user explicitly asks for analysis.
 - UI, CSS, layout, theme, localization, or background changes require real browser verification on `localhost` before handoff.
+- Blog + Play MVP changes should verify `/`, `/blog`, `/play`, `/play/office-survival`, `/tools`, and the reduced sitemap index before handoff.
 - If `npm run build` ran while a local server was already running, restart the server before browser verification so stale CSS/JS chunks do not create false visual failures.
 - Do not expose access tokens or secrets in verification output. Pass deployment credentials as environment variables such as `VERCEL_TOKEN`.
 
@@ -73,7 +74,7 @@ Include:
 - Default and localized about/contact trust pages through `getLocalizedTrustContent`, footer trust navigation, and sitemap inclusion.
 - Non-English common labels and chips, including privacy/server/local indicators, should be localized and should not show English fallback fragments outside the English source route.
 - Arabic RTL route and visible prose.
-- Sitemap index at `/sitemap.xml`, per-locale sitemaps at `/sitemaps/en`, `/sitemaps/ko`, `/sitemaps/ar`, and full locale URL coverage without the old 200 URL static cap.
+- Sitemap index at `/sitemap.xml` and the current reduced submitted sitemap at `/sitemaps/en`; old per-locale sitemaps are paused, and full per-locale URL coverage should not be restored until localized Blog/Play content exists.
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.

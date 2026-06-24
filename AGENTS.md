@@ -2,9 +2,10 @@
 
 ## Product North Star
 
-- Bob's Multi Tool is a monetized developer utility product. The top priorities are AdSense approval readiness, organic search acquisition, repeat usage, session depth, and high-quality mobile/desktop UX.
-- Optimize for high-demand deterministic utilities first: JSON, Regex, JWT, Base64, Cron, UUID, Hash, Password, QR, DNS, HTTP, Color, SQL, CSS, and JavaScript clusters.
-- Do not let short-term visual experiments damage the product objective. Any visual change must preserve the working input/output loop, SEO crawlability, accessibility, and AdSense-safe layout.
+- As of 2026-06-24, bobob.app is being redirected from a developer-tool-first SEO site into a small Blog + Play content experiment lab. The priority is short search-led posts, clickable Play content, shareable results, light support links, session depth, and high-quality mobile/desktop UX.
+- The existing developer tools remain archived under `/tools`; keep them working, searchable, and safe, but do not present them as the main service on the home page.
+- Optimize new work for content/play registry throughput: content metadata -> blog page -> play page -> result/share page -> SEO metadata -> sitemap -> smoke test.
+- Do not let short-term visual experiments damage the product objective. Any visual change must preserve crawlability, accessibility, static performance, and safe layout.
 
 ## Collaboration And Handoff
 
@@ -33,6 +34,8 @@
 - `/about` and `/contact` are required trust pages. They must exist for the default English route and supported locale prefixes, use `getLocalizedTrustContent` for localized trust content, appear in the footer trust navigation, and be included in localized sitemaps.
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
+- New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Prefer one reusable Play engine per format, starting with survival simulators.
+- Play MVP pages should expose the game surface, result/share actions, related content links, and a support/coffee link without requiring login, ranking, comments, payment, user saves, or server state.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
@@ -112,7 +115,7 @@
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Search crawlers must receive final 200 responses on canonical unprefixed sitemap URLs such as `/`, `/tools`, and `/tools/{slug}`; do not geolocation-redirect known bots away from the sitemap URL set.
 - IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
-- Sitemap exposure must use `/sitemap.xml` as a sitemap index and `/sitemaps/{locale}` for full per-locale URL coverage, including home, tools, guides, about, contact, privacy, and terms. Do not return to a capped static sitemap that drops locale tool pages.
+- Sitemap exposure must use `/sitemap.xml` as a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small and canonical: `/`, `/blog`, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore broad full per-locale URL coverage until content proves demand and localized Blog/Play pages exist.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.
 - Non-English common dictionary prose must include localized site descriptions, home descriptions, privacy/server/local chips, and legal page copy. Avoid leaving mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server` outside the English source locale.

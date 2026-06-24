@@ -13,11 +13,11 @@ const adsenseEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bobob.app"),
   title: {
-    default: "Bob's Multi Tool - Practical Developer Utilities",
+    default: "bobob.app - Blog and Play Lab",
     template: "%s | Bob's Multi Tool",
   },
   description:
-    "A focused workbench of free developer tools for regex testing, cron expressions, meta tags, JSON formatting, JWT decoding, URL encoding, Base64, timestamps, UUIDs, iframe previews, and placeholder text.",
+    "A lightweight Blog + Play content lab for short reads, interactive mini games, quizzes, tests, and archived developer tools.",
   authors: [{ name: "Bob" }],
   creator: "Bob's Multi Tool",
   publisher: "Bob's Multi Tool",
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: openGraphLocales.en,
     url: "https://www.bobob.app",
-    siteName: "Bob's Multi Tool",
-    title: "Bob's Multi Tool - Practical Developer Utilities",
+    siteName: "bobob.app",
+    title: "bobob.app - Blog and Play Lab",
     description:
-      "A practical developer workbench with fast utilities, clear examples, and search-friendly guides.",
+      "Short reads and interactive Play content, with the original developer tools kept as an archive.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bob's Multi Tool - Practical Developer Utilities",
-    description: "Free online tools for everyday developer workflows.",
+    title: "bobob.app - Blog and Play Lab",
+    description: "Short reads, interactive Play content, and archived developer tools.",
   },
   robots: {
     index: true,
@@ -66,10 +66,10 @@ export default async function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Bob's Multi Tool",
-    alternateName: "Bobob Developer Utilities",
+    name: "bobob.app",
+    alternateName: "Bobob Blog and Play Lab",
     url: "https://www.bobob.app",
-    description: dictionary.siteDescription,
+    description: "A lightweight Blog + Play content lab for short reads, interactive mini games, quizzes, tests, and archived developer tools.",
     inLanguage: locale,
     creator: {
       "@type": "Person",

@@ -40,6 +40,18 @@ async function gotoWithRetry(page, url) {
 
 const scenarios = [
   {
+    name: "content-home-desktop",
+    path: "/",
+    viewport: { width: 1440, height: 1000 },
+    expectedText: ["퇴근 생존기", "Latest Blog", "Popular Tools"],
+  },
+  {
+    name: "office-survival-mobile",
+    path: "/play/office-survival",
+    viewport: { width: 390, height: 844 },
+    expectedText: ["퇴근 생존기", "오늘의 선택 로그"],
+  },
+  {
     name: "tools-desktop",
     path: "/tools?q=json",
     viewport: { width: 1440, height: 1000 },

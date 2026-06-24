@@ -15,6 +15,10 @@ const guideSlugs = Array.from(guides.matchAll(/slug:\s+"([^"]+)"/g)).map((match)
 
 const paths = [
   "/",
+  "/blog",
+  "/blog/office-survival-workday",
+  "/play",
+  "/play/office-survival",
   "/tools",
   "/tools?q=json",
   ...toolSlugs.map((slug) => `/tools/${slug}`),
@@ -37,8 +41,6 @@ const paths = [
   "/robots.txt",
   "/sitemap.xml",
   "/sitemaps/en",
-  "/sitemaps/ko",
-  "/sitemaps/ar",
   "/ads.txt",
 ];
 
