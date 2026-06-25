@@ -11,6 +11,7 @@
 
 - Keep progress updates short. Prefer one-line status notes with current task, changed file group, and verification result; avoid long streaming explanations unless the user asks for analysis.
 - Work in small validated slices: Audit -> One Slice -> Harness -> Browser Check -> Stop.
+- Run `npm run harness:blog-play-mvp` after Blog/Play content, engine, result-link, sitemap, feed, or discovery metadata changes.
 - After UI, CSS, layout, theme, localization, or background changes, inspect `localhost` in a real browser before handoff. If a build ran while a local server is active, restart the server before visual verification so stale CSS/JS chunks do not break the page.
 - Do not put access tokens, Vercel tokens, API keys, or other secrets in AGENTS.md, skills, source files, docs, git history, or final answers. Use environment variables such as `VERCEL_TOKEN` only at command time.
 

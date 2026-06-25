@@ -1,0 +1,259 @@
+import fs from "node:fs";
+import path from "node:path";
+
+const root = process.cwd();
+const blogDir = path.join(root, "content/blog");
+const playDir = path.join(root, "content/play");
+const blogCategoryPath = path.join(root, "apps/main/src/features/content/blog-categories.ts");
+const contentSearchPath = path.join(root, "apps/main/src/features/content/search.ts");
+const contentStructuredDataPath = path.join(root, "apps/main/src/features/content/structured-data.ts");
+const discoveryPath = path.join(root, "apps/main/src/features/content/discovery.ts");
+const sitemapPath = path.join(root, "apps/main/src/features/seo/sitemaps.ts");
+const feedPath = path.join(root, "apps/main/src/features/seo/feed.ts");
+const llmsPath = path.join(root, "apps/main/src/features/seo/llms.ts");
+const opensearchPath = path.join(root, "apps/main/src/features/seo/opensearch.ts");
+const playDetailPath = path.join(root, "apps/main/src/app/play/[slug]/page.tsx");
+const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
+const playResultLinksPath = path.join(root, "apps/main/src/features/play/result-links.tsx");
+const playEngineDir = path.join(root, "apps/main/src/features/play");
+const appSourceDir = path.join(root, "apps/main/src");
+
+const requiredBlogSlugs = [
+  "ai-side-project-realistic-order",
+  "cursor-codex-web-service-bottlenecks",
+  "search-console-misreads-for-indie-devs",
+  "small-web-games-retention",
+  "vercel-sitemap-canonical-log",
+  "human-decisions-in-ai-coding",
+  "why-bobob-shifted-to-content-lab",
+  "static-micro-games-architecture",
+];
+const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker"];
+const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
+const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game"];
+const disallowedSupportLinkPatterns = [/buymeacoffee/i, /ko-fi/i, /paypal/i, /toss\.me/i, /후원\s*링크/, /커피값/];
+
+const failures = [];
+
+function read(filePath) {
+  return fs.readFileSync(filePath, "utf8");
+}
+
+function parseFrontmatter(source) {
+  const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (!match) return {};
+
+  return Object.fromEntries(
+    match[1]
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const separatorIndex = line.indexOf(":");
+        if (separatorIndex === -1) return [line, ""];
+        const key = line.slice(0, separatorIndex).trim();
+        const value = line.slice(separatorIndex + 1).trim().replace(/^"|"$/g, "");
+        return [key, value];
+      }),
+  );
+}
+
+function bodyFromMdx(source) {
+  return source.replace(/^---\n[\s\S]*?\n---\n?/, "").trim();
+}
+
+function dateDaysBetween(startDate, endDate) {
+  const start = new Date(`${startDate}T00:00:00+09:00`);
+  const end = new Date(`${endDate}T00:00:00+09:00`);
+  return Math.round((end.getTime() - start.getTime()) / 86_400_000);
+}
+
+function listFiles(dir, extension) {
+  return fs.readdirSync(dir).filter((file) => file.endsWith(extension)).sort();
+}
+
+function scanFiles(dir, predicate) {
+  const matches = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      matches.push(...scanFiles(fullPath, predicate));
+      continue;
+    }
+    if (predicate(fullPath)) matches.push(fullPath);
+  }
+  return matches;
+}
+
+const blogEntries = listFiles(blogDir, ".mdx").map((file) => {
+  const filePath = path.join(blogDir, file);
+  const source = read(filePath);
+  const frontmatter = parseFrontmatter(source);
+  const body = bodyFromMdx(source);
+
+  return {
+    file,
+    source,
+    body,
+    bodyChars: body.replace(/\s+/g, " ").length,
+    slug: frontmatter.slug,
+    title: frontmatter.title,
+    description: frontmatter.description,
+    date: frontmatter.date,
+    category: frontmatter.category,
+    relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
+  };
+});
+const playEntries = listFiles(playDir, ".json").map((file) => ({
+  file,
+  ...JSON.parse(read(path.join(playDir, file))),
+}));
+const blogBySlug = new Map(blogEntries.map((entry) => [entry.slug, entry]));
+const playBySlug = new Map(playEntries.map((entry) => [entry.slug, entry]));
+
+if (blogEntries.length < 24) failures.push(`expected at least 24 Blog posts for the expanded MVP, found ${blogEntries.length}`);
+if (playEntries.length < 5) failures.push(`expected at least 5 Play entries, found ${playEntries.length}`);
+
+for (const slug of requiredBlogSlugs) {
+  if (!blogBySlug.has(slug)) failures.push(`missing required MVP Blog post: ${slug}`);
+}
+for (const slug of requiredPlaySlugs) {
+  if (!playBySlug.has(slug)) failures.push(`missing required MVP Play entry: ${slug}`);
+}
+for (const type of requiredPlayTypes) {
+  if (!playEntries.some((entry) => entry.type === type)) failures.push(`missing Play engine content type: ${type}`);
+}
+
+const categorySource = read(blogCategoryPath);
+for (const category of requiredCategories) {
+  const count = blogEntries.filter((entry) => entry.category === category).length;
+  if (count < 2) failures.push(`Blog category "${category}" should have at least 2 posts, found ${count}`);
+  if (!categorySource.includes(`label: "${category}"`)) failures.push(`Blog category definition missing label: ${category}`);
+}
+const dates = blogEntries.map((entry) => entry.date).filter(Boolean).sort();
+if (dates.length !== blogEntries.length) failures.push("all Blog posts must have a date");
+if (dates.length && dateDaysBetween(dates[0], dates[dates.length - 1]) < 90) {
+  failures.push(`Blog dates should look gradually published across several months, found ${dates[0]} to ${dates[dates.length - 1]}`);
+}
+
+for (const entry of blogEntries) {
+  if (!entry.slug || !entry.title || !entry.description || !entry.category) failures.push(`${entry.file} is missing required Blog frontmatter`);
+  if (entry.bodyChars < 450) failures.push(`${entry.slug ?? entry.file} body is too thin for MVP content: ${entry.bodyChars} chars`);
+  if (!/^#{2}\s+/m.test(entry.body)) failures.push(`${entry.slug ?? entry.file} should include at least one section heading`);
+  for (const playSlug of entry.relatedPlaySlugs) {
+    if (!playBySlug.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
+  }
+}
+
+const standaloneBlogs = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0);
+if (standaloneBlogs.length < 3) {
+  failures.push(`standalone Blog posts should remain allowed and visible, found only ${standaloneBlogs.length}`);
+}
+
+for (const entry of playEntries) {
+  if (!entry.slug || !entry.title || !entry.description || !entry.type || !entry.durationLabel || !entry.updatedAt || !entry.shareText) {
+    failures.push(`${entry.file} is missing required Play metadata`);
+  }
+  if (!entry.relatedBlogSlugs?.length) failures.push(`${entry.slug ?? entry.file} should link to related Blog posts`);
+  if (!entry.relatedPlaySlugs?.length) failures.push(`${entry.slug ?? entry.file} should recommend other Play entries`);
+  for (const blogSlug of entry.relatedBlogSlugs ?? []) {
+    if (!blogBySlug.has(blogSlug)) failures.push(`${entry.slug ?? entry.file} references missing Blog: ${blogSlug}`);
+  }
+  for (const playSlug of entry.relatedPlaySlugs ?? []) {
+    if (!playBySlug.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
+  }
+  if (entry.relatedPlaySlugs?.includes(entry.slug)) failures.push(`${entry.slug} should not recommend itself as related Play`);
+}
+
+const officeSurvival = playBySlug.get("office-survival");
+if (officeSurvival?.type !== "micro-sim") {
+  failures.push("office-survival must remain a micro-sim");
+} else {
+  if (officeSurvival.turns.length < 8 || officeSurvival.turns.length > 12) failures.push(`office-survival should have 8-12 turns, found ${officeSurvival.turns.length}`);
+  if (officeSurvival.endings.length < 6 || officeSurvival.endings.length > 10) failures.push(`office-survival should have 6-10 endings, found ${officeSurvival.endings.length}`);
+  for (const turn of officeSurvival.turns) {
+    if (turn.choices.length < 2 || turn.choices.length > 4) failures.push(`office-survival turn ${turn.id} should have 2-4 choices`);
+  }
+}
+
+for (const entry of playEntries.filter((item) => item.type === "tap-game")) {
+  if (entry.targets.length < 8) failures.push(`${entry.slug} should have at least 8 tap targets`);
+  if (!entry.targets.some((target) => target.kind === "target")) failures.push(`${entry.slug} needs target tap items`);
+  if (!entry.targets.some((target) => target.kind === "decoy")) failures.push(`${entry.slug} needs decoy tap items`);
+}
+for (const entry of playEntries.filter((item) => item.type === "sort-match-game")) {
+  if (entry.categories.length < 2) failures.push(`${entry.slug} should have at least 2 sort categories`);
+  if (entry.items.length < 8) failures.push(`${entry.slug} should have at least 8 sortable items`);
+}
+
+for (const blog of blogEntries) {
+  for (const playSlug of blog.relatedPlaySlugs) {
+    const play = playBySlug.get(playSlug);
+    if (play && !play.relatedBlogSlugs?.includes(blog.slug)) {
+      failures.push(`${play.slug} should link back to Blog post ${blog.slug}`);
+    }
+  }
+}
+
+const playDetail = read(playDetailPath);
+const blogDetail = read(blogDetailPath);
+const resultLinks = read(playResultLinksPath);
+const contentSearch = read(contentSearchPath);
+const contentStructuredData = read(contentStructuredDataPath);
+const discovery = read(discoveryPath);
+const sitemap = read(sitemapPath);
+const feed = read(feedPath);
+const llms = read(llmsPath);
+const opensearch = read(opensearchPath);
+const playEngineSource = scanFiles(playEngineDir, (filePath) => filePath.endsWith(".tsx")).map(read).join("\n");
+
+for (const fragment of ["SurvivalPlayEngine", "TapGameEngine", "SortMatchEngine", "relatedBlogLinks", "relatedPlayLinks"]) {
+  if (!playDetail.includes(fragment)) failures.push(`Play detail route missing ${fragment}`);
+}
+for (const fragment of ["data-play-result-links", "data-play-related-play", "data-play-related-blog"]) {
+  if (!resultLinks.includes(fragment)) failures.push(`Play result links missing ${fragment}`);
+}
+for (const fragment of ["data-blog-related-play-bottom", "relatedPlays.map"]) {
+  if (!blogDetail.includes(fragment)) failures.push(`Blog detail route missing ${fragment}`);
+}
+for (const fragment of ["getBlogPosts", "getPlayContents", "getLocalizedTools", "scoreBlogPost", "scorePlayContent", "scoreTool"]) {
+  if (!contentSearch.includes(fragment)) failures.push(`global content search missing ${fragment}`);
+}
+for (const fragment of ["BlogPosting", "Game", "SearchResultsPage", "CollectionPage", "BreadcrumbList", "keywords", "about", "subjectOf"]) {
+  if (!contentStructuredData.includes(fragment)) failures.push(`Blog + Play structured data missing ${fragment}`);
+}
+for (const fragment of ["blogPostKeywords", "playContentKeywords", "blogIndexKeywords", "playIndexKeywords", "homeContentKeywords"]) {
+  if (!discovery.includes(fragment)) failures.push(`content discovery helper missing ${fragment}`);
+}
+for (const fragment of ["getBlogPosts", "getPlayContents", "sitemapSubmissionLocales", "/search", "/tools", "blogCategoryDefinitions"]) {
+  if (!sitemap.includes(fragment)) failures.push(`reduced sitemap source missing ${fragment}`);
+}
+for (const fragment of ["rssFeedXml", "atomFeedXml", "jsonFeed", "tags", "<category>", "blogPostKeywords", "playContentKeywords"]) {
+  if (!feed.includes(fragment)) failures.push(`Blog + Play feed source missing ${fragment}`);
+}
+for (const fragment of ["## Play", "## Blog", "## Blog Categories", "## Discovery", "OpenSearch descriptor"]) {
+  if (!llms.includes(fragment)) failures.push(`llms.txt source missing ${fragment}`);
+}
+if (!opensearch.includes("/search?q={searchTerms}")) failures.push("OpenSearch should point to global /search");
+if (/fetch\(|\/api\//.test(playEngineSource)) failures.push("Play engines should remain static/client-only and not call API routes");
+
+const publicSources = scanFiles(appSourceDir, (filePath) => /\.(tsx?|jsx?)$/.test(filePath));
+for (const filePath of publicSources) {
+  const source = read(filePath);
+  for (const pattern of disallowedSupportLinkPatterns) {
+    if (pattern.test(source)) failures.push(`${path.relative(root, filePath)} contains a first-pass donation or coffee support link`);
+  }
+}
+
+if (failures.length) {
+  console.error(failures.join("\n"));
+  process.exit(1);
+}
+
+console.log(
+  [
+    `Blog + Play MVP smoke passed for ${blogEntries.length} Blog posts, ${standaloneBlogs.length} standalone posts, ${playEntries.length} Play entries.`,
+    `Categories: ${requiredCategories.map((category) => `${category}=${blogEntries.filter((entry) => entry.category === category).length}`).join(", ")}`,
+    `Required Play: ${requiredPlaySlugs.join(", ")}`,
+  ].join("\n"),
+);

@@ -15,6 +15,7 @@ Run the narrow checks first:
 
 ```bash
 npm run harness:registry
+npm run harness:blog-play-mvp
 npm run harness:tools
 npm run harness:i18n
 npm run harness:localization
