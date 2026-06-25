@@ -14,6 +14,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 - Current Play count: `6`
 - Current Blog categories in sitemap: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`
 - Sitemap scope: home, global search, Blog index, Blog category hubs with real posts, Blog posts, Play index, Play pages, and archived `/tools`.
+- Submitted URL health: every `/sitemaps/en` URL should be a final 200 HTML response with matching canonical, one h1, unique title/description metadata, OpenGraph/Twitter title and description, and indexable robots metadata.
 - Paused scope: broad locale sitemap expansion. Do not restore it until localized Blog/Play content exists and measured demand supports it.
 
 ## Registration And Discovery Channels

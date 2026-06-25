@@ -1,7 +1,7 @@
 {
   "slug": "prompt-cleanup",
   "title": "프롬프트 정리함",
-  "description": "AI에게 던질 문장을 목적, 맥락, 제약으로 빠르게 분류하는 1분짜리 정리 게임.",
+  "description": "AI에게 던질 문장을 목적, 맥락, 제약으로 빠르게 분류하는 1분짜리 정리 게임. 좋은 답보다 좋은 질문을 먼저 나눠봅니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
   "updatedAt": "2026-06-25",

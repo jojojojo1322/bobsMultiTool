@@ -16,7 +16,7 @@ const playShareImage = openGraphImage({ kind: "play", title: playShareTitle });
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
-  description: "규칙 하나만 보고 바로 눌러보는 bobob.app의 작은 웹 놀이 목록입니다.",
+  description: "규칙 하나만 보고 바로 눌러보는 bobob.app의 작은 웹 놀이 목록입니다. 30초에서 3분 사이에 끝나는 정적 Play를 모읍니다.",
   keywords: playIndexKeywords(playContentsForMetadata),
   alternates: {
     canonical: "https://www.bobob.app/play",
@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/play",
     siteName: "bobob.app",
     title: "Play - bobob.app",
-    description: "대단하진 않아도 바로 눌러보고 결과를 보는 작은 웹 놀이 목록.",
+    description: "대단하진 않아도 바로 눌러보고 결과를 보는 작은 웹 놀이 목록입니다. 짧은 규칙과 한 가지 조작으로 끝납니다.",
     images: [playShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - bobob.app",
-    description: "규칙 하나, 조작 하나, 결과 하나로 끝나는 Play 목록.",
+    description: "규칙 하나, 조작 하나, 결과 하나로 끝나는 Play 목록입니다. 모바일에서도 바로 해볼 수 있게 작게 만들었습니다.",
     images: [shareImageUrl({ kind: "play", title: playShareTitle })],
   },
 };

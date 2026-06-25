@@ -14,6 +14,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - `/about` and `/contact` are required trust pages. They must exist for default English and supported locale prefixes, use localized trust content, appear in footer trust navigation, and be reachable as final 200 URLs.
 - `/tools` and `/{locale}/tools` must return 200 as tool directory pages. They are SEO hub pages and must not redirect to a single tool.
 - Sitemap entries must point only to final public URLs expected to return 200.
+- Submitted sitemap URLs must stay final 200 HTML pages with matching canonical links, exactly one h1, unique title/description metadata, OpenGraph/Twitter title and description, and indexable robots metadata. Use `npm run harness:submitted-url-health` after changing sitemap scope, Blog/Play metadata, canonical handling, or crawlability rules.
 - English is the default unprefixed URL set. Non-English locales use path prefixes and require canonical plus hreflang alternates.
 - Hreflang alternates must include `x-default` pointing to the canonical unprefixed English URL.
 - Locale pages must render the correct root `<html lang>` and `<html dir>` via the middleware locale handoff, not only nested route attributes.

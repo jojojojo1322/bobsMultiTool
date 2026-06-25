@@ -13,17 +13,17 @@ export const blogCategoryDefinitions = [
   {
     slug: "interests",
     label: "요즘 관심사",
-    description: "작은 웹 놀이, 짧은 상호작용, 요즘 눈에 밟히는 웹 감각을 적습니다.",
+    description: "작은 웹 놀이, 짧은 상호작용, 요즘 눈에 밟히는 웹 감각을 저장해두고 왜 다시 열어봤는지 적습니다.",
   },
   {
     slug: "ai",
     label: "AI",
-    description: "AI 코딩 도구를 쓰며 빨라진 부분과 사람이 다시 확인해야 했던 지점을 적습니다.",
+    description: "AI 코딩 도구를 쓰며 빨라진 부분, 오히려 헷갈린 부분, 사람이 마지막에 다시 정해야 했던 기준을 적습니다.",
   },
   {
     slug: "development",
     label: "개발",
-    description: "정적 배포, 데이터 구조, 라우트, 구현 범위를 실제로 만지며 정리한 개발 기록입니다.",
+    description: "정적 배포, 데이터 구조, 라우트, 구현 범위를 실제로 만지며 정리한 개발 기록입니다. 작게 만들다 막힌 지점을 남깁니다.",
   },
   {
     slug: "operations",

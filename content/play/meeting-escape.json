@@ -1,7 +1,7 @@
 {
   "slug": "meeting-escape",
   "title": "회의 탈출 버튼",
-  "description": "회의 중 진짜 결정 신호만 누르고 잡담 신호는 넘기는 탭 게임.",
+  "description": "회의 중 진짜 결정 신호만 누르고 잡담 신호는 넘기는 탭 게임. 짧은 문장 속에서 회의를 끝낼 단서를 찾습니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
   "updatedAt": "2026-06-25",

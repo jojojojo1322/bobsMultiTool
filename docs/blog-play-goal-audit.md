@@ -68,6 +68,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Latest response statuses: `204`, `204`
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
+- Submitted URL health:
+  - `npm run harness:submitted-url-health` verifies every submitted `/sitemaps/en` URL as a final 200 HTML response with matching canonical, one h1, unique title/description, social metadata, and indexable robots metadata.
 
 ## Still Not Complete
 

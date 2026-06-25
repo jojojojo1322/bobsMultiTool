@@ -1,7 +1,7 @@
 {
   "slug": "bug-clicker",
   "title": "버그 잡기 클릭",
-  "description": "로그와 증상 카드 속에서 실제 버그 신호만 빠르게 누르는 클릭 게임.",
+  "description": "로그와 증상 카드 속에서 실제 버그 신호만 빠르게 누르는 클릭 게임. 느낌과 증거를 나눠보는 짧은 디버깅 연습입니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
   "updatedAt": "2026-06-25",

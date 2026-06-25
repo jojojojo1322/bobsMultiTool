@@ -18,6 +18,7 @@
     "harness:play-interaction": "node scripts/harness/play-interaction-smoke.mjs",
     "harness:live-discovery": "node scripts/harness/live-discovery-smoke.mjs",
     "harness:search-discovery-registration": "node scripts/harness/search-discovery-registration-smoke.mjs",
+    "harness:submitted-url-health": "node scripts/harness/submitted-url-health-smoke.mjs",
     "harness:indexing-observation": "node scripts/harness/indexing-observation-smoke.mjs",
     "harness:routes": "node scripts/harness/route-smoke.mjs",
     "harness:tools": "node scripts/harness/tool-logic-smoke.mjs",

@@ -107,6 +107,8 @@ for (const fragment of [
   "Latest response statuses: `204`, `204`",
   "Discovery registration matrix:",
   "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
+  "Submitted URL health:",
+  "`npm run harness:submitted-url-health` verifies every submitted `/sitemaps/en` URL",
   "Still Not Complete",
   "Bing Webmaster recommendation classes still need a follow-up pass",
   "Automation id: `bobob-indexing-observation`",
