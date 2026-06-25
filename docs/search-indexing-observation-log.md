@@ -27,6 +27,13 @@ This file records manual external checks for the Blog + Play migration. Keep pri
 - Sitemaps report:
   - `/sitemaps/en`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `44`
   - `/sitemap.xml`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `0`
+- IndexNow submission:
+  - Command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - Endpoint: `https://api.indexnow.org/indexnow`
+  - Host: `www.bobob.app`
+  - Key location: `https://www.bobob.app/ac3d32921a2fa361bd499222bff28abf.txt`
+  - Submitted URL count: `44`
+  - Response status: `200`
 - Public search spot check:
   - A public search result for `site:www.bobob.app bobob.app` surfaced the homepage, but Search Console has not yet reflected indexed URL counts for the new Blog + Play set.
 
