@@ -12,6 +12,7 @@
 - Keep progress updates short. Prefer one-line status notes with current task, changed file group, and verification result; avoid long streaming explanations unless the user asks for analysis.
 - Work in small validated slices: Audit -> One Slice -> Harness -> Browser Check -> Stop.
 - Run `npm run harness:blog-play-mvp` after Blog/Play content, engine, result-link, sitemap, feed, or discovery metadata changes.
+- Run `npm run harness:live-discovery` before closing live SEO/discovery work; it checks the deployed canonical host, reduced sitemap, feeds, OpenSearch, llms, IndexNow key, ads.txt, and representative Blog/Play structured data.
 - After UI, CSS, layout, theme, localization, or background changes, inspect `localhost` in a real browser before handoff. If a build ran while a local server is active, restart the server before visual verification so stale CSS/JS chunks do not break the page.
 - Do not put access tokens, Vercel tokens, API keys, or other secrets in AGENTS.md, skills, source files, docs, git history, or final answers. Use environment variables such as `VERCEL_TOKEN` only at command time.
 
@@ -123,6 +124,7 @@
 - `/robots.txt` must allow public crawl paths and point to the canonical sitemap index. `/feed.xml`, `/atom.xml`, and `/feed.json` should expose the current Blog + Play canonical content set for lightweight discovery without expanding the submitted sitemap beyond the MVP scope.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small and canonical: `/`, `/blog`, Blog category hubs with real posts, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore broad full per-locale URL coverage until content proves demand and localized Blog/Play pages exist.
 - Blog dates and Play `updatedAt` fields are the source of truth for Blog + Play discovery freshness. `/sitemaps/en` must emit URL-specific `lastmod`, `/sitemap.xml` must use the latest content date, and `/feed.xml`, `/atom.xml`, and `/feed.json` must use the same canonical Blog + Play set with current item dates.
+- Live discovery checks should use the canonical deployed host by default. If local TLS trust fails during CLI verification, set TLS overrides only at command time and never write them into source, docs, or git history.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.
 - Non-English common dictionary prose must include localized site descriptions, home descriptions, privacy/server/local chips, and legal page copy. Avoid leaving mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server` outside the English source locale.
