@@ -73,6 +73,13 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Deployment check: `BOBOB_DEPLOY_SHA=d3be3c8 npm run harness:deployment-status` returned `overallState: success`.
   - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `52`, feed items `42`, Blog posts `36`, Play entries `6`.
   - Live spot check: `/blog/boring-maintenance-is-content-too`, `/blog/ai-coding-needs-human-last-check`, `/blog/first-small-web-note`, and `/blog/category/ai` returned `200`.
+  - Google Search Console account: `bobob935@gmail.com`
+  - Search Console action: submitted `/sitemaps/en` again from the `https://www.bobob.app/` URL-prefix property after the standalone Blog expansion deployment.
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - Search Console sitemap row after submission: `/sitemaps/en`, status `성공`, discovered pages `52`.
+  - Representative URL inspection: `https://www.bobob.app/blog/boring-maintenance-is-content-too`
+  - Representative URL status before request: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`.
+  - Representative URL indexing request confirmation: `색인 생성 요청됨`
   - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
   - IndexNow submitted URL count: `52`
   - IndexNow response status: `200`
@@ -95,7 +102,7 @@ Next observation windows:
 - `2026-07-02`:
   - Use the `bobob935` Google account.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline and the later same-day `52` discovered-page sitemap resubmission.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
