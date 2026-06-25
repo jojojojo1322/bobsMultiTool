@@ -20,6 +20,7 @@ npm run harness:goal-audit
 npm run harness:blog-play-quality
 npm run harness:play-interaction
 npm run harness:live-discovery
+npm run harness:search-discovery-registration
 npm run harness:indexing-observation
 npm run harness:indexing-followup
 npm run harness:websub
@@ -91,6 +92,7 @@ Include:
 - The goal audit at `docs/blog-play-goal-audit.md` should separate completed Blog/Play implementation evidence from still-pending Search Console/Bing observation evidence, and `npm run harness:goal-audit` should stay green before anyone marks the active goal complete.
 - Play interaction checks should click every Play entry through mobile and desktop completion and confirm `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
 - Live discovery checks should confirm the deployed canonical host returns the apex-to-www redirect, reduced sitemap, feeds, OpenSearch descriptor, llms.txt, IndexNow key file, ads.txt, and representative Blog/Play structured data. If CLI TLS trust fails, pass temporary TLS overrides only at command time and do not store them.
+- Search discovery registration checks should keep `docs/search-discovery-registration.md` aligned with the live sitemap/feed/OpenSearch/robots/llms/IndexNow surface, Search Console registration evidence, Bing/IndexNow evidence, and the stop rule that these are discovery hints rather than indexing proof.
 - WebSub checks should confirm RSS/Atom feed hub discovery before `npm run websub:submit` publishes `feed.xml` and `atom.xml` topics to the configured hub.
 - Search indexing observation checks should keep `docs/search-indexing-observation-log.md` tied to the `bobob935` Search Console baseline, the 1-2 week check dates, the IndexNow 200 submission, and the live `/sitemaps/en` URL count. Do not close indexing readiness from deployment or sitemap fetch alone.
 - The indexing follow-up packet should be generated with `npm run seo:indexing-followup` before the next Search Console/Bing pass and checked with `npm run harness:indexing-followup`; it should include current live discovery counts, representative URL inspection targets, Bing recommendation checks, and the stop rule that submissions are not indexing proof.

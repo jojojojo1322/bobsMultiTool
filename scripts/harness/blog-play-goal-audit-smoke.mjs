@@ -4,6 +4,7 @@ import path from "node:path";
 const root = process.cwd();
 const auditPath = path.join(root, "docs/blog-play-goal-audit.md");
 const observationLogPath = path.join(root, "docs/search-indexing-observation-log.md");
+const discoveryRegistrationPath = path.join(root, "docs/search-discovery-registration.md");
 const blogDir = path.join(root, "content/blog");
 const playDir = path.join(root, "content/play");
 const failures = [];
@@ -34,6 +35,7 @@ function assertIncludes(source, fragment, label) {
 
 const audit = read(auditPath);
 const observationLog = read(observationLogPath);
+const discoveryRegistration = read(discoveryRegistrationPath);
 const blogEntries = fs
   .readdirSync(blogDir)
   .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
@@ -103,12 +105,24 @@ for (const fragment of [
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
   "Latest submitted URL count: `52`",
   "Latest response statuses: `204`, `204`",
+  "Discovery registration matrix:",
+  "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
   "Still Not Complete",
   "Bing Webmaster recommendation classes still need a follow-up pass",
   "Automation id: `bobob-indexing-observation`",
   "Do not mark the active goal complete",
 ]) {
   assertIncludes(audit, fragment, auditPath);
+}
+
+for (const fragment of [
+  "Current submitted sitemap URL count: `52`",
+  "Current feed item count: `42`",
+  "Google Search Console sitemap",
+  "Bing and IndexNow",
+  "Do not mark the active Blog + Play goal complete",
+]) {
+  assertIncludes(discoveryRegistration, fragment, discoveryRegistrationPath);
 }
 
 for (const fragment of [
