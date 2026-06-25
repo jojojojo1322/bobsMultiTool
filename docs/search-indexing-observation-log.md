@@ -34,6 +34,17 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Key location: `https://www.bobob.app/ac3d32921a2fa361bd499222bff28abf.txt`
   - Submitted URL count: `44`
   - Response status: `200`
+- Post-quality-update resubmission:
+  - Google Search Console account: `bobob935@gmail.com`
+  - Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` property after the Blog + Play quality/WebSub deployment
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `44`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub hub: `https://pubsubhubbub.appspot.com/`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub response statuses: `204`, `204`
 - Public search spot check:
   - A public search result for `site:www.bobob.app bobob.app` surfaced the homepage, but Search Console has not yet reflected indexed URL counts for the new Blog + Play set.
 
@@ -60,4 +71,5 @@ Next observation windows:
 Completion guard:
 
 - This Blog + Play migration should not be treated as indexed or search-ready only because deployment, sitemap fetch, live discovery, or IndexNow submission passed.
+- WebSub publish and repeated Search Console sitemap submission are discovery hints, not indexing proof.
 - The next Search Console check must record concrete changed numbers before closing the indexing part of the goal.
