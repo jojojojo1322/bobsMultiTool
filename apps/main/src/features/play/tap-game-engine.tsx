@@ -114,10 +114,10 @@ export function TapGameEngine({
               <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <Button className="h-14 text-base" onClick={() => answer("tap")}>
+              <Button className="h-14 text-base" onClick={() => answer("tap")} data-play-action="tap">
                 {content.targetLabel}
               </Button>
-              <Button className="h-14 text-base" variant="outline" onClick={() => answer("skip")}>
+              <Button className="h-14 text-base" variant="outline" onClick={() => answer("skip")} data-play-action="skip">
                 {content.decoyLabel}
               </Button>
             </div>

@@ -108,6 +108,8 @@ export function SortMatchEngine({
                 <button
                   key={category.id}
                   type="button"
+                  data-play-action="category"
+                  data-play-category-id={category.id}
                   className="rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => choose(category.id)}
                 >

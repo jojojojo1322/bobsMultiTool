@@ -16,6 +16,7 @@ Run the narrow checks first:
 ```bash
 npm run harness:registry
 npm run harness:blog-play-mvp
+npm run harness:play-interaction
 npm run harness:live-discovery
 npm run harness:tools
 npm run harness:i18n
@@ -57,6 +58,7 @@ For a running local server, run:
 
 ```bash
 BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes
+BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction
 BOBOB_BASE_URL=http://localhost:3000 npm run harness:visual
 ```
 
@@ -79,6 +81,7 @@ Include:
 - Sitemap index at `/sitemap.xml` and the current reduced submitted sitemap at `/sitemaps/en`; old per-locale sitemaps are paused, and full per-locale URL coverage should not be restored until localized Blog/Play content exists.
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Blog + Play discovery routes should expose current content dates: `/sitemaps/en` should include URL-specific `lastmod` from Blog dates and Play `updatedAt`, and `/feed.xml`, `/atom.xml`, and `/feed.json` should include the same canonical Blog + Play items with current item dates.
+- Play interaction checks should click every Play entry through mobile and desktop completion and confirm `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
 - Live discovery checks should confirm the deployed canonical host returns the apex-to-www redirect, reduced sitemap, feeds, OpenSearch descriptor, llms.txt, IndexNow key file, ads.txt, and representative Blog/Play structured data. If CLI TLS trust fails, pass temporary TLS overrides only at command time and do not store them.
 - `/blog` should expose broad source-locale categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`; standalone Blog posts must remain allowed, and any post that declares `relatedPlay` should link to an existing Play page whose metadata links back without fake SEO padding.
 - `/blog/category/{slug}` should return source-locale category hub pages with real posts, category-specific metadata, structured data, and sitemap coverage only for categories with content.

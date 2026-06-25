@@ -185,6 +185,8 @@ export function SurvivalPlayEngine({
                 <button
                   key={choice.label}
                   type="button"
+                  data-play-action="choice"
+                  data-play-choice-index={choiceIndex}
                   className="rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => choose(choiceIndex)}
                 >
