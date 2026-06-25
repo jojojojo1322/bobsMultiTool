@@ -4,6 +4,7 @@
   "description": "AI에게 던질 문장을 목적, 맥락, 제약으로 빠르게 분류하는 1분짜리 정리 게임.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
+  "updatedAt": "2026-06-25",
   "shareText": "나는 프롬프트를 얼마나 잘 정리할까? 프롬프트 정리함을 플레이했다.",
   "order": 2,
   "relatedBlogSlugs": ["ai-side-project-realistic-order", "human-decisions-in-ai-coding"],

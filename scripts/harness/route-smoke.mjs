@@ -139,6 +139,40 @@ if (!adsTxtBody.includes("google.com, pub-2620992505263949, DIRECT, f08c47fec094
   failures.push("/ads.txt missing Google publisher line");
 }
 
+const sitemapIndexBody = await (await fetch(`${baseUrl}/sitemap.xml`, { headers: smokeHeaders })).text();
+if (!sitemapIndexBody.includes("<sitemapindex") || !sitemapIndexBody.includes("https://www.bobob.app/sitemaps/en")) {
+  failures.push("/sitemap.xml missing canonical reduced sitemap index entry");
+}
+
+const reducedSitemapBody = await (await fetch(`${baseUrl}/sitemaps/en`, { headers: smokeHeaders })).text();
+const reducedSitemapUrlCount = (reducedSitemapBody.match(/<url>/g) ?? []).length;
+if (reducedSitemapUrlCount !== 18) {
+  failures.push(`/sitemaps/en should expose 18 reduced Blog + Play MVP URLs, found ${reducedSitemapUrlCount}`);
+}
+for (const fragment of [
+  "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
+  "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
+  "<loc>https://www.bobob.app/tools</loc>",
+  "<lastmod>2026-06-25</lastmod>",
+  'hreflang="x-default"',
+]) {
+  if (!reducedSitemapBody.includes(fragment)) failures.push(`/sitemaps/en missing discovery fragment: ${fragment}`);
+}
+
+const feedBody = await (await fetch(`${baseUrl}/feed.xml`, { headers: smokeHeaders })).text();
+const feedItemCount = (feedBody.match(/<item>/g) ?? []).length;
+if (feedItemCount !== 14) {
+  failures.push(`/feed.xml should expose 14 Blog + Play feed items, found ${feedItemCount}`);
+}
+for (const fragment of [
+  "<title>bobob.app Blog and Play Lab</title>",
+  "<link>https://www.bobob.app/blog/ai-side-project-realistic-order</link>",
+  "<link>https://www.bobob.app/play/prompt-cleanup</link>",
+  "<lastBuildDate>",
+]) {
+  if (!feedBody.includes(fragment)) failures.push(`/feed.xml missing discovery fragment: ${fragment}`);
+}
+
 const httpStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}`);
 const httpStatusBody = await httpStatusResponse.json().catch(() => null);
 if (httpStatusResponse.status !== 200) {

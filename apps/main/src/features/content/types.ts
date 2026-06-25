@@ -20,6 +20,7 @@ type PlayBase = {
   description: string;
   type: PlayType;
   durationLabel: string;
+  updatedAt: string;
   shareText: string;
   relatedBlogSlugs: string[];
   relatedPlaySlugs: string[];

@@ -9,7 +9,7 @@ function readPlayContent(slug: string): PlayContent {
   const filePath = path.join(resolveContentDir("play"), `${slug}.json`);
   const content = JSON.parse(fs.readFileSync(filePath, "utf8")) as PlayContent;
 
-  if (!content.slug || !content.title || !content.description || !content.type || !content.durationLabel) {
+  if (!content.slug || !content.title || !content.description || !content.type || !content.durationLabel || !content.updatedAt) {
     throw new Error(`Play content is missing required fields: ${filePath}`);
   }
   if (content.type === "micro-sim" && (!content.turns?.length || !content.endings?.length || !content.stats?.length)) {

@@ -4,6 +4,7 @@
   "description": "들어오는 일을 지금, 예약, 버림으로 빠르게 나누는 과일상자식 분류 게임.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
+  "updatedAt": "2026-06-25",
   "shareText": "나는 일을 얼마나 잘 분류할까? 업무 우선순위 분류기를 플레이했다.",
   "order": 4,
   "relatedBlogSlugs": ["search-console-misreads-for-indie-devs", "static-micro-games-architecture"],

@@ -173,7 +173,8 @@ for (const entry of blogEntries) {
   }
 }
 for (const entry of playEntries) {
-  if (!entry.slug || !entry.title || !entry.description || !entry.type) failures.push(`${entry.file} missing required Play fields`);
+  if (!entry.slug || !entry.title || !entry.description || !entry.type || !entry.updatedAt) failures.push(`${entry.file} missing required Play fields`);
+  if (entry.updatedAt && !/^\d{4}-\d{2}-\d{2}$/.test(entry.updatedAt)) failures.push(`${entry.slug ?? entry.file} has invalid Play updatedAt: ${entry.updatedAt}`);
   if (!entry.relatedBlogSlugs?.length) failures.push(`${entry.slug ?? entry.file} must link to at least one related Blog`);
   if (!entry.relatedPlaySlugs?.length) failures.push(`${entry.slug ?? entry.file} must recommend at least one related Play`);
   for (const blogSlug of entry.relatedBlogSlugs ?? []) {

@@ -4,6 +4,7 @@
   "description": "로그와 증상 카드 속에서 실제 버그 신호만 빠르게 누르는 클릭 게임.",
   "type": "tap-game",
   "durationLabel": "30-60초",
+  "updatedAt": "2026-06-25",
   "shareText": "나는 버그 신호를 얼마나 빨리 잡을까? 버그 잡기 클릭을 플레이했다.",
   "order": 5,
   "relatedBlogSlugs": ["cursor-codex-web-service-bottlenecks", "static-micro-games-architecture"],

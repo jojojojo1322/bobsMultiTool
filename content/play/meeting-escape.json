@@ -4,6 +4,7 @@
   "description": "회의 중 진짜 결정 신호만 누르고 잡담 신호는 넘기는 탭 게임.",
   "type": "tap-game",
   "durationLabel": "30-60초",
+  "updatedAt": "2026-06-25",
   "shareText": "나는 회의에서 결정 신호를 얼마나 잘 잡을까? 회의 탈출 버튼을 플레이했다.",
   "order": 3,
   "relatedBlogSlugs": ["small-web-games-retention", "why-bobob-shifted-to-content-lab"],

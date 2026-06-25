@@ -2,7 +2,6 @@ import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
-const updatedAt = "2026-06-25T00:00:00.000Z";
 
 type FeedItem = {
   title: string;
@@ -24,6 +23,10 @@ function rfc822(date: string) {
   return new Date(date).toUTCString();
 }
 
+function latestItemDate(items: FeedItem[]) {
+  return items.map((item) => item.date).sort((left, right) => right.localeCompare(left))[0] ?? "2026-06-25T00:00:00+09:00";
+}
+
 function blogFeedItems(): FeedItem[] {
   return getBlogPosts().map((post) => ({
     title: post.title,
@@ -38,12 +41,13 @@ function playFeedItems(): FeedItem[] {
     title: content.title,
     description: content.description,
     url: `${siteUrl}/play/${content.slug}`,
-    date: updatedAt,
+    date: `${content.updatedAt}T00:00:00+09:00`,
   }));
 }
 
 export function rssFeedXml() {
-  const items = [...blogFeedItems(), ...playFeedItems()]
+  const feedItems = [...blogFeedItems(), ...playFeedItems()];
+  const items = feedItems
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((item) =>
       [
@@ -66,7 +70,7 @@ export function rssFeedXml() {
     `<link>${siteUrl}/</link>`,
     "<description>Development and AI notes plus lightweight static web Play experiments.</description>",
     "<language>ko</language>",
-    `<lastBuildDate>${escapeXml(rfc822(updatedAt))}</lastBuildDate>`,
+    `<lastBuildDate>${escapeXml(rfc822(latestItemDate(feedItems)))}</lastBuildDate>`,
     items,
     "</channel>",
     "</rss>",

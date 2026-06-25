@@ -3,7 +3,7 @@ import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
-const lastmod = "2026-06-25";
+const archiveLastmod = "2026-06-25";
 const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
@@ -12,6 +12,7 @@ type SitemapPath = {
   path: string;
   changefreq: ChangeFrequency;
   priority: string;
+  lastmod: string;
 };
 
 function absoluteUrl(path: string) {
@@ -27,22 +28,44 @@ function escapeXml(value: string) {
     .replaceAll("'", "&apos;");
 }
 
+function latestDate(dates: string[]) {
+  return dates.map((date) => date.slice(0, 10)).sort((left, right) => right.localeCompare(left))[0] ?? archiveLastmod;
+}
+
+function blogLastmod() {
+  return latestDate(getBlogPosts().map((post) => post.date));
+}
+
+function playLastmod() {
+  return latestDate(getPlayContents().map((content) => content.updatedAt));
+}
+
+function siteLastmod() {
+  return latestDate([blogLastmod(), playLastmod(), archiveLastmod]);
+}
+
 function basePaths(): SitemapPath[] {
+  const latestBlogLastmod = blogLastmod();
+  const latestPlayLastmod = playLastmod();
+  const latestSiteLastmod = siteLastmod();
+
   return [
-    { path: "/", changefreq: "weekly", priority: "1.0" },
-    { path: "/blog", changefreq: "weekly", priority: "0.8" },
+    { path: "/", changefreq: "weekly", priority: "1.0", lastmod: latestSiteLastmod },
+    { path: "/blog", changefreq: "weekly", priority: "0.8", lastmod: latestBlogLastmod },
     ...getBlogPosts().map((post) => ({
       path: `/blog/${post.slug}`,
       changefreq: "monthly" as const,
       priority: "0.7",
+      lastmod: post.date,
     })),
-    { path: "/play", changefreq: "weekly", priority: "0.8" },
+    { path: "/play", changefreq: "weekly", priority: "0.8", lastmod: latestPlayLastmod },
     ...getPlayContents().map((content) => ({
       path: `/play/${content.slug}`,
       changefreq: "weekly" as const,
       priority: content.type === "micro-sim" ? "0.9" : "0.8",
+      lastmod: content.updatedAt,
     })),
-    { path: "/tools", changefreq: "monthly", priority: "0.5" },
+    { path: "/tools", changefreq: "monthly", priority: "0.5", lastmod: archiveLastmod },
   ];
 }
 
@@ -55,6 +78,7 @@ export function sitemapLocales() {
 }
 
 export function sitemapIndexXml() {
+  const lastmod = siteLastmod();
   const entries = sitemapLocales()
     .map((locale) => {
       const loc = `${siteUrl}/sitemaps/${locale}`;
@@ -73,7 +97,7 @@ export function localizedSitemapXml(_locale: Locale) {
       return [
         "<url>",
         `<loc>${escapeXml(loc)}</loc>`,
-        `<lastmod>${lastmod}</lastmod>`,
+        `<lastmod>${entry.lastmod}</lastmod>`,
         `<changefreq>${entry.changefreq}</changefreq>`,
         `<priority>${entry.priority}</priority>`,
         alternateLinks(entry.path),

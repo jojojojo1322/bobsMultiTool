@@ -76,6 +76,7 @@ Include:
 - Arabic RTL route and visible prose.
 - Sitemap index at `/sitemap.xml` and the current reduced submitted sitemap at `/sitemaps/en`; old per-locale sitemaps are paused, and full per-locale URL coverage should not be restored until localized Blog/Play content exists.
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
+- Blog + Play discovery routes should expose current content dates: `/sitemaps/en` should include URL-specific `lastmod` from Blog dates and Play `updatedAt`, and `/feed.xml` should include the same canonical Blog + Play items with current item dates.
 - Home, `/tools`, localized tool directories, and workbench shared search behavior, including `?q=` URL state and SearchAction schema alignment.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.
 - Tool directory and tool detail pages should expose local-first workflow recipe cards for task paths such as API response formatting, API token debugging, redirect debugging, DNS deployment checks, Wi-Fi QR creation, secure token generation, security-header review, deploy config validation, and CSV cleanup for API payloads.
