@@ -32,6 +32,9 @@ const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape"
 const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
 const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game"];
 const disallowedSupportLinkPatterns = [/buymeacoffee/i, /ko-fi/i, /paypal/i, /toss\.me/i, /후원\s*링크/, /커피값/];
+const minBlogDescriptionLength = 50;
+const minPlayDescriptionLength = 50;
+const minCategoryDescriptionLength = 50;
 
 const failures = [];
 
@@ -66,6 +69,10 @@ function dateDaysBetween(startDate, endDate) {
   const start = new Date(`${startDate}T00:00:00+09:00`);
   const end = new Date(`${endDate}T00:00:00+09:00`);
   return Math.round((end.getTime() - start.getTime()) / 86_400_000);
+}
+
+function normalizedTextLength(value) {
+  return (value ?? "").replace(/\s+/g, " ").trim().length;
 }
 
 function listFiles(dir, extension) {
@@ -110,6 +117,15 @@ const playEntries = listFiles(playDir, ".json").map((file) => ({
 }));
 const blogBySlug = new Map(blogEntries.map((entry) => [entry.slug, entry]));
 const playBySlug = new Map(playEntries.map((entry) => [entry.slug, entry]));
+const categorySource = read(blogCategoryPath);
+const categoryDefinitions = Array.from(categorySource.matchAll(/slug:\s+"([^"]+)"[\s\S]*?label:\s+"([^"]+)"[\s\S]*?description:\s+"([^"]+)"/g)).map(
+  (match) => ({
+    slug: match[1],
+    label: match[2],
+    description: match[3],
+  }),
+);
+const categoryByLabel = new Map(categoryDefinitions.map((category) => [category.label, category]));
 
 if (blogEntries.length < 32) failures.push(`expected at least 32 Blog posts for the expanded MVP, found ${blogEntries.length}`);
 if (playEntries.length < 5) failures.push(`expected at least 5 Play entries, found ${playEntries.length}`);
@@ -124,11 +140,17 @@ for (const type of requiredPlayTypes) {
   if (!playEntries.some((entry) => entry.type === type)) failures.push(`missing Play engine content type: ${type}`);
 }
 
-const categorySource = read(blogCategoryPath);
 for (const category of requiredCategories) {
   const count = blogEntries.filter((entry) => entry.category === category).length;
+  const categoryDefinition = categoryByLabel.get(category);
   if (count < 2) failures.push(`Blog category "${category}" should have at least 2 posts, found ${count}`);
-  if (!categorySource.includes(`label: "${category}"`)) failures.push(`Blog category definition missing label: ${category}`);
+  if (!categoryDefinition) {
+    failures.push(`Blog category definition missing label: ${category}`);
+  } else if (normalizedTextLength(categoryDefinition.description) < minCategoryDescriptionLength) {
+    failures.push(
+      `Blog category "${category}" description is too short for submitted URL metadata: ${normalizedTextLength(categoryDefinition.description)} chars`,
+    );
+  }
 }
 const dates = blogEntries.map((entry) => entry.date).filter(Boolean).sort();
 if (dates.length !== blogEntries.length) failures.push("all Blog posts must have a date");
@@ -138,6 +160,9 @@ if (dates.length && dateDaysBetween(dates[0], dates[dates.length - 1]) < 90) {
 
 for (const entry of blogEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.category) failures.push(`${entry.file} is missing required Blog frontmatter`);
+  if (entry.description && normalizedTextLength(entry.description) < minBlogDescriptionLength) {
+    failures.push(`${entry.slug ?? entry.file} description is too short for submitted URL metadata: ${normalizedTextLength(entry.description)} chars`);
+  }
   if (entry.bodyChars < 450) failures.push(`${entry.slug ?? entry.file} body is too thin for MVP content: ${entry.bodyChars} chars`);
   if (!/^#{2}\s+/m.test(entry.body)) failures.push(`${entry.slug ?? entry.file} should include at least one section heading`);
   for (const playSlug of entry.relatedPlaySlugs) {
@@ -153,6 +178,9 @@ if (standaloneBlogs.length < 8) {
 for (const entry of playEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.type || !entry.durationLabel || !entry.updatedAt || !entry.shareText) {
     failures.push(`${entry.file} is missing required Play metadata`);
+  }
+  if (entry.description && normalizedTextLength(entry.description) < minPlayDescriptionLength) {
+    failures.push(`${entry.slug ?? entry.file} description is too short for submitted URL metadata: ${normalizedTextLength(entry.description)} chars`);
   }
   if (!entry.relatedBlogSlugs?.length) failures.push(`${entry.slug ?? entry.file} should link to related Blog posts`);
   if (!entry.relatedPlaySlugs?.length) failures.push(`${entry.slug ?? entry.file} should recommend other Play entries`);

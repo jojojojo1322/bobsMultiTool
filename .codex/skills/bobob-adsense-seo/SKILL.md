@@ -27,6 +27,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Do not add a static sitemap file. Use the sitemap index even when the current submitted URL set is intentionally reduced.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Blog dates and Play `updatedAt` values should drive Blog + Play discovery freshness. Keep URL-level `lastmod` in `/sitemaps/en`, the sitemap index lastmod, and `/feed.xml`, `/atom.xml`, and `/feed.json` item dates aligned with the current canonical content set.
+- Blog post, Play entry, and Blog category source descriptions should clear the MVP metadata quality gate before deployment so submitted URLs do not rely on live-only checks to catch thin descriptions.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.
 - Meta Tag Generator and Open Graph Preview pages should strengthen SEO by checking title/description length, canonical/page host, image host, robots policy, HTTPS status, local/private hosts, noindex risk, and image format before raw tag output.
 - robots.txt and sitemap generator pages should strengthen crawl-readiness SEO by validating sitemap URLs, directive counts, URL counts, duplicate removal, mixed hosts, non-HTTPS entries, and local/private hosts with localized review messages before raw output.

@@ -41,6 +41,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat new `/blog` posts as original development, AI, diary, interests, side-project, or web-operations content. Blog posts do not need a forced Play attachment; keep enough standalone posts that Blog reads like its own lane, add `relatedPlay` only when it naturally helps the reader continue, and keep reciprocal Play metadata for those linked posts.
 - Do not produce search-keyword-only Blog posts. Blog copy should contain a point of view, operating detail, concrete examples, or failure notes so the site does not read as thin SEO inventory.
+- Keep Blog, Play, and category descriptions specific enough to stand alone as submitted URL metadata; source-level checks should catch thin descriptions before live URL health checks fail.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
 - Do not prioritize donation, coffee, paid-pack, or ad surfaces in the first Blog + Play content pass. Build original content and lightweight interaction depth first.
 - Do not show ad placeholders before approval. Real opt-in ad units may reserve space only with valid publisher and slot ids, and post-approval candidates are below the primary tool output, right reference panel bottom, and mid-guide content only.

@@ -48,6 +48,7 @@
 - Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Blog is not subordinate to Play: keep standalone posts allowed and visible, and link to Play only when it helps the reader continue naturally.
 - Source-locale Blog category hubs should live at `/blog/category/{slug}` for the main categories and can be included in the reduced MVP sitemap when each hub has real posts.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
+- Blog post, Play entry, and Blog category source descriptions should be long enough to stand as submitted URL metadata; `npm run harness:blog-play-mvp` catches thin source descriptions before live URL health checks.
 - Blog and Play rendered pages should keep exactly one visible `h1`, unique document titles and meta descriptions, canonical URLs on `https://www.bobob.app`, and matching BlogPosting/Game/CollectionPage structured data so Bing/Search Console quality checks do not regress.
 - `docs/search-discovery-registration.md` is the operating matrix for Google Search Console, Bing/IndexNow, feeds, WebSub, robots, OpenSearch, llms.txt, and the stop rule that discovery submissions are not indexing proof.
 - Submitted sitemap URLs should remain final 200 HTML pages with matching canonical links, exactly one h1, unique title/description metadata, OpenGraph/Twitter title and description, and no `noindex` robots metadata.
