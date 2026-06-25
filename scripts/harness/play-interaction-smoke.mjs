@@ -55,7 +55,9 @@ function playLength(content) {
 
 async function clickNextAction(page, content) {
   if (content.type === "micro-sim") {
-    await page.locator('[data-play-action="choice"]').first().click();
+    const choice = page.locator('[data-play-action="choice"]').first();
+    await choice.scrollIntoViewIfNeeded().catch(() => undefined);
+    await choice.click();
     return;
   }
   if (content.type === "tap-game") {
@@ -67,6 +69,14 @@ async function clickNextAction(page, content) {
 
 function isIgnoredRuntimeError(message) {
   return message.includes("https://www.google.com/") && message.includes("report-only Content Security Policy directive");
+}
+
+async function playState(page) {
+  return page.evaluate(() => ({
+    result: Boolean(document.querySelector("[data-play-result]")),
+    turn: document.querySelector("[data-play-turn]")?.getAttribute("data-play-turn") ?? null,
+    actionCount: document.querySelectorAll("[data-play-action]").length,
+  }));
 }
 
 async function verifyPlay(browser, content, viewport) {
@@ -105,10 +115,22 @@ async function verifyPlay(browser, content, viewport) {
     }
 
     const steps = playLength(content);
-    for (let index = 0; index < steps; index += 1) {
-      if (await page.locator("[data-play-result]").first().isVisible().catch(() => false)) break;
+    for (let index = 0; index < steps + 2; index += 1) {
+      const beforeState = await playState(page);
+      if (beforeState.result) break;
+      if (!beforeState.actionCount) break;
       await clickNextAction(page, content);
-      await page.locator("[data-play-result]").first().waitFor({ state: "visible", timeout: 500 }).catch(() => undefined);
+      await page
+        .waitForFunction(
+          (previousTurn) => {
+            const result = Boolean(document.querySelector("[data-play-result]"));
+            const currentTurn = document.querySelector("[data-play-turn]")?.getAttribute("data-play-turn") ?? null;
+            return result || currentTurn !== previousTurn;
+          },
+          beforeState.turn,
+          { timeout: 1_500 },
+        )
+        .catch(() => undefined);
     }
 
     if (!(await page.locator("[data-play-result]").first().isVisible().catch(() => false))) {
