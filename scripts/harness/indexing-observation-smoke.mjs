@@ -54,6 +54,11 @@ for (const fragment of [
   "WebSub hub: `https://pubsubhubbub.appspot.com/`",
   "WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`",
   "WebSub response statuses: `204`, `204`",
+  "Post-standalone-blog expansion resubmission:",
+  "Blog now has `36` posts, `12` standalone posts",
+  "Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `52`, feed items `42`, Blog posts `36`, Play entries `6`.",
+  "IndexNow submitted URL count: `52`",
+  "WebSub feed item counts: `42`, `42`",
   "Next observation windows:",
   "`2026-07-02`",
   "`2026-07-09`",
@@ -77,6 +82,11 @@ for (const url of [
 }
 
 const submittedUrlCount = numberAfter(log, /Submitted URL count: `(\d+)`/, "IndexNow submitted URL count");
+const latestSubmittedUrlCount = Array.from(log.matchAll(/(?:Submitted URL count|IndexNow submitted URL count): `(\d+)`/g))
+  .map((match) => Number.parseInt(match[1], 10))
+  .filter(Number.isFinite)
+  .at(-1);
+if (!latestSubmittedUrlCount) failures.push("Could not parse latest submitted URL count");
 const discoveredPages = numberAfter(log, /\/sitemaps\/en`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `(\d+)`/, "/sitemaps/en discovered pages");
 
 if (submittedUrlCount !== null && discoveredPages !== null && submittedUrlCount !== discoveredPages) {
@@ -91,8 +101,8 @@ try {
   failures.push(`Could not fetch live /sitemaps/en for observation smoke: ${error instanceof Error ? error.message : String(error)}`);
 }
 
-if (liveSitemapUrlCount !== null && submittedUrlCount !== null && liveSitemapUrlCount !== submittedUrlCount) {
-  failures.push(`Live /sitemaps/en URL count ${liveSitemapUrlCount} should match logged submitted URL count ${submittedUrlCount}`);
+if (liveSitemapUrlCount !== null && latestSubmittedUrlCount && liveSitemapUrlCount !== latestSubmittedUrlCount) {
+  failures.push(`Live /sitemaps/en URL count ${liveSitemapUrlCount} should match latest logged submitted URL count ${latestSubmittedUrlCount}`);
 }
 
 if (failures.length) {
@@ -100,4 +110,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Indexing observation smoke passed. Logged submitted URLs: ${submittedUrlCount}; live sitemap URLs: ${liveSitemapUrlCount}.`);
+console.log(`Indexing observation smoke passed. Baseline submitted URLs: ${submittedUrlCount}; latest submitted URLs: ${latestSubmittedUrlCount}; live sitemap URLs: ${liveSitemapUrlCount}.`);

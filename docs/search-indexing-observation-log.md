@@ -67,6 +67,19 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
   - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - WebSub response statuses: `204`, `204`
+- Post-standalone-blog expansion resubmission:
+  - Commit: `d3be3c8`
+  - Change: added eight standalone Blog posts across `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`; Blog now has `36` posts, `12` standalone posts, and visible dates from `2026-01-28` to `2026-06-24`.
+  - Deployment check: `BOBOB_DEPLOY_SHA=d3be3c8 npm run harness:deployment-status` returned `overallState: success`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `52`, feed items `42`, Blog posts `36`, Play entries `6`.
+  - Live spot check: `/blog/boring-maintenance-is-content-too`, `/blog/ai-coding-needs-human-last-check`, `/blog/first-small-web-note`, and `/blog/category/ai` returned `200`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `52`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `42`, `42`
+  - WebSub response statuses: `204`, `204`
 - Public search spot check:
   - A public search result for `site:www.bobob.app bobob.app` surfaced the homepage, but Search Console has not yet reflected indexed URL counts for the new Blog + Play set.
 
