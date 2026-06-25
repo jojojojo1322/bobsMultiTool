@@ -112,7 +112,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </Link>
           </div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {playContents.slice(0, 5).map((content, index) => (
+            {playContents.map((content, index) => (
               <Link key={content.slug} href={`/play/${content.slug}`} className={index === 0 ? "rounded-lg border bg-card p-4 shadow-sm transition-colors hover:bg-muted/40 md:col-span-2" : "rounded-lg border bg-background p-4 transition-colors hover:bg-muted/40"}>
                 <Gamepad2 className="h-5 w-5 text-muted-foreground" />
                 <h3 className="mt-3 text-lg font-semibold">{content.title}</h3>

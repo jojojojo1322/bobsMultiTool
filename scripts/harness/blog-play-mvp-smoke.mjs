@@ -12,6 +12,7 @@ const sitemapPath = path.join(root, "apps/main/src/features/seo/sitemaps.ts");
 const feedPath = path.join(root, "apps/main/src/features/seo/feed.ts");
 const llmsPath = path.join(root, "apps/main/src/features/seo/llms.ts");
 const opensearchPath = path.join(root, "apps/main/src/features/seo/opensearch.ts");
+const homePagePath = path.join(root, "apps/main/src/app/page.tsx");
 const playDetailPath = path.join(root, "apps/main/src/app/play/[slug]/page.tsx");
 const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
 const playResultLinksPath = path.join(root, "apps/main/src/features/play/result-links.tsx");
@@ -233,8 +234,15 @@ const sitemap = read(sitemapPath);
 const feed = read(feedPath);
 const llms = read(llmsPath);
 const opensearch = read(opensearchPath);
+const homePage = read(homePagePath);
 const playEngineSource = scanFiles(playEngineDir, (filePath) => filePath.endsWith(".tsx")).map(read).join("\n");
 
+if (!homePage.includes("{playContents.map((content")) {
+  failures.push("home Featured Play should render every current Play entry instead of capping the list");
+}
+if (homePage.includes("playContents.slice(0, 5).map")) {
+  failures.push("home Featured Play should not be capped at the original five-entry MVP lineup");
+}
 for (const fragment of ["SurvivalPlayEngine", "TapGameEngine", "SortMatchEngine", "relatedBlogLinks", "relatedPlayLinks"]) {
   if (!playDetail.includes(fragment)) failures.push(`Play detail route missing ${fragment}`);
 }

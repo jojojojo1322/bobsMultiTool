@@ -46,6 +46,7 @@
 - Do not add AI assistant features unless explicitly requested again.
 - New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, and `micro-sim`.
 - Play engines should expose stable QA hooks for the playable loop: `data-play-action`, `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
+- Home Featured Play should surface the current Play registry instead of staying capped to the original five-entry MVP lineup; new lightweight Play entries should not be hidden from the first screen by an old slice limit.
 - Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Blog is not subordinate to Play: keep standalone posts allowed and visible, and link to Play only when it helps the reader continue naturally.
 - Source-locale Blog category hubs should live at `/blog/category/{slug}` for the main categories and can be included in the reduced MVP sitemap when each hub has real posts.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
