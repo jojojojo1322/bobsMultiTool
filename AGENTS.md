@@ -12,6 +12,7 @@
 - Keep progress updates short. Prefer one-line status notes with current task, changed file group, and verification result; avoid long streaming explanations unless the user asks for analysis.
 - Work in small validated slices: Audit -> One Slice -> Harness -> Browser Check -> Stop.
 - Run `npm run harness:blog-play-mvp` after Blog/Play content, engine, result-link, sitemap, feed, or discovery metadata changes.
+- Run `npm run harness:goal-audit` before claiming the Blog + Play goal is complete; it keeps implemented content evidence separate from still-pending Search Console/Bing observation evidence.
 - Run `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` after Blog/Play route, metadata, structured data, or visible content changes; it catches missing h1, duplicate title/description, thin rendered content, canonical drift, and missing BlogPosting/Game/CollectionPage fragments.
 - Run `BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction` after Play engine or Play content changes; it clicks each Play entry through mobile and desktop completion, then checks result sharing and related Blog/Play links.
 - Run `npm run harness:live-discovery` before closing live SEO/discovery work; it checks the deployed canonical host, reduced sitemap, feeds, OpenSearch, llms, IndexNow key, ads.txt, and representative Blog/Play structured data.
