@@ -111,7 +111,7 @@ const playEntries = listFiles(playDir, ".json").map((file) => ({
 const blogBySlug = new Map(blogEntries.map((entry) => [entry.slug, entry]));
 const playBySlug = new Map(playEntries.map((entry) => [entry.slug, entry]));
 
-if (blogEntries.length < 24) failures.push(`expected at least 24 Blog posts for the expanded MVP, found ${blogEntries.length}`);
+if (blogEntries.length < 32) failures.push(`expected at least 32 Blog posts for the expanded MVP, found ${blogEntries.length}`);
 if (playEntries.length < 5) failures.push(`expected at least 5 Play entries, found ${playEntries.length}`);
 
 for (const slug of requiredBlogSlugs) {
@@ -146,7 +146,7 @@ for (const entry of blogEntries) {
 }
 
 const standaloneBlogs = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0);
-if (standaloneBlogs.length < 3) {
+if (standaloneBlogs.length < 8) {
   failures.push(`standalone Blog posts should remain allowed and visible, found only ${standaloneBlogs.length}`);
 }
 

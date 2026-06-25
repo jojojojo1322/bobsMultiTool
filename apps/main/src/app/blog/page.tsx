@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/blog",
     siteName: "bobob.app",
     title: "Blog - bobob.app",
-    description: "개발/AI 작업을 하다 막힌 지점과 작은 Play로 이어지는 bobob.app 글 목록.",
+    description: "개발/AI 작업을 하다 막힌 지점과 가끔 작은 Play로 이어지는 bobob.app 글 목록.",
     images: [blogShareImage],
   },
   twitter: {
@@ -60,6 +60,7 @@ export default function BlogIndexPage() {
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">막히면 적고, 좀 알겠으면 다시 적는 글</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
             검색어만 맞춘 글은 재미가 없습니다. 여기에는 개발, AI 도구, 사이드프로젝트 운영을 하다가 실제로 헷갈렸던 것들을 조금 덜 다듬은 말투로 남깁니다.
+            어떤 글은 Play로 이어지고, 어떤 글은 그냥 글로 끝납니다. 그게 더 자연스럽다고 봅니다.
           </p>
         </div>
       </section>

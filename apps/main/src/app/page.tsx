@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/",
     siteName: "bobob.app",
     title: "bobob.app - 일단 해보는 Blog and Play",
-    description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 눌러보게 만드는 작은 웹 작업장.",
+    description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 올려보는 작은 웹 작업장.",
     images: [homeShareImage],
   },
   twitter: {
@@ -68,8 +68,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               뭐라도 해보자. 짧게 읽고, 바로 눌러보고, 다시 고치는 곳
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              bobob.app은 대단한 플랫폼을 만들겠다는 말보다, 오늘 막힌 개발/AI 작업을 적고 그 옆에 작은 Play를 하나 붙여보는 쪽으로 갑니다.
-              퇴근 생존기, 프롬프트 정리, 회의 탈출 같은 것들부터요. 좀 어설퍼도... 일단 해보고 고칩니다!
+              bobob.app은 대단한 플랫폼을 만들겠다는 말보다, 오늘 막힌 개발/AI 작업을 적고 떠오르면 작은 Play도 하나씩 올리는 쪽으로 갑니다.
+              글은 글대로 쌓고, 퇴근 생존기나 회의 탈출 같은 건 바로 눌러보게 만듭니다. 좀 어설퍼도... 일단 해보고 고칩니다!
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
@@ -92,7 +92,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <p className="text-sm font-semibold">요즘 작업 방식</p>
             </div>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <p>글을 쓰다가 “이거 눌러보면 더 잘 느껴지겠다” 싶으면 Play로 만듭니다.</p>
+              <p>글은 독립적으로 쌓고, 손으로 느끼면 더 좋겠다 싶은 아이디어만 Play로 만듭니다.</p>
               <p>규칙은 하나만 둡니다. 오래 설명하면 이미 진 겁니다.</p>
               <p>초기에는 로그인, 랭킹, 댓글 없이 갑니다. 만들고, 보고, 이상하면 다시 손봅니다.</p>
             </div>
