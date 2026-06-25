@@ -185,7 +185,7 @@ for (const category of requiredBlogCategories) {
 for (const slug of ["diary", "interests", "ai", "development", "operations"]) {
   if (!blogCategoryDefinition.includes(`slug: "${slug}"`)) failures.push(`Blog category registry missing slug: ${slug}`);
 }
-for (const fragment of ["data-blog-categories", "data-blog-category", "그냥 글만 남긴 기록입니다", "blogCategoryPath(group.slug)"]) {
+for (const fragment of ["data-blog-categories", "data-blog-category", "글만 남긴 기록입니다", "blogCategoryPath(group.slug)"]) {
   if (!blogIndex.includes(fragment)) failures.push(`/blog index missing category or standalone Blog fragment: ${fragment}`);
 }
 for (const fragment of ["generateStaticParams", "blogCategoryStructuredData(", "data-blog-category-page", "getBlogCategoryBySlug", "notFound()"]) {

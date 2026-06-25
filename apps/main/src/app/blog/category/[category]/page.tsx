@@ -106,19 +106,20 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
                     <CardTitle>{post.title}</CardTitle>
                     <CardDescription>{post.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-muted-foreground">
-                    <p className="inline-flex items-center gap-2">
-                      <Newspaper className="h-4 w-4" />
-                      {post.date}
-                    </p>
-                    {relatedPlay ? (
-                      <p className="inline-flex items-center gap-2 text-foreground">
-                        관련 Play: {relatedPlay.title}
-                        <ArrowRight className="h-4 w-4" />
+                  <CardContent className="border-t pt-4 text-sm text-muted-foreground">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="inline-flex items-center gap-2">
+                        <Newspaper className="h-4 w-4" />
+                        {post.date}
                       </p>
-                    ) : (
-                      <p>그냥 글만 남긴 기록입니다. 억지로 Play를 붙이진 않았습니다.</p>
-                    )}
+                      {relatedPlay ? (
+                        <span className="inline-flex w-fit items-center gap-2 rounded-md border bg-background px-3 py-1.5 text-foreground">
+                          바로 해보기: {relatedPlay.title}
+                          <ArrowRight className="h-4 w-4 shrink-0" />
+                        </span>
+                      ) : null}
+                    </div>
+                    {!relatedPlay ? <p className="mt-3 leading-6">글만 남긴 기록입니다.</p> : null}
                   </CardContent>
                 </Card>
               </Link>

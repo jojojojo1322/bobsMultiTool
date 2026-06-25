@@ -21,7 +21,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Latest confirmed row from `bobob935@gmail.com` showed `성공` and discovered pages `52`; current `53` URL live set is pending Search Console refresh | Google can discover the submitted URL set | It does not prove indexing, impressions, or ranking |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Resubmitted from `bobob935@gmail.com`; latest confirmed row showed `성공` and discovered pages `53` | Google can discover the submitted URL set | It does not prove indexing, impressions, or ranking |
 | Google URL Inspection | `/blog/boring-maintenance-is-content-too` | Request confirmed with `색인 생성 요청됨` | A representative Blog URL was manually queued | It does not prove the URL was indexed |
 | Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest response status `200`; submitted URL count `53` | Bing-compatible discovery ping accepted the live sitemap URL set | It does not prove Bing indexed or ranked the pages |
 | RSS feed | `/feed.xml` | Live feed has `43` Blog + Play items and WebSub hub discovery | Feed readers and lightweight crawlers can discover current content | It does not replace sitemap or webmaster-tool evidence |
@@ -56,8 +56,8 @@ Compare against the first `2026-06-25` baseline:
 Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
+- Latest `/sitemaps/en` discovered pages after AI-review Play resubmission: `53`
 - Current live `/sitemaps/en` URL count: `53`
-- Current live sitemap set pending Search Console refresh: `53`
 - Latest IndexNow URL count: `53`
 - Latest feed item count: `43`
 

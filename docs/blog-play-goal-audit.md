@@ -57,9 +57,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` resubmitted after standalone Blog expansion.
-  - Search Console sitemap row after the previous resubmission showed status `성공` and discovered pages `52`.
-  - Current live sitemap URL count is `53`; the new Play expansion still needs a Search Console refresh from the `bobob935@gmail.com` Chrome session.
+  - `/sitemaps/en` resubmitted after the AI-review Play expansion.
+  - Search Console sitemap row after resubmission showed status `성공` and discovered pages `53`.
   - Representative URL inspected: `https://www.bobob.app/blog/boring-maintenance-is-content-too`
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
@@ -76,7 +75,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 ## Still Not Complete
 
-- Search Console page indexing report still needs a later refresh after the same-day `/sitemaps/en` `52` discovered-page resubmission and the current `53` URL live sitemap set.
+- Search Console page indexing report still needs a later refresh after the same-day `/sitemaps/en` `53` discovered-page resubmission.
 - The baseline still records indexed pages `0`, not-indexed pages `5`, clicks `0`, and impressions `0`.
 - Bing Webmaster recommendation classes still need a follow-up pass after deployment and submission propagation.
 - Discovery submissions are hints only. They do not prove that Google or Bing indexed the new Blog + Play pages.

@@ -101,8 +101,7 @@ for (const fragment of [
   "Current count: `7` Play entries.",
   "Sitemap URLs: `53`",
   "Feed items: `43`",
-  "Search Console sitemap row after the previous resubmission showed status `성공` and discovered pages `52`.",
-  "Current live sitemap URL count is `53`",
+  "Search Console sitemap row after resubmission showed status `성공` and discovered pages `53`.",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
   "Latest submitted URL count: `53`",
   "Latest response statuses: `204`, `204`",
@@ -129,8 +128,7 @@ for (const fragment of [
 }
 
 for (const fragment of [
-  "Search Console sitemap row after submission: `/sitemaps/en`, status `성공`, discovered pages `52`.",
-  "Search Console pending live sitemap URL count: `53`",
+  "Search Console sitemap row after resubmission: `/sitemaps/en`, status `성공`, discovered pages `53`.",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
   "Bing Webmaster recommendations",

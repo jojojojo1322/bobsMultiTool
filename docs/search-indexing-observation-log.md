@@ -92,9 +92,9 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Change: added `ai-review-tap`, a short tap-game for checking risky AI-answer signals; Play now has `7` entries while Blog remains `36` posts.
   - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `53`, feed items `43`, Blog posts `36`, Play entries `7`.
   - Google Search Console account: `bobob935@gmail.com`
-  - Search Console latest confirmed row remains `/sitemaps/en`, status `성공`, discovered pages `52`.
-  - Search Console pending live sitemap URL count: `53`
-  - Search Console action needed: resubmit or refresh `/sitemaps/en` from the Chrome profile/session signed in as `bobob935@gmail.com`; do not use another signed-in Chrome profile.
+  - Search Console action: submitted `/sitemaps/en` again from the `https://www.bobob.app/` URL-prefix property after the AI-review Play expansion deployment.
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - Search Console sitemap row after resubmission: `/sitemaps/en`, status `성공`, discovered pages `53`.
   - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
   - IndexNow submitted URL count: `53`
   - IndexNow response status: `200`
@@ -122,7 +122,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` discovered-page sitemap resubmission, and the current `53` URL live sitemap set.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` discovered-page sitemap resubmission, and the current `53` discovered-page sitemap resubmission.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:

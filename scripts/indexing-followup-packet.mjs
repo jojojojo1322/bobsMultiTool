@@ -44,11 +44,6 @@ function latestSitemapDiscoveredPages(log) {
   return matches.length ? Number.parseInt(matches[matches.length - 1][1], 10) : null;
 }
 
-function latestPendingSearchConsoleCount(log) {
-  const matches = [...log.matchAll(/Search Console pending live sitemap URL count: `(\d+)`/g)];
-  return matches.length ? Number.parseInt(matches[matches.length - 1][1], 10) : null;
-}
-
 function firstSitemapDiscoveredPages(log) {
   const match = log.match(/\/sitemaps\/en[^\n]*discovered pages `(\d+)`/);
   return match ? Number.parseInt(match[1], 10) : null;
@@ -119,7 +114,6 @@ function assertSnapshot(snapshot, log) {
   const checks = snapshot.checks;
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
-  const pendingSearchConsoleCount = latestPendingSearchConsoleCount(log);
 
   for (const [key, value] of Object.entries(checks)) {
     if (value === false || value === 0) failures.push(`discovery check failed: ${key}`);
@@ -127,7 +121,7 @@ function assertSnapshot(snapshot, log) {
   if (latestIndexNowCount !== null && checks.sitemapUrlCount !== latestIndexNowCount) {
     failures.push(`live sitemap URL count ${checks.sitemapUrlCount} should match latest logged IndexNow count ${latestIndexNowCount}`);
   }
-  if (latestDiscoveredPages !== null && checks.sitemapUrlCount !== latestDiscoveredPages && checks.sitemapUrlCount !== pendingSearchConsoleCount) {
+  if (latestDiscoveredPages !== null && checks.sitemapUrlCount !== latestDiscoveredPages) {
     failures.push(`live sitemap URL count ${checks.sitemapUrlCount} should match latest logged Search Console discovered pages ${latestDiscoveredPages}`);
   }
   for (const fragment of ["`2026-07-02`", "`2026-07-09`", "Bing Webmaster recommendations", "not be treated as indexed or search-ready"]) {
@@ -143,12 +137,10 @@ function assertPacket(packet, snapshot, log) {
   const initialDiscoveredPages = firstSitemapDiscoveredPages(log);
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
-  const pendingSearchConsoleCount = latestPendingSearchConsoleCount(log);
   const liveSitemapUrlCount = snapshot.checks.sitemapUrlCount;
   const requiredFragments = [
     `Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
-    `Search Console pending live sitemap URL count: \`${pendingSearchConsoleCount ?? "not parsed"}\``,
     "Chrome profile/session already signed in as `bobob935@gmail.com`",
     `same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}`,
     `live sitemap URL count ${liveSitemapUrlCount}`,
@@ -162,7 +154,6 @@ function renderPacket(snapshot, log) {
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
   const initialDiscoveredPages = firstSitemapDiscoveredPages(log);
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
-  const pendingSearchConsoleCount = latestPendingSearchConsoleCount(log);
   const checks = snapshot.checks;
 
   return [
@@ -179,7 +170,6 @@ function renderPacket(snapshot, log) {
     `- Latest logged IndexNow URL count: \`${latestIndexNowCount ?? "not parsed"}\``,
     `- Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `- Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
-    `- Search Console pending live sitemap URL count: \`${pendingSearchConsoleCount ?? "not parsed"}\``,
     `- Feed counts: RSS \`${checks.rssItemCount}\`, Atom \`${checks.atomEntryCount}\`, JSON Feed \`${checks.jsonFeedItemCount}\``,
     `- WebSub discovery: \`${checks.webSubDiscovery ? "ok" : "check"}\``,
     `- robots.txt sitemap: \`${checks.robotsSitemap ? "ok" : "check"}\``,
@@ -194,7 +184,6 @@ function renderPacket(snapshot, log) {
     `- Sitemaps report: ${searchConsoleSitemapsUrl}`,
     `- Compare against the 2026-06-25 baseline: clicks 0, impressions 0, indexed pages 0, not indexed pages 5, initial /sitemaps/en discovered pages ${initialDiscoveredPages ?? "not parsed"}.`,
     `- Also compare against the same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}, live sitemap URL count ${checks.sitemapUrlCount}, latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}.`,
-    `- If Search Console still shows ${latestDiscoveredPages ?? "not parsed"} discovered pages, resubmit or refresh /sitemaps/en for the pending ${pendingSearchConsoleCount ?? "not parsed"} URL live sitemap set before interpreting the next observation window.`,
     "- Record whether `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` changed, disappeared, or gained sample URLs.",
     "- If impressions appear, export Search Console Page + Query rows to `reports/search-console.csv` or `reports/search-console.tsv` and run `npm run harness:seo-opportunities`.",
     "",

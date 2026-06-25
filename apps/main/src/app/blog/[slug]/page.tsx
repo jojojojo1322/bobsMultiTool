@@ -111,16 +111,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           })}
         </div>
         {relatedPlays.length ? (
-          <section className="mt-10 border-t pt-6" data-blog-related-play-bottom>
-            <p className="text-sm font-semibold">읽은 뒤 바로 해보기</p>
-            <div className="mt-3 grid gap-2">
+          <section className="mt-12 border-t pt-8" data-blog-related-play-bottom>
+            <p className="text-sm font-semibold">읽고 나서 해볼 것</p>
+            <div className="mt-4 grid gap-3">
               {relatedPlays.map((play) => (
-                <Link key={play.slug} href={`/play/${play.slug}`} className="group rounded-md border bg-background p-4 text-sm transition-colors hover:bg-muted">
-                  <span className="flex items-center justify-between gap-3">
-                    <span className="font-medium">{play.title}</span>
+                <Link key={play.slug} href={`/play/${play.slug}`} className="group rounded-md border bg-background px-4 py-3 text-sm transition-colors hover:bg-muted">
+                  <span className="flex items-start justify-between gap-4">
+                    <span className="font-medium leading-6">{play.title}</span>
                     <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
                   </span>
-                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">{play.description}</span>
+                  <span className="mt-2 block text-sm leading-6 text-muted-foreground">{play.description}</span>
                 </Link>
               ))}
             </div>
