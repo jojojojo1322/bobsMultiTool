@@ -4,8 +4,8 @@ import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
 const webSubHubUrl = "https://pubsubhubbub.appspot.com/";
-const feedTitle = "bobob.app - 일단 해보는 Blog and Play";
-const feedDescription = "개발/AI 기록과 짧게 눌러보는 Play를 하나씩 올립니다.";
+const feedTitle = "bobob.app - 뭐라도 해보는 기록과 Play";
+const feedDescription = "개발/AI 작업에서 막힌 것과 떠오른 작은 Play를 하나씩 올립니다.";
 
 type FeedItem = {
   title: string;

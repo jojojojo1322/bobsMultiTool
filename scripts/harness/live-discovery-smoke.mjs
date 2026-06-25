@@ -181,7 +181,7 @@ if (rssItemCount !== expectedFeedItemCount) {
   failures.push(`/feed.xml should expose ${expectedFeedItemCount} items, found ${rssItemCount}`);
 }
 assertIncludes("/feed.xml", rssFeed, [
-  "<title>bobob.app - 일단 해보는 Blog and Play</title>",
+  "<title>bobob.app - 뭐라도 해보는 기록과 Play</title>",
   'xmlns:atom="http://www.w3.org/2005/Atom"',
   '<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
   `<atom:link rel="self" href="${baseUrl}/feed.xml" />`,
@@ -202,7 +202,7 @@ if (atomResponse) {
     failures.push(`/atom.xml should expose ${expectedFeedItemCount} entries, found ${atomEntryCount}`);
   }
   assertIncludes("/atom.xml", atomFeed, [
-    "<title>bobob.app - 일단 해보는 Blog and Play</title>",
+    "<title>bobob.app - 뭐라도 해보는 기록과 Play</title>",
     '<link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
     `<link rel="self" href="${baseUrl}/atom.xml" />`,
     `<id>${baseUrl}/blog/ai-side-project-realistic-order</id>`,
