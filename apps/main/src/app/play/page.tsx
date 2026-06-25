@@ -51,6 +51,27 @@ export default function PlayIndexPage() {
         </div>
       </section>
       <section className="mx-auto max-w-6xl px-4 py-8">
+        <div className="mb-6 grid gap-4 rounded-md border bg-muted/20 p-4 text-sm leading-7 text-muted-foreground md:grid-cols-3" data-play-format-note>
+          <div>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">가볍게 만든다</h2>
+            <p className="mt-2">
+              여기 있는 Play는 큰 게임이 아닙니다. 예전 플래시게임처럼 바로 들어가서 한 번 눌러보고, 별로면 바로 닫아도 되는 정도의 작은 웹 놀이를 목표로 둡니다.
+            </p>
+          </div>
+          <div>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">설명을 줄인다</h2>
+            <p className="mt-2">
+              규칙은 하나만 먼저 보이게 둡니다. 선택하거나, 누르거나, 분류하고 결과를 보는 흐름이면 충분합니다. 긴 튜토리얼보다 첫 반응이 더 중요하다고 봅니다.
+            </p>
+          </div>
+          <div>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">계속 바꿔본다</h2>
+            <p className="mt-2">
+              반응이 있으면 비슷한 실험을 더 만들고, 재미없으면 과감하게 접습니다. 완성된 서비스라기보다 “뭐라도 해보는” 쪽에 가까운 목록입니다. 그래서 결과도 너무
+              심각하게 만들지 않고, 다음에 다시 눌러볼 여지만 남겨둡니다.
+            </p>
+          </div>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {playContents.map((content) => (
             <Link key={content.slug} href={`/play/${content.slug}`}>

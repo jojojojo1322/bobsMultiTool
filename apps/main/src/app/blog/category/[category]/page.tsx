@@ -75,6 +75,13 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
           <Badge>Blog category</Badge>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">{category.label}</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{category.description}</p>
+          <div className="mt-5 max-w-3xl rounded-md border bg-background p-4 text-sm leading-7 text-muted-foreground" data-blog-category-context>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">이 분류에서 보는 것</h2>
+            <p className="mt-2">
+              이 페이지는 같은 결의 기록을 한곳에 모아둔 작은 묶음입니다. 글이 아주 반듯한 정답이라기보다, 만들다가 막힌 순간, 방향을 바꾼 이유, 다음에 다시 확인할 기준을 남기는 쪽에
+              가깝습니다. 그래서 글마다 길이와 온도는 조금씩 다릅니다. 그날 손이 어디에서 멈췄는지를 보려고 남겨둔 분류입니다.
+            </p>
+          </div>
           <Link href="/blog" className="mt-6 inline-flex h-9 items-center justify-center rounded-md border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
             전체 글 보기
           </Link>

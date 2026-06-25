@@ -8,7 +8,7 @@ export const blogCategoryDefinitions = [
   {
     slug: "diary",
     label: "일기",
-    description: "방향을 바꾸거나 다시 작게 시작하면서 남긴 개인 기록입니다.",
+    description: "방향을 바꾸거나 다시 작게 시작하면서 남긴 개인 기록입니다. 완성된 선언보다 그날의 흔들림과 판단을 남깁니다.",
   },
   {
     slug: "interests",

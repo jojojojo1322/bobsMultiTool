@@ -13,6 +13,7 @@
     "lint": "npm run lint --workspace @bobob/main",
     "harness:registry": "node scripts/harness/validate-registry.mjs",
     "harness:blog-play-mvp": "node scripts/harness/blog-play-mvp-smoke.mjs",
+    "harness:blog-play-quality": "node scripts/harness/blog-play-rendered-quality.mjs",
     "harness:play-interaction": "node scripts/harness/play-interaction-smoke.mjs",
     "harness:live-discovery": "node scripts/harness/live-discovery-smoke.mjs",
     "harness:indexing-observation": "node scripts/harness/indexing-observation-smoke.mjs",

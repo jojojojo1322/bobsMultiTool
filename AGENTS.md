@@ -12,6 +12,7 @@
 - Keep progress updates short. Prefer one-line status notes with current task, changed file group, and verification result; avoid long streaming explanations unless the user asks for analysis.
 - Work in small validated slices: Audit -> One Slice -> Harness -> Browser Check -> Stop.
 - Run `npm run harness:blog-play-mvp` after Blog/Play content, engine, result-link, sitemap, feed, or discovery metadata changes.
+- Run `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` after Blog/Play route, metadata, structured data, or visible content changes; it catches missing h1, duplicate title/description, thin rendered content, canonical drift, and missing BlogPosting/Game/CollectionPage fragments.
 - Run `BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction` after Play engine or Play content changes; it clicks each Play entry through mobile and desktop completion, then checks result sharing and related Blog/Play links.
 - Run `npm run harness:live-discovery` before closing live SEO/discovery work; it checks the deployed canonical host, reduced sitemap, feeds, OpenSearch, llms, IndexNow key, ads.txt, and representative Blog/Play structured data.
 - Run `npm run harness:indexing-observation` after Search Console, IndexNow, sitemap submission, or indexing-observation log changes; it keeps the 1-2 week observation window and live sitemap count tied to the logged baseline.
@@ -43,6 +44,7 @@
 - Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Blog is not subordinate to Play: keep standalone posts allowed and visible, and link to Play only when it helps the reader continue naturally.
 - Source-locale Blog category hubs should live at `/blog/category/{slug}` for the main categories and can be included in the reduced MVP sitemap when each hub has real posts.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
+- Blog and Play rendered pages should keep exactly one visible `h1`, unique document titles and meta descriptions, canonical URLs on `https://www.bobob.app`, and matching BlogPosting/Game/CollectionPage structured data so Bing/Search Console quality checks do not regress.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
