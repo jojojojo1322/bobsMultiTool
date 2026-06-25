@@ -20,6 +20,7 @@ npm run harness:blog-play-quality
 npm run harness:play-interaction
 npm run harness:live-discovery
 npm run harness:indexing-observation
+npm run harness:indexing-followup
 npm run harness:websub
 npm run harness:tools
 npm run harness:i18n
@@ -90,6 +91,7 @@ Include:
 - Live discovery checks should confirm the deployed canonical host returns the apex-to-www redirect, reduced sitemap, feeds, OpenSearch descriptor, llms.txt, IndexNow key file, ads.txt, and representative Blog/Play structured data. If CLI TLS trust fails, pass temporary TLS overrides only at command time and do not store them.
 - WebSub checks should confirm RSS/Atom feed hub discovery before `npm run websub:submit` publishes `feed.xml` and `atom.xml` topics to the configured hub.
 - Search indexing observation checks should keep `docs/search-indexing-observation-log.md` tied to the `bobob935` Search Console baseline, the 1-2 week check dates, the IndexNow 200 submission, and the live `/sitemaps/en` URL count. Do not close indexing readiness from deployment or sitemap fetch alone.
+- The indexing follow-up packet should be generated with `npm run seo:indexing-followup` before the next Search Console/Bing pass and checked with `npm run harness:indexing-followup`; it should include current live discovery counts, representative URL inspection targets, Bing recommendation checks, and the stop rule that submissions are not indexing proof.
 - `/blog` should expose broad source-locale categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`; standalone Blog posts must remain allowed, and any post that declares `relatedPlay` should link to an existing Play page whose metadata links back without fake SEO padding.
 - `/blog/category/{slug}` should return source-locale category hub pages with real posts, category-specific metadata, structured data, and sitemap coverage only for categories with content.
 - Global `/search?q=` should render Blog, Play, and archived Tools results, and root WebSite SearchAction should target that route. Home, `/tools`, localized tool directories, and workbench shared tool search should keep `?q=` URL state for the archived tool registry.

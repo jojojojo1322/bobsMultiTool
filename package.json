@@ -37,8 +37,10 @@
     "harness:deployment-status": "node scripts/harness/deployment-status.mjs",
     "harness:indexnow": "node scripts/submit-indexnow.mjs --dry-run",
     "harness:websub": "node scripts/submit-websub.mjs --dry-run",
+    "harness:indexing-followup": "node scripts/indexing-followup-packet.mjs --check",
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "websub:submit": "node scripts/submit-websub.mjs",
+    "seo:indexing-followup": "BOBOB_INDEXING_PACKET_OUT=reports/indexing-followup.md node scripts/indexing-followup-packet.mjs",
     "seo:export-packet": "BOBOB_SEO_REPORT_FORMAT=export-packet BOBOB_SEO_REPORT_OUT=reports/seo-export-packet.md node scripts/harness/seo-opportunity-report.mjs",
     "seo:report": "BOBOB_SEO_REPORT_FORMAT=markdown BOBOB_SEO_REPORT_OUT=reports/seo-opportunities.md node scripts/harness/seo-opportunity-report.mjs"
   },

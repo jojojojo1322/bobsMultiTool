@@ -16,6 +16,7 @@
 - Run `BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction` after Play engine or Play content changes; it clicks each Play entry through mobile and desktop completion, then checks result sharing and related Blog/Play links.
 - Run `npm run harness:live-discovery` before closing live SEO/discovery work; it checks the deployed canonical host, reduced sitemap, feeds, OpenSearch, llms, IndexNow key, ads.txt, and representative Blog/Play structured data.
 - Run `npm run harness:indexing-observation` after Search Console, IndexNow, sitemap submission, or indexing-observation log changes; it keeps the 1-2 week observation window and live sitemap count tied to the logged baseline.
+- Run `npm run seo:indexing-followup` before the next Search Console/Bing pass so the manual check uses the current sitemap/feed snapshot, representative URL inspection targets, and Bing recommendation checklist. `npm run harness:indexing-followup` verifies the same live discovery packet without writing a report.
 - After UI, CSS, layout, theme, localization, or background changes, inspect `localhost` in a real browser before handoff. If a build ran while a local server is active, restart the server before visual verification so stale CSS/JS chunks do not break the page.
 - Do not put access tokens, Vercel tokens, API keys, or other secrets in AGENTS.md, skills, source files, docs, git history, or final answers. Use environment variables such as `VERCEL_TOKEN` only at command time.
 
