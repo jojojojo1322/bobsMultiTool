@@ -5,8 +5,11 @@ const root = process.cwd();
 const registryPath = path.join(root, "apps/main/src/features/tools/registry.ts");
 const guideRegistryPath = path.join(root, "apps/main/src/features/guides/registry.ts");
 const sitemapSourcePath = path.join(root, "apps/main/src/features/seo/sitemaps.ts");
+const blogContentDir = path.join(root, "content/blog");
+const playContentDir = path.join(root, "content/play");
 const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/route.ts");
 const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
+const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
 const toolsIndexPath = path.join(root, "apps/main/src/app/tools/page.tsx");
 const localizedToolsIndexPath = path.join(root, "apps/main/src/app/[locale]/tools/page.tsx");
 const toolDetailPath = path.join(root, "apps/main/src/app/tools/[slug]/page.tsx");
@@ -17,10 +20,28 @@ const registry = fs.readFileSync(registryPath, "utf8");
 const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
 const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
 const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
+const blogDetail = fs.readFileSync(blogDetailPath, "utf8");
 const toolDetail = fs.readFileSync(toolDetailPath, "utf8");
 const localizedToolDetail = fs.readFileSync(localizedToolDetailPath, "utf8");
 const toolStructuredData = fs.readFileSync(toolStructuredDataPath, "utf8");
 const failures = [];
+const requiredBlogSlugs = [
+  "ai-side-project-realistic-order",
+  "cursor-codex-web-service-bottlenecks",
+  "search-console-misreads-for-indie-devs",
+  "small-web-games-retention",
+  "vercel-sitemap-canonical-log",
+  "human-decisions-in-ai-coding",
+  "why-bobob-shifted-to-content-lab",
+  "static-micro-games-architecture",
+];
+const requiredPlaySlugs = [
+  "office-survival",
+  "prompt-cleanup",
+  "meeting-escape",
+  "priority-sorter",
+  "bug-clicker",
+];
 const priorityDetailSlugs = [
   "regex-tester",
   "json-formatter",
@@ -86,9 +107,77 @@ function priorityDemandDetailCounts(slug) {
   };
 }
 
+function parseFrontmatter(source) {
+  const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (!match) return {};
+  return Object.fromEntries(
+    match[1]
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const separatorIndex = line.indexOf(":");
+        if (separatorIndex === -1) return [line, ""];
+        return [line.slice(0, separatorIndex).trim(), line.slice(separatorIndex + 1).trim().replace(/^"|"$/g, "")];
+      }),
+  );
+}
+
+const blogEntries = fs
+  .readdirSync(blogContentDir)
+  .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
+  .map((file) => {
+    const frontmatter = parseFrontmatter(fs.readFileSync(path.join(blogContentDir, file), "utf8"));
+    return {
+      file,
+      slug: frontmatter.slug,
+      title: frontmatter.title,
+      description: frontmatter.description,
+      relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
+    };
+  });
+const playEntries = fs
+  .readdirSync(playContentDir)
+  .filter((file) => file.endsWith(".json"))
+  .map((file) => ({ file, ...JSON.parse(fs.readFileSync(path.join(playContentDir, file), "utf8")) }));
+const blogContentSlugs = new Set(blogEntries.map((entry) => entry.slug).filter(Boolean));
+const playContentSlugs = new Set(playEntries.map((entry) => entry.slug).filter(Boolean));
+
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
 if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
+if (blogEntries.length < 8) failures.push(`Blog + Play MVP needs at least 8 blog posts, found ${blogEntries.length}`);
+if (playEntries.length < 5) failures.push(`Blog + Play MVP needs at least 5 Play entries, found ${playEntries.length}`);
+for (const slug of requiredBlogSlugs) {
+  if (!blogContentSlugs.has(slug)) failures.push(`required Blog MVP post missing: ${slug}`);
+}
+for (const slug of requiredPlaySlugs) {
+  if (!playContentSlugs.has(slug)) failures.push(`required Play MVP content missing: ${slug}`);
+}
+for (const type of ["micro-sim", "tap-game", "sort-match-game"]) {
+  if (!playEntries.some((entry) => entry.type === type)) failures.push(`Play MVP missing ${type} engine content`);
+}
+for (const entry of blogEntries) {
+  if (!entry.slug || !entry.title || !entry.description) failures.push(`${entry.file} missing required blog frontmatter`);
+  if (!entry.relatedPlaySlugs.length) failures.push(`${entry.slug ?? entry.file} must link to at least one related Play`);
+  for (const playSlug of entry.relatedPlaySlugs) {
+    if (!playContentSlugs.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing Play content: ${playSlug}`);
+  }
+}
+for (const entry of playEntries) {
+  if (!entry.slug || !entry.title || !entry.description || !entry.type) failures.push(`${entry.file} missing required Play fields`);
+  if (!entry.relatedBlogSlugs?.length) failures.push(`${entry.slug ?? entry.file} must link to at least one related Blog`);
+  if (!entry.relatedPlaySlugs?.length) failures.push(`${entry.slug ?? entry.file} must recommend at least one related Play`);
+  for (const blogSlug of entry.relatedBlogSlugs ?? []) {
+    if (!blogContentSlugs.has(blogSlug)) failures.push(`${entry.slug ?? entry.file} references missing Blog post: ${blogSlug}`);
+  }
+  for (const playSlug of entry.relatedPlaySlugs ?? []) {
+    if (!playContentSlugs.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
+  }
+}
+for (const fragment of ["data-blog-related-play-bottom", "relatedPlays.map", "/play/${play.slug}"]) {
+  if (!blogDetail.includes(fragment)) failures.push(`Blog detail page missing related Play bottom flow fragment: ${fragment}`);
+}
 if (fs.existsSync(path.join(root, "apps/main/public/sitemap.xml"))) failures.push("static public sitemap.xml must not shadow dynamic sitemap index");
 for (const legacyPath of [
   "packages/ui",

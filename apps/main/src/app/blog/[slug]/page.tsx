@@ -49,7 +49,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = getBlogPostBySlug(slug);
   if (!post) notFound();
   const dictionary = getClientDictionary(contentLocale);
-  const relatedPlay = post.relatedPlaySlugs[0] ? getPlayContentBySlug(post.relatedPlaySlugs[0]) : undefined;
+  const relatedPlays = post.relatedPlaySlugs.flatMap((playSlug) => {
+    const content = getPlayContentBySlug(playSlug);
+    return content ? [content] : [];
+  });
+  const primaryRelatedPlay = relatedPlays[0];
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -80,9 +84,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
         <h1 className="mt-5 text-4xl font-semibold tracking-normal">{post.title}</h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">{post.description}</p>
-        {relatedPlay ? (
-          <Link href={`/play/${relatedPlay.slug}`} className="mt-6 inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-zinc-700 dark:hover:bg-zinc-200">
-            {relatedPlay.title} 바로 하기
+        {primaryRelatedPlay ? (
+          <Link href={`/play/${primaryRelatedPlay.slug}`} className="mt-6 inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-zinc-700 dark:hover:bg-zinc-200">
+            {primaryRelatedPlay.title} 바로 하기
             <ArrowRight className="h-4 w-4" />
           </Link>
         ) : null}
@@ -111,6 +115,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             );
           })}
         </div>
+        {relatedPlays.length ? (
+          <section className="mt-10 border-t pt-6" data-blog-related-play-bottom>
+            <p className="text-sm font-semibold">읽은 뒤 바로 해보기</p>
+            <div className="mt-3 grid gap-2">
+              {relatedPlays.map((play) => (
+                <Link key={play.slug} href={`/play/${play.slug}`} className="group rounded-md border bg-background p-4 text-sm transition-colors hover:bg-muted">
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="font-medium">{play.title}</span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">{play.description}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </article>
     </main>
   );
