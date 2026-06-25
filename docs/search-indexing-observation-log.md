@@ -102,15 +102,37 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - WebSub feed item counts: `43`, `43`
   - WebSub response statuses: `204`, `204`
+- Same-day Search Console observation after metadata/feed deployment:
+  - Google Search Console account: `bobob935@gmail.com`
+  - Verified account surface: `Google 계정: 조현재 (bobob935@gmail.com)`
+  - Search Console URL-prefix property: `https://www.bobob.app/`
+  - Performance report range: `3개월`
+  - Total clicks: `0`
+  - Total impressions: `3`
+  - Average CTR: `0%`
+  - Sitemaps report: `/sitemaps/en`, status `성공`, discovered pages `53`.
+  - Page indexing report last updated: `2026-06-12`
+  - Indexed pages: `0`
+  - Not indexed pages: `5`
+  - Reason rows:
+    - `리디렉션이 포함된 페이지`: `3`
+    - `적절한 표준 태그가 포함된 대체 페이지`: `2`
+  - Interpretation: impressions have appeared, but page indexing is still not solved because indexed pages remain `0`.
 - Public search spot check:
   - A public search result for `site:www.bobob.app bobob.app` surfaced the homepage, but Search Console has not yet reflected indexed URL counts for the new Blog + Play set.
+- Bing follow-up attempt:
+  - Bing Webmaster Tools URL opened: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`
+  - Result: redirected to the public Bing Webmaster Tools landing page with `Sign In`; site-specific recommendation classes were not visible without signing in.
+  - Public Bing search attempted: `site:www.bobob.app`
+  - Result: Bing showed a `계속하려면 아래 과제 해결` challenge, so public Bing indexed-result evidence was not collected in this pass.
+  - Interpretation: IndexNow submission is still the only confirmed Bing-compatible discovery evidence; Bing indexing/recommendation evidence remains pending.
 
 Decision:
 
 - Do not broaden sitemap scope yet.
 - Keep `/sitemaps/en` as the submitted canonical Blog + Play sitemap.
 - Continue with a 1-2 week Search Console observation window before treating indexing as solved.
-- Next check should compare indexed count, not-indexed count, sitemap discovered page count, and 3-month impressions against this baseline.
+- Next check should compare indexed count, not-indexed count, sitemap discovered page count, and 3-month impressions against the initial zero-impression baseline and the latest `3`-impression observation.
 
 Next observation windows:
 
@@ -129,6 +151,7 @@ Next observation windows:
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Repeat the same Search Console comparison.
   - If indexed pages still remain `0`, do not broaden sitemap scope yet. First check live URL inspection, canonical selection, crawl allowed status, and Bing Webmaster recommendations for missing `h1`, duplicate title/description, insufficient content, or weak inbound-link signals.
+  - Bing Webmaster Tools still needs a signed-in pass. Public Bing `site:` search was blocked by a challenge in the latest attempt.
   - If impressions appear, generate measured exports under the gitignored `reports/search-console.csv` or `reports/search-console.tsv` path and run `npm run harness:seo-opportunities`.
 
 Completion guard:

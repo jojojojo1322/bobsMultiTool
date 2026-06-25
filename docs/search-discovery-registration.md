@@ -22,8 +22,12 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
 | Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Resubmitted from `bobob935@gmail.com`; latest confirmed row showed `성공` and discovered pages `53` | Google can discover the submitted URL set | It does not prove indexing, impressions, or ranking |
+| Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `3`, CTR `0%` for `3개월` | Google has begun showing at least some search impressions | It does not prove useful traffic or page indexing completion |
+| Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5` | The indexing problem is still visible and measurable | It does not identify all submitted Blog + Play URLs as indexed |
 | Google URL Inspection | `/blog/boring-maintenance-is-content-too` | Request confirmed with `색인 생성 요청됨` | A representative Blog URL was manually queued | It does not prove the URL was indexed |
 | Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest response status `200`; submitted URL count `53` | Bing-compatible discovery ping accepted the live sitemap URL set | It does not prove Bing indexed or ranked the pages |
+| Bing Webmaster Tools | `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app` | Latest browser check reached the public landing page with `Sign In`; site-specific recommendations were not visible | Bing Webmaster follow-up still needs a signed-in session | It does not provide indexing or recommendation evidence yet |
+| Public Bing search | `site:www.bobob.app` | Latest browser check hit a `계속하려면 아래 과제 해결` challenge | Public Bing search was attempted | It does not prove whether Bing has indexed the URL set |
 | RSS feed | `/feed.xml` | Live feed has `43` Blog + Play items and WebSub hub discovery | Feed readers and lightweight crawlers can discover current content | It does not replace sitemap or webmaster-tool evidence |
 | Atom feed | `/atom.xml` | Live feed has `43` Blog + Play entries and WebSub hub discovery | Feed readers and WebSub can discover current content | It does not prove search indexing |
 | JSON Feed | `/feed.json` | Live feed has `43` Blog + Play items and WebSub hub metadata | Programmatic readers can discover current content | It does not broaden the submitted sitemap scope |
@@ -41,7 +45,8 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 - Use Search Console property: `https://www.bobob.app/`
 - Use Google account: `bobob935@gmail.com`
 - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
-- Open Bing Webmaster Tools and check recommendation classes before closing the indexing loop.
+- Open Bing Webmaster Tools in a signed-in session and check recommendation classes before closing the indexing loop.
+- Public Bing `site:` search may show a challenge; do not treat a blocked public search page as indexing evidence.
 
 ## Required Comparison Points
 
@@ -60,6 +65,13 @@ Also compare against the later same-day post-expansion registration:
 - Current live `/sitemaps/en` URL count: `53`
 - Latest IndexNow URL count: `53`
 - Latest feed item count: `43`
+
+Latest Search Console observation from `bobob935@gmail.com`:
+
+- Total clicks: `0`
+- Total impressions: `3`
+- Indexed pages: `0`
+- Not indexed pages: `5`
 
 ## Stop Rule
 

@@ -59,12 +59,17 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` resubmitted after the AI-review Play expansion.
   - Search Console sitemap row after resubmission showed status `성공` and discovered pages `53`.
+  - Latest performance observation showed total clicks `0` and total impressions `3` for the `3개월` range.
+  - Latest page indexing observation still showed indexed pages `0` and not-indexed pages `5`.
   - Representative URL inspected: `https://www.bobob.app/blog/boring-maintenance-is-content-too`
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
   - Latest submitted URL count: `53`
   - Latest response status: `200`
+- Bing:
+  - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
+  - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
@@ -75,9 +80,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 ## Still Not Complete
 
-- Search Console page indexing report still needs a later refresh after the same-day `/sitemaps/en` `53` discovered-page resubmission.
-- The baseline still records indexed pages `0`, not-indexed pages `5`, clicks `0`, and impressions `0`.
-- Bing Webmaster recommendation classes still need a follow-up pass after deployment and submission propagation.
+- Search Console has started showing impressions (`3`) in the `3개월` performance report, but clicks remain `0`.
+- Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
+- Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Discovery submissions are hints only. They do not prove that Google or Bing indexed the new Blog + Play pages.
 
 ## Scheduled Follow-up
