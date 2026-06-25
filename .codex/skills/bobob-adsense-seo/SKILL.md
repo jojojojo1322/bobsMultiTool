@@ -21,10 +21,10 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Arabic locale routes must keep RTL layout coverage.
 - Locale routing may use NEXT_LOCALE, Accept-Language, and country headers such as x-vercel-ip-country or cf-ipcountry.
 - IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
-- `/robots.txt` should allow public crawl paths, disallow only non-content API surfaces when needed, and point to the canonical sitemap index. `/feed.xml` should expose the current Blog + Play canonical content set for feed readers and lightweight crawler discovery without broadening the submitted sitemap policy.
+- `/robots.txt` should allow public crawl paths, disallow only non-content API surfaces when needed, and point to the canonical sitemap index. `/feed.xml`, `/atom.xml`, and `/feed.json` should expose the current Blog + Play canonical content set for feed readers and lightweight crawler discovery without broadening the submitted sitemap policy.
 - Do not add a static sitemap file. Use the sitemap index even when the current submitted URL set is intentionally reduced.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
-- Blog dates and Play `updatedAt` values should drive Blog + Play discovery freshness. Keep URL-level `lastmod` in `/sitemaps/en`, the sitemap index lastmod, and `/feed.xml` item dates aligned with the current canonical content set.
+- Blog dates and Play `updatedAt` values should drive Blog + Play discovery freshness. Keep URL-level `lastmod` in `/sitemaps/en`, the sitemap index lastmod, and `/feed.xml`, `/atom.xml`, and `/feed.json` item dates aligned with the current canonical content set.
 - Use registry search metadata and content clusters to strengthen tool-led SEO; avoid thin localized pages by improving core tool titles, descriptions, FAQ, and guide intros first.
 - Meta Tag Generator and Open Graph Preview pages should strengthen SEO by checking title/description length, canonical/page host, image host, robots policy, HTTPS status, local/private hosts, noindex risk, and image format before raw tag output.
 - robots.txt and sitemap generator pages should strengthen crawl-readiness SEO by validating sitemap URLs, directive counts, URL counts, duplicate removal, mixed hosts, non-HTTPS entries, and local/private hosts with localized review messages before raw output.

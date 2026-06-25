@@ -66,6 +66,8 @@ export function llmsTxt() {
     "## Discovery",
     markdownLink("Sitemap index", `${siteUrl}/sitemap.xml`, "Search Console에 제출하는 축소 canonical sitemap index."),
     markdownLink("RSS feed", `${siteUrl}/feed.xml`, "현재 Blog + Play canonical 콘텐츠 feed."),
+    markdownLink("Atom feed", `${siteUrl}/atom.xml`, "RSS와 같은 Blog + Play 항목을 Atom 형식으로 제공하는 feed."),
+    markdownLink("JSON feed", `${siteUrl}/feed.json`, "Blog + Play 항목을 JSON Feed 1.1 형식으로 제공하는 feed."),
     markdownLink("OpenSearch descriptor", `${siteUrl}/opensearch.xml`, "전역 검색 /search?q= endpoint discovery."),
     "",
     "## Trust",

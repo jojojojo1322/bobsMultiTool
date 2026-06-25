@@ -64,6 +64,8 @@ const paths = [
   "/robots.txt",
   "/llms.txt",
   "/feed.xml",
+  "/atom.xml",
+  "/feed.json",
   "/opensearch.xml",
   "/sitemap.xml",
   "/sitemaps/en",
@@ -149,7 +151,11 @@ for (const fragment of [
   "/privacy",
   "/terms",
   'rel="search" type="application/opensearchdescription+xml"',
+  'rel="alternate" type="application/atom+xml"',
+  'rel="alternate" type="application/feed+json"',
   "https://www.bobob.app/opensearch.xml",
+  "https://www.bobob.app/atom.xml",
+  "https://www.bobob.app/feed.json",
 ]) {
   if (!homeHtml.includes(fragment)) failures.push(`home page missing approval readiness fragment: ${fragment}`);
 }
@@ -217,6 +223,43 @@ for (const fragment of [
   if (!feedBody.includes(fragment)) failures.push(`/feed.xml missing discovery fragment: ${fragment}`);
 }
 
+const atomResponse = await fetch(`${baseUrl}/atom.xml`, { headers: smokeHeaders });
+const atomBody = await atomResponse.text();
+if (!atomResponse.headers.get("content-type")?.includes("application/atom+xml")) {
+  failures.push("/atom.xml must return application/atom+xml");
+}
+const atomEntryCount = (atomBody.match(/<entry>/g) ?? []).length;
+if (atomEntryCount !== expectedFeedItemCount) {
+  failures.push(`/atom.xml should expose ${expectedFeedItemCount} Blog + Play feed items, found ${atomEntryCount}`);
+}
+for (const fragment of [
+  "<title>bobob.app Blog and Play Lab</title>",
+  '<link rel="self" href="https://www.bobob.app/atom.xml" />',
+  "<id>https://www.bobob.app/blog/small-reset-note</id>",
+  "<id>https://www.bobob.app/play/prompt-cleanup</id>",
+]) {
+  if (!atomBody.includes(fragment)) failures.push(`/atom.xml missing discovery fragment: ${fragment}`);
+}
+
+const jsonFeedResponse = await fetch(`${baseUrl}/feed.json`, { headers: smokeHeaders });
+const jsonFeedBody = await jsonFeedResponse.json().catch(() => null);
+if (!jsonFeedResponse.headers.get("content-type")?.includes("application/json")) {
+  failures.push("/feed.json must return application/json");
+}
+if (jsonFeedBody?.version !== "https://jsonfeed.org/version/1.1") {
+  failures.push("/feed.json missing JSON Feed 1.1 version");
+}
+if (jsonFeedBody?.items?.length !== expectedFeedItemCount) {
+  failures.push(`/feed.json should expose ${expectedFeedItemCount} Blog + Play feed items, found ${jsonFeedBody?.items?.length ?? "none"}`);
+}
+for (const url of [
+  "https://www.bobob.app/blog/small-reset-note",
+  "https://www.bobob.app/blog/ai-side-project-realistic-order",
+  "https://www.bobob.app/play/prompt-cleanup",
+]) {
+  if (!jsonFeedBody?.items?.some((item) => item.url === url)) failures.push(`/feed.json missing item URL: ${url}`);
+}
+
 const llmsResponse = await fetch(`${baseUrl}/llms.txt`, { headers: smokeHeaders });
 const llmsBody = await llmsResponse.text();
 if (!llmsResponse.headers.get("content-type")?.includes("text/plain")) {
@@ -234,6 +277,8 @@ for (const fragment of [
   "[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](https://www.bobob.app/blog/ai-side-project-realistic-order)",
   "[다시 작게 시작하기로 한 날](https://www.bobob.app/blog/small-reset-note)",
   "[Sitemap index](https://www.bobob.app/sitemap.xml)",
+  "[Atom feed](https://www.bobob.app/atom.xml)",
+  "[JSON feed](https://www.bobob.app/feed.json)",
   "[OpenSearch descriptor](https://www.bobob.app/opensearch.xml)",
 ]) {
   if (!llmsBody.includes(fragment)) failures.push(`/llms.txt missing discovery fragment: ${fragment}`);

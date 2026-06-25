@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     languages: languageAlternates("/"),
     types: {
       "application/rss+xml": "https://www.bobob.app/feed.xml",
+      "application/atom+xml": "https://www.bobob.app/atom.xml",
+      "application/feed+json": "https://www.bobob.app/feed.json",
       "application/opensearchdescription+xml": "https://www.bobob.app/opensearch.xml",
     },
   },
@@ -93,6 +95,8 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
         <link rel="alternate" type="application/rss+xml" title="bobob.app Blog and Play Feed" href="https://www.bobob.app/feed.xml" />
+        <link rel="alternate" type="application/atom+xml" title="bobob.app Blog and Play Atom Feed" href="https://www.bobob.app/atom.xml" />
+        <link rel="alternate" type="application/feed+json" title="bobob.app Blog and Play JSON Feed" href="https://www.bobob.app/feed.json" />
         <link rel="search" type="application/opensearchdescription+xml" title="bobob.app Search" href="https://www.bobob.app/opensearch.xml" />
         <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
         <script

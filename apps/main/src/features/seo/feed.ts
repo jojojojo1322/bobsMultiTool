@@ -27,6 +27,10 @@ function latestItemDate(items: FeedItem[]) {
   return items.map((item) => item.date).sort((left, right) => right.localeCompare(left))[0] ?? "2026-06-25T00:00:00+09:00";
 }
 
+function isoDate(date: string) {
+  return new Date(date).toISOString();
+}
+
 function blogFeedItems(): FeedItem[] {
   return getBlogPosts().map((post) => ({
     title: post.title,
@@ -45,10 +49,13 @@ function playFeedItems(): FeedItem[] {
   }));
 }
 
+function feedItems() {
+  return [...blogFeedItems(), ...playFeedItems()].sort((a, b) => b.date.localeCompare(a.date));
+}
+
 export function rssFeedXml() {
-  const feedItems = [...blogFeedItems(), ...playFeedItems()];
-  const items = feedItems
-    .sort((a, b) => b.date.localeCompare(a.date))
+  const items = feedItems();
+  const itemXml = items
     .map((item) =>
       [
         "<item>",
@@ -70,9 +77,62 @@ export function rssFeedXml() {
     `<link>${siteUrl}/</link>`,
     "<description>Development and AI notes plus lightweight static web Play experiments.</description>",
     "<language>ko</language>",
-    `<lastBuildDate>${escapeXml(rfc822(latestItemDate(feedItems)))}</lastBuildDate>`,
-    items,
+    `<lastBuildDate>${escapeXml(rfc822(latestItemDate(items)))}</lastBuildDate>`,
+    itemXml,
     "</channel>",
     "</rss>",
   ].join("");
+}
+
+export function atomFeedXml() {
+  const items = feedItems();
+  const entries = items
+    .map((item) =>
+      [
+        "<entry>",
+        `<title>${escapeXml(item.title)}</title>`,
+        `<link href="${escapeXml(item.url)}" />`,
+        `<id>${escapeXml(item.url)}</id>`,
+        `<published>${escapeXml(isoDate(item.date))}</published>`,
+        `<updated>${escapeXml(isoDate(item.date))}</updated>`,
+        `<summary>${escapeXml(item.description)}</summary>`,
+        "</entry>",
+      ].join(""),
+    )
+    .join("");
+
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<feed xmlns="http://www.w3.org/2005/Atom">',
+    "<title>bobob.app Blog and Play Lab</title>",
+    `<id>${siteUrl}/</id>`,
+    `<link href="${siteUrl}/" />`,
+    `<link rel="self" href="${siteUrl}/atom.xml" />`,
+    "<subtitle>Development and AI notes plus lightweight static web Play experiments.</subtitle>",
+    `<updated>${escapeXml(isoDate(latestItemDate(items)))}</updated>`,
+    entries,
+    "</feed>",
+  ].join("");
+}
+
+export function jsonFeed() {
+  const items = feedItems();
+
+  return {
+    version: "https://jsonfeed.org/version/1.1",
+    title: "bobob.app Blog and Play Lab",
+    home_page_url: `${siteUrl}/`,
+    feed_url: `${siteUrl}/feed.json`,
+    description: "Development and AI notes plus lightweight static web Play experiments.",
+    language: "ko",
+    items: items.map((item) => ({
+      id: item.url,
+      url: item.url,
+      title: item.title,
+      summary: item.description,
+      content_text: item.description,
+      date_published: isoDate(item.date),
+      date_modified: isoDate(item.date),
+    })),
+  };
 }
