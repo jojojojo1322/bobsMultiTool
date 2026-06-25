@@ -172,6 +172,9 @@ if (rssItemCount !== expectedFeedItemCount) {
 }
 assertIncludes("/feed.xml", rssFeed, [
   "<title>bobob.app Blog and Play Lab</title>",
+  'xmlns:atom="http://www.w3.org/2005/Atom"',
+  '<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
+  `<atom:link rel="self" href="${baseUrl}/feed.xml" />`,
   `<link>${baseUrl}/blog/ai-side-project-realistic-order</link>`,
   `<link>${baseUrl}/play/prompt-cleanup</link>`,
   "<category>AI</category>",
@@ -190,6 +193,8 @@ if (atomResponse) {
   }
   assertIncludes("/atom.xml", atomFeed, [
     "<title>bobob.app Blog and Play Lab</title>",
+    '<link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
+    `<link rel="self" href="${baseUrl}/atom.xml" />`,
     `<id>${baseUrl}/blog/ai-side-project-realistic-order</id>`,
     `<id>${baseUrl}/play/prompt-cleanup</id>`,
     '<category term="AI" />',
@@ -200,6 +205,9 @@ if (atomResponse) {
 const jsonFeed = await jsonFor("/feed.json");
 if (jsonFeed) {
   if (jsonFeed.version !== "https://jsonfeed.org/version/1.1") failures.push("/feed.json missing JSON Feed 1.1 version");
+  if (!jsonFeed.hubs?.some((hub) => hub.type === "WebSub" && hub.url === "https://pubsubhubbub.appspot.com/")) {
+    failures.push("/feed.json missing WebSub hub");
+  }
   if (jsonFeed.items?.length !== expectedFeedItemCount) {
     failures.push(`/feed.json should expose ${expectedFeedItemCount} items, found ${jsonFeed.items?.length ?? "none"}`);
   }

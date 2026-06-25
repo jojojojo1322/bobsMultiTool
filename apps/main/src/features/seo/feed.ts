@@ -3,6 +3,7 @@ import { blogPostKeywords, playContentKeywords } from "@/features/content/discov
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
+const webSubHubUrl = "https://pubsubhubbub.appspot.com/";
 
 type FeedItem = {
   title: string;
@@ -78,10 +79,12 @@ export function rssFeedXml() {
 
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<rss version="2.0">',
+    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     "<channel>",
     "<title>bobob.app Blog and Play Lab</title>",
     `<link>${siteUrl}/</link>`,
+    `<atom:link rel="hub" href="${webSubHubUrl}" />`,
+    `<atom:link rel="self" href="${siteUrl}/feed.xml" />`,
     "<description>Development and AI notes plus lightweight static web Play experiments.</description>",
     "<language>ko</language>",
     `<lastBuildDate>${escapeXml(rfc822(latestItemDate(items)))}</lastBuildDate>`,
@@ -117,6 +120,7 @@ export function atomFeedXml() {
     "<title>bobob.app Blog and Play Lab</title>",
     `<id>${siteUrl}/</id>`,
     `<link href="${siteUrl}/" />`,
+    `<link rel="hub" href="${webSubHubUrl}" />`,
     `<link rel="self" href="${siteUrl}/atom.xml" />`,
     "<subtitle>Development and AI notes plus lightweight static web Play experiments.</subtitle>",
     `<updated>${escapeXml(isoDate(latestItemDate(items)))}</updated>`,
@@ -135,6 +139,7 @@ export function jsonFeed() {
     feed_url: `${siteUrl}/feed.json`,
     description: "Development and AI notes plus lightweight static web Play experiments.",
     language: "ko",
+    hubs: [{ type: "WebSub", url: webSubHubUrl }],
     items: items.map((item) => ({
       id: item.url,
       url: item.url,

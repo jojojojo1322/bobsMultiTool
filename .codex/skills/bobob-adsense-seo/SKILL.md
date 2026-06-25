@@ -22,6 +22,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Locale routing may use NEXT_LOCALE, Accept-Language, and country headers such as x-vercel-ip-country or cf-ipcountry.
 - IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
 - `/robots.txt` should allow public crawl paths, disallow only non-content API surfaces when needed, and point to the canonical sitemap index. `/feed.xml`, `/atom.xml`, and `/feed.json` should expose the current Blog + Play canonical content set for feed readers and lightweight crawler discovery without broadening the submitted sitemap policy.
+- WebSub support uses RSS/Atom hub discovery and `npm run websub:submit` to publish feed update topics after Blog/Play content changes. Run `npm run harness:websub` before publishing, and do not treat a WebSub 204 as proof that Google indexed the URLs.
 - Do not add a static sitemap file. Use the sitemap index even when the current submitted URL set is intentionally reduced.
 - Refresh sitemap `lastmod` whenever tool, guide, route, or locale content changes so crawlers receive a current update signal.
 - Blog dates and Play `updatedAt` values should drive Blog + Play discovery freshness. Keep URL-level `lastmod` in `/sitemaps/en`, the sitemap index lastmod, and `/feed.xml`, `/atom.xml`, and `/feed.json` item dates aligned with the current canonical content set.

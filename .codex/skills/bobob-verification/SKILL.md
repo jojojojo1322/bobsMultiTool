@@ -20,6 +20,7 @@ npm run harness:blog-play-quality
 npm run harness:play-interaction
 npm run harness:live-discovery
 npm run harness:indexing-observation
+npm run harness:websub
 npm run harness:tools
 npm run harness:i18n
 npm run harness:localization
@@ -87,6 +88,7 @@ Include:
 - Blog + Play rendered quality checks should cover `/blog`, `/play`, Blog category hubs, every Blog post, and every Play page for exactly one `h1`, unique document title and meta description, canonical URL, enough visible text, OpenGraph/Twitter metadata, and BlogPosting/Game/CollectionPage structured data fragments.
 - Play interaction checks should click every Play entry through mobile and desktop completion and confirm `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
 - Live discovery checks should confirm the deployed canonical host returns the apex-to-www redirect, reduced sitemap, feeds, OpenSearch descriptor, llms.txt, IndexNow key file, ads.txt, and representative Blog/Play structured data. If CLI TLS trust fails, pass temporary TLS overrides only at command time and do not store them.
+- WebSub checks should confirm RSS/Atom feed hub discovery before `npm run websub:submit` publishes `feed.xml` and `atom.xml` topics to the configured hub.
 - Search indexing observation checks should keep `docs/search-indexing-observation-log.md` tied to the `bobob935` Search Console baseline, the 1-2 week check dates, the IndexNow 200 submission, and the live `/sitemaps/en` URL count. Do not close indexing readiness from deployment or sitemap fetch alone.
 - `/blog` should expose broad source-locale categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`; standalone Blog posts must remain allowed, and any post that declares `relatedPlay` should link to an existing Play page whose metadata links back without fake SEO padding.
 - `/blog/category/{slug}` should return source-locale category hub pages with real posts, category-specific metadata, structured data, and sitemap coverage only for categories with content.

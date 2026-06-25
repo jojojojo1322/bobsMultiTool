@@ -241,6 +241,9 @@ if (feedItemCount !== expectedFeedItemCount) {
 }
 for (const fragment of [
   "<title>bobob.app Blog and Play Lab</title>",
+  'xmlns:atom="http://www.w3.org/2005/Atom"',
+  '<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
+  '<atom:link rel="self" href="https://www.bobob.app/feed.xml" />',
   "<link>https://www.bobob.app/blog/small-reset-note</link>",
   "<link>https://www.bobob.app/blog/ai-side-project-realistic-order</link>",
   "<link>https://www.bobob.app/play/prompt-cleanup</link>",
@@ -262,6 +265,7 @@ if (atomEntryCount !== expectedFeedItemCount) {
 }
 for (const fragment of [
   "<title>bobob.app Blog and Play Lab</title>",
+  '<link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
   '<link rel="self" href="https://www.bobob.app/atom.xml" />',
   "<id>https://www.bobob.app/blog/small-reset-note</id>",
   "<id>https://www.bobob.app/play/prompt-cleanup</id>",
@@ -278,6 +282,9 @@ if (!jsonFeedResponse.headers.get("content-type")?.includes("application/json"))
 }
 if (jsonFeedBody?.version !== "https://jsonfeed.org/version/1.1") {
   failures.push("/feed.json missing JSON Feed 1.1 version");
+}
+if (!jsonFeedBody?.hubs?.some((hub) => hub.type === "WebSub" && hub.url === "https://pubsubhubbub.appspot.com/")) {
+  failures.push("/feed.json missing WebSub hub");
 }
 if (jsonFeedBody?.items?.length !== expectedFeedItemCount) {
   failures.push(`/feed.json should expose ${expectedFeedItemCount} Blog + Play feed items, found ${jsonFeedBody?.items?.length ?? "none"}`);
