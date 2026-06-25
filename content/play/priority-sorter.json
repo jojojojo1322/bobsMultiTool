@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-25",
   "shareText": "나는 일을 얼마나 잘 분류할까? 업무 우선순위 분류기를 플레이했다.",
   "order": 4,
-  "relatedBlogSlugs": ["search-console-misreads-for-indie-devs", "static-micro-games-architecture"],
+  "relatedBlogSlugs": ["static-first-before-server", "not-building-login-yet", "static-site-limit", "search-console-misreads-for-indie-devs", "static-micro-games-architecture"],
   "relatedPlaySlugs": ["prompt-cleanup", "meeting-escape"],
   "categories": [
     { "id": "now", "label": "지금", "description": "오늘 흐름을 막는 핵심 일" },

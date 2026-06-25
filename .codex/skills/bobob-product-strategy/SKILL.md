@@ -39,7 +39,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Core acquisition tool detail pages in Korean, Japanese, Spanish, and German should have localized priority failure cases and pre-copy checklist items so review-strip copy is specific enough to increase trust and session depth.
 - Use `/tools` and localized tool directories as session-depth hubs: acquisition workflow clusters should connect high-demand tools into second and third tool paths using localized registry copy.
 - Treat guides as support content for tools, not as a separate generic blog.
-- Treat new `/blog` posts as original development, AI, diary, interests, side-project, or web-operations content. Related Play links are useful when natural, but standalone notes are allowed and should not be padded with forced Play links.
+- Treat new `/blog` posts as original development, AI, diary, interests, side-project, or web-operations content. Blog posts do not need a forced Play attachment; add `relatedPlay` only when it naturally helps the reader continue, and keep reciprocal Play metadata for those linked posts.
 - Do not produce search-keyword-only Blog posts. Blog copy should contain a point of view, operating detail, concrete examples, or failure notes so the site does not read as thin SEO inventory.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
 - Do not prioritize donation, coffee, paid-pack, or ad surfaces in the first Blog + Play content pass. Build original content and lightweight interaction depth first.

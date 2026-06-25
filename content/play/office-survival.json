@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-25",
   "shareText": "나는 오늘 퇴근에 성공했을까? 퇴근 생존기를 플레이해 봤다.",
   "order": 1,
-  "relatedBlogSlugs": ["office-survival-workday"],
+  "relatedBlogSlugs": ["office-survival-workday", "vercel-sitemap-canonical-log"],
   "relatedPlaySlugs": ["meeting-escape", "priority-sorter"],
   "stats": [
     { "key": "stamina", "label": "체력", "initial": 62 },

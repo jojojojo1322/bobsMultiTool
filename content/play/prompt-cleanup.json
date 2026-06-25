@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-25",
   "shareText": "나는 프롬프트를 얼마나 잘 정리할까? 프롬프트 정리함을 플레이했다.",
   "order": 2,
-  "relatedBlogSlugs": ["ai-side-project-realistic-order", "human-decisions-in-ai-coding"],
+  "relatedBlogSlugs": ["ai-answer-review-habit", "ai-before-delegation-checklist", "ai-side-project-realistic-order", "human-decisions-in-ai-coding"],
   "relatedPlaySlugs": ["priority-sorter", "bug-clicker"],
   "categories": [
     { "id": "goal", "label": "목적", "description": "AI가 무엇을 끝내야 하는지" },

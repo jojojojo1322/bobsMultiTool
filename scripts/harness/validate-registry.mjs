@@ -163,7 +163,7 @@ const playContentSlugs = new Set(playEntries.map((entry) => entry.slug).filter(B
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
 if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
-if (blogEntries.length < 16) failures.push(`Blog + Play MVP needs at least 16 blog posts after the category expansion, found ${blogEntries.length}`);
+if (blogEntries.length < 24) failures.push(`Blog + Play MVP needs at least 24 blog posts after the category expansion, found ${blogEntries.length}`);
 if (playEntries.length < 5) failures.push(`Blog + Play MVP needs at least 5 Play entries, found ${playEntries.length}`);
 for (const slug of requiredBlogSlugs) {
   if (!blogContentSlugs.has(slug)) failures.push(`required Blog MVP post missing: ${slug}`);
@@ -175,14 +175,16 @@ for (const type of ["micro-sim", "tap-game", "sort-match-game"]) {
   if (!playEntries.some((entry) => entry.type === type)) failures.push(`Play MVP missing ${type} engine content`);
 }
 for (const category of requiredBlogCategories) {
-  if (!blogEntries.some((entry) => entry.category === category)) failures.push(`Blog category missing from content: ${category}`);
+  const categoryPostCount = blogEntries.filter((entry) => entry.category === category).length;
+  if (!categoryPostCount) failures.push(`Blog category missing from content: ${category}`);
+  if (categoryPostCount < 2) failures.push(`Blog category should have at least two posts: ${category}`);
   if (!blogCategoryDefinition.includes(`label: "${category}"`)) failures.push(`Blog category registry missing label: ${category}`);
 }
 for (const slug of ["diary", "interests", "ai", "development", "operations"]) {
   if (!blogCategoryDefinition.includes(`slug: "${slug}"`)) failures.push(`Blog category registry missing slug: ${slug}`);
 }
 for (const fragment of ["data-blog-categories", "data-blog-category", "그냥 글만 남긴 기록입니다", "blogCategoryPath(group.slug)"]) {
-  if (!blogIndex.includes(fragment)) failures.push(`/blog index missing category or standalone-post fragment: ${fragment}`);
+  if (!blogIndex.includes(fragment)) failures.push(`/blog index missing category or standalone Blog fragment: ${fragment}`);
 }
 for (const fragment of ["generateStaticParams", "blogCategoryStructuredData(", "data-blog-category-page", "getBlogCategoryBySlug", "notFound()"]) {
   if (!blogCategoryPage.includes(fragment)) failures.push(`Blog category page missing ${fragment}`);
@@ -194,6 +196,10 @@ for (const entry of blogEntries) {
     if (!playContentSlugs.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing Play content: ${playSlug}`);
   }
 }
+const standaloneBlogEntries = blogEntries.filter((entry) => !entry.relatedPlaySlugs.length);
+if (standaloneBlogEntries.length < 3) {
+  failures.push(`Blog should keep standalone writing that is not forced into Play links, found ${standaloneBlogEntries.length}`);
+}
 for (const entry of playEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.type || !entry.updatedAt) failures.push(`${entry.file} missing required Play fields`);
   if (entry.updatedAt && !/^\d{4}-\d{2}-\d{2}$/.test(entry.updatedAt)) failures.push(`${entry.slug ?? entry.file} has invalid Play updatedAt: ${entry.updatedAt}`);
@@ -204,6 +210,14 @@ for (const entry of playEntries) {
   }
   for (const playSlug of entry.relatedPlaySlugs ?? []) {
     if (!playContentSlugs.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
+  }
+}
+for (const entry of blogEntries) {
+  for (const playSlug of entry.relatedPlaySlugs) {
+    const playEntry = playEntries.find((play) => play.slug === playSlug);
+    if (playEntry && !playEntry.relatedBlogSlugs?.includes(entry.slug)) {
+      failures.push(`${playSlug} must link back to related Blog post: ${entry.slug}`);
+    }
   }
 }
 for (const fragment of ["data-blog-related-play-bottom", "relatedPlays.map", "/play/${play.slug}"]) {

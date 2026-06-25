@@ -4,7 +4,7 @@
 
 - As of 2026-06-25, bobob.app is being redirected from a developer-tool-first SEO site into a small Blog + Play workshop that feels like someone is trying, writing, fixing, and shipping small things in public. The priority is development/AI/operator posts, lightweight web Play experiments, shareable results, session depth, and high-quality mobile/desktop UX.
 - The existing developer tools remain archived under `/tools`; keep them working, searchable, and safe, but do not present them as the main service on the home page.
-- Optimize new work for content/play registry throughput without forcing every post into a Play pair. Blog metadata can ship as standalone writing; Play metadata should connect back to related writing when the connection is natural.
+- Optimize new work for content/play registry throughput without fake SEO link padding. Blog posts may stand alone by category; add `relatedPlay` only when the connection is natural, and keep reciprocal Play metadata when a Blog post does point to a Play page.
 - Do not let short-term visual experiments damage the product objective. Any visual change must preserve crawlability, accessibility, static performance, and safe layout.
 
 ## Collaboration And Handoff
@@ -35,7 +35,7 @@
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
 - New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, and `micro-sim`.
-- Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Related Play links are useful, but they must not be forced when a post works better as a standalone note.
+- Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Blog is not subordinate to Play: keep standalone posts allowed and visible, and link to Play only when it helps the reader continue naturally.
 - Source-locale Blog category hubs should live at `/blog/category/{slug}` for the main categories and can be included in the reduced MVP sitemap when each hub has real posts.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
