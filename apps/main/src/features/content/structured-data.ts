@@ -1,6 +1,7 @@
 import type { BlogPost, PlayContent } from "./types";
 import type { BlogCategoryDefinition } from "./blog-categories";
 import { blogCategoryPath } from "./blog-categories";
+import { blogIndexKeywords, blogPostKeywords, playContentKeywords, playIndexKeywords } from "./discovery";
 import type { ToolDefinition } from "@/features/tools/types";
 
 const siteUrl = "https://www.bobob.app";
@@ -43,6 +44,13 @@ function breadcrumbList(items: Array<{ name: string; path: string }>) {
   };
 }
 
+function topicThings(keywords: string[]) {
+  return keywords.slice(0, 10).map((keyword) => ({
+    "@type": "Thing",
+    name: keyword,
+  }));
+}
+
 function playMetric(content: PlayContent) {
   if (content.type === "micro-sim") return `${content.turns.length}턴`;
   if (content.type === "tap-game") return `${content.targets.length}개 판단`;
@@ -57,6 +65,7 @@ function playGenre(content: PlayContent) {
 
 export function blogIndexStructuredData(posts: BlogPost[]) {
   const url = `${siteUrl}/blog`;
+  const keywords = blogIndexKeywords(posts);
   const itemList = {
     "@type": "ItemList",
     name: "bobob.app Blog",
@@ -90,6 +99,8 @@ export function blogIndexStructuredData(posts: BlogPost[]) {
     url,
     description: "개발, AI 사용, 생산성, 사이드 프로젝트 운영 기록을 짧게 읽고 관련 Play로 이어지는 bobob.app 글 목록.",
     inLanguage: contentLocale,
+    keywords,
+    about: topicThings(keywords),
     isPartOf: websiteNode(),
     mainEntity: itemList,
   };
@@ -106,6 +117,7 @@ export function blogIndexStructuredData(posts: BlogPost[]) {
 export function blogCategoryStructuredData({ category, posts }: { category: BlogCategoryDefinition; posts: BlogPost[] }) {
   const path = blogCategoryPath(category.slug);
   const url = `${siteUrl}${path}`;
+  const keywords = blogIndexKeywords(posts);
   const itemList = {
     "@type": "ItemList",
     name: `${category.label} - bobob.app Blog`,
@@ -140,6 +152,8 @@ export function blogCategoryStructuredData({ category, posts }: { category: Blog
     url,
     description: category.description,
     inLanguage: contentLocale,
+    keywords,
+    about: topicThings([category.label, ...keywords]),
     isPartOf: websiteNode(),
     mainEntity: itemList,
   };
@@ -156,6 +170,7 @@ export function blogCategoryStructuredData({ category, posts }: { category: Blog
 
 export function playIndexStructuredData(contents: PlayContent[]) {
   const url = `${siteUrl}/play`;
+  const keywords = playIndexKeywords(contents);
   const itemList = {
     "@type": "ItemList",
     name: "bobob.app Play",
@@ -173,6 +188,7 @@ export function playIndexStructuredData(contents: PlayContent[]) {
           description: content.description,
           url: playUrl,
           genre: playGenre(content),
+          keywords: playContentKeywords(content),
           inLanguage: contentLocale,
           isAccessibleForFree: true,
           numberOfPlayers: {
@@ -192,6 +208,8 @@ export function playIndexStructuredData(contents: PlayContent[]) {
     url,
     description: "단일 규칙과 짧은 조작으로 바로 끝나는 bobob.app의 가벼운 웹 게임과 실험 목록.",
     inLanguage: contentLocale,
+    keywords,
+    about: topicThings(keywords),
     isPartOf: websiteNode(),
     mainEntity: itemList,
   };
@@ -207,6 +225,7 @@ export function playIndexStructuredData(contents: PlayContent[]) {
 
 export function blogPostStructuredData({ post, relatedPlays }: { post: BlogPost; relatedPlays: PlayContent[] }) {
   const url = `${siteUrl}/blog/${post.slug}`;
+  const keywords = blogPostKeywords(post, relatedPlays);
   const blogPosting = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -217,6 +236,8 @@ export function blogPostStructuredData({ post, relatedPlays }: { post: BlogPost;
     datePublished: post.date,
     dateModified: post.date,
     articleSection: post.category,
+    keywords,
+    about: topicThings(keywords),
     timeRequired: `PT${post.readingMinutes}M`,
     author: personNode(),
     publisher: organizationNode(),
@@ -247,8 +268,9 @@ export function blogPostStructuredData({ post, relatedPlays }: { post: BlogPost;
   ];
 }
 
-export function playDetailStructuredData({ content, relatedBlog }: { content: PlayContent; relatedBlog?: BlogPost }) {
+export function playDetailStructuredData({ content, relatedBlogs }: { content: PlayContent; relatedBlogs: BlogPost[] }) {
   const url = `${siteUrl}/play/${content.slug}`;
+  const keywords = playContentKeywords(content, relatedBlogs);
   const game = {
     "@context": "https://schema.org",
     "@type": "Game",
@@ -256,6 +278,8 @@ export function playDetailStructuredData({ content, relatedBlog }: { content: Pl
     description: content.description,
     url,
     genre: playGenre(content),
+    keywords,
+    about: topicThings(keywords),
     inLanguage: contentLocale,
     isAccessibleForFree: true,
     numberOfPlayers: {
@@ -269,13 +293,17 @@ export function playDetailStructuredData({ content, relatedBlog }: { content: Pl
       name: "bobob.app Play",
       url: `${siteUrl}/play`,
     },
-    subjectOf: relatedBlog
-      ? {
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
+    },
+    subjectOf: relatedBlogs.length
+      ? relatedBlogs.map((relatedBlog) => ({
           "@type": "BlogPosting",
           headline: relatedBlog.title,
           url: `${siteUrl}/blog/${relatedBlog.slug}`,
           description: relatedBlog.description,
-        }
+        }))
       : undefined,
   };
 

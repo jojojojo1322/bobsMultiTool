@@ -92,6 +92,17 @@ const directoryStructuredDataPaths = [
   ["/ar/tools", '"inLanguage":"ar"'],
 ];
 
+const contentStructuredDataPaths = [
+  [
+    "/blog/ai-side-project-realistic-order",
+    ['"@type":"BlogPosting"', '"keywords":[', '"about":[', '"articleSection":"AI"', '"mentions":['],
+  ],
+  [
+    "/play/prompt-cleanup",
+    ['"@type":"Game"', '"keywords":[', '"about":[', '"mainEntityOfPage"', '"subjectOf":['],
+  ],
+];
+
 const failures = [];
 
 for (const routePath of paths) {
@@ -142,6 +153,14 @@ for (const [routePath, localeFragment] of directoryStructuredDataPaths) {
   }
 }
 
+for (const [routePath, fragments] of contentStructuredDataPaths) {
+  const response = await fetch(`${baseUrl}${routePath}`, { headers: smokeHeaders });
+  const html = await response.text();
+  for (const fragment of fragments) {
+    if (!html.includes(fragment)) failures.push(`${routePath} missing content discovery structured data fragment ${fragment}`);
+  }
+}
+
 const homeHtml = await (await fetch(`${baseUrl}/`, { headers: smokeHeaders })).text();
 for (const fragment of [
   'name="google-adsense-account" content="ca-pub-2620992505263949"',
@@ -156,6 +175,8 @@ for (const fragment of [
   "https://www.bobob.app/opensearch.xml",
   "https://www.bobob.app/atom.xml",
   "https://www.bobob.app/feed.json",
+  'name="keywords"',
+  "작은 웹게임",
 ]) {
   if (!homeHtml.includes(fragment)) failures.push(`home page missing approval readiness fragment: ${fragment}`);
 }
@@ -223,6 +244,8 @@ for (const fragment of [
   "<link>https://www.bobob.app/blog/small-reset-note</link>",
   "<link>https://www.bobob.app/blog/ai-side-project-realistic-order</link>",
   "<link>https://www.bobob.app/play/prompt-cleanup</link>",
+  "<category>AI</category>",
+  "<category>Play</category>",
   "<lastBuildDate>",
 ]) {
   if (!feedBody.includes(fragment)) failures.push(`/feed.xml missing discovery fragment: ${fragment}`);
@@ -242,6 +265,8 @@ for (const fragment of [
   '<link rel="self" href="https://www.bobob.app/atom.xml" />',
   "<id>https://www.bobob.app/blog/small-reset-note</id>",
   "<id>https://www.bobob.app/play/prompt-cleanup</id>",
+  '<category term="AI" />',
+  '<category term="Play" />',
 ]) {
   if (!atomBody.includes(fragment)) failures.push(`/atom.xml missing discovery fragment: ${fragment}`);
 }
@@ -263,6 +288,12 @@ for (const url of [
   "https://www.bobob.app/play/prompt-cleanup",
 ]) {
   if (!jsonFeedBody?.items?.some((item) => item.url === url)) failures.push(`/feed.json missing item URL: ${url}`);
+}
+if (!jsonFeedBody?.items?.some((item) => item.url === "https://www.bobob.app/blog/ai-side-project-realistic-order" && item.tags?.includes("AI"))) {
+  failures.push("/feed.json missing Blog category tags");
+}
+if (!jsonFeedBody?.items?.some((item) => item.url === "https://www.bobob.app/play/prompt-cleanup" && item.tags?.includes("Play"))) {
+  failures.push("/feed.json missing Play tags");
 }
 
 const llmsResponse = await fetch(`${baseUrl}/llms.txt`, { headers: smokeHeaders });

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ContentNav } from "@/features/content/content-nav";
 import { blogCategoryDefinitions, blogCategoryPath, getBlogCategoryBySlug } from "@/features/content/blog-categories";
 import { getBlogPosts } from "@/features/content/blog";
+import { blogIndexKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogCategoryStructuredData } from "@/features/content/structured-data";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
@@ -31,9 +32,11 @@ export async function generateMetadata({ params }: BlogCategoryPageProps): Promi
   if (!category) return {};
 
   const url = `https://www.bobob.app${blogCategoryPath(category.slug)}`;
+  const posts = getBlogPosts().filter((post) => post.category === category.label);
   return {
     title: `${category.label} - bobob.app Blog`,
     description: category.description,
+    keywords: blogIndexKeywords(posts),
     alternates: {
       canonical: url,
     },

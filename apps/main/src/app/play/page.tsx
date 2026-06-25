@@ -5,12 +5,16 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
+import { playIndexKeywords } from "@/features/content/discovery";
 import { getPlayContents } from "@/features/content/play";
 import { playIndexStructuredData } from "@/features/content/structured-data";
+
+const playContentsForMetadata = getPlayContents();
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
   description: "규칙 하나만 보고 바로 눌러보는 bobob.app의 작은 웹 놀이 목록입니다.",
+  keywords: playIndexKeywords(playContentsForMetadata),
   alternates: {
     canonical: "https://www.bobob.app/play",
   },

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPostBySlug, getBlogPosts } from "@/features/content/blog";
+import { blogPostKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogPostStructuredData } from "@/features/content/structured-data";
 
@@ -22,10 +23,15 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = getBlogPostBySlug(slug);
   if (!post) return {};
   const url = `https://www.bobob.app/blog/${post.slug}`;
+  const relatedPlays = post.relatedPlaySlugs.flatMap((playSlug) => {
+    const content = getPlayContentBySlug(playSlug);
+    return content ? [content] : [];
+  });
 
   return {
     title: `${post.title} - bobob.app`,
     description: post.description,
+    keywords: blogPostKeywords(post, relatedPlays),
     alternates: {
       canonical: url,
     },

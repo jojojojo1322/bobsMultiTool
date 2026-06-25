@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPostBySlug } from "@/features/content/blog";
+import { playContentKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug, getPlayContents } from "@/features/content/play";
 import { playDetailStructuredData } from "@/features/content/structured-data";
 import { SurvivalPlayEngine } from "@/features/play/survival-engine";
@@ -23,10 +24,15 @@ export async function generateMetadata({ params }: PlayPageProps): Promise<Metad
   const content = getPlayContentBySlug(slug);
   if (!content) return {};
   const url = `https://www.bobob.app/play/${content.slug}`;
+  const relatedBlogs = content.relatedBlogSlugs.flatMap((blogSlug) => {
+    const post = getBlogPostBySlug(blogSlug);
+    return post ? [post] : [];
+  });
 
   return {
     title: `${content.title} - bobob.app Play`,
     description: content.description,
+    keywords: playContentKeywords(content, relatedBlogs),
     alternates: {
       canonical: url,
     },
@@ -50,7 +56,10 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
   const content = getPlayContentBySlug(slug);
   if (!content) notFound();
   const dictionary = getClientDictionary(contentLocale);
-  const relatedBlog = content.relatedBlogSlugs[0] ? getBlogPostBySlug(content.relatedBlogSlugs[0]) : undefined;
+  const relatedBlogs = content.relatedBlogSlugs.flatMap((blogSlug) => {
+    const post = getBlogPostBySlug(blogSlug);
+    return post ? [post] : [];
+  });
   const relatedBlogLinks = content.relatedBlogSlugs.flatMap((blogSlug) => {
     const post = getBlogPostBySlug(blogSlug);
     return post ? [{ slug: post.slug, title: post.title, description: post.description }] : [];
@@ -65,7 +74,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
       : content.type === "tap-game"
         ? `${content.targets.length}개 판단`
         : `${content.items.length}개 분류`;
-  const jsonLd = playDetailStructuredData({ content, relatedBlog });
+  const jsonLd = playDetailStructuredData({ content, relatedBlogs });
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>

@@ -1,4 +1,5 @@
 import { getBlogPosts } from "@/features/content/blog";
+import { blogPostKeywords, playContentKeywords } from "@/features/content/discovery";
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
@@ -8,6 +9,7 @@ type FeedItem = {
   description: string;
   url: string;
   date: string;
+  categories: string[];
 };
 
 function escapeXml(value: string) {
@@ -37,6 +39,7 @@ function blogFeedItems(): FeedItem[] {
     description: post.description,
     url: `${siteUrl}/blog/${post.slug}`,
     date: `${post.date}T00:00:00+09:00`,
+    categories: blogPostKeywords(post).slice(0, 8),
   }));
 }
 
@@ -46,6 +49,7 @@ function playFeedItems(): FeedItem[] {
     description: content.description,
     url: `${siteUrl}/play/${content.slug}`,
     date: `${content.updatedAt}T00:00:00+09:00`,
+    categories: playContentKeywords(content).slice(0, 8),
   }));
 }
 
@@ -56,17 +60,20 @@ function feedItems() {
 export function rssFeedXml() {
   const items = feedItems();
   const itemXml = items
-    .map((item) =>
-      [
+    .map((item) => {
+      const categories = item.categories.map((category) => `<category>${escapeXml(category)}</category>`).join("");
+
+      return [
         "<item>",
         `<title>${escapeXml(item.title)}</title>`,
         `<link>${escapeXml(item.url)}</link>`,
         `<guid isPermaLink="true">${escapeXml(item.url)}</guid>`,
         `<description>${escapeXml(item.description)}</description>`,
         `<pubDate>${escapeXml(rfc822(item.date))}</pubDate>`,
+        categories,
         "</item>",
-      ].join(""),
-    )
+      ].join("");
+    })
     .join("");
 
   return [
@@ -87,8 +94,10 @@ export function rssFeedXml() {
 export function atomFeedXml() {
   const items = feedItems();
   const entries = items
-    .map((item) =>
-      [
+    .map((item) => {
+      const categories = item.categories.map((category) => `<category term="${escapeXml(category)}" />`).join("");
+
+      return [
         "<entry>",
         `<title>${escapeXml(item.title)}</title>`,
         `<link href="${escapeXml(item.url)}" />`,
@@ -96,9 +105,10 @@ export function atomFeedXml() {
         `<published>${escapeXml(isoDate(item.date))}</published>`,
         `<updated>${escapeXml(isoDate(item.date))}</updated>`,
         `<summary>${escapeXml(item.description)}</summary>`,
+        categories,
         "</entry>",
-      ].join(""),
-    )
+      ].join("");
+    })
     .join("");
 
   return [
@@ -133,6 +143,7 @@ export function jsonFeed() {
       content_text: item.description,
       date_published: isoDate(item.date),
       date_modified: isoDate(item.date),
+      tags: item.categories,
     })),
   };
 }

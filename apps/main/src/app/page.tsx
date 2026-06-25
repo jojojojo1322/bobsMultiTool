@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPosts } from "@/features/content/blog";
+import { homeContentKeywords } from "@/features/content/discovery";
 import { getPlayContents } from "@/features/content/play";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { readSearchQuery } from "@/features/tools/tool-directory";
@@ -17,10 +18,12 @@ interface HomePageProps {
 
 const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base64-tool", "cron-generator", "dns-lookup"];
 const contentLocale = "ko";
+const homeKeywords = homeContentKeywords(getBlogPosts(), getPlayContents());
 
 export const metadata: Metadata = {
   title: "bobob.app - 일단 해보는 Blog and Play",
   description: "거창한 서비스보다, 오늘 떠오른 개발/AI 기록과 작은 웹 놀이를 일단 만들어 보는 곳입니다.",
+  keywords: homeKeywords,
   alternates: {
     canonical: "https://www.bobob.app/",
   },

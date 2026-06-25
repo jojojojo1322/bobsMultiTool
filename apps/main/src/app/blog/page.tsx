@@ -7,12 +7,16 @@ import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { blogCategoryDefinitions, blogCategoryPath, getBlogCategoryByLabel } from "@/features/content/blog-categories";
 import { getBlogPosts } from "@/features/content/blog";
+import { blogIndexKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogIndexStructuredData } from "@/features/content/structured-data";
+
+const postsForMetadata = getBlogPosts();
 
 export const metadata: Metadata = {
   title: "Blog - bobob.app",
   description: "개발, AI, 작은 웹서비스를 만들면서 막힌 것과 다시 고친 것을 적어두는 bobob.app 글 목록입니다.",
+  keywords: blogIndexKeywords(postsForMetadata),
   alternates: {
     canonical: "https://www.bobob.app/blog",
   },
