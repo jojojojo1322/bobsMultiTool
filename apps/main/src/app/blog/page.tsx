@@ -7,6 +7,7 @@ import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContentBySlug } from "@/features/content/play";
+import { blogIndexStructuredData } from "@/features/content/structured-data";
 
 export const metadata: Metadata = {
   title: "Blog - bobob.app",
@@ -31,9 +32,11 @@ export const metadata: Metadata = {
 export default function BlogIndexPage() {
   const dictionary = getClientDictionary(contentLocale);
   const posts = getBlogPosts();
+  const jsonLd = blogIndexStructuredData(posts);
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ContentNav dictionary={dictionary} />
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">

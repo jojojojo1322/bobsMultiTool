@@ -5,6 +5,7 @@ import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPostBySlug } from "@/features/content/blog";
 import { getPlayContentBySlug, getPlayContents } from "@/features/content/play";
+import { playDetailStructuredData } from "@/features/content/structured-data";
 import { SurvivalPlayEngine } from "@/features/play/survival-engine";
 import { TapGameEngine } from "@/features/play/tap-game-engine";
 import { SortMatchEngine } from "@/features/play/sort-match-engine";
@@ -56,19 +57,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
       : content.type === "tap-game"
         ? `${content.targets.length}개 판단`
         : `${content.items.length}개 분류`;
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Game",
-    name: content.title,
-    description: content.description,
-    url: `https://www.bobob.app/play/${content.slug}`,
-    inLanguage: "ko",
-    numberOfPlayers: {
-      "@type": "QuantitativeValue",
-      minValue: 1,
-      maxValue: 1,
-    },
-  };
+  const jsonLd = playDetailStructuredData({ content, relatedBlog });
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>

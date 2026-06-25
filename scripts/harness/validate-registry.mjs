@@ -9,21 +9,29 @@ const blogContentDir = path.join(root, "content/blog");
 const playContentDir = path.join(root, "content/play");
 const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/route.ts");
 const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
+const blogIndexPath = path.join(root, "apps/main/src/app/blog/page.tsx");
 const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
+const playIndexPath = path.join(root, "apps/main/src/app/play/page.tsx");
+const playDetailPath = path.join(root, "apps/main/src/app/play/[slug]/page.tsx");
 const toolsIndexPath = path.join(root, "apps/main/src/app/tools/page.tsx");
 const localizedToolsIndexPath = path.join(root, "apps/main/src/app/[locale]/tools/page.tsx");
 const toolDetailPath = path.join(root, "apps/main/src/app/tools/[slug]/page.tsx");
 const localizedToolDetailPath = path.join(root, "apps/main/src/app/[locale]/tools/[slug]/page.tsx");
 const toolStructuredDataPath = path.join(root, "apps/main/src/features/tools/structured-data.ts");
+const contentStructuredDataPath = path.join(root, "apps/main/src/features/content/structured-data.ts");
 const i18nConfigPath = path.join(root, "apps/main/src/features/i18n/config.ts");
 const registry = fs.readFileSync(registryPath, "utf8");
 const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
 const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
 const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
+const blogIndex = fs.readFileSync(blogIndexPath, "utf8");
 const blogDetail = fs.readFileSync(blogDetailPath, "utf8");
+const playIndex = fs.readFileSync(playIndexPath, "utf8");
+const playDetail = fs.readFileSync(playDetailPath, "utf8");
 const toolDetail = fs.readFileSync(toolDetailPath, "utf8");
 const localizedToolDetail = fs.readFileSync(localizedToolDetailPath, "utf8");
 const toolStructuredData = fs.readFileSync(toolStructuredDataPath, "utf8");
+const contentStructuredData = fs.readFileSync(contentStructuredDataPath, "utf8");
 const failures = [];
 const requiredBlogSlugs = [
   "ai-side-project-realistic-order",
@@ -177,6 +185,33 @@ for (const entry of playEntries) {
 }
 for (const fragment of ["data-blog-related-play-bottom", "relatedPlays.map", "/play/${play.slug}"]) {
   if (!blogDetail.includes(fragment)) failures.push(`Blog detail page missing related Play bottom flow fragment: ${fragment}`);
+}
+for (const [source, name, fragment] of [
+  [blogIndex, "/blog index", "blogIndexStructuredData("],
+  [playIndex, "/play index", "playIndexStructuredData("],
+  [blogDetail, "Blog detail", "blogPostStructuredData("],
+  [playDetail, "Play detail", "playDetailStructuredData("],
+]) {
+  if (!source.includes(fragment)) failures.push(`${name} must render shared Blog + Play structured data: ${fragment}`);
+}
+for (const fragment of [
+  "blogIndexStructuredData",
+  "playIndexStructuredData",
+  "blogPostStructuredData",
+  "playDetailStructuredData",
+  "CollectionPage",
+  "ItemList",
+  "BlogPosting",
+  "Game",
+  "BreadcrumbList",
+  "mainEntity",
+  "numberOfItems",
+  "isAccessibleForFree",
+]) {
+  if (!contentStructuredData.includes(fragment)) failures.push(`Blog + Play structured data missing ${fragment}`);
+}
+if (contentStructuredData.includes("aggregateRating") || contentStructuredData.includes("reviewRating")) {
+  failures.push("Blog + Play structured data must not include fabricated rating or review schema");
 }
 if (fs.existsSync(path.join(root, "apps/main/public/sitemap.xml"))) failures.push("static public sitemap.xml must not shadow dynamic sitemap index");
 for (const legacyPath of [

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getPlayContents } from "@/features/content/play";
+import { playIndexStructuredData } from "@/features/content/structured-data";
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
@@ -30,9 +31,11 @@ export const metadata: Metadata = {
 export default function PlayIndexPage() {
   const dictionary = getClientDictionary(contentLocale);
   const playContents = getPlayContents();
+  const jsonLd = playIndexStructuredData(playContents);
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ContentNav dictionary={dictionary} />
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">

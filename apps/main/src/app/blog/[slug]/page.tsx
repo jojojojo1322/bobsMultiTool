@@ -7,6 +7,7 @@ import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPostBySlug, getBlogPosts } from "@/features/content/blog";
 import { getPlayContentBySlug } from "@/features/content/play";
+import { blogPostStructuredData } from "@/features/content/structured-data";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -54,23 +55,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return content ? [content] : [];
   });
   const primaryRelatedPlay = relatedPlays[0];
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    dateModified: post.date,
-    author: {
-      "@type": "Person",
-      name: "Bob",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "bobob.app",
-    },
-    mainEntityOfPage: `https://www.bobob.app/blog/${post.slug}`,
-  };
+  const jsonLd = blogPostStructuredData({ post, relatedPlays });
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
