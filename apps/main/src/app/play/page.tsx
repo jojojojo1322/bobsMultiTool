@@ -9,7 +9,7 @@ import { getPlayContents } from "@/features/content/play";
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
-  description: "미니게임, 성향 테스트, 밸런스 게임, 퀴즈를 빠르게 실험하는 bobob.app Play 콘텐츠 목록입니다.",
+  description: "클릭, 분류, 짧은 선택으로 바로 끝나는 bobob.app의 가벼운 웹 게임과 실험 목록입니다.",
   alternates: {
     canonical: "https://www.bobob.app/play",
   },
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/play",
     siteName: "bobob.app",
     title: "Play - bobob.app",
-    description: "직접 클릭하고 결과를 공유하는 bobob.app Play 콘텐츠 목록.",
+    description: "바로 클릭하고 결과를 공유하는 가벼운 웹 게임과 실험 목록.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - bobob.app",
-    description: "직접 클릭하고 결과를 공유하는 Play 콘텐츠 목록.",
+    description: "바로 클릭하고 결과를 공유하는 Play 콘텐츠 목록.",
   },
 };
 
@@ -37,9 +37,9 @@ export default function PlayIndexPage() {
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Badge>Play</Badge>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">바로 클릭하고 결과를 공유하는 콘텐츠</h1>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">플래시게임처럼 가볍게 시작하는 Play</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            생존 시뮬레이터, 성향 테스트, 밸런스 게임, 퀴즈를 같은 데이터 구조로 빠르게 실험합니다.
+            단일 규칙, 단일 조작, 짧은 결과를 기준으로 클릭 게임과 분류 게임, 짧은 시뮬레이터를 실험합니다.
           </p>
         </div>
       </section>
@@ -55,8 +55,8 @@ export default function PlayIndexPage() {
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-2">
                   <Badge>{content.durationLabel}</Badge>
-                  <Badge>{content.turns.length}턴</Badge>
-                  <Badge>{content.endings.length}엔딩</Badge>
+                  <Badge>{content.type === "micro-sim" ? `${content.turns.length}턴` : content.type === "tap-game" ? `${content.targets.length}개 판단` : `${content.items.length}개 분류`}</Badge>
+                  <Badge>{content.type === "tap-game" ? "탭 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
                 </CardContent>
               </Card>
             </Link>

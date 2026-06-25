@@ -7,7 +7,7 @@ description: Use before handing off Bob's Multi Tool changes, especially route, 
 
 - Keep handoff/status text short unless the user explicitly asks for analysis.
 - UI, CSS, layout, theme, localization, or background changes require real browser verification on `localhost` before handoff.
-- Blog + Play MVP changes should verify `/`, `/blog`, `/play`, `/play/office-survival`, `/tools`, and the reduced sitemap index before handoff.
+- Blog + Play MVP changes should verify `/`, `/blog`, `/play`, `/play/office-survival`, `/play/prompt-cleanup`, `/play/meeting-escape`, `/play/priority-sorter`, `/play/bug-clicker`, `/tools`, and the reduced sitemap index before handoff.
 - If `npm run build` ran while a local server was already running, restart the server before browser verification so stale CSS/JS chunks do not create false visual failures.
 - Do not expose access tokens or secrets in verification output. Pass deployment credentials as environment variables such as `VERCEL_TOKEN`.
 

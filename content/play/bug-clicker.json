@@ -1,0 +1,31 @@
+{
+  "slug": "bug-clicker",
+  "title": "버그 잡기 클릭",
+  "description": "로그와 증상 카드 속에서 실제 버그 신호만 빠르게 누르는 클릭 게임.",
+  "type": "tap-game",
+  "durationLabel": "30-60초",
+  "shareText": "나는 버그 신호를 얼마나 빨리 잡을까? 버그 잡기 클릭을 플레이했다.",
+  "order": 5,
+  "relatedBlogSlugs": ["cursor-codex-web-service-bottlenecks", "static-micro-games-architecture"],
+  "relatedPlaySlugs": ["prompt-cleanup", "priority-sorter"],
+  "targetLabel": "버그 신호",
+  "decoyLabel": "소음",
+  "targetScore": 18,
+  "targets": [
+    { "id": "stack", "label": "TypeError at route load", "detail": "실제 예외와 경로가 같이 있다.", "kind": "target", "points": 3 },
+    { "id": "slow", "label": "왠지 느린 느낌", "detail": "측정 없는 체감만으로는 약하다.", "kind": "decoy", "points": 2 },
+    { "id": "repro", "label": "모바일에서만 재현", "detail": "조건이 좁혀진 강한 단서다.", "kind": "target", "points": 3 },
+    { "id": "maybe-cache", "label": "캐시 때문일 듯", "detail": "검증 전 추측이다.", "kind": "decoy", "points": 2 },
+    { "id": "status500", "label": "POST /api/save 500", "detail": "요청과 상태 코드가 명확하다.", "kind": "target", "points": 3 },
+    { "id": "design-opinion", "label": "버튼이 조금 심심함", "detail": "개선 의견이지 버그 신호는 아니다.", "kind": "decoy", "points": 2 },
+    { "id": "hydration", "label": "Hydration mismatch", "detail": "렌더링 계층의 실제 경고다.", "kind": "target", "points": 3 },
+    { "id": "all-broken", "label": "전부 이상함", "detail": "범위가 너무 넓어 바로 잡기 어렵다.", "kind": "decoy", "points": 2 },
+    { "id": "missing-env", "label": "NEXT_PUBLIC 값 undefined", "detail": "환경 변수 경계가 보인다.", "kind": "target", "points": 3 },
+    { "id": "old-memory", "label": "예전에도 그랬던 것 같음", "detail": "기록 없이 기억만 있는 소음이다.", "kind": "decoy", "points": 2 }
+  ],
+  "endings": [
+    { "id": "debugger", "title": "버그 신호 탐지 성공", "description": "예외, 재현 조건, 상태 코드를 중심으로 진짜 단서를 잘 잡았다.", "minScore": 18 },
+    { "id": "triage", "title": "트리아지 가능", "description": "대체로 신호를 잡았다. 추측과 증거를 더 분리하면 속도가 오른다.", "minScore": 12 },
+    { "id": "noise", "title": "소음에 휩쓸림", "description": "느낌과 의견이 버그처럼 보였다. 다음 판에서는 재현 조건부터 보자.", "minScore": 0 }
+  ]
+}

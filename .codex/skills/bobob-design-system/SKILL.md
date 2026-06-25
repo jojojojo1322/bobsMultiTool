@@ -6,6 +6,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 # Bobob Design System
 
 - Visual changes must protect the current product loop: on Blog + Play pages, users should see the featured Play path, readable content, result/share actions, and related links before decorative or support content; on archived tool pages, preserve input, output, copy/review actions, and next-tool paths.
+- Blog + Play game screens should feel like compact web experiments, not landing pages: one clear rule, one primary interaction, stable dimensions, mobile-first controls, and no donation/ad/support prompts in the first pass.
 - After changing CSS, layout, theme, or background behavior, verify the page in a real browser on `localhost`; if a build ran, restart the local server first to avoid stale CSS/JS chunk regressions.
 - Use shadcn/ui-style local primitives from `apps/main/src/components/ui`.
 - Keep the product-lab tone: neutral zinc palette, compact panels, crisp borders, modest radius, no raised colored top borders, and no decorative accent strips.

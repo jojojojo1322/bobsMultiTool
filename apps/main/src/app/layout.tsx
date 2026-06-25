@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Bob's Multi Tool",
   },
   description:
-    "A lightweight Blog + Play content lab for short reads, interactive mini games, quizzes, tests, and archived developer tools.",
+    "A lightweight Blog + Play content lab for development and AI notes, static web games, and archived developer tools.",
   authors: [{ name: "Bob" }],
   creator: "Bob's Multi Tool",
   publisher: "Bob's Multi Tool",
@@ -69,7 +69,7 @@ export default async function RootLayout({
     name: "bobob.app",
     alternateName: "Bobob Blog and Play Lab",
     url: "https://www.bobob.app",
-    description: "A lightweight Blog + Play content lab for short reads, interactive mini games, quizzes, tests, and archived developer tools.",
+    description: "A lightweight Blog + Play content lab for development and AI notes, static web games, and archived developer tools.",
     inLanguage: locale,
     creator: {
       "@type": "Person",

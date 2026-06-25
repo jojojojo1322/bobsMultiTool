@@ -178,10 +178,10 @@ for (const fragment of [
   "xmlns:xhtml",
   "hreflang=\"x-default\"",
   "getBlogPosts",
+  "getPlayContents",
   'path: "/"',
   'path: "/blog"',
   'path: "/play"',
-  'path: "/play/office-survival"',
   'path: "/tools"',
   "sitemapLocales",
   "sitemapSubmissionLocales",
@@ -190,8 +190,8 @@ for (const fragment of [
 }
 
 const reducedSitemapCountMatch = sitemapSource.match(/function basePaths\(\)[\s\S]*?\n}\n\nfunction alternateLinks/);
-if (!reducedSitemapCountMatch?.[0]?.includes("/play/office-survival")) {
-  failures.push("reduced content sitemap should include the first priority Play page");
+if (!reducedSitemapCountMatch?.[0]?.includes("getPlayContents().map")) {
+  failures.push("reduced content sitemap should include registered Play pages");
 }
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));

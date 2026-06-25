@@ -1,0 +1,32 @@
+{
+  "slug": "prompt-cleanup",
+  "title": "프롬프트 정리함",
+  "description": "AI에게 던질 문장을 목적, 맥락, 제약으로 빠르게 분류하는 1분짜리 정리 게임.",
+  "type": "sort-match-game",
+  "durationLabel": "1-2분",
+  "shareText": "나는 프롬프트를 얼마나 잘 정리할까? 프롬프트 정리함을 플레이했다.",
+  "order": 2,
+  "relatedBlogSlugs": ["ai-side-project-realistic-order", "human-decisions-in-ai-coding"],
+  "relatedPlaySlugs": ["priority-sorter", "bug-clicker"],
+  "categories": [
+    { "id": "goal", "label": "목적", "description": "AI가 무엇을 끝내야 하는지" },
+    { "id": "context", "label": "맥락", "description": "상황, 대상, 기존 조건" },
+    { "id": "constraint", "label": "제약", "description": "형식, 금지, 기준, 범위" }
+  ],
+  "items": [
+    { "id": "landing", "label": "랜딩 페이지 초안을 만들어줘", "detail": "완료해야 할 작업 자체를 말한다.", "categoryId": "goal" },
+    { "id": "ko-user", "label": "대상은 한국어 모바일 사용자야", "detail": "누구를 위한 결과인지 정한다.", "categoryId": "context" },
+    { "id": "no-hero", "label": "마케팅식 hero 말고 바로 쓰는 화면으로", "detail": "결과의 방향을 제한한다.", "categoryId": "constraint" },
+    { "id": "existing-css", "label": "이미 shadcn 스타일 컴포넌트를 쓰고 있어", "detail": "현재 코드베이스의 조건이다.", "categoryId": "context" },
+    { "id": "five-bullets", "label": "결과는 다섯 개 bullet 안으로", "detail": "출력 형식을 좁힌다.", "categoryId": "constraint" },
+    { "id": "bug-fix", "label": "이 에러가 나는 원인을 찾아줘", "detail": "AI가 수행해야 하는 작업이다.", "categoryId": "goal" },
+    { "id": "do-not-touch", "label": "인증 코드는 건드리지 마", "detail": "변경 범위를 막는 제약이다.", "categoryId": "constraint" },
+    { "id": "prod-issue", "label": "프로덕션에서만 발생해", "detail": "문제 상황을 설명하는 맥락이다.", "categoryId": "context" },
+    { "id": "compare", "label": "두 접근의 장단점을 비교해줘", "detail": "원하는 산출물의 목적이다.", "categoryId": "goal" }
+  ],
+  "endings": [
+    { "id": "architect", "title": "프롬프트 설계자", "description": "목적, 맥락, 제약을 분리해서 AI가 헛돌 가능성을 크게 줄였다.", "minScore": 8 },
+    { "id": "operator", "title": "실무형 정리러", "description": "대부분의 문장을 제대로 정리했다. 이제 결과물 검토 기준만 조금 더 선명하면 된다.", "minScore": 6 },
+    { "id": "messy", "title": "질문부터 리팩터링 필요", "description": "AI가 나쁜 답을 하는 게 아니라 질문이 아직 한 덩어리일 수 있다.", "minScore": 0 }
+  ]
+}

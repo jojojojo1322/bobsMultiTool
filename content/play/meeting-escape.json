@@ -1,0 +1,31 @@
+{
+  "slug": "meeting-escape",
+  "title": "회의 탈출 버튼",
+  "description": "회의 중 진짜 결정 신호만 누르고 잡담 신호는 넘기는 탭 게임.",
+  "type": "tap-game",
+  "durationLabel": "30-60초",
+  "shareText": "나는 회의에서 결정 신호를 얼마나 잘 잡을까? 회의 탈출 버튼을 플레이했다.",
+  "order": 3,
+  "relatedBlogSlugs": ["small-web-games-retention", "why-bobob-shifted-to-content-lab"],
+  "relatedPlaySlugs": ["office-survival", "priority-sorter"],
+  "targetLabel": "결정 신호",
+  "decoyLabel": "넘기기",
+  "targetScore": 18,
+  "targets": [
+    { "id": "owner", "label": "누가 가져갈까요?", "detail": "담당자가 정해지면 회의가 끝날 수 있다.", "kind": "target", "points": 3 },
+    { "id": "just-sync", "label": "일단 싱크만 하죠", "detail": "목적 없는 회의가 길어지는 신호다.", "kind": "decoy", "points": 2 },
+    { "id": "deadline", "label": "오늘 안에 필요한가요?", "detail": "마감이 정해지면 범위가 줄어든다.", "kind": "target", "points": 3 },
+    { "id": "vibe", "label": "느낌상 그럴 것 같아요", "detail": "결정 근거가 아니라 분위기다.", "kind": "decoy", "points": 2 },
+    { "id": "next-action", "label": "다음 행동만 정리하죠", "detail": "회의 종료에 가까운 문장이다.", "kind": "target", "points": 3 },
+    { "id": "circle", "label": "다시 처음부터 보면", "detail": "이미 돈 이야기가 반복되는 순간이다.", "kind": "decoy", "points": 2 },
+    { "id": "doc", "label": "문서에 남기고 비동기로 볼까요?", "detail": "회의를 줄이는 좋은 탈출문이다.", "kind": "target", "points": 3 },
+    { "id": "another-meeting", "label": "이건 다음 회의에서 더 보죠", "detail": "회의가 새끼를 치는 신호다.", "kind": "decoy", "points": 2 },
+    { "id": "scope", "label": "이번 범위에서 빼도 되나요?", "detail": "범위를 줄이면 오늘의 시간이 살아난다.", "kind": "target", "points": 3 },
+    { "id": "everyone", "label": "모두 한마디씩 해볼까요?", "detail": "결정과 멀어지는 확장 신호다.", "kind": "decoy", "points": 2 }
+  ],
+  "endings": [
+    { "id": "escaped", "title": "회의 탈출 성공", "description": "결정 신호를 잘 잡았다. 회의는 짧아지고 다음 행동은 남았다.", "minScore": 18 },
+    { "id": "survived", "title": "회의 생존", "description": "몇 번 흔들렸지만 핵심 신호는 대체로 잡았다.", "minScore": 12 },
+    { "id": "loop", "title": "싱크 지옥 잔류", "description": "잡담과 결정을 구분하지 못해 회의가 한 바퀴 더 돌았다.", "minScore": 0 }
+  ]
+}

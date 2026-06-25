@@ -6,6 +6,8 @@ import { ContentNav } from "@/features/content/content-nav";
 import { getBlogPostBySlug } from "@/features/content/blog";
 import { getPlayContentBySlug, getPlayContents } from "@/features/content/play";
 import { SurvivalPlayEngine } from "@/features/play/survival-engine";
+import { TapGameEngine } from "@/features/play/tap-game-engine";
+import { SortMatchEngine } from "@/features/play/sort-match-engine";
 
 interface PlayPageProps {
   params: Promise<{ slug: string }>;
@@ -48,6 +50,12 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
   if (!content) notFound();
   const dictionary = getClientDictionary(contentLocale);
   const relatedBlog = content.relatedBlogSlugs[0] ? getBlogPostBySlug(content.relatedBlogSlugs[0]) : undefined;
+  const playMetric =
+    content.type === "micro-sim"
+      ? `${content.turns.length}턴`
+      : content.type === "tap-game"
+        ? `${content.targets.length}개 판단`
+        : `${content.items.length}개 분류`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Game",
@@ -71,14 +79,20 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
           <div className="flex flex-wrap gap-2">
             <Badge>Play</Badge>
             <Badge>{content.durationLabel}</Badge>
-            <Badge>{content.turns.length}턴</Badge>
+            <Badge>{playMetric}</Badge>
           </div>
           <h1 className="mt-4 text-4xl font-semibold tracking-normal">{content.title}</h1>
           <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">{content.description}</p>
         </div>
       </section>
       <section className="mx-auto max-w-6xl px-4 py-8">
-        <SurvivalPlayEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+        {content.type === "micro-sim" ? (
+          <SurvivalPlayEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+        ) : content.type === "tap-game" ? (
+          <TapGameEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+        ) : (
+          <SortMatchEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+        )}
       </section>
     </main>
   );

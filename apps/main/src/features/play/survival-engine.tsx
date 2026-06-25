@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Coffee, RotateCcw, Share2 } from "lucide-react";
+import { RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { withLocale } from "@/features/i18n/config";
-import type { PlayContent, PlayEnding, PlayStatKey } from "@/features/content/types";
+import type { MicroSimPlayContent, PlayEnding, PlayStatKey } from "@/features/content/types";
 
 type Stats = Record<PlayStatKey, number>;
 
@@ -19,7 +19,7 @@ function clampStat(value: number) {
   return Math.max(0, Math.min(100, value));
 }
 
-function initialStats(content: PlayContent): Stats {
+function initialStats(content: MicroSimPlayContent): Stats {
   return Object.fromEntries(content.stats.map((stat) => [stat.key, stat.initial])) as Stats;
 }
 
@@ -37,7 +37,7 @@ function ruleMatches(stats: Stats, rule: PlayEnding["conditions"][number]) {
   return rule.op === "<=" ? value <= rule.value : value >= rule.value;
 }
 
-function pickEnding(content: PlayContent, stats: Stats) {
+function pickEnding(content: MicroSimPlayContent, stats: Stats) {
   return content.endings.find((ending) => ending.conditions.every((rule) => ruleMatches(stats, rule))) ?? content.endings[content.endings.length - 1];
 }
 
@@ -61,7 +61,7 @@ export function SurvivalPlayEngine({
   content,
   relatedBlogTitle,
 }: {
-  content: PlayContent;
+  content: MicroSimPlayContent;
   relatedBlogTitle?: string;
 }) {
   const [turnIndex, setTurnIndex] = React.useState(0);
@@ -120,7 +120,7 @@ export function SurvivalPlayEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Survival Play</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Micro Sim</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
@@ -161,13 +161,6 @@ export function SurvivalPlayEngine({
                 <RotateCcw className="h-4 w-4" />
                 다시 하기
               </Button>
-              <a
-                href={content.supportUrl}
-                className="inline-flex h-9 items-center justify-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <Coffee className="h-4 w-4" />
-                커피값 보내기
-              </a>
             </div>
             <div className="mt-6 rounded-md border bg-muted/20 p-3">
               <p className="text-sm font-medium">다음에 이어서 보기</p>
@@ -226,7 +219,7 @@ export function SurvivalPlayEngine({
   );
 }
 
-function HistoryPanel({ content, history }: { content: PlayContent; history: HistoryItem[] }) {
+function HistoryPanel({ content, history }: { content: MicroSimPlayContent; history: HistoryItem[] }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
       <p className="text-sm font-semibold">오늘의 선택 로그</p>

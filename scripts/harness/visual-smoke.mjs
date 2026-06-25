@@ -52,6 +52,18 @@ const scenarios = [
     expectedText: ["퇴근 생존기", "오늘의 선택 로그"],
   },
   {
+    name: "prompt-cleanup-mobile",
+    path: "/play/prompt-cleanup",
+    viewport: { width: 390, height: 844 },
+    expectedText: ["프롬프트 정리함", "분류 로그"],
+  },
+  {
+    name: "meeting-escape-desktop",
+    path: "/play/meeting-escape",
+    viewport: { width: 1366, height: 900 },
+    expectedText: ["회의 탈출 버튼", "판단 로그"],
+  },
+  {
     name: "tools-desktop",
     path: "/tools?q=json",
     viewport: { width: 1440, height: 1000 },

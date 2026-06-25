@@ -1,0 +1,29 @@
+---
+slug: vercel-sitemap-canonical-log
+title: Vercel, sitemap, canonical을 다시 정리한 기록
+description: bobob.app을 콘텐츠 실험장으로 바꾸면서 apex redirect, sitemap 제출 목록, Search Console 색인 요청을 정리한 기록입니다.
+date: 2026-06-25
+category: 운영 기록
+readingMinutes: 4
+relatedPlay: office-survival
+---
+
+## 도메인 문제는 코드만 봐서는 끝나지 않는다
+
+앱 코드에 308 redirect를 넣었는데도 실제 apex 도메인은 307을 반환할 수 있다. 이유는 플랫폼의 도메인 redirect가 앱보다 먼저 응답하기 때문이다. 이럴 때는 Next.js 설정만 보는 것으로는 부족하고 Vercel 프로젝트 도메인 설정을 직접 확인해야 한다.
+
+bobob.app은 apex에서 www로 가는 redirect를 308로 고정했다. 그 다음 sitemap을 줄였다. 이전에는 여러 locale sitemap이 제출되어 있었지만 실제 Blog/Play 콘텐츠는 아직 unprefixed 경로가 중심이다. 그래서 Search Console 제출 목록에서 오래된 child sitemap을 제거하고 `/sitemap.xml`만 남겼다.
+
+## 정리 순서
+
+- apex `bobob.app`을 `www.bobob.app`으로 308 redirect
+- `/sitemap.xml`은 sitemap index로 유지
+- `/sitemaps/en`에 검증된 핵심 URL만 포함
+- 오래된 다국어 child sitemap 제출 내역 제거
+- 핵심 URL을 Search Console에서 개별 색인 요청
+
+이 작업은 화려하지 않지만 중요하다. 검색엔진이 볼 URL과 사용자가 보는 URL이 다르면 작은 사이트는 금방 신뢰를 잃는다. 콘텐츠를 늘리기 전에 canonical과 sitemap을 작게 맞추는 이유가 여기에 있다.
+
+## 바로 해보기
+
+퇴근 생존기는 이 운영 작업과 닮아 있다. 하루의 모든 요청을 다 받는 대신 지금 처리할 것과 넘길 것을 구분해야 퇴근할 수 있다. 사이트 운영도 마찬가지다.

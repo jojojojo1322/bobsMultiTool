@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Coffee, Gamepad2, Newspaper, Sparkles } from "lucide-react";
+import { ArrowRight, Gamepad2, Newspaper, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
@@ -60,15 +60,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               짧게 읽고 바로 해보고 결과를 공유하는 가벼운 웹 콘텐츠 실험장
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              bobob.app은 개발자 도구를 보관하되, 이제 검색 유입용 짧은 글과 체류 시간을 만드는 Play 콘텐츠를 함께 실험합니다.
-              첫 실험은 직장인의 하루를 선택 게임으로 압축한 퇴근 생존기입니다.
+              bobob.app은 개발자 도구를 보관하되, 이제 개발과 AI 기록을 읽고 플래시게임처럼 가벼운 Play를 바로 해보는 콘텐츠를 실험합니다.
+              첫 라인업은 퇴근 생존기, 프롬프트 정리, 회의 탈출, 우선순위 분류, 버그 잡기입니다.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/play/office-survival"
+                href={featuredPlay ? `/play/${featuredPlay.slug}` : "/play"}
                 className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-zinc-700 dark:hover:bg-zinc-200"
               >
-                퇴근 생존기 시작 <ArrowRight className="h-4 w-4" />
+                첫 Play 시작 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/blog"
@@ -85,7 +85,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
               <p>content metadata -&gt; blog page -&gt; play page -&gt; result/share -&gt; SEO metadata -&gt; smoke test</p>
-              <p>글 하나를 만들면 관련 플레이 콘텐츠도 같이 만들 수 있는 구조로 전환합니다.</p>
+              <p>글 하나는 관점과 경험을 담고, 관련 Play는 단일 규칙과 단일 조작으로 바로 끝나게 만듭니다.</p>
               <p>초기에는 로그인, 랭킹, 댓글 없이 정적 콘텐츠와 브라우저 상호작용만으로 반응을 확인합니다.</p>
             </div>
           </div>
@@ -104,24 +104,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </Link>
           </div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {featuredPlay ? (
-              <Link href={`/play/${featuredPlay.slug}`} className="rounded-lg border bg-card p-4 shadow-sm transition-colors hover:bg-muted/40 md:col-span-2">
+            {playContents.slice(0, 5).map((content, index) => (
+              <Link key={content.slug} href={`/play/${content.slug}`} className={index === 0 ? "rounded-lg border bg-card p-4 shadow-sm transition-colors hover:bg-muted/40 md:col-span-2" : "rounded-lg border bg-background p-4 transition-colors hover:bg-muted/40"}>
                 <Gamepad2 className="h-5 w-5 text-muted-foreground" />
-                <h3 className="mt-3 text-lg font-semibold">{featuredPlay.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{featuredPlay.description}</p>
+                <h3 className="mt-3 text-lg font-semibold">{content.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{content.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge>{featuredPlay.durationLabel}</Badge>
-                  <Badge>{featuredPlay.turns.length}턴</Badge>
-                  <Badge>{featuredPlay.endings.length}개 엔딩</Badge>
+                  <Badge>{content.durationLabel}</Badge>
+                  <Badge>{content.type === "tap-game" ? "탭 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
                 </div>
               </Link>
-            ) : null}
-            {["오늘의 이슈 퀴즈", "밸런스 게임", "성향 테스트"].map((title) => (
-              <div key={title} className="rounded-lg border bg-background p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Next format</p>
-                <h3 className="mt-3 text-base font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">질문 데이터만 바꿔 빠르게 실험할 수 있는 다음 Play 포맷입니다.</p>
-              </div>
             ))}
           </div>
         </div>
@@ -205,10 +197,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <Link href="/terms" className="hover:text-foreground">
               약관
             </Link>
-            <a href="mailto:bobob935@gmail.com?subject=bobob.app%20coffee" className="inline-flex items-center gap-1 hover:text-foreground">
-              <Coffee className="h-3.5 w-3.5" />
-              커피값
-            </a>
             <Link href="/tools" className="hover:text-foreground">
               Tools archive
             </Link>

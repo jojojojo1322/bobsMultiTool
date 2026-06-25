@@ -1,8 +1,9 @@
 import { defaultLocale, type Locale } from "@/features/i18n/config";
 import { getBlogPosts } from "@/features/content/blog";
+import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
-const lastmod = "2026-06-24";
+const lastmod = "2026-06-25";
 const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
@@ -36,7 +37,11 @@ function basePaths(): SitemapPath[] {
       priority: "0.7",
     })),
     { path: "/play", changefreq: "weekly", priority: "0.8" },
-    { path: "/play/office-survival", changefreq: "weekly", priority: "0.9" },
+    ...getPlayContents().map((content) => ({
+      path: `/play/${content.slug}`,
+      changefreq: "weekly" as const,
+      priority: content.type === "micro-sim" ? "0.9" : "0.8",
+    })),
     { path: "/tools", changefreq: "monthly", priority: "0.5" },
   ];
 }

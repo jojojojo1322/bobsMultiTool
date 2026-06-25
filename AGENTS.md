@@ -2,7 +2,7 @@
 
 ## Product North Star
 
-- As of 2026-06-24, bobob.app is being redirected from a developer-tool-first SEO site into a small Blog + Play content experiment lab. The priority is short search-led posts, clickable Play content, shareable results, light support links, session depth, and high-quality mobile/desktop UX.
+- As of 2026-06-25, bobob.app is being redirected from a developer-tool-first SEO site into a small Blog + Play content experiment lab. The priority is development/AI/operator posts, lightweight web Play experiments, shareable results, session depth, and high-quality mobile/desktop UX.
 - The existing developer tools remain archived under `/tools`; keep them working, searchable, and safe, but do not present them as the main service on the home page.
 - Optimize new work for content/play registry throughput: content metadata -> blog page -> play page -> result/share page -> SEO metadata -> sitemap -> smoke test.
 - Do not let short-term visual experiments damage the product objective. Any visual change must preserve crawlability, accessibility, static performance, and safe layout.
@@ -34,8 +34,8 @@
 - `/about` and `/contact` are required trust pages. They must exist for the default English route and supported locale prefixes, use `getLocalizedTrustContent` for localized trust content, appear in the footer trust navigation, and be included in localized sitemaps.
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
-- New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Prefer one reusable Play engine per format, starting with survival simulators.
-- Play MVP pages should expose the game surface, result/share actions, related content links, and a support/coffee link without requiring login, ranking, comments, payment, user saves, or server state.
+- New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, and `micro-sim`.
+- Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.
