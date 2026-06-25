@@ -134,6 +134,11 @@ assertIncludes("home", homeHtml, [
   'rel="search" type="application/opensearchdescription+xml"',
   'rel="alternate" type="application/atom+xml"',
   'rel="alternate" type="application/feed+json"',
+  'property="og:image"',
+  'property="og:image:width" content="1200"',
+  'property="og:image:height" content="630"',
+  'name="twitter:image"',
+  "/og-image?",
   'name="keywords"',
   '"@type":"WebSite"',
   '"@type":"SearchAction"',
@@ -145,6 +150,11 @@ assertIncludes("home", homeHtml, [
 
 const robotsTxt = await textFor("/robots.txt");
 assertIncludes("/robots.txt", robotsTxt, ["Allow: /", `Sitemap: ${baseUrl}/sitemap.xml`]);
+
+const ogImageResponse = await fetchLive(`${baseUrl}/og-image?kind=home&title=bobob.app`);
+if (ogImageResponse && !ogImageResponse.headers.get("content-type")?.includes("image/png")) {
+  failures.push("/og-image should return image/png");
+}
 
 const sitemapIndex = await textFor("/sitemap.xml");
 assertIncludes("/sitemap.xml", sitemapIndex, ["<sitemapindex", `<loc>${baseUrl}/sitemaps/en</loc>`]);

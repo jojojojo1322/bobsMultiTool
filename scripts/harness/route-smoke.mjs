@@ -67,6 +67,7 @@ const paths = [
   "/atom.xml",
   "/feed.json",
   "/opensearch.xml",
+  "/og-image?kind=home&title=bobob.app",
   "/sitemap.xml",
   "/sitemaps/en",
   "/ads.txt",
@@ -172,6 +173,11 @@ for (const fragment of [
   'rel="search" type="application/opensearchdescription+xml"',
   'rel="alternate" type="application/atom+xml"',
   'rel="alternate" type="application/feed+json"',
+  'property="og:image"',
+  'property="og:image:width" content="1200"',
+  'property="og:image:height" content="630"',
+  'name="twitter:image"',
+  "/og-image?",
   "https://www.bobob.app/opensearch.xml",
   "https://www.bobob.app/atom.xml",
   "https://www.bobob.app/feed.json",
@@ -208,6 +214,11 @@ const adsTxtResponse = await fetch(`${baseUrl}/ads.txt`, { headers: smokeHeaders
 const adsTxtBody = await adsTxtResponse.text();
 if (!adsTxtBody.includes("google.com, pub-2620992505263949, DIRECT, f08c47fec0942fa0")) {
   failures.push("/ads.txt missing Google publisher line");
+}
+
+const ogImageResponse = await fetch(`${baseUrl}/og-image?kind=home&title=bobob.app`, { headers: smokeHeaders });
+if (!ogImageResponse.headers.get("content-type")?.includes("image/png")) {
+  failures.push("/og-image must return image/png");
 }
 
 const sitemapIndexBody = await (await fetch(`${baseUrl}/sitemap.xml`, { headers: smokeHeaders })).text();

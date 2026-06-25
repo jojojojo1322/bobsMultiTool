@@ -11,6 +11,7 @@ import { getPlayContents } from "@/features/content/play";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { readSearchQuery } from "@/features/tools/tool-directory";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
+import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 interface HomePageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -19,6 +20,8 @@ interface HomePageProps {
 const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base64-tool", "cron-generator", "dns-lookup"];
 const contentLocale = "ko";
 const homeKeywords = homeContentKeywords(getBlogPosts(), getPlayContents());
+const homeShareTitle = "뭐라도 해보자. 짧게 읽고 바로 눌러보는 곳";
+const homeShareImage = openGraphImage({ kind: "home", title: homeShareTitle });
 
 export const metadata: Metadata = {
   title: "bobob.app - 일단 해보는 Blog and Play",
@@ -33,11 +36,13 @@ export const metadata: Metadata = {
     siteName: "bobob.app",
     title: "bobob.app - 일단 해보는 Blog and Play",
     description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 눌러보게 만드는 작은 웹 작업장.",
+    images: [homeShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "bobob.app - 일단 해보는 Blog and Play",
     description: "개발/AI 기록과 작은 Play를 일단 만들어 보는 곳.",
+    images: [shareImageUrl({ kind: "home", title: homeShareTitle })],
   },
 };
 

@@ -11,6 +11,7 @@ import { blogIndexKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogCategoryStructuredData } from "@/features/content/structured-data";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
+import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 const contentLocale = "ko";
 
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: BlogCategoryPageProps): Promi
 
   const url = `https://www.bobob.app${blogCategoryPath(category.slug)}`;
   const posts = getBlogPosts().filter((post) => post.category === category.label);
+  const image = openGraphImage({ kind: "category", title: `${category.label} 글 모음` });
   return {
     title: `${category.label} - bobob.app Blog`,
     description: category.description,
@@ -46,11 +48,13 @@ export async function generateMetadata({ params }: BlogCategoryPageProps): Promi
       siteName: "bobob.app",
       title: `${category.label} - bobob.app Blog`,
       description: category.description,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: `${category.label} - bobob.app Blog`,
       description: category.description,
+      images: [shareImageUrl({ kind: "category", title: `${category.label} 글 모음` })],
     },
   };
 }

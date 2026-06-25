@@ -8,8 +8,11 @@ import { ContentNav } from "@/features/content/content-nav";
 import { playIndexKeywords } from "@/features/content/discovery";
 import { getPlayContents } from "@/features/content/play";
 import { playIndexStructuredData } from "@/features/content/structured-data";
+import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 const playContentsForMetadata = getPlayContents();
+const playShareTitle = "규칙 하나만 보고 바로 눌러보는 작은 Play";
+const playShareImage = openGraphImage({ kind: "play", title: playShareTitle });
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
@@ -24,11 +27,13 @@ export const metadata: Metadata = {
     siteName: "bobob.app",
     title: "Play - bobob.app",
     description: "대단하진 않아도 바로 눌러보고 결과를 보는 작은 웹 놀이 목록.",
+    images: [playShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - bobob.app",
     description: "규칙 하나, 조작 하나, 결과 하나로 끝나는 Play 목록.",
+    images: [shareImageUrl({ kind: "play", title: playShareTitle })],
   },
 };
 

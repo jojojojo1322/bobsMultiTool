@@ -9,6 +9,7 @@ import { getBlogPostBySlug, getBlogPosts } from "@/features/content/blog";
 import { blogPostKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogPostStructuredData } from "@/features/content/structured-data";
+import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = getBlogPostBySlug(slug);
   if (!post) return {};
   const url = `https://www.bobob.app/blog/${post.slug}`;
+  const image = openGraphImage({ kind: "blog", title: post.title });
   const relatedPlays = post.relatedPlaySlugs.flatMap((playSlug) => {
     const content = getPlayContentBySlug(playSlug);
     return content ? [content] : [];
@@ -42,11 +44,13 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: post.title,
       description: post.description,
       publishedTime: post.date,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
+      images: [shareImageUrl({ kind: "blog", title: post.title })],
     },
   };
 }

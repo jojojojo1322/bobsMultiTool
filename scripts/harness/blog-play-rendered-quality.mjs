@@ -187,8 +187,12 @@ try {
         canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href")?.trim() || "",
         ogTitle: document.querySelector('meta[property="og:title"]')?.getAttribute("content")?.trim() || "",
         ogDescription: document.querySelector('meta[property="og:description"]')?.getAttribute("content")?.trim() || "",
+        ogImage: document.querySelector('meta[property="og:image"]')?.getAttribute("content")?.trim() || "",
+        ogImageWidth: document.querySelector('meta[property="og:image:width"]')?.getAttribute("content")?.trim() || "",
+        ogImageHeight: document.querySelector('meta[property="og:image:height"]')?.getAttribute("content")?.trim() || "",
         twitterTitle: document.querySelector('meta[name="twitter:title"]')?.getAttribute("content")?.trim() || "",
         twitterDescription: document.querySelector('meta[name="twitter:description"]')?.getAttribute("content")?.trim() || "",
+        twitterImage: document.querySelector('meta[name="twitter:image"]')?.getAttribute("content")?.trim() || "",
         h1Texts,
         h2Count: document.querySelectorAll("main h2").length,
         textLength: text.length,
@@ -212,6 +216,12 @@ try {
     }
     if (!data.ogTitle || !data.ogDescription || !data.twitterTitle || !data.twitterDescription) {
       failures.push(`${item.path} missing OpenGraph or Twitter title/description metadata`);
+    }
+    if (!data.ogImage || !data.twitterImage || !data.ogImage.includes("/og-image?") || !data.twitterImage.includes("/og-image?")) {
+      failures.push(`${item.path} missing share image metadata`);
+    }
+    if (data.ogImageWidth !== "1200" || data.ogImageHeight !== "630") {
+      failures.push(`${item.path} OpenGraph image should expose 1200x630 dimensions`);
     }
     if (data.overflow > 2) failures.push(`${item.path} horizontal overflow ${data.overflow}px`);
     if (forbiddenText.test(data.text)) failures.push(`${item.path} exposes forbidden public wording`);

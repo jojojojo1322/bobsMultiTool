@@ -12,6 +12,7 @@ import { SurvivalPlayEngine } from "@/features/play/survival-engine";
 import { TapGameEngine } from "@/features/play/tap-game-engine";
 import { SortMatchEngine } from "@/features/play/sort-match-engine";
 import type { PlayContent } from "@/features/content/types";
+import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 interface PlayPageProps {
   params: Promise<{ slug: string }>;
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: PlayPageProps): Promise<Metad
   const content = getPlayContentBySlug(slug);
   if (!content) return {};
   const url = `https://www.bobob.app/play/${content.slug}`;
+  const image = openGraphImage({ kind: "play", title: content.title });
   const relatedBlogs = content.relatedBlogSlugs.flatMap((blogSlug) => {
     const post = getBlogPostBySlug(blogSlug);
     return post ? [post] : [];
@@ -44,11 +46,13 @@ export async function generateMetadata({ params }: PlayPageProps): Promise<Metad
       siteName: "bobob.app",
       title: `${content.title} - bobob.app Play`,
       description: content.description,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: `${content.title} - bobob.app Play`,
       description: content.description,
+      images: [shareImageUrl({ kind: "play", title: content.title })],
     },
   };
 }

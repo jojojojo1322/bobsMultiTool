@@ -10,8 +10,11 @@ import { getBlogPosts } from "@/features/content/blog";
 import { blogIndexKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogIndexStructuredData } from "@/features/content/structured-data";
+import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 const postsForMetadata = getBlogPosts();
+const blogShareTitle = "막히면 적고, 좀 알겠으면 다시 적는 글";
+const blogShareImage = openGraphImage({ kind: "blog", title: blogShareTitle });
 
 export const metadata: Metadata = {
   title: "Blog - bobob.app",
@@ -26,11 +29,13 @@ export const metadata: Metadata = {
     siteName: "bobob.app",
     title: "Blog - bobob.app",
     description: "개발/AI 작업을 하다 막힌 지점과 작은 Play로 이어지는 bobob.app 글 목록.",
+    images: [blogShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Blog - bobob.app",
     description: "막히고 고친 기록을 짧게 남기는 글 목록.",
+    images: [shareImageUrl({ kind: "blog", title: blogShareTitle })],
   },
 };
 
