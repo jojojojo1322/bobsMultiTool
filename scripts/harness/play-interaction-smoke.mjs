@@ -65,6 +65,10 @@ async function clickNextAction(page, content) {
   await page.locator('[data-play-action="category"]').first().click();
 }
 
+function isIgnoredRuntimeError(message) {
+  return message.includes("https://www.google.com/") && message.includes("report-only Content Security Policy directive");
+}
+
 async function verifyPlay(browser, content, viewport) {
   const context = await browser.newContext({
     viewport,
@@ -74,9 +78,11 @@ async function verifyPlay(browser, content, viewport) {
   });
   const page = await context.newPage();
   const runtimeErrors = [];
-  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+  page.on("pageerror", (error) => {
+    if (!isIgnoredRuntimeError(error.message)) runtimeErrors.push(error.message);
+  });
   page.on("console", (message) => {
-    if (message.type() === "error") runtimeErrors.push(message.text());
+    if (message.type() === "error" && !isIgnoredRuntimeError(message.text())) runtimeErrors.push(message.text());
   });
 
   try {
@@ -102,7 +108,7 @@ async function verifyPlay(browser, content, viewport) {
     for (let index = 0; index < steps; index += 1) {
       if (await page.locator("[data-play-result]").first().isVisible().catch(() => false)) break;
       await clickNextAction(page, content);
-      await page.waitForTimeout(50);
+      await page.locator("[data-play-result]").first().waitFor({ state: "visible", timeout: 500 }).catch(() => undefined);
     }
 
     if (!(await page.locator("[data-play-result]").first().isVisible().catch(() => false))) {
