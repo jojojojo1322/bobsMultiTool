@@ -56,6 +56,17 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
   - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - WebSub response statuses: `204`, `204`
+- Post-share-image resubmission:
+  - Commit: `a80215a`
+  - Change: Blog + Play home, index, category, detail pages now expose `og:image`, `og:image:width`, `og:image:height`, and `twitter:image` metadata using the shared `/og-image` PNG route.
+  - Deployment check: `npm run harness:deployment-status` returned `overallState: success` for `a80215ac11d980a3d4e21fc1d1f6675c01ab6152`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `44`, feed items `34`, Blog posts `28`, Play entries `6`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `44`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub response statuses: `204`, `204`
 - Public search spot check:
   - A public search result for `site:www.bobob.app bobob.app` surfaced the homepage, but Search Console has not yet reflected indexed URL counts for the new Blog + Play set.
 
