@@ -4,6 +4,8 @@ import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
 const webSubHubUrl = "https://pubsubhubbub.appspot.com/";
+const feedTitle = "bobob.app - 일단 해보는 Blog and Play";
+const feedDescription = "개발/AI 기록과 짧게 눌러보는 Play를 하나씩 올립니다.";
 
 type FeedItem = {
   title: string;
@@ -81,11 +83,11 @@ export function rssFeedXml() {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     "<channel>",
-    "<title>bobob.app Blog and Play Lab</title>",
+    `<title>${escapeXml(feedTitle)}</title>`,
     `<link>${siteUrl}/</link>`,
     `<atom:link rel="hub" href="${webSubHubUrl}" />`,
     `<atom:link rel="self" href="${siteUrl}/feed.xml" />`,
-    "<description>Development and AI notes plus lightweight static web Play experiments.</description>",
+    `<description>${escapeXml(feedDescription)}</description>`,
     "<language>ko</language>",
     `<lastBuildDate>${escapeXml(rfc822(latestItemDate(items)))}</lastBuildDate>`,
     itemXml,
@@ -117,12 +119,12 @@ export function atomFeedXml() {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<feed xmlns="http://www.w3.org/2005/Atom">',
-    "<title>bobob.app Blog and Play Lab</title>",
+    `<title>${escapeXml(feedTitle)}</title>`,
     `<id>${siteUrl}/</id>`,
     `<link href="${siteUrl}/" />`,
     `<link rel="hub" href="${webSubHubUrl}" />`,
     `<link rel="self" href="${siteUrl}/atom.xml" />`,
-    "<subtitle>Development and AI notes plus lightweight static web Play experiments.</subtitle>",
+    `<subtitle>${escapeXml(feedDescription)}</subtitle>`,
     `<updated>${escapeXml(isoDate(latestItemDate(items)))}</updated>`,
     entries,
     "</feed>",
@@ -134,10 +136,10 @@ export function jsonFeed() {
 
   return {
     version: "https://jsonfeed.org/version/1.1",
-    title: "bobob.app Blog and Play Lab",
+    title: feedTitle,
     home_page_url: `${siteUrl}/`,
     feed_url: `${siteUrl}/feed.json`,
-    description: "Development and AI notes plus lightweight static web Play experiments.",
+    description: feedDescription,
     language: "ko",
     hubs: [{ type: "WebSub", url: webSubHubUrl }],
     items: items.map((item) => ({
