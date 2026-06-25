@@ -63,7 +63,7 @@ const requiredBlogSlugs = [
   "why-bobob-shifted-to-content-lab",
   "static-micro-games-architecture",
 ];
-const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker"];
+const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker", "ai-review-tap"];
 const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
 const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game"];
 
@@ -75,8 +75,8 @@ const categoryCounts = Object.fromEntries(requiredCategories.map((category) => [
 const standaloneBlogCount = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0).length;
 
 if (blogEntries.length !== 36) failures.push(`audit expects 36 Blog posts, found ${blogEntries.length}`);
-if (playEntries.length !== 6) failures.push(`audit expects 6 Play entries, found ${playEntries.length}`);
-if (standaloneBlogCount !== 12) failures.push(`audit expects 12 standalone Blog posts, found ${standaloneBlogCount}`);
+if (playEntries.length !== 7) failures.push(`audit expects 7 Play entries, found ${playEntries.length}`);
+if (standaloneBlogCount !== 10) failures.push(`audit expects 10 standalone Blog posts, found ${standaloneBlogCount}`);
 if (blogDates[0] !== "2026-01-28" || blogDates[blogDates.length - 1] !== "2026-06-24") {
   failures.push(`audit expects Blog date range 2026-01-28 through 2026-06-24, found ${blogDates[0]} through ${blogDates[blogDates.length - 1]}`);
 }
@@ -97,13 +97,14 @@ for (const [category, count] of Object.entries(categoryCounts)) {
 for (const fragment of [
   "This audit tracks the active first-pass goal. It is not a completion certificate.",
   "Current count: `36` Blog posts.",
-  "Standalone Blog lane: `12` posts have no forced `relatedPlay`",
-  "Current count: `6` Play entries.",
-  "Sitemap URLs: `52`",
-  "Feed items: `42`",
-  "Search Console sitemap row after resubmission showed status `성공` and discovered pages `52`.",
+  "Standalone Blog lane: `10` posts have no forced `relatedPlay`",
+  "Current count: `7` Play entries.",
+  "Sitemap URLs: `53`",
+  "Feed items: `43`",
+  "Search Console sitemap row after the previous resubmission showed status `성공` and discovered pages `52`.",
+  "Current live sitemap URL count is `53`",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
-  "Latest submitted URL count: `52`",
+  "Latest submitted URL count: `53`",
   "Latest response statuses: `204`, `204`",
   "Discovery registration matrix:",
   "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
@@ -118,8 +119,8 @@ for (const fragment of [
 }
 
 for (const fragment of [
-  "Current submitted sitemap URL count: `52`",
-  "Current feed item count: `42`",
+  "Current submitted sitemap URL count: `53`",
+  "Current feed item count: `43`",
   "Google Search Console sitemap",
   "Bing and IndexNow",
   "Do not mark the active Blog + Play goal complete",
@@ -129,6 +130,7 @@ for (const fragment of [
 
 for (const fragment of [
   "Search Console sitemap row after submission: `/sitemaps/en`, status `성공`, discovered pages `52`.",
+  "Search Console pending live sitemap URL count: `53`",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
   "Bing Webmaster recommendations",

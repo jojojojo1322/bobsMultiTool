@@ -15,7 +15,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Date range: `2026-01-28` through `2026-06-24`, so the archive reads as a gradual few-month publishing trail.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`.
 - Category distribution: each category has at least `7` posts.
-- Standalone Blog lane: `12` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
+- Standalone Blog lane: `10` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`
@@ -29,13 +29,14 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Play Evidence
 
 - Play source: `content/play/*.json`
-- Current count: `6` Play entries.
+- Current count: `7` Play entries.
 - Required first-pass entries are present:
   - `office-survival`
   - `prompt-cleanup`
   - `meeting-escape`
   - `priority-sorter`
   - `bug-clicker`
+  - `ai-review-tap`
 - Implemented Play engine types:
   - `micro-sim`
   - `tap-game`
@@ -48,21 +49,22 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current live discovery snapshot:
-  - Sitemap URLs: `52`
-  - Feed items: `42`
+  - Sitemap URLs: `53`
+  - Feed items: `43`
   - Blog posts: `36`
-  - Play entries: `6`
+  - Play entries: `7`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` resubmitted after standalone Blog expansion.
-  - Search Console sitemap row after resubmission showed status `성공` and discovered pages `52`.
+  - Search Console sitemap row after the previous resubmission showed status `성공` and discovered pages `52`.
+  - Current live sitemap URL count is `53`; the new Play expansion still needs a Search Console refresh from the `bobob935@gmail.com` Chrome session.
   - Representative URL inspected: `https://www.bobob.app/blog/boring-maintenance-is-content-too`
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
-  - Latest submitted URL count: `52`
+  - Latest submitted URL count: `53`
   - Latest response status: `200`
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
@@ -74,7 +76,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 ## Still Not Complete
 
-- Search Console page indexing report still needs a later refresh after the same-day `/sitemaps/en` `52` discovered-page resubmission.
+- Search Console page indexing report still needs a later refresh after the same-day `/sitemaps/en` `52` discovered-page resubmission and the current `53` URL live sitemap set.
 - The baseline still records indexed pages `0`, not-indexed pages `5`, clicks `0`, and impressions `0`.
 - Bing Webmaster recommendation classes still need a follow-up pass after deployment and submission propagation.
 - Discovery submissions are hints only. They do not prove that Google or Bing indexed the new Blog + Play pages.

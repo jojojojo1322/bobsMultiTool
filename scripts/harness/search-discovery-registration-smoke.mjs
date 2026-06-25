@@ -90,10 +90,11 @@ for (const fragment of [
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
-  "discovered pages `52`",
+  "Latest confirmed row from `bobob935@gmail.com` showed `성공` and discovered pages `52`",
+  "current `53` URL live set is pending Search Console refresh",
   "Google URL Inspection",
   "Bing and IndexNow",
-  "Latest response status `200`; submitted URL count `52`",
+  "Latest response status `200`; submitted URL count `53`",
   "RSS feed",
   "Atom feed",
   "JSON Feed",
@@ -113,9 +114,10 @@ for (const fragment of [
 
 for (const fragment of [
   "Search Console sitemap row after submission: `/sitemaps/en`, status `성공`, discovered pages `52`.",
+  "Search Console pending live sitemap URL count: `53`",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
-  "IndexNow submitted URL count: `52`",
-  "WebSub feed item counts: `42`, `42`",
+  "IndexNow submitted URL count: `53`",
+  "WebSub feed item counts: `43`, `43`",
   "WebSub response statuses: `204`, `204`",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
 ]) {

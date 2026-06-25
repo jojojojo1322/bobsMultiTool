@@ -1,0 +1,38 @@
+{
+  "slug": "ai-review-tap",
+  "title": "AI 답변 검수 버튼",
+  "description": "AI가 그럴듯하게 낸 답에서 바로 믿어도 될 신호와 사람이 다시 확인해야 할 신호를 나누는 짧은 탭 게임입니다.",
+  "type": "tap-game",
+  "durationLabel": "30-60초",
+  "updatedAt": "2026-06-25",
+  "shareText": "나는 AI 답변에서 다시 확인할 신호를 얼마나 잘 잡을까? AI 답변 검수 버튼을 플레이했다.",
+  "order": 7,
+  "relatedBlogSlugs": [
+    "ai-output-is-not-finished-work",
+    "ai-answer-review-habit",
+    "ai-coding-needs-human-last-check",
+    "human-decisions-in-ai-coding",
+    "codex-work-note"
+  ],
+  "relatedPlaySlugs": ["prompt-cleanup", "bug-clicker"],
+  "targetLabel": "다시 확인",
+  "decoyLabel": "그냥 통과",
+  "targetScore": 18,
+  "targets": [
+    { "id": "missing-file", "label": "없는 파일을 수정했다고 함", "detail": "실제 파일 확인 전에는 절대 통과시키면 안 된다.", "kind": "target", "points": 3 },
+    { "id": "clear-summary", "label": "변경 파일을 짧게 요약함", "detail": "요약 자체는 도움 되지만, 이것만으로 위험 신호는 아니다.", "kind": "decoy", "points": 2 },
+    { "id": "new-dependency", "label": "새 패키지를 조용히 추가함", "detail": "의도한 선택인지, 기존 코드로 충분한지 다시 봐야 한다.", "kind": "target", "points": 3 },
+    { "id": "same-pattern", "label": "근처 컴포넌트 패턴을 따라감", "detail": "확인은 필요하지만 일단 좋은 신호에 가깝다.", "kind": "decoy", "points": 2 },
+    { "id": "no-test-claim", "label": "테스트는 안 돌렸지만 된다고 말함", "detail": "말보다 명령 결과가 필요하다.", "kind": "target", "points": 3 },
+    { "id": "plain-limitation", "label": "확인 못 한 범위를 명시함", "detail": "불완전함을 말하는 건 오히려 검토에 도움이 된다.", "kind": "decoy", "points": 2 },
+    { "id": "changed-copy-tone", "label": "사이트 말투와 다른 홍보 문구를 넣음", "detail": "콘텐츠 사이트에서는 문체도 품질이다.", "kind": "target", "points": 3 },
+    { "id": "small-diff", "label": "작은 diff로 한 문제만 고침", "detail": "범위가 좁으면 검토가 쉬워진다.", "kind": "decoy", "points": 2 },
+    { "id": "secret-leak", "label": "토큰을 예시 코드에 남김", "detail": "즉시 멈추고 제거해야 하는 신호다.", "kind": "target", "points": 3 },
+    { "id": "exact-command", "label": "실행한 명령과 결과를 적음", "detail": "검증 근거가 있어서 그냥 의심 신호는 아니다.", "kind": "decoy", "points": 2 }
+  ],
+  "endings": [
+    { "id": "reviewer", "title": "검수 루틴 생김", "description": "없는 파일, 새 의존성, 미검증 주장 같은 위험 신호를 잘 잡았다.", "minScore": 18 },
+    { "id": "careful", "title": "대체로 조심함", "description": "큰 위험은 잡았다. 이제 문체와 범위 변경도 조금 더 빠르게 보면 된다.", "minScore": 12 },
+    { "id": "too-trusting", "title": "AI 말투에 설득됨", "description": "그럴듯한 말과 검증된 결과를 조금 섞어 봤다. 다음 판에서는 파일과 명령 결과부터 보자.", "minScore": 0 }
+  ]
+}
