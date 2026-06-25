@@ -1,17 +1,19 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { RotateCcw, Share2, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { TapGameContent } from "@/features/content/types";
+import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
 export function TapGameEngine({
   content,
-  relatedBlogTitle,
+  relatedBlogLinks,
+  relatedPlayLinks,
 }: {
   content: TapGameContent;
-  relatedBlogTitle?: string;
+  relatedBlogLinks: PlayResultLink[];
+  relatedPlayLinks: PlayResultLink[];
 }) {
   const [index, setIndex] = React.useState(0);
   const [score, setScore] = React.useState(0);
@@ -98,7 +100,7 @@ export function TapGameEngine({
                 다시 하기
               </Button>
             </div>
-            <RelatedLinks content={content} relatedBlogTitle={relatedBlogTitle} />
+            <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
           </div>
           <TapHistory history={history} />
         </div>
@@ -146,23 +148,5 @@ function TapHistory({ history }: { history: Array<{ label: string; correct: bool
         <p className="mt-3 text-sm leading-6 text-muted-foreground">터치하거나 넘기면 판단 로그가 쌓입니다.</p>
       )}
     </aside>
-  );
-}
-
-function RelatedLinks({ content, relatedBlogTitle }: { content: TapGameContent; relatedBlogTitle?: string }) {
-  return (
-    <div className="mt-6 rounded-md border bg-muted/20 p-3">
-      <p className="text-sm font-medium">다음에 이어서 보기</p>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <Link href="/play" className="rounded-md border bg-background p-3 text-sm hover:bg-muted">
-          다른 Play 콘텐츠 보기
-        </Link>
-        {content.relatedBlogSlugs[0] ? (
-          <Link href={`/blog/${content.relatedBlogSlugs[0]}`} className="rounded-md border bg-background p-3 text-sm hover:bg-muted">
-            {relatedBlogTitle ?? "관련 글 읽기"}
-          </Link>
-        ) : null}
-      </div>
-    </div>
   );
 }

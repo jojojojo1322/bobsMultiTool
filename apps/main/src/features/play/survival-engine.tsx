@@ -6,6 +6,7 @@ import { RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { withLocale } from "@/features/i18n/config";
 import type { MicroSimPlayContent, PlayEnding, PlayStatKey } from "@/features/content/types";
+import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
 type Stats = Record<PlayStatKey, number>;
 
@@ -59,10 +60,12 @@ function statTone(key: PlayStatKey, value: number) {
 
 export function SurvivalPlayEngine({
   content,
-  relatedBlogTitle,
+  relatedBlogLinks,
+  relatedPlayLinks,
 }: {
   content: MicroSimPlayContent;
-  relatedBlogTitle?: string;
+  relatedBlogLinks: PlayResultLink[];
+  relatedPlayLinks: PlayResultLink[];
 }) {
   const [turnIndex, setTurnIndex] = React.useState(0);
   const [stats, setStats] = React.useState<Stats>(() => initialStats(content));
@@ -162,21 +165,11 @@ export function SurvivalPlayEngine({
                 다시 하기
               </Button>
             </div>
-            <div className="mt-6 rounded-md border bg-muted/20 p-3">
-              <p className="text-sm font-medium">다음에 이어서 보기</p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <Link href="/play" className="rounded-md border bg-background p-3 text-sm hover:bg-muted">
-                  다른 Play 콘텐츠 보기
-                </Link>
-                {content.relatedBlogSlugs[0] ? (
-                  <Link href={`/blog/${content.relatedBlogSlugs[0]}`} className="rounded-md border bg-background p-3 text-sm hover:bg-muted">
-                    {relatedBlogTitle ?? "관련 글 읽기"}
-                  </Link>
-                ) : null}
-                <Link href={withLocale("/tools", "en")} className="rounded-md border bg-background p-3 text-sm hover:bg-muted">
-                  보관된 개발자 도구 열기
-                </Link>
-              </div>
+            <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
+            <div className="mt-3">
+              <Link href={withLocale("/tools", "en")} className="inline-flex rounded-md border bg-background px-3 py-2 text-sm hover:bg-muted">
+                보관된 개발자 도구 열기
+              </Link>
             </div>
           </div>
           <HistoryPanel content={content} history={history} />

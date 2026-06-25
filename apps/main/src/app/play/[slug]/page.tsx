@@ -51,6 +51,14 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
   if (!content) notFound();
   const dictionary = getClientDictionary(contentLocale);
   const relatedBlog = content.relatedBlogSlugs[0] ? getBlogPostBySlug(content.relatedBlogSlugs[0]) : undefined;
+  const relatedBlogLinks = content.relatedBlogSlugs.flatMap((blogSlug) => {
+    const post = getBlogPostBySlug(blogSlug);
+    return post ? [{ slug: post.slug, title: post.title, description: post.description }] : [];
+  });
+  const relatedPlayLinks = content.relatedPlaySlugs.flatMap((playSlug) => {
+    const play = getPlayContentBySlug(playSlug);
+    return play ? [{ slug: play.slug, title: play.title, description: play.description }] : [];
+  });
   const playMetric =
     content.type === "micro-sim"
       ? `${content.turns.length}턴`
@@ -76,11 +84,11 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
       </section>
       <section className="mx-auto max-w-6xl px-4 py-8">
         {content.type === "micro-sim" ? (
-          <SurvivalPlayEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+          <SurvivalPlayEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         ) : content.type === "tap-game" ? (
-          <TapGameEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+          <TapGameEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         ) : (
-          <SortMatchEngine content={content} relatedBlogTitle={relatedBlog?.title} />
+          <SortMatchEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         )}
       </section>
     </main>

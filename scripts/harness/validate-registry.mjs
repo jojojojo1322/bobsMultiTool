@@ -16,6 +16,7 @@ const blogCategoryPagePath = path.join(root, "apps/main/src/app/blog/category/[c
 const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
 const playIndexPath = path.join(root, "apps/main/src/app/play/page.tsx");
 const playDetailPath = path.join(root, "apps/main/src/app/play/[slug]/page.tsx");
+const playResultLinksPath = path.join(root, "apps/main/src/features/play/result-links.tsx");
 const toolsIndexPath = path.join(root, "apps/main/src/app/tools/page.tsx");
 const localizedToolsIndexPath = path.join(root, "apps/main/src/app/[locale]/tools/page.tsx");
 const toolDetailPath = path.join(root, "apps/main/src/app/tools/[slug]/page.tsx");
@@ -34,6 +35,7 @@ const blogCategoryPage = fs.readFileSync(blogCategoryPagePath, "utf8");
 const blogDetail = fs.readFileSync(blogDetailPath, "utf8");
 const playIndex = fs.readFileSync(playIndexPath, "utf8");
 const playDetail = fs.readFileSync(playDetailPath, "utf8");
+const playResultLinks = fs.readFileSync(playResultLinksPath, "utf8");
 const toolDetail = fs.readFileSync(toolDetailPath, "utf8");
 const localizedToolDetail = fs.readFileSync(localizedToolDetailPath, "utf8");
 const toolStructuredData = fs.readFileSync(toolStructuredDataPath, "utf8");
@@ -211,6 +213,12 @@ for (const entry of playEntries) {
   for (const playSlug of entry.relatedPlaySlugs ?? []) {
     if (!playContentSlugs.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
   }
+}
+for (const fragment of ["relatedBlogLinks", "relatedPlayLinks", "getBlogPostBySlug", "getPlayContentBySlug"]) {
+  if (!playDetail.includes(fragment)) failures.push(`Play detail page missing result-link data flow: ${fragment}`);
+}
+for (const fragment of ["data-play-result-links", "data-play-related-play", "data-play-related-blog", "relatedPlayLinks.slice", "relatedBlogLinks.slice"]) {
+  if (!playResultLinks.includes(fragment)) failures.push(`Play result links component missing ${fragment}`);
 }
 for (const entry of blogEntries) {
   for (const playSlug of entry.relatedPlaySlugs) {
