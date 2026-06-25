@@ -77,8 +77,10 @@ Include:
 - Sitemap index at `/sitemap.xml` and the current reduced submitted sitemap at `/sitemaps/en`; old per-locale sitemaps are paused, and full per-locale URL coverage should not be restored until localized Blog/Play content exists.
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Blog + Play discovery routes should expose current content dates: `/sitemaps/en` should include URL-specific `lastmod` from Blog dates and Play `updatedAt`, and `/feed.xml` should include the same canonical Blog + Play items with current item dates.
+- `/blog` should expose broad source-locale categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`; some posts may be standalone and should not show forced Play links.
 - Global `/search?q=` should render Blog, Play, and archived Tools results, and root WebSite SearchAction should target that route. Home, `/tools`, localized tool directories, and workbench shared tool search should keep `?q=` URL state for the archived tool registry.
 - `/opensearch.xml` should return `application/opensearchdescription+xml`, point to `/search?q={searchTerms}`, and be discoverable through the root `rel="search"` head link.
+- `/llms.txt` should return `text/plain`, include the canonical Blog + Play MVP links, discovery routes, trust pages, and selected archived tools, and must not broaden the submitted sitemap URL set.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.
 - Tool directory and tool detail pages should expose local-first workflow recipe cards for task paths such as API response formatting, API token debugging, redirect debugging, DNS deployment checks, Wi-Fi QR creation, secure token generation, security-header review, deploy config validation, and CSV cleanup for API payloads.
 - Search results should surface workflow recipe matches for task-shaped queries and show localized recipe title, description, step chips, and step reasons. task-shaped search query recipe results must be checked in the search panel.

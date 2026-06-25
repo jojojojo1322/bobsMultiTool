@@ -9,9 +9,11 @@ import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogIndexStructuredData } from "@/features/content/structured-data";
 
+const categoryOrder = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
+
 export const metadata: Metadata = {
   title: "Blog - bobob.app",
-  description: "검색 유입을 위한 짧은 글과 관련 Play 콘텐츠를 함께 묶어 실험하는 bobob.app 블로그입니다.",
+  description: "개발, AI, 작은 웹서비스를 만들면서 막힌 것과 다시 고친 것을 적어두는 bobob.app 글 목록입니다.",
   alternates: {
     canonical: "https://www.bobob.app/blog",
   },
@@ -20,19 +22,32 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/blog",
     siteName: "bobob.app",
     title: "Blog - bobob.app",
-    description: "짧게 읽고 바로 Play로 이어지는 bobob.app 콘텐츠 글 목록.",
+    description: "개발/AI 작업을 하다 막힌 지점과 작은 Play로 이어지는 bobob.app 글 목록.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Blog - bobob.app",
-    description: "짧게 읽고 바로 Play로 이어지는 콘텐츠 글 목록.",
+    description: "막히고 고친 기록을 짧게 남기는 글 목록.",
   },
 };
+
+function categoryId(category: string) {
+  return `blog-category-${category.replace(/\s+/g, "-")}`;
+}
 
 export default function BlogIndexPage() {
   const dictionary = getClientDictionary(contentLocale);
   const posts = getBlogPosts();
   const jsonLd = blogIndexStructuredData(posts);
+  const categories = [
+    ...categoryOrder,
+    ...Array.from(new Set(posts.map((post) => post.category))).filter((category) => !categoryOrder.includes(category)),
+  ]
+    .map((category) => ({
+      category,
+      posts: posts.filter((post) => post.category === category),
+    }))
+    .filter((group) => group.posts.length);
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
@@ -41,43 +56,75 @@ export default function BlogIndexPage() {
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Badge>Blog</Badge>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">짧게 읽고 바로 해보는 글</h1>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">막히면 적고, 좀 알겠으면 다시 적는 글</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            트렌드, 생활, 직장, 개발 이슈를 짧게 정리하고 관련 Play 콘텐츠로 자연스럽게 이어갑니다.
+            검색어만 맞춘 글은 재미가 없습니다. 여기에는 개발, AI 도구, 사이드프로젝트 운영을 하다가 실제로 헷갈렸던 것들을 조금 덜 다듬은 말투로 남깁니다.
           </p>
         </div>
       </section>
-      <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="grid gap-4 md:grid-cols-2">
-          {posts.map((post) => {
-            const relatedPlay = post.relatedPlaySlugs[0] ? getPlayContentBySlug(post.relatedPlaySlugs[0]) : undefined;
-            return (
-              <Link key={post.slug} href={`/blog/${post.slug}`}>
-                <Card className="h-full transition-colors hover:bg-muted/50">
-                  <CardHeader>
-                    <div className="mb-2 flex flex-wrap gap-2">
-                      <Badge>{post.category}</Badge>
-                      <Badge>{post.readingMinutes}분 읽기</Badge>
-                    </div>
-                    <CardTitle>{post.title}</CardTitle>
-                    <CardDescription>{post.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-muted-foreground">
-                    <p className="inline-flex items-center gap-2">
-                      <Newspaper className="h-4 w-4" />
-                      {post.date}
-                    </p>
-                    {relatedPlay ? (
-                      <p className="inline-flex items-center gap-2 text-foreground">
-                        관련 Play: {relatedPlay.title}
-                        <ArrowRight className="h-4 w-4" />
-                      </p>
-                    ) : null}
-                  </CardContent>
-                </Card>
+      <section className="border-b" data-blog-categories>
+        <div className="mx-auto max-w-6xl px-4 py-6">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Categories</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {categories.map((group) => (
+              <Link
+                key={group.category}
+                href={`#${categoryId(group.category)}`}
+                className="inline-flex h-9 items-center gap-2 rounded-md border bg-background px-3 text-sm font-medium transition-colors hover:bg-muted"
+              >
+                {group.category}
+                <Badge>{group.posts.length}</Badge>
               </Link>
-            );
-          })}
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="mx-auto max-w-6xl px-4 py-8">
+        <div className="space-y-10">
+          {categories.map((group) => (
+            <section key={group.category} id={categoryId(group.category)} data-blog-category={group.category}>
+              <div className="mb-4 flex items-end justify-between gap-3">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Category</p>
+                  <h2 className="mt-1 text-2xl font-semibold tracking-normal">{group.category}</h2>
+                </div>
+                <Badge>{group.posts.length}개</Badge>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {group.posts.map((post) => {
+                  const relatedPlay = post.relatedPlaySlugs[0] ? getPlayContentBySlug(post.relatedPlaySlugs[0]) : undefined;
+                  return (
+                    <Link key={post.slug} href={`/blog/${post.slug}`}>
+                      <Card className="h-full transition-colors hover:bg-muted/50">
+                        <CardHeader>
+                          <div className="mb-2 flex flex-wrap gap-2">
+                            <Badge>{post.category}</Badge>
+                            <Badge>{post.readingMinutes}분 읽기</Badge>
+                          </div>
+                          <CardTitle>{post.title}</CardTitle>
+                          <CardDescription>{post.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3 text-sm text-muted-foreground">
+                          <p className="inline-flex items-center gap-2">
+                            <Newspaper className="h-4 w-4" />
+                            {post.date}
+                          </p>
+                          {relatedPlay ? (
+                            <p className="inline-flex items-center gap-2 text-foreground">
+                              관련 Play: {relatedPlay.title}
+                              <ArrowRight className="h-4 w-4" />
+                            </p>
+                          ) : (
+                            <p>그냥 글만 남긴 기록입니다. 억지로 Play를 붙이진 않았습니다.</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
       </section>
     </main>

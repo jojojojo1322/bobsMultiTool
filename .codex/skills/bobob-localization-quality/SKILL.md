@@ -7,7 +7,9 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 
 - English is the source locale and stays unprefixed.
 - During the Blog + Play MVP, unprefixed Blog/Play pages are the submitted canonical content set. Do not add localized Blog/Play routes or hreflang alternates unless the visible prose, metadata, and content data are localized for that route.
+- Blog category prose such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록` belongs to the source-locale Blog MVP until localized Blog routes are intentionally added.
 - `/opensearch.xml` is the unprefixed source-locale search discovery document during the Blog + Play MVP. Do not add localized OpenSearch descriptors unless the related Blog/Play/search surfaces are localized and submitted as canonical locale content.
+- `/llms.txt` is the unprefixed source-locale machine-readable content map during the Blog + Play MVP. Do not add localized LLM maps unless the related Blog/Play/search surfaces are localized and submitted as canonical locale content.
 - Non-English pages must render localized visible prose through `getLocalizedTool`, `getLocalizedGuide`, `getLocalizedTools`, `getLocalizedGuides`, and `searchLocalizedTools`; they must not expose raw English registry prose.
 - Tool names, slugs, JSON/JWT/UUID/CSS/SQL/Base64, and code sample values may remain technical terms. Sentence copy, descriptions, examples, FAQ, guide sections, search result descriptions, and metadata descriptions must be localized.
 - Common dictionary prose is part of localization quality. Non-English site descriptions, home descriptions, privacy/server/local chips, empty states, and legal page copy must not fall back to mixed visible fragments such as `Privacy`, `Server route`, `Browser local`, `privacy badge`, or `route server`.

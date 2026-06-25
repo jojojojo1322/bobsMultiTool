@@ -5,6 +5,8 @@ const baseUrl = process.env.BOBOB_BASE_URL || "http://localhost:3000";
 const root = process.cwd();
 const registry = fs.readFileSync(path.join(root, "apps/main/src/features/tools/registry.ts"), "utf8");
 const guides = fs.readFileSync(path.join(root, "apps/main/src/features/guides/registry.ts"), "utf8");
+const blogDir = path.join(root, "content/blog");
+const playDir = path.join(root, "content/play");
 const smokeHeaders = {
   "user-agent": process.env.BOBOB_ROUTE_USER_AGENT || "Googlebot",
   "accept-language": process.env.BOBOB_ROUTE_ACCEPT_LANGUAGE || "en-US,en;q=0.9",
@@ -12,19 +14,29 @@ const smokeHeaders = {
 
 const toolSlugs = Array.from(registry.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guides.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
+const blogSlugs = fs
+  .readdirSync(blogDir)
+  .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
+  .map((file) => {
+    const source = fs.readFileSync(path.join(blogDir, file), "utf8");
+    const match = source.match(/^slug:\s*(.+)$/m);
+    return match?.[1]?.trim().replace(/^"|"$/g, "");
+  })
+  .filter(Boolean);
+const playSlugs = fs
+  .readdirSync(playDir)
+  .filter((file) => file.endsWith(".json"))
+  .map((file) => JSON.parse(fs.readFileSync(path.join(playDir, file), "utf8")).slug)
+  .filter(Boolean);
+const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + 5;
+const expectedFeedItemCount = blogSlugs.length + playSlugs.length;
 
 const paths = [
   "/",
   "/blog",
-  "/blog/office-survival-workday",
-  "/blog/ai-side-project-realistic-order",
-  "/blog/static-micro-games-architecture",
+  ...blogSlugs.map((slug) => `/blog/${slug}`),
   "/play",
-  "/play/office-survival",
-  "/play/prompt-cleanup",
-  "/play/meeting-escape",
-  "/play/priority-sorter",
-  "/play/bug-clicker",
+  ...playSlugs.map((slug) => `/play/${slug}`),
   "/search",
   "/search?q=prompt",
   "/tools",
@@ -47,6 +59,7 @@ const paths = [
   "/privacy",
   "/terms",
   "/robots.txt",
+  "/llms.txt",
   "/feed.xml",
   "/opensearch.xml",
   "/sitemap.xml",
@@ -138,6 +151,19 @@ for (const fragment of [
   if (!homeHtml.includes(fragment)) failures.push(`home page missing approval readiness fragment: ${fragment}`);
 }
 
+const blogHtml = await (await fetch(`${baseUrl}/blog`, { headers: smokeHeaders })).text();
+for (const fragment of [
+  "data-blog-categories",
+  'data-blog-category="일기"',
+  'data-blog-category="요즘 관심사"',
+  'data-blog-category="AI"',
+  'data-blog-category="개발"',
+  'data-blog-category="운영 기록"',
+  "그냥 글만 남긴 기록입니다",
+]) {
+  if (!blogHtml.includes(fragment)) failures.push(`/blog missing source-locale category fragment: ${fragment}`);
+}
+
 const adsTxtResponse = await fetch(`${baseUrl}/ads.txt`, { headers: smokeHeaders });
 const adsTxtBody = await adsTxtResponse.text();
 if (!adsTxtBody.includes("google.com, pub-2620992505263949, DIRECT, f08c47fec0942fa0")) {
@@ -151,12 +177,13 @@ if (!sitemapIndexBody.includes("<sitemapindex") || !sitemapIndexBody.includes("h
 
 const reducedSitemapBody = await (await fetch(`${baseUrl}/sitemaps/en`, { headers: smokeHeaders })).text();
 const reducedSitemapUrlCount = (reducedSitemapBody.match(/<url>/g) ?? []).length;
-if (reducedSitemapUrlCount !== 19) {
-  failures.push(`/sitemaps/en should expose 19 reduced Blog + Play MVP URLs, found ${reducedSitemapUrlCount}`);
+if (reducedSitemapUrlCount !== expectedSitemapUrlCount) {
+  failures.push(`/sitemaps/en should expose ${expectedSitemapUrlCount} reduced Blog + Play MVP URLs, found ${reducedSitemapUrlCount}`);
 }
 for (const fragment of [
   "<loc>https://www.bobob.app/search</loc>",
   "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
+  "<loc>https://www.bobob.app/blog/small-reset-note</loc>",
   "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
   "<loc>https://www.bobob.app/tools</loc>",
   "<lastmod>2026-06-25</lastmod>",
@@ -167,16 +194,36 @@ for (const fragment of [
 
 const feedBody = await (await fetch(`${baseUrl}/feed.xml`, { headers: smokeHeaders })).text();
 const feedItemCount = (feedBody.match(/<item>/g) ?? []).length;
-if (feedItemCount !== 14) {
-  failures.push(`/feed.xml should expose 14 Blog + Play feed items, found ${feedItemCount}`);
+if (feedItemCount !== expectedFeedItemCount) {
+  failures.push(`/feed.xml should expose ${expectedFeedItemCount} Blog + Play feed items, found ${feedItemCount}`);
 }
 for (const fragment of [
   "<title>bobob.app Blog and Play Lab</title>",
+  "<link>https://www.bobob.app/blog/small-reset-note</link>",
   "<link>https://www.bobob.app/blog/ai-side-project-realistic-order</link>",
   "<link>https://www.bobob.app/play/prompt-cleanup</link>",
   "<lastBuildDate>",
 ]) {
   if (!feedBody.includes(fragment)) failures.push(`/feed.xml missing discovery fragment: ${fragment}`);
+}
+
+const llmsResponse = await fetch(`${baseUrl}/llms.txt`, { headers: smokeHeaders });
+const llmsBody = await llmsResponse.text();
+if (!llmsResponse.headers.get("content-type")?.includes("text/plain")) {
+  failures.push("/llms.txt must return text/plain");
+}
+for (const fragment of [
+  "# bobob.app",
+  "## Play",
+  "## Blog",
+  "## Discovery",
+  "[퇴근 생존기](https://www.bobob.app/play/office-survival)",
+  "[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](https://www.bobob.app/blog/ai-side-project-realistic-order)",
+  "[다시 작게 시작하기로 한 날](https://www.bobob.app/blog/small-reset-note)",
+  "[Sitemap index](https://www.bobob.app/sitemap.xml)",
+  "[OpenSearch descriptor](https://www.bobob.app/opensearch.xml)",
+]) {
+  if (!llmsBody.includes(fragment)) failures.push(`/llms.txt missing discovery fragment: ${fragment}`);
 }
 
 const openSearchResponse = await fetch(`${baseUrl}/opensearch.xml`, { headers: smokeHeaders });

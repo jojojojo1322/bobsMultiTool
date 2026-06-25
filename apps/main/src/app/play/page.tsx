@@ -10,7 +10,7 @@ import { playIndexStructuredData } from "@/features/content/structured-data";
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
-  description: "클릭, 분류, 짧은 선택으로 바로 끝나는 bobob.app의 가벼운 웹 게임과 실험 목록입니다.",
+  description: "규칙 하나만 보고 바로 눌러보는 bobob.app의 작은 웹 놀이 목록입니다.",
   alternates: {
     canonical: "https://www.bobob.app/play",
   },
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/play",
     siteName: "bobob.app",
     title: "Play - bobob.app",
-    description: "바로 클릭하고 결과를 공유하는 가벼운 웹 게임과 실험 목록.",
+    description: "대단하진 않아도 바로 눌러보고 결과를 보는 작은 웹 놀이 목록.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - bobob.app",
-    description: "바로 클릭하고 결과를 공유하는 Play 콘텐츠 목록.",
+    description: "규칙 하나, 조작 하나, 결과 하나로 끝나는 Play 목록.",
   },
 };
 
@@ -40,9 +40,9 @@ export default function PlayIndexPage() {
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Badge>Play</Badge>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">플래시게임처럼 가볍게 시작하는 Play</h1>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">일단 눌러보면 감이 오는 작은 Play</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            단일 규칙, 단일 조작, 짧은 결과를 기준으로 클릭 게임과 분류 게임, 짧은 시뮬레이터를 실험합니다.
+            설명서를 길게 읽는 게임은 지금 안 만듭니다. 한 가지 규칙만 보고, 엄지로 눌러보고, 결과 보고 “아... 이 느낌이네” 하면 충분합니다.
           </p>
         </div>
       </section>

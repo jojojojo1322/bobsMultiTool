@@ -36,6 +36,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Do not add fabricated review, rating, pricing, or availability schema.
 - Global SearchAction schema must point to `/search?q={search_term_string}` and render usable Blog, Play, and archived Tools results. Tool-directory SearchAction may still point to the local `/tools?q=` or localized tool directory search.
 - `/opensearch.xml` should expose the same global search endpoint with the OpenSearch `{searchTerms}` template, and the root document head should include a `rel="search"` discovery link.
+- `/llms.txt` should expose a concise Markdown map of the canonical Blog + Play MVP, global search, submitted discovery routes, trust pages, and selected archived tools without expanding the submitted sitemap URL set.
 - For post-deploy title/description work, use Search Console and AdSense page/query CSV exports with `npm run harness:seo-opportunities`. Prioritize high-impression low-CTR tool and guide pages, low-RPM pages, metadata warnings, and `titleDescriptionRecommendations` before broad copy rewrites.
 - The SEO opportunity harness auto-detects private local exports at `reports/search-console.csv`, `reports/search-console.tsv`, `reports/adsense.csv`, and `reports/adsense.tsv`; env vars `BOBOB_SEARCH_CONSOLE_CSV` and `BOBOB_ADSENSE_CSV` override those defaults.
 - Review `inputWarnings` from the SEO opportunity report before trusting empty measured results; missing Search Console/AdSense CSV headers must be fixed or acknowledged before title/description edits.

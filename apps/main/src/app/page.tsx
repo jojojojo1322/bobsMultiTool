@@ -19,8 +19,8 @@ const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base
 const contentLocale = "ko";
 
 export const metadata: Metadata = {
-  title: "bobob.app - Blog and Play Lab",
-  description: "짧게 읽고 바로 해보고 결과를 공유하는 Blog + Play 기반의 가벼운 웹 콘텐츠 실험장입니다.",
+  title: "bobob.app - 일단 해보는 Blog and Play",
+  description: "거창한 서비스보다, 오늘 떠오른 개발/AI 기록과 작은 웹 놀이를 일단 만들어 보는 곳입니다.",
   alternates: {
     canonical: "https://www.bobob.app/",
   },
@@ -28,13 +28,13 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://www.bobob.app/",
     siteName: "bobob.app",
-    title: "bobob.app - Blog and Play Lab",
-    description: "짧은 글과 바로 해보는 Play 콘텐츠를 함께 실험하는 가벼운 웹 콘텐츠 랩.",
+    title: "bobob.app - 일단 해보는 Blog and Play",
+    description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 눌러보게 만드는 작은 웹 작업장.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "bobob.app - Blog and Play Lab",
-    description: "짧게 읽고 바로 해보고 결과를 공유하는 웹 콘텐츠 실험장.",
+    title: "bobob.app - 일단 해보는 Blog and Play",
+    description: "개발/AI 기록과 작은 Play를 일단 만들어 보는 곳.",
   },
 };
 
@@ -55,13 +55,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <section className="border-b bg-muted/20">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
           <div>
-            <Badge>Blog + Play Lab</Badge>
+            <Badge>일단 해보는 Blog + Play</Badge>
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal text-foreground md:text-5xl">
-              짧게 읽고 바로 해보고 결과를 공유하는 가벼운 웹 콘텐츠 실험장
+              뭐라도 해보자. 짧게 읽고, 바로 눌러보고, 다시 고치는 곳
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              bobob.app은 개발자 도구를 보관하되, 이제 개발과 AI 기록을 읽고 플래시게임처럼 가벼운 Play를 바로 해보는 콘텐츠를 실험합니다.
-              첫 라인업은 퇴근 생존기, 프롬프트 정리, 회의 탈출, 우선순위 분류, 버그 잡기입니다.
+              bobob.app은 대단한 플랫폼을 만들겠다는 말보다, 오늘 막힌 개발/AI 작업을 적고 그 옆에 작은 Play를 하나 붙여보는 쪽으로 갑니다.
+              퇴근 생존기, 프롬프트 정리, 회의 탈출 같은 것들부터요. 좀 어설퍼도... 일단 해보고 고칩니다!
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
@@ -81,12 +81,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="rounded-lg border bg-background p-4 shadow-sm">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-muted-foreground" />
-              <p className="text-sm font-semibold">콘텐츠 하네스</p>
+              <p className="text-sm font-semibold">요즘 작업 방식</p>
             </div>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <p>content metadata -&gt; blog page -&gt; play page -&gt; result/share -&gt; SEO metadata -&gt; smoke test</p>
-              <p>글 하나는 관점과 경험을 담고, 관련 Play는 단일 규칙과 단일 조작으로 바로 끝나게 만듭니다.</p>
-              <p>초기에는 로그인, 랭킹, 댓글 없이 정적 콘텐츠와 브라우저 상호작용만으로 반응을 확인합니다.</p>
+              <p>글을 쓰다가 “이거 눌러보면 더 잘 느껴지겠다” 싶으면 Play로 만듭니다.</p>
+              <p>규칙은 하나만 둡니다. 오래 설명하면 이미 진 겁니다.</p>
+              <p>초기에는 로그인, 랭킹, 댓글 없이 갑니다. 만들고, 보고, 이상하면 다시 손봅니다.</p>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="mb-4 flex items-end justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Featured Play</p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-normal">바로 해보는 콘텐츠</h2>
+              <h2 className="mt-1 text-2xl font-semibold tracking-normal">일단 눌러보는 것들</h2>
             </div>
             <Link href="/play" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               전체 Play 보기
@@ -124,7 +124,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="mb-4 flex items-end justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Latest Blog</p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-normal">최근 글</h2>
+              <h2 className="mt-1 text-2xl font-semibold tracking-normal">막히면서 쓴 글</h2>
             </div>
             <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               블로그 목록
@@ -157,8 +157,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <div className="mb-4 flex items-end justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Popular Tools</p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-normal">보관된 개발자 도구</h2>
-            <p className="mt-1 text-sm text-muted-foreground">기존 도구는 삭제하지 않고 `/tools` 아래에서 계속 사용할 수 있습니다.</p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-normal">그래도 남겨둔 개발자 도구</h2>
+            <p className="mt-1 text-sm text-muted-foreground">예전에 만든 도구들은 버리지 않습니다. 필요하면 `/tools` 아래에서 계속 씁니다.</p>
           </div>
           <Link href="/tools" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             도구 전체 보기
@@ -183,7 +183,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-sm text-muted-foreground">
-          <span>bobob.app content lab</span>
+          <span>bobob.app, 일단 해보는 중</span>
           <div className="flex gap-3">
             <Link href="/about" className="hover:text-foreground">
               소개

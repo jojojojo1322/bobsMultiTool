@@ -5,7 +5,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 
 # Bobob Product Strategy
 
-- Keep the product north star explicit: as of 2026-06-25, bobob.app is a small Blog + Play content experiment lab, not a developer-tool-first SEO site. The archived tools stay under `/tools`, but new product work should prioritize development/AI/operator posts, lightweight web Play experiments, shareable results, session depth, and mobile/desktop completion.
+- Keep the product north star explicit: as of 2026-06-25, bobob.app is a small Blog + Play workshop that feels like someone is trying, writing, fixing, and shipping small things in public, not a developer-tool-first SEO site. The archived tools stay under `/tools`, but new product work should prioritize development/AI/operator posts, lightweight web Play experiments, shareable results, session depth, and mobile/desktop completion.
 - When choosing work, rank impact by search-led content acquisition, Play retention, shareability, lightweight support conversion, static performance, and mobile/desktop completion before decorative polish.
 - Keep status reporting terse during long work. Use short current-task / changed-files / verification-result updates instead of long streaming narration.
 - Prefer single-domain Blog + Play experiments over standalone communities or AI wrappers. Keep developer utilities as an archive unless the user explicitly asks to invest in tools again.
@@ -39,7 +39,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Core acquisition tool detail pages in Korean, Japanese, Spanish, and German should have localized priority failure cases and pre-copy checklist items so review-strip copy is specific enough to increase trust and session depth.
 - Use `/tools` and localized tool directories as session-depth hubs: acquisition workflow clusters should connect high-demand tools into second and third tool paths using localized registry copy.
 - Treat guides as support content for tools, not as a separate generic blog.
-- Treat new `/blog` posts as original development, AI, productivity, side-project, or web-operations content that should connect to `/play` experiences. A post without a related Play path is lower priority than a post/play pair.
+- Treat new `/blog` posts as original development, AI, diary, interests, side-project, or web-operations content. Related Play links are useful when natural, but standalone notes are allowed and should not be padded with forced Play links.
 - Do not produce search-keyword-only Blog posts. Blog copy should contain a point of view, operating detail, concrete examples, or failure notes so the site does not read as thin SEO inventory.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
 - Do not prioritize donation, coffee, paid-pack, or ad surfaces in the first Blog + Play content pass. Build original content and lightweight interaction depth first.

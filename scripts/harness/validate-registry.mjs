@@ -52,6 +52,7 @@ const requiredPlaySlugs = [
   "priority-sorter",
   "bug-clicker",
 ];
+const requiredBlogCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
 const priorityDetailSlugs = [
   "regex-tester",
   "json-formatter",
@@ -143,6 +144,8 @@ const blogEntries = fs
       slug: frontmatter.slug,
       title: frontmatter.title,
       description: frontmatter.description,
+      date: frontmatter.date,
+      category: frontmatter.category,
       relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
     };
   });
@@ -156,7 +159,7 @@ const playContentSlugs = new Set(playEntries.map((entry) => entry.slug).filter(B
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
 if (locales.length < 14) failures.push(`expected at least 14 locales, found ${locales.length}`);
-if (blogEntries.length < 8) failures.push(`Blog + Play MVP needs at least 8 blog posts, found ${blogEntries.length}`);
+if (blogEntries.length < 16) failures.push(`Blog + Play MVP needs at least 16 blog posts after the category expansion, found ${blogEntries.length}`);
 if (playEntries.length < 5) failures.push(`Blog + Play MVP needs at least 5 Play entries, found ${playEntries.length}`);
 for (const slug of requiredBlogSlugs) {
   if (!blogContentSlugs.has(slug)) failures.push(`required Blog MVP post missing: ${slug}`);
@@ -167,9 +170,16 @@ for (const slug of requiredPlaySlugs) {
 for (const type of ["micro-sim", "tap-game", "sort-match-game"]) {
   if (!playEntries.some((entry) => entry.type === type)) failures.push(`Play MVP missing ${type} engine content`);
 }
+for (const category of requiredBlogCategories) {
+  if (!blogEntries.some((entry) => entry.category === category)) failures.push(`Blog category missing from content: ${category}`);
+  if (!blogIndex.includes(category)) failures.push(`/blog index missing category prose: ${category}`);
+}
+for (const fragment of ["data-blog-categories", "data-blog-category", "그냥 글만 남긴 기록입니다"]) {
+  if (!blogIndex.includes(fragment)) failures.push(`/blog index missing category or standalone-post fragment: ${fragment}`);
+}
 for (const entry of blogEntries) {
-  if (!entry.slug || !entry.title || !entry.description) failures.push(`${entry.file} missing required blog frontmatter`);
-  if (!entry.relatedPlaySlugs.length) failures.push(`${entry.slug ?? entry.file} must link to at least one related Play`);
+  if (!entry.slug || !entry.title || !entry.description || !entry.date || !entry.category) failures.push(`${entry.file} missing required blog frontmatter`);
+  if (entry.date && !/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) failures.push(`${entry.slug ?? entry.file} has invalid Blog date: ${entry.date}`);
   for (const playSlug of entry.relatedPlaySlugs) {
     if (!playContentSlugs.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing Play content: ${playSlug}`);
   }

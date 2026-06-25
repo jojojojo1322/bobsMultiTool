@@ -2,9 +2,9 @@
 
 ## Product North Star
 
-- As of 2026-06-25, bobob.app is being redirected from a developer-tool-first SEO site into a small Blog + Play content experiment lab. The priority is development/AI/operator posts, lightweight web Play experiments, shareable results, session depth, and high-quality mobile/desktop UX.
+- As of 2026-06-25, bobob.app is being redirected from a developer-tool-first SEO site into a small Blog + Play workshop that feels like someone is trying, writing, fixing, and shipping small things in public. The priority is development/AI/operator posts, lightweight web Play experiments, shareable results, session depth, and high-quality mobile/desktop UX.
 - The existing developer tools remain archived under `/tools`; keep them working, searchable, and safe, but do not present them as the main service on the home page.
-- Optimize new work for content/play registry throughput: content metadata -> blog page -> play page -> result/share page -> SEO metadata -> sitemap -> smoke test.
+- Optimize new work for content/play registry throughput without forcing every post into a Play pair. Blog metadata can ship as standalone writing; Play metadata should connect back to related writing when the connection is natural.
 - Do not let short-term visual experiments damage the product objective. Any visual change must preserve crawlability, accessibility, static performance, and safe layout.
 
 ## Collaboration And Handoff
@@ -35,6 +35,7 @@
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
 - New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, and `micro-sim`.
+- Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Related Play links are useful, but they must not be forced when a post works better as a standalone note.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
@@ -77,6 +78,7 @@
 - Tool navigation clicks must preserve the sidebar scroll position and must not force the document back to the top while moving between tool detail pages.
 - Global content search must use `/search?q=` and cover Blog, Play, and archived Tools results, with Blog + Play ranked as the primary product direction. The root SearchAction schema must target `/search?q={search_term_string}`. Archived tool search can still use the shared registry index across home, `/tools`, locale tool directories, and tool workbench surfaces.
 - `/opensearch.xml` should expose the same `/search?q={searchTerms}` entrypoint, and the root document head should include a `rel="search"` OpenSearch discovery link.
+- `/llms.txt` should expose a concise Markdown map of the canonical Blog + Play MVP, global search, submitted discovery routes, trust pages, and selected archived tools. Keep it source-locale only until localized Blog/Play/search surfaces are intentionally submitted.
 - Search results must expose compact match-signal chips from localized title, description, use cases, examples, failure cases, pre-copy checklist items, aliases, intents, keywords, FAQ, guide titles, and related next-action context so users understand why a result appeared before opening it.
 - Search results and tool detail pages must expose related next-action links so users naturally continue to a second tool in the same session.
 - Related next-action links must preserve the registry `relatedTools` order and expose localized use-case context, not only a bare related tool name.
