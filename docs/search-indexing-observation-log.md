@@ -45,6 +45,17 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub hub: `https://pubsubhubbub.appspot.com/`
   - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - WebSub response statuses: `204`, `204`
+- Post-discovery-wording resubmission:
+  - Commit: `186d7af`
+  - Change: root metadata, WebSite structured data, RSS/Atom/JSON Feed title and description now use the `일단 해보는 Blog and Play` direction instead of the old `Blog and Play Lab` wording.
+  - Deployment check: `npm run harness:deployment-status` returned `overallState: success` for `186d7afcb0792f670869f17fba7019d2d5e72ba5`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `44`, feed items `34`, Blog posts `28`, Play entries `6`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `44`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub response statuses: `204`, `204`
 - Public search spot check:
   - A public search result for `site:www.bobob.app bobob.app` surfaced the homepage, but Search Console has not yet reflected indexed URL counts for the new Blog + Play set.
 
