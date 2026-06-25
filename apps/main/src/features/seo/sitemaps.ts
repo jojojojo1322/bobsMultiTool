@@ -1,4 +1,5 @@
 import { defaultLocale, type Locale } from "@/features/i18n/config";
+import { blogCategoryDefinitions, blogCategoryPath } from "@/features/content/blog-categories";
 import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
 
@@ -48,12 +49,25 @@ function basePaths(): SitemapPath[] {
   const latestBlogLastmod = blogLastmod();
   const latestPlayLastmod = playLastmod();
   const latestSiteLastmod = siteLastmod();
+  const posts = getBlogPosts();
 
   return [
     { path: "/", changefreq: "weekly", priority: "1.0", lastmod: latestSiteLastmod },
     { path: "/search", changefreq: "weekly", priority: "0.7", lastmod: latestSiteLastmod },
     { path: "/blog", changefreq: "weekly", priority: "0.8", lastmod: latestBlogLastmod },
-    ...getBlogPosts().map((post) => ({
+    ...blogCategoryDefinitions
+      .map((category) => ({
+        category,
+        posts: posts.filter((post) => post.category === category.label),
+      }))
+      .filter((group) => group.posts.length)
+      .map((group) => ({
+        path: blogCategoryPath(group.category.slug),
+        changefreq: "weekly" as const,
+        priority: "0.7",
+        lastmod: latestDate(group.posts.map((post) => post.date)),
+      })),
+    ...posts.map((post) => ({
       path: `/blog/${post.slug}`,
       changefreq: "monthly" as const,
       priority: "0.7",

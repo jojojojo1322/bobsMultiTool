@@ -5,6 +5,7 @@ const baseUrl = process.env.BOBOB_BASE_URL || "http://localhost:3000";
 const root = process.cwd();
 const registry = fs.readFileSync(path.join(root, "apps/main/src/features/tools/registry.ts"), "utf8");
 const guides = fs.readFileSync(path.join(root, "apps/main/src/features/guides/registry.ts"), "utf8");
+const blogCategories = fs.readFileSync(path.join(root, "apps/main/src/features/content/blog-categories.ts"), "utf8");
 const blogDir = path.join(root, "content/blog");
 const playDir = path.join(root, "content/play");
 const smokeHeaders = {
@@ -14,6 +15,7 @@ const smokeHeaders = {
 
 const toolSlugs = Array.from(registry.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guides.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
+const blogCategorySlugs = Array.from(blogCategories.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const blogSlugs = fs
   .readdirSync(blogDir)
   .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
@@ -28,12 +30,13 @@ const playSlugs = fs
   .filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(fs.readFileSync(path.join(playDir, file), "utf8")).slug)
   .filter(Boolean);
-const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + 5;
+const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + blogCategorySlugs.length + 5;
 const expectedFeedItemCount = blogSlugs.length + playSlugs.length;
 
 const paths = [
   "/",
   "/blog",
+  ...blogCategorySlugs.map((slug) => `/blog/category/${slug}`),
   ...blogSlugs.map((slug) => `/blog/${slug}`),
   "/play",
   ...playSlugs.map((slug) => `/play/${slug}`),
@@ -160,6 +163,11 @@ for (const fragment of [
   'data-blog-category="개발"',
   'data-blog-category="운영 기록"',
   "그냥 글만 남긴 기록입니다",
+  "/blog/category/diary",
+  "/blog/category/interests",
+  "/blog/category/ai",
+  "/blog/category/development",
+  "/blog/category/operations",
 ]) {
   if (!blogHtml.includes(fragment)) failures.push(`/blog missing source-locale category fragment: ${fragment}`);
 }
@@ -182,6 +190,8 @@ if (reducedSitemapUrlCount !== expectedSitemapUrlCount) {
 }
 for (const fragment of [
   "<loc>https://www.bobob.app/search</loc>",
+  "<loc>https://www.bobob.app/blog/category/diary</loc>",
+  "<loc>https://www.bobob.app/blog/category/development</loc>",
   "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
   "<loc>https://www.bobob.app/blog/small-reset-note</loc>",
   "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
@@ -216,7 +226,10 @@ for (const fragment of [
   "# bobob.app",
   "## Play",
   "## Blog",
+  "## Blog Categories",
   "## Discovery",
+  "[일기](https://www.bobob.app/blog/category/diary)",
+  "[개발](https://www.bobob.app/blog/category/development)",
   "[퇴근 생존기](https://www.bobob.app/play/office-survival)",
   "[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](https://www.bobob.app/blog/ai-side-project-realistic-order)",
   "[다시 작게 시작하기로 한 날](https://www.bobob.app/blog/small-reset-note)",

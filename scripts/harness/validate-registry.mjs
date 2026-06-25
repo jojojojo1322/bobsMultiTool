@@ -11,6 +11,8 @@ const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/rou
 const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
 const searchPagePath = path.join(root, "apps/main/src/app/search/page.tsx");
 const blogIndexPath = path.join(root, "apps/main/src/app/blog/page.tsx");
+const blogCategoryDefinitionPath = path.join(root, "apps/main/src/features/content/blog-categories.ts");
+const blogCategoryPagePath = path.join(root, "apps/main/src/app/blog/category/[category]/page.tsx");
 const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
 const playIndexPath = path.join(root, "apps/main/src/app/play/page.tsx");
 const playDetailPath = path.join(root, "apps/main/src/app/play/[slug]/page.tsx");
@@ -27,6 +29,8 @@ const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
 const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
 const searchPage = fs.readFileSync(searchPagePath, "utf8");
 const blogIndex = fs.readFileSync(blogIndexPath, "utf8");
+const blogCategoryDefinition = fs.readFileSync(blogCategoryDefinitionPath, "utf8");
+const blogCategoryPage = fs.readFileSync(blogCategoryPagePath, "utf8");
 const blogDetail = fs.readFileSync(blogDetailPath, "utf8");
 const playIndex = fs.readFileSync(playIndexPath, "utf8");
 const playDetail = fs.readFileSync(playDetailPath, "utf8");
@@ -172,10 +176,16 @@ for (const type of ["micro-sim", "tap-game", "sort-match-game"]) {
 }
 for (const category of requiredBlogCategories) {
   if (!blogEntries.some((entry) => entry.category === category)) failures.push(`Blog category missing from content: ${category}`);
-  if (!blogIndex.includes(category)) failures.push(`/blog index missing category prose: ${category}`);
+  if (!blogCategoryDefinition.includes(`label: "${category}"`)) failures.push(`Blog category registry missing label: ${category}`);
 }
-for (const fragment of ["data-blog-categories", "data-blog-category", "그냥 글만 남긴 기록입니다"]) {
+for (const slug of ["diary", "interests", "ai", "development", "operations"]) {
+  if (!blogCategoryDefinition.includes(`slug: "${slug}"`)) failures.push(`Blog category registry missing slug: ${slug}`);
+}
+for (const fragment of ["data-blog-categories", "data-blog-category", "그냥 글만 남긴 기록입니다", "blogCategoryPath(group.slug)"]) {
   if (!blogIndex.includes(fragment)) failures.push(`/blog index missing category or standalone-post fragment: ${fragment}`);
+}
+for (const fragment of ["generateStaticParams", "blogCategoryStructuredData(", "data-blog-category-page", "getBlogCategoryBySlug", "notFound()"]) {
+  if (!blogCategoryPage.includes(fragment)) failures.push(`Blog category page missing ${fragment}`);
 }
 for (const entry of blogEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.date || !entry.category) failures.push(`${entry.file} missing required blog frontmatter`);
@@ -210,6 +220,7 @@ for (const [source, name, fragment] of [
 }
 for (const fragment of [
   "blogIndexStructuredData",
+  "blogCategoryStructuredData",
   "playIndexStructuredData",
   "blogPostStructuredData",
   "playDetailStructuredData",
@@ -316,6 +327,8 @@ for (const slug of guideSlugs) {
 for (const fragment of [
   "sitemapIndexXml",
   "localizedSitemapXml",
+  "blogCategoryDefinitions",
+  "blogCategoryPath",
   "xmlns:xhtml",
   "hreflang=\"x-default\"",
   "getBlogPosts",

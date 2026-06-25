@@ -78,6 +78,7 @@ Include:
 - Sitemap `lastmod` should be current for the latest tool, guide, route, or locale content commit.
 - Blog + Play discovery routes should expose current content dates: `/sitemaps/en` should include URL-specific `lastmod` from Blog dates and Play `updatedAt`, and `/feed.xml` should include the same canonical Blog + Play items with current item dates.
 - `/blog` should expose broad source-locale categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`; some posts may be standalone and should not show forced Play links.
+- `/blog/category/{slug}` should return source-locale category hub pages with real posts, category-specific metadata, structured data, and sitemap coverage only for categories with content.
 - Global `/search?q=` should render Blog, Play, and archived Tools results, and root WebSite SearchAction should target that route. Home, `/tools`, localized tool directories, and workbench shared tool search should keep `?q=` URL state for the archived tool registry.
 - `/opensearch.xml` should return `application/opensearchdescription+xml`, point to `/search?q={searchTerms}`, and be discoverable through the root `rel="search"` head link.
 - `/llms.txt` should return `text/plain`, include the canonical Blog + Play MVP links, discovery routes, trust pages, and selected archived tools, and must not broaden the submitted sitemap URL set.

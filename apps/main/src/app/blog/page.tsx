@@ -5,11 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
+import { blogCategoryDefinitions, blogCategoryPath, getBlogCategoryByLabel } from "@/features/content/blog-categories";
 import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogIndexStructuredData } from "@/features/content/structured-data";
-
-const categoryOrder = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
 
 export const metadata: Metadata = {
   title: "Blog - bobob.app",
@@ -31,21 +30,14 @@ export const metadata: Metadata = {
   },
 };
 
-function categoryId(category: string) {
-  return `blog-category-${category.replace(/\s+/g, "-")}`;
-}
-
 export default function BlogIndexPage() {
   const dictionary = getClientDictionary(contentLocale);
   const posts = getBlogPosts();
   const jsonLd = blogIndexStructuredData(posts);
-  const categories = [
-    ...categoryOrder,
-    ...Array.from(new Set(posts.map((post) => post.category))).filter((category) => !categoryOrder.includes(category)),
-  ]
+  const categories = blogCategoryDefinitions
     .map((category) => ({
-      category,
-      posts: posts.filter((post) => post.category === category),
+      ...category,
+      posts: posts.filter((post) => post.category === category.label),
     }))
     .filter((group) => group.posts.length);
 
@@ -68,11 +60,11 @@ export default function BlogIndexPage() {
           <div className="mt-3 flex flex-wrap gap-2">
             {categories.map((group) => (
               <Link
-                key={group.category}
-                href={`#${categoryId(group.category)}`}
+                key={group.slug}
+                href={blogCategoryPath(group.slug)}
                 className="inline-flex h-9 items-center gap-2 rounded-md border bg-background px-3 text-sm font-medium transition-colors hover:bg-muted"
               >
-                {group.category}
+                {group.label}
                 <Badge>{group.posts.length}</Badge>
               </Link>
             ))}
@@ -82,13 +74,16 @@ export default function BlogIndexPage() {
       <section className="mx-auto max-w-6xl px-4 py-8">
         <div className="space-y-10">
           {categories.map((group) => (
-            <section key={group.category} id={categoryId(group.category)} data-blog-category={group.category}>
+            <section key={group.slug} id={`blog-category-${group.slug}`} data-blog-category={group.label}>
               <div className="mb-4 flex items-end justify-between gap-3">
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Category</p>
-                  <h2 className="mt-1 text-2xl font-semibold tracking-normal">{group.category}</h2>
+                  <h2 className="mt-1 text-2xl font-semibold tracking-normal">{group.label}</h2>
+                  <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">{group.description}</p>
                 </div>
-                <Badge>{group.posts.length}개</Badge>
+                <Link href={blogCategoryPath(group.slug)} className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                  이 분류만 보기
+                </Link>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 {group.posts.map((post) => {
@@ -98,7 +93,7 @@ export default function BlogIndexPage() {
                       <Card className="h-full transition-colors hover:bg-muted/50">
                         <CardHeader>
                           <div className="mb-2 flex flex-wrap gap-2">
-                            <Badge>{post.category}</Badge>
+                            <Badge>{getBlogCategoryByLabel(post.category)?.label ?? post.category}</Badge>
                             <Badge>{post.readingMinutes}분 읽기</Badge>
                           </div>
                           <CardTitle>{post.title}</CardTitle>

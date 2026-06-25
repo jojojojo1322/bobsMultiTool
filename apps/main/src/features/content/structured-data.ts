@@ -1,4 +1,6 @@
 import type { BlogPost, PlayContent } from "./types";
+import type { BlogCategoryDefinition } from "./blog-categories";
+import { blogCategoryPath } from "./blog-categories";
 import type { ToolDefinition } from "@/features/tools/types";
 
 const siteUrl = "https://www.bobob.app";
@@ -97,6 +99,57 @@ export function blogIndexStructuredData(posts: BlogPost[]) {
     breadcrumbList([
       { name: siteName, path: "" },
       { name: "Blog", path: "/blog" },
+    ]),
+  ];
+}
+
+export function blogCategoryStructuredData({ category, posts }: { category: BlogCategoryDefinition; posts: BlogPost[] }) {
+  const path = blogCategoryPath(category.slug);
+  const url = `${siteUrl}${path}`;
+  const itemList = {
+    "@type": "ItemList",
+    name: `${category.label} - bobob.app Blog`,
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => {
+      const postUrl = `${siteUrl}/blog/${post.slug}`;
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        url: postUrl,
+        item: {
+          "@type": "BlogPosting",
+          headline: post.title,
+          description: post.description,
+          url: postUrl,
+          datePublished: post.date,
+          dateModified: post.date,
+          articleSection: category.label,
+          inLanguage: contentLocale,
+          author: personNode(),
+          publisher: organizationNode(),
+        },
+      };
+    }),
+  };
+
+  const collectionPage = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `${category.label} - bobob.app Blog`,
+    url,
+    description: category.description,
+    inLanguage: contentLocale,
+    isPartOf: websiteNode(),
+    mainEntity: itemList,
+  };
+
+  return [
+    collectionPage,
+    breadcrumbList([
+      { name: siteName, path: "" },
+      { name: "Blog", path: "/blog" },
+      { name: category.label, path },
     ]),
   ];
 }

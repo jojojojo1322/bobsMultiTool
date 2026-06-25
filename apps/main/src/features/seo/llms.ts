@@ -1,4 +1,5 @@
 import { getBlogPosts } from "@/features/content/blog";
+import { blogCategoryDefinitions, blogCategoryPath } from "@/features/content/blog-categories";
 import { getPlayContents } from "@/features/content/play";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
 
@@ -19,6 +20,14 @@ function blogLinks() {
 
 function playLinks() {
   return getPlayContents().map((content) => markdownLink(content.title, `${siteUrl}/play/${content.slug}`, content.description));
+}
+
+function blogCategoryLinks() {
+  const posts = getBlogPosts();
+
+  return blogCategoryDefinitions
+    .filter((category) => posts.some((post) => post.category === category.label))
+    .map((category) => markdownLink(category.label, `${siteUrl}${blogCategoryPath(category.slug)}`, category.description));
 }
 
 function toolLinks() {
@@ -44,6 +53,9 @@ export function llmsTxt() {
     markdownLink("Blog index", `${siteUrl}/blog`, "개발, AI 활용, 생산성, 사이드 프로젝트, 웹서비스 운영 기록 목록."),
     markdownLink("Play index", `${siteUrl}/play`, "30초에서 3분 안에 끝나는 가벼운 웹 게임과 실험 목록."),
     markdownLink("Tools archive", `${siteUrl}/tools`, "기존 개발자 도구를 보관한 archive hub."),
+    "",
+    "## Blog Categories",
+    ...blogCategoryLinks(),
     "",
     "## Play",
     ...playLinks(),

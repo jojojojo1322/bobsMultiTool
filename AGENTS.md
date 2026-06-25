@@ -36,6 +36,7 @@
 - Do not add AI assistant features unless explicitly requested again.
 - New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, and `micro-sim`.
 - Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Related Play links are useful, but they must not be forced when a post works better as a standalone note.
+- Source-locale Blog category hubs should live at `/blog/category/{slug}` for the main categories and can be included in the reduced MVP sitemap when each hub has real posts.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
@@ -119,7 +120,7 @@
 - Search crawlers must receive final 200 responses on canonical unprefixed sitemap URLs such as `/`, `/tools`, and `/tools/{slug}`; do not geolocation-redirect known bots away from the sitemap URL set.
 - IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
 - `/robots.txt` must allow public crawl paths and point to the canonical sitemap index. `/feed.xml` should expose the current Blog + Play canonical content set for lightweight discovery without expanding the submitted sitemap beyond the MVP scope.
-- Sitemap exposure must use `/sitemap.xml` as a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small and canonical: `/`, `/blog`, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore broad full per-locale URL coverage until content proves demand and localized Blog/Play pages exist.
+- Sitemap exposure must use `/sitemap.xml` as a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small and canonical: `/`, `/blog`, Blog category hubs with real posts, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore broad full per-locale URL coverage until content proves demand and localized Blog/Play pages exist.
 - Blog dates and Play `updatedAt` fields are the source of truth for Blog + Play discovery freshness. `/sitemaps/en` must emit URL-specific `lastmod`, `/sitemap.xml` must use the latest content date, and `/feed.xml` must use the same canonical Blog + Play set with current item dates.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.

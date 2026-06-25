@@ -1,0 +1,117 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowRight, Newspaper } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContentNav } from "@/features/content/content-nav";
+import { blogCategoryDefinitions, blogCategoryPath, getBlogCategoryBySlug } from "@/features/content/blog-categories";
+import { getBlogPosts } from "@/features/content/blog";
+import { getPlayContentBySlug } from "@/features/content/play";
+import { blogCategoryStructuredData } from "@/features/content/structured-data";
+import { getClientDictionary } from "@/features/i18n/dictionaries";
+
+const contentLocale = "ko";
+
+type BlogCategoryPageProps = {
+  params: Promise<{ category: string }>;
+};
+
+export function generateStaticParams() {
+  const posts = getBlogPosts();
+
+  return blogCategoryDefinitions
+    .filter((category) => posts.some((post) => post.category === category.label))
+    .map((category) => ({ category: category.slug }));
+}
+
+export async function generateMetadata({ params }: BlogCategoryPageProps): Promise<Metadata> {
+  const { category: categorySlug } = await params;
+  const category = getBlogCategoryBySlug(categorySlug);
+  if (!category) return {};
+
+  const url = `https://www.bobob.app${blogCategoryPath(category.slug)}`;
+  return {
+    title: `${category.label} - bobob.app Blog`,
+    description: category.description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      siteName: "bobob.app",
+      title: `${category.label} - bobob.app Blog`,
+      description: category.description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${category.label} - bobob.app Blog`,
+      description: category.description,
+    },
+  };
+}
+
+export default async function BlogCategoryPage({ params }: BlogCategoryPageProps) {
+  const { category: categorySlug } = await params;
+  const category = getBlogCategoryBySlug(categorySlug);
+  if (!category) notFound();
+
+  const posts = getBlogPosts().filter((post) => post.category === category.label);
+  if (!posts.length) notFound();
+
+  const dictionary = getClientDictionary(contentLocale);
+  const jsonLd = blogCategoryStructuredData({ category, posts });
+
+  return (
+    <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ContentNav dictionary={dictionary} />
+      <section className="border-b bg-muted/20">
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <Badge>Blog category</Badge>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">{category.label}</h1>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{category.description}</p>
+          <Link href="/blog" className="mt-6 inline-flex h-9 items-center justify-center rounded-md border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
+            전체 글 보기
+          </Link>
+        </div>
+      </section>
+      <section className="mx-auto max-w-6xl px-4 py-8" data-blog-category-page={category.slug}>
+        <div className="grid gap-4 md:grid-cols-2">
+          {posts.map((post) => {
+            const relatedPlay = post.relatedPlaySlugs[0] ? getPlayContentBySlug(post.relatedPlaySlugs[0]) : undefined;
+            return (
+              <Link key={post.slug} href={`/blog/${post.slug}`}>
+                <Card className="h-full transition-colors hover:bg-muted/50">
+                  <CardHeader>
+                    <div className="mb-2 flex flex-wrap gap-2">
+                      <Badge>{post.category}</Badge>
+                      <Badge>{post.readingMinutes}분 읽기</Badge>
+                    </div>
+                    <CardTitle>{post.title}</CardTitle>
+                    <CardDescription>{post.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-muted-foreground">
+                    <p className="inline-flex items-center gap-2">
+                      <Newspaper className="h-4 w-4" />
+                      {post.date}
+                    </p>
+                    {relatedPlay ? (
+                      <p className="inline-flex items-center gap-2 text-foreground">
+                        관련 Play: {relatedPlay.title}
+                        <ArrowRight className="h-4 w-4" />
+                      </p>
+                    ) : (
+                      <p>그냥 글만 남긴 기록입니다. 억지로 Play를 붙이진 않았습니다.</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+    </main>
+  );
+}

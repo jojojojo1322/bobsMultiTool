@@ -10,7 +10,7 @@ description: Use before changing Bob's Multi Tool AdSense, domain, redirect, sit
 - Canonical host is `https://www.bobob.app`.
 - `bobob.app` should permanently redirect to `www.bobob.app` with an explicit 308 canonical host redirect before locale redirects run.
 - Legacy standalone apps must not be restored. Legacy entry paths should redirect from `apps/main` to the matching `/tools/{slug}` page.
-- `/sitemap.xml` must be a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small through `/sitemaps/{locale}` routes: `/`, `/blog`, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore full per-locale URL coverage until localized Blog/Play pages exist and there is measured demand.
+- `/sitemap.xml` must be a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small through `/sitemaps/{locale}` routes: `/`, `/blog`, source-locale Blog category hubs with real posts, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore full per-locale URL coverage until localized Blog/Play pages exist and there is measured demand.
 - `/about` and `/contact` are required trust pages. They must exist for default English and supported locale prefixes, use localized trust content, appear in footer trust navigation, and be reachable as final 200 URLs.
 - `/tools` and `/{locale}/tools` must return 200 as tool directory pages. They are SEO hub pages and must not redirect to a single tool.
 - Sitemap entries must point only to final public URLs expected to return 200.
