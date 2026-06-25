@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: "bobob.app - 뭐라도 해보는 기록과 Play",
     template: "%s | bobob.app",
   },
-  description: "개발/AI 작업에서 막힌 것, 고친 것, 떠오른 작은 Play를 그냥 하나씩 올리는 bobob.app입니다.",
+  description: "거창한 서비스라고 말하기보다, 개발/AI 작업에서 막힌 것과 고친 기록을 남기고 떠오른 작은 Play를 그냥 하나씩 올리는 bobob.app입니다.",
   authors: [{ name: "Bob" }],
   creator: "bobob.app",
   publisher: "bobob.app",
@@ -36,12 +36,12 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app",
     siteName: "bobob.app",
     title: "bobob.app - 뭐라도 해보는 기록과 Play",
-    description: "막히면 적고, 떠오르면 만들고, 이상하면 다시 고치는 개발/AI 기록과 작은 Play.",
+    description: "막히면 적고, 떠오르면 만들고, 이상하면 다시 고치는 개발/AI 기록과 작은 Play입니다.",
   },
   twitter: {
     card: "summary_large_image",
     title: "bobob.app - 뭐라도 해보는 기록과 Play",
-    description: "개발/AI 기록과 작은 Play를 그냥 하나씩 올립니다.",
+    description: "개발/AI 작업에서 막힌 것과 떠오른 작은 Play를 그냥 하나씩 올립니다.",
   },
   robots: {
     index: true,
@@ -73,7 +73,7 @@ export default async function RootLayout({
     name: "bobob.app",
     alternateName: "뭐라도 해보는 기록과 Play",
     url: "https://www.bobob.app",
-    description: "개발/AI 작업에서 막힌 것, 고친 것, 떠오른 작은 Play를 그냥 하나씩 올리는 bobob.app입니다.",
+    description: "거창한 서비스라고 말하기보다, 개발/AI 작업에서 막힌 것과 고친 기록을 남기고 떠오른 작은 Play를 그냥 하나씩 올리는 bobob.app입니다.",
     inLanguage: locale,
     creator: {
       "@type": "Person",

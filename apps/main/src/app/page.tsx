@@ -25,7 +25,7 @@ const homeShareImage = openGraphImage({ kind: "home", title: homeShareTitle });
 
 export const metadata: Metadata = {
   title: "bobob.app - 뭐라도 해보는 기록과 Play",
-  description: "개발/AI 작업에서 막힌 것, 고친 것, 떠오른 작은 Play를 그냥 하나씩 올립니다.",
+  description: "거창한 서비스라고 말하기보다, 개발/AI 작업에서 막힌 것과 고친 기록을 남기고 떠오른 작은 Play를 그냥 하나씩 올립니다.",
   keywords: homeKeywords,
   alternates: {
     canonical: "https://www.bobob.app/",
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/",
     siteName: "bobob.app",
     title: "bobob.app - 뭐라도 해보는 기록과 Play",
-    description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 올려보는 작은 작업 기록.",
+    description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 올려보는 개발/AI 기록과 작은 Play입니다.",
     images: [homeShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "bobob.app - 뭐라도 해보는 기록과 Play",
-    description: "개발/AI 기록과 작은 Play를 그냥 하나씩 올립니다.",
+    description: "개발/AI 작업에서 막힌 것과 떠오른 작은 Play를 그냥 하나씩 올립니다.",
     images: [shareImageUrl({ kind: "home", title: homeShareTitle })],
   },
 };
