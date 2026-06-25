@@ -43,3 +43,21 @@ Decision:
 - Keep `/sitemaps/en` as the submitted canonical Blog + Play sitemap.
 - Continue with a 1-2 week Search Console observation window before treating indexing as solved.
 - Next check should compare indexed count, not-indexed count, sitemap discovered page count, and 3-month impressions against this baseline.
+
+Next observation windows:
+
+- `2026-07-02`:
+  - Use the `bobob935` Google account.
+  - Search Console property: `https://www.bobob.app/`.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline.
+  - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
+  - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
+- `2026-07-09`:
+  - Repeat the same Search Console comparison.
+  - If indexed pages still remain `0`, do not broaden sitemap scope yet. First check live URL inspection, canonical selection, crawl allowed status, and Bing Webmaster recommendations for missing `h1`, duplicate title/description, insufficient content, or weak inbound-link signals.
+  - If impressions appear, generate measured exports under the gitignored `reports/search-console.csv` or `reports/search-console.tsv` path and run `npm run harness:seo-opportunities`.
+
+Completion guard:
+
+- This Blog + Play migration should not be treated as indexed or search-ready only because deployment, sitemap fetch, live discovery, or IndexNow submission passed.
+- The next Search Console check must record concrete changed numbers before closing the indexing part of the goal.
