@@ -1,0 +1,32 @@
+{
+  "slug": "indexing-waiting-room",
+  "title": "색인 대기실",
+  "description": "Search Console 숫자가 조용할 때, 진짜 확인할 신호와 괜한 불안 신호를 구분하는 탭 게임.",
+  "type": "tap-game",
+  "durationLabel": "30-60초",
+  "updatedAt": "2026-06-25",
+  "shareText": "나는 색인 대기 중에 괜한 설정을 만지지 않을 수 있을까? 색인 대기실을 플레이했다.",
+  "order": 6,
+  "relatedBlogSlugs": ["search-console-waiting-diary", "search-console-zero-checklist", "vercel-sitemap-canonical-log"],
+  "relatedPlaySlugs": ["priority-sorter", "meeting-escape"],
+  "targetLabel": "확인할 신호",
+  "decoyLabel": "불안 신호",
+  "targetScore": 18,
+  "targets": [
+    { "id": "live-200", "label": "라이브 URL 200 확인", "detail": "검색엔진보다 먼저 내가 확인할 수 있는 가장 기본 신호다.", "kind": "target", "points": 3 },
+    { "id": "refresh-minute", "label": "1분마다 실적 새로고침", "detail": "데이터가 쌓이는 속도보다 불안이 더 빠르다.", "kind": "decoy", "points": 2 },
+    { "id": "sitemap-read", "label": "sitemap 읽힘 여부", "detail": "제출과 읽힘은 다르다. 이 단계는 따로 봐야 한다.", "kind": "target", "points": 3 },
+    { "id": "title-change-again", "label": "제목을 또 바꾸기", "detail": "측정 전 제목 변경은 원인 추적을 더 어렵게 만든다.", "kind": "decoy", "points": 2 },
+    { "id": "canonical", "label": "canonical 최종 URL 확인", "detail": "색인 후보가 어느 URL인지 흔들리지 않게 보는 신호다.", "kind": "target", "points": 3 },
+    { "id": "panic-sitemap", "label": "sitemap URL을 갑자기 1000개로 늘리기", "detail": "노출이 없다고 범위를 넓히면 품질 판단이 더 흐려진다.", "kind": "decoy", "points": 2 },
+    { "id": "inspection", "label": "URL 검사에서 크롤링 가능 여부", "detail": "색인 여부와 별개로 접근 가능한지 확인하는 단계다.", "kind": "target", "points": 3 },
+    { "id": "plugin-submit", "label": "아무 제출 플러그인 설치", "detail": "제출 버튼보다 중요한 건 실제 페이지 품질과 접근성이다.", "kind": "decoy", "points": 2 },
+    { "id": "content-check", "label": "페이지가 독립 콘텐츠인지 확인", "detail": "얇은 페이지는 제출해도 오래 버티기 어렵다.", "kind": "target", "points": 3 },
+    { "id": "query-dream", "label": "아직 없는 검색어 순위 상상", "detail": "Search Console에 노출이 생기기 전에는 비교할 데이터가 없다.", "kind": "decoy", "points": 2 }
+  ],
+  "endings": [
+    { "id": "operator", "title": "차분한 운영자", "description": "확인할 신호와 기다릴 시간을 잘 나눴다. 괜한 수정으로 원인을 흐리지 않았다.", "minScore": 18 },
+    { "id": "watcher", "title": "대기실 생존", "description": "대체로 필요한 신호를 봤다. 이제 숫자가 움직일 때까지 기록을 남기면 된다.", "minScore": 12 },
+    { "id": "panic", "title": "새로고침 과다", "description": "불안 신호에 많이 눌렸다. 다음 판에서는 200, sitemap, canonical부터 차례로 보자.", "minScore": 0 }
+  ]
+}
