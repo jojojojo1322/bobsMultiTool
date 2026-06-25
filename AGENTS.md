@@ -76,6 +76,7 @@
 - Resize handles use a transparent hit area with one stable neutral divider line. Do not use hover backgrounds, divider color transitions, duplicate center-panel inset side lines, or delayed layout restore that can make the left divider flash when clicking between tool pages.
 - Tool navigation clicks must preserve the sidebar scroll position and must not force the document back to the top while moving between tool detail pages.
 - Global content search must use `/search?q=` and cover Blog, Play, and archived Tools results, with Blog + Play ranked as the primary product direction. The root SearchAction schema must target `/search?q={search_term_string}`. Archived tool search can still use the shared registry index across home, `/tools`, locale tool directories, and tool workbench surfaces.
+- `/opensearch.xml` should expose the same `/search?q={searchTerms}` entrypoint, and the root document head should include a `rel="search"` OpenSearch discovery link.
 - Search results must expose compact match-signal chips from localized title, description, use cases, examples, failure cases, pre-copy checklist items, aliases, intents, keywords, FAQ, guide titles, and related next-action context so users understand why a result appeared before opening it.
 - Search results and tool detail pages must expose related next-action links so users naturally continue to a second tool in the same session.
 - Related next-action links must preserve the registry `relatedTools` order and expose localized use-case context, not only a bare related tool name.

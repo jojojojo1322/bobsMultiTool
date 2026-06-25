@@ -54,6 +54,9 @@ if (!searchPanel.includes("related.useCases[0]")) failures.push("tool search pan
 if (!searchPanel.includes("initialQuery")) failures.push("tool search panel does not accept initial URL query");
 if (!searchPanel.includes("url.searchParams.set(\"q\"")) failures.push("tool search panel does not sync q search param");
 if (!layout.includes("https://www.bobob.app/search?q={search_term_string}")) failures.push("SearchAction target is not aligned to /search?q=");
+if (!layout.includes('rel="search"') || !layout.includes("https://www.bobob.app/opensearch.xml")) {
+  failures.push("root layout missing OpenSearch discovery link");
+}
 for (const fragment of ["searchContentLab", "scoreBlogPost", "scorePlayContent", "scoreTool", "getBlogPosts", "getPlayContents", "getLocalizedTools"]) {
   if (!contentSearch.includes(fragment)) failures.push(`content lab search helper missing ${fragment}`);
 }

@@ -48,6 +48,7 @@ const paths = [
   "/terms",
   "/robots.txt",
   "/feed.xml",
+  "/opensearch.xml",
   "/sitemap.xml",
   "/sitemaps/en",
   "/ads.txt",
@@ -131,6 +132,8 @@ for (const fragment of [
   "/contact",
   "/privacy",
   "/terms",
+  'rel="search" type="application/opensearchdescription+xml"',
+  "https://www.bobob.app/opensearch.xml",
 ]) {
   if (!homeHtml.includes(fragment)) failures.push(`home page missing approval readiness fragment: ${fragment}`);
 }
@@ -174,6 +177,20 @@ for (const fragment of [
   "<lastBuildDate>",
 ]) {
   if (!feedBody.includes(fragment)) failures.push(`/feed.xml missing discovery fragment: ${fragment}`);
+}
+
+const openSearchResponse = await fetch(`${baseUrl}/opensearch.xml`, { headers: smokeHeaders });
+const openSearchBody = await openSearchResponse.text();
+if (!openSearchResponse.headers.get("content-type")?.includes("application/opensearchdescription+xml")) {
+  failures.push("/opensearch.xml must return application/opensearchdescription+xml");
+}
+for (const fragment of [
+  "<OpenSearchDescription",
+  "<ShortName>bobob.app</ShortName>",
+  "Search bobob.app Blog, Play, and archived developer tools.",
+  'template="https://www.bobob.app/search?q={searchTerms}"',
+]) {
+  if (!openSearchBody.includes(fragment)) failures.push(`/opensearch.xml missing discovery fragment: ${fragment}`);
 }
 
 const httpStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}`);
