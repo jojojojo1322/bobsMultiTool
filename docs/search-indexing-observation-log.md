@@ -5,6 +5,7 @@ This file records manual external checks for the Blog + Play migration. Keep pri
 ## 2026-06-25
 
 - Checked with the `bobob935` Google account on the Search Console URL-prefix property `https://www.bobob.app/`.
+- Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not use another signed-in Chrome profile for Search Console.
 - Overview:
   - Total web search clicks: `0`
   - Not indexed pages: `5`
@@ -105,11 +106,13 @@ Next observation windows:
   - Purpose: continue this thread and record concrete Search Console/Bing changes instead of treating discovery submissions as indexing proof.
 - `2026-07-02`:
   - Use the `bobob935` Google account.
+  - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
   - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline and the later same-day `52` discovered-page sitemap resubmission.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
+  - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Repeat the same Search Console comparison.
   - If indexed pages still remain `0`, do not broaden sitemap scope yet. First check live URL inspection, canonical selection, crawl allowed status, and Bing Webmaster recommendations for missing `h1`, duplicate title/description, insufficient content, or weak inbound-link signals.
   - If impressions appear, generate measured exports under the gitignored `reports/search-console.csv` or `reports/search-console.tsv` path and run `npm run harness:seo-opportunities`.

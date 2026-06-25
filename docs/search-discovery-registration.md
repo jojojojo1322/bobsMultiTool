@@ -40,6 +40,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 - Automation id: `bobob-indexing-observation`
 - Use Search Console property: `https://www.bobob.app/`
 - Use Google account: `bobob935@gmail.com`
+- Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
 - Open Bing Webmaster Tools and check recommendation classes before closing the indexing loop.
 
 ## Required Comparison Points

@@ -54,6 +54,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Play entries: `6`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
+  - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` resubmitted after standalone Blog expansion.
   - Search Console sitemap row after resubmission showed status `성공` and discovered pages `52`.

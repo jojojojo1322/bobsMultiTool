@@ -89,6 +89,7 @@ for (const fragment of [
   `Current Play count: \`${playEntries.length}\``,
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
+  "Chrome profile/session signed in as `bobob935@gmail.com`",
   "discovered pages `52`",
   "Google URL Inspection",
   "Bing and IndexNow",

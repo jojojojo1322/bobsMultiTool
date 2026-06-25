@@ -141,6 +141,7 @@ function assertPacket(packet, snapshot, log) {
   const requiredFragments = [
     `Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
+    "Chrome profile/session already signed in as `bobob935@gmail.com`",
     `same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}`,
     `live sitemap URL count ${liveSitemapUrlCount}`,
     `latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}`,
@@ -178,6 +179,7 @@ function renderPacket(snapshot, log) {
     "## Google Search Console Check",
     "",
     `- Account to use: \`bobob935@gmail.com\``,
+    "- Browser session: use the Chrome profile/session already signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.",
     `- Property: \`${searchConsoleProperty}\``,
     `- Sitemaps report: ${searchConsoleSitemapsUrl}`,
     `- Compare against the 2026-06-25 baseline: clicks 0, impressions 0, indexed pages 0, not indexed pages 5, initial /sitemaps/en discovered pages ${initialDiscoveredPages ?? "not parsed"}.`,
