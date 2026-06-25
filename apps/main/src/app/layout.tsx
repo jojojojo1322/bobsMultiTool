@@ -91,6 +91,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
+        <link rel="alternate" type="application/rss+xml" title="bobob.app Blog and Play Feed" href="https://www.bobob.app/feed.xml" />
         <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
         <script
           type="application/ld+json"
