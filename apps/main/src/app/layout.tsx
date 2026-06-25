@@ -80,7 +80,7 @@ export default async function RootLayout({
     },
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://www.bobob.app/tools?q={search_term_string}",
+      target: "https://www.bobob.app/search?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };

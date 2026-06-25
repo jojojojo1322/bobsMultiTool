@@ -9,6 +9,7 @@ const blogContentDir = path.join(root, "content/blog");
 const playContentDir = path.join(root, "content/play");
 const sitemapIndexRoutePath = path.join(root, "apps/main/src/app/sitemap.xml/route.ts");
 const localizedSitemapRoutePath = path.join(root, "apps/main/src/app/sitemaps/[locale]/route.ts");
+const searchPagePath = path.join(root, "apps/main/src/app/search/page.tsx");
 const blogIndexPath = path.join(root, "apps/main/src/app/blog/page.tsx");
 const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
 const playIndexPath = path.join(root, "apps/main/src/app/play/page.tsx");
@@ -24,6 +25,7 @@ const registry = fs.readFileSync(registryPath, "utf8");
 const guideRegistry = fs.readFileSync(guideRegistryPath, "utf8");
 const sitemapSource = fs.readFileSync(sitemapSourcePath, "utf8");
 const i18nConfig = fs.readFileSync(i18nConfigPath, "utf8");
+const searchPage = fs.readFileSync(searchPagePath, "utf8");
 const blogIndex = fs.readFileSync(blogIndexPath, "utf8");
 const blogDetail = fs.readFileSync(blogDetailPath, "utf8");
 const playIndex = fs.readFileSync(playIndexPath, "utf8");
@@ -188,6 +190,7 @@ for (const fragment of ["data-blog-related-play-bottom", "relatedPlays.map", "/p
   if (!blogDetail.includes(fragment)) failures.push(`Blog detail page missing related Play bottom flow fragment: ${fragment}`);
 }
 for (const [source, name, fragment] of [
+  [searchPage, "/search", "searchPageStructuredData("],
   [blogIndex, "/blog index", "blogIndexStructuredData("],
   [playIndex, "/play index", "playIndexStructuredData("],
   [blogDetail, "Blog detail", "blogPostStructuredData("],
@@ -200,6 +203,8 @@ for (const fragment of [
   "playIndexStructuredData",
   "blogPostStructuredData",
   "playDetailStructuredData",
+  "searchPageStructuredData",
+  "SearchResultsPage",
   "CollectionPage",
   "ItemList",
   "BlogPosting",
@@ -229,6 +234,7 @@ for (const legacyPath of [
 }
 if (!fs.existsSync(sitemapIndexRoutePath)) failures.push("sitemap index route missing");
 if (!fs.existsSync(localizedSitemapRoutePath)) failures.push("localized sitemap route missing");
+if (!fs.existsSync(searchPagePath)) failures.push("content search page missing");
 if (!fs.existsSync(toolsIndexPath) || !fs.readFileSync(toolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("/tools index directory page missing");
 if (!fs.existsSync(localizedToolsIndexPath) || !fs.readFileSync(localizedToolsIndexPath, "utf8").includes("ToolDirectory")) failures.push("localized tools index directory page missing");
 if (!fs.readFileSync(toolsIndexPath, "utf8").includes("toolDirectoryStructuredData(")) failures.push("/tools index must render shared directory structured data");
@@ -305,6 +311,7 @@ for (const fragment of [
   "getBlogPosts",
   "getPlayContents",
   'path: "/"',
+  'path: "/search"',
   'path: "/blog"',
   'path: "/play"',
   'path: "/tools"',

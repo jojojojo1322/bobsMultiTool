@@ -51,6 +51,7 @@ function basePaths(): SitemapPath[] {
 
   return [
     { path: "/", changefreq: "weekly", priority: "1.0", lastmod: latestSiteLastmod },
+    { path: "/search", changefreq: "weekly", priority: "0.7", lastmod: latestSiteLastmod },
     { path: "/blog", changefreq: "weekly", priority: "0.8", lastmod: latestBlogLastmod },
     ...getBlogPosts().map((post) => ({
       path: `/blog/${post.slug}`,

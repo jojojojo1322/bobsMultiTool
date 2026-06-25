@@ -1,4 +1,5 @@
 import type { BlogPost, PlayContent } from "./types";
+import type { ToolDefinition } from "@/features/tools/types";
 
 const siteUrl = "https://www.bobob.app";
 const siteName = "bobob.app";
@@ -231,6 +232,78 @@ export function playDetailStructuredData({ content, relatedBlog }: { content: Pl
       { name: siteName, path: "" },
       { name: "Play", path: "/play" },
       { name: content.title, path: `/play/${content.slug}` },
+    ]),
+  ];
+}
+
+export function searchPageStructuredData({
+  query,
+  blogResults,
+  playResults,
+  toolResults,
+}: {
+  query: string;
+  blogResults: BlogPost[];
+  playResults: PlayContent[];
+  toolResults: ToolDefinition[];
+}) {
+  const url = query ? `${siteUrl}/search?q=${encodeURIComponent(query)}` : `${siteUrl}/search`;
+  const items = [
+    ...blogResults.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.description,
+      url: `${siteUrl}/blog/${post.slug}`,
+      inLanguage: contentLocale,
+    })),
+    ...playResults.map((content) => ({
+      "@type": "Game",
+      name: content.title,
+      description: content.description,
+      url: `${siteUrl}/play/${content.slug}`,
+      inLanguage: contentLocale,
+      isAccessibleForFree: true,
+    })),
+    ...toolResults.map((tool) => ({
+      "@type": "SoftwareApplication",
+      name: tool.title,
+      description: tool.description,
+      url: `${siteUrl}/tools/${tool.slug}`,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Web Browser",
+      isAccessibleForFree: true,
+    })),
+  ];
+
+  const searchResultsPage = {
+    "@context": "https://schema.org",
+    "@type": "SearchResultsPage",
+    name: query ? `${query} - bobob.app search` : "bobob.app search",
+    url,
+    description: "bobob.app의 개발/AI 글, 가벼운 Play, 보관된 개발자 도구를 함께 찾는 검색 페이지.",
+    inLanguage: contentLocale,
+    isPartOf: websiteNode(),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: items.length,
+      itemListElement: items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item,
+      })),
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  return [
+    searchResultsPage,
+    breadcrumbList([
+      { name: siteName, path: "" },
+      { name: "Search", path: "/search" },
     ]),
   ];
 }

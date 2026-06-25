@@ -25,6 +25,8 @@ const paths = [
   "/play/meeting-escape",
   "/play/priority-sorter",
   "/play/bug-clicker",
+  "/search",
+  "/search?q=prompt",
   "/tools",
   "/tools?q=json",
   ...toolSlugs.map((slug) => `/tools/${slug}`),
@@ -146,10 +148,11 @@ if (!sitemapIndexBody.includes("<sitemapindex") || !sitemapIndexBody.includes("h
 
 const reducedSitemapBody = await (await fetch(`${baseUrl}/sitemaps/en`, { headers: smokeHeaders })).text();
 const reducedSitemapUrlCount = (reducedSitemapBody.match(/<url>/g) ?? []).length;
-if (reducedSitemapUrlCount !== 18) {
-  failures.push(`/sitemaps/en should expose 18 reduced Blog + Play MVP URLs, found ${reducedSitemapUrlCount}`);
+if (reducedSitemapUrlCount !== 19) {
+  failures.push(`/sitemaps/en should expose 19 reduced Blog + Play MVP URLs, found ${reducedSitemapUrlCount}`);
 }
 for (const fragment of [
+  "<loc>https://www.bobob.app/search</loc>",
   "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
   "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
   "<loc>https://www.bobob.app/tools</loc>",

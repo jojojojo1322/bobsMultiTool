@@ -8,6 +8,8 @@ const workspace = fs.readFileSync(path.join(root, "apps/main/src/features/tools/
 const localizedContent = fs.readFileSync(path.join(root, "apps/main/src/features/i18n/localized-content.ts"), "utf8");
 const home = fs.readFileSync(path.join(root, "apps/main/src/app/page.tsx"), "utf8");
 const localizedHome = fs.readFileSync(path.join(root, "apps/main/src/app/[locale]/page.tsx"), "utf8");
+const contentSearch = fs.readFileSync(path.join(root, "apps/main/src/features/content/search.ts"), "utf8");
+const searchPage = fs.readFileSync(path.join(root, "apps/main/src/app/search/page.tsx"), "utf8");
 const layout = fs.readFileSync(path.join(root, "apps/main/src/app/layout.tsx"), "utf8");
 const toolDirectory = fs.readFileSync(path.join(root, "apps/main/src/features/tools/tool-directory.tsx"), "utf8");
 const toolsIndex = fs.readFileSync(path.join(root, "apps/main/src/app/tools/page.tsx"), "utf8");
@@ -51,7 +53,13 @@ if (!searchPanel.includes("getLocalizedRelatedTools(")) failures.push("tool sear
 if (!searchPanel.includes("related.useCases[0]")) failures.push("tool search panel related links must expose localized use-case context");
 if (!searchPanel.includes("initialQuery")) failures.push("tool search panel does not accept initial URL query");
 if (!searchPanel.includes("url.searchParams.set(\"q\"")) failures.push("tool search panel does not sync q search param");
-if (!layout.includes("https://www.bobob.app/tools?q={search_term_string}")) failures.push("SearchAction target is not aligned to /tools?q=");
+if (!layout.includes("https://www.bobob.app/search?q={search_term_string}")) failures.push("SearchAction target is not aligned to /search?q=");
+for (const fragment of ["searchContentLab", "scoreBlogPost", "scorePlayContent", "scoreTool", "getBlogPosts", "getPlayContents", "getLocalizedTools"]) {
+  if (!contentSearch.includes(fragment)) failures.push(`content lab search helper missing ${fragment}`);
+}
+for (const fragment of ["data-content-search-form", "data-content-search-count", "data-content-search-play", "data-content-search-blog", "data-content-search-tools", "searchPageStructuredData"]) {
+  if (!searchPage.includes(fragment)) failures.push(`content search page missing ${fragment}`);
+}
 if (!toolDirectory.includes("acquisitionClusterSlugs")) failures.push("tool directory missing acquisition workflow clusters");
 if (!toolDirectory.includes("data-acquisition-clusters")) failures.push("tool directory acquisition clusters need a stable QA attribute");
 if (!toolDirectory.includes("dictionary.tool.nextActionPrefix")) failures.push("tool directory clusters must expose next-action links");
