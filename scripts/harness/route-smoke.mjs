@@ -45,6 +45,7 @@ const paths = [
   "/privacy",
   "/terms",
   "/robots.txt",
+  "/feed.xml",
   "/sitemap.xml",
   "/sitemaps/en",
   "/ads.txt",

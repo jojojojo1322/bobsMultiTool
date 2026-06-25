@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.bobob.app",
     languages: languageAlternates("/"),
+    types: {
+      "application/rss+xml": "https://www.bobob.app/feed.xml",
+    },
   },
   openGraph: {
     type: "website",

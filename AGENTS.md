@@ -115,6 +115,7 @@
 - Locale alternates must include `x-default`; Arabic must keep RTL verification coverage.
 - Search crawlers must receive final 200 responses on canonical unprefixed sitemap URLs such as `/`, `/tools`, and `/tools/{slug}`; do not geolocation-redirect known bots away from the sitemap URL set.
 - IndexNow support uses a public root key file and `npm run indexnow:submit` to submit the live sitemap URL set. Keep the key file reachable at the canonical host before running the submission script.
+- `/robots.txt` must allow public crawl paths and point to the canonical sitemap index. `/feed.xml` should expose the current Blog + Play canonical content set for lightweight discovery without expanding the submitted sitemap beyond the MVP scope.
 - Sitemap exposure must use `/sitemap.xml` as a sitemap index. During the Blog + Play MVP, keep submitted sitemap coverage intentionally small and canonical: `/`, `/blog`, priority blog posts, `/play`, priority Play pages, and `/tools`. Do not restore broad full per-locale URL coverage until content proves demand and localized Blog/Play pages exist.
 - Sitemap `lastmod` must be refreshed when tool, guide, route, or locale content changes. The i18n harness compares it against the latest relevant content commit date.
 - Non-English locale pages must not render raw English registry prose for descriptions, examples, FAQ, guide bodies, search results, or metadata. Route shells are not enough; visible prose must pass through localized content resolvers.
