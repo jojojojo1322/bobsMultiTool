@@ -64,6 +64,8 @@ for (const fragment of [
   "IndexNow submitted URL count: `52`",
   "WebSub feed item counts: `42`, `42`",
   "Next observation windows:",
+  "Codex heartbeat automation id: `bobob-indexing-observation`",
+  "Schedule: starts `2026-07-02 10:00`, weekly, `2` runs.",
   "`2026-07-02`",
   "`2026-07-09`",
   "Completion guard:",

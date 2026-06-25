@@ -99,6 +99,10 @@ Decision:
 
 Next observation windows:
 
+- Automation:
+  - Codex heartbeat automation id: `bobob-indexing-observation`
+  - Schedule: starts `2026-07-02 10:00`, weekly, `2` runs.
+  - Purpose: continue this thread and record concrete Search Console/Bing changes instead of treating discovery submissions as indexing proof.
 - `2026-07-02`:
   - Use the `bobob935` Google account.
   - Search Console property: `https://www.bobob.app/`.
