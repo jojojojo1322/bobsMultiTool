@@ -75,6 +75,7 @@ import {
   gemColumns,
   gemGap,
   gemIndex,
+  findGemSwapHint,
   gemTargetFromDrag,
   makeGemTiles,
   moveGemCursor,
@@ -2112,6 +2113,7 @@ function gemColor(content: ArcadeGameContent, tile: GemTile) {
 function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const dragTarget = state.gemDragStartIndex !== null ? gemTargetFromDrag(state) : -1;
+  const hint = state.gemSelected === null && state.gemDragStartIndex === null && !state.finished ? findGemSwapHint(state) : null;
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -2151,6 +2153,34 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fillStyle = gemColor(content, selectedTile);
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(selectedTile.label.slice(0, 6), 48, 184);
+  } else if (hint) {
+    const fromTile = state.gemTiles[hint.from];
+    const toTile = state.gemTiles[hint.to];
+    ctx.fillStyle = "rgba(255,255,255,0.1)";
+    ctx.beginPath();
+    ctx.roundRect(34, 132, 122, 70, 14);
+    ctx.fill();
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("보이는 한 수", 48, 156);
+    ctx.fillStyle = accent;
+    ctx.font = "900 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(`${fromTile.label.slice(0, 3)} ↔ ${toTile.label.slice(0, 3)}`, 48, 184);
+  }
+
+  if (hint) {
+    const start = gemCellCenter(hint.from);
+    const end = gemCellCenter(hint.to);
+    ctx.strokeStyle = "rgba(248,250,252,0.46)";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.setLineDash([7, 7]);
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.lineCap = "butt";
   }
 
   for (const tile of state.gemTiles) {
@@ -2159,6 +2189,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     const y = gemBoardY + tile.row * (gemCellSize + gemGap);
     const selected = state.gemSelected === index || state.gemDragStartIndex === index;
     const cursor = state.gemCursor === index || dragTarget === index;
+    const hinted = hint !== null && (hint.from === index || hint.to === index);
     const color = gemColor(content, tile);
 
     ctx.fillStyle = "rgba(255,255,255,0.08)";
@@ -2192,6 +2223,14 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.beginPath();
       ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, 16);
       ctx.stroke();
+    } else if (hinted) {
+      ctx.strokeStyle = "rgba(248,250,252,0.52)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, 16);
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
   }
 
@@ -2215,7 +2254,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("마우스로 색돌을 옆 칸으로 끌거나, 방향키로 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 옆 칸에 끌어 놓습니다. 점선은 한 번 가능한 교환입니다.", 34, canvasHeight - 20);
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";

@@ -38,6 +38,13 @@ type GemHistoryItem = {
   score: number;
 };
 
+export type GemSwapHint = {
+  from: number;
+  to: number;
+  matches: number;
+  goodMatches: number;
+};
+
 type GemPlayState = GemCursorState &
   GemDragState & {
     finished: boolean;
@@ -212,6 +219,31 @@ export function findGemSwapTarget(state: { gemTiles: GemTile[] }, index: number)
     if (matched) return candidate;
   }
   return candidates[0] ?? null;
+}
+
+export function findGemSwapHint(state: { gemTiles: GemTile[] }) {
+  let best: GemSwapHint | null = null;
+
+  for (let row = 0; row < gemRows; row += 1) {
+    for (let column = 0; column < gemColumns; column += 1) {
+      const index = gemIndex(column, row);
+      const candidates = [gemIndex(column + 1, row), gemIndex(column, row + 1)];
+      for (const candidate of candidates) {
+        if (candidate < 0 || !state.gemTiles[index] || !state.gemTiles[candidate]) continue;
+        swapGemKinds(state.gemTiles, index, candidate);
+        const matches = findGemMatches(state.gemTiles);
+        const goodMatches = [...matches].filter((matchIndex) => state.gemTiles[matchIndex]?.good).length;
+        swapGemKinds(state.gemTiles, index, candidate);
+
+        if (!matches.size) continue;
+        if (!best || matches.size > best.matches || (matches.size === best.matches && goodMatches > best.goodMatches)) {
+          best = { from: index, to: candidate, matches: matches.size, goodMatches };
+        }
+      }
+    }
+  }
+
+  return best;
 }
 
 export function gemTargetFromDrag(state: GemDragState, point = state.gemDragCurrent) {
