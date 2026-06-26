@@ -12,7 +12,7 @@ export type BlogPost = {
   body: BlogBlock[];
 };
 
-export type PlayType = "micro-sim" | "tap-game" | "sort-match-game";
+export type PlayType = "micro-sim" | "tap-game" | "sort-match-game" | "arcade-game";
 
 type PlayBase = {
   slug: string;
@@ -126,4 +126,44 @@ export type PlayScoreEnding = {
   minScore: number;
 };
 
-export type PlayContent = MicroSimPlayContent | TapGameContent | SortMatchGameContent;
+export type ArcadeGameVariant =
+  | "runner"
+  | "shooter"
+  | "conveyor"
+  | "sum-box"
+  | "match-three"
+  | "memory"
+  | "flight"
+  | "brick-breaker"
+  | "snake"
+  | "crossing"
+  | "minesweeper"
+  | "mole"
+  | "stacker";
+
+export type ArcadeGamePalette = {
+  background: string;
+  primary: string;
+  accent: string;
+  danger: string;
+};
+
+export type ArcadeGameConfig = {
+  variant: ArcadeGameVariant;
+  goal: string;
+  controls: string;
+  rounds: number;
+  targetScore: number;
+  playerLabel: string;
+  goodLabels: string[];
+  badLabels: string[];
+  palette: ArcadeGamePalette;
+};
+
+export type ArcadeGameContent = PlayBase & {
+  type: "arcade-game";
+  arcade: ArcadeGameConfig;
+  endings: PlayScoreEnding[];
+};
+
+export type PlayContent = MicroSimPlayContent | TapGameContent | SortMatchGameContent | ArcadeGameContent;

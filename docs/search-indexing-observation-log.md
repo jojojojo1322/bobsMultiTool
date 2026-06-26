@@ -127,6 +127,18 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Result: Bing showed a `계속하려면 아래 과제 해결` challenge, so public Bing indexed-result evidence was not collected in this pass.
   - Interpretation: IndexNow submission is still the only confirmed Bing-compatible discovery evidence; Bing indexing/recommendation evidence remains pending.
 
+## 2026-06-26
+
+- Search Console sitemap discovery check:
+  - Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`
+  - Browser/session guard: Chrome profile/session signed in as `bobob935@gmail.com`.
+  - Search Console URL-prefix property: `https://www.bobob.app/`
+  - `/sitemaps/en`: submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `66`
+  - `/sitemap.xml`: type `Sitemap 색인`, submitted `2026. 6. 25.`, last read `2026. 6. 25.`, status `성공`, discovered pages `0`
+  - Live `/sitemaps/en` URL count: `68`
+  - Interpretation: Search Console has applied the newer sitemap beyond the old `53` discovered-page state, but it still trails the live XML by `2` URLs. This is discovery evidence only, not indexing proof.
+  - No Search Console resubmission or IndexNow submission was performed in this pass.
+
 Decision:
 
 - Do not broaden sitemap scope yet.
@@ -144,7 +156,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` discovered-page sitemap resubmission, and the current `53` discovered-page sitemap resubmission.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, and the `2026-06-26` discovered-page value of `66`.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:

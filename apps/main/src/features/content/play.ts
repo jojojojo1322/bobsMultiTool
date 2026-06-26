@@ -21,6 +21,18 @@ function readPlayContent(slug: string): PlayContent {
   if (content.type === "sort-match-game" && (!content.categories?.length || !content.items?.length || !content.endings?.length)) {
     throw new Error(`Sort match game content is missing required fields: ${filePath}`);
   }
+  if (
+    content.type === "arcade-game" &&
+    (!content.arcade?.variant ||
+      !content.arcade.goal ||
+      !content.arcade.controls ||
+      !content.arcade.goodLabels?.length ||
+      !content.arcade.badLabels?.length ||
+      !content.arcade.rounds ||
+      !content.endings?.length)
+  ) {
+    throw new Error(`Arcade game content is missing required fields: ${filePath}`);
+  }
 
   return content;
 }

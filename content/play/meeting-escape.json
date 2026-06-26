@@ -6,7 +6,7 @@
   "durationLabel": "30-60초",
   "updatedAt": "2026-06-25",
   "shareText": "나는 회의에서 결정 신호를 얼마나 잘 잡을까? 회의 탈출 버튼을 플레이했다.",
-  "order": 3,
+  "order": 21,
   "relatedBlogSlugs": ["routine-before-name", "small-reset-note", "tiny-web-things", "why-i-like-one-button-web", "small-play-rules-note", "why-small-web-toys-return", "small-web-games-retention", "why-bobob-shifted-to-content-lab"],
   "relatedPlaySlugs": ["office-survival", "priority-sorter"],
   "targetLabel": "결정 신호",

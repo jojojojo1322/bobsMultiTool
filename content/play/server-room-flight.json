@@ -1,0 +1,28 @@
+{
+  "slug": "server-room-flight",
+  "title": "밤길 비행",
+  "description": "누르고 있으면 떠오르고 놓으면 내려가는 원버튼 비행 게임입니다. 움직이는 통로가 다가올 때 높이를 맞춰 지나갑니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "밤길 비행을 해봤다. 누르고 놓는 감각 하나만 남겨도 꽤 게임 같다.",
+  "order": 10,
+  "relatedBlogSlugs": ["small-web-games-retention", "why-small-web-toys-return"],
+  "relatedPlaySlugs": ["office-survival", "deploy-crossing"],
+  "arcade": {
+    "variant": "flight",
+    "goal": "Space를 누르고 놓으며 빈틈을 통과합니다.",
+    "controls": "키보드: Space/Enter 또는 위 방향키로 상승, 손을 떼면 내려갑니다.",
+    "rounds": 12,
+    "targetScore": 20,
+    "playerLabel": "비행",
+    "goodLabels": ["빈틈", "바람", "문", "길", "숨"],
+    "badLabels": ["벽", "소음", "흔들", "안개", "급커브"],
+    "palette": { "background": "#0b1120", "primary": "#facc15", "accent": "#93c5fd", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "smooth", "title": "부드럽게 통과", "description": "높이를 잘 맞췄다. 누르고 놓는 리듬이 살아 있다.", "minScore": 20 },
+    { "id": "bumpy", "title": "조금 덜컹", "description": "몇 번 스쳤지만 계속 날았다.", "minScore": 10 },
+    { "id": "ground", "title": "바닥에 닿음", "description": "너무 오래 누르거나 너무 빨리 놓았다. 다음엔 조금 짧게.", "minScore": 0 }
+  ]
+}

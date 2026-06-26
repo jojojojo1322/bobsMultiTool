@@ -1,0 +1,28 @@
+{
+  "slug": "deploy-minesweeper",
+  "title": "조용한 지뢰찾기",
+  "description": "안전한 칸과 위험한 칸을 구분하듯 내려오는 신호를 골라내는 캔버스 보드 퍼즐입니다. 숫자보다 감각을 먼저 남겼습니다.",
+  "type": "arcade-game",
+  "durationLabel": "80초",
+  "updatedAt": "2026-06-26",
+  "shareText": "조용한 지뢰찾기를 해봤다. 안전해 보이는 칸도 한 번 더 봐야 했다.",
+  "order": 15,
+  "relatedBlogSlugs": ["vercel-sitemap-canonical-log", "search-console-before-impatience"],
+  "relatedPlaySlugs": ["deploy-pattern-memory", "deploy-10-box"],
+  "arcade": {
+    "variant": "minesweeper",
+    "goal": "안전한 신호만 고르고 위험한 칸은 넘깁니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 열기.",
+    "rounds": 12,
+    "targetScore": 20,
+    "playerLabel": "칸",
+    "goodLabels": ["0", "1", "2", "안전", "열기"],
+    "badLabels": ["펑", "함정", "급함", "깜빡", "덫"],
+    "palette": { "background": "#111827", "primary": "#94a3b8", "accent": "#93c5fd", "danger": "#f87171" }
+  },
+  "endings": [
+    { "id": "safe", "title": "조용히 열림", "description": "무리하지 않고 안전한 칸을 골랐다.", "minScore": 20 },
+    { "id": "flag", "title": "표시는 해둠", "description": "몇 칸은 애매했지만 위험한 칸을 크게 밟진 않았다.", "minScore": 10 },
+    { "id": "boom", "title": "펑", "description": "안전해 보인다고 바로 누르면 터진다.", "minScore": 0 }
+  ]
+}

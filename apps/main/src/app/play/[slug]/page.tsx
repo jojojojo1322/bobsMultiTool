@@ -11,6 +11,7 @@ import { playDetailStructuredData } from "@/features/content/structured-data";
 import { SurvivalPlayEngine } from "@/features/play/survival-engine";
 import { TapGameEngine } from "@/features/play/tap-game-engine";
 import { SortMatchEngine } from "@/features/play/sort-match-engine";
+import { ArcadeGameEngine } from "@/features/play/arcade-game-engine";
 import type { PlayContent } from "@/features/content/types";
 import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
@@ -79,7 +80,9 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
       ? `${content.turns.length}턴`
       : content.type === "tap-game"
         ? `${content.targets.length}개 판단`
-        : `${content.items.length}개 분류`;
+        : content.type === "arcade-game"
+          ? `${content.arcade.rounds}번 조작`
+          : `${content.items.length}개 분류`;
   const jsonLd = playDetailStructuredData({ content, relatedBlogs });
 
   return (
@@ -102,6 +105,8 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
           <SurvivalPlayEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         ) : content.type === "tap-game" ? (
           <TapGameEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
+        ) : content.type === "arcade-game" ? (
+          <ArcadeGameEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         ) : (
           <SortMatchEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         )}
@@ -121,7 +126,14 @@ function PlayContext({
   relatedBlogLinks: Array<{ slug: string; title: string; description?: string }>;
   playMetric: string;
 }) {
-  const typeLabel = content.type === "tap-game" ? "판단을 빠르게 누르는 형식" : content.type === "sort-match-game" ? "항목을 나눠보는 형식" : "선택을 쌓아 결과를 보는 형식";
+  const typeLabel =
+    content.type === "tap-game"
+      ? "판단을 빠르게 누르는 형식"
+      : content.type === "sort-match-game"
+        ? "항목을 나눠보는 형식"
+        : content.type === "arcade-game"
+          ? "키보드로 직접 움직이는 캔버스 형식"
+          : "선택을 쌓아 결과를 보는 형식";
   const firstBlog = relatedBlogLinks[0];
 
   return (

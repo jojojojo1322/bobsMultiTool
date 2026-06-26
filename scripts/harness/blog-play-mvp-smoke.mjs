@@ -31,7 +31,7 @@ const requiredBlogSlugs = [
 ];
 const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker", "ai-review-tap"];
 const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
-const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game"];
+const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game", "arcade-game"];
 const disallowedSupportLinkPatterns = [/buymeacoffee/i, /ko-fi/i, /paypal/i, /toss\.me/i, /후원\s*링크/, /커피값/];
 const minBlogDescriptionLength = 50;
 const minPlayDescriptionLength = 50;
@@ -214,6 +214,14 @@ for (const entry of playEntries.filter((item) => item.type === "sort-match-game"
   if (entry.categories.length < 2) failures.push(`${entry.slug} should have at least 2 sort categories`);
   if (entry.items.length < 8) failures.push(`${entry.slug} should have at least 8 sortable items`);
 }
+for (const entry of playEntries.filter((item) => item.type === "arcade-game")) {
+  if (!entry.arcade?.variant) failures.push(`${entry.slug} should declare an arcade variant`);
+  if (!entry.arcade?.goal || normalizedTextLength(entry.arcade.goal) < 20) failures.push(`${entry.slug} should explain the arcade goal`);
+  if (!entry.arcade?.controls || normalizedTextLength(entry.arcade.controls) < 20) failures.push(`${entry.slug} should explain keyboard controls`);
+  if (!entry.arcade?.rounds || entry.arcade.rounds < 8) failures.push(`${entry.slug} should have at least 8 arcade actions`);
+  if (!entry.arcade?.goodLabels?.length || !entry.arcade?.badLabels?.length) failures.push(`${entry.slug} should provide good and bad arcade labels`);
+  if (!entry.endings?.length) failures.push(`${entry.slug} should provide arcade endings`);
+}
 
 for (const blog of blogEntries) {
   for (const playSlug of blog.relatedPlaySlugs) {
@@ -243,7 +251,7 @@ if (!homePage.includes("{playContents.map((content")) {
 if (homePage.includes("playContents.slice(0, 5).map")) {
   failures.push("home Featured Play should not be capped at the original five-entry MVP lineup");
 }
-for (const fragment of ["SurvivalPlayEngine", "TapGameEngine", "SortMatchEngine", "relatedBlogLinks", "relatedPlayLinks"]) {
+for (const fragment of ["SurvivalPlayEngine", "TapGameEngine", "SortMatchEngine", "ArcadeGameEngine", "relatedBlogLinks", "relatedPlayLinks"]) {
   if (!playDetail.includes(fragment)) failures.push(`Play detail route missing ${fragment}`);
 }
 for (const fragment of ["data-play-result-links", "data-play-related-play", "data-play-related-blog"]) {

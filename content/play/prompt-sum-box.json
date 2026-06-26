@@ -1,0 +1,28 @@
+{
+  "slug": "prompt-sum-box",
+  "title": "말조각 10칸 맞추기",
+  "description": "짧은 말조각이 흘러올 때 필요한 조각만 골라 점수를 맞추는 캔버스 보드 게임입니다. 너무 길게 붙잡지 않고 리듬으로 정리합니다.",
+  "type": "arcade-game",
+  "durationLabel": "1-2분",
+  "updatedAt": "2026-06-26",
+  "shareText": "말조각 10칸 맞추기를 해봤다. 너무 길지도 짧지도 않게 고르는 게 은근 어렵다.",
+  "order": 3,
+  "relatedBlogSlugs": ["why-small-web-toys-return", "small-play-rules-note"],
+  "relatedPlaySlugs": ["ten-box-rush", "prompt-gem-swap"],
+  "arcade": {
+    "variant": "sum-box",
+    "goal": "흘러오는 좋은 말조각만 골라 합을 맞춥니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 선택. 버튼 조작도 됩니다.",
+    "rounds": 12,
+    "targetScore": 20,
+    "playerLabel": "상자",
+    "goodLabels": ["목적", "맥락", "제약", "예시", "확인"],
+    "badLabels": ["장황", "중복", "헛말", "흐림", "핑계"],
+    "palette": { "background": "#15151d", "primary": "#a78bfa", "accent": "#facc15", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "neat-box", "title": "꽤 말끔함", "description": "필요한 조각만 잘 골랐다. 말이 길어지기 전에 손이 먼저 정리했다.", "minScore": 20 },
+    { "id": "almost", "title": "조금 넘침", "description": "나쁘지 않지만 욕심낸 조각이 몇 개 섞였다. 다음 판은 더 가볍게 가자.", "minScore": 10 },
+    { "id": "messy", "title": "상자가 넘침", "description": "좋은 조각과 소음이 같이 들어왔다. 한 박자 늦게 눌러도 된다.", "minScore": 0 }
+  ]
+}

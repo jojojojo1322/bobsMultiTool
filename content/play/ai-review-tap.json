@@ -6,7 +6,7 @@
   "durationLabel": "30-60초",
   "updatedAt": "2026-06-25",
   "shareText": "나는 AI 답변에서 다시 확인할 신호를 얼마나 잘 잡을까? AI 답변 검수 버튼을 플레이했다.",
-  "order": 7,
+  "order": 20,
   "relatedBlogSlugs": [
     "ai-output-is-not-finished-work",
     "ai-answer-review-habit",

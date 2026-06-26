@@ -1,0 +1,28 @@
+{
+  "slug": "deploy-stacker",
+  "title": "블록 스태커",
+  "description": "왕복하는 블록이 아래 타워와 겹칠 때 눌러 쌓는 캔버스 타이밍 게임입니다. 조금만 튀어나와도 다음 층이 어려워집니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "블록 스태커를 해봤다. 멈추는 타이밍 하나가 은근 신경 쓰인다.",
+  "order": 17,
+  "relatedBlogSlugs": ["commit-small-visible-slice", "static-micro-games-architecture"],
+  "relatedPlaySlugs": ["deploy-pattern-memory", "deploy-10-box"],
+  "arcade": {
+    "variant": "stacker",
+    "goal": "좌우로 움직이는 블록이 가운데 올 때 Space로 쌓습니다.",
+    "controls": "키보드: A/D 또는 방향키로 위치를 맞추고 Space/Enter로 쌓기.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "블록",
+    "goodLabels": ["정렬", "층", "딱", "중앙", "평평"],
+    "badLabels": ["삐뚤", "금", "튀어", "흔들", "틈"],
+    "palette": { "background": "#111827", "primary": "#fbbf24", "accent": "#a7f3d0", "danger": "#f87171" }
+  },
+  "endings": [
+    { "id": "tower", "title": "타워가 섰다", "description": "서두르지 않고 잘 쌓았다. 작은 타이밍이 꽤 중요했다.", "minScore": 20 },
+    { "id": "leaning", "title": "조금 기울어짐", "description": "몇 층은 삐뚤었지만 아직 서 있다.", "minScore": 10 },
+    { "id": "fall", "title": "와르르", "description": "멈추기 전에 손이 먼저 나갔다. 다음엔 가운데를 보고 누르자.", "minScore": 0 }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "slug": "deploy-invaders",
+  "title": "비상등 인베이더",
+  "description": "위에서 줄지어 내려오는 빨간 비상등 사이에서 진짜 처리할 신호만 쏘는 짧은 캔버스 슈팅 게임입니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "비상등 인베이더를 해봤다. 빨간 것이라고 전부 급한 건 아니었다.",
+  "order": 4,
+  "relatedBlogSlugs": ["vercel-sitemap-canonical-log", "boring-maintenance-is-content-too"],
+  "relatedPlaySlugs": ["deploy-missile-defense", "deploy-pattern-memory"],
+  "arcade": {
+    "variant": "shooter",
+    "goal": "방어선을 좌우로 옮기고 Space로 진짜 신호만 맞춥니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 발사.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "라인",
+    "goodLabels": ["불빛", "신호", "확인", "문", "열쇠"],
+    "badLabels": ["번쩍", "허상", "소음", "헛발", "잔상"],
+    "palette": { "background": "#111827", "primary": "#38bdf8", "accent": "#a7f3d0", "danger": "#f97316" }
+  },
+  "endings": [
+    { "id": "clear", "title": "방어선 유지", "description": "진짜 신호를 차분히 골라냈다. 화면은 시끄러웠지만 손은 덜 흔들렸다.", "minScore": 20 },
+    { "id": "half", "title": "아슬아슬 통과", "description": "몇 번 헛발이 있었지만 줄은 무너지지 않았다.", "minScore": 10 },
+    { "id": "overrun", "title": "비상등에 밀림", "description": "빨간 것만 보고 너무 많이 쐈다. 다음 판은 더 늦게 눌러도 된다.", "minScore": 0 }
+  ]
+}

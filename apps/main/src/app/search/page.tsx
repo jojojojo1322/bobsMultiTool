@@ -102,7 +102,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Badge>{item.durationLabel}</Badge>
-                    <Badge>{item.type === "tap-game" ? "탭 게임" : item.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
+                    <Badge>{item.type === "arcade-game" ? "아케이드 게임" : item.type === "tap-game" ? "탭 게임" : item.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
                   </div>
                   {signalBadges(signals)}
                 </Link>

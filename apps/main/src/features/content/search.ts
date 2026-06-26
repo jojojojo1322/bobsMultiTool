@@ -53,6 +53,19 @@ function playSearchValues(content: PlayContent) {
     ];
   }
 
+  if (content.type === "arcade-game") {
+    return [
+      ...baseValues,
+      content.arcade.variant,
+      content.arcade.goal,
+      content.arcade.controls,
+      content.arcade.playerLabel,
+      ...content.arcade.goodLabels,
+      ...content.arcade.badLabels,
+      ...content.endings.flatMap((ending) => [ending.title, ending.description]),
+    ];
+  }
+
   return [
     ...baseValues,
     ...content.categories.flatMap((category) => [category.label, category.description]),

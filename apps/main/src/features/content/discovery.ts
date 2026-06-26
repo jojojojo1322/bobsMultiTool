@@ -14,6 +14,7 @@ const playTypeKeywords: Record<PlayContent["type"], string[]> = {
   "micro-sim": ["선택형 시뮬레이션", "짧은 시뮬레이터"],
   "tap-game": ["탭 게임", "클릭 게임", "반응형 게임"],
   "sort-match-game": ["분류 게임", "매칭 게임", "과일상자류 게임"],
+  "arcade-game": ["캔버스 게임", "키보드 게임", "아케이드 게임"],
 };
 
 function compactUnique(values: string[]) {
@@ -29,6 +30,7 @@ function compactUnique(values: string[]) {
 export function playTypeLabel(type: PlayContent["type"]) {
   if (type === "micro-sim") return "짧은 시뮬레이션";
   if (type === "tap-game") return "탭 게임";
+  if (type === "arcade-game") return "아케이드 게임";
   return "분류 게임";
 }
 

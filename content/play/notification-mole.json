@@ -1,0 +1,28 @@
+{
+  "slug": "notification-mole",
+  "title": "알림 두더지",
+  "description": "튀어나오는 알림 중 지금 봐야 할 것만 빠르게 잡는 캔버스 두더지 게임입니다. 모든 알림에 반응하면 점수보다 집중이 먼저 닳습니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "알림 두더지를 해봤다. 모든 알림을 치는 사람은 결국 진다.",
+  "order": 16,
+  "relatedBlogSlugs": ["ai-output-is-not-finished-work", "codex-work-note"],
+  "relatedPlaySlugs": ["bug-clicker", "ai-review-tap"],
+  "arcade": {
+    "variant": "mole",
+    "goal": "튀어나오는 좋은 신호만 잡고, 소음 알림은 지나가게 둡니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 잡기.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "망치",
+    "goodLabels": ["지금", "확인", "답장", "결정", "짧게"],
+    "badLabels": ["광고", "잡담", "중복", "급한척", "핑"],
+    "palette": { "background": "#16181f", "primary": "#f59e0b", "accent": "#86efac", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "quiet", "title": "알림 조용함", "description": "지금 볼 것만 잡았다. 손이 바빠도 머리는 덜 시끄럽다.", "minScore": 20 },
+    { "id": "buzz", "title": "조금 시끄러움", "description": "핵심은 잡았지만 알림 몇 개에 끌려갔다.", "minScore": 10 },
+    { "id": "flood", "title": "알림 홍수", "description": "전부 치려다 집중이 먼저 닳았다.", "minScore": 0 }
+  ]
+}

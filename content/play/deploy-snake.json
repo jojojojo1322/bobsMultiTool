@@ -1,0 +1,28 @@
+{
+  "slug": "deploy-snake",
+  "title": "골목 스네이크",
+  "description": "고전 스네이크처럼 방향을 틀며 좋은 조각을 모으는 캔버스 게임입니다. 소음 조각에 닿으면 집중이 줄어듭니다.",
+  "type": "arcade-game",
+  "durationLabel": "75초",
+  "updatedAt": "2026-06-26",
+  "shareText": "골목 스네이크를 해봤다. 짧은 길도 욕심내면 꼬인다.",
+  "order": 13,
+  "relatedBlogSlugs": ["static-micro-games-architecture", "why-small-web-toys-return"],
+  "relatedPlaySlugs": ["deploy-crossing", "ten-box-rush"],
+  "arcade": {
+    "variant": "snake",
+    "goal": "좌우로 움직이며 좋은 조각을 모읍니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 선택.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "스네",
+    "goodLabels": ["사과", "길", "점", "숨", "칸"],
+    "badLabels": ["꼬임", "벽", "소음", "돌", "급함"],
+    "palette": { "background": "#102016", "primary": "#4ade80", "accent": "#fef08a", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "long", "title": "길게 이어짐", "description": "좋은 조각을 잘 골라 길이 이어졌다.", "minScore": 20 },
+    { "id": "turn", "title": "몇 번 꼬임", "description": "아슬아슬했지만 길은 끊기지 않았다.", "minScore": 10 },
+    { "id": "bite", "title": "꼬리를 밟음", "description": "욕심낸 조각 때문에 길이 꼬였다.", "minScore": 0 }
+  ]
+}

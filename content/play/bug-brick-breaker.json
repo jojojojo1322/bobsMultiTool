@@ -1,0 +1,28 @@
+{
+  "slug": "bug-brick-breaker",
+  "title": "불편한 벽돌깨기",
+  "description": "패들을 좌우로 움직여 공을 되받고, 꼭 깨야 할 벽돌만 노리는 캔버스 벽돌깨기 게임입니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "불편한 벽돌깨기를 해봤다. 깨는 맛은 있는데 욕심내면 바로 흔들린다.",
+  "order": 12,
+  "relatedBlogSlugs": ["cursor-codex-web-service-bottlenecks", "small-web-games-retention"],
+  "relatedPlaySlugs": ["bug-bubble-shooter", "bug-clicker"],
+  "arcade": {
+    "variant": "brick-breaker",
+    "goal": "좌우로 움직이고 Space로 좋은 벽돌을 맞춥니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 발사.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "패들",
+    "goodLabels": ["틈", "핵심", "균열", "단서", "정리"],
+    "badLabels": ["소음", "과열", "착시", "헛힘", "벽"],
+    "palette": { "background": "#0f172a", "primary": "#22d3ee", "accent": "#a3e635", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "break", "title": "길이 열림", "description": "필요한 벽돌을 잘 깼다.", "minScore": 20 },
+    { "id": "chip", "title": "조금 깨짐", "description": "핵심은 맞췄지만 헛힘도 조금 썼다.", "minScore": 10 },
+    { "id": "wall", "title": "벽 앞에서 멈춤", "description": "공을 따라가기보다 위치를 먼저 잡아야 했다.", "minScore": 0 }
+  ]
+}

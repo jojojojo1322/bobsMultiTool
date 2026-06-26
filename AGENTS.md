@@ -44,7 +44,7 @@
 - `/about` and `/contact` are required trust pages. They must exist for the default English route and supported locale prefixes, use `getLocalizedTrustContent` for localized trust content, appear in the footer trust navigation, and be included in localized sitemaps.
 - Default English URLs stay unprefixed. Non-English routes use `/{locale}/tools/{slug}` and must keep canonical/hreflang behavior aligned.
 - Do not add AI assistant features unless explicitly requested again.
-- New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, and `micro-sim`.
+- New Blog + Play content should be registered through `content/blog/*.mdx` and `content/play/*.json` plus the app content registry. Use one reusable Play engine per format: `tap-game`, `sort-match-game`, `micro-sim`, and `arcade-game` for keyboard/canvas mini-games.
 - Play engines should expose stable QA hooks for the playable loop: `data-play-action`, `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
 - Home Featured Play should surface the current Play registry instead of staying capped to the original five-entry MVP lineup; new lightweight Play entries should not be hidden from the first screen by an old slice limit.
 - Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, and `운영 기록`. Blog is not subordinate to Play: keep standalone posts allowed and visible, and link to Play only when it helps the reader continue naturally.

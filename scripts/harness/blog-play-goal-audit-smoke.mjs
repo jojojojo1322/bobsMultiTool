@@ -65,7 +65,7 @@ const requiredBlogSlugs = [
 ];
 const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker", "ai-review-tap"];
 const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
-const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game"];
+const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game", "arcade-game"];
 
 const blogSlugs = new Set(blogEntries.map((entry) => entry.slug));
 const playSlugs = new Set(playEntries.map((entry) => entry.slug));
@@ -75,7 +75,7 @@ const categoryCounts = Object.fromEntries(requiredCategories.map((category) => [
 const standaloneBlogCount = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0).length;
 
 if (blogEntries.length !== 36) failures.push(`audit expects 36 Blog posts, found ${blogEntries.length}`);
-if (playEntries.length !== 7) failures.push(`audit expects 7 Play entries, found ${playEntries.length}`);
+if (playEntries.length !== 22) failures.push(`audit expects 22 Play entries, found ${playEntries.length}`);
 if (standaloneBlogCount !== 10) failures.push(`audit expects 10 standalone Blog posts, found ${standaloneBlogCount}`);
 if (blogDates[0] !== "2026-01-28" || blogDates[blogDates.length - 1] !== "2026-06-24") {
   failures.push(`audit expects Blog date range 2026-01-28 through 2026-06-24, found ${blogDates[0]} through ${blogDates[blogDates.length - 1]}`);
@@ -98,14 +98,17 @@ for (const fragment of [
   "This audit tracks the active first-pass goal. It is not a completion certificate.",
   "Current count: `36` Blog posts.",
   "Standalone Blog lane: `10` posts have no forced `relatedPlay`",
-  "Current count: `7` Play entries.",
-  "Sitemap URLs: `53`",
-  "Feed items: `43`",
-  "Search Console sitemap row after resubmission showed status `성공` and discovered pages `53`.",
+  "Current count: `22` Play entries.",
+  "`arcade-game`",
+  "Sitemap URLs: `68`",
+  "Feed items: `58`",
+  "Search Console sitemap row showed status `성공`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, and discovered pages `66`.",
+  "Live `/sitemaps/en` has `68` URLs",
   "Latest performance observation showed total clicks `0` and total impressions `3`",
   "Latest page indexing observation still showed indexed pages `0` and not-indexed pages `5`.",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
-  "Latest submitted URL count: `53`",
+  "Latest confirmed submitted URL count: `53`",
+  "Refresh the IndexNow submission after the next deployed 68-URL Play set",
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
@@ -116,6 +119,7 @@ for (const fragment of [
   "Still Not Complete",
   "Search Console has started showing impressions (`3`)",
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
+  "Search Console sitemap discovery is improved (`66`) but still behind the live sitemap URL count (`68`).",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Automation id: `bobob-indexing-observation`",
   "Do not mark the active goal complete",
@@ -124,8 +128,8 @@ for (const fragment of [
 }
 
 for (const fragment of [
-  "Current submitted sitemap URL count: `53`",
-  "Current feed item count: `43`",
+  "Current submitted sitemap URL count: `68`",
+  "Current feed item count: `58`",
   "Google Search Console sitemap",
   "Bing and IndexNow",
   "Do not mark the active Blog + Play goal complete",

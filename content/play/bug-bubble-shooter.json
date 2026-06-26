@@ -1,0 +1,28 @@
+{
+  "slug": "bug-bubble-shooter",
+  "title": "불편한 버블슈터",
+  "description": "조준선을 움직여 필요한 버블만 터뜨리는 짧은 캔버스 슈팅 게임입니다. 전부 터뜨리려 들면 집중이 먼저 닳습니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "불편한 버블슈터를 해봤다. 다 터뜨리는 게 답은 아니었다.",
+  "order": 9,
+  "relatedBlogSlugs": ["cursor-codex-web-service-bottlenecks", "small-web-games-retention"],
+  "relatedPlaySlugs": ["bug-clicker", "notification-mole"],
+  "arcade": {
+    "variant": "shooter",
+    "goal": "좌우로 조준하고 좋은 버블만 터뜨립니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 발사.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "조준",
+    "goodLabels": ["단서", "흔적", "원인", "고리", "실마리"],
+    "badLabels": ["소음", "헛점", "감", "착시", "과장"],
+    "palette": { "background": "#151f2e", "primary": "#38bdf8", "accent": "#a7f3d0", "danger": "#fda4af" }
+  },
+  "endings": [
+    { "id": "pop", "title": "잘 터뜨림", "description": "터뜨릴 것과 지나갈 것을 잘 나눴다.", "minScore": 20 },
+    { "id": "foam", "title": "거품 조금 남음", "description": "핵심은 잡았지만 소음도 몇 번 건드렸다.", "minScore": 10 },
+    { "id": "noise", "title": "거품에 갇힘", "description": "보이는 걸 다 쏘면 판이 더 흐려진다.", "minScore": 0 }
+  ]
+}

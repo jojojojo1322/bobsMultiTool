@@ -1,0 +1,28 @@
+{
+  "slug": "deploy-pattern-memory",
+  "title": "불빛 패턴 메모리",
+  "description": "순서대로 반짝이는 불빛을 보고 같은 박자로 눌러보는 기억 게임입니다. 복잡한 설명 없이 손과 눈으로 외웁니다.",
+  "type": "arcade-game",
+  "durationLabel": "1분",
+  "updatedAt": "2026-06-26",
+  "shareText": "불빛 패턴 메모리를 해봤다. 짧은 순서도 급하면 이상하게 놓친다.",
+  "order": 7,
+  "relatedBlogSlugs": ["small-play-rules-note", "static-micro-games-architecture"],
+  "relatedPlaySlugs": ["deploy-stacker", "notification-mole"],
+  "arcade": {
+    "variant": "memory",
+    "goal": "반짝이는 좋은 신호만 기억해 Space로 맞춥니다.",
+    "controls": "키보드: A/D 또는 방향키로 위치를 맞추고 Space/Enter로 입력.",
+    "rounds": 10,
+    "targetScore": 18,
+    "playerLabel": "기억",
+    "goodLabels": ["파랑", "초록", "노랑", "흰빛", "작은"],
+    "badLabels": ["번짐", "흐림", "소음", "잔상", "깜빡"],
+    "palette": { "background": "#111827", "primary": "#818cf8", "accent": "#bef264", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "clear", "title": "순서가 보임", "description": "불빛이 빨라도 필요한 패턴은 잘 남겼다.", "minScore": 18 },
+    { "id": "okay", "title": "반쯤 기억", "description": "큰 흐름은 잡았다. 급한 손만 조금 줄이면 된다.", "minScore": 9 },
+    { "id": "blink", "title": "눈만 깜빡", "description": "반짝이는 것에 손이 먼저 나갔다. 다음에는 한 번 보고 누르자.", "minScore": 0 }
+  ]
+}

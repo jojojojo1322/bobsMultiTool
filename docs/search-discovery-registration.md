@@ -8,10 +8,10 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 - Apex host: `https://bobob.app` should permanently redirect to the canonical host.
 - Submitted sitemap index: `https://www.bobob.app/sitemap.xml`
 - Current submitted sitemap: `https://www.bobob.app/sitemaps/en`
-- Current submitted sitemap URL count: `53`
-- Current feed item count: `43`
+- Current submitted sitemap URL count: `68`
+- Current feed item count: `58`
 - Current Blog count: `36`
-- Current Play count: `7`
+- Current Play count: `22`
 - Current Blog categories in sitemap: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`
 - Sitemap scope: home, global search, Blog index, Blog category hubs with real posts, Blog posts, Play index, Play pages, and archived `/tools`.
 - Submitted URL health: every `/sitemaps/en` URL should be a final 200 HTML response with matching canonical, one h1, unique title/description metadata, OpenGraph/Twitter title and description, and indexable robots metadata.
@@ -21,16 +21,16 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Resubmitted from `bobob935@gmail.com`; latest confirmed row showed `성공` and discovered pages `53` | Google can discover the submitted URL set | It does not prove indexing, impressions, or ranking |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` read-only check showed `성공`, submitted/read `2026. 6. 26.`, discovered pages `66`, while live XML has `68` URLs | Google has applied the newer sitemap beyond the old `53` count | It does not prove indexing, impressions, ranking, or that the final `2` live URLs have been discovered |
 | Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `3`, CTR `0%` for `3개월` | Google has begun showing at least some search impressions | It does not prove useful traffic or page indexing completion |
 | Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5` | The indexing problem is still visible and measurable | It does not identify all submitted Blog + Play URLs as indexed |
 | Google URL Inspection | `/blog/boring-maintenance-is-content-too` | Request confirmed with `색인 생성 요청됨` | A representative Blog URL was manually queued | It does not prove the URL was indexed |
-| Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest response status `200`; submitted URL count `53` | Bing-compatible discovery ping accepted the live sitemap URL set | It does not prove Bing indexed or ranked the pages |
+| Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest confirmed response status `200`; submitted URL count `53`; refresh needed after the next deployed `68`-URL set | Bing-compatible discovery ping accepted the previous live sitemap URL set | It does not prove Bing indexed or ranked the pages |
 | Bing Webmaster Tools | `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app` | Latest browser check reached the public landing page with `Sign In`; site-specific recommendations were not visible | Bing Webmaster follow-up still needs a signed-in session | It does not provide indexing or recommendation evidence yet |
 | Public Bing search | `site:www.bobob.app` | Latest browser check hit a `계속하려면 아래 과제 해결` challenge | Public Bing search was attempted | It does not prove whether Bing has indexed the URL set |
-| RSS feed | `/feed.xml` | Live feed has `43` Blog + Play items and WebSub hub discovery | Feed readers and lightweight crawlers can discover current content | It does not replace sitemap or webmaster-tool evidence |
-| Atom feed | `/atom.xml` | Live feed has `43` Blog + Play entries and WebSub hub discovery | Feed readers and WebSub can discover current content | It does not prove search indexing |
-| JSON Feed | `/feed.json` | Live feed has `43` Blog + Play items and WebSub hub metadata | Programmatic readers can discover current content | It does not broaden the submitted sitemap scope |
+| RSS feed | `/feed.xml` | Live feed has `58` Blog + Play items and WebSub hub discovery | Feed readers and lightweight crawlers can discover current content | It does not replace sitemap or webmaster-tool evidence |
+| Atom feed | `/atom.xml` | Live feed has `58` Blog + Play entries and WebSub hub discovery | Feed readers and WebSub can discover current content | It does not prove search indexing |
+| JSON Feed | `/feed.json` | Live feed has `58` Blog + Play items and WebSub hub metadata | Programmatic readers can discover current content | It does not broaden the submitted sitemap scope |
 | WebSub | `https://pubsubhubbub.appspot.com/` for RSS and Atom topics | Latest publish responses `204`, `204` | Feed update topics were accepted by the hub | It does not prove Google indexed the URLs |
 | robots.txt | `/robots.txt` | Allows public crawl paths and points to `/sitemap.xml` | Crawlers can find the canonical sitemap index | It does not force crawling or indexing |
 | OpenSearch | `/opensearch.xml` | Points to `/search?q={searchTerms}` | Browsers and crawlers can discover the internal search entrypoint | It does not submit pages to search engines |
@@ -61,10 +61,10 @@ Compare against the first `2026-06-25` baseline:
 Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
-- Latest `/sitemaps/en` discovered pages after AI-review Play resubmission: `53`
-- Current live `/sitemaps/en` URL count: `53`
-- Latest IndexNow URL count: `53`
-- Latest feed item count: `43`
+- Latest `/sitemaps/en` discovered pages after the 2026-06-26 check: `66`
+- Current live `/sitemaps/en` URL count: `68`
+- Latest confirmed IndexNow URL count: `53`
+- Latest feed item count: `58`
 
 Latest Search Console observation from `bobob935@gmail.com`:
 

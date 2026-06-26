@@ -1,0 +1,28 @@
+{
+  "slug": "deploy-10-box",
+  "title": "마감 전 10칸 맞추기",
+  "description": "마감 전에 남은 작은 조각들을 과하지 않게 골라 담는 캔버스 숫자박스 게임입니다. 많이 담는 것보다 맞게 담는 쪽이 중요합니다.",
+  "type": "arcade-game",
+  "durationLabel": "1-2분",
+  "updatedAt": "2026-06-26",
+  "shareText": "마감 전 10칸 맞추기를 해봤다. 오늘도 상자는 쉽게 넘친다.",
+  "order": 11,
+  "relatedBlogSlugs": ["commit-small-visible-slice", "vercel-sitemap-canonical-log"],
+  "relatedPlaySlugs": ["ten-box-rush", "deploy-stacker"],
+  "arcade": {
+    "variant": "sum-box",
+    "goal": "좋은 확인 조각만 골라 담고, 괜한 조급함은 넘깁니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 선택.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "상자",
+    "goodLabels": ["확인", "저장", "보기", "한줄", "마감"],
+    "badLabels": ["욕심", "새일", "과장", "딴길", "급함"],
+    "palette": { "background": "#1c1917", "primary": "#f97316", "accent": "#fde68a", "danger": "#f43f5e" }
+  },
+  "endings": [
+    { "id": "packed", "title": "딱 닫힘", "description": "마감 전에 필요한 것만 담았다.", "minScore": 20 },
+    { "id": "tight", "title": "조금 빡빡함", "description": "상자가 꽉 찼지만 아직 닫힌다.", "minScore": 10 },
+    { "id": "overflow", "title": "상자 터짐", "description": "마지막에 새 일을 너무 넣었다. 오늘은 덜어내야 한다.", "minScore": 0 }
+  ]
+}

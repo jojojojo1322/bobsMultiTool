@@ -1,0 +1,28 @@
+{
+  "slug": "ten-box-rush",
+  "title": "10칸 숫자박스",
+  "description": "작은 숫자 타일처럼 내려오는 좋은 조각을 골라 점수를 맞추는 캔버스 게임입니다. 한 판은 짧지만 리듬이 계속 걸립니다.",
+  "type": "arcade-game",
+  "durationLabel": "1-2분",
+  "updatedAt": "2026-06-26",
+  "shareText": "10칸 숫자박스를 해봤다. 간단한데 또 하게 되는 쪽으로 가고 싶다.",
+  "order": 8,
+  "relatedBlogSlugs": ["small-web-games-retention", "tiny-web-things"],
+  "relatedPlaySlugs": ["prompt-sum-box", "deploy-10-box"],
+  "arcade": {
+    "variant": "sum-box",
+    "goal": "좋은 숫자 조각만 받아 점수를 쌓습니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 선택.",
+    "rounds": 12,
+    "targetScore": 22,
+    "playerLabel": "10칸",
+    "goodLabels": ["1", "2", "3", "4", "5"],
+    "badLabels": ["흔들", "넘침", "빈칸", "덫", "삐끗"],
+    "palette": { "background": "#172026", "primary": "#22c55e", "accent": "#fbbf24", "danger": "#ef4444" }
+  },
+  "endings": [
+    { "id": "ten", "title": "딱 맞음", "description": "손이 급하지 않았다. 좋은 조각만 들어오니 판이 깔끔해졌다.", "minScore": 20 },
+    { "id": "near", "title": "거의 맞음", "description": "몇 칸 넘쳤지만 리듬은 살아 있다.", "minScore": 10 },
+    { "id": "spill", "title": "상자 엎어짐", "description": "많이 받는 것보다 맞게 받는 게 더 어렵다.", "minScore": 0 }
+  ]
+}

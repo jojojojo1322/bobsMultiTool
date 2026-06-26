@@ -54,12 +54,14 @@ function topicThings(keywords: string[]) {
 function playMetric(content: PlayContent) {
   if (content.type === "micro-sim") return `${content.turns.length}턴`;
   if (content.type === "tap-game") return `${content.targets.length}개 판단`;
+  if (content.type === "arcade-game") return `${content.arcade.rounds}번 조작`;
   return `${content.items.length}개 분류`;
 }
 
 function playGenre(content: PlayContent) {
   if (content.type === "micro-sim") return "Micro simulation";
   if (content.type === "tap-game") return "Tap game";
+  if (content.type === "arcade-game") return "Canvas arcade game";
   return "Sort and match game";
 }
 

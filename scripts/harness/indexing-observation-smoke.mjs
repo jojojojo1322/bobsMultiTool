@@ -35,6 +35,7 @@ const log = fs.readFileSync(logPath, "utf8");
 for (const fragment of [
   "# bobob.app Search Indexing Observation Log",
   "## 2026-06-25",
+  "## 2026-06-26",
   "`bobob935` Google account",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
   "Search Console URL-prefix property `https://www.bobob.app/`",
@@ -81,6 +82,12 @@ for (const fragment of [
   "Bing showed a `계속하려면 아래 과제 해결` challenge",
   "IndexNow submission is still the only confirmed Bing-compatible discovery evidence",
   "IndexNow submitted URL count: `53`",
+  "Search Console sitemap discovery check:",
+  "Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`",
+  "`/sitemaps/en`: submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `66`",
+  "Live `/sitemaps/en` URL count: `68`",
+  "Search Console has applied the newer sitemap beyond the old `53` discovered-page state",
+  "No Search Console resubmission or IndexNow submission was performed in this pass.",
   "WebSub feed item counts: `43`, `43`",
   "Next observation windows:",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
@@ -112,6 +119,16 @@ const latestSubmittedUrlCount = Array.from(log.matchAll(/(?:Submitted URL count|
   .filter(Number.isFinite)
   .at(-1);
 if (!latestSubmittedUrlCount) failures.push("Could not parse latest submitted URL count");
+const latestLoggedLiveSitemapUrlCount = Array.from(log.matchAll(/Live `?\/sitemaps\/en`? URL count: `(\d+)`/g))
+  .map((match) => Number.parseInt(match[1], 10))
+  .filter(Number.isFinite)
+  .at(-1);
+if (!latestLoggedLiveSitemapUrlCount) failures.push("Could not parse latest logged live sitemap URL count");
+const latestSearchConsoleDiscoveredPages = Array.from(log.matchAll(/\/sitemaps\/en[^\n]*discovered pages `(\d+)`/g))
+  .map((match) => Number.parseInt(match[1], 10))
+  .filter(Number.isFinite)
+  .at(-1);
+if (!latestSearchConsoleDiscoveredPages) failures.push("Could not parse latest Search Console discovered pages");
 const discoveredPages = numberAfter(log, /\/sitemaps\/en`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `(\d+)`/, "/sitemaps/en discovered pages");
 
 if (submittedUrlCount !== null && discoveredPages !== null && submittedUrlCount !== discoveredPages) {
@@ -126,8 +143,13 @@ try {
   failures.push(`Could not fetch live /sitemaps/en for observation smoke: ${error instanceof Error ? error.message : String(error)}`);
 }
 
-if (liveSitemapUrlCount !== null && latestSubmittedUrlCount && liveSitemapUrlCount !== latestSubmittedUrlCount) {
-  failures.push(`Live /sitemaps/en URL count ${liveSitemapUrlCount} should match latest logged submitted URL count ${latestSubmittedUrlCount}`);
+if (liveSitemapUrlCount !== null && latestLoggedLiveSitemapUrlCount && liveSitemapUrlCount !== latestLoggedLiveSitemapUrlCount) {
+  failures.push(`Live /sitemaps/en URL count ${liveSitemapUrlCount} should match latest logged live sitemap URL count ${latestLoggedLiveSitemapUrlCount}`);
+}
+if (liveSitemapUrlCount !== null && latestSearchConsoleDiscoveredPages && latestSearchConsoleDiscoveredPages > liveSitemapUrlCount) {
+  failures.push(
+    `Latest Search Console discovered pages ${latestSearchConsoleDiscoveredPages} should not exceed live sitemap URL count ${liveSitemapUrlCount}`,
+  );
 }
 
 if (failures.length) {
@@ -135,4 +157,6 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Indexing observation smoke passed. Baseline submitted URLs: ${submittedUrlCount}; latest submitted URLs: ${latestSubmittedUrlCount}; live sitemap URLs: ${liveSitemapUrlCount}.`);
+console.log(
+  `Indexing observation smoke passed. Baseline submitted URLs: ${submittedUrlCount}; latest IndexNow submitted URLs: ${latestSubmittedUrlCount}; Search Console discovered pages: ${latestSearchConsoleDiscoveredPages}; live sitemap URLs: ${liveSitemapUrlCount}.`,
+);

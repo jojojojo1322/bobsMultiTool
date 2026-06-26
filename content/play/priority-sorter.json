@@ -6,7 +6,7 @@
   "durationLabel": "1-2분",
   "updatedAt": "2026-06-25",
   "shareText": "나는 일을 얼마나 잘 분류할까? 업무 우선순위 분류기를 플레이했다.",
-  "order": 4,
+  "order": 18,
   "relatedBlogSlugs": ["static-first-before-server", "not-building-login-yet", "static-site-limit", "search-console-misreads-for-indie-devs", "static-micro-games-architecture"],
   "relatedPlaySlugs": ["prompt-cleanup", "meeting-escape"],
   "categories": [

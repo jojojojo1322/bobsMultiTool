@@ -1,0 +1,28 @@
+{
+  "slug": "prompt-gem-swap",
+  "title": "말조각 젬스왑",
+  "description": "색이 다른 말조각 사이에서 필요한 조각만 맞춰 터뜨리는 짧은 캔버스 매칭 게임입니다. 예쁜 보석보다 손맛을 먼저 봅니다.",
+  "type": "arcade-game",
+  "durationLabel": "1-2분",
+  "updatedAt": "2026-06-26",
+  "shareText": "말조각 젬스왑을 해봤다. 정리도 게임처럼 하면 조금 덜 지겹다.",
+  "order": 6,
+  "relatedBlogSlugs": ["why-small-web-toys-return", "small-play-rules-note"],
+  "relatedPlaySlugs": ["prompt-sum-box", "prompt-cleanup"],
+  "arcade": {
+    "variant": "match-three",
+    "goal": "좋은 조각이 내려올 때 타이밍을 보고 맞춥니다.",
+    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 선택.",
+    "rounds": 12,
+    "targetScore": 20,
+    "playerLabel": "손",
+    "goodLabels": ["짧게", "분명", "예시", "검토", "끝"],
+    "badLabels": ["빙빙", "과장", "중복", "막연", "긴말"],
+    "palette": { "background": "#1e1b2e", "primary": "#c084fc", "accent": "#67e8f9", "danger": "#fb7185" }
+  },
+  "endings": [
+    { "id": "match", "title": "손에 감김", "description": "필요한 말만 잘 잡았다. 정리도 조금은 게임이 된다.", "minScore": 20 },
+    { "id": "loose", "title": "몇 개 섞임", "description": "좋은 조각은 잡았지만 긴말도 조금 들어왔다.", "minScore": 10 },
+    { "id": "scatter", "title": "조각 흩어짐", "description": "눈에 띄는 걸 다 눌렀다. 다음에는 한 박자 늦게 보자.", "minScore": 0 }
+  ]
+}

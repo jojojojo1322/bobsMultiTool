@@ -119,7 +119,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{content.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Badge>{content.durationLabel}</Badge>
-                  <Badge>{content.type === "tap-game" ? "탭 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
+                  <Badge>{content.type === "arcade-game" ? "아케이드 게임" : content.type === "tap-game" ? "탭 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
                 </div>
               </Link>
             ))}
