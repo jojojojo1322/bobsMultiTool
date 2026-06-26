@@ -139,13 +139,13 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
     state.actions += 1;
-    const bonus = cleared.length >= 3 ? 1 : 0;
-    state.score = Math.max(0, state.score + 5 + bonus);
+    const delta = sumBoxClearScore(cleared);
+    state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
     rememberSumHistory(state, {
       label: cleared.map((item) => item.value).join(" + "),
-      detail: "딱 10",
-      score: 5 + bonus,
+      detail: cleared.length >= 4 ? "길게 쓸어 10" : "딱 10",
+      score: delta,
     });
     moveSumCursor(state, 1);
     if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
@@ -197,13 +197,13 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
     state.actions += 1;
-    const bonus = cleared.length >= 3 ? 1 : 0;
-    state.score = Math.max(0, state.score + 5 + bonus);
+    const delta = sumBoxClearScore(cleared);
+    state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
     rememberSumHistory(state, {
       label: cleared.map((item) => item.value).join(" + "),
-      detail: "쓸어서 10",
-      score: 5 + bonus,
+      detail: cleared.length >= 4 ? "길게 쓸어 10" : "쓸어서 10",
+      score: delta,
     });
     moveSumCursor(state, 1);
     if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
@@ -255,6 +255,25 @@ export function sumBoxCombinationHint(state: { sumTiles: SumTile[] }) {
     }
   }
   return combinations[10] ?? [];
+}
+
+export function sumBoxTenCombinationCount(state: { sumTiles: SumTile[] }) {
+  const counts = Array.from({ length: 11 }, () => 0);
+  counts[0] = 1;
+  for (const tile of state.sumTiles) {
+    if (tile.cleared || tile.value > 10) continue;
+    for (let sum = 10; sum >= tile.value; sum -= 1) {
+      counts[sum] = Math.min(99, counts[sum] + counts[sum - tile.value]);
+    }
+  }
+  return counts[10];
+}
+
+export function sumBoxClearScore(tiles: SumTile[]) {
+  if (tiles.length >= 5) return 8;
+  if (tiles.length >= 4) return 7;
+  if (tiles.length >= 3) return 6;
+  return 5;
 }
 
 export function sumTileIndexAt(state: { sumTiles: SumTile[] }, x: number, y: number) {

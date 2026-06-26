@@ -172,6 +172,7 @@ import {
   rememberSumDragSegment,
   rememberSumDragTile,
   selectedSumTiles,
+  sumBoxClearScore,
   sumBoxCombinationHint,
   sumBoxBoardHeight,
   sumBoxBoardWidth,
@@ -183,6 +184,7 @@ import {
   sumBoxTileHeight,
   sumBoxTimeLimitSeconds,
   sumBoxSelectionSummary,
+  sumBoxTenCombinationCount,
   sumDragTiles,
   sumTileIndexAt,
   updateSumBox,
@@ -2479,8 +2481,11 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const blockedSum = blockedTile ? shownSum + blockedTile.value : shownSum;
   const complementTileIds = selectionSummary.complementTileIds;
   const comboHint = sumBoxCombinationHint(state);
+  const tenCombinationCount = sumBoxTenCombinationCount(state);
+  const tenCombinationLabel = tenCombinationCount >= 99 ? "99+" : `${tenCombinationCount}`;
   const hintTiles = !dragging && !shownTiles.length ? comboHint : [];
   const hintTileIds = new Set(hintTiles.map((tile) => tile.id));
+  const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) : 0;
   const comboHintLabel = comboHint.length
     ? comboHint
         .map((tile) => tile.value)
@@ -2545,7 +2550,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.66)";
   ctx.fillText(`비운 칸 ${cleared} / ${state.sumTiles.length}`, 190, 48);
   ctx.fillStyle = comboHint.length ? "rgba(255,255,255,0.66)" : "rgba(251,113,133,0.88)";
-  ctx.fillText(`보이는 10 ${comboHintLabel}`, 330, 48);
+  ctx.fillText(`남은 10 ${tenCombinationLabel}개 · 힌트 ${comboHintLabel}`, 330, 48);
   ctx.textAlign = "right";
   ctx.fillText(`남은 ${timeLeft}초`, canvasWidth - 44, 48);
   ctx.textAlign = "left";
@@ -2553,7 +2558,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     blockedTile
       ? `${shownTiles.map((tile) => tile.value).join(" + ") || "0"} + ${blockedTile.value} = ${blockedSum} · 넘침`
       : shownTiles.length
-        ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}`
+        ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}${shownSum === 10 ? ` · +${clearScore}점` : ""}`
         : hintTiles.length
           ? "노란 힌트 사과를 그대로 쓸면 10"
           : "마우스로 쓸어 담기",
@@ -2746,14 +2751,15 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   if (dragging && state.sumDragMoved && state.sumDragCurrent) {
     const pillX = clamp(state.sumDragCurrent.x + 18, 36, canvasWidth - 96);
     const pillY = clamp(state.sumDragCurrent.y + 18, 94, canvasHeight - 84);
+    const pillWidth = shownSum === 10 && !blockedTile ? 84 : 76;
     ctx.fillStyle = blockedTile ? "rgba(251,113,133,0.94)" : shownSum === 10 ? "rgba(251,191,36,0.95)" : shownSum > 10 ? "rgba(251,113,133,0.94)" : "rgba(15,23,42,0.86)";
     ctx.beginPath();
-    ctx.roundRect(pillX, pillY, 68, 28, 14);
+    ctx.roundRect(pillX, pillY, pillWidth, 28, 14);
     ctx.fill();
     ctx.fillStyle = shownSum === 10 && !blockedTile ? "#111827" : "#f8fafc";
     ctx.font = "900 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(blockedTile ? `${blockedSum} 넘침` : `${shownSum} / 10`, pillX + 34, pillY + 19);
+    ctx.fillText(blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? `10/10 +${clearScore}` : `${shownSum} / 10`, pillX + pillWidth / 2, pillY + 19);
   }
 
   const barWidth = clamp((shownSum / 10) * (canvasWidth - 68), 0, canvasWidth - 68);
@@ -2769,12 +2775,12 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillStyle = "rgba(255,255,255,0.86)";
     ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "right";
-    ctx.fillText(dragging ? "놓으면 사라집니다" : "Space 누르면 사라집니다", canvasWidth - 34, canvasHeight - 66);
+    ctx.fillText(dragging ? `놓으면 +${clearScore}점` : `Space 누르면 +${clearScore}점`, canvasWidth - 34, canvasHeight - 66);
   }
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("노란 힌트는 남은 합 10 한 조합입니다. 마우스로 쓸거나 방향키와 Space로 골라도 됩니다.", 34, canvasHeight - 20);
+  ctx.fillText("노란 힌트는 한 조합입니다. 3개 이상 길게 쓸어 10을 만들면 보너스가 붙습니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -2785,7 +2791,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.", canvasWidth / 2, 202);
-    ctx.fillText("합 10이면 사라집니다. 남은 시간 안에 많이 비우면 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText("합 10이면 사라집니다. 길게 맞추면 보너스가 붙습니다.", canvasWidth / 2, 228);
   }
 }
 
