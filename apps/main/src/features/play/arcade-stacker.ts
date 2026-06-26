@@ -22,6 +22,25 @@ export type StackerBlock = {
   quality: "base" | "perfect" | "solid" | "thin" | "miss";
 };
 
+export type StackerPlacementPreview = {
+  activeLeft: number;
+  activeRight: number;
+  overlapLeft: number;
+  overlapRight: number;
+  overlap: number;
+  cutLeft: number;
+  cutRight: number;
+  centerGap: number;
+  nearPerfect: boolean;
+  placedWidth: number;
+  placedX: number;
+  quality: StackerBlock["quality"];
+  scoreDelta: number;
+  focusDelta: number;
+  status: string;
+  detail: string;
+};
+
 type StackerBlockState = {
   stackerBlocks: StackerBlock[];
 };
@@ -72,4 +91,65 @@ export function nudgeStacker(state: Pick<StackerActiveState, "stackerActiveX" | 
 
 export function centerStackerActiveAt(state: Pick<StackerActiveState, "stackerActiveX" | "stackerActiveWidth">, centerX: number) {
   state.stackerActiveX = clamp(centerX - state.stackerActiveWidth / 2, stackerBoardX, stackerBoardX + stackerBoardWidth - state.stackerActiveWidth);
+}
+
+export function stackerPlacementPreview(state: StackerActiveState): StackerPlacementPreview | null {
+  const previous = topStackerBlock(state);
+  if (!previous) return null;
+
+  const activeLeft = state.stackerActiveX;
+  const activeRight = state.stackerActiveX + state.stackerActiveWidth;
+  const overlapLeft = Math.max(activeLeft, previous.x);
+  const overlapRight = Math.min(activeRight, previous.x + previous.width);
+  const overlap = Math.max(0, overlapRight - overlapLeft);
+  const centerGap = Math.abs(activeLeft + state.stackerActiveWidth / 2 - (previous.x + previous.width / 2));
+  const cutLeft = Math.max(0, previous.x - activeLeft);
+  const cutRight = Math.max(0, activeRight - (previous.x + previous.width));
+
+  if (overlap < stackerMinOverlap) {
+    return {
+      activeLeft,
+      activeRight,
+      overlapLeft,
+      overlapRight,
+      overlap,
+      cutLeft,
+      cutRight,
+      centerGap,
+      nearPerfect: false,
+      placedWidth: 0,
+      placedX: overlapLeft,
+      quality: "miss",
+      scoreDelta: -2,
+      focusDelta: -18,
+      status: "놓침",
+      detail: "겹친 면이 거의 없음",
+    };
+  }
+
+  const nearPerfect = centerGap <= 7 || overlap >= previous.width * 0.96;
+  const placedWidth = nearPerfect ? Math.min(stackerBaseWidth, previous.width + 4) : overlap;
+  const placedX = nearPerfect ? previous.x - Math.max(0, placedWidth - previous.width) / 2 : overlapLeft;
+  const quality: StackerBlock["quality"] = nearPerfect ? "perfect" : overlap >= previous.width * 0.72 ? "solid" : "thin";
+  const scoreDelta = nearPerfect ? 4 : quality === "solid" ? 3 : 2;
+  const focusDelta = nearPerfect ? 5 : quality === "solid" ? 2 : -6;
+
+  return {
+    activeLeft,
+    activeRight,
+    overlapLeft,
+    overlapRight,
+    overlap,
+    cutLeft,
+    cutRight,
+    centerGap,
+    nearPerfect,
+    placedWidth,
+    placedX,
+    quality,
+    scoreDelta,
+    focusDelta,
+    status: nearPerfect ? "딱 맞음" : quality === "solid" ? "잘 겹침" : "아슬아슬",
+    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "잘 겹침" : "아슬아슬",
+  };
 }

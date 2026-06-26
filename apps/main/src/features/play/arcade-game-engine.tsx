@@ -137,7 +137,7 @@ import {
   stackerBoardWidth,
   stackerBoardX,
   stackerBoardY,
-  stackerMinOverlap,
+  stackerPlacementPreview,
   topStackerBlock,
   type StackerBlock,
 } from "@/features/play/arcade-stacker";
@@ -442,22 +442,18 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
   if (state.finished) return;
   const previous = topStackerBlock(state);
   if (!previous) return;
+  const preview = stackerPlacementPreview(state);
+  if (!preview) return;
 
   state.actions += 1;
-  const activeLeft = state.stackerActiveX;
-  const activeRight = state.stackerActiveX + state.stackerActiveWidth;
-  const overlapLeft = Math.max(activeLeft, previous.x);
-  const overlapRight = Math.min(activeRight, previous.x + previous.width);
-  const overlap = overlapRight - overlapLeft;
-  const centerGap = Math.abs(activeLeft + state.stackerActiveWidth / 2 - (previous.x + previous.width / 2));
 
-  if (overlap < stackerMinOverlap) {
-    state.score = Math.max(0, state.score - 2);
-    state.focus = clamp(state.focus - 18, 0, 100);
+  if (preview.quality === "miss") {
+    state.score = Math.max(0, state.score + preview.scoreDelta);
+    state.focus = clamp(state.focus + preview.focusDelta, 0, 100);
     addHistory(state, {
-      label: "놓침",
-      detail: "겹친 면이 거의 없음",
-      score: -2,
+      label: preview.status,
+      detail: preview.detail,
+      score: preview.scoreDelta,
     });
     state.stackerDirection *= -1;
     nudgeStacker(state, state.stackerDirection * 34);
@@ -465,30 +461,23 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
     return;
   }
 
-  const nearPerfect = centerGap <= 7 || overlap >= previous.width * 0.96;
-  const placedWidth = nearPerfect ? Math.min(stackerBaseWidth, previous.width + 4) : overlap;
-  const placedX = nearPerfect ? previous.x - Math.max(0, placedWidth - previous.width) / 2 : overlapLeft;
-  const quality: StackerBlock["quality"] = nearPerfect ? "perfect" : overlap >= previous.width * 0.72 ? "solid" : "thin";
-  const delta = nearPerfect ? 4 : quality === "solid" ? 3 : 2;
-  const focusDelta = nearPerfect ? 5 : quality === "solid" ? 2 : -6;
-
   const block: StackerBlock = {
     id: state.stackerBlocks.length,
-    x: clamp(placedX, stackerBoardX, stackerBoardX + stackerBoardWidth - placedWidth),
+    x: clamp(preview.placedX, stackerBoardX, stackerBoardX + stackerBoardWidth - preview.placedWidth),
     y: previous.y - stackerBlockHeight,
-    width: placedWidth,
+    width: preview.placedWidth,
     height: stackerBlockHeight,
-    label: nearPerfect ? "딱" : pickLabel(quality === "thin" ? content.arcade.badLabels : content.arcade.goodLabels, state.actions),
-    quality,
+    label: preview.nearPerfect ? "딱" : pickLabel(preview.quality === "thin" ? content.arcade.badLabels : content.arcade.goodLabels, state.actions),
+    quality: preview.quality,
   };
   state.stackerBlocks.push(block);
   state.stackerLayer += 1;
-  state.score = Math.max(0, state.score + delta);
-  state.focus = clamp(state.focus + focusDelta, 0, 100);
+  state.score = Math.max(0, state.score + preview.scoreDelta);
+  state.focus = clamp(state.focus + preview.focusDelta, 0, 100);
   addHistory(state, {
     label: block.label,
-    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "잘 겹침" : "아슬아슬",
-    score: delta,
+    detail: preview.detail,
+    score: preview.scoreDelta,
   });
 
   resetStackerActiveFromTop(state);
@@ -1480,10 +1469,13 @@ function drawStackerBlock(ctx: CanvasRenderingContext2D, block: StackerBlock, fi
 function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const top = topStackerBlock(state);
+  const preview = stackerPlacementPreview(state);
   const activeCenter = state.stackerActiveX + state.stackerActiveWidth / 2;
   const topCenter = top ? top.x + top.width / 2 : canvasWidth / 2;
-  const centerGap = Math.abs(activeCenter - topCenter);
-  const overlap = top ? Math.max(0, Math.min(state.stackerActiveX + state.stackerActiveWidth, top.x + top.width) - Math.max(state.stackerActiveX, top.x)) : 0;
+  const centerGap = preview?.centerGap ?? Math.abs(activeCenter - topCenter);
+  const overlap = preview?.overlap ?? 0;
+  const cutTotal = preview ? preview.cutLeft + preview.cutRight : 0;
+  const statusFill = preview?.quality === "miss" ? danger : preview?.quality === "perfect" ? accent : preview?.quality === "solid" ? primary : "rgba(251,113,133,0.86)";
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1535,6 +1527,19 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.beginPath();
     ctx.roundRect(top.x, state.stackerActiveY + 1, top.width, stackerBlockHeight - 2, 8);
     ctx.fill();
+    if (preview && preview.overlap > 0) {
+      ctx.fillStyle =
+        preview.quality === "miss"
+          ? "rgba(248,113,113,0.2)"
+          : preview.quality === "perfect"
+            ? "rgba(167,243,208,0.32)"
+            : preview.quality === "solid"
+              ? "rgba(251,191,36,0.25)"
+              : "rgba(248,113,113,0.22)";
+      ctx.beginPath();
+      ctx.roundRect(preview.overlapLeft, state.stackerActiveY + 3, preview.overlap, stackerBlockHeight - 6, 7);
+      ctx.fill();
+    }
   }
 
   const activeBlock: StackerBlock = {
@@ -1544,24 +1549,22 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     width: state.stackerActiveWidth,
     height: stackerBlockHeight,
     label: "쌓기",
-    quality: centerGap <= 7 ? "perfect" : overlap >= state.stackerActiveWidth * 0.72 ? "solid" : "thin",
+    quality: preview?.quality === "miss" ? "thin" : (preview?.quality ?? (centerGap <= 7 ? "perfect" : overlap >= state.stackerActiveWidth * 0.72 ? "solid" : "thin")),
   };
-  drawStackerBlock(ctx, activeBlock, centerGap <= 7 ? accent : primary, "#111827");
+  drawStackerBlock(ctx, activeBlock, preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : statusFill, "#111827");
 
-  if (top && overlap > 0 && overlap < state.stackerActiveWidth) {
-    const wasteLeft = Math.min(state.stackerActiveX, top.x);
-    const wasteRight = Math.max(state.stackerActiveX + state.stackerActiveWidth, top.x + top.width);
+  if (top && preview && cutTotal > 0) {
     ctx.fillStyle = "rgba(251,113,133,0.42)";
-    if (state.stackerActiveX < top.x) {
-      ctx.fillRect(state.stackerActiveX, state.stackerActiveY, top.x - state.stackerActiveX, stackerBlockHeight);
+    if (preview.cutLeft > 0) {
+      ctx.fillRect(preview.activeLeft, state.stackerActiveY, preview.cutLeft, stackerBlockHeight);
     }
-    if (state.stackerActiveX + state.stackerActiveWidth > top.x + top.width) {
-      ctx.fillRect(top.x + top.width, state.stackerActiveY, state.stackerActiveX + state.stackerActiveWidth - (top.x + top.width), stackerBlockHeight);
+    if (preview.cutRight > 0) {
+      ctx.fillRect(preview.activeRight - preview.cutRight, state.stackerActiveY, preview.cutRight, stackerBlockHeight);
     }
     ctx.strokeStyle = "rgba(251,113,133,0.62)";
     ctx.beginPath();
-    ctx.moveTo(wasteLeft, state.stackerActiveY - 8);
-    ctx.lineTo(wasteRight, state.stackerActiveY - 8);
+    ctx.moveTo(preview.activeLeft, state.stackerActiveY - 8);
+    ctx.lineTo(preview.activeRight, state.stackerActiveY - 8);
     ctx.stroke();
   }
 
@@ -1571,7 +1574,13 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillText(`층 ${state.stackerLayer}`, 34, 36);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`폭 ${Math.round(state.stackerActiveWidth)} · 차이 ${Math.round(centerGap)}`, 94, 36);
+  ctx.fillText(
+    `폭 ${Math.round(state.stackerActiveWidth)} · 놓으면 ${Math.round(preview?.placedWidth ?? 0)} · 잘림 ${Math.round(cutTotal)}`,
+    94,
+    36,
+  );
+  ctx.fillStyle = preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : preview?.quality === "perfect" ? "rgba(167,243,208,0.9)" : "rgba(255,255,255,0.68)";
+  ctx.fillText(preview ? `${preview.status} · 차이 ${Math.round(centerGap)}` : `차이 ${Math.round(centerGap)}`, 94, 56);
 
   const meterX = 34;
   const meterY = 66;
@@ -1586,7 +1595,7 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fill();
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(centerGap <= 7 ? "지금 좋아요" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
+  ctx.fillText(preview?.quality === "miss" ? "거의 안 겹침" : centerGap <= 7 ? "지금 좋아요" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
