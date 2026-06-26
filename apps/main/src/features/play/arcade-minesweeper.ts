@@ -1,5 +1,5 @@
 import type { ArcadeGameContent } from "@/features/content/types";
-import { pseudoRandom } from "@/features/play/arcade-engine-utils";
+import { clamp, pseudoRandom } from "@/features/play/arcade-engine-utils";
 
 export const mineColumns = 9;
 export const mineRows = 7;
@@ -26,6 +26,21 @@ type MineCellState = {
 
 type MineCursorState = MineCellState & {
   mineCursor: number;
+};
+
+type MineHistoryItem = {
+  label: string;
+  detail: string;
+  score: number;
+};
+
+type MinesweeperPlayState = MineCursorState & {
+  finished: boolean;
+  elapsed: number;
+  score: number;
+  focus: number;
+  actions: number;
+  history: MineHistoryItem[];
 };
 
 export function makeMineCells(content: ArcadeGameContent): MineCell[] {
@@ -109,7 +124,47 @@ export function moveMineCursorToNextSafe(state: MineCursorState) {
   }
 }
 
-export function revealMineFlood(state: MineCellState, start: MineCell) {
+export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPlayState, index = state.mineCursor) {
+  const cell = state.mineCells[index];
+  if (!cell) return;
+  state.mineCursor = index;
+  if (cell.revealed) {
+    moveMineCursorToNextSafe(state);
+    return;
+  }
+
+  state.actions += 1;
+  if (cell.mine) {
+    cell.revealed = true;
+    state.score = Math.max(0, state.score - 3);
+    state.focus = clamp(state.focus - 20, 0, 100);
+    rememberMineHistory(state, {
+      label: "펑",
+      detail: "너무 빨리 눌렀음",
+      score: -3,
+    });
+  } else {
+    const opened = revealMineFlood(state, cell);
+    const delta = cell.adjacent === 0 ? Math.min(6, 2 + opened) : 2 + Math.max(0, 3 - cell.adjacent);
+    state.score = Math.max(0, state.score + delta);
+    state.focus = clamp(state.focus + (cell.adjacent === 0 ? 3 : 1), 0, 100);
+    rememberMineHistory(state, {
+      label: cell.adjacent === 0 ? "빈칸" : `${cell.adjacent}`,
+      detail: cell.adjacent === 0 ? `${opened}칸 열림` : "숫자 확인",
+      score: delta,
+    });
+    moveMineCursorToNextSafe(state);
+  }
+
+  finishMinesweeperIfNeeded(content, state);
+}
+
+export function updateMinesweeper(content: ArcadeGameContent, state: MinesweeperPlayState, dt: number) {
+  state.elapsed += dt;
+  finishMinesweeperIfNeeded(content, state);
+}
+
+function revealMineFlood(state: MineCellState, start: MineCell) {
   const queue = [start];
   const revealed = new Set<number>();
   while (queue.length) {
@@ -124,6 +179,22 @@ export function revealMineFlood(state: MineCellState, start: MineCell) {
     }
   }
   return revealed.size;
+}
+
+function finishMinesweeperIfNeeded(content: ArcadeGameContent, state: MinesweeperPlayState) {
+  if (
+    state.score >= content.arcade.targetScore ||
+    revealedMineSafeCount(state) >= totalMineSafeCount(state) ||
+    state.actions >= content.arcade.rounds ||
+    state.focus <= 0 ||
+    state.elapsed >= content.arcade.rounds * 5
+  ) {
+    state.finished = true;
+  }
+}
+
+function rememberMineHistory(state: Pick<MinesweeperPlayState, "history">, item: MineHistoryItem) {
+  state.history = [item, ...state.history].slice(0, 8);
 }
 
 function mineCellAt(cells: MineCell[], column: number, row: number) {

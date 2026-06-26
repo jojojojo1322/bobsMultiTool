@@ -93,10 +93,10 @@ import {
   mineColumns,
   mineGap,
   moveMineCursor,
-  moveMineCursorToNextSafe,
-  revealMineFlood,
+  revealMineCell,
   revealedMineSafeCount,
   totalMineSafeCount,
+  updateMinesweeper,
   type MineCell,
 } from "@/features/play/arcade-minesweeper";
 import {
@@ -403,44 +403,6 @@ function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
   if (content.arcade.variant === "sum-box") return sumBoxTimeLimitSeconds;
   if (content.arcade.variant === "password") return passwordTimeLimitSeconds;
   return content.arcade.rounds * 5;
-}
-
-function revealMineCell(content: ArcadeGameContent, state: GameState, index = state.mineCursor) {
-  const cell = state.mineCells[index];
-  if (!cell) return;
-  state.mineCursor = index;
-  if (cell.revealed) {
-    moveMineCursorToNextSafe(state);
-    return;
-  }
-
-  state.actions += 1;
-  if (cell.mine) {
-    cell.revealed = true;
-    state.score = Math.max(0, state.score - 3);
-    state.focus = clamp(state.focus - 20, 0, 100);
-    addHistory(state, {
-      label: "펑",
-      detail: "너무 빨리 눌렀음",
-      score: -3,
-    });
-  } else {
-    const opened = revealMineFlood(state, cell);
-    const delta = cell.adjacent === 0 ? Math.min(6, 2 + opened) : 2 + Math.max(0, 3 - cell.adjacent);
-    state.score = Math.max(0, state.score + delta);
-    state.focus = clamp(state.focus + (cell.adjacent === 0 ? 3 : 1), 0, 100);
-    addHistory(state, {
-      label: cell.adjacent === 0 ? "빈칸" : `${cell.adjacent}`,
-      detail: cell.adjacent === 0 ? `${opened}칸 열림` : "숫자 확인",
-      score: delta,
-    });
-    moveMineCursorToNextSafe(state);
-  }
-
-  const openedSafe = revealedMineSafeCount(state);
-  if (state.score >= content.arcade.targetScore || openedSafe >= totalMineSafeCount(state) || state.actions >= content.arcade.rounds || state.focus <= 0) {
-    state.finished = true;
-  }
 }
 
 function finishStackerIfNeeded(content: ArcadeGameContent, state: GameState) {
@@ -752,19 +714,6 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   }
 
   if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 4) {
-    state.finished = true;
-  }
-}
-
-function updateMinesweeper(content: ArcadeGameContent, state: GameState, dt: number) {
-  state.elapsed += dt;
-  if (
-    state.score >= content.arcade.targetScore ||
-    revealedMineSafeCount(state) >= totalMineSafeCount(state) ||
-    state.actions >= content.arcade.rounds ||
-    state.focus <= 0 ||
-    state.elapsed >= content.arcade.rounds * 5
-  ) {
     state.finished = true;
   }
 }
