@@ -32,6 +32,13 @@ const passwordDigitGap = 20;
 const passwordDigitStartX = (canvasWidth - passwordDigitCount * passwordDigitWidth - (passwordDigitCount - 1) * passwordDigitGap) / 2;
 const passwordDigitY = 142;
 const passwordSubmitRect = { x: canvasWidth / 2 - 82, y: 292, width: 164, height: 46 };
+const mineColumns = 9;
+const mineRows = 7;
+const mineCount = 10;
+const mineCellSize = 38;
+const mineGap = 4;
+const mineBoardX = 54;
+const mineBoardY = 74;
 
 type Sprite = {
   id: number;
@@ -92,6 +99,15 @@ type PasswordAttempt = {
   hint: string;
 };
 
+type MineCell = {
+  id: number;
+  column: number;
+  row: number;
+  mine: boolean;
+  adjacent: number;
+  revealed: boolean;
+};
+
 type HistoryItem = {
   label: string;
   detail: string;
@@ -124,6 +140,8 @@ type GameState = {
   passwordSecret: number[];
   passwordCursor: number;
   passwordAttempts: PasswordAttempt[];
+  mineCells: MineCell[];
+  mineCursor: number;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -168,6 +186,8 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     passwordSecret: makePasswordSecret(content),
     passwordCursor: 0,
     passwordAttempts: [],
+    mineCells: makeMineCells(content),
+    mineCursor: 0,
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -176,6 +196,32 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     history: [],
     lastFrame: null,
   };
+}
+
+function makeMineCells(content: ArcadeGameContent): MineCell[] {
+  const total = mineColumns * mineRows;
+  const mines = new Set<number>();
+  for (let attempt = 0; mines.size < mineCount && attempt < total * 5; attempt += 1) {
+    const candidate = Math.floor(pseudoRandom(content.slug.length * 41 + attempt * 13 + 5) * total);
+    if (candidate === 0 || candidate === 1 || candidate === mineColumns) continue;
+    mines.add(candidate);
+  }
+
+  const cells = Array.from({ length: total }, (_, id) => ({
+    id,
+    column: id % mineColumns,
+    row: Math.floor(id / mineColumns),
+    mine: mines.has(id),
+    adjacent: 0,
+    revealed: false,
+  }));
+
+  for (const cell of cells) {
+    if (cell.mine) continue;
+    cell.adjacent = neighborMineCount(cells, cell.column, cell.row);
+  }
+
+  return cells;
 }
 
 function makePasswordSecret(content: ArcadeGameContent): number[] {
@@ -311,6 +357,123 @@ function selectedSumTiles(state: GameState) {
 
 function sumTileIndexAt(state: GameState, x: number, y: number) {
   return state.sumTiles.findIndex((tile) => !tile.cleared && x >= tile.x && x <= tile.x + tile.width && y >= tile.y && y <= tile.y + tile.height);
+}
+
+function mineCellAt(cells: MineCell[], column: number, row: number) {
+  if (column < 0 || column >= mineColumns || row < 0 || row >= mineRows) return undefined;
+  return cells[row * mineColumns + column];
+}
+
+function mineCellIndexAt(x: number, y: number) {
+  const boardWidth = mineColumns * mineCellSize + (mineColumns - 1) * mineGap;
+  const boardHeight = mineRows * mineCellSize + (mineRows - 1) * mineGap;
+  if (x < mineBoardX || y < mineBoardY || x > mineBoardX + boardWidth || y > mineBoardY + boardHeight) return -1;
+  const localX = x - mineBoardX;
+  const localY = y - mineBoardY;
+  const column = Math.floor(localX / (mineCellSize + mineGap));
+  const row = Math.floor(localY / (mineCellSize + mineGap));
+  const insideCellX = localX - column * (mineCellSize + mineGap);
+  const insideCellY = localY - row * (mineCellSize + mineGap);
+  if (insideCellX > mineCellSize || insideCellY > mineCellSize) return -1;
+  if (column < 0 || column >= mineColumns || row < 0 || row >= mineRows) return -1;
+  return row * mineColumns + column;
+}
+
+function neighborCells(cells: MineCell[], column: number, row: number) {
+  const neighbors: MineCell[] = [];
+  for (let dy = -1; dy <= 1; dy += 1) {
+    for (let dx = -1; dx <= 1; dx += 1) {
+      if (!dx && !dy) continue;
+      const neighbor = mineCellAt(cells, column + dx, row + dy);
+      if (neighbor) neighbors.push(neighbor);
+    }
+  }
+  return neighbors;
+}
+
+function neighborMineCount(cells: MineCell[], column: number, row: number) {
+  return neighborCells(cells, column, row).filter((cell) => cell.mine).length;
+}
+
+function revealedMineSafeCount(state: GameState) {
+  return state.mineCells.filter((cell) => cell.revealed && !cell.mine).length;
+}
+
+function totalMineSafeCount(state: GameState) {
+  return state.mineCells.filter((cell) => !cell.mine).length;
+}
+
+function moveMineCursor(state: GameState, delta: number) {
+  const total = state.mineCells.length;
+  if (!total) return;
+  state.mineCursor = (state.mineCursor + delta + total) % total;
+}
+
+function moveMineCursorToNextSafe(state: GameState) {
+  const total = state.mineCells.length;
+  for (let step = 0; step < total; step += 1) {
+    const index = (state.mineCursor + step) % total;
+    const cell = state.mineCells[index];
+    if (cell && !cell.revealed && !cell.mine) {
+      state.mineCursor = index;
+      return;
+    }
+  }
+}
+
+function revealMineFlood(state: GameState, start: MineCell) {
+  const queue = [start];
+  const revealed = new Set<number>();
+  while (queue.length) {
+    const cell = queue.shift();
+    if (!cell || cell.revealed || cell.mine || revealed.has(cell.id)) continue;
+    cell.revealed = true;
+    revealed.add(cell.id);
+    if (cell.adjacent === 0) {
+      for (const neighbor of neighborCells(state.mineCells, cell.column, cell.row)) {
+        if (!neighbor.revealed && !neighbor.mine) queue.push(neighbor);
+      }
+    }
+  }
+  return revealed.size;
+}
+
+function revealMineCell(content: ArcadeGameContent, state: GameState, index = state.mineCursor) {
+  const cell = state.mineCells[index];
+  if (!cell) return;
+  state.mineCursor = index;
+  if (cell.revealed) {
+    moveMineCursorToNextSafe(state);
+    return;
+  }
+
+  state.actions += 1;
+  if (cell.mine) {
+    cell.revealed = true;
+    state.score = Math.max(0, state.score - 3);
+    state.focus = clamp(state.focus - 20, 0, 100);
+    addHistory(state, {
+      label: "펑",
+      detail: "너무 빨리 눌렀음",
+      score: -3,
+    });
+  } else {
+    const opened = revealMineFlood(state, cell);
+    const delta = cell.adjacent === 0 ? Math.min(6, 2 + opened) : 2 + Math.max(0, 3 - cell.adjacent);
+    state.score = Math.max(0, state.score + delta);
+    state.focus = clamp(state.focus + (cell.adjacent === 0 ? 3 : 1), 0, 100);
+    addHistory(state, {
+      label: cell.adjacent === 0 ? "빈칸" : `${cell.adjacent}`,
+      detail: cell.adjacent === 0 ? `${opened}칸 열림` : "숫자 확인",
+      score: delta,
+    });
+    moveMineCursorToNextSafe(state);
+  }
+
+  const openedSafe = revealedMineSafeCount(state);
+  if (state.score >= content.arcade.targetScore || openedSafe >= totalMineSafeCount(state) || state.actions >= content.arcade.rounds || state.focus <= 0) {
+    state.finished = true;
+  }
 }
 
 const snakeDirectionDeltas: Record<SnakeDirection, SnakeCell> = {
@@ -610,6 +773,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "sum-box") return "고르기";
   if (content.arcade.variant === "snake") return "한 칸";
   if (content.arcade.variant === "password") return "확인";
+  if (content.arcade.variant === "minesweeper") return "열기";
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
@@ -649,6 +813,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "password") {
     updatePassword(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "minesweeper") {
+    updateMinesweeper(content, state, dt);
     return;
   }
 
@@ -751,6 +920,19 @@ function updateSnake(content: ArcadeGameContent, state: GameState, dt: number) {
 function updatePassword(content: ArcadeGameContent, state: GameState, dt: number) {
   state.elapsed += dt;
   if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+    state.finished = true;
+  }
+}
+
+function updateMinesweeper(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  if (
+    state.score >= content.arcade.targetScore ||
+    revealedMineSafeCount(state) >= totalMineSafeCount(state) ||
+    state.actions >= content.arcade.rounds ||
+    state.focus <= 0 ||
+    state.elapsed >= content.arcade.rounds * 5
+  ) {
     state.finished = true;
   }
 }
@@ -991,6 +1173,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "minesweeper") {
+    drawMinesweeper(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -1126,6 +1313,142 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("방향키나 WASD로 방향을 틀고 사과를 먹습니다.", canvasWidth / 2, 204);
     ctx.fillText("욕심내서 꺾으면 바로 꼬입니다. 천천히 가도 됩니다.", canvasWidth / 2, 230);
+  }
+}
+
+function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  const boardWidth = mineColumns * mineCellSize + (mineColumns - 1) * mineGap;
+  const boardHeight = mineRows * mineCellSize + (mineRows - 1) * mineGap;
+  const openedSafe = revealedMineSafeCount(state);
+  const totalSafe = totalMineSafeCount(state);
+
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const glow = ctx.createRadialGradient(mineBoardX + boardWidth / 2, mineBoardY + boardHeight / 2, 40, mineBoardX + boardWidth / 2, mineBoardY + boardHeight / 2, 310);
+  glow.addColorStop(0, "rgba(147,197,253,0.14)");
+  glow.addColorStop(1, "rgba(147,197,253,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  ctx.beginPath();
+  ctx.roundRect(mineBoardX - 14, mineBoardY - 14, boardWidth + 28, boardHeight + 28, 18);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  for (const cell of state.mineCells) {
+    const x = mineBoardX + cell.column * (mineCellSize + mineGap);
+    const y = mineBoardY + cell.row * (mineCellSize + mineGap);
+    const isCursor = cell.id === state.mineCursor;
+    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    ctx.beginPath();
+    ctx.roundRect(x + 3, y + 4, mineCellSize, mineCellSize, 9);
+    ctx.fill();
+
+    if (cell.revealed && cell.mine) {
+      ctx.fillStyle = danger;
+    } else if (cell.revealed) {
+      ctx.fillStyle = cell.adjacent === 0 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.16)";
+    } else {
+      const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
+      gradient.addColorStop(0, "rgba(255,255,255,0.22)");
+      gradient.addColorStop(1, "rgba(255,255,255,0.08)");
+      ctx.fillStyle = gradient;
+    }
+    ctx.beginPath();
+    ctx.roundRect(x, y, mineCellSize, mineCellSize, 9);
+    ctx.fill();
+    ctx.strokeStyle = cell.revealed ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.24)";
+    ctx.stroke();
+
+    if (isCursor && !state.finished) {
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y - 4, mineCellSize + 8, mineCellSize + 8, 12);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+
+    if (cell.revealed) {
+      ctx.textAlign = "center";
+      if (cell.mine) {
+        ctx.fillStyle = "#111827";
+        ctx.beginPath();
+        ctx.arc(x + mineCellSize / 2, y + mineCellSize / 2, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#111827";
+        ctx.beginPath();
+        ctx.moveTo(x + 12, y + 12);
+        ctx.lineTo(x + 26, y + 26);
+        ctx.moveTo(x + 26, y + 12);
+        ctx.lineTo(x + 12, y + 26);
+        ctx.stroke();
+      } else if (cell.adjacent > 0) {
+        ctx.fillStyle = cell.adjacent >= 3 ? danger : cell.adjacent === 2 ? accent : primary;
+        ctx.font = "900 19px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+        ctx.fillText(`${cell.adjacent}`, x + mineCellSize / 2, y + 25);
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,0.38)";
+        ctx.beginPath();
+        ctx.arc(x + mineCellSize / 2, y + mineCellSize / 2, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  const panelX = 466;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(panelX, mineBoardY - 12, 196, 238, 18);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("열린 칸", panelX + 18, mineBoardY + 22);
+  ctx.font = "900 32px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+  ctx.fillStyle = accent;
+  ctx.fillText(`${openedSafe}`, panelX + 18, mineBoardY + 62);
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  ctx.fillText(`/ ${totalSafe} 안전칸`, panelX + 80, mineBoardY + 59);
+
+  const cursor = state.mineCells[state.mineCursor];
+  ctx.fillStyle = "rgba(255,255,255,0.13)";
+  ctx.beginPath();
+  ctx.roundRect(panelX + 18, mineBoardY + 90, 160, 44, 12);
+  ctx.fill();
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(cursor?.revealed ? "열린 칸입니다" : "여기를 열어볼까요", panelX + 32, mineBoardY + 116);
+
+  ctx.fillStyle = "rgba(255,255,255,0.64)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("숫자는 가까운 위험 칸 수입니다.", panelX + 18, mineBoardY + 164);
+  ctx.fillText("의심되면 다른 칸부터 열어도 됩니다.", panelX + 18, mineBoardY + 188);
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("마우스로 칸을 누르거나 방향키로 옮겨 Space를 누릅니다. 숫자를 보고 천천히 열면 됩니다.", 34, canvasHeight - 20);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 164);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("칸을 열고 숫자를 봅니다. 숫자는 가까운 위험 칸 수입니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 바로 열거나 방향키로 옮겨 Space를 누르세요.", canvasWidth / 2, 228);
   }
 }
 
@@ -1571,6 +1894,16 @@ export function ArcadeGameEngine({
         syncView();
         return;
       }
+      if (content.arcade.variant === "minesweeper") {
+        if (action === "left") moveMineCursor(state, -1);
+        if (action === "right") moveMineCursor(state, 1);
+        if (action === "up") moveMineCursor(state, -mineColumns);
+        if (action === "down") moveMineCursor(state, mineColumns);
+        if (action === "main") revealMineCell(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -1666,6 +1999,15 @@ export function ArcadeGameEngine({
           if (event.code === "Space" || event.code === "Enter") performAction("main");
           return;
         }
+        if (content.arcade.variant === "minesweeper") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
         keys.add(event.code);
         if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
@@ -1729,6 +2071,17 @@ export function ArcadeGameEngine({
         } else {
           return;
         }
+        setShareState("idle");
+        syncView();
+        return;
+      }
+
+      if (content.arcade.variant === "minesweeper") {
+        const index = mineCellIndexAt(point.x, point.y);
+        if (index < 0) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        revealMineCell(content, state, index);
         setShareState("idle");
         syncView();
       }
@@ -1798,7 +2151,9 @@ export function ArcadeGameEngine({
                 tabIndex={0}
                 onClick={handleCanvasClick}
                 aria-label={`${content.title} canvas`}
-                className={`block aspect-[12/7] w-full outline-none ${content.arcade.variant === "sum-box" || content.arcade.variant === "password" ? "cursor-pointer" : ""}`}
+                className={`block aspect-[12/7] w-full outline-none ${
+                  content.arcade.variant === "sum-box" || content.arcade.variant === "password" || content.arcade.variant === "minesweeper" ? "cursor-pointer" : ""
+                }`}
                 style={{ background: content.arcade.palette.background }}
               />
             </div>
@@ -1806,7 +2161,7 @@ export function ArcadeGameEngine({
               <p className="text-sm font-semibold">{content.arcade.goal}</p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
             </div>
-            {content.arcade.variant === "snake" || content.arcade.variant === "password" ? (
+            {content.arcade.variant === "snake" || content.arcade.variant === "password" || content.arcade.variant === "minesweeper" ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
