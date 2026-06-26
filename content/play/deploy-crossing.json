@@ -1,27 +1,27 @@
 {
   "slug": "deploy-crossing",
-  "title": "골목 횡단",
-  "description": "고전 길건너기처럼 빈틈을 보고 한 칸씩 건너는 캔버스 게임입니다. 급하게 움직이면 눈앞의 길도 놓칩니다.",
+  "title": "골목 건너기",
+  "description": "고전 길건너기처럼 차 사이 빈틈을 보고 한 칸씩 움직이는 키보드 캔버스 게임입니다. 멈출 줄 알아야 오래 갑니다.",
   "type": "arcade-game",
   "durationLabel": "70초",
   "updatedAt": "2026-06-26",
-  "shareText": "골목 횡단을 해봤다. 건널 때는 속도보다 타이밍이었다.",
+  "shareText": "골목 건너기를 해봤다. 건널 때는 속도보다 타이밍이었다.",
   "order": 14,
-  "relatedBlogSlugs": ["why-small-web-toys-return", "vercel-sitemap-canonical-log"],
+  "relatedBlogSlugs": ["why-small-web-toys-return", "small-web-games-retention"],
   "relatedPlaySlugs": ["server-room-flight", "deploy-snake"],
   "arcade": {
     "variant": "crossing",
-    "goal": "좌우로 위치를 잡고 Space로 빈틈을 건넙니다.",
-    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 건너기.",
-    "rounds": 12,
+    "goal": "아래쪽에서 출발해 차 사이 빈틈을 보고 위쪽 도착선까지 건넙니다.",
+    "controls": "키보드: 방향키 또는 WASD로 한 칸씩 이동, Space/Enter로 위로 건너기.",
+    "rounds": 21,
     "targetScore": 20,
-    "playerLabel": "발",
+    "playerLabel": "나",
     "goodLabels": ["빈칸", "틈", "초록", "쉼", "길"],
-    "badLabels": ["차", "소음", "빨강", "급함", "벽"],
+    "badLabels": ["차", "택시", "버스", "급함", "빨강"],
     "palette": { "background": "#111827", "primary": "#facc15", "accent": "#86efac", "danger": "#fb7185" }
   },
   "endings": [
-    { "id": "cross", "title": "건넜다", "description": "빈틈을 보고 움직였다. 급하지 않아서 살았다.", "minScore": 20 },
+    { "id": "cross", "title": "건넜다", "description": "빈틈을 보고 움직였다. 급하지 않아서 살았다.", "minScore": 15 },
     { "id": "curb", "title": "턱에 걸림", "description": "몇 번 멈칫했지만 큰 충돌은 피했다.", "minScore": 10 },
     { "id": "honk", "title": "빵빵거림", "description": "빨리 건너려다 타이밍을 놓쳤다.", "minScore": 0 }
   ]

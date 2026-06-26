@@ -8,6 +8,10 @@ import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-lin
 
 const canvasWidth = 720;
 const canvasHeight = 420;
+const crossingLanes = [326, 274, 222, 170, 118, 66];
+const crossingStartY = canvasHeight - 42;
+const crossingStepX = 48;
+const crossingStepY = 52;
 
 type Sprite = {
   id: number;
@@ -78,7 +82,12 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     focus: 100,
     actions: 0,
     playerX: canvasWidth / 2,
-    playerY: content.arcade.variant === "runner" || content.arcade.variant === "flight" ? canvasHeight - 92 : canvasHeight - 56,
+    playerY:
+      content.arcade.variant === "runner" || content.arcade.variant === "flight"
+        ? canvasHeight - 92
+        : content.arcade.variant === "crossing"
+          ? crossingStartY
+          : canvasHeight - 56,
     playerVy: 0,
     nextSpriteId: 1,
     spawnTimer: 0,
@@ -184,11 +193,12 @@ function spawnSprite(content: ArcadeGameContent, state: GameState) {
 }
 
 function shouldUseSideScroller(content: ArcadeGameContent) {
-  return content.arcade.variant === "runner" || content.arcade.variant === "flight" || content.arcade.variant === "crossing";
+  return content.arcade.variant === "runner" || content.arcade.variant === "flight";
 }
 
 function mainActionLabel(content: ArcadeGameContent) {
   if (shouldUseSideScroller(content)) return "점프";
+  if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
@@ -209,6 +219,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "brick-breaker") {
     updateBrickBreaker(content, state, keys, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "crossing") {
+    updateCrossing(content, state, dt);
     return;
   }
 
@@ -292,6 +307,67 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   }
 
   if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 4) {
+    state.finished = true;
+  }
+}
+
+function spawnCrossingObstacle(content: ArcadeGameContent, state: GameState) {
+  const seed = state.nextSpriteId + content.slug.length * 23;
+  const laneIndex = Math.floor(pseudoRandom(seed) * crossingLanes.length);
+  const direction = laneIndex % 2 === 0 ? -1 : 1;
+  const label = pickLabel(content.arcade.badLabels, state.nextSpriteId);
+  state.nextSpriteId += 1;
+  state.sprites.push({
+    id: state.nextSpriteId,
+    x: direction < 0 ? canvasWidth + 54 : -54,
+    y: crossingLanes[laneIndex] ?? crossingLanes[0],
+    vx: direction * (130 + pseudoRandom(seed + 1) * 105),
+    vy: 0,
+    radius: 24 + pseudoRandom(seed + 2) * 8,
+    label,
+    good: false,
+  });
+}
+
+function updateCrossing(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  state.spawnTimer -= dt;
+
+  if (state.spawnTimer <= 0) {
+    spawnCrossingObstacle(content, state);
+    state.spawnTimer = 0.38 + pseudoRandom(state.nextSpriteId + 5) * 0.24;
+  }
+
+  state.sprites = state.sprites
+    .map((sprite) => ({ ...sprite, x: sprite.x + sprite.vx * dt }))
+    .filter((sprite) => sprite.x > -90 && sprite.x < canvasWidth + 90);
+
+  for (const sprite of state.sprites) {
+    const hitPlayer = Math.abs(sprite.x - state.playerX) < sprite.radius + 18 && Math.abs(sprite.y - state.playerY) < 24;
+    if (!hitPlayer) continue;
+    state.focus = clamp(state.focus - 16, 0, 100);
+    state.score = Math.max(0, state.score - 3);
+    state.playerY = crossingStartY;
+    addHistory(state, {
+      label: sprite.label,
+      detail: "멈춰 섬",
+      score: -3,
+    });
+    break;
+  }
+
+  if (state.playerY <= crossingLanes[crossingLanes.length - 1] - 26) {
+    state.score += 5;
+    state.focus = clamp(state.focus + 5, 0, 100);
+    state.playerY = crossingStartY;
+    addHistory(state, {
+      label: "건넘",
+      detail: "빈틈을 잡음",
+      score: 5,
+    });
+  }
+
+  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
     state.finished = true;
   }
 }
@@ -396,6 +472,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "crossing") {
+    drawCrossing(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -455,6 +536,79 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(content.arcade.controls, canvasWidth / 2, 206);
     ctx.fillText("Space 또는 시작 버튼으로 바로 시작", canvasWidth / 2, 232);
+  }
+}
+
+function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "#182235";
+  ctx.fillRect(0, 42, canvasWidth, canvasHeight - 98);
+  ctx.fillStyle = "#233047";
+  ctx.fillRect(0, 0, canvasWidth, 42);
+  ctx.fillRect(0, crossingStartY - 23, canvasWidth, 58);
+
+  for (const y of crossingLanes) {
+    ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.setLineDash([16, 14]);
+    ctx.beginPath();
+    ctx.moveTo(24, y + 27);
+    ctx.lineTo(canvasWidth - 24, y + 27);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 42, canvasWidth, 4);
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("도착선", 20, 30);
+
+  for (const sprite of state.sprites) {
+    ctx.fillStyle = danger;
+    ctx.beginPath();
+    ctx.roundRect(sprite.x - sprite.radius, sprite.y - 15, sprite.radius * 2, 30, 8);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.86)";
+    ctx.beginPath();
+    ctx.arc(sprite.x + (sprite.vx < 0 ? -sprite.radius + 8 : sprite.radius - 8), sprite.y - 8, 3, 0, Math.PI * 2);
+    ctx.arc(sprite.x + (sprite.vx < 0 ? -sprite.radius + 8 : sprite.radius - 8), sprite.y + 8, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#111827";
+    ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(sprite.label.slice(0, 6), sprite.x, sprite.y + 4);
+  }
+
+  ctx.fillStyle = primary;
+  ctx.beginPath();
+  ctx.roundRect(state.playerX - 17, state.playerY - 17, 34, 34, 10);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.65)";
+  ctx.stroke();
+  ctx.fillStyle = "#111827";
+  ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(content.arcade.playerLabel.slice(0, 4), state.playerX, state.playerY + 4);
+
+  ctx.fillStyle = "rgba(255,255,255,0.76)";
+  ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`건넌 횟수 ${Math.floor(state.score / 5)}`, 24, canvasHeight - 18);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.68)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "700 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 168);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("방향키로 한 칸씩 움직이고, 빈틈이 보이면 위로 건넙니다.", canvasWidth / 2, 204);
+    ctx.fillText("멈춰도 됩니다. 이 게임은 급하게 가면 더 자주 막힙니다.", canvasWidth / 2, 230);
   }
 }
 
@@ -551,15 +705,23 @@ export function ArcadeGameEngine({
   }, [content, syncView]);
 
   const performAction = React.useCallback(
-    (action: "left" | "right" | "main") => {
+    (action: "left" | "right" | "main" | "down") => {
       const state = stateRef.current;
       if (state.finished) return;
       state.started = true;
       state.lastFrame = performance.now();
-      if (action === "left") state.playerX = clamp(state.playerX - 52, 34, canvasWidth - 34);
-      if (action === "right") state.playerX = clamp(state.playerX + 52, 34, canvasWidth - 34);
+      const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
+      if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
+      if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
+      if (content.arcade.variant === "crossing" && action === "down") {
+        state.actions += 1;
+        state.playerY = clamp(state.playerY + crossingStepY, crossingLanes[crossingLanes.length - 1] - 36, crossingStartY);
+      }
       if (action === "main") {
-        if (content.arcade.variant === "brick-breaker") {
+        if (content.arcade.variant === "crossing") {
+          state.actions += 1;
+          state.playerY = clamp(state.playerY - crossingStepY, crossingLanes[crossingLanes.length - 1] - 36, crossingStartY);
+        } else if (content.arcade.variant === "brick-breaker") {
           if (!state.brickLaunched) {
             state.brickLaunched = true;
             state.brickBallVx = state.playerX < canvasWidth / 2 ? 185 : -185;
@@ -592,6 +754,14 @@ export function ArcadeGameEngine({
     function keyDown(event: KeyboardEvent) {
       if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code)) {
         event.preventDefault();
+        if (content.arcade.variant === "crossing") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "ArrowUp" || event.code === "KeyW" || event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
         keys.add(event.code);
         if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
@@ -605,7 +775,7 @@ export function ArcadeGameEngine({
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [performAction]);
+  }, [content, performAction]);
 
   React.useEffect(() => {
     let frame = 0;
