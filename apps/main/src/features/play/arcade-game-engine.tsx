@@ -12,6 +12,13 @@ const crossingLanes = [326, 274, 222, 170, 118, 66];
 const crossingStartY = canvasHeight - 42;
 const crossingStepX = 48;
 const crossingStepY = 52;
+const sumBoxColumns = 5;
+const sumBoxRows = 4;
+const sumBoxGap = 12;
+const sumBoxTileWidth = (canvasWidth - 96 - sumBoxGap * (sumBoxColumns - 1)) / sumBoxColumns;
+const sumBoxTileHeight = 54;
+const sumBoxStartX = 48;
+const sumBoxStartY = 82;
 
 type Sprite = {
   id: number;
@@ -41,6 +48,18 @@ type Brick = {
   alive: boolean;
 };
 
+type SumTile = {
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  value: number;
+  label: string;
+  selected: boolean;
+  cleared: boolean;
+};
+
 type HistoryItem = {
   label: string;
   detail: string;
@@ -62,6 +81,8 @@ type GameState = {
   bullets: Bullet[];
   sprites: Sprite[];
   bricks: Brick[];
+  sumTiles: SumTile[];
+  sumCursor: number;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -94,6 +115,8 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     bullets: [],
     sprites: [],
     bricks: makeBricks(content),
+    sumTiles: makeSumTiles(content),
+    sumCursor: 0,
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -102,6 +125,30 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     history: [],
     lastFrame: null,
   };
+}
+
+function makeSumTiles(content: ArcadeGameContent): SumTile[] {
+  if (content.arcade.variant !== "sum-box") return [];
+  const values = [1, 9, 2, 8, 3, 7, 4, 6, 5, 5, 1, 4, 2, 6, 3, 7, 8, 5, 9, 5];
+  return Array.from({ length: sumBoxColumns * sumBoxRows }, (_, index) => {
+    const column = index % sumBoxColumns;
+    const row = Math.floor(index / sumBoxColumns);
+    const value = values[index % values.length] ?? 5;
+    const labelSource = Number.isFinite(Number(content.arcade.goodLabels[index % content.arcade.goodLabels.length]))
+      ? `${value}`
+      : pickLabel(content.arcade.goodLabels, index);
+    return {
+      id: index,
+      x: sumBoxStartX + column * (sumBoxTileWidth + sumBoxGap),
+      y: sumBoxStartY + row * (sumBoxTileHeight + sumBoxGap),
+      width: sumBoxTileWidth,
+      height: sumBoxTileHeight,
+      value,
+      label: labelSource,
+      selected: false,
+      cleared: false,
+    };
+  });
 }
 
 function makeBricks(content: ArcadeGameContent): Brick[] {
@@ -160,6 +207,50 @@ function addHistory(state: GameState, item: HistoryItem) {
   state.history = [item, ...state.history].slice(0, 8);
 }
 
+function selectedSum(state: GameState) {
+  return state.sumTiles.reduce((sum, tile) => sum + (!tile.cleared && tile.selected ? tile.value : 0), 0);
+}
+
+function selectedSumTiles(state: GameState) {
+  return state.sumTiles.filter((tile) => !tile.cleared && tile.selected);
+}
+
+function moveSumCursor(state: GameState, delta: number) {
+  const tileCount = state.sumTiles.length;
+  if (!tileCount || state.sumTiles.every((tile) => tile.cleared)) return;
+  for (let step = 1; step <= tileCount; step += 1) {
+    const next = (state.sumCursor + delta * step + tileCount * step) % tileCount;
+    if (!state.sumTiles[next]?.cleared) {
+      state.sumCursor = next;
+      return;
+    }
+  }
+}
+
+function moveSumCursorToComplement(state: GameState) {
+  const sum = selectedSum(state);
+  const target = 10 - sum;
+  if (target <= 0) {
+    moveSumCursor(state, 1);
+    return;
+  }
+  const complement = state.sumTiles.findIndex((tile, index) => index !== state.sumCursor && !tile.cleared && !tile.selected && tile.value === target);
+  if (complement >= 0) {
+    state.sumCursor = complement;
+    return;
+  }
+  moveSumCursor(state, 1);
+}
+
+function clearSelectedSumTiles(state: GameState) {
+  const selected = selectedSumTiles(state);
+  for (const tile of selected) {
+    tile.selected = false;
+    tile.cleared = true;
+  }
+  return selected;
+}
+
 function spawnSprite(content: ArcadeGameContent, state: GameState) {
   const seed = state.nextSpriteId + content.slug.length * 17;
   const good = pseudoRandom(seed) > 0.34;
@@ -200,6 +291,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (shouldUseSideScroller(content)) return "점프";
   if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
+  if (content.arcade.variant === "sum-box") return "고르기";
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
@@ -224,6 +316,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "crossing") {
     updateCrossing(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "sum-box") {
+    updateSumBox(content, state, dt);
     return;
   }
 
@@ -309,6 +406,61 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 4) {
     state.finished = true;
   }
+}
+
+function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  if (
+    state.score >= content.arcade.targetScore ||
+    state.sumTiles.every((tile) => tile.cleared) ||
+    state.actions >= content.arcade.rounds ||
+    state.focus <= 0 ||
+    state.elapsed >= content.arcade.rounds * 8
+  ) {
+    state.finished = true;
+  }
+}
+
+function chooseSumTile(content: ArcadeGameContent, state: GameState) {
+  const tile = state.sumTiles[state.sumCursor];
+  if (!tile || tile.cleared) {
+    moveSumCursor(state, 1);
+    return;
+  }
+
+  tile.selected = !tile.selected;
+  const sum = selectedSum(state);
+  if (sum === 10) {
+    const cleared = clearSelectedSumTiles(state);
+    state.actions += 1;
+    const bonus = cleared.length >= 3 ? 1 : 0;
+    state.score = Math.max(0, state.score + 5 + bonus);
+    state.focus = clamp(state.focus + 4, 0, 100);
+    addHistory(state, {
+      label: cleared.map((item) => item.value).join(" + "),
+      detail: "딱 10",
+      score: 5 + bonus,
+    });
+    moveSumCursor(state, 1);
+    if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
+    return;
+  }
+
+  if (sum > 10) {
+    for (const item of state.sumTiles) item.selected = false;
+    state.actions += 1;
+    state.score = Math.max(0, state.score - 1);
+    state.focus = clamp(state.focus - 7, 0, 100);
+    addHistory(state, {
+      label: `${sum}`,
+      detail: "넘침",
+      score: -1,
+    });
+    moveSumCursor(state, 1);
+    return;
+  }
+
+  moveSumCursorToComplement(state);
 }
 
 function spawnCrossingObstacle(content: ArcadeGameContent, state: GameState) {
@@ -477,6 +629,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "sum-box") {
+    drawSumBox(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -536,6 +693,85 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(content.arcade.controls, canvasWidth / 2, 206);
     ctx.fillText("Space 또는 시작 버튼으로 바로 시작", canvasWidth / 2, 232);
+  }
+}
+
+function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  const currentSum = selectedSum(state);
+  const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  for (let x = 32; x < canvasWidth; x += 48) {
+    ctx.fillRect(x, 0, 1, canvasHeight);
+  }
+  for (let y = 52; y < canvasHeight; y += 48) {
+    ctx.fillRect(0, y, canvasWidth, 1);
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`합 ${currentSum} / 10`, 34, 42);
+  ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.66)";
+  ctx.fillText(`사라진 칸 ${cleared} / ${state.sumTiles.length}`, 166, 42);
+
+  for (const tile of state.sumTiles) {
+    const isCursor = tile.id === state.sumCursor;
+    ctx.globalAlpha = tile.cleared ? 0.2 : 1;
+    ctx.fillStyle = tile.cleared ? "rgba(255,255,255,0.08)" : tile.selected ? accent : "rgba(255,255,255,0.12)";
+    ctx.beginPath();
+    ctx.roundRect(tile.x, tile.y, tile.width, tile.height, 10);
+    ctx.fill();
+    ctx.strokeStyle = tile.selected ? "rgba(255,255,255,0.74)" : "rgba(255,255,255,0.22)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    if (isCursor && !tile.cleared) {
+      ctx.strokeStyle = primary;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(tile.x - 4, tile.y - 4, tile.width + 8, tile.height + 8, 13);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = tile.selected ? "#111827" : "#f8fafc";
+    ctx.font = "900 25px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`${tile.value}`, tile.x + tile.width / 2, tile.y + 32);
+    ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillStyle = tile.selected ? "rgba(17,24,39,0.72)" : "rgba(248,250,252,0.72)";
+    ctx.fillText(tile.label.slice(0, 6), tile.x + tile.width / 2, tile.y + 47);
+    ctx.globalAlpha = 1;
+  }
+
+  const barWidth = clamp((currentSum / 10) * (canvasWidth - 68), 0, canvasWidth - 68);
+  ctx.fillStyle = "rgba(255,255,255,0.12)";
+  ctx.beginPath();
+  ctx.roundRect(34, canvasHeight - 50, canvasWidth - 68, 12, 6);
+  ctx.fill();
+  ctx.fillStyle = currentSum > 10 ? danger : currentSum === 10 ? accent : primary;
+  ctx.beginPath();
+  ctx.roundRect(34, canvasHeight - 50, barWidth, 12, 6);
+  ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,0.76)";
+  ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("방향키로 칸을 옮기고 Space로 고릅니다. 합 10을 만들면 칸이 사라집니다.", 34, canvasHeight - 20);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.7)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 164);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("방향키로 칸을 옮기고 Space로 숫자를 고릅니다.", canvasWidth / 2, 202);
+    ctx.fillText("합 10을 만들면 사라집니다. 많이 누르는 것보다 딱 맞추는 쪽입니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -705,11 +941,21 @@ export function ArcadeGameEngine({
   }, [content, syncView]);
 
   const performAction = React.useCallback(
-    (action: "left" | "right" | "main" | "down") => {
+    (action: "left" | "right" | "main" | "up" | "down") => {
       const state = stateRef.current;
       if (state.finished) return;
       state.started = true;
       state.lastFrame = performance.now();
+      if (content.arcade.variant === "sum-box") {
+        if (action === "left") moveSumCursor(state, -1);
+        if (action === "right") moveSumCursor(state, 1);
+        if (action === "up") moveSumCursor(state, -sumBoxColumns);
+        if (action === "down") moveSumCursor(state, sumBoxColumns);
+        if (action === "main") chooseSumTile(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -760,6 +1006,15 @@ export function ArcadeGameEngine({
           if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
           if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
           if (event.code === "ArrowUp" || event.code === "KeyW" || event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
+        if (content.arcade.variant === "sum-box") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
           return;
         }
         keys.add(event.code);
