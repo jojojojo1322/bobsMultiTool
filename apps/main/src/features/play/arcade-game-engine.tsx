@@ -2465,6 +2465,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const blockedSum = blockedTile ? shownSum + blockedTile.value : shownSum;
   const complementTileIds = selectionSummary.complementTileIds;
   const comboHint = sumBoxCombinationHint(state);
+  const hintTiles = !dragging && !shownTiles.length ? comboHint : [];
+  const hintTileIds = new Set(hintTiles.map((tile) => tile.id));
   const comboHintLabel = comboHint.length
     ? comboHint
         .map((tile) => tile.value)
@@ -2538,10 +2540,29 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ? `${shownTiles.map((tile) => tile.value).join(" + ") || "0"} + ${blockedTile.value} = ${blockedSum} · 넘침`
       : shownTiles.length
         ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}`
-        : "마우스로 쓸어 담기",
+        : hintTiles.length
+          ? "노란 힌트 사과를 그대로 쓸면 10"
+          : "마우스로 쓸어 담기",
     42,
     68,
   );
+
+  if (hintTiles.length > 1) {
+    ctx.strokeStyle = "rgba(250,204,21,0.42)";
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.setLineDash([12, 10]);
+    ctx.beginPath();
+    hintTiles.forEach((tile, index) => {
+      const x = tile.x + tile.width / 2;
+      const y = tile.y + tile.height / 2;
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
 
   if (dragging && dragTiles.length > 1) {
     ctx.strokeStyle = shownSum === 10 ? "rgba(251,191,36,0.68)" : shownSum > 10 ? "rgba(251,113,133,0.58)" : "rgba(255,255,255,0.38)";
@@ -2580,6 +2601,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     const isActive = dragging ? dragTileIds.has(tile.id) : tile.selected;
     const isComplement = complementTileIds.has(tile.id);
     const isBlocked = blockedTile?.id === tile.id;
+    const isHint = hintTileIds.has(tile.id);
     const tileCenterX = tile.x + tile.width / 2;
     const tileCenterY = tile.y + tile.height / 2;
     ctx.globalAlpha = tile.cleared ? 0.2 : 1;
@@ -2595,6 +2617,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     } else if (isActive) {
       tileGradient.addColorStop(0, "rgba(254,243,199,0.96)");
       tileGradient.addColorStop(1, accent);
+    } else if (isHint) {
+      tileGradient.addColorStop(0, "rgba(254,249,195,0.7)");
+      tileGradient.addColorStop(1, "rgba(250,204,21,0.18)");
     } else {
       tileGradient.addColorStop(0, "rgba(255,255,255,0.2)");
       tileGradient.addColorStop(1, "rgba(255,255,255,0.075)");
@@ -2603,8 +2628,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.beginPath();
     ctx.roundRect(tile.x, tile.y, tile.width, tile.height, 16);
     ctx.fill();
-    ctx.strokeStyle = isActive ? "rgba(255,255,255,0.9)" : isBlocked ? "rgba(251,113,133,0.9)" : isComplement ? "rgba(250,204,21,0.62)" : "rgba(255,255,255,0.22)";
-    ctx.lineWidth = isActive || isComplement || isBlocked ? 2 : 1;
+    ctx.strokeStyle = isActive
+      ? "rgba(255,255,255,0.9)"
+      : isBlocked
+        ? "rgba(251,113,133,0.9)"
+        : isComplement || isHint
+          ? "rgba(250,204,21,0.72)"
+          : "rgba(255,255,255,0.22)";
+    ctx.lineWidth = isActive || isComplement || isBlocked || isHint ? 2 : 1;
     ctx.stroke();
 
     if (isCursor && !tile.cleared) {
@@ -2621,6 +2652,22 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.beginPath();
       ctx.roundRect(tile.x - 4, tile.y - 4, tile.width + 8, tile.height + 8, 19);
       ctx.stroke();
+    }
+
+    if (isHint) {
+      ctx.strokeStyle = "rgba(250,204,21,0.38)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(tile.x - 4, tile.y - 4, tile.width + 8, tile.height + 8, 19);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(250,204,21,0.94)";
+      ctx.beginPath();
+      ctx.roundRect(tile.x + tile.width - 35, tile.y + 7, 27, 17, 8);
+      ctx.fill();
+      ctx.fillStyle = "#111827";
+      ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("힌트", tile.x + tile.width - 21.5, tile.y + 19);
     }
 
     if (isBlocked) {
@@ -2713,7 +2760,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스로 사과를 쓸어 합 10을 만들면 사라집니다. 방향키로 옮기고 Space로 골라도 됩니다.", 34, canvasHeight - 20);
+  ctx.fillText("노란 힌트는 남은 합 10 한 조합입니다. 마우스로 쓸거나 방향키와 Space로 골라도 됩니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -2723,8 +2770,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("마우스로 사과를 쓸어 담습니다.", canvasWidth / 2, 202);
-    ctx.fillText("합 10이면 사라집니다. 1분 안에 많이 비우면 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText("마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.", canvasWidth / 2, 202);
+    ctx.fillText("합 10이면 사라집니다. 남은 시간 안에 많이 비우면 됩니다.", canvasWidth / 2, 228);
   }
 }
 
