@@ -1,5 +1,5 @@
 import type { ArcadeGameContent } from "@/features/content/types";
-import { clamp, pickLabel, pseudoRandom } from "@/features/play/arcade-engine-utils";
+import { clamp, pickLabel, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
 
 const snakeCanvasWidth = 720;
 
@@ -88,6 +88,31 @@ export function snakeDirectionFromAction(action: "left" | "right" | "main" | "up
   if (action === "left") return "left";
   if (action === "right") return "right";
   return null;
+}
+
+export function pointInSnakeBoard(point: CanvasPoint) {
+  return (
+    point.x >= snakeBoardX - 16 &&
+    point.x <= snakeBoardX + snakeColumns * snakeCellSize + 16 &&
+    point.y >= snakeBoardY - 16 &&
+    point.y <= snakeBoardY + snakeRows * snakeCellSize + 16
+  );
+}
+
+export function snakeDirectionFromDrag(start: CanvasPoint, current: CanvasPoint): SnakeDirection | null {
+  const dx = current.x - start.x;
+  const dy = current.y - start.y;
+  if (Math.hypot(dx, dy) < 18) return null;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx < 0 ? "left" : "right";
+  return dy < 0 ? "up" : "down";
+}
+
+export function snakeDirectionFromPoint(state: Pick<SnakePlayState, "snake">, point: CanvasPoint): SnakeDirection | null {
+  const head = state.snake[0];
+  if (!head) return null;
+  const headCenterX = snakeBoardX + head.x * snakeCellSize + snakeCellSize / 2;
+  const headCenterY = snakeBoardY + head.y * snakeCellSize + snakeCellSize / 2;
+  return snakeDirectionFromDrag({ x: headCenterX, y: headCenterY }, point);
 }
 
 export function setSnakeDirection(state: Pick<SnakePlayState, "snakeDirection" | "snakeNextDirection">, direction: SnakeDirection) {

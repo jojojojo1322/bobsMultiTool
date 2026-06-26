@@ -147,8 +147,11 @@ import {
   snakeBoardY,
   snakeCellSize,
   snakeColumns,
+  snakeDirectionFromDrag,
   snakeDirectionFromAction,
+  snakeDirectionFromPoint,
   snakeMoveInterval,
+  pointInSnakeBoard,
   snakeRows,
   updateSnake,
   type SnakeCell,
@@ -251,6 +254,7 @@ type GameState = {
   snakeNextDirection: SnakeDirection;
   snakeMoveTimer: number;
   snakeFood: SnakeFood;
+  snakeDragStart: CanvasPoint | null;
   passwordGuess: number[];
   passwordSecret: number[];
   passwordCursor: number;
@@ -326,6 +330,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     snakeNextDirection: "right",
     snakeMoveTimer: snakeMoveInterval,
     snakeFood: makeSnakeFood(content, 1, snake),
+    snakeDragStart: null,
     passwordGuess: [1, 2, 3],
     passwordSecret: makePasswordSecret(content),
     passwordCursor: 0,
@@ -1868,7 +1873,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("방향키나 WASD로 방향을 틉니다. 벽과 꼬리는 피하고, 사과는 먹으면 됩니다.", 34, canvasHeight - 20);
+  ctx.fillText("방향키/WASD 또는 캔버스 드래그로 방향을 틉니다. 탭하면 머리 기준으로 가까운 방향을 잡습니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -1878,8 +1883,8 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("방향키나 WASD로 방향을 틀고 사과를 먹습니다.", canvasWidth / 2, 204);
-    ctx.fillText("욕심내서 꺾으면 바로 꼬입니다. 천천히 가도 됩니다.", canvasWidth / 2, 230);
+    ctx.fillText("방향키/WASD나 캔버스 드래그로 방향을 틀고 사과를 먹습니다.", canvasWidth / 2, 204);
+    ctx.fillText("손가락으로 쓸어도 됩니다. 욕심내서 꺾으면 바로 꼬입니다.", canvasWidth / 2, 230);
   }
 }
 
@@ -3304,6 +3309,7 @@ export function ArcadeGameEngine({
   const handleCanvasPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       if (
+        content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "stacker" &&
@@ -3316,6 +3322,21 @@ export function ArcadeGameEngine({
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+      if (content.arcade.variant === "snake") {
+        if (!pointInSnakeBoard(point)) return;
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.snakeDragStart = point;
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "brick-breaker") {
         event.preventDefault();
         try {
@@ -3396,6 +3417,7 @@ export function ArcadeGameEngine({
   const handleCanvasPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       if (
+        content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "stacker" &&
@@ -3408,6 +3430,18 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
+      if (content.arcade.variant === "snake") {
+        if ((event.buttons === 0 && event.pointerType !== "touch") || !state.snakeDragStart) return;
+        const direction = snakeDirectionFromDrag(state.snakeDragStart, point);
+        if (!direction) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        setSnakeDirection(state, direction);
+        state.snakeDragStart = point;
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "brick-breaker") {
         if (event.buttons === 0) return;
         state.started = true;
@@ -3445,12 +3479,13 @@ export function ArcadeGameEngine({
       const target = gemTargetFromDrag(state, point);
       if (target >= 0 && state.gemTiles[target]) state.gemCursor = target;
     },
-    [content.arcade.variant],
+    [content.arcade.variant, syncView],
   );
 
   const handleCanvasPointerUp = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       if (
+        content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "stacker" &&
@@ -3472,6 +3507,19 @@ export function ArcadeGameEngine({
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
+      }
+      if (content.arcade.variant === "snake") {
+        const direction = state.snakeDragStart ? snakeDirectionFromDrag(state.snakeDragStart, point) : snakeDirectionFromPoint(state, point);
+        const tapDirection = direction ?? snakeDirectionFromPoint(state, point);
+        state.snakeDragStart = null;
+        if (tapDirection) {
+          state.started = true;
+          state.lastFrame = performance.now();
+          setSnakeDirection(state, tapDirection);
+        }
+        setShareState("idle");
+        syncView();
+        return;
       }
       if (content.arcade.variant === "brick-breaker") {
         moveBrickPaddleTo(state, point.x);
@@ -3536,6 +3584,7 @@ export function ArcadeGameEngine({
   const handleCanvasPointerCancel = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       if (
+        content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "stacker" &&
@@ -3545,6 +3594,7 @@ export function ArcadeGameEngine({
         return;
       const state = stateRef.current;
       keysRef.current.delete("Space");
+      state.snakeDragStart = null;
       clearSumDrag(state);
       clearGemDrag(state);
       try {
@@ -3627,6 +3677,7 @@ export function ArcadeGameEngine({
                 aria-label={`${content.title} canvas`}
                 className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
+                  content.arcade.variant === "snake" ||
                   content.arcade.variant === "password" ||
                   content.arcade.variant === "minesweeper" ||
                   content.arcade.variant === "match-three" ||
