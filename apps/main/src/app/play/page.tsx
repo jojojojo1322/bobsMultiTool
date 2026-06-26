@@ -16,7 +16,7 @@ const playShareImage = openGraphImage({ kind: "play", title: playShareTitle });
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
-  description: "카드 하나 골라 바로 시작하는 bobob.app의 작은 웹게임 목록입니다. 마우스와 키보드로 짧게 한 판 하고 결과를 봅니다.",
+  description: "카드 하나 골라 바로 시작하는 bobob.app의 작은 웹게임 목록입니다. 마우스로 쓸고, 방향키로 움직이고, 짧게 점수만 봅니다.",
   keywords: playIndexKeywords(playContentsForMetadata),
   alternates: {
     canonical: "https://www.bobob.app/play",
@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/play",
     siteName: "bobob.app",
     title: "Play - bobob.app",
-    description: "카드 하나 골라 바로 시작합니다. 마우스로 누르고, 방향키로 움직이고, 끝나면 점수만 보면 됩니다.",
+    description: "카드 하나 골라 바로 시작합니다. 마우스로 쓸고, 방향키로 움직이고, 끝나면 점수만 보면 됩니다.",
     images: [playShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - bobob.app",
-    description: "카드 하나 골라 바로 시작합니다. 마우스와 키보드로 짧게 한 판씩 해봅니다.",
+    description: "카드 하나 골라 바로 시작합니다. 마우스와 키보드로 짧게 한 판씩 합니다.",
     images: [shareImageUrl({ kind: "play", title: playShareTitle })],
   },
 };
@@ -51,28 +51,28 @@ export default function PlayIndexPage() {
           <Badge>Play</Badge>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">심심하면 한 판</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            카드 하나 골라 바로 시작하면 됩니다. 마우스로 누르고, 방향키로 움직이고, 끝나면 점수만 봅니다.
+            카드 하나 누르면 바로 시작합니다. 마우스로 쓸고, 방향키로 움직이고, 끝나면 점수만 보면 됩니다. 재미없으면 그냥 나가도 되고요.
           </p>
         </div>
       </section>
       <section className="mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6 grid gap-4 rounded-md border bg-muted/20 p-4 text-sm leading-7 text-muted-foreground md:grid-cols-3" data-play-format-note>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">누르면 시작</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">누르면 바로</h2>
             <p className="mt-2">
-              규칙은 화면 안에 짧게 나옵니다. 읽다가 지치게 만들 생각은 없습니다.
+              대부분 첫 화면에서 규칙이 끝납니다. 길게 읽기 싫을 때 누르면 됩니다.
             </p>
           </div>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">손맛 쪽으로</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">손으로 하기</h2>
             <p className="mt-2">
-              클릭, 드래그, 방향키, 스페이스처럼 바로 알아먹는 조작을 우선합니다.
+              마우스로 쓸거나 키보드로 움직입니다. 읽는 것보다 손이 먼저 가는 쪽입니다.
             </p>
           </div>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">끝나면 짧게</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">점수만 보기</h2>
             <p className="mt-2">
-              결과는 점수와 한 줄이면 충분합니다. 무슨 대단한 검사처럼 굴지는 않습니다.
+              끝나면 점수와 한 줄만 봅니다. 거창한 성향 분석 같은 건 없습니다.
             </p>
           </div>
         </div>
@@ -96,7 +96,7 @@ export default function PlayIndexPage() {
                           ? `${content.arcade.rounds}번 조작`
                           : `${content.items.length}개 분류`}
                   </Badge>
-                  <Badge>{content.type === "arcade-game" ? "아케이드 게임" : content.type === "tap-game" ? "탭 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 시뮬레이션"}</Badge>
+                  <Badge>{content.type === "arcade-game" ? "손으로 하는 게임" : content.type === "tap-game" ? "누르는 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 선택"}</Badge>
                 </CardContent>
               </Card>
             </Link>
