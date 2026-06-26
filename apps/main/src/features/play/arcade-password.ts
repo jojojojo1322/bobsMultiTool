@@ -233,6 +233,16 @@ export function passwordCandidateStats(attempts: PasswordAttempt[]) {
   };
 }
 
+export function passwordAttemptCandidateSummary(attempts: PasswordAttempt[], index: number) {
+  const before = passwordCandidatesForAttempts(attempts.slice(index + 1)).length;
+  const after = passwordCandidatesForAttempts(attempts.slice(index)).length;
+  return {
+    before,
+    after,
+    reduced: Math.max(0, before - after),
+  };
+}
+
 export function passwordGuessPreview(attempts: PasswordAttempt[], guess: number[] | string): PasswordGuessPreview {
   const guessText = Array.isArray(guess) ? passwordGuessText(guess) : guess;
   const candidates = passwordCandidatesForAttempts(attempts);

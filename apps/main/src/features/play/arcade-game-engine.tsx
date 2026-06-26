@@ -27,6 +27,7 @@ import {
   passwordCandidateOptionRect,
   passwordCandidateOptions,
   passwordCandidateStats,
+  passwordAttemptCandidateSummary,
   passwordGuessPreview,
   passwordDigitFromKeyboardCode,
   passwordDigitCount,
@@ -2517,7 +2518,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillText("힌트 기록", historyX, historyY - 18);
   ctx.font = "650 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.56)";
-  ctx.fillText("자리 / 숫자", historyX + 70, historyY - 18);
+  ctx.fillText("자리 / 숫자 / 후보", historyX + 58, historyY - 18);
 
   const attempts = state.passwordAttempts.slice(0, 5);
   if (!attempts.length) {
@@ -2533,6 +2534,12 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   attempts.forEach((attempt, index) => {
     const y = historyY + index * 38;
     const issueLabel = attempt.issue === "duplicate" ? "중복" : attempt.issue === "contradiction" ? "충돌" : null;
+    const candidateSummary = passwordAttemptCandidateSummary(state.passwordAttempts, index);
+    const candidateLine = issueLabel
+      ? attempt.hint
+      : candidateSummary.reduced
+        ? `후보 ${candidateSummary.before}→${candidateSummary.after}`
+        : `후보 ${candidateSummary.after} 유지`;
     ctx.fillStyle = attempt.repeated || attempt.issue ? "rgba(251,113,133,0.18)" : "rgba(255,255,255,0.12)";
     ctx.beginPath();
     ctx.roundRect(historyX, y, historyWidth, 32, 9);
@@ -2545,14 +2552,19 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.fillText(issueLabel ?? `${attempt.exact}자리`, historyX + 62, y + 20);
     ctx.fillStyle = attempt.near ? accent : "rgba(255,255,255,0.56)";
     ctx.fillText(issueLabel ? "무효" : `${attempt.near}숫자`, historyX + 110, y + 20);
+    ctx.textAlign = "right";
+    ctx.fillStyle = candidateSummary.after <= 12 && !issueLabel ? accent : "rgba(255,255,255,0.62)";
+    ctx.font = "850 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillText(issueLabel ? "무효" : `${candidateSummary.after}`, historyX + historyWidth - 10, y + 20);
+    ctx.textAlign = "left";
     ctx.fillStyle = "rgba(255,255,255,0.56)";
     ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(attempt.hint.slice(0, 14), historyX + 12, y + 30);
+    ctx.fillText(candidateLine.slice(0, 20), historyX + 12, y + 30);
   });
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자키·R 추천 후보·Space/Enter 확인", 34, passwordKeypadY - 4);
+  ctx.fillText("숫자키·후보칩·R 추천·Space/Enter 확인", 34, passwordKeypadY - 4);
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;
