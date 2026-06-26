@@ -1,13 +1,13 @@
 {
   "slug": "ten-box-rush",
   "title": "사과 10 맞추기",
-  "description": "숫자가 적힌 사과를 마우스로 쓸어 합 10을 만들면 사라집니다. 남은 10 힌트를 보며 1분 동안 빈칸을 최대한 많이 만듭니다.",
+  "description": "숫자가 적힌 사과를 마우스로 쓸어 합 10을 만들면 사라집니다. 넘치는 드래그는 바로 표시되고, 남은 10 힌트를 보며 1분 동안 빈칸을 최대한 많이 만듭니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-27",
   "shareText": "사과 10 맞추기를 해봤다. 합 10을 놓치면 괜히 억울하다.",
   "order": 8,
-  "relatedBlogSlugs": ["sum-box-visible-ten-hint-note", "drag-feedback-small-game-note", "small-web-games-retention", "tiny-web-things"],
+  "relatedBlogSlugs": ["sum-box-overflow-drag-note", "sum-box-visible-ten-hint-note", "drag-feedback-small-game-note", "small-web-games-retention", "tiny-web-things"],
   "relatedPlaySlugs": ["prompt-sum-box", "deploy-10-box", "password-lock"],
   "arcade": {
     "variant": "sum-box",

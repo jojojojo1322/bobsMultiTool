@@ -3506,12 +3506,13 @@ export function ArcadeGameEngine({
         const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
         const dragged = state.sumDragMoved || movedDistance > 5;
         const draggedTiles = dragged ? sumDragTiles(state) : [];
+        const blockedTile = state.sumDragBlockedTileId !== null ? state.sumTiles[state.sumDragBlockedTileId] : null;
         const fallbackPoint = state.sumDragStart;
         const clickedIndex = sumTileIndexAt(state, point.x, point.y);
         const fallbackIndex = clickedIndex >= 0 ? clickedIndex : sumTileIndexAt(state, fallbackPoint.x, fallbackPoint.y);
         clearSumDrag(state);
         if (dragged) {
-          commitDraggedSumTiles(content, state, draggedTiles);
+          commitDraggedSumTiles(content, state, draggedTiles, blockedTile);
         } else if (fallbackIndex >= 0) {
           state.sumCursor = fallbackIndex;
           chooseSumTile(content, state);

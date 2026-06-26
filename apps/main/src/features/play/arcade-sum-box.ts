@@ -169,7 +169,7 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
   moveSumCursorToComplement(state);
 }
 
-export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxPlayState, tiles: SumTile[]) {
+export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxPlayState, tiles: SumTile[], blockedTile?: SumTile | null) {
   const activeTiles = tiles.filter((tile) => !tile.cleared);
   if (!activeTiles.length) return;
 
@@ -177,6 +177,23 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
   for (const tile of activeTiles) tile.selected = true;
 
   const sum = sumTilesTotal(activeTiles);
+  if (blockedTile && !blockedTile.cleared && !activeTiles.some((tile) => tile.id === blockedTile.id)) {
+    const attemptedTiles = [...activeTiles, blockedTile];
+    const attemptedSum = sumTilesTotal(attemptedTiles);
+    for (const tile of state.sumTiles) tile.selected = false;
+    state.actions += 1;
+    state.score = Math.max(0, state.score - 1);
+    state.focus = clamp(state.focus - 6, 0, 100);
+    rememberSumHistory(state, {
+      label: attemptedTiles.map((item) => item.value).join(" + "),
+      detail: `${attemptedSum - 10} 넘침`,
+      score: -1,
+    });
+    moveSumCursor(state, 1);
+    if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
+    return;
+  }
+
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
     state.actions += 1;
