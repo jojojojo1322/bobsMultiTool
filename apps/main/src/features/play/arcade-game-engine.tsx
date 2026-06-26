@@ -52,6 +52,14 @@ const mineCellSize = 38;
 const mineGap = 4;
 const mineBoardX = 54;
 const mineBoardY = 74;
+const stackerBoardX = 96;
+const stackerBoardY = 48;
+const stackerBoardWidth = 528;
+const stackerBoardHeight = 322;
+const stackerBlockHeight = 26;
+const stackerBaseWidth = 216;
+const stackerBaseY = stackerBoardY + stackerBoardHeight - stackerBlockHeight;
+const stackerMinOverlap = 18;
 
 type Sprite = {
   id: number;
@@ -131,6 +139,16 @@ type MineCell = {
   revealed: boolean;
 };
 
+type StackerBlock = {
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  label: string;
+  quality: "base" | "perfect" | "solid" | "thin" | "miss";
+};
+
 type HistoryItem = {
   label: string;
   detail: string;
@@ -169,6 +187,13 @@ type GameState = {
   gemCombo: number;
   mineCells: MineCell[];
   mineCursor: number;
+  stackerBlocks: StackerBlock[];
+  stackerActiveX: number;
+  stackerActiveY: number;
+  stackerActiveWidth: number;
+  stackerDirection: number;
+  stackerSpeed: number;
+  stackerLayer: number;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -219,6 +244,13 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     gemCombo: 0,
     mineCells: makeMineCells(content),
     mineCursor: 0,
+    stackerBlocks: makeStackerBlocks(content),
+    stackerActiveX: stackerBoardX + 4,
+    stackerActiveY: stackerBaseY - stackerBlockHeight,
+    stackerActiveWidth: stackerBaseWidth,
+    stackerDirection: 1,
+    stackerSpeed: 168,
+    stackerLayer: 0,
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -227,6 +259,21 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     history: [],
     lastFrame: null,
   };
+}
+
+function makeStackerBlocks(content: ArcadeGameContent): StackerBlock[] {
+  if (content.arcade.variant !== "stacker") return [];
+  return [
+    {
+      id: 0,
+      x: canvasWidth / 2 - stackerBaseWidth / 2,
+      y: stackerBaseY,
+      width: stackerBaseWidth,
+      height: stackerBlockHeight,
+      label: "바닥",
+      quality: "base",
+    },
+  ];
 }
 
 function makeMineCells(content: ArcadeGameContent): MineCell[] {
@@ -1031,6 +1078,95 @@ function chooseGemTile(content: ArcadeGameContent, state: GameState, index = sta
   }
 }
 
+function topStackerBlock(state: GameState) {
+  return state.stackerBlocks[state.stackerBlocks.length - 1];
+}
+
+function resetStackerActiveFromTop(state: GameState) {
+  const top = topStackerBlock(state);
+  const width = top ? top.width : stackerBaseWidth;
+  const y = top ? top.y - stackerBlockHeight : stackerBaseY - stackerBlockHeight;
+  const fromLeft = state.stackerLayer % 2 === 0;
+  state.stackerActiveWidth = width;
+  state.stackerActiveY = y;
+  state.stackerActiveX = fromLeft ? stackerBoardX : stackerBoardX + stackerBoardWidth - width;
+  state.stackerDirection = fromLeft ? 1 : -1;
+  state.stackerSpeed = 168 + Math.min(132, state.stackerLayer * 15);
+}
+
+function nudgeStacker(state: GameState, delta: number) {
+  state.stackerActiveX = clamp(state.stackerActiveX + delta, stackerBoardX, stackerBoardX + stackerBoardWidth - state.stackerActiveWidth);
+}
+
+function finishStackerIfNeeded(content: ArcadeGameContent, state: GameState) {
+  if (
+    state.score >= content.arcade.targetScore ||
+    state.actions >= content.arcade.rounds ||
+    state.focus <= 0 ||
+    state.elapsed >= content.arcade.rounds * 5 ||
+    state.stackerActiveY <= stackerBoardY + 6
+  ) {
+    state.finished = true;
+  }
+}
+
+function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
+  if (state.finished) return;
+  const previous = topStackerBlock(state);
+  if (!previous) return;
+
+  state.actions += 1;
+  const activeLeft = state.stackerActiveX;
+  const activeRight = state.stackerActiveX + state.stackerActiveWidth;
+  const overlapLeft = Math.max(activeLeft, previous.x);
+  const overlapRight = Math.min(activeRight, previous.x + previous.width);
+  const overlap = overlapRight - overlapLeft;
+  const centerGap = Math.abs(activeLeft + state.stackerActiveWidth / 2 - (previous.x + previous.width / 2));
+
+  if (overlap < stackerMinOverlap) {
+    state.score = Math.max(0, state.score - 2);
+    state.focus = clamp(state.focus - 18, 0, 100);
+    addHistory(state, {
+      label: "놓침",
+      detail: "겹친 면이 거의 없음",
+      score: -2,
+    });
+    state.stackerDirection *= -1;
+    nudgeStacker(state, state.stackerDirection * 34);
+    finishStackerIfNeeded(content, state);
+    return;
+  }
+
+  const nearPerfect = centerGap <= 7 || overlap >= previous.width * 0.96;
+  const placedWidth = nearPerfect ? Math.min(stackerBaseWidth, previous.width + 4) : overlap;
+  const placedX = nearPerfect ? previous.x - Math.max(0, placedWidth - previous.width) / 2 : overlapLeft;
+  const quality: StackerBlock["quality"] = nearPerfect ? "perfect" : overlap >= previous.width * 0.72 ? "solid" : "thin";
+  const delta = nearPerfect ? 4 : quality === "solid" ? 3 : 2;
+  const focusDelta = nearPerfect ? 5 : quality === "solid" ? 2 : -6;
+
+  const block: StackerBlock = {
+    id: state.stackerBlocks.length,
+    x: clamp(placedX, stackerBoardX, stackerBoardX + stackerBoardWidth - placedWidth),
+    y: previous.y - stackerBlockHeight,
+    width: placedWidth,
+    height: stackerBlockHeight,
+    label: nearPerfect ? "딱" : pickLabel(quality === "thin" ? content.arcade.badLabels : content.arcade.goodLabels, state.actions),
+    quality,
+  };
+  state.stackerBlocks.push(block);
+  state.stackerLayer += 1;
+  state.score = Math.max(0, state.score + delta);
+  state.focus = clamp(state.focus + focusDelta, 0, 100);
+  addHistory(state, {
+    label: block.label,
+    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "잘 겹침" : "아슬아슬",
+    score: delta,
+  });
+
+  resetStackerActiveFromTop(state);
+  finishStackerIfNeeded(content, state);
+}
+
 function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
   return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 }
@@ -1176,6 +1312,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
     return;
   }
 
+  if (content.arcade.variant === "stacker") {
+    updateStacker(content, state, keys, dt);
+    return;
+  }
+
   state.elapsed += dt;
   state.spawnTimer -= dt;
 
@@ -1297,6 +1438,24 @@ function updateGemSwap(content: ArcadeGameContent, state: GameState, dt: number)
   if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
     state.finished = true;
   }
+}
+
+function updateStacker(content: ArcadeGameContent, state: GameState, keys: Set<string>, dt: number) {
+  state.elapsed += dt;
+  const left = keys.has("ArrowLeft") || keys.has("KeyA");
+  const right = keys.has("ArrowRight") || keys.has("KeyD");
+  const steer = (right ? 1 : 0) - (left ? 1 : 0);
+  state.stackerActiveX += state.stackerDirection * state.stackerSpeed * dt + steer * 92 * dt;
+  const minX = stackerBoardX;
+  const maxX = stackerBoardX + stackerBoardWidth - state.stackerActiveWidth;
+  if (state.stackerActiveX <= minX) {
+    state.stackerActiveX = minX;
+    state.stackerDirection = 1;
+  } else if (state.stackerActiveX >= maxX) {
+    state.stackerActiveX = maxX;
+    state.stackerDirection = -1;
+  }
+  finishStackerIfNeeded(content, state);
 }
 
 function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) {
@@ -1545,6 +1704,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "stacker") {
+    drawStacker(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -1604,6 +1768,157 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(content.arcade.controls, canvasWidth / 2, 206);
     ctx.fillText("Space 또는 시작 버튼으로 바로 시작", canvasWidth / 2, 232);
+  }
+}
+
+function drawStackerBlock(ctx: CanvasRenderingContext2D, block: StackerBlock, fill: string, textFill: string) {
+  const gradient = ctx.createLinearGradient(block.x, block.y, block.x, block.y + block.height);
+  gradient.addColorStop(0, fill);
+  gradient.addColorStop(1, "rgba(15,23,42,0.62)");
+  ctx.fillStyle = "rgba(0,0,0,0.24)";
+  ctx.beginPath();
+  ctx.roundRect(block.x + 4, block.y + 5, block.width, block.height, 8);
+  ctx.fill();
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.roundRect(block.x, block.y, block.width, block.height, 8);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.28)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  if (block.width >= 42) {
+    ctx.fillStyle = textFill;
+    ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(block.label.slice(0, 5), block.x + block.width / 2, block.y + 17);
+  }
+}
+
+function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  const top = topStackerBlock(state);
+  const activeCenter = state.stackerActiveX + state.stackerActiveWidth / 2;
+  const topCenter = top ? top.x + top.width / 2 : canvasWidth / 2;
+  const centerGap = Math.abs(activeCenter - topCenter);
+  const overlap = top ? Math.max(0, Math.min(state.stackerActiveX + state.stackerActiveWidth, top.x + top.width) - Math.max(state.stackerActiveX, top.x)) : 0;
+
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const glow = ctx.createRadialGradient(canvasWidth / 2, 210, 40, canvasWidth / 2, 230, 360);
+  glow.addColorStop(0, "rgba(251,191,36,0.18)");
+  glow.addColorStop(1, "rgba(251,191,36,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.beginPath();
+  ctx.roundRect(stackerBoardX - 18, stackerBoardY - 16, stackerBoardWidth + 36, stackerBoardHeight + 32, 22);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.13)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  for (let x = stackerBoardX + stackerBoardWidth / 2; x <= stackerBoardX + stackerBoardWidth / 2; x += 1) {
+    ctx.fillRect(x, stackerBoardY + 8, 1, stackerBoardHeight - 14);
+  }
+  for (let y = stackerBaseY + stackerBlockHeight; y > stackerBoardY; y -= stackerBlockHeight) {
+    ctx.fillRect(stackerBoardX, y, stackerBoardWidth, 1);
+  }
+
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.setLineDash([6, 8]);
+  ctx.beginPath();
+  ctx.moveTo(topCenter, stackerBoardY + 10);
+  ctx.lineTo(topCenter, stackerBaseY + stackerBlockHeight);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  for (const block of state.stackerBlocks) {
+    const fill =
+      block.quality === "base"
+        ? "rgba(148,163,184,0.92)"
+        : block.quality === "perfect"
+          ? accent
+          : block.quality === "solid"
+            ? primary
+            : "rgba(251,113,133,0.86)";
+    drawStackerBlock(ctx, block, fill, block.quality === "base" ? "#0f172a" : "#111827");
+  }
+
+  if (top) {
+    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    ctx.beginPath();
+    ctx.roundRect(top.x, state.stackerActiveY + 1, top.width, stackerBlockHeight - 2, 8);
+    ctx.fill();
+  }
+
+  const activeBlock: StackerBlock = {
+    id: -1,
+    x: state.stackerActiveX,
+    y: state.stackerActiveY,
+    width: state.stackerActiveWidth,
+    height: stackerBlockHeight,
+    label: "쌓기",
+    quality: centerGap <= 7 ? "perfect" : overlap >= state.stackerActiveWidth * 0.72 ? "solid" : "thin",
+  };
+  drawStackerBlock(ctx, activeBlock, centerGap <= 7 ? accent : primary, "#111827");
+
+  if (top && overlap > 0 && overlap < state.stackerActiveWidth) {
+    const wasteLeft = Math.min(state.stackerActiveX, top.x);
+    const wasteRight = Math.max(state.stackerActiveX + state.stackerActiveWidth, top.x + top.width);
+    ctx.fillStyle = "rgba(251,113,133,0.42)";
+    if (state.stackerActiveX < top.x) {
+      ctx.fillRect(state.stackerActiveX, state.stackerActiveY, top.x - state.stackerActiveX, stackerBlockHeight);
+    }
+    if (state.stackerActiveX + state.stackerActiveWidth > top.x + top.width) {
+      ctx.fillRect(top.x + top.width, state.stackerActiveY, state.stackerActiveX + state.stackerActiveWidth - (top.x + top.width), stackerBlockHeight);
+    }
+    ctx.strokeStyle = "rgba(251,113,133,0.62)";
+    ctx.beginPath();
+    ctx.moveTo(wasteLeft, state.stackerActiveY - 8);
+    ctx.lineTo(wasteRight, state.stackerActiveY - 8);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`층 ${state.stackerLayer}`, 34, 36);
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`폭 ${Math.round(state.stackerActiveWidth)} · 차이 ${Math.round(centerGap)}`, 94, 36);
+
+  const meterX = 34;
+  const meterY = 66;
+  const meterWidth = 116;
+  ctx.fillStyle = "rgba(255,255,255,0.12)";
+  ctx.beginPath();
+  ctx.roundRect(meterX, meterY, meterWidth, 10, 999);
+  ctx.fill();
+  ctx.fillStyle = centerGap <= 7 ? accent : centerGap <= 26 ? primary : danger;
+  ctx.beginPath();
+  ctx.roundRect(meterX, meterY, clamp(meterWidth - centerGap * 2.2, 8, meterWidth), 10, 999);
+  ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,0.7)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(centerGap <= 7 ? "지금 좋아요" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("Space/Enter나 마우스 클릭으로 멈춥니다. A/D는 살짝 보정만 합니다.", 34, canvasHeight - 20);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 164);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("움직이는 블록이 아래층과 겹칠 때 멈춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 눌러도 되고, Space/Enter로 쌓아도 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -2455,6 +2770,14 @@ export function ArcadeGameEngine({
         syncView();
         return;
       }
+      if (content.arcade.variant === "stacker") {
+        if (action === "left") nudgeStacker(state, -18);
+        if (action === "right") nudgeStacker(state, 18);
+        if (action === "main") placeStackerBlock(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -2592,6 +2915,13 @@ export function ArcadeGameEngine({
           if (event.code === "Space" || event.code === "Enter") performAction("main");
           return;
         }
+        if (content.arcade.variant === "stacker") {
+          keys.add(event.code);
+          if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
+          if ((event.code === "ArrowLeft" || event.code === "KeyA") && !event.repeat) performAction("left");
+          if ((event.code === "ArrowRight" || event.code === "KeyD") && !event.repeat) performAction("right");
+          return;
+        }
         keys.add(event.code);
         if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
@@ -2682,6 +3012,15 @@ export function ArcadeGameEngine({
         chooseGemTile(content, state, index);
         setShareState("idle");
         syncView();
+        return;
+      }
+
+      if (content.arcade.variant === "stacker") {
+        state.started = true;
+        state.lastFrame = performance.now();
+        placeStackerBlock(content, state);
+        setShareState("idle");
+        syncView();
       }
     },
     [content, syncView],
@@ -2753,7 +3092,8 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "sum-box" ||
                   content.arcade.variant === "password" ||
                   content.arcade.variant === "minesweeper" ||
-                  content.arcade.variant === "match-three"
+                  content.arcade.variant === "match-three" ||
+                  content.arcade.variant === "stacker"
                     ? "cursor-pointer"
                     : ""
                 }`}

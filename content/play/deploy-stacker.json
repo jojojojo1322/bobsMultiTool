@@ -1,7 +1,7 @@
 {
   "slug": "deploy-stacker",
   "title": "블록 스태커",
-  "description": "왕복하는 블록이 아래 타워와 겹칠 때 눌러 쌓는 캔버스 타이밍 게임입니다. 조금만 튀어나와도 다음 층이 어려워집니다.",
+  "description": "왕복하는 블록이 아래층과 겹칠 때 눌러 쌓는 1분 캔버스 타이밍 게임입니다. 딱 맞으면 폭이 살고, 튀어나오면 다음 층이 바로 어려워집니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-26",
@@ -11,8 +11,8 @@
   "relatedPlaySlugs": ["deploy-pattern-memory", "deploy-10-box"],
   "arcade": {
     "variant": "stacker",
-    "goal": "좌우로 움직이는 블록이 가운데 올 때 Space로 쌓습니다.",
-    "controls": "키보드: A/D 또는 방향키로 위치를 맞추고 Space/Enter로 쌓기.",
+    "goal": "좌우로 움직이는 블록이 아래층과 겹칠 때 쌓습니다. 많이 튀어나올수록 다음 층 폭이 줄어듭니다.",
+    "controls": "마우스로 캔버스를 누르거나 Space/Enter로 쌓습니다. A/D 또는 방향키는 마지막에 살짝만 보정합니다.",
     "rounds": 12,
     "targetScore": 22,
     "playerLabel": "블록",
