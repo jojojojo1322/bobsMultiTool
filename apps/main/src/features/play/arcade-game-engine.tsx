@@ -2836,7 +2836,15 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const dragTiles = dragging ? sumDragTiles(state) : [];
   const dragTileIds = new Set(dragTiles.map((tile) => tile.id));
   const shownTiles = dragging ? dragTiles : selectedSumTiles(state);
+  const shownTileIds = new Set(shownTiles.map((tile) => tile.id));
   const shownSum = dragging ? sumTilesTotal(dragTiles) : currentSum;
+  const neededValue = 10 - shownSum;
+  const complementTileIds = new Set(
+    shownSum > 0 && shownSum < 10
+      ? state.sumTiles.filter((tile) => !tile.cleared && !shownTileIds.has(tile.id) && tile.value === neededValue).map((tile) => tile.id)
+      : [],
+  );
+  const sumStatus = shownSum === 10 ? "딱 10" : shownSum > 10 ? `${shownSum - 10} 넘침` : shownSum > 0 ? `${neededValue} 더 필요` : "합 10 만들기";
   const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
   const timeLimit = arcadeTimeLimitSeconds(content);
   const timeLeft = Math.max(0, Math.ceil(timeLimit - state.elapsed));
@@ -2888,7 +2896,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "right";
   ctx.fillText(`남은 ${timeLeft}초`, canvasWidth - 44, 48);
   ctx.textAlign = "left";
-  ctx.fillText(shownTiles.length ? shownTiles.map((tile) => tile.value).join(" + ") : "마우스로 쓸어 담기", 42, 68);
+  ctx.fillText(shownTiles.length ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${sumStatus}` : "마우스로 쓸어 담기", 42, 68);
 
   if (dragging && dragTiles.length > 1) {
     ctx.strokeStyle = shownSum === 10 ? "rgba(251,191,36,0.68)" : shownSum > 10 ? "rgba(251,113,133,0.58)" : "rgba(255,255,255,0.38)";
@@ -2908,6 +2916,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   for (const tile of state.sumTiles) {
     const isCursor = tile.id === state.sumCursor;
     const isActive = dragging ? dragTileIds.has(tile.id) : tile.selected;
+    const isComplement = complementTileIds.has(tile.id);
     const tileCenterX = tile.x + tile.width / 2;
     const tileCenterY = tile.y + tile.height / 2;
     ctx.globalAlpha = tile.cleared ? 0.2 : 1;
@@ -2931,8 +2940,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.beginPath();
     ctx.roundRect(tile.x, tile.y, tile.width, tile.height, 16);
     ctx.fill();
-    ctx.strokeStyle = isActive ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.22)";
-    ctx.lineWidth = isActive ? 2 : 1;
+    ctx.strokeStyle = isActive ? "rgba(255,255,255,0.9)" : isComplement ? "rgba(250,204,21,0.62)" : "rgba(255,255,255,0.22)";
+    ctx.lineWidth = isActive || isComplement ? 2 : 1;
     ctx.stroke();
 
     if (isCursor && !tile.cleared) {
@@ -2940,6 +2949,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.roundRect(tile.x - 5, tile.y - 5, tile.width + 10, tile.height + 10, 20);
+      ctx.stroke();
+    }
+
+    if (isComplement) {
+      ctx.strokeStyle = "rgba(250,204,21,0.34)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(tile.x - 4, tile.y - 4, tile.width + 8, tile.height + 8, 19);
       ctx.stroke();
     }
 
@@ -2976,6 +2993,16 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.font = "900 27px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillText(`${tile.value}`, tileCenterX, tileCenterY + 12);
+    const activeOrder = shownTiles.findIndex((item) => item.id === tile.id);
+    if (activeOrder >= 0) {
+      ctx.fillStyle = shownSum === 10 ? accent : shownSum > 10 ? danger : primary;
+      ctx.beginPath();
+      ctx.arc(tile.x + 16, tile.y + 16, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = shownSum === 10 ? "#111827" : "#f8fafc";
+      ctx.font = "900 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.fillText(`${activeOrder + 1}`, tile.x + 16, tile.y + 20);
+    }
     if (tile.label !== `${tile.value}`) {
       ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.fillStyle = isActive ? "rgba(17,24,39,0.72)" : "rgba(248,250,252,0.72)";
