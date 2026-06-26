@@ -198,6 +198,7 @@ import {
   sumBoxTileHeight,
   sumBoxTimeLimitSeconds,
   sumBoxSelectionSummary,
+  sumBoxStreakBonus,
   sumBoxTenCombinationCount,
   sumDragTiles,
   sumTileIndexAt,
@@ -265,6 +266,8 @@ type GameState = {
   sumDragMoved: boolean;
   sumDragTileIds: number[];
   sumDragBlockedTileId: number | null;
+  sumStreak: number;
+  sumBestStreak: number;
   snake: SnakeCell[];
   snakeDirection: SnakeDirection;
   snakeNextDirection: SnakeDirection;
@@ -341,6 +344,8 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     sumDragMoved: false,
     sumDragTileIds: [],
     sumDragBlockedTileId: null,
+    sumStreak: 0,
+    sumBestStreak: 0,
     snake,
     snakeDirection: "right",
     snakeNextDirection: "right",
@@ -2519,7 +2524,10 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const tenCombinationLabel = tenCombinationCount >= 99 ? "99+" : `${tenCombinationCount}`;
   const hintTiles = !dragging && !shownTiles.length ? comboHint : [];
   const hintTileIds = new Set(hintTiles.map((tile) => tile.id));
-  const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) : 0;
+  const nextStreak = shownSum === 10 ? state.sumStreak + 1 : state.sumStreak;
+  const clearStreakBonus = shownSum === 10 ? sumBoxStreakBonus(nextStreak) : 0;
+  const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) + clearStreakBonus : 0;
+  const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}점(연속 +${clearStreakBonus})` : `+${clearScore}점`;
   const comboHintLabel = comboHint.length
     ? comboHint
         .map((tile) => tile.value)
@@ -2582,7 +2590,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillText(`${dragging ? "드래그 합" : "합"} ${shownSum} / 10`, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.66)";
-  ctx.fillText(`비운 칸 ${cleared} / ${state.sumTiles.length}`, 190, 48);
+  ctx.fillText(`비운 ${cleared}/${state.sumTiles.length} · 연속 ${state.sumStreak}`, 190, 48);
   ctx.fillStyle = comboHint.length ? "rgba(255,255,255,0.66)" : "rgba(251,113,133,0.88)";
   ctx.fillText(`남은 10 ${tenCombinationLabel}개 · 힌트 ${comboHintLabel}`, 330, 48);
   ctx.textAlign = "right";
@@ -2592,10 +2600,10 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     blockedTile
       ? `${shownTiles.map((tile) => tile.value).join(" + ") || "0"} + ${blockedTile.value} = ${blockedSum} · 넘침`
       : shownTiles.length
-        ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}${shownSum === 10 ? ` · +${clearScore}점` : ""}`
+        ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}${shownSum === 10 ? ` · ${clearScoreLabel}` : ""}`
         : hintTiles.length
-          ? "노란 힌트 사과를 그대로 쓸면 10"
-          : "마우스로 쓸어 담기",
+          ? `노란 힌트 사과를 그대로 쓸면 10 · 최고 연속 ${state.sumBestStreak}`
+          : `마우스로 쓸어 담기 · 최고 연속 ${state.sumBestStreak}`,
     42,
     68,
   );
@@ -2809,12 +2817,12 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillStyle = "rgba(255,255,255,0.86)";
     ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "right";
-    ctx.fillText(dragging ? `놓으면 +${clearScore}점` : `Space 누르면 +${clearScore}점`, canvasWidth - 34, canvasHeight - 66);
+    ctx.fillText(dragging ? `놓으면 ${clearScoreLabel}` : `Space 누르면 ${clearScoreLabel}`, canvasWidth - 34, canvasHeight - 66);
   }
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("노란 힌트는 한 조합입니다. 3개 이상 길게 쓸어 10을 만들면 보너스가 붙습니다.", 34, canvasHeight - 20);
+  ctx.fillText("연속 10은 보너스가 붙습니다. 넘치거나 모자라면 연속이 끊깁니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -2825,7 +2833,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.", canvasWidth / 2, 202);
-    ctx.fillText("합 10이면 사라집니다. 길게 맞추면 보너스가 붙습니다.", canvasWidth / 2, 228);
+    ctx.fillText("합 10을 이어가면 연속 보너스가 붙습니다.", canvasWidth / 2, 228);
   }
 }
 

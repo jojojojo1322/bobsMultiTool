@@ -1,7 +1,7 @@
 {
   "slug": "deploy-10-box",
   "title": "마감 전 사과 10",
-  "description": "숫자 사과를 쓸어 합 10을 만들고 칸을 비웁니다. 남은 10 힌트를 보며 급하게 넘치는 선택을 줄입니다.",
+  "description": "숫자 사과를 쓸어 합 10을 만들고 칸을 비웁니다. 연속으로 딱 맞추면 보너스가 붙고 넘치면 끊깁니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-27",
@@ -11,8 +11,8 @@
   "relatedPlaySlugs": ["ten-box-rush", "deploy-stacker"],
   "arcade": {
     "variant": "sum-box",
-    "goal": "사과를 쓸어 합 10을 만들고, 남은 칸을 차근차근 비웁니다.",
-    "controls": "마우스로 드래그해서 사과를 묶습니다. 보이는 10 힌트를 참고하고, 방향키/WASD와 Space/Enter로 하나씩 골라도 됩니다.",
+    "goal": "사과를 쓸어 합 10을 만들고, 연속 성공으로 마감 전에 점수를 당깁니다.",
+    "controls": "마우스로 드래그해서 사과를 묶습니다. 보이는 10 힌트를 참고하되, 넘치거나 모자라면 연속이 끊깁니다.",
     "rounds": 12,
     "targetScore": 22,
     "playerLabel": "상자",

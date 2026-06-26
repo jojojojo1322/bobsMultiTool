@@ -38,6 +38,8 @@ type SumBoxPlayState = SumBoxDragState & {
   score: number;
   focus: number;
   actions: number;
+  sumStreak: number;
+  sumBestStreak: number;
   sumCursor: number;
   history: SumHistoryItem[];
 };
@@ -139,12 +141,12 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
     state.actions += 1;
-    const delta = sumBoxClearScore(cleared);
+    const { delta, streakBonus } = applySumBoxClearScore(state, cleared);
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
     rememberSumHistory(state, {
       label: cleared.map((item) => item.value).join(" + "),
-      detail: cleared.length >= 4 ? "길게 쓸어 10" : "딱 10",
+      detail: sumBoxClearDetail(cleared.length >= 4 ? "길게 쓸어 10" : "딱 10", state.sumStreak, streakBonus),
       score: delta,
     });
     moveSumCursor(state, 1);
@@ -155,6 +157,7 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
   if (sum > 10) {
     for (const item of state.sumTiles) item.selected = false;
     state.actions += 1;
+    state.sumStreak = 0;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 7, 0, 100);
     rememberSumHistory(state, {
@@ -182,6 +185,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
     const attemptedSum = sumTilesTotal(attemptedTiles);
     for (const tile of state.sumTiles) tile.selected = false;
     state.actions += 1;
+    state.sumStreak = 0;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 6, 0, 100);
     rememberSumHistory(state, {
@@ -197,12 +201,12 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
     state.actions += 1;
-    const delta = sumBoxClearScore(cleared);
+    const { delta, streakBonus } = applySumBoxClearScore(state, cleared);
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
     rememberSumHistory(state, {
       label: cleared.map((item) => item.value).join(" + "),
-      detail: cleared.length >= 4 ? "길게 쓸어 10" : "쓸어서 10",
+      detail: sumBoxClearDetail(cleared.length >= 4 ? "길게 쓸어 10" : "쓸어서 10", state.sumStreak, streakBonus),
       score: delta,
     });
     moveSumCursor(state, 1);
@@ -212,6 +216,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
 
   for (const tile of state.sumTiles) tile.selected = false;
   state.actions += 1;
+  state.sumStreak = 0;
   const overflow = sum > 10;
   state.score = Math.max(0, state.score + (overflow ? -1 : 0));
   state.focus = clamp(state.focus + (overflow ? -6 : -2), 0, 100);
@@ -274,6 +279,11 @@ export function sumBoxClearScore(tiles: SumTile[]) {
   if (tiles.length >= 4) return 7;
   if (tiles.length >= 3) return 6;
   return 5;
+}
+
+export function sumBoxStreakBonus(streak: number) {
+  if (streak < 2) return 0;
+  return Math.min(4, streak - 1);
 }
 
 export function sumTileIndexAt(state: { sumTiles: SumTile[] }, x: number, y: number) {
@@ -373,6 +383,20 @@ function clearSelectedSumTiles(state: { sumTiles: SumTile[] }) {
     tile.cleared = true;
   }
   return selected;
+}
+
+function applySumBoxClearScore(state: Pick<SumBoxPlayState, "sumStreak" | "sumBestStreak">, cleared: SumTile[]) {
+  state.sumStreak += 1;
+  state.sumBestStreak = Math.max(state.sumBestStreak, state.sumStreak);
+  const streakBonus = sumBoxStreakBonus(state.sumStreak);
+  const delta = sumBoxClearScore(cleared) + streakBonus;
+  return { delta, streakBonus };
+}
+
+function sumBoxClearDetail(label: string, streak: number, streakBonus: number) {
+  if (streakBonus > 0) return `${label} · 연속 ${streak} +${streakBonus}`;
+  if (streak > 1) return `${label} · 연속 ${streak}`;
+  return label;
 }
 
 function rememberSumHistory(state: Pick<SumBoxPlayState, "history">, item: SumHistoryItem) {
