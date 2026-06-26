@@ -110,12 +110,14 @@ import {
   type StackerBlock,
 } from "@/features/play/arcade-stacker";
 import {
+  chooseSumTile,
   clearSumDrag,
+  commitDraggedSumTiles,
   makeSumTiles,
+  moveSumCursor,
   pointInSumBoard,
   rememberSumDragSegment,
   rememberSumDragTile,
-  selectedSum,
   selectedSumTiles,
   sumBoxBoardHeight,
   sumBoxBoardWidth,
@@ -129,7 +131,7 @@ import {
   sumBoxSelectionSummary,
   sumDragTiles,
   sumTileIndexAt,
-  sumTilesTotal,
+  updateSumBox,
   type SumTile,
 } from "@/features/play/arcade-sum-box";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
@@ -962,42 +964,6 @@ function canvasPointFromEvent(canvas: HTMLCanvasElement, event: React.MouseEvent
   };
 }
 
-function moveSumCursor(state: GameState, delta: number) {
-  const tileCount = state.sumTiles.length;
-  if (!tileCount || state.sumTiles.every((tile) => tile.cleared)) return;
-  for (let step = 1; step <= tileCount; step += 1) {
-    const next = (state.sumCursor + delta * step + tileCount * step) % tileCount;
-    if (!state.sumTiles[next]?.cleared) {
-      state.sumCursor = next;
-      return;
-    }
-  }
-}
-
-function moveSumCursorToComplement(state: GameState) {
-  const sum = selectedSum(state);
-  const target = 10 - sum;
-  if (target <= 0) {
-    moveSumCursor(state, 1);
-    return;
-  }
-  const complement = state.sumTiles.findIndex((tile, index) => index !== state.sumCursor && !tile.cleared && !tile.selected && tile.value === target);
-  if (complement >= 0) {
-    state.sumCursor = complement;
-    return;
-  }
-  moveSumCursor(state, 1);
-}
-
-function clearSelectedSumTiles(state: GameState) {
-  const selected = selectedSumTiles(state);
-  for (const tile of selected) {
-    tile.selected = false;
-    tile.cleared = true;
-  }
-  return selected;
-}
-
 function spawnSprite(content: ArcadeGameContent, state: GameState) {
   const seed = state.nextSpriteId + content.slug.length * 17;
   const good = pseudoRandom(seed) > 0.34;
@@ -1290,99 +1256,6 @@ function updateMemory(content: ArcadeGameContent, state: GameState, dt: number) 
   }
 
   finishMemoryIfNeeded(content, state);
-}
-
-function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) {
-  state.elapsed += dt;
-  if (
-    state.score >= content.arcade.targetScore ||
-    state.sumTiles.every((tile) => tile.cleared) ||
-    state.actions >= content.arcade.rounds ||
-    state.focus <= 0 ||
-    state.elapsed >= arcadeTimeLimitSeconds(content)
-  ) {
-    state.finished = true;
-  }
-}
-
-function chooseSumTile(content: ArcadeGameContent, state: GameState) {
-  const tile = state.sumTiles[state.sumCursor];
-  if (!tile || tile.cleared) {
-    moveSumCursor(state, 1);
-    return;
-  }
-
-  tile.selected = !tile.selected;
-  const sum = selectedSum(state);
-  if (sum === 10) {
-    const cleared = clearSelectedSumTiles(state);
-    state.actions += 1;
-    const bonus = cleared.length >= 3 ? 1 : 0;
-    state.score = Math.max(0, state.score + 5 + bonus);
-    state.focus = clamp(state.focus + 4, 0, 100);
-    addHistory(state, {
-      label: cleared.map((item) => item.value).join(" + "),
-      detail: "딱 10",
-      score: 5 + bonus,
-    });
-    moveSumCursor(state, 1);
-    if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
-    return;
-  }
-
-  if (sum > 10) {
-    for (const item of state.sumTiles) item.selected = false;
-    state.actions += 1;
-    state.score = Math.max(0, state.score - 1);
-    state.focus = clamp(state.focus - 7, 0, 100);
-    addHistory(state, {
-      label: `${sum}`,
-      detail: "넘침",
-      score: -1,
-    });
-    moveSumCursor(state, 1);
-    return;
-  }
-
-  moveSumCursorToComplement(state);
-}
-
-function commitDraggedSumTiles(content: ArcadeGameContent, state: GameState, tiles: SumTile[]) {
-  const activeTiles = tiles.filter((tile) => !tile.cleared);
-  if (!activeTiles.length) return;
-
-  for (const tile of state.sumTiles) tile.selected = false;
-  for (const tile of activeTiles) tile.selected = true;
-
-  const sum = sumTilesTotal(activeTiles);
-  if (sum === 10) {
-    const cleared = clearSelectedSumTiles(state);
-    state.actions += 1;
-    const bonus = cleared.length >= 3 ? 1 : 0;
-    state.score = Math.max(0, state.score + 5 + bonus);
-    state.focus = clamp(state.focus + 4, 0, 100);
-    addHistory(state, {
-      label: cleared.map((item) => item.value).join(" + "),
-      detail: "쓸어서 10",
-      score: 5 + bonus,
-    });
-    moveSumCursor(state, 1);
-    if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
-    return;
-  }
-
-  for (const tile of state.sumTiles) tile.selected = false;
-  state.actions += 1;
-  const overflow = sum > 10;
-  state.score = Math.max(0, state.score + (overflow ? -1 : 0));
-  state.focus = clamp(state.focus + (overflow ? -6 : -2), 0, 100);
-  addHistory(state, {
-    label: activeTiles.map((item) => item.value).join(" + "),
-    detail: overflow ? "넘침" : "모자람",
-    score: overflow ? -1 : 0,
-  });
-  moveSumCursor(state, 1);
-  if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
 }
 
 function spawnCrossingObstacle(content: ArcadeGameContent, state: GameState) {
