@@ -31,7 +31,12 @@ const passwordDigitHeight = 112;
 const passwordDigitGap = 20;
 const passwordDigitStartX = (canvasWidth - passwordDigitCount * passwordDigitWidth - (passwordDigitCount - 1) * passwordDigitGap) / 2;
 const passwordDigitY = 142;
-const passwordSubmitRect = { x: canvasWidth / 2 - 82, y: 292, width: 164, height: 46 };
+const passwordSubmitRect = { x: canvasWidth / 2 - 82, y: 286, width: 164, height: 44 };
+const passwordKeypadX = 38;
+const passwordKeypadY = 344;
+const passwordKeypadWidth = 38;
+const passwordKeypadHeight = 32;
+const passwordKeypadGap = 8;
 const mineColumns = 9;
 const mineRows = 7;
 const mineCount = 10;
@@ -97,6 +102,7 @@ type PasswordAttempt = {
   exact: number;
   near: number;
   hint: string;
+  repeated: boolean;
 };
 
 type MineCell = {
@@ -610,6 +616,11 @@ function adjustPasswordDigit(state: GameState, delta: number) {
   state.passwordGuess[state.passwordCursor] = (current + delta + 10) % 10;
 }
 
+function setPasswordDigit(state: GameState, digit: number, advance: boolean) {
+  state.passwordGuess[state.passwordCursor] = clamp(Math.floor(digit), 0, 9);
+  if (advance) movePasswordCursor(state, 1);
+}
+
 function setPasswordDigitFromClick(state: GameState, digitIndex: number) {
   state.passwordCursor = clamp(digitIndex, 0, passwordDigitCount - 1);
   adjustPasswordDigit(state, 1);
@@ -638,6 +649,55 @@ function evaluatePasswordGuess(secret: number[], guess: number[]) {
   return { exact, near };
 }
 
+function parsePasswordGuess(guess: string) {
+  return guess.split("").map((digit) => Number(digit));
+}
+
+function isRepeatedPasswordGuess(state: GameState, guess: string) {
+  return state.passwordAttempts.some((attempt) => attempt.guess === guess);
+}
+
+function candidateMatchesAttempts(candidate: number[], attempts: PasswordAttempt[]) {
+  return attempts.every((attempt) => {
+    const { exact, near } = evaluatePasswordGuess(candidate, parsePasswordGuess(attempt.guess));
+    return exact === attempt.exact && near === attempt.near;
+  });
+}
+
+function passwordCandidates(state: GameState) {
+  const candidates: number[][] = [];
+  for (let a = 0; a <= 9; a += 1) {
+    for (let b = 0; b <= 9; b += 1) {
+      if (b === a) continue;
+      for (let c = 0; c <= 9; c += 1) {
+        if (c === a || c === b) continue;
+        const candidate = [a, b, c];
+        if (candidateMatchesAttempts(candidate, state.passwordAttempts)) {
+          candidates.push(candidate);
+        }
+      }
+    }
+  }
+  return candidates;
+}
+
+function passwordDigitMarks(state: GameState) {
+  const marks: Array<"unknown" | "candidate" | "absent"> = Array.from({ length: 10 }, () => "unknown");
+  for (const attempt of state.passwordAttempts) {
+    const digits = new Set(parsePasswordGuess(attempt.guess));
+    if (attempt.exact === 0 && attempt.near === 0) {
+      digits.forEach((digit) => {
+        marks[digit] = "absent";
+      });
+      continue;
+    }
+    digits.forEach((digit) => {
+      if (marks[digit] !== "absent") marks[digit] = "candidate";
+    });
+  }
+  return marks;
+}
+
 function passwordHint(state: GameState, exact: number, near: number) {
   if (exact === passwordDigitCount) return "열림";
   if (exact === 0 && near === 0) return "숫자부터 다시 보는 게 낫습니다";
@@ -657,14 +717,15 @@ function submitPasswordGuess(content: ArcadeGameContent, state: GameState) {
   const hint = passwordHint(state, exact, near);
   const guess = passwordGuessText(state);
   const solved = exact === passwordDigitCount;
-  const delta = solved ? content.arcade.targetScore : Math.max(0, exact * 5 + near * 2 - (exact === 0 && near === 0 ? 1 : 0));
+  const repeated = isRepeatedPasswordGuess(state, guess);
+  const delta = solved ? content.arcade.targetScore : Math.max(0, exact * 5 + near * 2 - (exact === 0 && near === 0 ? 1 : 0) - (repeated ? 3 : 0));
 
   state.score = solved ? content.arcade.targetScore : Math.max(state.score, delta);
-  state.focus = clamp(state.focus + (solved ? 8 : exact > 0 || near > 0 ? -4 : -9), 0, 100);
-  state.passwordAttempts = [{ guess, exact, near, hint }, ...state.passwordAttempts].slice(0, 5);
+  state.focus = clamp(state.focus + (solved ? 8 : repeated ? -13 : exact > 0 || near > 0 ? -4 : -9), 0, 100);
+  state.passwordAttempts = [{ guess, exact, near, hint: repeated ? "이미 해본 번호입니다" : hint, repeated }, ...state.passwordAttempts].slice(0, 6);
   addHistory(state, {
     label: guess,
-    detail: solved ? "번호가 열림" : `${exact}자리, ${near}숫자`,
+    detail: solved ? "번호가 열림" : repeated ? "반복해서 손해" : `${exact}자리, ${near}숫자`,
     score: solved ? content.arcade.targetScore : delta,
   });
 
@@ -680,6 +741,21 @@ function passwordDigitIndexAt(x: number, y: number) {
     if (x >= left && x <= left + passwordDigitWidth) return index;
   }
   return -1;
+}
+
+function passwordKeypadDigitAt(x: number, y: number) {
+  if (y < passwordKeypadY || y > passwordKeypadY + passwordKeypadHeight) return -1;
+  for (let digit = 0; digit <= 9; digit += 1) {
+    const left = passwordKeypadX + digit * (passwordKeypadWidth + passwordKeypadGap);
+    if (x >= left && x <= left + passwordKeypadWidth) return digit;
+  }
+  return -1;
+}
+
+function digitFromKeyboardCode(code: string) {
+  if (/^Digit\d$/.test(code)) return Number(code.slice(5));
+  if (/^Numpad\d$/.test(code)) return Number(code.slice(6));
+  return null;
 }
 
 function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
@@ -1454,18 +1530,32 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
 
 function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
+  const latest = state.passwordAttempts[0];
+  const candidates = passwordCandidates(state);
+  const triedGuesses = new Set(state.passwordAttempts.map((attempt) => attempt.guess));
+  const suggestion = candidates.find((candidate) => !triedGuesses.has(candidate.join("")))?.join("") ?? candidates[0]?.join("") ?? "---";
+  const digitMarks = passwordDigitMarks(state);
+  const currentGuess = passwordGuessText(state);
+  const repeatedCurrent = state.passwordAttempts.some((attempt, index) => attempt.guess === currentGuess && (index > 0 || attempt.repeated));
+
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   const centerX = canvasWidth / 2;
+  const glow = ctx.createRadialGradient(centerX, 182, 20, centerX, 184, 230);
+  glow.addColorStop(0, "rgba(96,165,250,0.24)");
+  glow.addColorStop(1, "rgba(96,165,250,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(130, 26, 460, 310);
+
   ctx.strokeStyle = "rgba(255,255,255,0.14)";
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(centerX, 94, 54, Math.PI * 1.08, Math.PI * 1.92);
   ctx.stroke();
-  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.fillStyle = "rgba(15,23,42,0.58)";
   ctx.beginPath();
-  ctx.roundRect(centerX - 128, 88, 256, 238, 26);
+  ctx.roundRect(centerX - 136, 84, 272, 248, 26);
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,0.16)";
   ctx.stroke();
@@ -1473,7 +1563,25 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("세 자리 번호", centerX, 122);
+  ctx.fillText("번호를 좁혀가기", centerX, 120);
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.1)";
+  ctx.beginPath();
+  ctx.roundRect(34, 72, 152, 84, 14);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.58)";
+  ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("남은 가능성", 48, 96);
+  ctx.fillStyle = candidates.length <= 12 ? accent : "#f8fafc";
+  ctx.font = "900 24px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+  ctx.fillText(`${candidates.length}`, 48, 124);
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`다음 후보 ${suggestion}`, 48, 145);
+  ctx.textAlign = "center";
 
   for (let index = 0; index < passwordDigitCount; index += 1) {
     const x = passwordDigitStartX + index * (passwordDigitWidth + passwordDigitGap);
@@ -1486,30 +1594,52 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.beginPath();
     ctx.roundRect(x, passwordDigitY, passwordDigitWidth, passwordDigitHeight, 18);
     ctx.fill();
+    ctx.shadowColor = selected ? "rgba(96,165,250,0.35)" : "transparent";
+    ctx.shadowBlur = selected ? 18 : 0;
     ctx.strokeStyle = selected ? primary : "rgba(255,255,255,0.2)";
     ctx.lineWidth = selected ? 3 : 1;
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
-    ctx.fillStyle = "rgba(255,255,255,0.42)";
+    ctx.fillStyle = selected ? "rgba(255,255,255,0.72)" : "rgba(255,255,255,0.42)";
     ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("클릭", x + passwordDigitWidth / 2, passwordDigitY + 22);
+    ctx.fillText(`${index + 1}번째`, x + passwordDigitWidth / 2, passwordDigitY + 22);
     ctx.fillStyle = "#f8fafc";
     ctx.font = "900 54px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.fillText(`${digit}`, x + passwordDigitWidth / 2, passwordDigitY + 76);
     ctx.fillStyle = selected ? accent : "rgba(255,255,255,0.5)";
     ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("▲", x + passwordDigitWidth / 2, passwordDigitY + 100);
+    ctx.fillText("↑↓", x + passwordDigitWidth / 2, passwordDigitY + 100);
   }
 
-  const latest = state.passwordAttempts[0];
-  ctx.fillStyle = latest?.exact === passwordDigitCount ? primary : accent;
+  ctx.textAlign = "center";
+  ctx.fillStyle = repeatedCurrent ? danger : "rgba(255,255,255,0.62)";
+  ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(repeatedCurrent ? "이미 해본 번호입니다" : latest ? latest.hint : "숫자키로 바로 넣어도 됩니다", centerX, 274);
+
+  ctx.fillStyle = latest?.exact === passwordDigitCount ? primary : repeatedCurrent ? danger : accent;
   ctx.beginPath();
   ctx.roundRect(passwordSubmitRect.x, passwordSubmitRect.y, passwordSubmitRect.width, passwordSubmitRect.height, 14);
   ctx.fill();
   ctx.fillStyle = "#111827";
   ctx.font = "900 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("확인", centerX, passwordSubmitRect.y + 29);
+  ctx.fillText(repeatedCurrent ? "다른 번호" : "확인", centerX, passwordSubmitRect.y + 28);
 
+  ctx.textAlign = "center";
+  for (let digit = 0; digit <= 9; digit += 1) {
+    const x = passwordKeypadX + digit * (passwordKeypadWidth + passwordKeypadGap);
+    const mark = digitMarks[digit];
+    ctx.fillStyle = mark === "absent" ? "rgba(148,163,184,0.18)" : mark === "candidate" ? "rgba(251,191,36,0.22)" : "rgba(255,255,255,0.1)";
+    ctx.beginPath();
+    ctx.roundRect(x, passwordKeypadY, passwordKeypadWidth, passwordKeypadHeight, 10);
+    ctx.fill();
+    ctx.strokeStyle = mark === "absent" ? "rgba(148,163,184,0.26)" : mark === "candidate" ? "rgba(251,191,36,0.55)" : "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = mark === "absent" ? "rgba(255,255,255,0.34)" : "#f8fafc";
+    ctx.font = "900 15px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillText(`${digit}`, x + passwordKeypadWidth / 2, passwordKeypadY + 21);
+  }
   const historyX = 510;
   const historyY = 72;
   const historyWidth = 176;
@@ -1521,7 +1651,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.56)";
   ctx.fillText("자리 / 숫자", historyX + 70, historyY - 18);
 
-  const attempts = state.passwordAttempts.slice(0, 4);
+  const attempts = state.passwordAttempts.slice(0, 5);
   if (!attempts.length) {
     ctx.fillStyle = "rgba(255,255,255,0.16)";
     ctx.beginPath();
@@ -1533,10 +1663,10 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   }
 
   attempts.forEach((attempt, index) => {
-    const y = historyY + index * 42;
-    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    const y = historyY + index * 38;
+    ctx.fillStyle = attempt.repeated ? "rgba(251,113,133,0.18)" : "rgba(255,255,255,0.12)";
     ctx.beginPath();
-    ctx.roundRect(historyX, y, historyWidth, 34, 9);
+    ctx.roundRect(historyX, y, historyWidth, 32, 9);
     ctx.fill();
     ctx.fillStyle = attempt.exact === passwordDigitCount ? primary : "#f8fafc";
     ctx.font = "900 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
@@ -1548,12 +1678,12 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.fillText(`${attempt.near}숫자`, historyX + 110, y + 20);
     ctx.fillStyle = "rgba(255,255,255,0.56)";
     ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(attempt.hint.slice(0, 14), historyX + 12, y + 31);
+    ctx.fillText(attempt.hint.slice(0, 14), historyX + 12, y + 30);
   });
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("←/→로 자리 이동, ↑/↓로 숫자 변경, Space/Enter로 확인합니다. 숫자는 마우스로도 올릴 수 있습니다.", 34, canvasHeight - 20);
+  ctx.fillText("숫자키로 입력, ←/→ 자리 이동, ↑/↓ 변경, Space/Enter 확인. 마우스 키패드도 됩니다.", 34, canvasHeight - 20);
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;
@@ -1570,7 +1700,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.fillText(content.title, centerX, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("세 자리 숫자를 맞춥니다. 숫자와 자리를 힌트로 줄여가면 됩니다.", centerX, 204);
-    ctx.fillText("숫자를 클릭하거나 방향키로 바꾸고, 확인을 누르세요.", centerX, 230);
+    ctx.fillText("숫자키로 바로 넣거나, 마우스 키패드와 방향키로 바꾸면 됩니다.", centerX, 230);
   }
 }
 
@@ -1946,7 +2076,13 @@ export function ArcadeGameEngine({
   React.useEffect(() => {
     const keys = keysRef.current;
     function keyDown(event: KeyboardEvent) {
-      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code)) {
+      const passwordDigitKey = content.arcade.variant === "password" ? digitFromKeyboardCode(event.code) : null;
+      const passwordUtilityKey = content.arcade.variant === "password" && event.code === "Backspace";
+      if (
+        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code) ||
+        passwordDigitKey !== null ||
+        passwordUtilityKey
+      ) {
         event.preventDefault();
         if (content.arcade.variant === "crossing") {
           if (event.repeat) return;
@@ -1991,6 +2127,24 @@ export function ArcadeGameEngine({
           }
         }
         if (content.arcade.variant === "password") {
+          if (passwordDigitKey !== null) {
+            if (event.repeat) return;
+            stateRef.current.started = true;
+            stateRef.current.lastFrame = performance.now();
+            setPasswordDigit(stateRef.current, passwordDigitKey, true);
+            setShareState("idle");
+            syncView();
+            return;
+          }
+          if (event.code === "Backspace") {
+            if (event.repeat) return;
+            stateRef.current.started = true;
+            stateRef.current.lastFrame = performance.now();
+            movePasswordCursor(stateRef.current, -1);
+            setShareState("idle");
+            syncView();
+            return;
+          }
           if (event.repeat && (event.code === "Space" || event.code === "Enter")) return;
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
           if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
@@ -2063,8 +2217,11 @@ export function ArcadeGameEngine({
       if (content.arcade.variant === "password") {
         state.started = true;
         state.lastFrame = performance.now();
+        const keypadDigit = passwordKeypadDigitAt(point.x, point.y);
         const digitIndex = passwordDigitIndexAt(point.x, point.y);
-        if (digitIndex >= 0) {
+        if (keypadDigit >= 0) {
+          setPasswordDigit(state, keypadDigit, true);
+        } else if (digitIndex >= 0) {
           setPasswordDigitFromClick(state, digitIndex);
         } else if (pointInRect(point, passwordSubmitRect)) {
           submitPasswordGuess(content, state);
