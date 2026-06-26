@@ -61,6 +61,7 @@ import {
   sumBoxStartY,
   sumBoxTileHeight,
   sumBoxTimeLimitSeconds,
+  sumBoxSelectionSummary,
   sumDragTiles,
   sumTileIndexAt,
   sumTilesTotal,
@@ -2831,20 +2832,13 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
 
 function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
-  const currentSum = selectedSum(state);
   const dragging = state.sumDragStart !== null && state.sumDragCurrent !== null;
   const dragTiles = dragging ? sumDragTiles(state) : [];
   const dragTileIds = new Set(dragTiles.map((tile) => tile.id));
   const shownTiles = dragging ? dragTiles : selectedSumTiles(state);
-  const shownTileIds = new Set(shownTiles.map((tile) => tile.id));
-  const shownSum = dragging ? sumTilesTotal(dragTiles) : currentSum;
-  const neededValue = 10 - shownSum;
-  const complementTileIds = new Set(
-    shownSum > 0 && shownSum < 10
-      ? state.sumTiles.filter((tile) => !tile.cleared && !shownTileIds.has(tile.id) && tile.value === neededValue).map((tile) => tile.id)
-      : [],
-  );
-  const sumStatus = shownSum === 10 ? "딱 10" : shownSum > 10 ? `${shownSum - 10} 넘침` : shownSum > 0 ? `${neededValue} 더 필요` : "합 10 만들기";
+  const selectionSummary = sumBoxSelectionSummary(state, shownTiles);
+  const shownSum = selectionSummary.sum;
+  const complementTileIds = selectionSummary.complementTileIds;
   const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
   const timeLimit = arcadeTimeLimitSeconds(content);
   const timeLeft = Math.max(0, Math.ceil(timeLimit - state.elapsed));
@@ -2896,7 +2890,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "right";
   ctx.fillText(`남은 ${timeLeft}초`, canvasWidth - 44, 48);
   ctx.textAlign = "left";
-  ctx.fillText(shownTiles.length ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${sumStatus}` : "마우스로 쓸어 담기", 42, 68);
+  ctx.fillText(shownTiles.length ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}` : "마우스로 쓸어 담기", 42, 68);
 
   if (dragging && dragTiles.length > 1) {
     ctx.strokeStyle = shownSum === 10 ? "rgba(251,191,36,0.68)" : shownSum > 10 ? "rgba(251,113,133,0.58)" : "rgba(255,255,255,0.38)";

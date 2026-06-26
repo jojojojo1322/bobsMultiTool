@@ -70,6 +70,26 @@ export function selectedSumTiles(state: { sumTiles: SumTile[] }) {
   return state.sumTiles.filter((tile) => !tile.cleared && tile.selected);
 }
 
+export function sumBoxSelectionSummary(state: { sumTiles: SumTile[] }, tiles: SumTile[]) {
+  const tileIds = new Set(tiles.map((tile) => tile.id));
+  const sum = sumTilesTotal(tiles);
+  const neededValue = 10 - sum;
+  const complementTileIds = new Set(
+    sum > 0 && sum < 10
+      ? state.sumTiles.filter((tile) => !tile.cleared && !tileIds.has(tile.id) && tile.value === neededValue).map((tile) => tile.id)
+      : [],
+  );
+  const status = sum === 10 ? "딱 10" : sum > 10 ? `${sum - 10} 넘침` : sum > 0 ? `${neededValue} 더 필요` : "합 10 만들기";
+
+  return {
+    tileIds,
+    sum,
+    neededValue,
+    complementTileIds,
+    status,
+  };
+}
+
 export function sumTileIndexAt(state: { sumTiles: SumTile[] }, x: number, y: number) {
   return state.sumTiles.findIndex((tile) => !tile.cleared && x >= tile.x && x <= tile.x + tile.width && y >= tile.y && y <= tile.y + tile.height);
 }
