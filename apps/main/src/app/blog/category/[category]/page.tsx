@@ -69,6 +69,10 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
 
   const dictionary = getClientDictionary(contentLocale);
   const jsonLd = blogCategoryStructuredData({ category, posts });
+  const supplementalContext =
+    category.slug === "info"
+      ? "정보 글은 가격, 할인율, 제품 라인업처럼 시간이 지나면 바로 달라지는 내용을 다룹니다. 그래서 글 제목과 본문에 기준일을 남기고, 원문 확인 경로와 함께 적습니다. 추천을 단정하기보다 지금 비교할 때 어디부터 보면 좋은지, 실제 결제나 가입 전에 무엇을 다시 눌러봐야 하는지를 남기는 분류입니다. 숫자는 출발점이고 마지막 확인은 늘 공식 페이지와 실제 계산 화면에서 해야 합니다."
+      : undefined;
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
@@ -85,6 +89,7 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
               이 페이지는 같은 결의 기록을 한곳에 모아둔 작은 묶음입니다. 글이 아주 반듯한 정답이라기보다, 만들다가 막힌 순간, 방향을 바꾼 이유, 다음에 다시 확인할 기준을 남기는 쪽에
               가깝습니다. 그래서 글마다 길이와 온도는 조금씩 다릅니다. 그날 손이 어디에서 멈췄는지를 보려고 남겨둔 분류입니다.
             </p>
+            {supplementalContext ? <p className="mt-2">{supplementalContext}</p> : null}
           </div>
           <Link href="/blog" className="mt-6 inline-flex h-9 items-center justify-center rounded-md border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
             전체 글 보기

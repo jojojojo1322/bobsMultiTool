@@ -30,7 +30,7 @@ const requiredBlogSlugs = [
   "static-micro-games-architecture",
 ];
 const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker", "ai-review-tap"];
-const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
+const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록", "정보"];
 const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game", "arcade-game"];
 const disallowedSupportLinkPatterns = [/buymeacoffee/i, /ko-fi/i, /paypal/i, /toss\.me/i, /후원\s*링크/, /커피값/];
 const minBlogDescriptionLength = 50;

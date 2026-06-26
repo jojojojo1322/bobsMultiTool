@@ -30,6 +30,11 @@ export const blogCategoryDefinitions = [
     label: "운영 기록",
     description: "Search Console, sitemap, canonical, 배포처럼 재미없지만 계속 발목 잡는 운영 메모입니다.",
   },
+  {
+    slug: "info",
+    label: "정보",
+    description: "가격, 할인, 제품 선택처럼 날짜가 지나면 바로 달라질 수 있는 생활형 정보를 기준일과 함께 정리합니다.",
+  },
 ] as const satisfies BlogCategoryDefinition[];
 
 export function getBlogCategoryBySlug(slug: string) {

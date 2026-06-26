@@ -10,9 +10,40 @@ import { blogPostKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogPostStructuredData } from "@/features/content/structured-data";
 import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
+import type { ReactNode } from "react";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
+}
+
+const inlineMarkdownLinkPattern = /\[([^\]]+)\]\((https:\/\/[^\s)]+)\)/g;
+
+function renderInlineText(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(inlineMarkdownLinkPattern)) {
+    const [raw, label, href] = match;
+    const index = match.index ?? 0;
+    if (index > lastIndex) nodes.push(text.slice(lastIndex, index));
+
+    try {
+      const url = new URL(href);
+      if (url.protocol !== "https:") throw new Error("Only https links are rendered");
+      nodes.push(
+        <a key={`${href}-${index}`} href={url.toString()} target="_blank" rel="noopener noreferrer" className="font-medium text-foreground underline decoration-muted-foreground/40 underline-offset-4 hover:decoration-foreground">
+          {label}
+        </a>,
+      );
+    } catch {
+      nodes.push(raw);
+    }
+
+    lastIndex = index + raw.length;
+  }
+
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
+  return nodes;
 }
 
 export function generateStaticParams() {
@@ -98,14 +129,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               return (
                 <ul key={`list-${index}`} className="space-y-2 rounded-md border bg-muted/20 p-4 text-sm leading-6 text-muted-foreground">
                   {block.items.map((item) => (
-                    <li key={item}>- {item}</li>
+                    <li key={item}>- {renderInlineText(item)}</li>
                   ))}
                 </ul>
               );
             }
             return (
               <p key={`${block.text}-${index}`} className="text-base leading-8 text-muted-foreground">
-                {block.text}
+                {renderInlineText(block.text)}
               </p>
             );
           })}

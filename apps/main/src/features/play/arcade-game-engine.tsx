@@ -26,6 +26,17 @@ type Bullet = {
   vy: number;
 };
 
+type Brick = {
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  label: string;
+  good: boolean;
+  alive: boolean;
+};
+
 type HistoryItem = {
   label: string;
   detail: string;
@@ -46,6 +57,12 @@ type GameState = {
   spawnTimer: number;
   bullets: Bullet[];
   sprites: Sprite[];
+  bricks: Brick[];
+  brickBallX: number;
+  brickBallY: number;
+  brickBallVx: number;
+  brickBallVy: number;
+  brickLaunched: boolean;
   history: HistoryItem[];
   lastFrame: number | null;
 };
@@ -67,9 +84,42 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     spawnTimer: 0,
     bullets: [],
     sprites: [],
+    bricks: makeBricks(content),
+    brickBallX: canvasWidth / 2,
+    brickBallY: canvasHeight - 96,
+    brickBallVx: 180,
+    brickBallVy: -260,
+    brickLaunched: false,
     history: [],
     lastFrame: null,
   };
+}
+
+function makeBricks(content: ArcadeGameContent): Brick[] {
+  if (content.arcade.variant !== "brick-breaker") return [];
+  const columns = 5;
+  const rows = 3;
+  const gap = 10;
+  const brickWidth = (canvasWidth - 96 - gap * (columns - 1)) / columns;
+  const bricks: Brick[] = [];
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const id = row * columns + column;
+      const good = (row + column) % 3 !== 0;
+      const labels = good ? content.arcade.goodLabels : content.arcade.badLabels;
+      bricks.push({
+        id,
+        x: 48 + column * (brickWidth + gap),
+        y: 58 + row * 42,
+        width: brickWidth,
+        height: 28,
+        label: pickLabel(labels, id),
+        good,
+        alive: true,
+      });
+    }
+  }
+  return bricks;
 }
 
 function snapshot(state: GameState): ViewState {
@@ -139,6 +189,7 @@ function shouldUseSideScroller(content: ArcadeGameContent) {
 
 function mainActionLabel(content: ArcadeGameContent) {
   if (shouldUseSideScroller(content)) return "점프";
+  if (content.arcade.variant === "brick-breaker") return "치기";
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
@@ -155,6 +206,12 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   const previousFrame = state.lastFrame ?? now;
   const dt = clamp((now - previousFrame) / 1000, 0, 0.04);
   state.lastFrame = now;
+
+  if (content.arcade.variant === "brick-breaker") {
+    updateBrickBreaker(content, state, keys, dt);
+    return;
+  }
+
   state.elapsed += dt;
   state.spawnTimer -= dt;
 
@@ -239,6 +296,86 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   }
 }
 
+function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: Set<string>, dt: number) {
+  state.elapsed += dt;
+
+  const left = keys.has("ArrowLeft") || keys.has("KeyA");
+  const right = keys.has("ArrowRight") || keys.has("KeyD");
+  if (left) state.playerX -= 340 * dt;
+  if (right) state.playerX += 340 * dt;
+  state.playerX = clamp(state.playerX, 70, canvasWidth - 70);
+  state.playerY = canvasHeight - 52;
+
+  if (!state.brickLaunched) {
+    state.brickBallX = state.playerX;
+    state.brickBallY = state.playerY - 23;
+  } else {
+    state.brickBallX += state.brickBallVx * dt;
+    state.brickBallY += state.brickBallVy * dt;
+
+    if (state.brickBallX < 16 || state.brickBallX > canvasWidth - 16) {
+      state.brickBallX = clamp(state.brickBallX, 16, canvasWidth - 16);
+      state.brickBallVx *= -1;
+    }
+    if (state.brickBallY < 18) {
+      state.brickBallY = 18;
+      state.brickBallVy = Math.abs(state.brickBallVy);
+    }
+
+    const paddleWidth = 112;
+    const hitPaddle =
+      state.brickBallVy > 0 &&
+      state.brickBallY > state.playerY - 20 &&
+      state.brickBallY < state.playerY + 10 &&
+      Math.abs(state.brickBallX - state.playerX) < paddleWidth / 2;
+    if (hitPaddle) {
+      const offset = (state.brickBallX - state.playerX) / (paddleWidth / 2);
+      state.brickBallY = state.playerY - 22;
+      state.brickBallVy = -Math.abs(state.brickBallVy) - 8;
+      state.brickBallVx = offset * 310;
+    }
+
+    const hitBrick = state.bricks.find(
+      (brick) =>
+        brick.alive &&
+        state.brickBallX > brick.x - 8 &&
+        state.brickBallX < brick.x + brick.width + 8 &&
+        state.brickBallY > brick.y - 8 &&
+        state.brickBallY < brick.y + brick.height + 8,
+    );
+    if (hitBrick) {
+      hitBrick.alive = false;
+      state.brickBallVy *= -1;
+      state.actions += 1;
+      const delta = hitBrick.good ? 3 : 1;
+      state.score = Math.max(0, state.score + delta);
+      state.focus = clamp(state.focus + (hitBrick.good ? 1 : -5), 0, 100);
+      addHistory(state, {
+        label: hitBrick.label,
+        detail: hitBrick.good ? "제대로 깸" : "괜히 힘 씀",
+        score: delta,
+      });
+    }
+
+    if (state.brickBallY > canvasHeight + 24) {
+      state.focus = clamp(state.focus - 12, 0, 100);
+      state.brickLaunched = false;
+      state.brickBallVx = state.brickBallVx >= 0 ? 180 : -180;
+      state.brickBallVy = -260;
+      addHistory(state, {
+        label: "공 놓침",
+        detail: "받침대가 늦음",
+        score: -2,
+      });
+    }
+  }
+
+  const aliveCount = state.bricks.filter((brick) => brick.alive).length;
+  if (aliveCount === 0 || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+    state.finished = true;
+  }
+}
+
 function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -253,6 +390,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  if (content.arcade.variant === "brick-breaker") {
+    drawBrickBreaker(content, state, ctx);
+    return;
+  }
 
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
@@ -316,6 +458,68 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
   }
 }
 
+function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.lineWidth = 1;
+  for (let x = 40; x < canvasWidth; x += 48) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvasHeight);
+    ctx.stroke();
+  }
+
+  for (const brick of state.bricks) {
+    if (!brick.alive) continue;
+    ctx.fillStyle = brick.good ? accent : danger;
+    ctx.beginPath();
+    ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 6);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.34)";
+    ctx.stroke();
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(brick.label.slice(0, 8), brick.x + brick.width / 2, brick.y + 18);
+  }
+
+  ctx.fillStyle = primary;
+  ctx.beginPath();
+  ctx.roundRect(state.playerX - 56, state.playerY - 8, 112, 16, 8);
+  ctx.fill();
+  ctx.fillStyle = "#f8fafc";
+  ctx.beginPath();
+  ctx.arc(state.brickBallX, state.brickBallY, 8, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`${state.bricks.filter((brick) => brick.alive).length}개 남음`, 24, canvasHeight - 22);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.68)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "700 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 172);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("A/D 또는 방향키로 받침대를 움직이고 Space로 공을 보냅니다.", canvasWidth / 2, 208);
+    ctx.fillText("벽돌을 다급하게 쫓지 말고, 공이 돌아올 자리를 먼저 잡으세요.", canvasWidth / 2, 234);
+  } else if (!state.brickLaunched) {
+    ctx.fillStyle = "rgba(15,23,42,0.5)";
+    ctx.fillRect(0, canvasHeight - 116, canvasWidth, 42);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "600 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Space로 다시 시작", canvasWidth / 2, canvasHeight - 90);
+  }
+}
+
 function endingFor(content: ArcadeGameContent, score: number) {
   return [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
 }
@@ -355,10 +559,26 @@ export function ArcadeGameEngine({
       if (action === "left") state.playerX = clamp(state.playerX - 52, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + 52, 34, canvasWidth - 34);
       if (action === "main") {
-        state.actions += 1;
-        if (content.arcade.variant === "runner") state.playerVy = -390;
-        else if (content.arcade.variant === "flight") state.playerVy -= 250;
-        else state.bullets.push({ x: state.playerX, y: state.playerY - 26, vy: -420 });
+        if (content.arcade.variant === "brick-breaker") {
+          if (!state.brickLaunched) {
+            state.brickLaunched = true;
+            state.brickBallVx = state.playerX < canvasWidth / 2 ? 185 : -185;
+            state.brickBallVy = -270;
+          } else {
+            state.brickBallVx = clamp(state.brickBallVx + (state.brickBallX >= state.playerX ? 22 : -22), -340, 340);
+            state.brickBallVy = Math.min(state.brickBallVy, -230);
+          }
+          state.actions += 1;
+        } else if (content.arcade.variant === "runner") {
+          state.actions += 1;
+          state.playerVy = -390;
+        } else if (content.arcade.variant === "flight") {
+          state.actions += 1;
+          state.playerVy -= 250;
+        } else {
+          state.actions += 1;
+          state.bullets.push({ x: state.playerX, y: state.playerY - 26, vy: -420 });
+        }
         if (state.actions >= content.arcade.rounds) state.finished = true;
       }
       setShareState("idle");
@@ -373,7 +593,7 @@ export function ArcadeGameEngine({
       if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code)) {
         event.preventDefault();
         keys.add(event.code);
-        if (event.code === "Space" || event.code === "Enter") performAction("main");
+        if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
     }
     function keyUp(event: KeyboardEvent) {

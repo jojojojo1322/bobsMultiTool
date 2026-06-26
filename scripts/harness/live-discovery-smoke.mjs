@@ -169,6 +169,8 @@ assertIncludes("/sitemaps/en", sitemap, [
   `<loc>${baseUrl}/search</loc>`,
   `<loc>${baseUrl}/blog</loc>`,
   `<loc>${baseUrl}/blog/category/ai</loc>`,
+  `<loc>${baseUrl}/blog/category/info</loc>`,
+  `<loc>${baseUrl}/blog/ai-plan-price-comparison-2026-06-26</loc>`,
   `<loc>${baseUrl}/blog/ai-side-project-realistic-order</loc>`,
   `<loc>${baseUrl}/play</loc>`,
   `<loc>${baseUrl}/play/office-survival</loc>`,

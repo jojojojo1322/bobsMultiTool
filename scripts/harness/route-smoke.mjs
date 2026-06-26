@@ -195,7 +195,9 @@ for (const fragment of [
   'data-blog-category="AI"',
   'data-blog-category="개발"',
   'data-blog-category="운영 기록"',
+  'data-blog-category="정보"',
   "글만 남긴 기록입니다.",
+  "2026년 6월 AI 유료 플랜, 누가 무엇을 고르면 좋을까",
   "밤에 도메인 이름을 다시 보는 습관",
   "AI 도구가 많은데 왜 더 피곤할 때가 있을까",
   "바로 해보기:",
@@ -206,6 +208,7 @@ for (const fragment of [
   "/blog/category/ai",
   "/blog/category/development",
   "/blog/category/operations",
+  "/blog/category/info",
 ]) {
   if (!blogHtml.includes(fragment)) failures.push(`/blog missing source-locale category fragment: ${fragment}`);
 }
@@ -235,11 +238,13 @@ for (const fragment of [
   "<loc>https://www.bobob.app/search</loc>",
   "<loc>https://www.bobob.app/blog/category/diary</loc>",
   "<loc>https://www.bobob.app/blog/category/development</loc>",
+  "<loc>https://www.bobob.app/blog/category/info</loc>",
+  "<loc>https://www.bobob.app/blog/ai-plan-price-comparison-2026-06-26</loc>",
   "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
   "<loc>https://www.bobob.app/blog/small-reset-note</loc>",
   "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
   "<loc>https://www.bobob.app/tools</loc>",
-  "<lastmod>2026-06-25</lastmod>",
+  "<lastmod>2026-06-26</lastmod>",
   'hreflang="x-default"',
 ]) {
   if (!reducedSitemapBody.includes(fragment)) failures.push(`/sitemaps/en missing discovery fragment: ${fragment}`);

@@ -58,7 +58,7 @@ const requiredPlaySlugs = [
   "priority-sorter",
   "bug-clicker",
 ];
-const requiredBlogCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록"];
+const requiredBlogCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록", "정보"];
 const priorityDetailSlugs = [
   "regex-tester",
   "json-formatter",
@@ -182,7 +182,7 @@ for (const category of requiredBlogCategories) {
   if (categoryPostCount < 2) failures.push(`Blog category should have at least two posts: ${category}`);
   if (!blogCategoryDefinition.includes(`label: "${category}"`)) failures.push(`Blog category registry missing label: ${category}`);
 }
-for (const slug of ["diary", "interests", "ai", "development", "operations"]) {
+for (const slug of ["diary", "interests", "ai", "development", "operations", "info"]) {
   if (!blogCategoryDefinition.includes(`slug: "${slug}"`)) failures.push(`Blog category registry missing slug: ${slug}`);
 }
 for (const fragment of ["data-blog-categories", "data-blog-category", "글만 남긴 기록입니다", "blogCategoryPath(group.slug)"]) {

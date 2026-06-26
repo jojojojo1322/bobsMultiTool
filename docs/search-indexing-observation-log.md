@@ -157,6 +157,17 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console confirmation: `사이트맵이 제출됨`
   - Search Console sitemap row after resubmission: `/sitemaps/en`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`.
   - Interpretation: sitemap discovery now matches the live `68` URL count. This is still discovery evidence only, not indexing proof.
+- Post-info Blog expansion registration:
+  - Change: added the source-locale `정보` Blog category and three 2026-06-26 기준 information posts for AI plan prices, safe-driving insurance discounts, and MacBook prices/outlook; Blog set to `39` posts while Play remains `22` entries.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `72`, feed items `61`, Blog posts `39`, Play entries `22`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `72`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `61`, `61`
+  - WebSub response statuses: `204`, `204`
+  - Search Console discovered pages still need a signed-in follow-up against the new `72` URL sitemap.
 
 Decision:
 
@@ -175,7 +186,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, and the `2026-06-26` discovered-page values of `66` and `68`.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the new live `72` URL sitemap after the 정보 expansion.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
