@@ -97,7 +97,7 @@ for (const fragment of [
   "Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5`",
   "Google URL Inspection",
   "Bing and IndexNow",
-  `Latest response status \`200\`; submitted URL count \`${expectedSitemapUrlCount}\` after the 정보 Blog expansion`,
+  `Latest response status \`200\`; submitted URL count \`${expectedSitemapUrlCount}\` after the Play canvas upgrade`,
   "Bing Webmaster Tools",
   "Latest browser check reached the public landing page with `Sign In`",
   "Public Bing search",

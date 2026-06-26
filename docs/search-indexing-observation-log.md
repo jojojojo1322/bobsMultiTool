@@ -171,6 +171,22 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console follow-up attempt: Chrome Search Console opened on the `https://www.bobob.app/` property, but the visible Google account surface was `task10@ljfriends.net`, not `bobob935@gmail.com`.
   - Search Console action: no sitemap was submitted from that session because the operating rule requires the Chrome profile/session signed in as `bobob935@gmail.com`.
   - Search Console discovered pages still need a signed-in follow-up against the new `72` URL sitemap.
+- Post-play canvas upgrade registration:
+  - Commit: `a4caa9e`
+  - Change: upgraded `deploy-snake` into a keyboard-directed canvas snake, added mouse selection and stronger board rendering for the `sum-box` games, and added `password-lock` as a 1-minute canvas number-guessing game; Blog remains `39` posts while Play is now `23` entries.
+  - Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_REQUIRE_MAIN_VERCEL=1 BOBOB_DEPLOY_SHA=a4caa9e0e751bc65d836bd0b6f74b3bd8e5132b8 npm run harness:deployment-status` returned `overallState: success`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `73`, feed items `62`, Blog posts `39`, Play entries `23`.
+  - Live `/sitemaps/en` URL count: `73`
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `73` final 200 sitemap URLs.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `73`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `62`, `62`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages still need a signed-in follow-up against the new `73` URL sitemap.
 
 Decision:
 
