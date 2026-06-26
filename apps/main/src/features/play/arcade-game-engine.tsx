@@ -60,6 +60,14 @@ const stackerBlockHeight = 26;
 const stackerBaseWidth = 216;
 const stackerBaseY = stackerBoardY + stackerBoardHeight - stackerBlockHeight;
 const stackerMinOverlap = 18;
+const moleColumns = 3;
+const moleRows = 3;
+const moleHoleSize = 82;
+const moleGap = 28;
+const moleBoardWidth = moleColumns * moleHoleSize + (moleColumns - 1) * moleGap;
+const moleBoardHeight = moleRows * moleHoleSize + (moleRows - 1) * moleGap;
+const moleBoardX = 72;
+const moleBoardY = 76;
 
 type Sprite = {
   id: number;
@@ -149,6 +157,15 @@ type StackerBlock = {
   quality: "base" | "perfect" | "solid" | "thin" | "miss";
 };
 
+type MoleTarget = {
+  id: number;
+  hole: number;
+  label: string;
+  good: boolean;
+  age: number;
+  ttl: number;
+};
+
 type HistoryItem = {
   label: string;
   detail: string;
@@ -194,6 +211,9 @@ type GameState = {
   stackerDirection: number;
   stackerSpeed: number;
   stackerLayer: number;
+  moleTargets: MoleTarget[];
+  moleCursor: number;
+  moleSpawnTimer: number;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -251,6 +271,9 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     stackerDirection: 1,
     stackerSpeed: 168,
     stackerLayer: 0,
+    moleTargets: [],
+    moleCursor: 4,
+    moleSpawnTimer: 0,
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -1167,6 +1190,102 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
   finishStackerIfNeeded(content, state);
 }
 
+function moleHoleCenter(hole: number) {
+  const column = hole % moleColumns;
+  const row = Math.floor(hole / moleColumns);
+  return {
+    x: moleBoardX + column * (moleHoleSize + moleGap) + moleHoleSize / 2,
+    y: moleBoardY + row * (moleHoleSize + moleGap) + moleHoleSize / 2,
+  };
+}
+
+function moleHoleAt(x: number, y: number) {
+  for (let hole = 0; hole < moleColumns * moleRows; hole += 1) {
+    const center = moleHoleCenter(hole);
+    const dx = (x - center.x) / (moleHoleSize / 2);
+    const dy = (y - center.y) / (moleHoleSize / 2.5);
+    if (dx * dx + dy * dy <= 1) return hole;
+  }
+  return -1;
+}
+
+function moveMoleCursor(state: GameState, delta: number) {
+  const total = moleColumns * moleRows;
+  state.moleCursor = (state.moleCursor + delta + total) % total;
+}
+
+function occupiedMoleHoles(state: GameState) {
+  return new Set(state.moleTargets.map((target) => target.hole));
+}
+
+function spawnMoleTarget(content: ArcadeGameContent, state: GameState, preferredHole?: number) {
+  const occupied = occupiedMoleHoles(state);
+  const total = moleColumns * moleRows;
+  let hole = typeof preferredHole === "number" && preferredHole >= 0 && !occupied.has(preferredHole) ? preferredHole : -1;
+  for (let attempt = 0; hole < 0 && attempt < total; attempt += 1) {
+    const candidate = Math.floor(pseudoRandom(state.nextSpriteId * 29 + content.slug.length * 17 + attempt * 11) * total);
+    if (!occupied.has(candidate)) hole = candidate;
+  }
+  if (hole < 0) return;
+
+  const seed = state.nextSpriteId + content.slug.length * 31;
+  const good = pseudoRandom(seed + 4) > 0.34;
+  const target: MoleTarget = {
+    id: state.nextSpriteId,
+    hole,
+    label: pickLabel(good ? content.arcade.goodLabels : content.arcade.badLabels, state.nextSpriteId),
+    good,
+    age: 0,
+    ttl: 1.05 + pseudoRandom(seed + 9) * 0.5,
+  };
+  state.nextSpriteId += 1;
+  state.moleTargets = [...state.moleTargets, target].slice(-4);
+}
+
+function activeMoleAt(state: GameState, hole: number) {
+  return state.moleTargets.find((target) => target.hole === hole);
+}
+
+function finishMoleIfNeeded(content: ArcadeGameContent, state: GameState) {
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= 60) {
+    state.finished = true;
+  }
+}
+
+function whackMole(content: ArcadeGameContent, state: GameState, hole = state.moleCursor) {
+  if (state.finished) return;
+  state.moleCursor = hole;
+  let target = activeMoleAt(state, hole);
+  if (!target && !state.moleTargets.length) {
+    spawnMoleTarget(content, state, hole);
+    target = activeMoleAt(state, hole);
+  }
+  if (!target && state.moleTargets.length) {
+    target = state.moleTargets[0];
+    state.moleCursor = target.hole;
+  }
+
+  state.actions += 1;
+  if (!target) {
+    state.score = Math.max(0, state.score - 1);
+    state.focus = clamp(state.focus - 5, 0, 100);
+    addHistory(state, { label: "빈칸", detail: "한 박자 빨랐음", score: -1 });
+    finishMoleIfNeeded(content, state);
+    return;
+  }
+
+  state.moleTargets = state.moleTargets.filter((item) => item.id !== target.id);
+  const delta = target.good ? 3 : -4;
+  state.score = Math.max(0, state.score + delta);
+  state.focus = clamp(state.focus + (target.good ? 3 : -11), 0, 100);
+  addHistory(state, {
+    label: target.label,
+    detail: target.good ? "지금 볼 것만 잡음" : "굳이 잡았음",
+    score: delta,
+  });
+  finishMoleIfNeeded(content, state);
+}
+
 function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
   return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 }
@@ -1317,6 +1436,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
     return;
   }
 
+  if (content.arcade.variant === "mole") {
+    updateMole(content, state, dt);
+    return;
+  }
+
   state.elapsed += dt;
   state.spawnTimer -= dt;
 
@@ -1456,6 +1580,25 @@ function updateStacker(content: ArcadeGameContent, state: GameState, keys: Set<s
     state.stackerDirection = -1;
   }
   finishStackerIfNeeded(content, state);
+}
+
+function updateMole(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  state.moleSpawnTimer -= dt;
+  state.moleTargets = state.moleTargets
+    .map((target) => ({ ...target, age: target.age + dt }))
+    .filter((target) => {
+      const alive = target.age < target.ttl;
+      if (!alive && target.good) state.focus = clamp(state.focus - 3, 0, 100);
+      return alive;
+    });
+
+  if (state.moleSpawnTimer <= 0 && state.moleTargets.length < 3) {
+    spawnMoleTarget(content, state);
+    state.moleSpawnTimer = 0.38 + pseudoRandom(state.nextSpriteId + content.slug.length) * 0.34;
+  }
+
+  finishMoleIfNeeded(content, state);
 }
 
 function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) {
@@ -1709,6 +1852,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "mole") {
+    drawMole(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -1919,6 +2067,104 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("움직이는 블록이 아래층과 겹칠 때 멈춥니다.", canvasWidth / 2, 202);
     ctx.fillText("마우스로 눌러도 되고, Space/Enter로 쌓아도 됩니다.", canvasWidth / 2, 228);
+  }
+}
+
+function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const glow = ctx.createRadialGradient(moleBoardX + moleBoardWidth / 2, 210, 30, moleBoardX + moleBoardWidth / 2, 210, 330);
+  glow.addColorStop(0, "rgba(245,158,11,0.18)");
+  glow.addColorStop(1, "rgba(245,158,11,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.beginPath();
+  ctx.roundRect(moleBoardX - 22, moleBoardY - 22, moleBoardWidth + 44, moleBoardHeight + 44, 26);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.13)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  for (let hole = 0; hole < moleColumns * moleRows; hole += 1) {
+    const center = moleHoleCenter(hole);
+    const hasCursor = state.moleCursor === hole;
+    ctx.fillStyle = "rgba(0,0,0,0.34)";
+    ctx.beginPath();
+    ctx.ellipse(center.x, center.y + 18, moleHoleSize / 2, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.07)";
+    ctx.beginPath();
+    ctx.ellipse(center.x, center.y + 16, moleHoleSize / 2 - 6, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const target = activeMoleAt(state, hole);
+    if (target) {
+      const progress = clamp(target.age / target.ttl, 0, 1);
+      const pop = Math.sin((Math.min(1, progress * 2) * Math.PI) / 2) * (1 - Math.max(0, progress - 0.72) * 0.9);
+      const moleHeight = 42 * pop;
+      ctx.fillStyle = target.good ? accent : danger;
+      ctx.beginPath();
+      ctx.roundRect(center.x - 28, center.y + 12 - moleHeight, 56, 44, 18);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.38)";
+      ctx.stroke();
+      ctx.fillStyle = target.good ? "#111827" : "#fff7ed";
+      ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(target.label.slice(0, 5), center.x, center.y + 38 - moleHeight);
+    }
+
+    if (hasCursor && !state.finished) {
+      ctx.strokeStyle = primary;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(center.x, center.y + 16, moleHoleSize / 2 + 8, 25, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+  }
+
+  const panelX = 486;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(panelX, 78, 182, 210, 18);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.stroke();
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("지금 뜬 알림", panelX + 18, 112);
+  ctx.font = "900 28px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+  ctx.fillStyle = accent;
+  ctx.fillText(`${state.moleTargets.filter((target) => target.good).length}`, panelX + 18, 152);
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`소음 ${state.moleTargets.filter((target) => !target.good).length}`, panelX + 66, 149);
+  ctx.fillText(`잡은 횟수 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, panelX + 18, 188);
+  ctx.fillText("초록은 잡고, 빨강은 흘려보냅니다.", panelX + 18, 222);
+  ctx.fillText("다 잡으려 들면 집중이 먼저 닳습니다.", panelX + 18, 246);
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("마우스로 알림을 누르거나 방향키/WASD로 칸을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 164);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("초록 알림만 잡고, 소음은 지나가게 둡니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 누르거나 방향키와 Space로 잡으면 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -2778,6 +3024,16 @@ export function ArcadeGameEngine({
         syncView();
         return;
       }
+      if (content.arcade.variant === "mole") {
+        if (action === "left") moveMoleCursor(state, -1);
+        if (action === "right") moveMoleCursor(state, 1);
+        if (action === "up") moveMoleCursor(state, -moleColumns);
+        if (action === "down") moveMoleCursor(state, moleColumns);
+        if (action === "main") whackMole(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -2922,6 +3178,15 @@ export function ArcadeGameEngine({
           if ((event.code === "ArrowRight" || event.code === "KeyD") && !event.repeat) performAction("right");
           return;
         }
+        if (content.arcade.variant === "mole") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
         keys.add(event.code);
         if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
@@ -3021,6 +3286,17 @@ export function ArcadeGameEngine({
         placeStackerBlock(content, state);
         setShareState("idle");
         syncView();
+        return;
+      }
+
+      if (content.arcade.variant === "mole") {
+        const hole = moleHoleAt(point.x, point.y);
+        if (hole < 0) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        whackMole(content, state, hole);
+        setShareState("idle");
+        syncView();
       }
     },
     [content, syncView],
@@ -3093,7 +3369,8 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "password" ||
                   content.arcade.variant === "minesweeper" ||
                   content.arcade.variant === "match-three" ||
-                  content.arcade.variant === "stacker"
+                  content.arcade.variant === "stacker" ||
+                  content.arcade.variant === "mole"
                     ? "cursor-pointer"
                     : ""
                 }`}
@@ -3107,7 +3384,8 @@ export function ArcadeGameEngine({
             {content.arcade.variant === "snake" ||
             content.arcade.variant === "password" ||
             content.arcade.variant === "minesweeper" ||
-            content.arcade.variant === "match-three" ? (
+            content.arcade.variant === "match-three" ||
+            content.arcade.variant === "mole" ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
