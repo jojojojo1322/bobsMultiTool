@@ -43,11 +43,9 @@ import {
 } from "@/features/play/arcade-password";
 import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
 import {
-  areGemAdjacent,
+  chooseGemTile,
   clearGemDrag,
-  collapseGemBoard,
-  findGemMatches,
-  findGemSwapTarget,
+  commitGemSwap,
   gemBoardHeight,
   gemBoardWidth,
   gemBoardX,
@@ -61,7 +59,8 @@ import {
   gemTargetFromDrag,
   makeGemTiles,
   moveGemCursor,
-  swapGemKinds,
+  pressGemMain,
+  updateGemSwap,
   type GemTile,
 } from "@/features/play/arcade-match-three";
 import {
@@ -615,83 +614,6 @@ function advanceSnake(content: ArcadeGameContent, state: GameState, countAction:
   finishSnakeIfNeeded(content, state);
 }
 
-function resolveGemMatches(content: ArcadeGameContent, state: GameState, swapped = true) {
-  const matches = findGemMatches(state.gemTiles);
-  if (!matches.size) {
-    if (swapped) {
-      state.focus = clamp(state.focus - 8, 0, 100);
-      state.gemCombo = 0;
-      addHistory(state, {
-        label: "헛손",
-        detail: "셋이 안 맞음",
-        score: -1,
-      });
-    }
-    return false;
-  }
-
-  const matchedTiles = [...matches].map((index) => state.gemTiles[index]).filter(Boolean);
-  const goodCount = matchedTiles.filter((tile) => tile.good).length;
-  const badCount = matchedTiles.length - goodCount;
-  const delta = Math.max(1, goodCount * 2 + Math.max(0, matches.size - 3) + state.gemCombo - badCount);
-  state.score = Math.max(0, state.score + delta);
-  state.focus = clamp(state.focus + Math.max(1, goodCount - badCount), 0, 100);
-  state.gemCombo += 1;
-  addHistory(state, {
-    label: `${matches.size}개`,
-    detail: badCount ? "잡말도 섞임" : "깔끔하게 맞음",
-    score: delta,
-  });
-  collapseGemBoard(content, state, matches);
-
-  const chain = findGemMatches(state.gemTiles);
-  if (chain.size) {
-    resolveGemMatches(content, state, false);
-  }
-
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0) {
-    state.finished = true;
-  }
-  return true;
-}
-
-function chooseGemTile(content: ArcadeGameContent, state: GameState, index = state.gemCursor) {
-  if (state.finished || !state.gemTiles[index]) return;
-  state.gemCursor = index;
-  if (state.gemSelected === null) {
-    state.gemSelected = index;
-    return;
-  }
-  if (state.gemSelected === index) {
-    const target = findGemSwapTarget(state, index);
-    if (target === null) {
-      state.gemSelected = null;
-      return;
-    }
-    index = target;
-    state.gemCursor = target;
-  }
-  if (!areGemAdjacent(state.gemSelected, index)) {
-    state.gemSelected = index;
-    return;
-  }
-
-  commitGemSwap(content, state, state.gemSelected, index);
-}
-
-function commitGemSwap(content: ArcadeGameContent, state: GameState, first: number, second: number) {
-  if (state.finished || !state.gemTiles[first] || !state.gemTiles[second] || !areGemAdjacent(first, second)) return;
-  state.gemSelected = null;
-  state.gemCursor = second;
-  state.actions += 1;
-  swapGemKinds(state.gemTiles, first, second);
-  const matched = resolveGemMatches(content, state, true);
-  if (!matched) {
-    swapGemKinds(state.gemTiles, first, second);
-    if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
-  }
-}
-
 function finishStackerIfNeeded(content: ArcadeGameContent, state: GameState) {
   if (
     state.score >= content.arcade.targetScore ||
@@ -1123,13 +1045,6 @@ function updateMinesweeper(content: ArcadeGameContent, state: GameState, dt: num
     state.focus <= 0 ||
     state.elapsed >= content.arcade.rounds * 5
   ) {
-    state.finished = true;
-  }
-}
-
-function updateGemSwap(content: ArcadeGameContent, state: GameState, dt: number) {
-  state.elapsed += dt;
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
     state.finished = true;
   }
 }
@@ -2855,15 +2770,7 @@ export function ArcadeGameEngine({
         if (action === "right") moveGemCursor(state, 1);
         if (action === "up") moveGemCursor(state, -gemColumns);
         if (action === "down") moveGemCursor(state, gemColumns);
-        if (action === "main") {
-          if (state.gemSelected === null) {
-            state.gemSelected = state.gemCursor;
-            const target = findGemSwapTarget(state, state.gemCursor);
-            if (target !== null) chooseGemTile(content, state, target);
-          } else {
-            chooseGemTile(content, state);
-          }
-        }
+        if (action === "main") pressGemMain(content, state);
         setShareState("idle");
         syncView();
         return;

@@ -1,5 +1,5 @@
 import type { ArcadeGameContent } from "@/features/content/types";
-import { pickLabel, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
+import { clamp, pickLabel, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
 
 const gemCanvasWidth = 720;
 
@@ -31,6 +31,24 @@ type GemDragState = {
   gemDragCurrent: CanvasPoint | null;
   gemDragStartIndex: number | null;
 };
+
+type GemHistoryItem = {
+  label: string;
+  detail: string;
+  score: number;
+};
+
+type GemPlayState = GemCursorState &
+  GemDragState & {
+    finished: boolean;
+    elapsed: number;
+    score: number;
+    focus: number;
+    actions: number;
+    gemSelected: number | null;
+    gemCombo: number;
+    history: GemHistoryItem[];
+  };
 
 export function gemKindCount(content: ArcadeGameContent) {
   return Math.max(4, Math.min(6, content.arcade.goodLabels.length + content.arcade.badLabels.length));
@@ -100,6 +118,60 @@ export function moveGemCursor(state: GemCursorState, delta: number) {
   const total = state.gemTiles.length;
   if (!total) return;
   state.gemCursor = (state.gemCursor + delta + total) % total;
+}
+
+export function updateGemSwap(content: ArcadeGameContent, state: GemPlayState, dt: number) {
+  state.elapsed += dt;
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+    state.finished = true;
+  }
+}
+
+export function pressGemMain(content: ArcadeGameContent, state: GemPlayState) {
+  if (state.gemSelected === null) {
+    state.gemSelected = state.gemCursor;
+    const target = findGemSwapTarget(state, state.gemCursor);
+    if (target !== null) chooseGemTile(content, state, target);
+    return;
+  }
+  chooseGemTile(content, state);
+}
+
+export function chooseGemTile(content: ArcadeGameContent, state: GemPlayState, index = state.gemCursor) {
+  if (state.finished || !state.gemTiles[index]) return;
+  state.gemCursor = index;
+  if (state.gemSelected === null) {
+    state.gemSelected = index;
+    return;
+  }
+  if (state.gemSelected === index) {
+    const target = findGemSwapTarget(state, index);
+    if (target === null) {
+      state.gemSelected = null;
+      return;
+    }
+    index = target;
+    state.gemCursor = target;
+  }
+  if (!areGemAdjacent(state.gemSelected, index)) {
+    state.gemSelected = index;
+    return;
+  }
+
+  commitGemSwap(content, state, state.gemSelected, index);
+}
+
+export function commitGemSwap(content: ArcadeGameContent, state: GemPlayState, first: number, second: number) {
+  if (state.finished || !state.gemTiles[first] || !state.gemTiles[second] || !areGemAdjacent(first, second)) return;
+  state.gemSelected = null;
+  state.gemCursor = second;
+  state.actions += 1;
+  swapGemKinds(state.gemTiles, first, second);
+  const matched = resolveGemMatches(content, state, true);
+  if (!matched) {
+    swapGemKinds(state.gemTiles, first, second);
+    if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
+  }
 }
 
 export function areGemAdjacent(first: number, second: number) {
@@ -219,6 +291,50 @@ export function collapseGemBoard(content: ArcadeGameContent, state: { actions: n
     }
   }
   state.gemTiles = nextTiles;
+}
+
+function resolveGemMatches(content: ArcadeGameContent, state: GemPlayState, swapped = true) {
+  const matches = findGemMatches(state.gemTiles);
+  if (!matches.size) {
+    if (swapped) {
+      state.focus = clamp(state.focus - 8, 0, 100);
+      state.gemCombo = 0;
+      rememberGemHistory(state, {
+        label: "헛손",
+        detail: "셋이 안 맞음",
+        score: -1,
+      });
+    }
+    return false;
+  }
+
+  const matchedTiles = [...matches].map((index) => state.gemTiles[index]).filter(Boolean);
+  const goodCount = matchedTiles.filter((tile) => tile.good).length;
+  const badCount = matchedTiles.length - goodCount;
+  const delta = Math.max(1, goodCount * 2 + Math.max(0, matches.size - 3) + state.gemCombo - badCount);
+  state.score = Math.max(0, state.score + delta);
+  state.focus = clamp(state.focus + Math.max(1, goodCount - badCount), 0, 100);
+  state.gemCombo += 1;
+  rememberGemHistory(state, {
+    label: `${matches.size}개`,
+    detail: badCount ? "잡말도 섞임" : "깔끔하게 맞음",
+    score: delta,
+  });
+  collapseGemBoard(content, state, matches);
+
+  const chain = findGemMatches(state.gemTiles);
+  if (chain.size) {
+    resolveGemMatches(content, state, false);
+  }
+
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0) {
+    state.finished = true;
+  }
+  return true;
+}
+
+function rememberGemHistory(state: Pick<GemPlayState, "history">, item: GemHistoryItem) {
+  state.history = [item, ...state.history].slice(0, 8);
 }
 
 function pickGemKind(content: ArcadeGameContent, tiles: GemTile[], column: number, row: number, seed: number) {
