@@ -583,6 +583,12 @@ function mainActionLabel(content: ArcadeGameContent) {
   return "발사";
 }
 
+function fireArcadeBullet(content: ArcadeGameContent, state: GameState) {
+  state.actions += 1;
+  state.bullets.push({ x: state.playerX, y: state.playerY - 30, vy: -430 });
+  if (state.actions >= content.arcade.rounds) state.finished = true;
+}
+
 function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<string>, now: number) {
   if (state.finished) return;
   if (!state.started) {
@@ -971,6 +977,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "shooter") {
+    drawShooter(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -1031,6 +1042,232 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     ctx.fillText(content.arcade.controls, canvasWidth / 2, 206);
     ctx.fillText("Space 또는 시작 버튼으로 바로 시작", canvasWidth / 2, 232);
   }
+}
+
+function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  const mode = content.slug.includes("bubble")
+    ? "bubble"
+    : content.slug.includes("missile")
+      ? "missile"
+      : content.slug.includes("invaders")
+        ? "invader"
+        : "signal";
+  const dangerLineY = canvasHeight - 96;
+  const shotsLeft = Math.max(0, content.arcade.rounds - state.actions);
+
+  const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+  backdrop.addColorStop(0, background);
+  backdrop.addColorStop(0.62, "rgba(15,23,42,0.96)");
+  backdrop.addColorStop(1, "rgba(2,6,23,1)");
+  ctx.fillStyle = backdrop;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = 1;
+  for (let x = 60; x < canvasWidth; x += 74) {
+    ctx.beginPath();
+    ctx.moveTo(x, 62);
+    ctx.lineTo(x, dangerLineY + 18);
+    ctx.stroke();
+  }
+  for (let y = 84; y < dangerLineY; y += 58) {
+    ctx.beginPath();
+    ctx.moveTo(34, y);
+    ctx.lineTo(canvasWidth - 34, y);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "rgba(15,23,42,0.54)";
+  ctx.beginPath();
+  ctx.roundRect(28, 20, canvasWidth - 56, 42, 14);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.82)";
+  ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(mode === "missile" ? "낙하 지점 보기" : mode === "bubble" ? "필요한 버블만 터뜨리기" : "진짜 신호만 쏘기", 44, 47);
+  ctx.textAlign = "right";
+  ctx.fillStyle = shotsLeft <= 3 ? danger : "rgba(255,255,255,0.68)";
+  ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`남은 발사 ${shotsLeft}`, canvasWidth - 44, 46);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.16)";
+  ctx.setLineDash([10, 10]);
+  ctx.beginPath();
+  ctx.moveTo(state.playerX, 68);
+  ctx.lineTo(state.playerX, state.playerY - 26);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(0, dangerLineY, canvasWidth, 5, 2);
+  ctx.fill();
+  ctx.fillStyle = state.focus < 38 ? "rgba(251,113,133,0.42)" : "rgba(96,165,250,0.16)";
+  ctx.beginPath();
+  ctx.roundRect(32, dangerLineY + 16, canvasWidth - 64, 28, 14);
+  ctx.fill();
+
+  for (const sprite of state.sprites) {
+    drawShooterSprite(ctx, sprite, mode, accent, danger);
+  }
+
+  for (const bullet of state.bullets) {
+    const beam = ctx.createLinearGradient(bullet.x, bullet.y - 22, bullet.x, bullet.y + 18);
+    beam.addColorStop(0, "rgba(248,250,252,0)");
+    beam.addColorStop(0.45, "rgba(248,250,252,0.96)");
+    beam.addColorStop(1, primary);
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.roundRect(bullet.x - 4, bullet.y - 24, 8, 34, 4);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(bullet.x, bullet.y - 24, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  drawShooterPlayer(ctx, content, state, mode, primary, accent);
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("마우스/터치로 조준 위치를 누르면 바로 발사합니다. A/D와 Space도 됩니다.", 34, canvasHeight - 22);
+  if (state.focus < 35) {
+    ctx.fillStyle = danger;
+    ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("눈에 띄는 걸 다 쏘면 먼저 지칩니다. 좋은 신호만 고르세요.", 34, canvasHeight - 48);
+  }
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 166);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("조준 위치를 누르거나 A/D로 움직여 Space로 쏩니다.", canvasWidth / 2, 204);
+    ctx.fillText("좋은 신호만 맞히면 오래 버팁니다.", canvasWidth / 2, 230);
+  }
+}
+
+function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: string, accent: string, danger: string) {
+  const fill = sprite.good ? accent : danger;
+  ctx.save();
+  ctx.translate(sprite.x, sprite.y);
+  ctx.fillStyle = "rgba(0,0,0,0.22)";
+  ctx.beginPath();
+  ctx.ellipse(0, sprite.radius + 8, sprite.radius * 0.82, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  const bodyGradient = ctx.createRadialGradient(-sprite.radius * 0.35, -sprite.radius * 0.4, 4, 0, 0, sprite.radius * 1.35);
+  bodyGradient.addColorStop(0, "rgba(255,255,255,0.92)");
+  bodyGradient.addColorStop(0.35, fill);
+  bodyGradient.addColorStop(1, sprite.good ? "rgba(20,83,45,0.96)" : "rgba(127,29,29,0.96)");
+  ctx.fillStyle = bodyGradient;
+
+  if (mode === "missile") {
+    ctx.beginPath();
+    ctx.moveTo(0, -sprite.radius - 10);
+    ctx.lineTo(sprite.radius * 0.72, sprite.radius + 8);
+    ctx.lineTo(-sprite.radius * 0.72, sprite.radius + 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = sprite.good ? "rgba(96,165,250,0.7)" : "rgba(251,191,36,0.8)";
+    ctx.beginPath();
+    ctx.ellipse(0, sprite.radius + 16, 7, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (mode === "bubble") {
+    ctx.beginPath();
+    ctx.arc(0, 0, sprite.radius + 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.64)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.beginPath();
+    ctx.arc(-sprite.radius * 0.32, -sprite.radius * 0.38, 5, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (mode === "invader") {
+    ctx.beginPath();
+    ctx.roundRect(-sprite.radius, -sprite.radius, sprite.radius * 2, sprite.radius * 1.8, 8);
+    ctx.fill();
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(-sprite.radius * 0.42, -sprite.radius * 0.25, 5, 5);
+    ctx.fillRect(sprite.radius * 0.28, -sprite.radius * 0.25, 5, 5);
+    ctx.strokeStyle = fill;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-sprite.radius * 0.82, sprite.radius * 0.98);
+    ctx.lineTo(-sprite.radius * 1.12, sprite.radius * 1.28);
+    ctx.moveTo(sprite.radius * 0.82, sprite.radius * 0.98);
+    ctx.lineTo(sprite.radius * 1.12, sprite.radius * 1.28);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.roundRect(-sprite.radius - 6, -sprite.radius * 0.72, sprite.radius * 2 + 12, sprite.radius * 1.44, 12);
+    ctx.fill();
+  }
+
+  ctx.strokeStyle = sprite.good ? "rgba(255,255,255,0.58)" : "rgba(255,255,255,0.34)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = sprite.good ? "#0f172a" : "#f8fafc";
+  ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(sprite.label.slice(0, 5), 0, mode === "missile" ? 9 : sprite.radius + 19);
+  ctx.restore();
+}
+
+function drawShooterPlayer(
+  ctx: CanvasRenderingContext2D,
+  content: ArcadeGameContent,
+  state: GameState,
+  mode: string,
+  primary: string,
+  accent: string,
+) {
+  ctx.save();
+  ctx.translate(state.playerX, state.playerY);
+  ctx.fillStyle = "rgba(0,0,0,0.28)";
+  ctx.beginPath();
+  ctx.ellipse(0, 23, 42, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = primary;
+  if (mode === "missile") {
+    ctx.beginPath();
+    ctx.arc(0, 0, 30, Math.PI, Math.PI * 2);
+    ctx.lineTo(30, 6);
+    ctx.lineTo(-30, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.58)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillRect(-3, 6, 6, 24);
+  } else {
+    ctx.beginPath();
+    ctx.roundRect(-34, -18, 68, 36, 12);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.55)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(0, -34);
+    ctx.lineTo(12, -16);
+    ctx.lineTo(-12, -16);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(content.arcade.playerLabel.slice(0, 5), 0, 5);
+  ctx.restore();
 }
 
 function drawStackerBlock(ctx: CanvasRenderingContext2D, block: StackerBlock, fill: string, textFill: string) {
@@ -2587,8 +2824,7 @@ export function ArcadeGameEngine({
           state.actions += 1;
           state.playerVy -= 250;
         } else {
-          state.actions += 1;
-          state.bullets.push({ x: state.playerX, y: state.playerY - 26, vy: -420 });
+          fireArcadeBullet(content, state);
         }
         if (state.actions >= content.arcade.rounds) state.finished = true;
       }
@@ -2841,6 +3077,17 @@ export function ArcadeGameEngine({
       }
 
       if (content.arcade.variant === "stacker") {
+        return;
+      }
+
+      if (content.arcade.variant === "shooter") {
+        event.preventDefault();
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.playerX = clamp(point.x, 34, canvasWidth - 34);
+        fireArcadeBullet(content, state);
+        setShareState("idle");
+        syncView();
         return;
       }
 
@@ -3135,6 +3382,7 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "minesweeper" ||
                   content.arcade.variant === "match-three" ||
                   content.arcade.variant === "stacker" ||
+                  content.arcade.variant === "shooter" ||
                   content.arcade.variant === "mole" ||
                   content.arcade.variant === "memory"
                     ? "cursor-pointer touch-none"

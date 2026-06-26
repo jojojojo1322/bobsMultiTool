@@ -4,7 +4,7 @@
   "description": "오른쪽에서 밀려오는 불편한 신호와 괜한 소음을 보고, 진짜 막아야 할 것만 Space로 쳐내는 짧은 캔버스 방어 게임입니다.",
   "type": "arcade-game",
   "durationLabel": "45-60초",
-  "updatedAt": "2026-06-26",
+  "updatedAt": "2026-06-27",
   "shareText": "나는 잡음 방어전에서 진짜 막아야 할 신호를 얼마나 잘 골랐을까?",
   "order": 22,
   "relatedBlogSlugs": [
@@ -17,8 +17,8 @@
   "relatedPlaySlugs": ["notification-mole", "meeting-escape"],
   "arcade": {
     "variant": "shooter",
-    "goal": "좌우로 움직이고 Space로 진짜 신호만 쳐냅니다.",
-    "controls": "키보드: A/D 또는 방향키로 이동, Space/Enter로 발사. 버튼으로도 조작할 수 있습니다.",
+    "goal": "좌우로 움직이거나 누른 위치로 조준해 진짜 신호만 쳐냅니다.",
+    "controls": "마우스/터치로 조준 위치를 누르면 바로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
     "rounds": 12,
     "targetScore": 22,
     "playerLabel": "방패",
