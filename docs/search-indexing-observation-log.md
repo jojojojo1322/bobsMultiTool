@@ -151,6 +151,12 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub feed item counts: `58`, `58`
   - WebSub response statuses: `204`, `204`
   - Interpretation: discovery registration was refreshed for the current live 68-URL set, but this still does not prove indexing.
+- Post-arcade Search Console sitemap resubmission:
+  - Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`
+  - Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` URL-prefix property after the arcade Play deployment.
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - Search Console sitemap row after resubmission: `/sitemaps/en`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`.
+  - Interpretation: sitemap discovery now matches the live `68` URL count. This is still discovery evidence only, not indexing proof.
 
 Decision:
 
@@ -169,7 +175,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, and the `2026-06-26` discovered-page value of `66`.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, and the `2026-06-26` discovered-page values of `66` and `68`.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:

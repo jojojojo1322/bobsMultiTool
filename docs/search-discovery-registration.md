@@ -21,7 +21,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` read-only check showed `성공`, submitted/read `2026. 6. 26.`, discovered pages `66`, while live XML has `68` URLs | Google has applied the newer sitemap beyond the old `53` count | It does not prove indexing, impressions, ranking, or that the final `2` live URLs have been discovered |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` resubmission confirmed `사이트맵이 제출됨`; submitted/read `2026. 6. 26.`, status `성공`, discovered pages `68`, matching the live XML count | Google can discover the current submitted sitemap URL set | It does not prove indexing, impressions, or ranking |
 | Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `3`, CTR `0%` for `3개월` | Google has begun showing at least some search impressions | It does not prove useful traffic or page indexing completion |
 | Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5` | The indexing problem is still visible and measurable | It does not identify all submitted Blog + Play URLs as indexed |
 | Google URL Inspection | `/blog/boring-maintenance-is-content-too` | Request confirmed with `색인 생성 요청됨` | A representative Blog URL was manually queued | It does not prove the URL was indexed |
@@ -61,7 +61,7 @@ Compare against the first `2026-06-25` baseline:
 Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
-- Latest `/sitemaps/en` discovered pages after the 2026-06-26 check: `66`
+- Latest `/sitemaps/en` discovered pages after the 2026-06-26 resubmission: `68`
 - Current live `/sitemaps/en` URL count: `68`
 - Latest IndexNow URL count: `68`
 - Latest feed item count: `58`

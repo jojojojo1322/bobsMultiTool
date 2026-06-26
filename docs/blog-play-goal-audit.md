@@ -59,9 +59,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked again on `2026-06-26` from the signed-in `bobob935@gmail.com` Chrome session.
-  - Search Console sitemap row showed status `성공`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, and discovered pages `66`.
-  - Live `/sitemaps/en` has `68` URLs, so Search Console has applied the newer sitemap beyond the old `53` count but still trails the live XML by `2` URLs.
+  - `/sitemaps/en` was checked and submitted again on `2026-06-26` from the signed-in `bobob935@gmail.com` Chrome session.
+  - Search Console sitemap row showed status `성공`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, and discovered pages `68`.
+  - Live `/sitemaps/en` has `68` URLs, so Search Console sitemap discovery now matches the current live XML count.
   - Latest performance observation showed total clicks `0` and total impressions `3` for the `3개월` range.
   - Latest page indexing observation still showed indexed pages `0` and not-indexed pages `5`.
   - Representative URL inspected: `https://www.bobob.app/blog/boring-maintenance-is-content-too`
@@ -87,7 +87,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Search Console has started showing impressions (`3`) in the `3개월` performance report, but clicks remain `0`.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery is improved (`66`) but still behind the live sitemap URL count (`68`).
+- Search Console sitemap discovery now matches the live sitemap URL count (`68`), but indexing is still unresolved.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Discovery submissions are hints only. They do not prove that Google or Bing indexed the new Blog + Play pages.
 
