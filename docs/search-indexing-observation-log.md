@@ -239,6 +239,22 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console sitemap row visible in that session: `/sitemaps/en`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`.
   - Search Console action: no sitemap was submitted from that session because the operating rule requires the Chrome profile/session signed in as `bobob935@gmail.com`.
   - Search Console discovered pages remain `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
+- Post-stacker canvas registration:
+  - Commit: `047c128`
+  - Change: upgraded `deploy-stacker` from the generic arcade fallback into a dedicated 1-minute canvas stacking loop with keyboard nudging, mouse/Space placement, overlap trimming, tower history, and less developer-coded public copy; Blog remains `39` posts and Play remains `23` entries.
+  - Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_REQUIRE_MAIN_VERCEL=1 BOBOB_DEPLOY_SHA=047c128ffa15b68d5c941394c62b641d10f96cc5 npm run harness:deployment-status` returned `overallState: success` with the main Vercel project `READY` and `PROMOTED`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `73`, feed items `62`, Blog posts `39`, Play entries `23`.
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `73` final 200 sitemap URLs.
+  - Local play verification: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction` passed across all `23` Play entries in desktop and mobile viewports; Playwright pixel/input checks passed for `deploy-stacker`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `73`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `62`, `62`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
 
 Decision:
 
