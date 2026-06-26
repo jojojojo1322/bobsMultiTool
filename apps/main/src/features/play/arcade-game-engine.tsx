@@ -597,6 +597,26 @@ function startFlightLift(content: ArcadeGameContent, state: GameState) {
   if (state.actions >= content.arcade.rounds) state.finished = true;
 }
 
+function moveBrickPaddleTo(state: GameState, x: number) {
+  state.playerX = clamp(x, 70, canvasWidth - 70);
+  if (!state.brickLaunched) {
+    state.brickBallX = state.playerX;
+    state.brickBallY = state.playerY - 23;
+  }
+}
+
+function launchOrNudgeBrickBall(state: GameState) {
+  if (!state.brickLaunched) {
+    state.brickLaunched = true;
+    state.brickBallVx = state.playerX < canvasWidth / 2 ? 185 : -185;
+    state.brickBallVy = -270;
+  } else {
+    state.brickBallVx = clamp(state.brickBallVx + (state.brickBallX >= state.playerX ? 22 : -22), -340, 340);
+    state.brickBallVy = Math.min(state.brickBallVy, -230);
+  }
+  state.actions += 1;
+}
+
 function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<string>, now: number) {
   if (state.finished) return;
   if (!state.started) {
@@ -2805,6 +2825,8 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(`${state.bricks.filter((brick) => brick.alive).length}개 남음`, 24, canvasHeight - 22);
+  ctx.textAlign = "right";
+  ctx.fillText("마우스/터치로 패들을 옮기고 누르면 공을 보냅니다.", canvasWidth - 24, canvasHeight - 22);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.68)";
@@ -2814,7 +2836,7 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 172);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("A/D 또는 방향키로 받침대를 움직이고 Space로 공을 보냅니다.", canvasWidth / 2, 208);
+    ctx.fillText("패들을 움직일 곳을 누르면 바로 공을 보냅니다.", canvasWidth / 2, 208);
     ctx.fillText("벽돌을 다급하게 쫓지 말고, 공이 돌아올 자리를 먼저 잡으세요.", canvasWidth / 2, 234);
   } else if (!state.brickLaunched) {
     ctx.fillStyle = "rgba(15,23,42,0.5)";
@@ -2822,7 +2844,7 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
     ctx.fillStyle = "#f8fafc";
     ctx.font = "600 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Space로 다시 시작", canvasWidth / 2, canvasHeight - 90);
+    ctx.fillText("패들 위치를 누르거나 Space로 다시 시작", canvasWidth / 2, canvasHeight - 90);
   }
 }
 
@@ -2962,15 +2984,7 @@ export function ArcadeGameEngine({
           state.actions += 1;
           state.playerY = clamp(state.playerY - crossingStepY, crossingLanes[crossingLanes.length - 1] - 36, crossingStartY);
         } else if (content.arcade.variant === "brick-breaker") {
-          if (!state.brickLaunched) {
-            state.brickLaunched = true;
-            state.brickBallVx = state.playerX < canvasWidth / 2 ? 185 : -185;
-            state.brickBallVy = -270;
-          } else {
-            state.brickBallVx = clamp(state.brickBallVx + (state.brickBallX >= state.playerX ? 22 : -22), -340, 340);
-            state.brickBallVy = Math.min(state.brickBallVy, -230);
-          }
-          state.actions += 1;
+          launchOrNudgeBrickBall(state);
         } else if (content.arcade.variant === "runner") {
           state.actions += 1;
           state.playerVy = -390;
@@ -3293,12 +3307,34 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
+      if (
+        content.arcade.variant !== "sum-box" &&
+        content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "flight" &&
+        content.arcade.variant !== "brick-breaker"
+      )
+        return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+      if (content.arcade.variant === "brick-breaker") {
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        state.started = true;
+        state.lastFrame = performance.now();
+        moveBrickPaddleTo(state, point.x);
+        if (!state.brickLaunched) launchOrNudgeBrickBall(state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "flight") {
         event.preventDefault();
         try {
@@ -3363,12 +3399,26 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
+      if (
+        content.arcade.variant !== "sum-box" &&
+        content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "flight" &&
+        content.arcade.variant !== "brick-breaker"
+      )
+        return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
       if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
+      if (content.arcade.variant === "brick-breaker") {
+        if (event.buttons === 0) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        moveBrickPaddleTo(state, point.x);
+        return;
+      }
       if (content.arcade.variant === "flight") {
         if (event.buttons === 0) keysRef.current.delete("Space");
         return;
@@ -3404,7 +3454,14 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerUp = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
+      if (
+        content.arcade.variant !== "sum-box" &&
+        content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "flight" &&
+        content.arcade.variant !== "brick-breaker"
+      )
+        return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
@@ -3419,6 +3476,12 @@ export function ArcadeGameEngine({
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
+      }
+      if (content.arcade.variant === "brick-breaker") {
+        moveBrickPaddleTo(state, point.x);
+        setShareState("idle");
+        syncView();
+        return;
       }
       if (content.arcade.variant === "flight") {
         keysRef.current.delete("Space");
@@ -3475,7 +3538,14 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerCancel = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
+      if (
+        content.arcade.variant !== "sum-box" &&
+        content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "flight" &&
+        content.arcade.variant !== "brick-breaker"
+      )
+        return;
       const state = stateRef.current;
       keysRef.current.delete("Space");
       clearSumDrag(state);
@@ -3566,6 +3636,7 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "stacker" ||
                   content.arcade.variant === "shooter" ||
                   content.arcade.variant === "flight" ||
+                  content.arcade.variant === "brick-breaker" ||
                   content.arcade.variant === "mole" ||
                   content.arcade.variant === "memory"
                     ? "cursor-pointer touch-none"
