@@ -48,6 +48,7 @@ type SumBoxDragState = {
   sumDragCurrent: CanvasPoint | null;
   sumDragMoved: boolean;
   sumDragTileIds: number[];
+  sumDragBlockedTileId: number | null;
 };
 
 export function makeSumTiles(content: ArcadeGameContent): SumTile[] {
@@ -233,15 +234,19 @@ export function pointInSumBoard(point: CanvasPoint) {
   );
 }
 
-export function rememberSumDragTile(state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds">, index: number) {
+export function rememberSumDragTile(state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds" | "sumDragBlockedTileId">, index: number) {
   const tile = state.sumTiles[index];
   if (!tile || tile.cleared || state.sumDragTileIds.includes(index)) return;
   const currentSum = state.sumDragTileIds.reduce((sum, id) => sum + (state.sumTiles[id]?.value ?? 0), 0);
-  if (currentSum >= 10 || currentSum + tile.value > 10) return;
+  if (currentSum >= 10 || currentSum + tile.value > 10) {
+    state.sumDragBlockedTileId = index;
+    return;
+  }
   state.sumDragTileIds.push(index);
+  state.sumDragBlockedTileId = null;
 }
 
-export function rememberSumDragSegment(state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds">, from: CanvasPoint, to: CanvasPoint) {
+export function rememberSumDragSegment(state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds" | "sumDragBlockedTileId">, from: CanvasPoint, to: CanvasPoint) {
   const rect = {
     x: Math.min(from.x, to.x) - 12,
     y: Math.min(from.y, to.y) - 12,
@@ -279,6 +284,7 @@ export function clearSumDrag(state: SumBoxDragState) {
   state.sumDragCurrent = null;
   state.sumDragMoved = false;
   state.sumDragTileIds = [];
+  state.sumDragBlockedTileId = null;
 }
 
 function moveSumCursorToComplement(state: Pick<SumBoxPlayState, "sumTiles" | "sumCursor">) {

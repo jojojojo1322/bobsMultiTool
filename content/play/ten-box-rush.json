@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-26",
   "shareText": "사과 10 맞추기를 해봤다. 합 10을 놓치면 괜히 억울하다.",
   "order": 8,
-  "relatedBlogSlugs": ["small-web-games-retention", "tiny-web-things"],
+  "relatedBlogSlugs": ["drag-feedback-small-game-note", "small-web-games-retention", "tiny-web-things"],
   "relatedPlaySlugs": ["prompt-sum-box", "deploy-10-box", "password-lock"],
   "arcade": {
     "variant": "sum-box",
