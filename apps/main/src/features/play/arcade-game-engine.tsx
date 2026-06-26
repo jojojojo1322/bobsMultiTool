@@ -5,6 +5,18 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, RotateCcw, Share2 } from "lu
 import { Button } from "@/components/ui/button";
 import type { ArcadeGameContent } from "@/features/content/types";
 import {
+  crossingActionFromPoint,
+  crossingDangerForY,
+  crossingDangerLabel,
+  crossingFinishY,
+  crossingLanes,
+  crossingNextY,
+  crossingStartY,
+  crossingStepX,
+  crossingStepY,
+  type CrossingAction,
+} from "@/features/play/arcade-crossing";
+import {
   adjustPasswordDigit,
   applyPasswordCandidate,
   applyPasswordSuggestion,
@@ -196,10 +208,6 @@ import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-lin
 
 const canvasWidth = 720;
 const canvasHeight = 520;
-const crossingLanes = [326, 274, 222, 170, 118, 66];
-const crossingStartY = canvasHeight - 42;
-const crossingStepX = 48;
-const crossingStepY = 52;
 
 type Sprite = {
   id: number;
@@ -846,7 +854,7 @@ function updateCrossing(content: ArcadeGameContent, state: GameState, dt: number
     break;
   }
 
-  if (state.playerY <= crossingLanes[crossingLanes.length - 1] - 26) {
+  if (state.playerY <= crossingFinishY) {
     state.score += 5;
     state.focus = clamp(state.focus + 5, 0, 100);
     state.playerY = crossingStartY;
@@ -2823,6 +2831,11 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
 function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
+  const nextAction: CrossingAction = "up";
+  const nextY = crossingNextY(state.playerY, nextAction);
+  const nextDanger = crossingDangerForY(state.sprites, state.playerX, nextY);
+  const nextColor = nextDanger.level === "danger" ? danger : nextDanger.level === "watch" ? primary : accent;
+
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -2833,6 +2846,11 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillRect(0, crossingStartY - 23, canvasWidth, 58);
 
   for (const y of crossingLanes) {
+    const laneDanger = crossingDangerForY(state.sprites, state.playerX, y);
+    if (laneDanger.level !== "safe") {
+      ctx.fillStyle = laneDanger.level === "danger" ? "rgba(251,113,133,0.16)" : "rgba(250,204,21,0.11)";
+      ctx.fillRect(0, y - 26, canvasWidth, 52);
+    }
     ctx.strokeStyle = "rgba(255,255,255,0.16)";
     ctx.setLineDash([16, 14]);
     ctx.beginPath();
@@ -2848,6 +2866,15 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText("도착선", 20, 30);
+
+  ctx.strokeStyle = nextColor;
+  ctx.lineWidth = 3;
+  ctx.setLineDash([8, 7]);
+  ctx.beginPath();
+  ctx.roundRect(state.playerX - 24, nextY - 24, 48, 48, 12);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineWidth = 1;
 
   for (const sprite of state.sprites) {
     ctx.fillStyle = danger;
@@ -2876,10 +2903,28 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.textAlign = "center";
   ctx.fillText(content.arcade.playerLabel.slice(0, 4), state.playerX, state.playerY + 4);
 
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(500, 64, 178, 116, 18);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.15)";
+  ctx.stroke();
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("다음 한 칸", 518, 98);
+  ctx.fillStyle = nextColor;
+  ctx.font = "900 24px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(crossingDangerLabel(nextDanger), 518, 132);
+  ctx.fillStyle = "rgba(255,255,255,0.68)";
+  ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  const secondsText = nextDanger.seconds === null ? "차 간격을 보고 이동" : `${nextDanger.seconds.toFixed(1)}초 안에 차가 옴`;
+  ctx.fillText(secondsText, 518, 156);
+
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`건넌 횟수 ${Math.floor(state.score / 5)}`, 24, canvasHeight - 18);
+  ctx.fillText(`건넌 횟수 ${Math.floor(state.score / 5)} · 마우스/터치로 가고 싶은 방향을 누르면 한 칸 움직입니다.`, 24, canvasHeight - 18);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.68)";
@@ -2889,8 +2934,8 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 168);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("방향키로 한 칸씩 움직이고, 빈틈이 보이면 위로 건넙니다.", canvasWidth / 2, 204);
-    ctx.fillText("멈춰도 됩니다. 이 게임은 급하게 가면 더 자주 막힙니다.", canvasWidth / 2, 230);
+    ctx.fillText("다음 칸 표시가 초록이면 건너고, 노랑이나 빨강이면 잠깐 봅니다.", canvasWidth / 2, 204);
+    ctx.fillText("방향키/WASD 또는 마우스/터치로 한 칸씩 움직입니다.", canvasWidth / 2, 230);
   }
 }
 
@@ -3087,12 +3132,12 @@ export function ArcadeGameEngine({
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
       if (content.arcade.variant === "crossing" && action === "down") {
         state.actions += 1;
-        state.playerY = clamp(state.playerY + crossingStepY, crossingLanes[crossingLanes.length - 1] - 36, crossingStartY);
+        state.playerY = clamp(state.playerY + crossingStepY, crossingFinishY - 10, crossingStartY);
       }
-      if (action === "main") {
+      if (action === "main" || (content.arcade.variant === "crossing" && action === "up")) {
         if (content.arcade.variant === "crossing") {
           state.actions += 1;
-          state.playerY = clamp(state.playerY - crossingStepY, crossingLanes[crossingLanes.length - 1] - 36, crossingStartY);
+          state.playerY = clamp(state.playerY - crossingStepY, crossingFinishY - 10, crossingStartY);
         } else if (content.arcade.variant === "brick-breaker") {
           launchOrNudgeBrickBall(state);
         } else if (content.arcade.variant === "runner") {
@@ -3369,6 +3414,13 @@ export function ArcadeGameEngine({
         return;
       }
 
+      if (content.arcade.variant === "crossing") {
+        event.preventDefault();
+        const crossingAction = crossingActionFromPoint(state.playerX, state.playerY, point);
+        performAction(crossingAction === "up" ? "main" : crossingAction);
+        return;
+      }
+
       if (content.arcade.variant === "shooter") {
         event.preventDefault();
         state.started = true;
@@ -3403,7 +3455,7 @@ export function ArcadeGameEngine({
         syncView();
       }
     },
-    [content, syncView],
+    [content, performAction, syncView],
   );
 
   const handleCanvasContextMenu = React.useCallback(
@@ -3806,7 +3858,8 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "flight" ||
                   content.arcade.variant === "brick-breaker" ||
                   content.arcade.variant === "mole" ||
-                  content.arcade.variant === "memory"
+                  content.arcade.variant === "memory" ||
+                  content.arcade.variant === "crossing"
                     ? "cursor-pointer touch-none"
                     : ""
                 }`}
@@ -3823,7 +3876,8 @@ export function ArcadeGameEngine({
             content.arcade.variant === "minesweeper" ||
             content.arcade.variant === "match-three" ||
             content.arcade.variant === "mole" ||
-            content.arcade.variant === "memory" ? (
+            content.arcade.variant === "memory" ||
+            content.arcade.variant === "crossing" ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
