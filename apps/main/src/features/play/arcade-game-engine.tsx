@@ -68,6 +68,16 @@ const moleBoardWidth = moleColumns * moleHoleSize + (moleColumns - 1) * moleGap;
 const moleBoardHeight = moleRows * moleHoleSize + (moleRows - 1) * moleGap;
 const moleBoardX = 72;
 const moleBoardY = 76;
+const memoryColumns = 3;
+const memoryRows = 3;
+const memoryCellSize = 78;
+const memoryGap = 18;
+const memoryBoardWidth = memoryColumns * memoryCellSize + (memoryColumns - 1) * memoryGap;
+const memoryBoardHeight = memoryRows * memoryCellSize + (memoryRows - 1) * memoryGap;
+const memoryBoardX = 86;
+const memoryBoardY = 82;
+const memoryFlashStep = 0.58;
+const memoryFlashOn = 0.36;
 
 type Sprite = {
   id: number;
@@ -214,6 +224,13 @@ type GameState = {
   moleTargets: MoleTarget[];
   moleCursor: number;
   moleSpawnTimer: number;
+  memorySequence: number[];
+  memoryInput: number[];
+  memoryCursor: number;
+  memoryRound: number;
+  memoryShowing: boolean;
+  memoryFlashIndex: number;
+  memoryFlashTimer: number;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -274,6 +291,13 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     moleTargets: [],
     moleCursor: 4,
     moleSpawnTimer: 0,
+    memorySequence: makeMemorySequence(content, 1, 0),
+    memoryInput: [],
+    memoryCursor: 4,
+    memoryRound: 1,
+    memoryShowing: true,
+    memoryFlashIndex: 0,
+    memoryFlashTimer: 0,
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -282,6 +306,32 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     history: [],
     lastFrame: null,
   };
+}
+
+function memoryLengthForRound(round: number) {
+  return clamp(3 + Math.floor((round - 1) / 2), 3, 7);
+}
+
+function makeMemorySequence(content: ArcadeGameContent, round: number, salt: number) {
+  if (content.arcade.variant !== "memory") return [];
+  const length = memoryLengthForRound(round);
+  const sequence: number[] = [];
+  for (let index = 0; index < length; index += 1) {
+    const seed = content.slug.length * 83 + round * 47 + salt * 19 + index * 29;
+    let cell = Math.floor(pseudoRandom(seed) * memoryColumns * memoryRows);
+    const previous = sequence[sequence.length - 1];
+    if (cell === previous) cell = (cell + 1 + (index % 3)) % (memoryColumns * memoryRows);
+    sequence.push(cell);
+  }
+  return sequence;
+}
+
+function resetMemoryPreview(content: ArcadeGameContent, state: GameState, keepSequence = true) {
+  state.memorySequence = keepSequence ? state.memorySequence : makeMemorySequence(content, state.memoryRound, state.actions + state.score);
+  state.memoryInput = [];
+  state.memoryShowing = true;
+  state.memoryFlashIndex = 0;
+  state.memoryFlashTimer = 0;
 }
 
 function makeStackerBlocks(content: ArcadeGameContent): StackerBlock[] {
@@ -1286,6 +1336,103 @@ function whackMole(content: ArcadeGameContent, state: GameState, hole = state.mo
   finishMoleIfNeeded(content, state);
 }
 
+function memoryCellCenter(cell: number) {
+  const column = cell % memoryColumns;
+  const row = Math.floor(cell / memoryColumns);
+  return {
+    x: memoryBoardX + column * (memoryCellSize + memoryGap) + memoryCellSize / 2,
+    y: memoryBoardY + row * (memoryCellSize + memoryGap) + memoryCellSize / 2,
+  };
+}
+
+function memoryCellAt(x: number, y: number) {
+  const boardRight = memoryBoardX + memoryBoardWidth;
+  const boardBottom = memoryBoardY + memoryBoardHeight;
+  if (x < memoryBoardX || y < memoryBoardY || x > boardRight || y > boardBottom) return -1;
+  const localX = x - memoryBoardX;
+  const localY = y - memoryBoardY;
+  const column = Math.floor(localX / (memoryCellSize + memoryGap));
+  const row = Math.floor(localY / (memoryCellSize + memoryGap));
+  const insideX = localX - column * (memoryCellSize + memoryGap);
+  const insideY = localY - row * (memoryCellSize + memoryGap);
+  if (insideX > memoryCellSize || insideY > memoryCellSize) return -1;
+  if (column < 0 || column >= memoryColumns || row < 0 || row >= memoryRows) return -1;
+  return row * memoryColumns + column;
+}
+
+function moveMemoryCursor(state: GameState, delta: number) {
+  const total = memoryColumns * memoryRows;
+  state.memoryCursor = (state.memoryCursor + delta + total) % total;
+}
+
+function memoryDigitFromKeyboardCode(code: string) {
+  if (/^Digit[1-9]$/.test(code)) return Number(code.slice(5)) - 1;
+  if (/^Numpad[1-9]$/.test(code)) return Number(code.slice(6)) - 1;
+  return -1;
+}
+
+function activeMemoryFlashCell(state: GameState) {
+  if (!state.memoryShowing || !state.memorySequence.length || state.memoryFlashIndex < 0) return -1;
+  const phase = state.memoryFlashTimer % memoryFlashStep;
+  if (phase > memoryFlashOn) return -1;
+  return state.memorySequence[state.memoryFlashIndex] ?? -1;
+}
+
+function finishMemoryIfNeeded(content: ArcadeGameContent, state: GameState) {
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= 60) {
+    state.finished = true;
+  }
+}
+
+function chooseMemoryCell(content: ArcadeGameContent, state: GameState, cell = state.memoryCursor) {
+  if (state.finished) return;
+  if (state.memoryShowing) {
+    state.actions += 1;
+    state.score = Math.max(0, state.score - 1);
+    state.focus = clamp(state.focus - 6, 0, 100);
+    addHistory(state, {
+      label: "너무 빠름",
+      detail: "불빛 끝나고 누르기",
+      score: -1,
+    });
+    resetMemoryPreview(content, state, true);
+    finishMemoryIfNeeded(content, state);
+    return;
+  }
+
+  state.memoryCursor = cell;
+  const expected = state.memorySequence[state.memoryInput.length];
+  if (cell === expected) {
+    state.memoryInput = [...state.memoryInput, cell];
+    if (state.memoryInput.length < state.memorySequence.length) return;
+
+    state.actions += 1;
+    const delta = 4 + state.memorySequence.length;
+    state.score = Math.max(0, state.score + delta);
+    state.focus = clamp(state.focus + 5, 0, 100);
+    addHistory(state, {
+      label: `${state.memorySequence.length}칸`,
+      detail: "순서 맞음",
+      score: delta,
+    });
+    state.memoryRound += 1;
+    resetMemoryPreview(content, state, false);
+    finishMemoryIfNeeded(content, state);
+    return;
+  }
+
+  state.actions += 1;
+  state.score = Math.max(0, state.score - 2);
+  state.focus = clamp(state.focus - 13, 0, 100);
+  addHistory(state, {
+    label: `${cell + 1}번`,
+    detail: "순서 놓침",
+    score: -2,
+  });
+  resetMemoryPreview(content, state, true);
+  finishMemoryIfNeeded(content, state);
+}
+
 function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
   return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 }
@@ -1438,6 +1585,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "mole") {
     updateMole(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "memory") {
+    updateMemory(content, state, dt);
     return;
   }
 
@@ -1599,6 +1751,28 @@ function updateMole(content: ArcadeGameContent, state: GameState, dt: number) {
   }
 
   finishMoleIfNeeded(content, state);
+}
+
+function updateMemory(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  if (!state.memorySequence.length) {
+    resetMemoryPreview(content, state, false);
+  }
+
+  if (state.memoryShowing) {
+    state.memoryFlashTimer += dt;
+    const nextIndex = Math.floor(state.memoryFlashTimer / memoryFlashStep);
+    if (nextIndex >= state.memorySequence.length) {
+      state.memoryShowing = false;
+      state.memoryFlashIndex = -1;
+      state.memoryFlashTimer = 0;
+      state.memoryInput = [];
+    } else {
+      state.memoryFlashIndex = nextIndex;
+    }
+  }
+
+  finishMemoryIfNeeded(content, state);
 }
 
 function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) {
@@ -1854,6 +2028,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
 
   if (content.arcade.variant === "mole") {
     drawMole(content, state, ctx);
+    return;
+  }
+
+  if (content.arcade.variant === "memory") {
+    drawMemory(content, state, ctx);
     return;
   }
 
@@ -2165,6 +2344,121 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("초록 알림만 잡고, 소음은 지나가게 둡니다.", canvasWidth / 2, 202);
     ctx.fillText("마우스로 누르거나 방향키와 Space로 잡으면 됩니다.", canvasWidth / 2, 228);
+  }
+}
+
+function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent } = content.arcade.palette;
+  const activeCell = activeMemoryFlashCell(state);
+
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const glow = ctx.createRadialGradient(memoryBoardX + memoryBoardWidth / 2, 210, 20, memoryBoardX + memoryBoardWidth / 2, 210, 330);
+  glow.addColorStop(0, "rgba(129,140,248,0.2)");
+  glow.addColorStop(1, "rgba(129,140,248,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.beginPath();
+  ctx.roundRect(memoryBoardX - 20, memoryBoardY - 20, memoryBoardWidth + 40, memoryBoardHeight + 40, 26);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  for (let cell = 0; cell < memoryColumns * memoryRows; cell += 1) {
+    const column = cell % memoryColumns;
+    const row = Math.floor(cell / memoryColumns);
+    const x = memoryBoardX + column * (memoryCellSize + memoryGap);
+    const y = memoryBoardY + row * (memoryCellSize + memoryGap);
+    const isActive = activeCell === cell;
+    const isCursor = state.memoryCursor === cell;
+    const isEntered = state.memoryInput.includes(cell);
+    const label = pickLabel(content.arcade.goodLabels, cell);
+
+    if (isActive) {
+      const center = memoryCellCenter(cell);
+      const cellGlow = ctx.createRadialGradient(center.x, center.y, 8, center.x, center.y, 76);
+      cellGlow.addColorStop(0, "rgba(190,242,100,0.5)");
+      cellGlow.addColorStop(1, "rgba(190,242,100,0)");
+      ctx.fillStyle = cellGlow;
+      ctx.fillRect(x - 28, y - 28, memoryCellSize + 56, memoryCellSize + 56);
+    }
+
+    ctx.fillStyle = isActive ? accent : isEntered ? "rgba(129,140,248,0.88)" : "rgba(255,255,255,0.1)";
+    ctx.beginPath();
+    ctx.roundRect(x, y, memoryCellSize, memoryCellSize, 18);
+    ctx.fill();
+    ctx.strokeStyle = isCursor ? primary : "rgba(255,255,255,0.18)";
+    ctx.lineWidth = isCursor ? 3 : 1;
+    ctx.stroke();
+    ctx.lineWidth = 1;
+
+    ctx.fillStyle = isActive || isEntered ? "#111827" : "rgba(248,250,252,0.78)";
+    ctx.font = "900 24px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(`${cell + 1}`, x + memoryCellSize / 2, y + 38);
+    ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(label.slice(0, 4), x + memoryCellSize / 2, y + 58);
+  }
+
+  const panelX = 430;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(panelX, 82, 218, 238, 18);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.stroke();
+
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "850 17px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(state.memoryShowing ? "불빛 보는 중" : "이제 그대로 누르기", panelX + 18, 118);
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`차례 ${state.memoryRound} · 길이 ${state.memorySequence.length}`, panelX + 18, 146);
+
+  const dotY = 184;
+  for (let index = 0; index < state.memorySequence.length; index += 1) {
+    const dotX = panelX + 22 + index * 24;
+    const done = index < state.memoryInput.length;
+    const current = !state.memoryShowing && index === state.memoryInput.length;
+    ctx.fillStyle = done ? accent : current ? primary : "rgba(255,255,255,0.18)";
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, current ? 8 : 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`입력 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, panelX + 18, 224);
+  ctx.fillText("틀리면 같은 불빛을 한 번 더 보여줍니다.", panelX + 18, 252);
+  ctx.fillText("외웠으면 숫자키로 바로 눌러도 됩니다.", panelX + 18, 276);
+
+  if (!state.memoryShowing && state.memoryInput.length) {
+    const last = state.memoryInput[state.memoryInput.length - 1];
+    ctx.fillStyle = "rgba(190,242,100,0.9)";
+    ctx.font = "850 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(`방금 ${typeof last === "number" ? last + 1 : ""}번`, panelX + 18, 304);
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("마우스로 칸을 누르거나 방향키/WASD로 옮겨 Space. 숫자 1~9도 됩니다.", 34, canvasHeight - 20);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 164);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("빛난 칸 순서를 기억해서 같은 순서로 누릅니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 눌러도 되고, 방향키와 Space로 골라도 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -2954,6 +3248,7 @@ export function ArcadeGameEngine({
     (action: "left" | "right" | "main" | "up" | "down") => {
       const state = stateRef.current;
       if (state.finished) return;
+      const wasStarted = state.started;
       state.started = true;
       state.lastFrame = performance.now();
       if (content.arcade.variant === "sum-box") {
@@ -3034,6 +3329,21 @@ export function ArcadeGameEngine({
         syncView();
         return;
       }
+      if (content.arcade.variant === "memory") {
+        if (!wasStarted) {
+          setShareState("idle");
+          syncView();
+          return;
+        }
+        if (action === "left") moveMemoryCursor(state, -1);
+        if (action === "right") moveMemoryCursor(state, 1);
+        if (action === "up") moveMemoryCursor(state, -memoryColumns);
+        if (action === "down") moveMemoryCursor(state, memoryColumns);
+        if (action === "main") chooseMemoryCell(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -3078,10 +3388,12 @@ export function ArcadeGameEngine({
     function keyDown(event: KeyboardEvent) {
       const passwordDigitKey = content.arcade.variant === "password" ? digitFromKeyboardCode(event.code) : null;
       const passwordUtilityKey = content.arcade.variant === "password" && event.code === "Backspace";
+      const memoryDigitKey = content.arcade.variant === "memory" ? memoryDigitFromKeyboardCode(event.code) : -1;
       if (
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code) ||
         passwordDigitKey !== null ||
-        passwordUtilityKey
+        passwordUtilityKey ||
+        memoryDigitKey >= 0
       ) {
         event.preventDefault();
         if (content.arcade.variant === "crossing") {
@@ -3180,6 +3492,26 @@ export function ArcadeGameEngine({
         }
         if (content.arcade.variant === "mole") {
           if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
+        if (content.arcade.variant === "memory") {
+          if (event.repeat) return;
+          if (memoryDigitKey >= 0) {
+            const state = stateRef.current;
+            const wasStarted = state.started;
+            state.started = true;
+            state.lastFrame = performance.now();
+            state.memoryCursor = memoryDigitKey;
+            if (wasStarted) chooseMemoryCell(content, state, memoryDigitKey);
+            setShareState("idle");
+            syncView();
+            return;
+          }
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
           if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
           if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
@@ -3297,6 +3629,19 @@ export function ArcadeGameEngine({
         whackMole(content, state, hole);
         setShareState("idle");
         syncView();
+        return;
+      }
+
+      if (content.arcade.variant === "memory") {
+        const cell = memoryCellAt(point.x, point.y);
+        if (cell < 0) return;
+        const wasStarted = state.started;
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.memoryCursor = cell;
+        if (wasStarted) chooseMemoryCell(content, state, cell);
+        setShareState("idle");
+        syncView();
       }
     },
     [content, syncView],
@@ -3370,7 +3715,8 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "minesweeper" ||
                   content.arcade.variant === "match-three" ||
                   content.arcade.variant === "stacker" ||
-                  content.arcade.variant === "mole"
+                  content.arcade.variant === "mole" ||
+                  content.arcade.variant === "memory"
                     ? "cursor-pointer"
                     : ""
                 }`}
@@ -3385,7 +3731,8 @@ export function ArcadeGameEngine({
             content.arcade.variant === "password" ||
             content.arcade.variant === "minesweeper" ||
             content.arcade.variant === "match-three" ||
-            content.arcade.variant === "mole" ? (
+            content.arcade.variant === "mole" ||
+            content.arcade.variant === "memory" ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">

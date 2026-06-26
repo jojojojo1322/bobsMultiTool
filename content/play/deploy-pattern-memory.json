@@ -1,7 +1,7 @@
 {
   "slug": "deploy-pattern-memory",
   "title": "불빛 패턴 메모리",
-  "description": "순서대로 반짝이는 불빛을 보고 같은 박자로 눌러보는 기억 게임입니다. 복잡한 설명 없이 손과 눈으로 외웁니다.",
+  "description": "잠깐 빛난 칸 순서를 외워서 그대로 누르는 1분 기억 게임입니다. 보고, 외우고, 누르면 됩니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-26",
@@ -11,11 +11,11 @@
   "relatedPlaySlugs": ["deploy-stacker", "notification-mole"],
   "arcade": {
     "variant": "memory",
-    "goal": "반짝이는 좋은 신호만 기억해 Space로 맞춥니다.",
-    "controls": "키보드: A/D 또는 방향키로 위치를 맞추고 Space/Enter로 입력.",
+    "goal": "빛난 칸 순서를 기억해서 같은 순서로 누릅니다.",
+    "controls": "마우스로 칸을 누르거나 방향키/WASD로 옮겨 Space/Enter. 숫자 1~9도 됩니다.",
     "rounds": 10,
-    "targetScore": 18,
-    "playerLabel": "기억",
+    "targetScore": 34,
+    "playerLabel": "눈",
     "goodLabels": ["파랑", "초록", "노랑", "흰빛", "작은"],
     "badLabels": ["번짐", "흐림", "소음", "잔상", "깜빡"],
     "palette": { "background": "#111827", "primary": "#818cf8", "accent": "#bef264", "danger": "#fb7185" }

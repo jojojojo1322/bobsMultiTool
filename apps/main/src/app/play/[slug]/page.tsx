@@ -128,31 +128,29 @@ function PlayContext({
 }) {
   const typeLabel =
     content.type === "tap-game"
-      ? "판단을 빠르게 누르는 형식"
+      ? "빠르게 누르는 게임"
       : content.type === "sort-match-game"
-        ? "항목을 나눠보는 형식"
+        ? "이것저것 나눠 보는 게임"
         : content.type === "arcade-game"
-          ? "키보드로 직접 움직이는 캔버스 형식"
-          : "선택을 쌓아 결과를 보는 형식";
+          ? "손으로 직접 조작하는 게임"
+          : "몇 번 골라보고 결과를 보는 게임";
   const firstBlog = relatedBlogLinks[0];
 
   return (
     <section className="mt-6 rounded-md border bg-muted/20 p-4" data-play-context>
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Play note</p>
-      <h2 className="mt-2 text-xl font-semibold tracking-normal">이 작은 Play를 둔 이유</h2>
+      <h2 className="mt-2 text-xl font-semibold tracking-normal">왜 만들었냐면</h2>
       <div className="mt-3 grid gap-4 text-sm leading-7 text-muted-foreground md:grid-cols-2">
         <p>
-          {content.title}은 오래 설명하려고 만든 페이지가 아닙니다. {typeLabel}으로, 머리로만 읽던 상황을 손으로 한 번 눌러보게 만드는 쪽에 가깝습니다. 잘 만든 게임이라기보다
-          “아, 이런 느낌이었지...” 하고 짧게 확인하는 실험입니다.
+          {content.title}은 설명을 오래 읽는 페이지가 아닙니다. {typeLabel}이고, 화면 보고 바로 한 번 움직여보면 됩니다. 잘 맞으면 다시 하고, 별로면 결과만 보고 그냥 닫아도 됩니다.
         </p>
         <p>
-          한 판은 {content.durationLabel}, {playMetric} 정도로 끝납니다. 결과가 대단한 진단은 아니지만, 어떤 선택을 반복했는지 돌아보는 작은 흔적은 남습니다. 그래서 글만 읽고
-          지나가기보다 한 번 눌러보고, 마음에 걸리면 관련 글로 다시 돌아오는 흐름을 보고 있습니다.
+          한 판은 {content.durationLabel}, {playMetric} 정도로 끝납니다. 결과는 거창한 분석이 아니라 점수와 짧은 코멘트에 가깝습니다. 마음에 남는 부분이 있으면 관련 글을
+          이어서 보면 됩니다.
         </p>
       </div>
       <p className="mt-3 text-sm leading-7 text-muted-foreground">
-        점수나 결과 문구는 정답표가 아닙니다. 이 사이트가 지금 어떤 작은 반응을 만들 수 있는지 확인하는 재료에 가깝습니다. 너무 진지하게 붙잡기보다, 한 번 해보고 “이건 좀
-        되네” 싶은 감각만 가져가면 됩니다.
+        점수는 정답표가 아닙니다. 그냥 한 판 해보고 “이건 좀 되네” 싶으면 한 번 더, 아니면 다음 카드로 넘어가면 됩니다. 그 정도면 충분합니다.
       </p>
       {firstBlog ? (
         <div className="mt-4 rounded-sm border bg-background p-3 text-sm">
