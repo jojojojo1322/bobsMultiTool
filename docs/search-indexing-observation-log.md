@@ -235,8 +235,10 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - WebSub feed item counts: `62`, `62`
   - WebSub response statuses: `204`, `204`
-  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
-  - Search Console discovered pages remain at the latest recorded `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
+  - Search Console browser check: the sitemap screen for the `https://www.bobob.app/` property opened, but the visible Google account surface was `task10@ljfriends.net`, not `bobob935@gmail.com`.
+  - Search Console sitemap row visible in that session: `/sitemaps/en`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`.
+  - Search Console action: no sitemap was submitted from that session because the operating rule requires the Chrome profile/session signed in as `bobob935@gmail.com`.
+  - Search Console discovered pages remain `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
 
 Decision:
 
