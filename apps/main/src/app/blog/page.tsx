@@ -66,7 +66,7 @@ export default function BlogIndexPage() {
       </section>
       <section className="border-b" data-blog-categories>
         <div className="mx-auto max-w-6xl px-4 py-6">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Categories</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">글 탭</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {categories.map((group) => (
               <Link
@@ -87,7 +87,7 @@ export default function BlogIndexPage() {
             <section key={group.slug} id={`blog-category-${group.slug}`} data-blog-category={group.label}>
               <div className="mb-4 flex items-end justify-between gap-3">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Category</p>
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">분류</p>
                   <h2 className="mt-1 text-2xl font-semibold tracking-normal">{group.label}</h2>
                   <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">{group.description}</p>
                 </div>

@@ -80,7 +80,7 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
       <ContentNav dictionary={dictionary} />
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">
-          <Badge>Blog category</Badge>
+          <Badge>Blog 분류</Badge>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">{category.label}</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{category.description}</p>
           <div className="mt-5 max-w-3xl rounded-md border bg-background p-4 text-sm leading-7 text-muted-foreground" data-blog-category-context>
