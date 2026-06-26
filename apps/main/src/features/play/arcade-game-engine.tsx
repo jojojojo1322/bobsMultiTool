@@ -15,6 +15,7 @@ import {
   passwordCandidateOptionRect,
   passwordCandidateOptions,
   passwordCandidateStats,
+  passwordGuessPreview,
   passwordDigitFromKeyboardCode,
   passwordDigitCount,
   passwordDigitGap,
@@ -2205,6 +2206,16 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const repeatedCurrent = state.passwordAttempts.some((attempt, index) => attempt.guess === currentGuess && (index > 0 || attempt.repeated));
   const impossibleCurrent =
     !duplicateCurrent && state.passwordAttempts.length > 0 && !state.passwordAttempts.some((attempt) => attempt.guess === currentGuess) && !passwordGuessIsPossible(state.passwordAttempts, currentGuess);
+  const guessPreview = passwordGuessPreview(state.passwordAttempts, state.passwordGuess);
+  const guessPreviewText = duplicateCurrent
+    ? "중복은 무효"
+    : repeatedCurrent
+      ? "이미 본 번호"
+      : impossibleCurrent || guessPreview.issue === "contradiction"
+        ? "기록과 충돌"
+        : state.passwordAttempts.length
+          ? `평균 ${Math.ceil(guessPreview.expectedRemaining)} · 최악 ${guessPreview.worstRemaining}`
+          : `후보 ${guessPreview.candidatesBefore}개 시작`;
   const statusText = duplicateCurrent
     ? "중복 숫자는 열리지 않습니다"
     : repeatedCurrent
@@ -2258,6 +2269,9 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(state.passwordAttempts.length ? `이번 힌트로 ${candidateStats.narrowedBy}개 줄임` : "첫 시도는 빠르게", 48, 146);
+  ctx.fillStyle = duplicateCurrent || repeatedCurrent || impossibleCurrent ? danger : "rgba(255,255,255,0.62)";
+  ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(guessPreviewText, 48, 166);
   ctx.fillStyle = "rgba(251,191,36,0.18)";
   ctx.beginPath();
   ctx.roundRect(passwordSuggestionRect.x, passwordSuggestionRect.y, passwordSuggestionRect.width, passwordSuggestionRect.height, 12);
@@ -2432,7 +2446,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자키 입력, ←/→ 자리 이동, ↑/↓ 변경, R 추천 후보, Space/Enter 확인. 후보도 누를 수 있습니다.", 34, passwordKeypadY - 18);
+  ctx.fillText("현재 번호의 평균/최악 후보 수를 보고, 숫자키·R 추천 후보·Space/Enter로 확인합니다.", 34, passwordKeypadY - 18);
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;
@@ -2449,7 +2463,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.fillText(content.title, centerX, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("세 자리 숫자를 맞춥니다. 힌트 기록으로 남은 후보를 줄입니다.", centerX, 204);
-    ctx.fillText("숫자키로 넣거나 추천 후보를 눌러 바로 좁혀갑니다.", centerX, 230);
+    ctx.fillText("현재 번호가 얼마나 줄이는지도 보고 눌러봅니다.", centerX, 230);
   }
 }
 

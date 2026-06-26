@@ -225,6 +225,58 @@ export function passwordCandidateStats(attempts: PasswordAttempt[]) {
   };
 }
 
+export function passwordGuessPreview(attempts: PasswordAttempt[], guess: number[] | string) {
+  const guessText = Array.isArray(guess) ? passwordGuessText(guess) : guess;
+  const candidates = passwordCandidatesForAttempts(attempts);
+  if (passwordGuessHasDuplicateDigits(guessText)) {
+    return {
+      issue: "duplicate" as const,
+      candidatesBefore: candidates.length,
+      expectedRemaining: candidates.length,
+      worstRemaining: candidates.length,
+      outcomeCount: 0,
+    };
+  }
+
+  const alreadyTried = attempts.some((attempt) => attempt.guess === guessText);
+  const guessDigits = parsePasswordGuess(guessText);
+  const isCandidate = candidates.some((candidate) => candidate.join("") === guessText);
+  if (attempts.length > 0 && !alreadyTried && !isCandidate) {
+    return {
+      issue: "contradiction" as const,
+      candidatesBefore: candidates.length,
+      expectedRemaining: candidates.length,
+      worstRemaining: candidates.length,
+      outcomeCount: 0,
+    };
+  }
+
+  if (!candidates.length) {
+    return {
+      issue: undefined,
+      candidatesBefore: 0,
+      expectedRemaining: 0,
+      worstRemaining: 0,
+      outcomeCount: 0,
+    };
+  }
+
+  const buckets = new Map<string, number>();
+  for (const possibleSecret of candidates) {
+    const outcome = evaluatePasswordGuess(possibleSecret, guessDigits);
+    const key = `${outcome.exact}-${outcome.near}`;
+    buckets.set(key, (buckets.get(key) ?? 0) + 1);
+  }
+  const bucketSizes = [...buckets.values()];
+  return {
+    issue: undefined,
+    candidatesBefore: candidates.length,
+    expectedRemaining: bucketSizes.reduce((sum, size) => sum + size * size, 0) / candidates.length,
+    worstRemaining: Math.max(...bucketSizes),
+    outcomeCount: buckets.size,
+  };
+}
+
 export function passwordPositionOptions(candidates: number[][]) {
   return Array.from({ length: passwordDigitCount }, (_, position) => {
     const digits = new Set<number>();
