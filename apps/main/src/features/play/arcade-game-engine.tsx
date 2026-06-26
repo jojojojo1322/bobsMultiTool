@@ -64,6 +64,25 @@ import {
   type GemTile,
 } from "@/features/play/arcade-match-three";
 import {
+  activeMemoryFlashCell,
+  chooseMemoryCell,
+  makeMemorySequence,
+  memoryBoardHeight,
+  memoryBoardWidth,
+  memoryBoardX,
+  memoryBoardY,
+  memoryCellAt,
+  memoryCellCenter,
+  memoryCellSize,
+  memoryColumns,
+  memoryDigitFromKeyboardCode,
+  memoryGap,
+  memoryRows,
+  moveMemoryCursor,
+  setMemoryCursor,
+  updateMemory,
+} from "@/features/play/arcade-memory";
+import {
   makeMineCells,
   mineBoardHeight,
   mineBoardWidth,
@@ -162,16 +181,6 @@ const crossingLanes = [326, 274, 222, 170, 118, 66];
 const crossingStartY = canvasHeight - 42;
 const crossingStepX = 48;
 const crossingStepY = 52;
-const memoryColumns = 3;
-const memoryRows = 3;
-const memoryCellSize = 78;
-const memoryGap = 18;
-const memoryBoardWidth = memoryColumns * memoryCellSize + (memoryColumns - 1) * memoryGap;
-const memoryBoardHeight = memoryRows * memoryCellSize + (memoryRows - 1) * memoryGap;
-const memoryBoardX = 86;
-const memoryBoardY = 82;
-const memoryFlashStep = 0.58;
-const memoryFlashOn = 0.36;
 
 type Sprite = {
   id: number;
@@ -345,32 +354,6 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     history: [],
     lastFrame: null,
   };
-}
-
-function memoryLengthForRound(round: number) {
-  return clamp(3 + Math.floor((round - 1) / 2), 3, 7);
-}
-
-function makeMemorySequence(content: ArcadeGameContent, round: number, salt: number) {
-  if (content.arcade.variant !== "memory") return [];
-  const length = memoryLengthForRound(round);
-  const sequence: number[] = [];
-  for (let index = 0; index < length; index += 1) {
-    const seed = content.slug.length * 83 + round * 47 + salt * 19 + index * 29;
-    let cell = Math.floor(pseudoRandom(seed) * memoryColumns * memoryRows);
-    const previous = sequence[sequence.length - 1];
-    if (cell === previous) cell = (cell + 1 + (index % 3)) % (memoryColumns * memoryRows);
-    sequence.push(cell);
-  }
-  return sequence;
-}
-
-function resetMemoryPreview(content: ArcadeGameContent, state: GameState, keepSequence = true) {
-  state.memorySequence = keepSequence ? state.memorySequence : makeMemorySequence(content, state.memoryRound, state.actions + state.score);
-  state.memoryInput = [];
-  state.memoryShowing = true;
-  state.memoryFlashIndex = 0;
-  state.memoryFlashTimer = 0;
 }
 
 function makeBricks(content: ArcadeGameContent): Brick[] {
@@ -567,103 +550,6 @@ function whackMole(content: ArcadeGameContent, state: GameState, hole = state.mo
     score: delta,
   });
   finishMoleIfNeeded(content, state);
-}
-
-function memoryCellCenter(cell: number) {
-  const column = cell % memoryColumns;
-  const row = Math.floor(cell / memoryColumns);
-  return {
-    x: memoryBoardX + column * (memoryCellSize + memoryGap) + memoryCellSize / 2,
-    y: memoryBoardY + row * (memoryCellSize + memoryGap) + memoryCellSize / 2,
-  };
-}
-
-function memoryCellAt(x: number, y: number) {
-  const boardRight = memoryBoardX + memoryBoardWidth;
-  const boardBottom = memoryBoardY + memoryBoardHeight;
-  if (x < memoryBoardX || y < memoryBoardY || x > boardRight || y > boardBottom) return -1;
-  const localX = x - memoryBoardX;
-  const localY = y - memoryBoardY;
-  const column = Math.floor(localX / (memoryCellSize + memoryGap));
-  const row = Math.floor(localY / (memoryCellSize + memoryGap));
-  const insideX = localX - column * (memoryCellSize + memoryGap);
-  const insideY = localY - row * (memoryCellSize + memoryGap);
-  if (insideX > memoryCellSize || insideY > memoryCellSize) return -1;
-  if (column < 0 || column >= memoryColumns || row < 0 || row >= memoryRows) return -1;
-  return row * memoryColumns + column;
-}
-
-function moveMemoryCursor(state: GameState, delta: number) {
-  const total = memoryColumns * memoryRows;
-  state.memoryCursor = (state.memoryCursor + delta + total) % total;
-}
-
-function memoryDigitFromKeyboardCode(code: string) {
-  if (/^Digit[1-9]$/.test(code)) return Number(code.slice(5)) - 1;
-  if (/^Numpad[1-9]$/.test(code)) return Number(code.slice(6)) - 1;
-  return -1;
-}
-
-function activeMemoryFlashCell(state: GameState) {
-  if (!state.memoryShowing || !state.memorySequence.length || state.memoryFlashIndex < 0) return -1;
-  const phase = state.memoryFlashTimer % memoryFlashStep;
-  if (phase > memoryFlashOn) return -1;
-  return state.memorySequence[state.memoryFlashIndex] ?? -1;
-}
-
-function finishMemoryIfNeeded(content: ArcadeGameContent, state: GameState) {
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= 60) {
-    state.finished = true;
-  }
-}
-
-function chooseMemoryCell(content: ArcadeGameContent, state: GameState, cell = state.memoryCursor) {
-  if (state.finished) return;
-  if (state.memoryShowing) {
-    state.actions += 1;
-    state.score = Math.max(0, state.score - 1);
-    state.focus = clamp(state.focus - 6, 0, 100);
-    addHistory(state, {
-      label: "너무 빠름",
-      detail: "불빛 끝나고 누르기",
-      score: -1,
-    });
-    resetMemoryPreview(content, state, true);
-    finishMemoryIfNeeded(content, state);
-    return;
-  }
-
-  state.memoryCursor = cell;
-  const expected = state.memorySequence[state.memoryInput.length];
-  if (cell === expected) {
-    state.memoryInput = [...state.memoryInput, cell];
-    if (state.memoryInput.length < state.memorySequence.length) return;
-
-    state.actions += 1;
-    const delta = 4 + state.memorySequence.length;
-    state.score = Math.max(0, state.score + delta);
-    state.focus = clamp(state.focus + 5, 0, 100);
-    addHistory(state, {
-      label: `${state.memorySequence.length}칸`,
-      detail: "순서 맞음",
-      score: delta,
-    });
-    state.memoryRound += 1;
-    resetMemoryPreview(content, state, false);
-    finishMemoryIfNeeded(content, state);
-    return;
-  }
-
-  state.actions += 1;
-  state.score = Math.max(0, state.score - 2);
-  state.focus = clamp(state.focus - 13, 0, 100);
-  addHistory(state, {
-    label: `${cell + 1}번`,
-    detail: "순서 놓침",
-    score: -2,
-  });
-  resetMemoryPreview(content, state, true);
-  finishMemoryIfNeeded(content, state);
 }
 
 function canvasPointFromEvent(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement> | React.PointerEvent<HTMLCanvasElement>) {
@@ -918,28 +804,6 @@ function updateMole(content: ArcadeGameContent, state: GameState, dt: number) {
   }
 
   finishMoleIfNeeded(content, state);
-}
-
-function updateMemory(content: ArcadeGameContent, state: GameState, dt: number) {
-  state.elapsed += dt;
-  if (!state.memorySequence.length) {
-    resetMemoryPreview(content, state, false);
-  }
-
-  if (state.memoryShowing) {
-    state.memoryFlashTimer += dt;
-    const nextIndex = Math.floor(state.memoryFlashTimer / memoryFlashStep);
-    if (nextIndex >= state.memorySequence.length) {
-      state.memoryShowing = false;
-      state.memoryFlashIndex = -1;
-      state.memoryFlashTimer = 0;
-      state.memoryInput = [];
-    } else {
-      state.memoryFlashIndex = nextIndex;
-    }
-  }
-
-  finishMemoryIfNeeded(content, state);
 }
 
 function spawnCrossingObstacle(content: ArcadeGameContent, state: GameState) {
@@ -2815,7 +2679,7 @@ export function ArcadeGameEngine({
             const wasStarted = state.started;
             state.started = true;
             state.lastFrame = performance.now();
-            state.memoryCursor = memoryDigitKey;
+            setMemoryCursor(state, memoryDigitKey);
             if (wasStarted) chooseMemoryCell(content, state, memoryDigitKey);
             setShareState("idle");
             syncView();
@@ -2925,7 +2789,7 @@ export function ArcadeGameEngine({
         const wasStarted = state.started;
         state.started = true;
         state.lastFrame = performance.now();
-        state.memoryCursor = cell;
+        setMemoryCursor(state, cell);
         if (wasStarted) chooseMemoryCell(content, state, cell);
         setShareState("idle");
         syncView();
