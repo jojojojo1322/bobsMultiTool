@@ -125,7 +125,7 @@ function priorityDemandDetailCounts(slug) {
 }
 
 function parseFrontmatter(source) {
-  const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/);
   if (!match) return {};
   return Object.fromEntries(
     match[1]
@@ -366,7 +366,7 @@ for (const fragment of [
   if (!sitemapSource.includes(fragment)) failures.push(`sitemap source missing ${fragment}`);
 }
 
-const reducedSitemapCountMatch = sitemapSource.match(/function basePaths\(\)[\s\S]*?\n}\n\nfunction alternateLinks/);
+const reducedSitemapCountMatch = sitemapSource.match(/function basePaths\(\)[\s\S]*?\r?\n}\r?\n\r?\nfunction alternateLinks/);
 if (!reducedSitemapCountMatch?.[0]?.includes("getPlayContents().map")) {
   failures.push("reduced content sitemap should include registered Play pages");
 }

@@ -16,7 +16,7 @@ function read(filePath) {
 }
 
 function parseFrontmatter(source) {
-  const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/);
   if (!match) return {};
   return Object.fromEntries(
     match[1]

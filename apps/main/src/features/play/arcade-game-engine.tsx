@@ -21,6 +21,7 @@ const sumBoxTileHeight = 52;
 const sumBoxTileWidth = (canvasWidth - sumBoxStartX * 2 - sumBoxGap * (sumBoxColumns - 1)) / sumBoxColumns;
 const sumBoxBoardWidth = sumBoxColumns * sumBoxTileWidth + (sumBoxColumns - 1) * sumBoxGap;
 const sumBoxBoardHeight = sumBoxRows * sumBoxTileHeight + (sumBoxRows - 1) * sumBoxGap;
+const sumBoxTimeLimitSeconds = 60;
 const snakeCellSize = 24;
 const snakeColumns = 24;
 const snakeRows = 14;
@@ -41,6 +42,7 @@ const passwordKeypadHeight = 40;
 const passwordKeypadGap = 10;
 const passwordKeypadX = (canvasWidth - passwordKeypadColumns * passwordKeypadWidth - (passwordKeypadColumns - 1) * passwordKeypadGap) / 2;
 const passwordKeypadY = 414;
+const passwordTimeLimitSeconds = 60;
 const gemColumns = 6;
 const gemRows = 5;
 const gemCellSize = 54;
@@ -211,6 +213,7 @@ type GameState = {
   sumDragStart: CanvasPoint | null;
   sumDragCurrent: CanvasPoint | null;
   sumDragMoved: boolean;
+  sumDragTileIds: number[];
   snake: SnakeCell[];
   snakeDirection: SnakeDirection;
   snakeNextDirection: SnakeDirection;
@@ -284,6 +287,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     sumDragStart: null,
     sumDragCurrent: null,
     sumDragMoved: false,
+    sumDragTileIds: [],
     snake,
     snakeDirection: "right",
     snakeNextDirection: "right",
@@ -612,7 +616,30 @@ function tileIntersectsRect(tile: SumTile, rect: { x: number; y: number; width: 
   return centerX >= rect.x && centerX <= rect.x + rect.width && centerY >= rect.y && centerY <= rect.y + rect.height;
 }
 
+function rememberSumDragTile(state: GameState, index: number) {
+  const tile = state.sumTiles[index];
+  if (!tile || tile.cleared || state.sumDragTileIds.includes(index)) return;
+  state.sumDragTileIds.push(index);
+}
+
+function rememberSumDragSegment(state: GameState, from: CanvasPoint, to: CanvasPoint) {
+  const rect = {
+    x: Math.min(from.x, to.x) - 12,
+    y: Math.min(from.y, to.y) - 12,
+    width: Math.abs(to.x - from.x) + 24,
+    height: Math.abs(to.y - from.y) + 24,
+  };
+
+  for (const tile of state.sumTiles) {
+    if (!tile.cleared && tileIntersectsRect(tile, rect)) rememberSumDragTile(state, tile.id);
+  }
+}
+
 function sumDragTiles(state: GameState) {
+  if (state.sumDragTileIds.length) {
+    return state.sumDragTileIds.map((id) => state.sumTiles[id]).filter((tile): tile is SumTile => Boolean(tile && !tile.cleared));
+  }
+
   const rect = sumDragRect(state);
   if (!rect) return [];
   const paddedRect = {
@@ -632,6 +659,13 @@ function clearSumDrag(state: GameState) {
   state.sumDragStart = null;
   state.sumDragCurrent = null;
   state.sumDragMoved = false;
+  state.sumDragTileIds = [];
+}
+
+function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
+  if (content.arcade.variant === "sum-box") return sumBoxTimeLimitSeconds;
+  if (content.arcade.variant === "password") return passwordTimeLimitSeconds;
+  return content.arcade.rounds * 5;
 }
 
 function mineCellAt(cells: MineCell[], column: number, row: number) {
@@ -934,6 +968,10 @@ function candidateMatchesAttempts(candidate: number[], attempts: PasswordAttempt
 }
 
 function passwordCandidates(state: GameState) {
+  return passwordCandidatesForAttempts(state.passwordAttempts);
+}
+
+function passwordCandidatesForAttempts(attempts: PasswordAttempt[]) {
   const candidates: number[][] = [];
   for (let a = 0; a <= 9; a += 1) {
     for (let b = 0; b <= 9; b += 1) {
@@ -941,13 +979,40 @@ function passwordCandidates(state: GameState) {
       for (let c = 0; c <= 9; c += 1) {
         if (c === a || c === b) continue;
         const candidate = [a, b, c];
-        if (candidateMatchesAttempts(candidate, state.passwordAttempts)) {
+        if (candidateMatchesAttempts(candidate, attempts)) {
           candidates.push(candidate);
         }
       }
     }
   }
   return candidates;
+}
+
+function passwordCandidateStats(state: GameState) {
+  const candidates = passwordCandidates(state);
+  const previousCandidates = state.passwordAttempts.length ? passwordCandidatesForAttempts(state.passwordAttempts.slice(1)) : candidates;
+  return {
+    candidates,
+    previousCount: previousCandidates.length,
+    narrowedBy: Math.max(0, previousCandidates.length - candidates.length),
+  };
+}
+
+function passwordPositionOptions(candidates: number[][]) {
+  return Array.from({ length: passwordDigitCount }, (_, position) => {
+    const digits = new Set<number>();
+    for (const candidate of candidates) {
+      const digit = candidate[position];
+      if (digit !== undefined) digits.add(digit);
+    }
+    return [...digits].sort((left, right) => left - right);
+  });
+}
+
+function formatPasswordOptionDigits(digits: number[]) {
+  if (!digits.length) return "-";
+  if (digits.length >= 9) return "0-9";
+  return digits.join("");
 }
 
 function passwordSuggestion(state: GameState) {
@@ -1810,7 +1875,7 @@ function updateSnake(content: ArcadeGameContent, state: GameState, dt: number) {
 
 function updatePassword(content: ArcadeGameContent, state: GameState, dt: number) {
   state.elapsed += dt;
-  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
     state.finished = true;
   }
 }
@@ -1901,7 +1966,7 @@ function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) 
     state.sumTiles.every((tile) => tile.cleared) ||
     state.actions >= content.arcade.rounds ||
     state.focus <= 0 ||
-    state.elapsed >= content.arcade.rounds * 5
+    state.elapsed >= arcadeTimeLimitSeconds(content)
   ) {
     state.finished = true;
   }
@@ -2965,7 +3030,9 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
 function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const latest = state.passwordAttempts[0];
-  const candidates = passwordCandidates(state);
+  const candidateStats = passwordCandidateStats(state);
+  const candidates = candidateStats.candidates;
+  const positionOptions = passwordPositionOptions(candidates);
   const suggestion = passwordSuggestion(state);
   const digitMarks = passwordDigitMarks(state);
   const currentGuess = passwordGuessText(state);
@@ -3013,7 +3080,11 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillText(`${candidates.length}`, 48, 124);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("괜찮은 다음 수", 48, 146);
+  ctx.fillText(
+    state.passwordAttempts.length ? `이번 힌트로 ${candidateStats.narrowedBy}개 줄임` : "괜찮은 다음 수",
+    48,
+    146,
+  );
   ctx.fillStyle = "rgba(251,191,36,0.18)";
   ctx.beginPath();
   ctx.roundRect(passwordSuggestionRect.x, passwordSuggestionRect.y, passwordSuggestionRect.width, passwordSuggestionRect.height, 12);
@@ -3026,6 +3097,27 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText("누르면 넣기", passwordSuggestionRect.x + 68, passwordSuggestionRect.y + 24);
+  ctx.textAlign = "center";
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(34, 224, 152, 104, 16);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.13)";
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.64)";
+  ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("자리별 가능성", 48, 248);
+  positionOptions.forEach((digits, index) => {
+    const y = 272 + index * 18;
+    ctx.fillStyle = index === state.passwordCursor ? accent : "rgba(255,255,255,0.52)";
+    ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(`${index + 1}칸`, 48, y);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "850 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillText(formatPasswordOptionDigits(digits), 86, y);
+  });
   ctx.textAlign = "center";
 
   for (let index = 0; index < passwordDigitCount; index += 1) {
@@ -3177,6 +3269,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const shownTiles = dragging ? dragTiles : selectedSumTiles(state);
   const shownSum = dragging ? sumTilesTotal(dragTiles) : currentSum;
   const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
+  const timeLimit = arcadeTimeLimitSeconds(content);
+  const timeLeft = Math.max(0, Math.ceil(timeLimit - state.elapsed));
+  const timeRatio = clamp(timeLeft / timeLimit, 0, 1);
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -3198,14 +3293,48 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillRect(sumBoxStartX - 8, sumBoxStartY - 7 + row * (sumBoxTileHeight + sumBoxGap), sumBoxBoardWidth + 16, sumBoxTileHeight + 10);
   }
 
-  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.fillStyle = "rgba(15,23,42,0.36)";
+  ctx.beginPath();
+  ctx.roundRect(24, 18, canvasWidth - 48, 48, 16);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.12)";
+  ctx.beginPath();
+  ctx.roundRect(canvasWidth - 176, 52, 132, 6, 3);
+  ctx.fill();
+  ctx.fillStyle = timeLeft <= 10 ? danger : accent;
+  ctx.beginPath();
+  ctx.roundRect(canvasWidth - 176, 52, 132 * timeRatio, 6, 3);
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`${dragging ? "드래그 합" : "합"} ${shownSum} / 10`, 34, 42);
+  ctx.fillText(`${dragging ? "드래그 합" : "합"} ${shownSum} / 10`, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.66)";
-  ctx.fillText(`비운 칸 ${cleared} / ${state.sumTiles.length}`, 190, 42);
-  ctx.fillText(shownTiles.length ? shownTiles.map((tile) => tile.value).join(" + ") : "마우스로 쓸어 담기", 328, 42);
+  ctx.fillText(`비운 칸 ${cleared} / ${state.sumTiles.length}`, 190, 48);
+  ctx.textAlign = "right";
+  ctx.fillText(`남은 ${timeLeft}초`, canvasWidth - 44, 48);
+  ctx.textAlign = "left";
+  ctx.fillText(shownTiles.length ? shownTiles.map((tile) => tile.value).join(" + ") : "마우스로 쓸어 담기", 42, 68);
+
+  if (dragging && dragTiles.length > 1) {
+    ctx.strokeStyle = shownSum === 10 ? "rgba(251,191,36,0.68)" : shownSum > 10 ? "rgba(251,113,133,0.58)" : "rgba(255,255,255,0.38)";
+    ctx.lineWidth = 7;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    dragTiles.forEach((tile, index) => {
+      const x = tile.x + tile.width / 2;
+      const y = tile.y + tile.height / 2;
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
 
   for (const tile of state.sumTiles) {
     const isCursor = tile.id === state.sumCursor;
@@ -3286,25 +3415,17 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.globalAlpha = 1;
   }
 
-  const rect = sumDragRect(state);
-  if (dragging && state.sumDragMoved && rect) {
-    ctx.fillStyle = shownSum === 10 ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.08)";
-    ctx.strokeStyle = shownSum === 10 ? accent : shownSum > 10 ? danger : "rgba(255,255,255,0.74)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([9, 7]);
+  if (dragging && state.sumDragMoved && state.sumDragCurrent) {
+    const pillX = clamp(state.sumDragCurrent.x + 18, 36, canvasWidth - 96);
+    const pillY = clamp(state.sumDragCurrent.y + 18, 94, canvasHeight - 84);
+    ctx.fillStyle = shownSum === 10 ? "rgba(251,191,36,0.95)" : shownSum > 10 ? "rgba(251,113,133,0.94)" : "rgba(15,23,42,0.86)";
     ctx.beginPath();
-    ctx.roundRect(rect.x, rect.y, rect.width, rect.height, 12);
+    ctx.roundRect(pillX, pillY, 68, 28, 14);
     ctx.fill();
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = "rgba(15,23,42,0.82)";
-    ctx.beginPath();
-    ctx.roundRect(clamp(rect.x + rect.width - 64, 34, canvasWidth - 94), clamp(rect.y + rect.height + 8, 92, canvasHeight - 88), 60, 26, 13);
-    ctx.fill();
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = shownSum === 10 ? "#111827" : "#f8fafc";
     ctx.font = "900 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(`${shownSum} / 10`, clamp(rect.x + rect.width - 34, 64, canvasWidth - 64), clamp(rect.y + rect.height + 26, 110, canvasHeight - 70));
+    ctx.fillText(`${shownSum} / 10`, pillX + 34, pillY + 19);
   }
 
   const barWidth = clamp((shownSum / 10) * (canvasWidth - 68), 0, canvasWidth - 68);
@@ -3494,6 +3615,7 @@ export function ArcadeGameEngine({
   const [view, setView] = React.useState<ViewState>(() => snapshot(stateRef.current));
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
   const ending = endingFor(content, view.score);
+  const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
 
   const syncView = React.useCallback(() => {
     setView(snapshot(stateRef.current));
@@ -3918,6 +4040,8 @@ export function ArcadeGameEngine({
         state.sumDragStart = point;
         state.sumDragCurrent = point;
         state.sumDragMoved = false;
+        state.sumDragTileIds = [];
+        if (index >= 0) rememberSumDragTile(state, index);
       } else {
         state.gemCursor = index;
         state.gemSelected = null;
@@ -3942,10 +4066,15 @@ export function ArcadeGameEngine({
       if (content.arcade.variant === "sum-box") {
         if (!state.sumDragStart) return;
         const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
+        const previousPoint = state.sumDragCurrent ?? state.sumDragStart;
         state.sumDragCurrent = point;
         if (movedDistance > 5) state.sumDragMoved = true;
         const index = sumTileIndexAt(state, point.x, point.y);
-        if (index >= 0) state.sumCursor = index;
+        rememberSumDragSegment(state, previousPoint, point);
+        if (index >= 0) {
+          state.sumCursor = index;
+          rememberSumDragTile(state, index);
+        }
         return;
       }
       if (state.gemDragStartIndex === null) return;
@@ -3972,7 +4101,9 @@ export function ArcadeGameEngine({
       }
       if (content.arcade.variant === "sum-box") {
         if (!state.sumDragStart) return;
+        const previousPoint = state.sumDragCurrent ?? state.sumDragStart;
         state.sumDragCurrent = point;
+        rememberSumDragSegment(state, previousPoint, point);
         const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
         const dragged = state.sumDragMoved || movedDistance > 5;
         const draggedTiles = dragged ? sumDragTiles(state) : [];
@@ -4047,9 +4178,10 @@ export function ArcadeGameEngine({
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-right">
+          <div className="grid grid-cols-2 gap-2 text-right sm:grid-cols-4">
             <Metric label="점수" value={view.score} />
             <Metric label="집중" value={view.focus} />
+            <Metric label="남은 시간" value={`${timeLeft}s`} />
             <Metric label="조작" value={`${Math.min(view.actions, content.arcade.rounds)} / ${content.arcade.rounds}`} />
           </div>
         </div>

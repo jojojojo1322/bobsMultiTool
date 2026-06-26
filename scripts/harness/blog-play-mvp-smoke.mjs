@@ -44,7 +44,7 @@ function read(filePath) {
 }
 
 function parseFrontmatter(source) {
-  const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?/);
   if (!match) return {};
 
   return Object.fromEntries(
@@ -63,7 +63,7 @@ function parseFrontmatter(source) {
 }
 
 function bodyFromMdx(source) {
-  return source.replace(/^---\n[\s\S]*?\n---\n?/, "").trim();
+  return source.replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n)?/, "").trim();
 }
 
 function dateDaysBetween(startDate, endDate) {

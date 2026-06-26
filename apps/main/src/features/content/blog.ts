@@ -16,7 +16,7 @@ type Frontmatter = {
 let cachedPosts: BlogPost[] | undefined;
 
 function parseFrontmatter(source: string): { frontmatter: Frontmatter; body: string } {
-  const match = source.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?([\s\S]*)$/);
   if (!match) return { frontmatter: {}, body: source };
 
   const frontmatter = Object.fromEntries(

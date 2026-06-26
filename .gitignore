@@ -64,6 +64,7 @@ vercel-*.log
 # local measured SEO exports and reports
 reports/*.csv
 reports/*.tsv
+reports/dev-server*.log
 reports/seo-opportunities*.md
 reports/seo-export*.md
 reports/indexing-followup*.md
