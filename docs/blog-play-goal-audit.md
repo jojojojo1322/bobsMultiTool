@@ -11,12 +11,12 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Blog Evidence
 
 - Blog source: `content/blog/*.mdx`
-- Current count: `77` Blog posts.
+- Current count: `80` Blog posts.
 - Date range: `2026-01-28` through `2026-06-27`, so the archive reads as a gradual few-month publishing trail.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
-- Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `24` date-sensitive posts.
-- Date-sensitive information lane: `24` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search checks, and youth savings notes.
-- Standalone Blog lane: `34` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
+- Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `26` date-sensitive posts.
+- Date-sensitive information lane: `26` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch checks, and youth savings notes.
+- Standalone Blog lane: `36` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`
@@ -52,9 +52,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current live discovery snapshot:
-  - Sitemap URLs: `111`
-  - Feed items: `100`
-  - Blog posts: `77`
+  - Sitemap URLs: `114`
+  - Feed items: `103`
+  - Blog posts: `80`
   - Play entries: `23`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
@@ -69,16 +69,16 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
-  - Latest submitted URL count: `111`
+  - Latest submitted URL count: `114`
   - Latest response status: `200`
-  - The 111-URL live sitemap set was submitted after the Play canvas upgrade, password guess preview, follow-up youth savings result expansion, sum-box combo bonus, stacker landing preview, notification mole urgency feedback, and the latest search-question information notes.
+  - The 114-URL live sitemap set was submitted after the Play canvas upgrade, password guess preview, follow-up youth savings result expansion, sum-box combo bonus, stacker landing preview, notification mole urgency feedback, crossing lane preview, and the latest information notes.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest feed item counts: `100`, `100`
+  - Latest feed item counts: `103`, `103`
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -88,7 +88,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Search Console has started showing impressions (`3`) in the `3개월` performance report, but clicks remain `0`.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`111`), and indexing is still unresolved.
+- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`114`), and indexing is still unresolved.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Discovery submissions are hints only. They do not prove that Google or Bing indexed the new Blog + Play pages.
 
