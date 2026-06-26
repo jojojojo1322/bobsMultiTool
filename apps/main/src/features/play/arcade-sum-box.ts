@@ -115,6 +115,8 @@ export function pointInSumBoard(point: CanvasPoint) {
 export function rememberSumDragTile(state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds">, index: number) {
   const tile = state.sumTiles[index];
   if (!tile || tile.cleared || state.sumDragTileIds.includes(index)) return;
+  const currentSum = state.sumDragTileIds.reduce((sum, id) => sum + (state.sumTiles[id]?.value ?? 0), 0);
+  if (currentSum >= 10 || currentSum + tile.value > 10) return;
   state.sumDragTileIds.push(index);
 }
 
