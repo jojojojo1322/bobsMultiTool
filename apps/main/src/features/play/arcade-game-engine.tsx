@@ -37,6 +37,14 @@ const passwordKeypadY = 344;
 const passwordKeypadWidth = 38;
 const passwordKeypadHeight = 32;
 const passwordKeypadGap = 8;
+const gemColumns = 6;
+const gemRows = 5;
+const gemCellSize = 54;
+const gemGap = 8;
+const gemBoardWidth = gemColumns * gemCellSize + (gemColumns - 1) * gemGap;
+const gemBoardHeight = gemRows * gemCellSize + (gemRows - 1) * gemGap;
+const gemBoardX = (canvasWidth - gemBoardWidth) / 2;
+const gemBoardY = 70;
 const mineColumns = 9;
 const mineRows = 7;
 const mineCount = 10;
@@ -105,6 +113,15 @@ type PasswordAttempt = {
   repeated: boolean;
 };
 
+type GemTile = {
+  id: number;
+  column: number;
+  row: number;
+  kind: number;
+  label: string;
+  good: boolean;
+};
+
 type MineCell = {
   id: number;
   column: number;
@@ -146,6 +163,10 @@ type GameState = {
   passwordSecret: number[];
   passwordCursor: number;
   passwordAttempts: PasswordAttempt[];
+  gemTiles: GemTile[];
+  gemCursor: number;
+  gemSelected: number | null;
+  gemCombo: number;
   mineCells: MineCell[];
   mineCursor: number;
   brickBallX: number;
@@ -192,6 +213,10 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     passwordSecret: makePasswordSecret(content),
     passwordCursor: 0,
     passwordAttempts: [],
+    gemTiles: makeGemTiles(content),
+    gemCursor: 0,
+    gemSelected: null,
+    gemCombo: 0,
     mineCells: makeMineCells(content),
     mineCursor: 0,
     brickBallX: canvasWidth / 2,
@@ -228,6 +253,59 @@ function makeMineCells(content: ArcadeGameContent): MineCell[] {
   }
 
   return cells;
+}
+
+function gemKindCount(content: ArcadeGameContent) {
+  return Math.max(4, Math.min(6, content.arcade.goodLabels.length + content.arcade.badLabels.length));
+}
+
+function gemIsGood(content: ArcadeGameContent, kind: number) {
+  return kind < Math.max(2, Math.min(4, content.arcade.goodLabels.length));
+}
+
+function gemLabel(content: ArcadeGameContent, kind: number) {
+  const goodCount = Math.max(2, Math.min(4, content.arcade.goodLabels.length));
+  if (kind < goodCount) return pickLabel(content.arcade.goodLabels, kind);
+  return pickLabel(content.arcade.badLabels, kind - goodCount);
+}
+
+function makeGemTile(content: ArcadeGameContent, column: number, row: number, kind: number, seed: number): GemTile {
+  return {
+    id: seed,
+    column,
+    row,
+    kind,
+    label: gemLabel(content, kind),
+    good: gemIsGood(content, kind),
+  };
+}
+
+function pickGemKind(content: ArcadeGameContent, tiles: GemTile[], column: number, row: number, seed: number) {
+  const count = gemKindCount(content);
+  for (let offset = 0; offset < count; offset += 1) {
+    const kind = (Math.floor(pseudoRandom(seed + offset * 23) * count) + offset) % count;
+    const left1 = tiles[gemIndex(column - 1, row)];
+    const left2 = tiles[gemIndex(column - 2, row)];
+    const up1 = tiles[gemIndex(column, row - 1)];
+    const up2 = tiles[gemIndex(column, row - 2)];
+    if (left1?.kind === kind && left2?.kind === kind) continue;
+    if (up1?.kind === kind && up2?.kind === kind) continue;
+    return kind;
+  }
+  return seed % count;
+}
+
+function makeGemTiles(content: ArcadeGameContent): GemTile[] {
+  if (content.arcade.variant !== "match-three") return [];
+  const tiles = new Array<GemTile>(gemColumns * gemRows);
+  for (let row = 0; row < gemRows; row += 1) {
+    for (let column = 0; column < gemColumns; column += 1) {
+      const seed = content.slug.length * 97 + row * 37 + column * 19 + 5;
+      const kind = pickGemKind(content, tiles, column, row, seed);
+      tiles[gemIndex(column, row)] = makeGemTile(content, column, row, kind, seed);
+    }
+  }
+  return tiles;
 }
 
 function makePasswordSecret(content: ArcadeGameContent): number[] {
@@ -758,6 +836,201 @@ function digitFromKeyboardCode(code: string) {
   return null;
 }
 
+function gemIndex(column: number, row: number) {
+  if (column < 0 || column >= gemColumns || row < 0 || row >= gemRows) return -1;
+  return row * gemColumns + column;
+}
+
+function gemCellIndexAt(x: number, y: number) {
+  if (x < gemBoardX || y < gemBoardY || x > gemBoardX + gemBoardWidth || y > gemBoardY + gemBoardHeight) return -1;
+  const localX = x - gemBoardX;
+  const localY = y - gemBoardY;
+  const column = Math.floor(localX / (gemCellSize + gemGap));
+  const row = Math.floor(localY / (gemCellSize + gemGap));
+  const insideX = localX - column * (gemCellSize + gemGap);
+  const insideY = localY - row * (gemCellSize + gemGap);
+  if (insideX > gemCellSize || insideY > gemCellSize) return -1;
+  return gemIndex(column, row);
+}
+
+function moveGemCursor(state: GameState, delta: number) {
+  const total = state.gemTiles.length;
+  if (!total) return;
+  state.gemCursor = (state.gemCursor + delta + total) % total;
+}
+
+function areGemAdjacent(first: number, second: number) {
+  const a = { column: first % gemColumns, row: Math.floor(first / gemColumns) };
+  const b = { column: second % gemColumns, row: Math.floor(second / gemColumns) };
+  return Math.abs(a.column - b.column) + Math.abs(a.row - b.row) === 1;
+}
+
+function swapGemKinds(tiles: GemTile[], first: number, second: number) {
+  const a = tiles[first];
+  const b = tiles[second];
+  if (!a || !b) return;
+  const aKind = a.kind;
+  const aLabel = a.label;
+  const aGood = a.good;
+  a.kind = b.kind;
+  a.label = b.label;
+  a.good = b.good;
+  b.kind = aKind;
+  b.label = aLabel;
+  b.good = aGood;
+}
+
+function findGemSwapTarget(state: GameState, index: number) {
+  const column = index % gemColumns;
+  const row = Math.floor(index / gemColumns);
+  const candidates = [
+    gemIndex(column + 1, row),
+    gemIndex(column - 1, row),
+    gemIndex(column, row + 1),
+    gemIndex(column, row - 1),
+  ].filter((candidate) => candidate >= 0 && state.gemTiles[candidate]);
+
+  for (const candidate of candidates) {
+    swapGemKinds(state.gemTiles, index, candidate);
+    const matched = findGemMatches(state.gemTiles).size > 0;
+    swapGemKinds(state.gemTiles, index, candidate);
+    if (matched) return candidate;
+  }
+  return candidates[0] ?? null;
+}
+
+function findGemMatches(tiles: GemTile[]) {
+  const matches = new Set<number>();
+  for (let row = 0; row < gemRows; row += 1) {
+    let runStart = 0;
+    for (let column = 1; column <= gemColumns; column += 1) {
+      const current = column < gemColumns ? tiles[gemIndex(column, row)]?.kind : -1;
+      const previous = tiles[gemIndex(column - 1, row)]?.kind;
+      if (current === previous) continue;
+      if (column - runStart >= 3) {
+        for (let matchColumn = runStart; matchColumn < column; matchColumn += 1) {
+          matches.add(gemIndex(matchColumn, row));
+        }
+      }
+      runStart = column;
+    }
+  }
+
+  for (let column = 0; column < gemColumns; column += 1) {
+    let runStart = 0;
+    for (let row = 1; row <= gemRows; row += 1) {
+      const current = row < gemRows ? tiles[gemIndex(column, row)]?.kind : -1;
+      const previous = tiles[gemIndex(column, row - 1)]?.kind;
+      if (current === previous) continue;
+      if (row - runStart >= 3) {
+        for (let matchRow = runStart; matchRow < row; matchRow += 1) {
+          matches.add(gemIndex(column, matchRow));
+        }
+      }
+      runStart = row;
+    }
+  }
+  return matches;
+}
+
+function collapseGemBoard(content: ArcadeGameContent, state: GameState, matches: Set<number>) {
+  const nextTiles = state.gemTiles.slice();
+  let fillSeed = state.actions * 101 + state.score * 13 + 31;
+  for (let column = 0; column < gemColumns; column += 1) {
+    const survivors: GemTile[] = [];
+    for (let row = gemRows - 1; row >= 0; row -= 1) {
+      const index = gemIndex(column, row);
+      const tile = nextTiles[index];
+      if (tile && !matches.has(index)) survivors.push(tile);
+    }
+    for (let row = gemRows - 1; row >= 0; row -= 1) {
+      const existing = survivors[gemRows - 1 - row];
+      const index = gemIndex(column, row);
+      if (existing) {
+        nextTiles[index] = { ...existing, column, row };
+      } else {
+        fillSeed += 17;
+        const kind = Math.floor(pseudoRandom(fillSeed + column * 7 + row * 11) * gemKindCount(content));
+        nextTiles[index] = makeGemTile(content, column, row, kind, fillSeed);
+      }
+    }
+  }
+  state.gemTiles = nextTiles;
+}
+
+function resolveGemMatches(content: ArcadeGameContent, state: GameState, swapped = true) {
+  const matches = findGemMatches(state.gemTiles);
+  if (!matches.size) {
+    if (swapped) {
+      state.focus = clamp(state.focus - 8, 0, 100);
+      state.gemCombo = 0;
+      addHistory(state, {
+        label: "헛손",
+        detail: "셋이 안 맞음",
+        score: -1,
+      });
+    }
+    return false;
+  }
+
+  const matchedTiles = [...matches].map((index) => state.gemTiles[index]).filter(Boolean);
+  const goodCount = matchedTiles.filter((tile) => tile.good).length;
+  const badCount = matchedTiles.length - goodCount;
+  const delta = Math.max(1, goodCount * 2 + Math.max(0, matches.size - 3) + state.gemCombo - badCount);
+  state.score = Math.max(0, state.score + delta);
+  state.focus = clamp(state.focus + Math.max(1, goodCount - badCount), 0, 100);
+  state.gemCombo += 1;
+  addHistory(state, {
+    label: `${matches.size}개`,
+    detail: badCount ? "잡말도 섞임" : "깔끔하게 맞음",
+    score: delta,
+  });
+  collapseGemBoard(content, state, matches);
+
+  const chain = findGemMatches(state.gemTiles);
+  if (chain.size) {
+    resolveGemMatches(content, state, false);
+  }
+
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0) {
+    state.finished = true;
+  }
+  return true;
+}
+
+function chooseGemTile(content: ArcadeGameContent, state: GameState, index = state.gemCursor) {
+  if (state.finished || !state.gemTiles[index]) return;
+  state.gemCursor = index;
+  if (state.gemSelected === null) {
+    state.gemSelected = index;
+    return;
+  }
+  if (state.gemSelected === index) {
+    const target = findGemSwapTarget(state, index);
+    if (target === null) {
+      state.gemSelected = null;
+      return;
+    }
+    index = target;
+    state.gemCursor = target;
+  }
+  if (!areGemAdjacent(state.gemSelected, index)) {
+    state.gemSelected = index;
+    return;
+  }
+
+  const first = state.gemSelected;
+  const second = index;
+  state.gemSelected = null;
+  state.actions += 1;
+  swapGemKinds(state.gemTiles, first, second);
+  const matched = resolveGemMatches(content, state, true);
+  if (!matched) {
+    swapGemKinds(state.gemTiles, first, second);
+    if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
+  }
+}
+
 function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
   return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 }
@@ -850,6 +1123,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "snake") return "한 칸";
   if (content.arcade.variant === "password") return "확인";
   if (content.arcade.variant === "minesweeper") return "열기";
+  if (content.arcade.variant === "match-three") return "고르기";
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
@@ -894,6 +1168,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "minesweeper") {
     updateMinesweeper(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "match-three") {
+    updateGemSwap(content, state, dt);
     return;
   }
 
@@ -1009,6 +1288,13 @@ function updateMinesweeper(content: ArcadeGameContent, state: GameState, dt: num
     state.focus <= 0 ||
     state.elapsed >= content.arcade.rounds * 5
   ) {
+    state.finished = true;
+  }
+}
+
+function updateGemSwap(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
     state.finished = true;
   }
 }
@@ -1251,6 +1537,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
 
   if (content.arcade.variant === "minesweeper") {
     drawMinesweeper(content, state, ctx);
+    return;
+  }
+
+  if (content.arcade.variant === "match-three") {
+    drawGemSwap(content, state, ctx);
     return;
   }
 
@@ -1525,6 +1816,118 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("칸을 열고 숫자를 봅니다. 숫자는 가까운 위험 칸 수입니다.", canvasWidth / 2, 202);
     ctx.fillText("마우스로 바로 열거나 방향키로 옮겨 Space를 누르세요.", canvasWidth / 2, 228);
+  }
+}
+
+function gemColor(content: ArcadeGameContent, tile: GemTile) {
+  const colors = [content.arcade.palette.primary, content.arcade.palette.accent, "#86efac", "#fde68a", content.arcade.palette.danger, "#cbd5e1"];
+  return colors[tile.kind % colors.length] ?? content.arcade.palette.primary;
+}
+
+function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const glow = ctx.createRadialGradient(canvasWidth / 2, 200, 40, canvasWidth / 2, 200, 350);
+  glow.addColorStop(0, "rgba(103,232,249,0.18)");
+  glow.addColorStop(1, "rgba(103,232,249,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(15,23,42,0.44)";
+  ctx.beginPath();
+  ctx.roundRect(gemBoardX - 18, gemBoardY - 18, gemBoardWidth + 36, gemBoardHeight + 36, 24);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.78)";
+  ctx.font = "800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("말조각 보드", 36, 64);
+  ctx.fillStyle = "rgba(255,255,255,0.58)";
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`이동 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, 36, 88);
+  ctx.fillText(`콤보 ${state.gemCombo}`, 36, 110);
+
+  const selectedTile = state.gemSelected !== null ? state.gemTiles[state.gemSelected] : null;
+  if (selectedTile) {
+    ctx.fillStyle = "rgba(255,255,255,0.1)";
+    ctx.beginPath();
+    ctx.roundRect(34, 132, 122, 70, 14);
+    ctx.fill();
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("고른 조각", 48, 156);
+    ctx.fillStyle = gemColor(content, selectedTile);
+    ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(selectedTile.label.slice(0, 6), 48, 184);
+  }
+
+  for (const tile of state.gemTiles) {
+    const index = gemIndex(tile.column, tile.row);
+    const x = gemBoardX + tile.column * (gemCellSize + gemGap);
+    const y = gemBoardY + tile.row * (gemCellSize + gemGap);
+    const selected = state.gemSelected === index;
+    const cursor = state.gemCursor === index;
+    const color = gemColor(content, tile);
+
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.beginPath();
+    ctx.roundRect(x, y, gemCellSize, gemCellSize, 14);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(x + gemCellSize / 2, y + gemCellSize / 2);
+    ctx.rotate(((tile.kind % 4) - 1.5) * 0.08);
+    ctx.fillStyle = color;
+    ctx.shadowColor = selected || cursor ? color : "transparent";
+    ctx.shadowBlur = selected || cursor ? 18 : 0;
+    ctx.beginPath();
+    ctx.roundRect(-18, -18, 36, 36, 10);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = tile.good ? "rgba(255,255,255,0.62)" : "rgba(15,23,42,0.62)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = tile.good ? "#0f172a" : "#f8fafc";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(tile.label.slice(0, 3), x + gemCellSize / 2, y + gemCellSize / 2 + 4);
+
+    if (selected || cursor) {
+      ctx.strokeStyle = selected ? accent : primary;
+      ctx.lineWidth = selected ? 4 : 2;
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, 16);
+      ctx.stroke();
+    }
+  }
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("마우스로 두 칸을 차례로 누르거나 방향키로 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+  if (state.focus < 35) {
+    ctx.fillStyle = danger;
+    ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("헛손이 많아졌습니다. 가까운 둘만 바꿔서 셋을 맞추세요.", 34, canvasHeight - 44);
+  }
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 164);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("옆 칸끼리 바꿔서 같은 말조각 셋을 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 두 칸을 누르거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -2034,6 +2437,24 @@ export function ArcadeGameEngine({
         syncView();
         return;
       }
+      if (content.arcade.variant === "match-three") {
+        if (action === "left") moveGemCursor(state, -1);
+        if (action === "right") moveGemCursor(state, 1);
+        if (action === "up") moveGemCursor(state, -gemColumns);
+        if (action === "down") moveGemCursor(state, gemColumns);
+        if (action === "main") {
+          if (state.gemSelected === null) {
+            state.gemSelected = state.gemCursor;
+            const target = findGemSwapTarget(state, state.gemCursor);
+            if (target !== null) chooseGemTile(content, state, target);
+          } else {
+            chooseGemTile(content, state);
+          }
+        }
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -2162,6 +2583,15 @@ export function ArcadeGameEngine({
           if (event.code === "Space" || event.code === "Enter") performAction("main");
           return;
         }
+        if (content.arcade.variant === "match-three") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
         keys.add(event.code);
         if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
@@ -2241,6 +2671,17 @@ export function ArcadeGameEngine({
         revealMineCell(content, state, index);
         setShareState("idle");
         syncView();
+        return;
+      }
+
+      if (content.arcade.variant === "match-three") {
+        const index = gemCellIndexAt(point.x, point.y);
+        if (index < 0) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        chooseGemTile(content, state, index);
+        setShareState("idle");
+        syncView();
       }
     },
     [content, syncView],
@@ -2309,7 +2750,12 @@ export function ArcadeGameEngine({
                 onClick={handleCanvasClick}
                 aria-label={`${content.title} canvas`}
                 className={`block aspect-[12/7] w-full outline-none ${
-                  content.arcade.variant === "sum-box" || content.arcade.variant === "password" || content.arcade.variant === "minesweeper" ? "cursor-pointer" : ""
+                  content.arcade.variant === "sum-box" ||
+                  content.arcade.variant === "password" ||
+                  content.arcade.variant === "minesweeper" ||
+                  content.arcade.variant === "match-three"
+                    ? "cursor-pointer"
+                    : ""
                 }`}
                 style={{ background: content.arcade.palette.background }}
               />
@@ -2318,7 +2764,10 @@ export function ArcadeGameEngine({
               <p className="text-sm font-semibold">{content.arcade.goal}</p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
             </div>
-            {content.arcade.variant === "snake" || content.arcade.variant === "password" || content.arcade.variant === "minesweeper" ? (
+            {content.arcade.variant === "snake" ||
+            content.arcade.variant === "password" ||
+            content.arcade.variant === "minesweeper" ||
+            content.arcade.variant === "match-three" ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
