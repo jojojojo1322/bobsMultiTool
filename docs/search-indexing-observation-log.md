@@ -160,6 +160,7 @@ This file records manual external checks for the Blog + Play migration. Keep pri
 - Post-info Blog expansion registration:
   - Change: added the source-locale `정보` Blog category and three 2026-06-26 기준 information posts for AI plan prices, safe-driving insurance discounts, and MacBook prices/outlook; Blog set to `39` posts while Play remains `22` entries.
   - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `72`, feed items `61`, Blog posts `39`, Play entries `22`.
+  - Live `/sitemaps/en` URL count: `72`
   - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
   - IndexNow submitted URL count: `72`
   - IndexNow response status: `200`
@@ -167,6 +168,8 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - WebSub feed item counts: `61`, `61`
   - WebSub response statuses: `204`, `204`
+  - Search Console follow-up attempt: Chrome Search Console opened on the `https://www.bobob.app/` property, but the visible Google account surface was `task10@ljfriends.net`, not `bobob935@gmail.com`.
+  - Search Console action: no sitemap was submitted from that session because the operating rule requires the Chrome profile/session signed in as `bobob935@gmail.com`.
   - Search Console discovered pages still need a signed-in follow-up against the new `72` URL sitemap.
 
 Decision:
