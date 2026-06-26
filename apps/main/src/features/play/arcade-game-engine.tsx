@@ -62,6 +62,23 @@ import {
   type GemTile,
 } from "@/features/play/arcade-match-three";
 import {
+  makeMineCells,
+  mineBoardHeight,
+  mineBoardWidth,
+  mineBoardX,
+  mineBoardY,
+  mineCellIndexAt,
+  mineCellSize,
+  mineColumns,
+  mineGap,
+  moveMineCursor,
+  moveMineCursorToNextSafe,
+  revealMineFlood,
+  revealedMineSafeCount,
+  totalMineSafeCount,
+  type MineCell,
+} from "@/features/play/arcade-minesweeper";
+import {
   clearSumDrag,
   makeSumTiles,
   pointInSumBoard,
@@ -98,13 +115,6 @@ const snakeRows = 14;
 const snakeBoardX = (canvasWidth - snakeColumns * snakeCellSize) / 2;
 const snakeBoardY = 58;
 const snakeMoveInterval = 0.18;
-const mineColumns = 9;
-const mineRows = 7;
-const mineCount = 10;
-const mineCellSize = 38;
-const mineGap = 4;
-const mineBoardX = 54;
-const mineBoardY = 74;
 const stackerBoardX = 96;
 const stackerBoardY = 48;
 const stackerBoardWidth = 528;
@@ -170,15 +180,6 @@ type SnakeCell = {
 type SnakeFood = SnakeCell & {
   label: string;
   good: boolean;
-};
-
-type MineCell = {
-  id: number;
-  column: number;
-  row: number;
-  mine: boolean;
-  adjacent: number;
-  revealed: boolean;
 };
 
 type StackerBlock = {
@@ -387,32 +388,6 @@ function makeStackerBlocks(content: ArcadeGameContent): StackerBlock[] {
   ];
 }
 
-function makeMineCells(content: ArcadeGameContent): MineCell[] {
-  const total = mineColumns * mineRows;
-  const mines = new Set<number>();
-  for (let attempt = 0; mines.size < mineCount && attempt < total * 5; attempt += 1) {
-    const candidate = Math.floor(pseudoRandom(content.slug.length * 41 + attempt * 13 + 5) * total);
-    if (candidate === 0 || candidate === 1 || candidate === mineColumns) continue;
-    mines.add(candidate);
-  }
-
-  const cells = Array.from({ length: total }, (_, id) => ({
-    id,
-    column: id % mineColumns,
-    row: Math.floor(id / mineColumns),
-    mine: mines.has(id),
-    adjacent: 0,
-    revealed: false,
-  }));
-
-  for (const cell of cells) {
-    if (cell.mine) continue;
-    cell.adjacent = neighborMineCount(cells, cell.column, cell.row);
-  }
-
-  return cells;
-}
-
 function makeSnake(): SnakeCell[] {
   const headX = Math.floor(snakeColumns / 2);
   const headY = Math.floor(snakeRows / 2);
@@ -493,85 +468,6 @@ function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
   if (content.arcade.variant === "sum-box") return sumBoxTimeLimitSeconds;
   if (content.arcade.variant === "password") return passwordTimeLimitSeconds;
   return content.arcade.rounds * 5;
-}
-
-function mineCellAt(cells: MineCell[], column: number, row: number) {
-  if (column < 0 || column >= mineColumns || row < 0 || row >= mineRows) return undefined;
-  return cells[row * mineColumns + column];
-}
-
-function mineCellIndexAt(x: number, y: number) {
-  const boardWidth = mineColumns * mineCellSize + (mineColumns - 1) * mineGap;
-  const boardHeight = mineRows * mineCellSize + (mineRows - 1) * mineGap;
-  if (x < mineBoardX || y < mineBoardY || x > mineBoardX + boardWidth || y > mineBoardY + boardHeight) return -1;
-  const localX = x - mineBoardX;
-  const localY = y - mineBoardY;
-  const column = Math.floor(localX / (mineCellSize + mineGap));
-  const row = Math.floor(localY / (mineCellSize + mineGap));
-  const insideCellX = localX - column * (mineCellSize + mineGap);
-  const insideCellY = localY - row * (mineCellSize + mineGap);
-  if (insideCellX > mineCellSize || insideCellY > mineCellSize) return -1;
-  if (column < 0 || column >= mineColumns || row < 0 || row >= mineRows) return -1;
-  return row * mineColumns + column;
-}
-
-function neighborCells(cells: MineCell[], column: number, row: number) {
-  const neighbors: MineCell[] = [];
-  for (let dy = -1; dy <= 1; dy += 1) {
-    for (let dx = -1; dx <= 1; dx += 1) {
-      if (!dx && !dy) continue;
-      const neighbor = mineCellAt(cells, column + dx, row + dy);
-      if (neighbor) neighbors.push(neighbor);
-    }
-  }
-  return neighbors;
-}
-
-function neighborMineCount(cells: MineCell[], column: number, row: number) {
-  return neighborCells(cells, column, row).filter((cell) => cell.mine).length;
-}
-
-function revealedMineSafeCount(state: GameState) {
-  return state.mineCells.filter((cell) => cell.revealed && !cell.mine).length;
-}
-
-function totalMineSafeCount(state: GameState) {
-  return state.mineCells.filter((cell) => !cell.mine).length;
-}
-
-function moveMineCursor(state: GameState, delta: number) {
-  const total = state.mineCells.length;
-  if (!total) return;
-  state.mineCursor = (state.mineCursor + delta + total) % total;
-}
-
-function moveMineCursorToNextSafe(state: GameState) {
-  const total = state.mineCells.length;
-  for (let step = 0; step < total; step += 1) {
-    const index = (state.mineCursor + step) % total;
-    const cell = state.mineCells[index];
-    if (cell && !cell.revealed && !cell.mine) {
-      state.mineCursor = index;
-      return;
-    }
-  }
-}
-
-function revealMineFlood(state: GameState, start: MineCell) {
-  const queue = [start];
-  const revealed = new Set<number>();
-  while (queue.length) {
-    const cell = queue.shift();
-    if (!cell || cell.revealed || cell.mine || revealed.has(cell.id)) continue;
-    cell.revealed = true;
-    revealed.add(cell.id);
-    if (cell.adjacent === 0) {
-      for (const neighbor of neighborCells(state.mineCells, cell.column, cell.row)) {
-        if (!neighbor.revealed && !neighbor.mine) queue.push(neighbor);
-      }
-    }
-  }
-  return revealed.size;
 }
 
 function revealMineCell(content: ArcadeGameContent, state: GameState, index = state.mineCursor) {
@@ -2294,15 +2190,13 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
 
 function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
-  const boardWidth = mineColumns * mineCellSize + (mineColumns - 1) * mineGap;
-  const boardHeight = mineRows * mineCellSize + (mineRows - 1) * mineGap;
   const openedSafe = revealedMineSafeCount(state);
   const totalSafe = totalMineSafeCount(state);
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  const glow = ctx.createRadialGradient(mineBoardX + boardWidth / 2, mineBoardY + boardHeight / 2, 40, mineBoardX + boardWidth / 2, mineBoardY + boardHeight / 2, 310);
+  const glow = ctx.createRadialGradient(mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 40, mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 310);
   glow.addColorStop(0, "rgba(147,197,253,0.14)");
   glow.addColorStop(1, "rgba(147,197,253,0)");
   ctx.fillStyle = glow;
@@ -2310,7 +2204,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
 
   ctx.fillStyle = "rgba(255,255,255,0.07)";
   ctx.beginPath();
-  ctx.roundRect(mineBoardX - 14, mineBoardY - 14, boardWidth + 28, boardHeight + 28, 18);
+  ctx.roundRect(mineBoardX - 14, mineBoardY - 14, mineBoardWidth + 28, mineBoardHeight + 28, 18);
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,0.14)";
   ctx.lineWidth = 1;
