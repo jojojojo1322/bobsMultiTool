@@ -221,6 +221,22 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - WebSub response statuses: `204`, `204`
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
   - Search Console discovered pages still need a signed-in follow-up against the current `73` URL sitemap.
+- Post-gem-swap canvas registration:
+  - Commit: `abc56dc`
+  - Change: upgraded `prompt-gem-swap` from the generic arcade fallback into a dedicated 6-by-5 canvas match-three loop with mouse tile swapping, keyboard cursor controls, match collapse/refill, combo scoring, and less developer-coded public copy; Blog remains `39` posts and Play remains `23` entries.
+  - Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_REQUIRE_MAIN_VERCEL=1 BOBOB_DEPLOY_SHA=abc56dc5d46c9a78d8b4a603bf75a56e4b8500e2 npm run harness:deployment-status` returned `overallState: success` with the main Vercel project `READY` and `PROMOTED`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `73`, feed items `62`, Blog posts `39`, Play entries `23`.
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `73` final 200 sitemap URLs.
+  - Local play verification: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction` passed across all `23` Play entries in desktop and mobile viewports; Playwright pixel/input checks passed for `prompt-gem-swap` and `password-lock`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `73`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `62`, `62`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
 
 Decision:
 
@@ -239,7 +255,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the new live `72` URL sitemap after the 정보 expansion.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `73` URL sitemap after the Play canvas upgrades.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
