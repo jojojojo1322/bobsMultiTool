@@ -7,18 +7,20 @@ import type { ArcadeGameContent } from "@/features/content/types";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
 const canvasWidth = 720;
-const canvasHeight = 420;
+const canvasHeight = 520;
 const crossingLanes = [326, 274, 222, 170, 118, 66];
 const crossingStartY = canvasHeight - 42;
 const crossingStepX = 48;
 const crossingStepY = 52;
-const sumBoxColumns = 5;
-const sumBoxRows = 4;
-const sumBoxGap = 12;
-const sumBoxTileWidth = (canvasWidth - 96 - sumBoxGap * (sumBoxColumns - 1)) / sumBoxColumns;
-const sumBoxTileHeight = 54;
-const sumBoxStartX = 48;
-const sumBoxStartY = 82;
+const sumBoxColumns = 9;
+const sumBoxRows = 6;
+const sumBoxGap = 8;
+const sumBoxStartX = 34;
+const sumBoxStartY = 78;
+const sumBoxTileHeight = 52;
+const sumBoxTileWidth = (canvasWidth - sumBoxStartX * 2 - sumBoxGap * (sumBoxColumns - 1)) / sumBoxColumns;
+const sumBoxBoardWidth = sumBoxColumns * sumBoxTileWidth + (sumBoxColumns - 1) * sumBoxGap;
+const sumBoxBoardHeight = sumBoxRows * sumBoxTileHeight + (sumBoxRows - 1) * sumBoxGap;
 const snakeCellSize = 24;
 const snakeColumns = 24;
 const snakeRows = 14;
@@ -26,19 +28,19 @@ const snakeBoardX = (canvasWidth - snakeColumns * snakeCellSize) / 2;
 const snakeBoardY = 58;
 const snakeMoveInterval = 0.18;
 const passwordDigitCount = 3;
-const passwordDigitWidth = 88;
-const passwordDigitHeight = 112;
-const passwordDigitGap = 20;
+const passwordDigitWidth = 112;
+const passwordDigitHeight = 136;
+const passwordDigitGap = 24;
 const passwordDigitStartX = (canvasWidth - passwordDigitCount * passwordDigitWidth - (passwordDigitCount - 1) * passwordDigitGap) / 2;
-const passwordDigitY = 142;
-const passwordSubmitRect = { x: canvasWidth / 2 - 82, y: 284, width: 164, height: 42 };
-const passwordSuggestionRect = { x: 48, y: 158, width: 124, height: 38 };
+const passwordDigitY = 154;
+const passwordSubmitRect = { x: canvasWidth / 2 - 96, y: 326, width: 192, height: 50 };
+const passwordSuggestionRect = { x: 42, y: 178, width: 148, height: 46 };
 const passwordKeypadColumns = 5;
-const passwordKeypadWidth = 48;
-const passwordKeypadHeight = 28;
-const passwordKeypadGap = 8;
+const passwordKeypadWidth = 64;
+const passwordKeypadHeight = 40;
+const passwordKeypadGap = 10;
 const passwordKeypadX = (canvasWidth - passwordKeypadColumns * passwordKeypadWidth - (passwordKeypadColumns - 1) * passwordKeypadGap) / 2;
-const passwordKeypadY = 346;
+const passwordKeypadY = 414;
 const gemColumns = 6;
 const gemRows = 5;
 const gemCellSize = 54;
@@ -221,6 +223,9 @@ type GameState = {
   gemTiles: GemTile[];
   gemCursor: number;
   gemSelected: number | null;
+  gemDragStart: CanvasPoint | null;
+  gemDragCurrent: CanvasPoint | null;
+  gemDragStartIndex: number | null;
   gemCombo: number;
   mineCells: MineCell[];
   mineCursor: number;
@@ -291,6 +296,9 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     gemTiles: makeGemTiles(content),
     gemCursor: 0,
     gemSelected: null,
+    gemDragStart: null,
+    gemDragCurrent: null,
+    gemDragStartIndex: null,
     gemCombo: 0,
     mineCells: makeMineCells(content),
     mineCursor: 0,
@@ -486,7 +494,11 @@ function makeSnakeFood(content: ArcadeGameContent, seed: number, snake: SnakeCel
 
 function makeSumTiles(content: ArcadeGameContent): SumTile[] {
   if (content.arcade.variant !== "sum-box") return [];
-  const values = [1, 9, 2, 8, 3, 7, 4, 6, 5, 5, 1, 4, 2, 6, 3, 7, 8, 5, 9, 5];
+  const values = [
+    1, 9, 2, 8, 3, 7, 4, 6, 5, 5, 1, 4, 2, 6, 3, 7, 8, 5,
+    9, 1, 6, 4, 8, 2, 7, 3, 5, 5, 2, 1, 9, 4, 6, 3, 7, 8,
+    5, 1, 4, 2, 8, 6, 3, 7, 9, 1, 5, 5, 2, 8, 4, 6, 1, 9,
+  ];
   return Array.from({ length: sumBoxColumns * sumBoxRows }, (_, index) => {
     const column = index % sumBoxColumns;
     const row = Math.floor(index / sumBoxColumns);
@@ -585,8 +597,19 @@ function sumDragRect(state: GameState) {
   return { x, y, width, height };
 }
 
+function pointInSumBoard(point: CanvasPoint) {
+  return (
+    point.x >= sumBoxStartX - 12 &&
+    point.x <= sumBoxStartX + sumBoxBoardWidth + 12 &&
+    point.y >= sumBoxStartY - 12 &&
+    point.y <= sumBoxStartY + sumBoxBoardHeight + 12
+  );
+}
+
 function tileIntersectsRect(tile: SumTile, rect: { x: number; y: number; width: number; height: number }) {
-  return tile.x <= rect.x + rect.width && tile.x + tile.width >= rect.x && tile.y <= rect.y + rect.height && tile.y + tile.height >= rect.y;
+  const centerX = tile.x + tile.width / 2;
+  const centerY = tile.y + tile.height / 2;
+  return centerX >= rect.x && centerX <= rect.x + rect.width && centerY >= rect.y && centerY <= rect.y + rect.height;
 }
 
 function sumDragTiles(state: GameState) {
@@ -1036,6 +1059,15 @@ function gemCellIndexAt(x: number, y: number) {
   return gemIndex(column, row);
 }
 
+function gemCellCenter(index: number) {
+  const column = index % gemColumns;
+  const row = Math.floor(index / gemColumns);
+  return {
+    x: gemBoardX + column * (gemCellSize + gemGap) + gemCellSize / 2,
+    y: gemBoardY + row * (gemCellSize + gemGap) + gemCellSize / 2,
+  };
+}
+
 function moveGemCursor(state: GameState, delta: number) {
   const total = state.gemTiles.length;
   if (!total) return;
@@ -1080,6 +1112,26 @@ function findGemSwapTarget(state: GameState, index: number) {
     if (matched) return candidate;
   }
   return candidates[0] ?? null;
+}
+
+function gemTargetFromDrag(state: GameState, point = state.gemDragCurrent) {
+  if (state.gemDragStartIndex === null || !state.gemDragStart || !point) return -1;
+  const directIndex = gemCellIndexAt(point.x, point.y);
+  if (directIndex >= 0 && areGemAdjacent(state.gemDragStartIndex, directIndex)) return directIndex;
+
+  const dx = point.x - state.gemDragStart.x;
+  const dy = point.y - state.gemDragStart.y;
+  if (Math.hypot(dx, dy) < 14) return -1;
+  const column = state.gemDragStartIndex % gemColumns;
+  const row = Math.floor(state.gemDragStartIndex / gemColumns);
+  if (Math.abs(dx) >= Math.abs(dy)) return gemIndex(column + (dx > 0 ? 1 : -1), row);
+  return gemIndex(column, row + (dy > 0 ? 1 : -1));
+}
+
+function clearGemDrag(state: GameState) {
+  state.gemDragStart = null;
+  state.gemDragCurrent = null;
+  state.gemDragStartIndex = null;
 }
 
 function findGemMatches(tiles: GemTile[]) {
@@ -1202,9 +1254,13 @@ function chooseGemTile(content: ArcadeGameContent, state: GameState, index = sta
     return;
   }
 
-  const first = state.gemSelected;
-  const second = index;
+  commitGemSwap(content, state, state.gemSelected, index);
+}
+
+function commitGemSwap(content: ArcadeGameContent, state: GameState, first: number, second: number) {
+  if (state.finished || !state.gemTiles[first] || !state.gemTiles[second] || !areGemAdjacent(first, second)) return;
   state.gemSelected = null;
+  state.gemCursor = second;
   state.actions += 1;
   swapGemKinds(state.gemTiles, first, second);
   const matched = resolveGemMatches(content, state, true);
@@ -2782,6 +2838,7 @@ function gemColor(content: ArcadeGameContent, tile: GemTile) {
 
 function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
+  const dragTarget = state.gemDragStartIndex !== null ? gemTargetFromDrag(state) : -1;
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -2802,13 +2859,14 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.78)";
   ctx.font = "800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("말조각 보드", 36, 64);
+  ctx.fillText("색돌 보드", 36, 64);
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`이동 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, 36, 88);
   ctx.fillText(`콤보 ${state.gemCombo}`, 36, 110);
 
-  const selectedTile = state.gemSelected !== null ? state.gemTiles[state.gemSelected] : null;
+  const selectedIndex = state.gemDragStartIndex ?? state.gemSelected;
+  const selectedTile = selectedIndex !== null ? state.gemTiles[selectedIndex] : null;
   if (selectedTile) {
     ctx.fillStyle = "rgba(255,255,255,0.1)";
     ctx.beginPath();
@@ -2816,7 +2874,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fill();
     ctx.fillStyle = "#f8fafc";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("고른 조각", 48, 156);
+    ctx.fillText(state.gemDragStartIndex !== null ? "잡은 돌" : "고른 돌", 48, 156);
     ctx.fillStyle = gemColor(content, selectedTile);
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(selectedTile.label.slice(0, 6), 48, 184);
@@ -2826,8 +2884,8 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     const index = gemIndex(tile.column, tile.row);
     const x = gemBoardX + tile.column * (gemCellSize + gemGap);
     const y = gemBoardY + tile.row * (gemCellSize + gemGap);
-    const selected = state.gemSelected === index;
-    const cursor = state.gemCursor === index;
+    const selected = state.gemSelected === index || state.gemDragStartIndex === index;
+    const cursor = state.gemCursor === index || dragTarget === index;
     const color = gemColor(content, tile);
 
     ctx.fillStyle = "rgba(255,255,255,0.08)";
@@ -2864,10 +2922,27 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     }
   }
 
+  if (state.gemDragStartIndex !== null && dragTarget >= 0 && state.gemTiles[dragTarget]) {
+    const start = gemCellCenter(state.gemDragStartIndex);
+    const end = gemCellCenter(dragTarget);
+    ctx.strokeStyle = "rgba(255,255,255,0.72)";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    ctx.lineCap = "butt";
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(end.x, end.y, 7, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("마우스로 두 칸을 차례로 누르거나 방향키로 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 색돌을 옆 칸으로 끌거나, 방향키로 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -2882,8 +2957,8 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("옆 칸끼리 바꿔서 같은 말조각 셋을 맞춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스로 두 칸을 누르거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText("색돌을 옆 칸으로 끌어 셋을 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 드래그하거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -2988,10 +3063,10 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.textAlign = "center";
   ctx.fillStyle = repeatedCurrent ? danger : "rgba(255,255,255,0.62)";
   ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(repeatedCurrent ? "이미 해본 번호입니다" : latest ? latest.hint : "숫자키로 바로 넣어도 됩니다", centerX, 268);
+  ctx.fillText(repeatedCurrent ? "이미 해본 번호입니다" : latest ? latest.hint : "숫자키로 바로 넣어도 됩니다", centerX, passwordSubmitRect.y - 18);
 
   const pegStartX = centerX - 38;
-  const pegY = 250;
+  const pegY = passwordSubmitRect.y - 40;
   for (let index = 0; index < passwordDigitCount; index += 1) {
     const filledExact = latest ? index < latest.exact : false;
     const filledNear = latest ? index >= latest.exact && index < latest.exact + latest.near : false;
@@ -3072,12 +3147,12 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자키로 입력, ←/→ 자리 이동, ↑/↓ 변경, Space/Enter 확인. 후보를 눌러 넣어도 됩니다.", 34, 338);
+  ctx.fillText("숫자키로 입력, ←/→ 자리 이동, ↑/↓ 변경, Space/Enter 확인. 후보를 눌러 넣어도 됩니다.", 34, passwordKeypadY - 18);
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("조급해졌습니다. 기록을 보고 하나씩 줄이세요.", 34, 322);
+    ctx.fillText("조급해졌습니다. 기록을 보고 하나씩 줄이세요.", 34, passwordKeypadY - 38);
   }
 
   if (!state.started) {
@@ -3113,14 +3188,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
   ctx.beginPath();
-  ctx.roundRect(30, 66, canvasWidth - 60, 290, 22);
+  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, 22);
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,0.13)";
   ctx.lineWidth = 1;
   ctx.stroke();
   for (let row = 0; row < sumBoxRows; row += 1) {
     ctx.fillStyle = row % 2 === 0 ? "rgba(255,255,255,0.035)" : "rgba(0,0,0,0.035)";
-    ctx.fillRect(40, sumBoxStartY - 7 + row * (sumBoxTileHeight + sumBoxGap), canvasWidth - 80, sumBoxTileHeight + 10);
+    ctx.fillRect(sumBoxStartX - 8, sumBoxStartY - 7 + row * (sumBoxTileHeight + sumBoxGap), sumBoxBoardWidth + 16, sumBoxTileHeight + 10);
   }
 
   ctx.fillStyle = "rgba(255,255,255,0.84)";
@@ -3745,7 +3820,7 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       if (state.finished) return;
 
-      if (content.arcade.variant === "sum-box") {
+      if (content.arcade.variant === "sum-box" || content.arcade.variant === "match-three") {
         return;
       }
 
@@ -3776,17 +3851,6 @@ export function ArcadeGameEngine({
         state.started = true;
         state.lastFrame = performance.now();
         revealMineCell(content, state, index);
-        setShareState("idle");
-        syncView();
-        return;
-      }
-
-      if (content.arcade.variant === "match-three") {
-        const index = gemCellIndexAt(point.x, point.y);
-        if (index < 0) return;
-        state.started = true;
-        state.lastFrame = performance.now();
-        chooseGemTile(content, state, index);
         setShareState("idle");
         syncView();
         return;
@@ -3829,14 +3893,18 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
-      const index = sumTileIndexAt(state, point.x, point.y);
-      if (index < 0) return;
+      const index = content.arcade.variant === "sum-box" ? sumTileIndexAt(state, point.x, point.y) : gemCellIndexAt(point.x, point.y);
+      if (content.arcade.variant === "sum-box") {
+        if (index < 0 && !pointInSumBoard(point)) return;
+      } else if (index < 0) {
+        return;
+      }
       event.preventDefault();
       try {
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -3845,10 +3913,18 @@ export function ArcadeGameEngine({
       }
       state.started = true;
       state.lastFrame = performance.now();
-      state.sumCursor = index;
-      state.sumDragStart = point;
-      state.sumDragCurrent = point;
-      state.sumDragMoved = false;
+      if (content.arcade.variant === "sum-box") {
+        if (index >= 0) state.sumCursor = index;
+        state.sumDragStart = point;
+        state.sumDragCurrent = point;
+        state.sumDragMoved = false;
+      } else {
+        state.gemCursor = index;
+        state.gemSelected = null;
+        state.gemDragStart = point;
+        state.gemDragCurrent = point;
+        state.gemDragStartIndex = index;
+      }
       setShareState("idle");
       syncView();
     },
@@ -3857,48 +3933,72 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
-      if (!state.sumDragStart || state.finished) return;
+      if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
-      const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
-      state.sumDragCurrent = point;
-      if (movedDistance > 5) state.sumDragMoved = true;
-      const index = sumTileIndexAt(state, point.x, point.y);
-      if (index >= 0) state.sumCursor = index;
+      if (content.arcade.variant === "sum-box") {
+        if (!state.sumDragStart) return;
+        const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
+        state.sumDragCurrent = point;
+        if (movedDistance > 5) state.sumDragMoved = true;
+        const index = sumTileIndexAt(state, point.x, point.y);
+        if (index >= 0) state.sumCursor = index;
+        return;
+      }
+      if (state.gemDragStartIndex === null) return;
+      state.gemDragCurrent = point;
+      const target = gemTargetFromDrag(state, point);
+      if (target >= 0 && state.gemTiles[target]) state.gemCursor = target;
     },
     [content.arcade.variant],
   );
 
   const handleCanvasPointerUp = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
-      if (!state.sumDragStart || state.finished) return;
+      if (state.finished) return;
       event.preventDefault();
       const point = canvasPointFromEvent(canvas, event);
-      state.sumDragCurrent = point;
-      const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
-      const dragged = state.sumDragMoved || movedDistance > 5;
-      const draggedTiles = dragged ? sumDragTiles(state) : [];
-      const fallbackPoint = state.sumDragStart;
-      const clickedIndex = sumTileIndexAt(state, point.x, point.y);
-      const fallbackIndex = clickedIndex >= 0 ? clickedIndex : sumTileIndexAt(state, fallbackPoint.x, fallbackPoint.y);
-      clearSumDrag(state);
       try {
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
       }
-      if (dragged) {
-        commitDraggedSumTiles(content, state, draggedTiles);
-      } else if (fallbackIndex >= 0) {
-        state.sumCursor = fallbackIndex;
-        chooseSumTile(content, state);
+      if (content.arcade.variant === "sum-box") {
+        if (!state.sumDragStart) return;
+        state.sumDragCurrent = point;
+        const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
+        const dragged = state.sumDragMoved || movedDistance > 5;
+        const draggedTiles = dragged ? sumDragTiles(state) : [];
+        const fallbackPoint = state.sumDragStart;
+        const clickedIndex = sumTileIndexAt(state, point.x, point.y);
+        const fallbackIndex = clickedIndex >= 0 ? clickedIndex : sumTileIndexAt(state, fallbackPoint.x, fallbackPoint.y);
+        clearSumDrag(state);
+        if (dragged) {
+          commitDraggedSumTiles(content, state, draggedTiles);
+        } else if (fallbackIndex >= 0) {
+          state.sumCursor = fallbackIndex;
+          chooseSumTile(content, state);
+        }
+      } else {
+        if (state.gemDragStartIndex === null || !state.gemDragStart) return;
+        state.gemDragCurrent = point;
+        const movedDistance = Math.hypot(point.x - state.gemDragStart.x, point.y - state.gemDragStart.y);
+        const startIndex = state.gemDragStartIndex;
+        const target = gemTargetFromDrag(state, point);
+        const clickedIndex = gemCellIndexAt(point.x, point.y);
+        clearGemDrag(state);
+        if (movedDistance > 12 && target >= 0 && state.gemTiles[target]) {
+          commitGemSwap(content, state, startIndex, target);
+        } else if (clickedIndex >= 0) {
+          chooseGemTile(content, state, clickedIndex);
+        }
       }
       setShareState("idle");
       syncView();
@@ -3908,10 +4008,10 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerCancel = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
       const state = stateRef.current;
-      if (!state.sumDragStart) return;
       clearSumDrag(state);
+      clearGemDrag(state);
       try {
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
@@ -3956,7 +4056,7 @@ export function ArcadeGameEngine({
       </div>
 
       {view.finished ? (
-        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-result>
+        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-result>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Result</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
@@ -3976,7 +4076,7 @@ export function ArcadeGameEngine({
           <HistoryPanel history={view.history} />
         </div>
       ) : (
-        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-turn={`arcade-${view.actions}`}>
+        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-turn={`arcade-${view.actions}`}>
           <div>
             <div className="overflow-hidden rounded-lg border bg-background">
               <canvas
@@ -3988,7 +4088,7 @@ export function ArcadeGameEngine({
                 onPointerUp={handleCanvasPointerUp}
                 onPointerCancel={handleCanvasPointerCancel}
                 aria-label={`${content.title} canvas`}
-                className={`block aspect-[12/7] w-full outline-none ${
+                className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
                   content.arcade.variant === "password" ||
                   content.arcade.variant === "minesweeper" ||
@@ -3996,7 +4096,7 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "stacker" ||
                   content.arcade.variant === "mole" ||
                   content.arcade.variant === "memory"
-                    ? "cursor-pointer"
+                    ? "cursor-pointer touch-none"
                     : ""
                 }`}
                 style={{ background: content.arcade.palette.background }}

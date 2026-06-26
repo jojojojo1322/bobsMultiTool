@@ -84,6 +84,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
           ? `${content.arcade.rounds}번 조작`
           : `${content.items.length}개 분류`;
   const jsonLd = playDetailStructuredData({ content, relatedBlogs });
+  const detailMaxWidth = content.type === "arcade-game" ? "max-w-7xl" : "max-w-6xl";
 
   return (
     <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
@@ -100,7 +101,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
           <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">{content.description}</p>
         </div>
       </section>
-      <section className="mx-auto max-w-6xl px-4 py-8">
+      <section className={`mx-auto ${detailMaxWidth} px-4 py-8`}>
         {content.type === "micro-sim" ? (
           <SurvivalPlayEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         ) : content.type === "tap-game" ? (
