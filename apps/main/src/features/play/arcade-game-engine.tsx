@@ -121,6 +121,8 @@ import {
   moleHoleCenter,
   moleHoleSize,
   moleRows,
+  moleTargetTiming,
+  moleWhackOutcome,
   moveMoleCursor,
   spawnMoleTarget,
   type MoleTarget,
@@ -513,13 +515,13 @@ function whackMole(content: ArcadeGameContent, state: GameState, hole = state.mo
   }
 
   state.moleTargets = state.moleTargets.filter((item) => item.id !== target.id);
-  const delta = target.good ? 3 : -4;
-  state.score = Math.max(0, state.score + delta);
-  state.focus = clamp(state.focus + (target.good ? 3 : -11), 0, 100);
+  const outcome = moleWhackOutcome(target);
+  state.score = Math.max(0, state.score + outcome.score);
+  state.focus = clamp(state.focus + outcome.focus, 0, 100);
   addHistory(state, {
     label: target.label,
-    detail: target.good ? "지금 볼 것만 잡음" : "굳이 잡았음",
-    score: delta,
+    detail: outcome.detail,
+    score: outcome.score,
   });
   finishMoleIfNeeded(content, state);
 }
@@ -1648,9 +1650,17 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
 
     const target = activeMoleAt(state, hole);
     if (target) {
-      const progress = clamp(target.age / target.ttl, 0, 1);
-      const pop = Math.sin((Math.min(1, progress * 2) * Math.PI) / 2) * (1 - Math.max(0, progress - 0.72) * 0.9);
-      const moleHeight = 42 * pop;
+      const timing = moleTargetTiming(target);
+      const outcome = moleWhackOutcome(target);
+      const urgencyAlpha = (0.36 + timing.urgency * 0.44).toFixed(2);
+      ctx.strokeStyle = target.good ? `rgba(134,239,172,${urgencyAlpha})` : `rgba(251,113,133,${urgencyAlpha})`;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y + 10, moleHoleSize / 2 + 8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * timing.remaining);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+
+      const moleHeight = 42 * timing.pop;
       ctx.fillStyle = target.good ? accent : danger;
       ctx.beginPath();
       ctx.roundRect(center.x - 28, center.y + 12 - moleHeight, 56, 44, 18);
@@ -1661,6 +1671,9 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(target.label.slice(0, 5), center.x, center.y + 38 - moleHeight);
+      ctx.fillStyle = target.good ? "rgba(220,252,231,0.92)" : "rgba(255,228,230,0.92)";
+      ctx.font = "800 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.fillText(`${outcome.score > 0 ? "+" : ""}${outcome.score}`, center.x, center.y - 38);
     }
 
     if (hasCursor && !state.finished) {
@@ -1674,6 +1687,9 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   }
 
   const panelX = 486;
+  const goodMoles = state.moleTargets.filter((target) => target.good).length;
+  const noiseMoles = state.moleTargets.filter((target) => !target.good).length;
+  const urgentGoodMoles = state.moleTargets.filter((target) => target.good && moleTargetTiming(target).remaining <= 0.32).length;
   ctx.fillStyle = "rgba(255,255,255,0.08)";
   ctx.beginPath();
   ctx.roundRect(panelX, 78, 182, 210, 18);
@@ -1686,13 +1702,14 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillText("지금 뜬 알림", panelX + 18, 112);
   ctx.font = "900 28px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
   ctx.fillStyle = accent;
-  ctx.fillText(`${state.moleTargets.filter((target) => target.good).length}`, panelX + 18, 152);
+  ctx.fillText(`${goodMoles}`, panelX + 18, 152);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`소음 ${state.moleTargets.filter((target) => !target.good).length}`, panelX + 66, 149);
+  ctx.fillText(`소음 ${noiseMoles}`, panelX + 66, 149);
+  ctx.fillText(`곧 사라질 핵심 ${urgentGoodMoles}`, panelX + 18, 174);
   ctx.fillText(`잡은 횟수 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, panelX + 18, 188);
-  ctx.fillText("초록은 잡고, 빨강은 흘려보냅니다.", panelX + 18, 222);
-  ctx.fillText("다 잡으려 들면 집중이 먼저 닳습니다.", panelX + 18, 246);
+  ctx.fillText("링이 줄수록 시간이 없습니다.", panelX + 18, 222);
+  ctx.fillText("빨강은 지나가게 두는 편이 낫습니다.", panelX + 18, 246);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";

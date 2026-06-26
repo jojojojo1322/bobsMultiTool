@@ -1,5 +1,5 @@
 import type { ArcadeGameContent } from "@/features/content/types";
-import { pickLabel, pseudoRandom } from "@/features/play/arcade-engine-utils";
+import { clamp, pickLabel, pseudoRandom } from "@/features/play/arcade-engine-utils";
 
 export const moleColumns = 3;
 export const moleRows = 3;
@@ -17,6 +17,19 @@ export type MoleTarget = {
   good: boolean;
   age: number;
   ttl: number;
+};
+
+export type MoleTargetTiming = {
+  progress: number;
+  remaining: number;
+  urgency: number;
+  pop: number;
+};
+
+export type MoleWhackOutcome = {
+  score: number;
+  focus: number;
+  detail: string;
 };
 
 type MoleTargetState = {
@@ -85,4 +98,26 @@ export function spawnMoleTarget(content: ArcadeGameContent, state: MoleSpawnStat
 
 export function activeMoleAt(state: MoleTargetState, hole: number) {
   return state.moleTargets.find((target) => target.hole === hole);
+}
+
+export function moleTargetTiming(target: MoleTarget): MoleTargetTiming {
+  const progress = clamp(target.age / target.ttl, 0, 1);
+  const remaining = 1 - progress;
+  return {
+    progress,
+    remaining,
+    urgency: clamp((progress - 0.58) / 0.42, 0, 1),
+    pop: Math.sin((Math.min(1, progress * 2) * Math.PI) / 2) * (1 - Math.max(0, progress - 0.72) * 0.9),
+  };
+}
+
+export function moleWhackOutcome(target: MoleTarget): MoleWhackOutcome {
+  const timing = moleTargetTiming(target);
+  if (target.good) {
+    if (timing.remaining >= 0.48) return { score: 4, focus: 4, detail: "핵심 알림 빠르게 처리" };
+    if (timing.remaining <= 0.2) return { score: 2, focus: 1, detail: "늦게라도 핵심 잡음" };
+    return { score: 3, focus: 3, detail: "지금 볼 것만 잡음" };
+  }
+  if (timing.urgency > 0.72) return { score: -5, focus: -13, detail: "사라질 소음에 손이 감" };
+  return { score: -4, focus: -11, detail: "굳이 잡았음" };
 }
