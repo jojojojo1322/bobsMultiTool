@@ -83,6 +83,7 @@ import {
   memoryGap,
   memoryRows,
   moveMemoryCursor,
+  replayMemoryPreview,
   setMemoryCursor,
   updateMemory,
 } from "@/features/play/arcade-memory";
@@ -1786,7 +1787,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`입력 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, panelX + 18, 224);
-  ctx.fillText("틀리면 같은 불빛을 한 번 더 보여줍니다.", panelX + 18, 252);
+  ctx.fillText("헷갈리면 R로 다시 봅니다.", panelX + 18, 252);
   ctx.fillText("외웠으면 숫자키로 바로 눌러도 됩니다.", panelX + 18, 276);
 
   if (!state.memoryShowing && state.memoryInput.length) {
@@ -1799,7 +1800,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스로 칸을 누르거나 방향키/WASD로 옮겨 Space. 숫자 1~9도 됩니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스/방향키/숫자 1~9로 입력합니다. 헷갈리면 R로 같은 패턴을 다시 봅니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -1810,7 +1811,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("빛난 칸 순서를 기억해서 같은 순서로 누릅니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스로 눌러도 되고, 방향키와 Space로 골라도 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText("헷갈리면 R로 다시 보고, 숫자 1~9로 바로 누를 수 있습니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -3026,13 +3027,15 @@ export function ArcadeGameEngine({
       const passwordSuggestionKey = content.arcade.variant === "password" && event.code === "KeyR";
       const mineFlagKey = content.arcade.variant === "minesweeper" && event.code === "KeyF";
       const memoryDigitKey = content.arcade.variant === "memory" ? memoryDigitFromKeyboardCode(event.code) : -1;
+      const memoryReplayKey = content.arcade.variant === "memory" && event.code === "KeyR";
       if (
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code) ||
         passwordDigitKey !== null ||
         passwordUtilityKey ||
         passwordSuggestionKey ||
         mineFlagKey ||
-        memoryDigitKey >= 0
+        memoryDigitKey >= 0 ||
+        memoryReplayKey
       ) {
         event.preventDefault();
         if (content.arcade.variant === "crossing") {
@@ -3157,6 +3160,15 @@ export function ArcadeGameEngine({
         }
         if (content.arcade.variant === "memory") {
           if (event.repeat) return;
+          if (memoryReplayKey) {
+            const state = stateRef.current;
+            state.started = true;
+            state.lastFrame = performance.now();
+            replayMemoryPreview(content, state);
+            setShareState("idle");
+            syncView();
+            return;
+          }
           if (memoryDigitKey >= 0) {
             const state = stateRef.current;
             const wasStarted = state.started;
@@ -3739,6 +3751,24 @@ export function ArcadeGameEngine({
                   <ArrowDown className="h-4 w-4" />
                 </Button>
                 <span aria-hidden />
+                {content.arcade.variant === "memory" ? (
+                  <Button
+                    variant="outline"
+                    className="col-span-3 h-12"
+                    onClick={() => {
+                      const state = stateRef.current;
+                      if (state.finished) return;
+                      state.started = true;
+                      state.lastFrame = performance.now();
+                      replayMemoryPreview(content, state);
+                      setShareState("idle");
+                      syncView();
+                    }}
+                    data-play-action="arcade-replay"
+                  >
+                    다시 보기
+                  </Button>
+                ) : null}
               </div>
             ) : (
               <div className="mt-4 grid grid-cols-3 gap-3">

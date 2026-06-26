@@ -155,6 +155,23 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
   finishMemoryIfNeeded(content, state);
 }
 
+export function replayMemoryPreview(content: ArcadeGameContent, state: MemoryPlayState) {
+  if (state.finished) return;
+  if (!state.memorySequence.length) resetMemoryPreview(content, state, false);
+  if (!state.memoryShowing) {
+    state.actions += 1;
+    state.score = Math.max(0, state.score - 1);
+    state.focus = clamp(state.focus - 5, 0, 100);
+    rememberMemoryHistory(state, {
+      label: "다시 보기",
+      detail: "한 번 더 확인",
+      score: -1,
+    });
+  }
+  resetMemoryPreview(content, state, true);
+  finishMemoryIfNeeded(content, state);
+}
+
 export function updateMemory(content: ArcadeGameContent, state: MemoryPlayState, dt: number) {
   state.elapsed += dt;
   if (!state.memorySequence.length) {
