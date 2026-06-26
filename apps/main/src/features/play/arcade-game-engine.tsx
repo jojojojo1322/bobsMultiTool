@@ -21,6 +21,28 @@ import {
 } from "@/features/play/arcade-password";
 import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
 import {
+  areGemAdjacent,
+  clearGemDrag,
+  collapseGemBoard,
+  findGemMatches,
+  findGemSwapTarget,
+  gemBoardHeight,
+  gemBoardWidth,
+  gemBoardX,
+  gemBoardY,
+  gemCellCenter,
+  gemCellIndexAt,
+  gemCellSize,
+  gemColumns,
+  gemGap,
+  gemIndex,
+  gemTargetFromDrag,
+  makeGemTiles,
+  moveGemCursor,
+  swapGemKinds,
+  type GemTile,
+} from "@/features/play/arcade-match-three";
+import {
   clearSumDrag,
   makeSumTiles,
   pointInSumBoard,
@@ -70,14 +92,6 @@ const passwordKeypadGap = 10;
 const passwordKeypadX = (canvasWidth - passwordKeypadColumns * passwordKeypadWidth - (passwordKeypadColumns - 1) * passwordKeypadGap) / 2;
 const passwordKeypadY = 414;
 const passwordTimeLimitSeconds = 60;
-const gemColumns = 6;
-const gemRows = 5;
-const gemCellSize = 54;
-const gemGap = 8;
-const gemBoardWidth = gemColumns * gemCellSize + (gemColumns - 1) * gemGap;
-const gemBoardHeight = gemRows * gemCellSize + (gemRows - 1) * gemGap;
-const gemBoardX = (canvasWidth - gemBoardWidth) / 2;
-const gemBoardY = 70;
 const mineColumns = 9;
 const mineRows = 7;
 const mineCount = 10;
@@ -148,15 +162,6 @@ type SnakeCell = {
 };
 
 type SnakeFood = SnakeCell & {
-  label: string;
-  good: boolean;
-};
-
-type GemTile = {
-  id: number;
-  column: number;
-  row: number;
-  kind: number;
   label: string;
   good: boolean;
 };
@@ -400,59 +405,6 @@ function makeMineCells(content: ArcadeGameContent): MineCell[] {
   }
 
   return cells;
-}
-
-function gemKindCount(content: ArcadeGameContent) {
-  return Math.max(4, Math.min(6, content.arcade.goodLabels.length + content.arcade.badLabels.length));
-}
-
-function gemIsGood(content: ArcadeGameContent, kind: number) {
-  return kind < Math.max(2, Math.min(4, content.arcade.goodLabels.length));
-}
-
-function gemLabel(content: ArcadeGameContent, kind: number) {
-  const goodCount = Math.max(2, Math.min(4, content.arcade.goodLabels.length));
-  if (kind < goodCount) return pickLabel(content.arcade.goodLabels, kind);
-  return pickLabel(content.arcade.badLabels, kind - goodCount);
-}
-
-function makeGemTile(content: ArcadeGameContent, column: number, row: number, kind: number, seed: number): GemTile {
-  return {
-    id: seed,
-    column,
-    row,
-    kind,
-    label: gemLabel(content, kind),
-    good: gemIsGood(content, kind),
-  };
-}
-
-function pickGemKind(content: ArcadeGameContent, tiles: GemTile[], column: number, row: number, seed: number) {
-  const count = gemKindCount(content);
-  for (let offset = 0; offset < count; offset += 1) {
-    const kind = (Math.floor(pseudoRandom(seed + offset * 23) * count) + offset) % count;
-    const left1 = tiles[gemIndex(column - 1, row)];
-    const left2 = tiles[gemIndex(column - 2, row)];
-    const up1 = tiles[gemIndex(column, row - 1)];
-    const up2 = tiles[gemIndex(column, row - 2)];
-    if (left1?.kind === kind && left2?.kind === kind) continue;
-    if (up1?.kind === kind && up2?.kind === kind) continue;
-    return kind;
-  }
-  return seed % count;
-}
-
-function makeGemTiles(content: ArcadeGameContent): GemTile[] {
-  if (content.arcade.variant !== "match-three") return [];
-  const tiles = new Array<GemTile>(gemColumns * gemRows);
-  for (let row = 0; row < gemRows; row += 1) {
-    for (let column = 0; column < gemColumns; column += 1) {
-      const seed = content.slug.length * 97 + row * 37 + column * 19 + 5;
-      const kind = pickGemKind(content, tiles, column, row, seed);
-      tiles[gemIndex(column, row)] = makeGemTile(content, column, row, kind, seed);
-    }
-  }
-  return tiles;
 }
 
 function makeSnake(): SnakeCell[] {
@@ -849,157 +801,6 @@ function digitFromKeyboardCode(code: string) {
   if (/^Digit\d$/.test(code)) return Number(code.slice(5));
   if (/^Numpad\d$/.test(code)) return Number(code.slice(6));
   return null;
-}
-
-function gemIndex(column: number, row: number) {
-  if (column < 0 || column >= gemColumns || row < 0 || row >= gemRows) return -1;
-  return row * gemColumns + column;
-}
-
-function gemCellIndexAt(x: number, y: number) {
-  if (x < gemBoardX || y < gemBoardY || x > gemBoardX + gemBoardWidth || y > gemBoardY + gemBoardHeight) return -1;
-  const localX = x - gemBoardX;
-  const localY = y - gemBoardY;
-  const column = Math.floor(localX / (gemCellSize + gemGap));
-  const row = Math.floor(localY / (gemCellSize + gemGap));
-  const insideX = localX - column * (gemCellSize + gemGap);
-  const insideY = localY - row * (gemCellSize + gemGap);
-  if (insideX > gemCellSize || insideY > gemCellSize) return -1;
-  return gemIndex(column, row);
-}
-
-function gemCellCenter(index: number) {
-  const column = index % gemColumns;
-  const row = Math.floor(index / gemColumns);
-  return {
-    x: gemBoardX + column * (gemCellSize + gemGap) + gemCellSize / 2,
-    y: gemBoardY + row * (gemCellSize + gemGap) + gemCellSize / 2,
-  };
-}
-
-function moveGemCursor(state: GameState, delta: number) {
-  const total = state.gemTiles.length;
-  if (!total) return;
-  state.gemCursor = (state.gemCursor + delta + total) % total;
-}
-
-function areGemAdjacent(first: number, second: number) {
-  const a = { column: first % gemColumns, row: Math.floor(first / gemColumns) };
-  const b = { column: second % gemColumns, row: Math.floor(second / gemColumns) };
-  return Math.abs(a.column - b.column) + Math.abs(a.row - b.row) === 1;
-}
-
-function swapGemKinds(tiles: GemTile[], first: number, second: number) {
-  const a = tiles[first];
-  const b = tiles[second];
-  if (!a || !b) return;
-  const aKind = a.kind;
-  const aLabel = a.label;
-  const aGood = a.good;
-  a.kind = b.kind;
-  a.label = b.label;
-  a.good = b.good;
-  b.kind = aKind;
-  b.label = aLabel;
-  b.good = aGood;
-}
-
-function findGemSwapTarget(state: GameState, index: number) {
-  const column = index % gemColumns;
-  const row = Math.floor(index / gemColumns);
-  const candidates = [
-    gemIndex(column + 1, row),
-    gemIndex(column - 1, row),
-    gemIndex(column, row + 1),
-    gemIndex(column, row - 1),
-  ].filter((candidate) => candidate >= 0 && state.gemTiles[candidate]);
-
-  for (const candidate of candidates) {
-    swapGemKinds(state.gemTiles, index, candidate);
-    const matched = findGemMatches(state.gemTiles).size > 0;
-    swapGemKinds(state.gemTiles, index, candidate);
-    if (matched) return candidate;
-  }
-  return candidates[0] ?? null;
-}
-
-function gemTargetFromDrag(state: GameState, point = state.gemDragCurrent) {
-  if (state.gemDragStartIndex === null || !state.gemDragStart || !point) return -1;
-  const directIndex = gemCellIndexAt(point.x, point.y);
-  if (directIndex >= 0 && areGemAdjacent(state.gemDragStartIndex, directIndex)) return directIndex;
-
-  const dx = point.x - state.gemDragStart.x;
-  const dy = point.y - state.gemDragStart.y;
-  if (Math.hypot(dx, dy) < 14) return -1;
-  const column = state.gemDragStartIndex % gemColumns;
-  const row = Math.floor(state.gemDragStartIndex / gemColumns);
-  if (Math.abs(dx) >= Math.abs(dy)) return gemIndex(column + (dx > 0 ? 1 : -1), row);
-  return gemIndex(column, row + (dy > 0 ? 1 : -1));
-}
-
-function clearGemDrag(state: GameState) {
-  state.gemDragStart = null;
-  state.gemDragCurrent = null;
-  state.gemDragStartIndex = null;
-}
-
-function findGemMatches(tiles: GemTile[]) {
-  const matches = new Set<number>();
-  for (let row = 0; row < gemRows; row += 1) {
-    let runStart = 0;
-    for (let column = 1; column <= gemColumns; column += 1) {
-      const current = column < gemColumns ? tiles[gemIndex(column, row)]?.kind : -1;
-      const previous = tiles[gemIndex(column - 1, row)]?.kind;
-      if (current === previous) continue;
-      if (column - runStart >= 3) {
-        for (let matchColumn = runStart; matchColumn < column; matchColumn += 1) {
-          matches.add(gemIndex(matchColumn, row));
-        }
-      }
-      runStart = column;
-    }
-  }
-
-  for (let column = 0; column < gemColumns; column += 1) {
-    let runStart = 0;
-    for (let row = 1; row <= gemRows; row += 1) {
-      const current = row < gemRows ? tiles[gemIndex(column, row)]?.kind : -1;
-      const previous = tiles[gemIndex(column, row - 1)]?.kind;
-      if (current === previous) continue;
-      if (row - runStart >= 3) {
-        for (let matchRow = runStart; matchRow < row; matchRow += 1) {
-          matches.add(gemIndex(column, matchRow));
-        }
-      }
-      runStart = row;
-    }
-  }
-  return matches;
-}
-
-function collapseGemBoard(content: ArcadeGameContent, state: GameState, matches: Set<number>) {
-  const nextTiles = state.gemTiles.slice();
-  let fillSeed = state.actions * 101 + state.score * 13 + 31;
-  for (let column = 0; column < gemColumns; column += 1) {
-    const survivors: GemTile[] = [];
-    for (let row = gemRows - 1; row >= 0; row -= 1) {
-      const index = gemIndex(column, row);
-      const tile = nextTiles[index];
-      if (tile && !matches.has(index)) survivors.push(tile);
-    }
-    for (let row = gemRows - 1; row >= 0; row -= 1) {
-      const existing = survivors[gemRows - 1 - row];
-      const index = gemIndex(column, row);
-      if (existing) {
-        nextTiles[index] = { ...existing, column, row };
-      } else {
-        fillSeed += 17;
-        const kind = Math.floor(pseudoRandom(fillSeed + column * 7 + row * 11) * gemKindCount(content));
-        nextTiles[index] = makeGemTile(content, column, row, kind, fillSeed);
-      }
-    }
-  }
-  state.gemTiles = nextTiles;
 }
 
 function resolveGemMatches(content: ArcadeGameContent, state: GameState, swapped = true) {
