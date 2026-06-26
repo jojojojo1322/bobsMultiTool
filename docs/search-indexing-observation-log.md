@@ -546,6 +546,22 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
   - Search Console discovered pages remain at the latest recorded `68` against the current live `123` URL sitemap until the next signed-in Search Console follow-up.
   - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `123` still needs the scheduled signed-in observation.
+- Post-sum-box release preview and information registration:
+  - Commit: `7a5cb6d`
+  - Change: added fixed release-result badges and a circular countdown gauge to the `sum-box` canvas games, added a sum-box release-preview development note, and added two 2026-06-27 정보 posts for World Cup ticket resale/transfer checks and youth future savings auto-transfer/missed-payment checks. Blog is now `92` posts while Play remains `23` entries.
+  - Deployment check: `npm run harness:deployment-status` returned `overallState: success` for `7a5cb6d3b99b4c10478a5c61b0ff8d43ae0626fd`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `126`, feed items `115`, Blog posts `92`, Play entries `23`.
+  - Live `/sitemaps/en` URL count: `126`
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `126`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `115`, `115`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `126` URL sitemap until the next signed-in Search Console follow-up.
+  - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `126` still needs the scheduled signed-in observation.
 
 Decision:
 
@@ -564,7 +580,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `123` URL sitemap after the Play and information-content upgrades.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `126` URL sitemap after the Play and information-content upgrades.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
