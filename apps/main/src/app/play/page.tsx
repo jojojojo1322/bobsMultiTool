@@ -11,12 +11,12 @@ import { playIndexStructuredData } from "@/features/content/structured-data";
 import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
 const playContentsForMetadata = getPlayContents();
-const playShareTitle = "규칙 하나만 보고 바로 눌러보는 작은 Play";
+const playShareTitle = "바로 눌러보는 작은 게임";
 const playShareImage = openGraphImage({ kind: "play", title: playShareTitle });
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
-  description: "규칙 하나만 보고 바로 눌러보는 bobob.app의 작은 웹 놀이 목록입니다. 30초에서 3분 사이에 끝나는 정적 Play를 모읍니다.",
+  description: "카드 하나 골라 바로 해보는 bobob.app의 작은 웹게임 목록입니다. 마우스와 키보드로 짧게 한 판 하고 결과를 봅니다.",
   keywords: playIndexKeywords(playContentsForMetadata),
   alternates: {
     canonical: "https://www.bobob.app/play",
@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/play",
     siteName: "bobob.app",
     title: "Play - bobob.app",
-    description: "대단하진 않아도 바로 눌러보고 결과를 보는 작은 웹 놀이 목록입니다. 짧은 규칙과 한 가지 조작으로 끝납니다.",
+    description: "긴 설명보다 바로 한 판 해보는 작은 웹게임 목록입니다. 별로면 닫고, 괜찮으면 한 번 더 하면 됩니다.",
     images: [playShareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - bobob.app",
-    description: "규칙 하나, 조작 하나, 결과 하나로 끝나는 Play 목록입니다. 모바일에서도 바로 해볼 수 있게 작게 만들었습니다.",
+    description: "카드 하나 골라 바로 해보는 작은 게임 목록입니다. 마우스와 키보드로 짧게 한 판씩 해봅니다.",
     images: [shareImageUrl({ kind: "play", title: playShareTitle })],
   },
 };
@@ -49,31 +49,30 @@ export default function PlayIndexPage() {
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Badge>Play</Badge>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">일단 눌러보면 감이 오는 작은 Play</h1>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">바로 눌러보는 작은 게임</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            설명서를 길게 읽는 게임은 지금 안 만듭니다. 한 가지 규칙만 보고, 엄지로 눌러보고, 결과 보고 “아... 이 느낌이네” 하면 충분합니다.
+            긴 설명은 빼고 카드 하나 골라 한 판 해보면 됩니다. 마우스나 키보드로 움직이고, 별로면 그냥 닫아도 됩니다.
           </p>
         </div>
       </section>
       <section className="mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6 grid gap-4 rounded-md border bg-muted/20 p-4 text-sm leading-7 text-muted-foreground md:grid-cols-3" data-play-format-note>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">가볍게 만든다</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">조작 먼저</h2>
             <p className="mt-2">
-              여기 있는 Play는 큰 게임이 아닙니다. 예전 플래시게임처럼 바로 들어가서 한 번 눌러보고, 별로면 바로 닫아도 되는 정도의 작은 웹 놀이를 목표로 둡니다.
+              클릭하거나 방향키로 움직이는 게임을 늘리는 중입니다. 읽는 것보다 손이 먼저 가는 쪽이 좋습니다.
             </p>
           </div>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">설명을 줄인다</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">한 판 짧게</h2>
             <p className="mt-2">
-              규칙은 하나만 먼저 보이게 둡니다. 선택하거나, 누르거나, 분류하고 결과를 보는 흐름이면 충분합니다. 긴 튜토리얼보다 첫 반응이 더 중요하다고 봅니다.
+              대부분 1~3분 안에 끝납니다. 점수 보고 다시 할지 말지 고르면 됩니다. 오래 붙잡는 게임은 아닙니다.
             </p>
           </div>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">계속 바꿔본다</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">괜찮은 것만 남김</h2>
             <p className="mt-2">
-              반응이 있으면 비슷한 실험을 더 만들고, 재미없으면 과감하게 접습니다. 완성된 서비스라기보다 “뭐라도 해보는” 쪽에 가까운 목록입니다. 그래서 결과도 너무
-              심각하게 만들지 않고, 다음에 다시 눌러볼 여지만 남겨둡니다.
+              재미없으면 고치거나 뺍니다. 손이 가는 게임만 더 만들 생각입니다. 아직은 실험장에 가깝습니다.
             </p>
           </div>
         </div>

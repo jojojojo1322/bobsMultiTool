@@ -19,6 +19,7 @@ function queryTokens(query: string) {
 
 function blockText(block: BlogBlock) {
   if (block.type === "list") return block.items.join(" ");
+  if (block.type === "table") return [...block.headers, ...block.rows.flat()].join(" ");
   return block.text;
 }
 

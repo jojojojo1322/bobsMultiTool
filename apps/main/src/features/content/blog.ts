@@ -41,6 +41,7 @@ function parseMarkdownBlocks(markdown: string): BlogBlock[] {
   const lines = markdown.split("\n");
   let paragraph: string[] = [];
   let listItems: string[] = [];
+  let tableRows: string[][] = [];
 
   function flushParagraph() {
     if (!paragraph.length) return;
@@ -54,13 +55,43 @@ function parseMarkdownBlocks(markdown: string): BlogBlock[] {
     listItems = [];
   }
 
+  function flushTable() {
+    if (tableRows.length < 2) {
+      tableRows = [];
+      return;
+    }
+    const [headers, separator, ...rows] = tableRows;
+    const isSeparator = separator.every((cell) => /^:?-{3,}:?$/.test(cell.replace(/\s/g, "")));
+    if (headers.length && isSeparator && rows.length) {
+      blocks.push({ type: "table", headers, rows: rows.filter((row) => row.some(Boolean)) });
+    }
+    tableRows = [];
+  }
+
+  function parseTableLine(line: string) {
+    if (!line.startsWith("|") || !line.endsWith("|")) return null;
+    return line
+      .slice(1, -1)
+      .split("|")
+      .map((cell) => cell.trim());
+  }
+
   for (const rawLine of lines) {
     const line = rawLine.trim();
     if (!line) {
       flushParagraph();
       flushList();
+      flushTable();
       continue;
     }
+    const tableCells = parseTableLine(line);
+    if (tableCells) {
+      flushParagraph();
+      flushList();
+      tableRows.push(tableCells);
+      continue;
+    }
+    flushTable();
     if (line.startsWith("## ")) {
       flushParagraph();
       flushList();
@@ -78,6 +109,7 @@ function parseMarkdownBlocks(markdown: string): BlogBlock[] {
 
   flushParagraph();
   flushList();
+  flushTable();
   return blocks;
 }
 

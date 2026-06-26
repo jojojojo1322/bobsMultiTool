@@ -39,6 +39,11 @@ export type BlogBlock =
   | {
       type: "list";
       items: string[];
+    }
+  | {
+      type: "table";
+      headers: string[];
+      rows: string[][];
     };
 
 export type PlayStatKey = "stamina" | "mental" | "workload" | "reputation";

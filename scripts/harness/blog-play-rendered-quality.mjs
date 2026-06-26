@@ -134,6 +134,7 @@ function pageDefinitions() {
       canonical: `${canonicalHost}/blog/${post.slug}`,
       expectedH1: post.title,
       expectedDescription: post.description,
+      category: post.category,
       minText: 850,
       structuredFragments: ['"@type":"BlogPosting"', '"@type":"BreadcrumbList"', '"author":', '"publisher":'],
     })),
@@ -195,6 +196,7 @@ try {
         twitterImage: document.querySelector('meta[name="twitter:image"]')?.getAttribute("content")?.trim() || "",
         h1Texts,
         h2Count: document.querySelectorAll("main h2").length,
+        tableCount: document.querySelectorAll("main table").length,
         textLength: text.length,
         html: document.documentElement.outerHTML,
         text,
@@ -208,6 +210,9 @@ try {
     if (item.expectedH1 && data.h1Texts[0] !== item.expectedH1) failures.push(`${item.path} h1 "${data.h1Texts[0] ?? ""}" should equal "${item.expectedH1}"`);
     if (data.textLength < item.minText) failures.push(`${item.path} ${item.kind} visible text ${data.textLength} < ${item.minText}`);
     if (data.h2Count < 1 && item.kind === "blog-post") failures.push(`${item.path} blog post should render at least one h2`);
+    if (item.kind === "blog-post" && item.category === "정보" && data.tableCount < 1) {
+      failures.push(`${item.path} information posts should render at least one HTML table`);
+    }
     if (data.canonical !== item.canonical) failures.push(`${item.path} canonical "${data.canonical}" should equal "${item.canonical}"`);
     if (!data.title || data.title.length < 12) failures.push(`${item.path} document title is missing or too short`);
     if (!data.description || data.description.length < 35) failures.push(`${item.path} meta description is missing or too short`);

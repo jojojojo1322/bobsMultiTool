@@ -134,6 +134,34 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </ul>
               );
             }
+            if (block.type === "table") {
+              return (
+                <div key={`table-${index}`} className="overflow-x-auto rounded-md border bg-background">
+                  <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+                    <thead className="bg-muted/50 text-foreground">
+                      <tr>
+                        {block.headers.map((header) => (
+                          <th key={header} scope="col" className="border-b px-4 py-3 font-semibold">
+                            {renderInlineText(header)}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {block.rows.map((row, rowIndex) => (
+                        <tr key={`${row.join("-")}-${rowIndex}`} className="align-top">
+                          {block.headers.map((_, cellIndex) => (
+                            <td key={`${rowIndex}-${cellIndex}`} className="px-4 py-3 leading-6 text-muted-foreground">
+                              {renderInlineText(row[cellIndex] ?? "")}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            }
             return (
               <p key={`${block.text}-${index}`} className="text-base leading-8 text-muted-foreground">
                 {renderInlineText(block.text)}
