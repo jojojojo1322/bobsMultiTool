@@ -18,6 +18,7 @@ export type MineCell = {
   mine: boolean;
   adjacent: number;
   revealed: boolean;
+  flagged: boolean;
 };
 
 type MineCellState = {
@@ -59,6 +60,7 @@ export function makeMineCells(content: ArcadeGameContent): MineCell[] {
     mine: mines.has(id),
     adjacent: 0,
     revealed: false,
+    flagged: false,
   }));
 
   for (const cell of cells) {
@@ -102,6 +104,10 @@ export function revealedMineSafeCount(state: MineCellState) {
   return state.mineCells.filter((cell) => cell.revealed && !cell.mine).length;
 }
 
+export function flaggedMineCount(state: MineCellState) {
+  return state.mineCells.filter((cell) => cell.flagged && !cell.revealed).length;
+}
+
 export function totalMineSafeCount(state: MineCellState) {
   return state.mineCells.filter((cell) => !cell.mine).length;
 }
@@ -117,17 +123,38 @@ export function moveMineCursorToNextSafe(state: MineCursorState) {
   for (let step = 0; step < total; step += 1) {
     const index = (state.mineCursor + step) % total;
     const cell = state.mineCells[index];
-    if (cell && !cell.revealed && !cell.mine) {
+    if (cell && !cell.revealed && !cell.flagged && !cell.mine) {
       state.mineCursor = index;
       return;
     }
   }
 }
 
+export function toggleMineFlag(state: MinesweeperPlayState, index = state.mineCursor) {
+  const cell = state.mineCells[index];
+  if (!cell || cell.revealed) return;
+  state.mineCursor = index;
+  cell.flagged = !cell.flagged;
+  state.focus = clamp(state.focus + (cell.flagged ? 1 : -1), 0, 100);
+  rememberMineHistory(state, {
+    label: cell.flagged ? "표시" : "해제",
+    detail: cell.flagged ? "의심 칸 보류" : "다시 볼 칸",
+    score: 0,
+  });
+}
+
 export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPlayState, index = state.mineCursor) {
   const cell = state.mineCells[index];
   if (!cell) return;
   state.mineCursor = index;
+  if (cell.flagged) {
+    rememberMineHistory(state, {
+      label: "표시",
+      detail: "표시한 칸은 보류",
+      score: 0,
+    });
+    return;
+  }
   if (cell.revealed) {
     moveMineCursorToNextSafe(state);
     return;
@@ -169,12 +196,12 @@ function revealMineFlood(state: MineCellState, start: MineCell) {
   const revealed = new Set<number>();
   while (queue.length) {
     const cell = queue.shift();
-    if (!cell || cell.revealed || cell.mine || revealed.has(cell.id)) continue;
+    if (!cell || cell.revealed || cell.flagged || cell.mine || revealed.has(cell.id)) continue;
     cell.revealed = true;
     revealed.add(cell.id);
     if (cell.adjacent === 0) {
       for (const neighbor of neighborCells(state.mineCells, cell.column, cell.row)) {
-        if (!neighbor.revealed && !neighbor.mine) queue.push(neighbor);
+        if (!neighbor.revealed && !neighbor.flagged && !neighbor.mine) queue.push(neighbor);
       }
     }
   }

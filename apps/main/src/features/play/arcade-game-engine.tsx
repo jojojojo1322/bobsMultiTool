@@ -87,6 +87,7 @@ import {
   updateMemory,
 } from "@/features/play/arcade-memory";
 import {
+  flaggedMineCount,
   makeMineCells,
   mineBoardHeight,
   mineBoardWidth,
@@ -95,10 +96,12 @@ import {
   mineCellIndexAt,
   mineCellSize,
   mineColumns,
+  mineCount,
   mineGap,
   moveMineCursor,
   revealMineCell,
   revealedMineSafeCount,
+  toggleMineFlag,
   totalMineSafeCount,
   updateMinesweeper,
   type MineCell,
@@ -1473,6 +1476,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   const { background, primary, accent, danger } = content.arcade.palette;
   const openedSafe = revealedMineSafeCount(state);
   const totalSafe = totalMineSafeCount(state);
+  const flaggedCount = flaggedMineCount(state);
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1504,6 +1508,11 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
       ctx.fillStyle = danger;
     } else if (cell.revealed) {
       ctx.fillStyle = cell.adjacent === 0 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.16)";
+    } else if (cell.flagged) {
+      const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
+      gradient.addColorStop(0, "rgba(248,113,113,0.42)");
+      gradient.addColorStop(1, "rgba(248,113,113,0.18)");
+      ctx.fillStyle = gradient;
     } else {
       const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
       gradient.addColorStop(0, "rgba(255,255,255,0.22)");
@@ -1549,6 +1558,21 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
         ctx.arc(x + mineCellSize / 2, y + mineCellSize / 2, 4, 0, Math.PI * 2);
         ctx.fill();
       }
+    } else if (cell.flagged) {
+      ctx.strokeStyle = "#111827";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + 15, y + 11);
+      ctx.lineTo(x + 15, y + 29);
+      ctx.stroke();
+      ctx.fillStyle = danger;
+      ctx.beginPath();
+      ctx.moveTo(x + 16, y + 12);
+      ctx.lineTo(x + 29, y + 17);
+      ctx.lineTo(x + 16, y + 22);
+      ctx.closePath();
+      ctx.fill();
+      ctx.lineWidth = 1;
     }
   }
 
@@ -1570,25 +1594,26 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.fillText(`/ ${totalSafe} 안전칸`, panelX + 80, mineBoardY + 59);
+  ctx.fillText(`표시 ${flaggedCount} / ${mineCount}`, panelX + 18, mineBoardY + 82);
 
   const cursor = state.mineCells[state.mineCursor];
   ctx.fillStyle = "rgba(255,255,255,0.13)";
   ctx.beginPath();
-  ctx.roundRect(panelX + 18, mineBoardY + 90, 160, 44, 12);
+  ctx.roundRect(panelX + 18, mineBoardY + 102, 160, 44, 12);
   ctx.fill();
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(cursor?.revealed ? "열린 칸입니다" : "여기를 열어볼까요", panelX + 32, mineBoardY + 116);
+  ctx.fillText(cursor?.revealed ? "열린 칸입니다" : cursor?.flagged ? "표시한 칸입니다" : "여기를 열어볼까요", panelX + 32, mineBoardY + 128);
 
   ctx.fillStyle = "rgba(255,255,255,0.64)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자는 가까운 위험 칸 수입니다.", panelX + 18, mineBoardY + 164);
-  ctx.fillText("의심되면 다른 칸부터 열어도 됩니다.", panelX + 18, mineBoardY + 188);
+  ctx.fillText("F 또는 Shift+클릭으로 표시합니다.", panelX + 18, mineBoardY + 174);
+  ctx.fillText("숫자는 가까운 위험 칸 수입니다.", panelX + 18, mineBoardY + 198);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스로 칸을 누르거나 방향키로 옮겨 Space를 누릅니다. 숫자를 보고 천천히 열면 됩니다.", 34, canvasHeight - 20);
+  ctx.fillText("클릭/Space로 열고, F/Shift+클릭/우클릭으로 의심 칸을 표시합니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -1599,7 +1624,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("칸을 열고 숫자를 봅니다. 숫자는 가까운 위험 칸 수입니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스로 바로 열거나 방향키로 옮겨 Space를 누르세요.", canvasWidth / 2, 228);
+    ctx.fillText("의심되는 칸은 F, Shift+클릭, 우클릭으로 표시해둡니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -2560,12 +2585,14 @@ export function ArcadeGameEngine({
       const passwordDigitKey = content.arcade.variant === "password" ? passwordDigitFromKeyboardCode(event.code) : null;
       const passwordUtilityKey = content.arcade.variant === "password" && event.code === "Backspace";
       const passwordSuggestionKey = content.arcade.variant === "password" && event.code === "KeyR";
+      const mineFlagKey = content.arcade.variant === "minesweeper" && event.code === "KeyF";
       const memoryDigitKey = content.arcade.variant === "memory" ? memoryDigitFromKeyboardCode(event.code) : -1;
       if (
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code) ||
         passwordDigitKey !== null ||
         passwordUtilityKey ||
         passwordSuggestionKey ||
+        mineFlagKey ||
         memoryDigitKey >= 0
       ) {
         event.preventDefault();
@@ -2649,6 +2676,14 @@ export function ArcadeGameEngine({
         }
         if (content.arcade.variant === "minesweeper") {
           if (event.repeat) return;
+          if (mineFlagKey) {
+            stateRef.current.started = true;
+            stateRef.current.lastFrame = performance.now();
+            toggleMineFlag(stateRef.current);
+            setShareState("idle");
+            syncView();
+            return;
+          }
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
           if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
           if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
@@ -2775,7 +2810,12 @@ export function ArcadeGameEngine({
         if (index < 0) return;
         state.started = true;
         state.lastFrame = performance.now();
-        revealMineCell(content, state, index);
+        if (event.shiftKey) {
+          event.preventDefault();
+          toggleMineFlag(state, index);
+        } else {
+          revealMineCell(content, state, index);
+        }
         setShareState("idle");
         syncView();
         return;
@@ -2809,6 +2849,26 @@ export function ArcadeGameEngine({
       }
     },
     [content, syncView],
+  );
+
+  const handleCanvasContextMenu = React.useCallback(
+    (event: React.MouseEvent<HTMLCanvasElement>) => {
+      if (content.arcade.variant !== "minesweeper") return;
+      event.preventDefault();
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const point = canvasPointFromEvent(canvas, event);
+      const index = mineCellIndexAt(point.x, point.y);
+      if (index < 0) return;
+      const state = stateRef.current;
+      if (state.finished) return;
+      state.started = true;
+      state.lastFrame = performance.now();
+      toggleMineFlag(state, index);
+      setShareState("idle");
+      syncView();
+    },
+    [content.arcade.variant, syncView],
   );
 
   const handleCanvasPointerDown = React.useCallback(
@@ -3048,6 +3108,7 @@ export function ArcadeGameEngine({
                 onPointerMove={handleCanvasPointerMove}
                 onPointerUp={handleCanvasPointerUp}
                 onPointerCancel={handleCanvasPointerCancel}
+                onContextMenu={handleCanvasContextMenu}
                 aria-label={`${content.title} canvas`}
                 className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
