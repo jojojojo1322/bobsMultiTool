@@ -20,6 +20,28 @@ import {
   type PasswordAttempt,
 } from "@/features/play/arcade-password";
 import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
+import {
+  clearSumDrag,
+  makeSumTiles,
+  pointInSumBoard,
+  rememberSumDragSegment,
+  rememberSumDragTile,
+  selectedSum,
+  selectedSumTiles,
+  sumBoxBoardHeight,
+  sumBoxBoardWidth,
+  sumBoxColumns,
+  sumBoxGap,
+  sumBoxRows,
+  sumBoxStartX,
+  sumBoxStartY,
+  sumBoxTileHeight,
+  sumBoxTimeLimitSeconds,
+  sumDragTiles,
+  sumTileIndexAt,
+  sumTilesTotal,
+  type SumTile,
+} from "@/features/play/arcade-sum-box";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
 const canvasWidth = 720;
@@ -28,16 +50,6 @@ const crossingLanes = [326, 274, 222, 170, 118, 66];
 const crossingStartY = canvasHeight - 42;
 const crossingStepX = 48;
 const crossingStepY = 52;
-const sumBoxColumns = 9;
-const sumBoxRows = 6;
-const sumBoxGap = 8;
-const sumBoxStartX = 34;
-const sumBoxStartY = 78;
-const sumBoxTileHeight = 52;
-const sumBoxTileWidth = (canvasWidth - sumBoxStartX * 2 - sumBoxGap * (sumBoxColumns - 1)) / sumBoxColumns;
-const sumBoxBoardWidth = sumBoxColumns * sumBoxTileWidth + (sumBoxColumns - 1) * sumBoxGap;
-const sumBoxBoardHeight = sumBoxRows * sumBoxTileHeight + (sumBoxRows - 1) * sumBoxGap;
-const sumBoxTimeLimitSeconds = 60;
 const snakeCellSize = 24;
 const snakeColumns = 24;
 const snakeRows = 14;
@@ -126,18 +138,6 @@ type Brick = {
   label: string;
   good: boolean;
   alive: boolean;
-};
-
-type SumTile = {
-  id: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  value: number;
-  label: string;
-  selected: boolean;
-  cleared: boolean;
 };
 
 type SnakeDirection = "up" | "down" | "left" | "right";
@@ -488,34 +488,6 @@ function makeSnakeFood(content: ArcadeGameContent, seed: number, snake: SnakeCel
   };
 }
 
-function makeSumTiles(content: ArcadeGameContent): SumTile[] {
-  if (content.arcade.variant !== "sum-box") return [];
-  const values = [
-    1, 9, 2, 8, 3, 7, 4, 6, 5, 5, 1, 4, 2, 6, 3, 7, 8, 5,
-    9, 1, 6, 4, 8, 2, 7, 3, 5, 5, 2, 1, 9, 4, 6, 3, 7, 8,
-    5, 1, 4, 2, 8, 6, 3, 7, 9, 1, 5, 5, 2, 8, 4, 6, 1, 9,
-  ];
-  return Array.from({ length: sumBoxColumns * sumBoxRows }, (_, index) => {
-    const column = index % sumBoxColumns;
-    const row = Math.floor(index / sumBoxColumns);
-    const value = values[index % values.length] ?? 5;
-    const labelSource = Number.isFinite(Number(content.arcade.goodLabels[index % content.arcade.goodLabels.length]))
-      ? `${value}`
-      : pickLabel(content.arcade.goodLabels, index);
-    return {
-      id: index,
-      x: sumBoxStartX + column * (sumBoxTileWidth + sumBoxGap),
-      y: sumBoxStartY + row * (sumBoxTileHeight + sumBoxGap),
-      width: sumBoxTileWidth,
-      height: sumBoxTileHeight,
-      value,
-      label: labelSource,
-      selected: false,
-      cleared: false,
-    };
-  });
-}
-
 function makeBricks(content: ArcadeGameContent): Brick[] {
   if (content.arcade.variant !== "brick-breaker") return [];
   const columns = 5;
@@ -557,88 +529,6 @@ function snapshot(state: GameState): ViewState {
 
 function addHistory(state: GameState, item: HistoryItem) {
   state.history = [item, ...state.history].slice(0, 8);
-}
-
-function selectedSum(state: GameState) {
-  return state.sumTiles.reduce((sum, tile) => sum + (!tile.cleared && tile.selected ? tile.value : 0), 0);
-}
-
-function selectedSumTiles(state: GameState) {
-  return state.sumTiles.filter((tile) => !tile.cleared && tile.selected);
-}
-
-function sumTileIndexAt(state: GameState, x: number, y: number) {
-  return state.sumTiles.findIndex((tile) => !tile.cleared && x >= tile.x && x <= tile.x + tile.width && y >= tile.y && y <= tile.y + tile.height);
-}
-
-function sumDragRect(state: GameState) {
-  if (!state.sumDragStart || !state.sumDragCurrent) return null;
-  const x = Math.min(state.sumDragStart.x, state.sumDragCurrent.x);
-  const y = Math.min(state.sumDragStart.y, state.sumDragCurrent.y);
-  const width = Math.abs(state.sumDragCurrent.x - state.sumDragStart.x);
-  const height = Math.abs(state.sumDragCurrent.y - state.sumDragStart.y);
-  return { x, y, width, height };
-}
-
-function pointInSumBoard(point: CanvasPoint) {
-  return (
-    point.x >= sumBoxStartX - 12 &&
-    point.x <= sumBoxStartX + sumBoxBoardWidth + 12 &&
-    point.y >= sumBoxStartY - 12 &&
-    point.y <= sumBoxStartY + sumBoxBoardHeight + 12
-  );
-}
-
-function tileIntersectsRect(tile: SumTile, rect: { x: number; y: number; width: number; height: number }) {
-  const centerX = tile.x + tile.width / 2;
-  const centerY = tile.y + tile.height / 2;
-  return centerX >= rect.x && centerX <= rect.x + rect.width && centerY >= rect.y && centerY <= rect.y + rect.height;
-}
-
-function rememberSumDragTile(state: GameState, index: number) {
-  const tile = state.sumTiles[index];
-  if (!tile || tile.cleared || state.sumDragTileIds.includes(index)) return;
-  state.sumDragTileIds.push(index);
-}
-
-function rememberSumDragSegment(state: GameState, from: CanvasPoint, to: CanvasPoint) {
-  const rect = {
-    x: Math.min(from.x, to.x) - 12,
-    y: Math.min(from.y, to.y) - 12,
-    width: Math.abs(to.x - from.x) + 24,
-    height: Math.abs(to.y - from.y) + 24,
-  };
-
-  for (const tile of state.sumTiles) {
-    if (!tile.cleared && tileIntersectsRect(tile, rect)) rememberSumDragTile(state, tile.id);
-  }
-}
-
-function sumDragTiles(state: GameState) {
-  if (state.sumDragTileIds.length) {
-    return state.sumDragTileIds.map((id) => state.sumTiles[id]).filter((tile): tile is SumTile => Boolean(tile && !tile.cleared));
-  }
-
-  const rect = sumDragRect(state);
-  if (!rect) return [];
-  const paddedRect = {
-    x: rect.x - 3,
-    y: rect.y - 3,
-    width: rect.width + 6,
-    height: rect.height + 6,
-  };
-  return state.sumTiles.filter((tile) => !tile.cleared && tileIntersectsRect(tile, paddedRect));
-}
-
-function sumTilesTotal(tiles: SumTile[]) {
-  return tiles.reduce((sum, tile) => sum + tile.value, 0);
-}
-
-function clearSumDrag(state: GameState) {
-  state.sumDragStart = null;
-  state.sumDragCurrent = null;
-  state.sumDragMoved = false;
-  state.sumDragTileIds = [];
 }
 
 function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
