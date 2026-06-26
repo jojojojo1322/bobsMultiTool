@@ -68,15 +68,16 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
-  - Latest confirmed submitted URL count: `53`
+  - Latest submitted URL count: `68`
   - Latest response status: `200`
-  - Refresh the IndexNow submission after the next deployed 68-URL Play set; this pass did not submit it again.
+  - The 68-URL live sitemap set was submitted after the arcade Play deployment.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
+  - Latest feed item counts: `58`, `58`
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:

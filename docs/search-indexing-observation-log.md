@@ -138,6 +138,19 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Live `/sitemaps/en` URL count: `68`
   - Interpretation: Search Console has applied the newer sitemap beyond the old `53` discovered-page state, but it still trails the live XML by `2` URLs. This is discovery evidence only, not indexing proof.
   - No Search Console resubmission or IndexNow submission was performed in this pass.
+- Post-arcade Play deployment registration:
+  - Commit: `23b5f8b`
+  - Change: added the shared keyboard/canvas `arcade-game` engine and restored the live Play set to `22` entries.
+  - Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_REQUIRE_MAIN_VERCEL=1 BOBOB_DEPLOY_SHA=23b5f8b166818251f1b31152ea636f0d7cb7a947 npm run harness:deployment-status` returned `overallState: success`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `68`, feed items `58`, Blog posts `36`, Play entries `22`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `68`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `58`, `58`
+  - WebSub response statuses: `204`, `204`
+  - Interpretation: discovery registration was refreshed for the current live 68-URL set, but this still does not prove indexing.
 
 Decision:
 
