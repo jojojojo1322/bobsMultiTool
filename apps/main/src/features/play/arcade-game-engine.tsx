@@ -6,10 +6,14 @@ import { Button } from "@/components/ui/button";
 import type { ArcadeGameContent } from "@/features/content/types";
 import {
   adjustPasswordDigit,
+  applyPasswordCandidate,
   applyPasswordSuggestion,
   formatPasswordOptionDigits,
   makePasswordSecret,
   movePasswordCursor,
+  passwordCandidateOptionAt,
+  passwordCandidateOptionRect,
+  passwordCandidateOptions,
   passwordCandidateStats,
   passwordDigitFromKeyboardCode,
   passwordDigitCount,
@@ -1737,6 +1741,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const candidates = candidateStats.candidates;
   const positionOptions = passwordPositionOptions(candidates);
   const suggestion = passwordSuggestion(state.passwordAttempts);
+  const candidateOptions = passwordCandidateOptions(state.passwordAttempts);
   const digitMarks = passwordDigitMarks(state.passwordAttempts);
   const currentGuess = passwordGuessText(state.passwordGuess);
   const duplicateCurrent = passwordGuessHasDuplicateDigits(state.passwordGuess);
@@ -1806,12 +1811,29 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fill();
   ctx.strokeStyle = "rgba(251,191,36,0.46)";
   ctx.stroke();
-  ctx.fillStyle = accent;
-  ctx.font = "900 17px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
-  ctx.fillText(suggestion, passwordSuggestionRect.x + 14, passwordSuggestionRect.y + 24);
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("누르면 넣기", passwordSuggestionRect.x + 68, passwordSuggestionRect.y + 24);
+  ctx.fillText("후보 바로 넣기", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
+  candidateOptions.forEach((candidate, index) => {
+    const rect = passwordCandidateOptionRect(index);
+    const selected = candidate === currentGuess;
+    ctx.fillStyle = selected ? primary : index === 0 ? "rgba(251,191,36,0.9)" : "rgba(255,255,255,0.14)";
+    ctx.beginPath();
+    ctx.roundRect(rect.x, rect.y, rect.width, rect.height, 7);
+    ctx.fill();
+    ctx.strokeStyle = selected ? "rgba(147,197,253,0.82)" : index === 0 ? "rgba(251,191,36,0.6)" : "rgba(255,255,255,0.18)";
+    ctx.stroke();
+    ctx.fillStyle = selected || index === 0 ? "#111827" : "#f8fafc";
+    ctx.font = "900 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(candidate, rect.x + rect.width / 2, rect.y + 15);
+    ctx.textAlign = "left";
+  });
+  if (!candidateOptions.length) {
+    ctx.fillStyle = accent;
+    ctx.font = "900 15px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillText(suggestion, passwordSuggestionRect.x + 14, passwordSuggestionRect.y + 32);
+  }
   ctx.textAlign = "center";
 
   ctx.textAlign = "left";
@@ -2728,10 +2750,14 @@ export function ArcadeGameEngine({
         state.lastFrame = performance.now();
         const keypadDigit = passwordKeypadDigitAt(point.x, point.y);
         const digitIndex = passwordDigitIndexAt(point.x, point.y);
+        const candidateOptions = passwordCandidateOptions(state.passwordAttempts);
+        const candidateOptionIndex = passwordCandidateOptionAt(point.x, point.y);
         if (keypadDigit >= 0) {
           setPasswordDigit(state, keypadDigit, true);
         } else if (digitIndex >= 0) {
           setPasswordDigitFromClick(state, digitIndex);
+        } else if (candidateOptionIndex >= 0 && candidateOptions[candidateOptionIndex]) {
+          applyPasswordCandidate(state, candidateOptions[candidateOptionIndex]);
         } else if (pointInRect(point, passwordSuggestionRect)) {
           applyPasswordSuggestion(state);
         } else if (pointInRect(point, passwordSubmitRect)) {

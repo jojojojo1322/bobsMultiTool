@@ -11,6 +11,10 @@ export const passwordDigitStartX = (passwordCanvasWidth - passwordDigitCount * p
 export const passwordDigitY = 154;
 export const passwordSubmitRect = { x: passwordCanvasWidth / 2 - 96, y: 326, width: 192, height: 50 };
 export const passwordSuggestionRect = { x: 42, y: 178, width: 148, height: 46 };
+export const passwordCandidateOptionCount = 3;
+export const passwordCandidateOptionWidth = 38;
+export const passwordCandidateOptionHeight = 22;
+export const passwordCandidateOptionGap = 6;
 export const passwordKeypadColumns = 5;
 export const passwordKeypadWidth = 64;
 export const passwordKeypadHeight = 40;
@@ -122,11 +126,14 @@ export function setPasswordDigitFromClick(state: Pick<PasswordPlayState, "passwo
   adjustPasswordDigit(state, 1);
 }
 
-export function applyPasswordSuggestion(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts">) {
-  const suggestion = passwordSuggestion(state.passwordAttempts);
-  if (!/^\d{3}$/.test(suggestion)) return;
-  state.passwordGuess = parsePasswordGuess(suggestion);
+export function applyPasswordCandidate(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor">, candidate: string) {
+  if (!/^\d{3}$/.test(candidate)) return;
+  state.passwordGuess = parsePasswordGuess(candidate);
   state.passwordCursor = 0;
+}
+
+export function applyPasswordSuggestion(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts">) {
+  applyPasswordCandidate(state, passwordSuggestion(state.passwordAttempts));
 }
 
 export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordPlayState) {
@@ -239,6 +246,32 @@ export function passwordSuggestion(attempts: PasswordAttempt[]) {
   const candidates = passwordCandidatesForAttempts(attempts);
   const triedGuesses = new Set(attempts.map((attempt) => attempt.guess));
   return candidates.find((candidate) => !triedGuesses.has(candidate.join("")))?.join("") ?? candidates[0]?.join("") ?? "---";
+}
+
+export function passwordCandidateOptions(attempts: PasswordAttempt[]) {
+  const candidates = passwordCandidatesForAttempts(attempts).map((candidate) => candidate.join(""));
+  const triedGuesses = new Set(attempts.map((attempt) => attempt.guess));
+  const untried = candidates.filter((candidate) => !triedGuesses.has(candidate));
+  return (untried.length ? untried : candidates).slice(0, passwordCandidateOptionCount);
+}
+
+export function passwordCandidateOptionRect(index: number) {
+  const totalWidth = passwordCandidateOptionCount * passwordCandidateOptionWidth + (passwordCandidateOptionCount - 1) * passwordCandidateOptionGap;
+  const startX = passwordSuggestionRect.x + (passwordSuggestionRect.width - totalWidth) / 2;
+  return {
+    x: startX + index * (passwordCandidateOptionWidth + passwordCandidateOptionGap),
+    y: passwordSuggestionRect.y + 18,
+    width: passwordCandidateOptionWidth,
+    height: passwordCandidateOptionHeight,
+  };
+}
+
+export function passwordCandidateOptionAt(x: number, y: number) {
+  for (let index = 0; index < passwordCandidateOptionCount; index += 1) {
+    const rect = passwordCandidateOptionRect(index);
+    if (x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height) return index;
+  }
+  return -1;
 }
 
 export function passwordGuessIsPossible(attempts: PasswordAttempt[], guess: string) {
