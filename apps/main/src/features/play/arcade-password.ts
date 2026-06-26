@@ -9,6 +9,7 @@ export type PasswordAttempt = {
   near: number;
   hint: string;
   repeated: boolean;
+  issue?: "duplicate" | "contradiction";
 };
 
 export function makePasswordSecret(content: ArcadeGameContent): number[] {
@@ -27,6 +28,11 @@ export function passwordGuessText(guess: number[]) {
 
 export function parsePasswordGuess(guess: string) {
   return guess.split("").map((digit) => Number(digit));
+}
+
+export function passwordGuessHasDuplicateDigits(guess: number[] | string) {
+  const digits = Array.isArray(guess) ? guess : parsePasswordGuess(guess);
+  return new Set(digits).size !== digits.length;
 }
 
 export function evaluatePasswordGuess(secret: number[], guess: number[]) {
@@ -106,9 +112,15 @@ export function passwordSuggestion(attempts: PasswordAttempt[]) {
   return candidates.find((candidate) => !triedGuesses.has(candidate.join("")))?.join("") ?? candidates[0]?.join("") ?? "---";
 }
 
+export function passwordGuessIsPossible(attempts: PasswordAttempt[], guess: string) {
+  if (passwordGuessHasDuplicateDigits(guess)) return false;
+  return passwordCandidatesForAttempts(attempts).some((candidate) => candidate.join("") === guess);
+}
+
 export function passwordDigitMarks(attempts: PasswordAttempt[]) {
   const marks: Array<"unknown" | "candidate" | "absent"> = Array.from({ length: 10 }, () => "unknown");
   for (const attempt of attempts) {
+    if (attempt.issue) continue;
     const digits = new Set(parsePasswordGuess(attempt.guess));
     if (attempt.exact === 0 && attempt.near === 0) {
       digits.forEach((digit) => {
@@ -137,6 +149,7 @@ export function passwordHint(secret: number[], guess: number[], exact: number, n
 
 function candidateMatchesAttempts(candidate: number[], attempts: PasswordAttempt[]) {
   return attempts.every((attempt) => {
+    if (attempt.issue) return true;
     const { exact, near } = evaluatePasswordGuess(candidate, parsePasswordGuess(attempt.guess));
     return exact === attempt.exact && near === attempt.near;
   });
