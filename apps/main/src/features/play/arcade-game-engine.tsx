@@ -4,6 +4,7 @@ import * as React from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ArcadeGameContent } from "@/features/content/types";
+import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
 const canvasWidth = 720;
@@ -100,11 +101,6 @@ type Bullet = {
   x: number;
   y: number;
   vy: number;
-};
-
-type CanvasPoint = {
-  x: number;
-  y: number;
 };
 
 type Brick = {
@@ -561,19 +557,6 @@ function snapshot(state: GameState): ViewState {
     actions: state.actions,
     history: state.history,
   };
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function pseudoRandom(seed: number) {
-  const raw = Math.sin(seed * 9283.37) * 10000;
-  return raw - Math.floor(raw);
-}
-
-function pickLabel(labels: string[], index: number) {
-  return labels[index % labels.length] ?? "신호";
 }
 
 function addHistory(state: GameState, item: HistoryItem) {
@@ -1615,10 +1598,6 @@ function chooseMemoryCell(content: ArcadeGameContent, state: GameState, cell = s
   });
   resetMemoryPreview(content, state, true);
   finishMemoryIfNeeded(content, state);
-}
-
-function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
-  return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 }
 
 function canvasPointFromEvent(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement> | React.PointerEvent<HTMLCanvasElement>) {
