@@ -36,6 +36,16 @@ const disallowedSupportLinkPatterns = [/buymeacoffee/i, /ko-fi/i, /paypal/i, /to
 const minBlogDescriptionLength = 50;
 const minPlayDescriptionLength = 50;
 const minCategoryDescriptionLength = 50;
+const infoReaderIntentPatterns = [
+  /궁금/,
+  /헷갈/,
+  /먼저/,
+  /실제/,
+  /다시\s*확인|다시\s*봐|다시\s*눌러/,
+  /가입\s*전|결제\s*전|구매\s*전|신청\s*전|해지/,
+  /어디(?:부터|를)?/,
+  /\?/,
+];
 
 const failures = [];
 
@@ -64,6 +74,18 @@ function parseFrontmatter(source) {
 
 function bodyFromMdx(source) {
   return source.replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n)?/, "").trim();
+}
+
+function markdownLinkCount(value) {
+  return Array.from(value.matchAll(/\[[^\]]+\]\(https?:\/\/[^)]+\)/g)).length;
+}
+
+function sectionHeadings(value) {
+  return Array.from(value.matchAll(/^##\s+(.+)$/gm)).map((match) => match[1].trim());
+}
+
+function informationReaderIntentScore(value) {
+  return infoReaderIntentPatterns.filter((pattern) => pattern.test(value)).length;
 }
 
 function dateDaysBetween(startDate, endDate) {
@@ -170,8 +192,23 @@ for (const entry of blogEntries) {
     if (!/기준일은\s+\d{4}-\d{2}-\d{2}/.test(entry.body)) {
       failures.push(`${entry.slug ?? entry.file} information posts should state a concrete 기준일`);
     }
-    if (!/^##\s+한눈에 비교/m.test(entry.body) || !/^\|.+\|\s*\n\|[-:|\s]+\|/m.test(entry.body)) {
+    const comparisonHeadingIndex = entry.body.search(/^##\s+한눈에 비교/m);
+    if (comparisonHeadingIndex === -1 || !/^\|.+\|\s*\n\|[-:|\s]+\|/m.test(entry.body)) {
       failures.push(`${entry.slug ?? entry.file} information posts should include a near-top comparison table`);
+    }
+    if (comparisonHeadingIndex > 1600) {
+      failures.push(`${entry.slug ?? entry.file} information comparison table should appear before long prose, not after the article is mostly done`);
+    }
+    const comparisonAndAfter = comparisonHeadingIndex >= 0 ? entry.body.slice(comparisonHeadingIndex) : entry.body;
+    const followUpSections = sectionHeadings(comparisonAndAfter).filter((heading) => heading !== "한눈에 비교");
+    if (followUpSections.length < 2) {
+      failures.push(`${entry.slug ?? entry.file} information posts should expand after the table with reader-question or decision-flow sections`);
+    }
+    if (informationReaderIntentScore(comparisonAndAfter) < 2) {
+      failures.push(`${entry.slug ?? entry.file} information posts should tune prose around reader questions, confusing points, and pre-purchase/pre-signup checks`);
+    }
+    if (!entry.body.includes("확인한 곳") || markdownLinkCount(entry.body) < 2) {
+      failures.push(`${entry.slug ?? entry.file} information posts should name original confirmation paths, not only summarize a table`);
     }
   }
   for (const playSlug of entry.relatedPlaySlugs) {
