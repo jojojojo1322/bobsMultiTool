@@ -165,6 +165,7 @@ import {
   rememberSumDragSegment,
   rememberSumDragTile,
   selectedSumTiles,
+  sumBoxCombinationHint,
   sumBoxBoardHeight,
   sumBoxBoardWidth,
   sumBoxColumns,
@@ -2036,6 +2037,13 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const blockedTile = dragging && state.sumDragBlockedTileId !== null ? state.sumTiles[state.sumDragBlockedTileId] : undefined;
   const blockedSum = blockedTile ? shownSum + blockedTile.value : shownSum;
   const complementTileIds = selectionSummary.complementTileIds;
+  const comboHint = sumBoxCombinationHint(state);
+  const comboHintLabel = comboHint.length
+    ? comboHint
+        .map((tile) => tile.value)
+        .slice(0, 5)
+        .join(" + ") + (comboHint.length > 5 ? " + ..." : "")
+    : "없음";
   const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
   const timeLimit = arcadeTimeLimitSeconds(content);
   const timeLeft = Math.max(0, Math.ceil(timeLimit - state.elapsed));
@@ -2061,6 +2069,15 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillRect(sumBoxStartX - 8, sumBoxStartY - 7 + row * (sumBoxTileHeight + sumBoxGap), sumBoxBoardWidth + 16, sumBoxTileHeight + 10);
   }
 
+  if (state.started && timeLeft <= 10 && timeLeft > 0) {
+    const pulse = 0.34 + Math.sin(state.elapsed * 8) * 0.14;
+    ctx.strokeStyle = `rgba(251,113,133,${pulse.toFixed(3)})`;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.roundRect(sumBoxStartX - 18, sumBoxStartY - 18, sumBoxBoardWidth + 36, sumBoxBoardHeight + 36, 26);
+    ctx.stroke();
+  }
+
   ctx.fillStyle = "rgba(15,23,42,0.36)";
   ctx.beginPath();
   ctx.roundRect(24, 18, canvasWidth - 48, 48, 16);
@@ -2084,6 +2101,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.66)";
   ctx.fillText(`비운 칸 ${cleared} / ${state.sumTiles.length}`, 190, 48);
+  ctx.fillStyle = comboHint.length ? "rgba(255,255,255,0.66)" : "rgba(251,113,133,0.88)";
+  ctx.fillText(`보이는 10 ${comboHintLabel}`, 330, 48);
   ctx.textAlign = "right";
   ctx.fillText(`남은 ${timeLeft}초`, canvasWidth - 44, 48);
   ctx.textAlign = "left";

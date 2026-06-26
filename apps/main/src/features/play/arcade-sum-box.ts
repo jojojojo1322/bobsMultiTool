@@ -89,9 +89,24 @@ export function selectedSumTiles(state: { sumTiles: SumTile[] }) {
 
 export function updateSumBox(content: ArcadeGameContent, state: SumBoxPlayState, dt: number) {
   state.elapsed += dt;
+  const hasCombination = sumBoxCombinationHint(state).length > 0;
+  if (
+    !hasCombination &&
+    state.score < content.arcade.targetScore &&
+    state.actions < content.arcade.rounds &&
+    !state.sumTiles.every((tile) => tile.cleared) &&
+    state.history[0]?.label !== "남은 10 없음"
+  ) {
+    rememberSumHistory(state, {
+      label: "남은 10 없음",
+      detail: "판 종료",
+      score: 0,
+    });
+  }
   if (
     state.score >= content.arcade.targetScore ||
     state.sumTiles.every((tile) => tile.cleared) ||
+    !hasCombination ||
     state.actions >= content.arcade.rounds ||
     state.focus <= 0 ||
     state.elapsed >= sumBoxTimeLimitSeconds
@@ -210,6 +225,19 @@ export function sumBoxSelectionSummary(state: { sumTiles: SumTile[] }, tiles: Su
     complementTileIds,
     status,
   };
+}
+
+export function sumBoxCombinationHint(state: { sumTiles: SumTile[] }) {
+  const combinations: Array<SumTile[] | null> = Array.from({ length: 11 }, () => null);
+  combinations[0] = [];
+  for (const tile of state.sumTiles) {
+    if (tile.cleared || tile.value > 10) continue;
+    for (let sum = 10; sum >= tile.value; sum -= 1) {
+      const previous = combinations[sum - tile.value];
+      if (!combinations[sum] && previous) combinations[sum] = [...previous, tile];
+    }
+  }
+  return combinations[10] ?? [];
 }
 
 export function sumTileIndexAt(state: { sumTiles: SumTile[] }, x: number, y: number) {

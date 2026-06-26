@@ -1,10 +1,10 @@
 {
   "slug": "deploy-10-box",
   "title": "마감 전 사과 10",
-  "description": "숫자 사과를 쓸어 합 10을 만들고 칸을 비웁니다. 급하게 쓸면 넘치고, 천천히 보면 딱 맞는 줄이 보입니다.",
+  "description": "숫자 사과를 쓸어 합 10을 만들고 칸을 비웁니다. 남은 10 힌트를 보며 급하게 넘치는 선택을 줄입니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-26",
+  "updatedAt": "2026-06-27",
   "shareText": "마감 전 사과 10을 해봤다. 딱 10으로 사라지면 괜히 기분 좋다.",
   "order": 11,
   "relatedBlogSlugs": ["commit-small-visible-slice", "vercel-sitemap-canonical-log"],
@@ -12,7 +12,7 @@
   "arcade": {
     "variant": "sum-box",
     "goal": "사과를 쓸어 합 10을 만들고, 남은 칸을 차근차근 비웁니다.",
-    "controls": "마우스로 드래그해서 사과를 묶습니다. 방향키/WASD로 옮기고 Space/Enter로 하나씩 골라도 됩니다.",
+    "controls": "마우스로 드래그해서 사과를 묶습니다. 보이는 10 힌트를 참고하고, 방향키/WASD와 Space/Enter로 하나씩 골라도 됩니다.",
     "rounds": 12,
     "targetScore": 22,
     "playerLabel": "상자",
