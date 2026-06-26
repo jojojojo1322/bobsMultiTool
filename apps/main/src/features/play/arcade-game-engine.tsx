@@ -11,13 +11,30 @@ import {
   makePasswordSecret,
   parsePasswordGuess,
   passwordCandidateStats,
+  passwordDigitFromKeyboardCode,
   passwordDigitCount,
+  passwordDigitGap,
+  passwordDigitHeight,
+  passwordDigitIndexAt,
   passwordDigitMarks,
+  passwordDigitStartX,
+  passwordDigitWidth,
+  passwordDigitY,
   passwordGuessHasDuplicateDigits,
   passwordGuessIsPossible,
   passwordGuessText,
   passwordHint,
+  passwordKeypadColumns,
+  passwordKeypadDigitAt,
+  passwordKeypadGap,
+  passwordKeypadHeight,
+  passwordKeypadWidth,
+  passwordKeypadX,
+  passwordKeypadY,
   passwordPositionOptions,
+  passwordSubmitRect,
+  passwordSuggestionRect,
+  passwordTimeLimitSeconds,
   passwordSuggestion,
   type PasswordAttempt,
 } from "@/features/play/arcade-password";
@@ -81,20 +98,6 @@ const snakeRows = 14;
 const snakeBoardX = (canvasWidth - snakeColumns * snakeCellSize) / 2;
 const snakeBoardY = 58;
 const snakeMoveInterval = 0.18;
-const passwordDigitWidth = 112;
-const passwordDigitHeight = 136;
-const passwordDigitGap = 24;
-const passwordDigitStartX = (canvasWidth - passwordDigitCount * passwordDigitWidth - (passwordDigitCount - 1) * passwordDigitGap) / 2;
-const passwordDigitY = 154;
-const passwordSubmitRect = { x: canvasWidth / 2 - 96, y: 326, width: 192, height: 50 };
-const passwordSuggestionRect = { x: 42, y: 178, width: 148, height: 46 };
-const passwordKeypadColumns = 5;
-const passwordKeypadWidth = 64;
-const passwordKeypadHeight = 40;
-const passwordKeypadGap = 10;
-const passwordKeypadX = (canvasWidth - passwordKeypadColumns * passwordKeypadWidth - (passwordKeypadColumns - 1) * passwordKeypadGap) / 2;
-const passwordKeypadY = 414;
-const passwordTimeLimitSeconds = 60;
 const mineColumns = 9;
 const mineRows = 7;
 const mineCount = 10;
@@ -789,32 +792,6 @@ function submitPasswordGuess(content: ArcadeGameContent, state: GameState) {
   if (solved || state.actions >= content.arcade.rounds || state.focus <= 0) {
     state.finished = true;
   }
-}
-
-function passwordDigitIndexAt(x: number, y: number) {
-  if (y < passwordDigitY || y > passwordDigitY + passwordDigitHeight) return -1;
-  for (let index = 0; index < passwordDigitCount; index += 1) {
-    const left = passwordDigitStartX + index * (passwordDigitWidth + passwordDigitGap);
-    if (x >= left && x <= left + passwordDigitWidth) return index;
-  }
-  return -1;
-}
-
-function passwordKeypadDigitAt(x: number, y: number) {
-  for (let digit = 0; digit <= 9; digit += 1) {
-    const column = digit % passwordKeypadColumns;
-    const row = Math.floor(digit / passwordKeypadColumns);
-    const left = passwordKeypadX + column * (passwordKeypadWidth + passwordKeypadGap);
-    const top = passwordKeypadY + row * (passwordKeypadHeight + passwordKeypadGap);
-    if (x >= left && x <= left + passwordKeypadWidth && y >= top && y <= top + passwordKeypadHeight) return digit;
-  }
-  return -1;
-}
-
-function digitFromKeyboardCode(code: string) {
-  if (/^Digit\d$/.test(code)) return Number(code.slice(5));
-  if (/^Numpad\d$/.test(code)) return Number(code.slice(6));
-  return null;
 }
 
 function resolveGemMatches(content: ArcadeGameContent, state: GameState, swapped = true) {
@@ -3359,7 +3336,7 @@ export function ArcadeGameEngine({
   React.useEffect(() => {
     const keys = keysRef.current;
     function keyDown(event: KeyboardEvent) {
-      const passwordDigitKey = content.arcade.variant === "password" ? digitFromKeyboardCode(event.code) : null;
+      const passwordDigitKey = content.arcade.variant === "password" ? passwordDigitFromKeyboardCode(event.code) : null;
       const passwordUtilityKey = content.arcade.variant === "password" && event.code === "Backspace";
       const passwordSuggestionKey = content.arcade.variant === "password" && event.code === "KeyR";
       const memoryDigitKey = content.arcade.variant === "memory" ? memoryDigitFromKeyboardCode(event.code) : -1;

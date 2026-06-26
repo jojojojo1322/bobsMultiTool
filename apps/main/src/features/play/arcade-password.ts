@@ -1,7 +1,23 @@
 import type { ArcadeGameContent } from "@/features/content/types";
 import { pseudoRandom } from "@/features/play/arcade-engine-utils";
 
+const passwordCanvasWidth = 720;
+
 export const passwordDigitCount = 3;
+export const passwordDigitWidth = 112;
+export const passwordDigitHeight = 136;
+export const passwordDigitGap = 24;
+export const passwordDigitStartX = (passwordCanvasWidth - passwordDigitCount * passwordDigitWidth - (passwordDigitCount - 1) * passwordDigitGap) / 2;
+export const passwordDigitY = 154;
+export const passwordSubmitRect = { x: passwordCanvasWidth / 2 - 96, y: 326, width: 192, height: 50 };
+export const passwordSuggestionRect = { x: 42, y: 178, width: 148, height: 46 };
+export const passwordKeypadColumns = 5;
+export const passwordKeypadWidth = 64;
+export const passwordKeypadHeight = 40;
+export const passwordKeypadGap = 10;
+export const passwordKeypadX = (passwordCanvasWidth - passwordKeypadColumns * passwordKeypadWidth - (passwordKeypadColumns - 1) * passwordKeypadGap) / 2;
+export const passwordKeypadY = 414;
+export const passwordTimeLimitSeconds = 60;
 
 export type PasswordAttempt = {
   guess: string;
@@ -33,6 +49,32 @@ export function parsePasswordGuess(guess: string) {
 export function passwordGuessHasDuplicateDigits(guess: number[] | string) {
   const digits = Array.isArray(guess) ? guess : parsePasswordGuess(guess);
   return new Set(digits).size !== digits.length;
+}
+
+export function passwordDigitIndexAt(x: number, y: number) {
+  if (y < passwordDigitY || y > passwordDigitY + passwordDigitHeight) return -1;
+  for (let index = 0; index < passwordDigitCount; index += 1) {
+    const left = passwordDigitStartX + index * (passwordDigitWidth + passwordDigitGap);
+    if (x >= left && x <= left + passwordDigitWidth) return index;
+  }
+  return -1;
+}
+
+export function passwordKeypadDigitAt(x: number, y: number) {
+  for (let digit = 0; digit <= 9; digit += 1) {
+    const column = digit % passwordKeypadColumns;
+    const row = Math.floor(digit / passwordKeypadColumns);
+    const left = passwordKeypadX + column * (passwordKeypadWidth + passwordKeypadGap);
+    const top = passwordKeypadY + row * (passwordKeypadHeight + passwordKeypadGap);
+    if (x >= left && x <= left + passwordKeypadWidth && y >= top && y <= top + passwordKeypadHeight) return digit;
+  }
+  return -1;
+}
+
+export function passwordDigitFromKeyboardCode(code: string) {
+  if (/^Digit\d$/.test(code)) return Number(code.slice(5));
+  if (/^Numpad\d$/.test(code)) return Number(code.slice(6));
+  return null;
 }
 
 export function evaluatePasswordGuess(secret: number[], guess: number[]) {
