@@ -108,6 +108,23 @@ export function flaggedMineCount(state: MineCellState) {
   return state.mineCells.filter((cell) => cell.flagged && !cell.revealed).length;
 }
 
+export function mineNeighborIds(state: MineCellState, index: number) {
+  const cell = state.mineCells[index];
+  if (!cell) return [];
+  return neighborCells(state.mineCells, cell.column, cell.row).map((neighbor) => neighbor.id);
+}
+
+export function mineNeighborSummary(state: MineCellState, index: number) {
+  const cell = state.mineCells[index];
+  if (!cell) return { closed: 0, flagged: 0, revealed: 0 };
+  const neighbors = neighborCells(state.mineCells, cell.column, cell.row);
+  return {
+    closed: neighbors.filter((neighbor) => !neighbor.revealed && !neighbor.flagged).length,
+    flagged: neighbors.filter((neighbor) => neighbor.flagged && !neighbor.revealed).length,
+    revealed: neighbors.filter((neighbor) => neighbor.revealed).length,
+  };
+}
+
 export function totalMineSafeCount(state: MineCellState) {
   return state.mineCells.filter((cell) => !cell.mine).length;
 }
@@ -156,6 +173,7 @@ export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPla
     return;
   }
   if (cell.revealed) {
+    if (openMineNeighborsFromNumber(content, state, cell)) return;
     moveMineCursorToNextSafe(state);
     return;
   }
@@ -184,6 +202,60 @@ export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPla
   }
 
   finishMinesweeperIfNeeded(content, state);
+}
+
+function openMineNeighborsFromNumber(content: ArcadeGameContent, state: MinesweeperPlayState, cell: MineCell) {
+  if (cell.mine || cell.adjacent <= 0) return false;
+
+  const neighbors = neighborCells(state.mineCells, cell.column, cell.row);
+  const flagged = neighbors.filter((neighbor) => neighbor.flagged && !neighbor.revealed).length;
+  const closed = neighbors.filter((neighbor) => !neighbor.revealed && !neighbor.flagged);
+  if (!closed.length) return false;
+
+  if (flagged !== cell.adjacent) {
+    rememberMineHistory(state, {
+      label: "대기",
+      detail: `표시 ${flagged}/${cell.adjacent}`,
+      score: 0,
+    });
+    return true;
+  }
+
+  state.actions += 1;
+  let openedSafe = 0;
+  let scoreDelta = 0;
+  for (const neighbor of closed) {
+    if (neighbor.mine) {
+      neighbor.revealed = true;
+      state.score = Math.max(0, state.score - 3);
+      state.focus = clamp(state.focus - 20, 0, 100);
+      rememberMineHistory(state, {
+        label: "펑",
+        detail: "표시가 빗나감",
+        score: -3,
+      });
+      finishMinesweeperIfNeeded(content, state);
+      return true;
+    }
+
+    const opened = revealMineFlood(state, neighbor);
+    openedSafe += opened;
+    scoreDelta += neighbor.adjacent === 0 ? Math.min(6, 2 + opened) : 2 + Math.max(0, 3 - neighbor.adjacent);
+  }
+
+  if (openedSafe > 0) {
+    state.score = Math.max(0, state.score + scoreDelta);
+    state.focus = clamp(state.focus + Math.min(5, openedSafe), 0, 100);
+    rememberMineHistory(state, {
+      label: "주변",
+      detail: `${openedSafe}칸 같이 열림`,
+      score: scoreDelta,
+    });
+    moveMineCursorToNextSafe(state);
+    finishMinesweeperIfNeeded(content, state);
+  }
+
+  return true;
 }
 
 export function updateMinesweeper(content: ArcadeGameContent, state: MinesweeperPlayState, dt: number) {

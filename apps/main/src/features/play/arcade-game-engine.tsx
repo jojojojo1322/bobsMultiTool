@@ -98,6 +98,8 @@ import {
   mineColumns,
   mineCount,
   mineGap,
+  mineNeighborIds,
+  mineNeighborSummary,
   moveMineCursor,
   revealMineCell,
   revealedMineSafeCount,
@@ -1893,6 +1895,9 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   const openedSafe = revealedMineSafeCount(state);
   const totalSafe = totalMineSafeCount(state);
   const flaggedCount = flaggedMineCount(state);
+  const cursor = state.mineCells[state.mineCursor];
+  const cursorSummary = mineNeighborSummary(state, state.mineCursor);
+  const cursorNeighborIds = new Set(cursor?.revealed && !cursor.mine && cursor.adjacent > 0 ? mineNeighborIds(state, state.mineCursor) : []);
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1915,10 +1920,18 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     const x = mineBoardX + cell.column * (mineCellSize + mineGap);
     const y = mineBoardY + cell.row * (mineCellSize + mineGap);
     const isCursor = cell.id === state.mineCursor;
+    const isCursorNeighbor = cursorNeighborIds.has(cell.id) && !cell.revealed && !cell.flagged;
     ctx.fillStyle = "rgba(0,0,0,0.22)";
     ctx.beginPath();
     ctx.roundRect(x + 3, y + 4, mineCellSize, mineCellSize, 9);
     ctx.fill();
+
+    if (isCursorNeighbor) {
+      ctx.fillStyle = "rgba(147,197,253,0.15)";
+      ctx.beginPath();
+      ctx.roundRect(x - 3, y - 3, mineCellSize + 6, mineCellSize + 6, 12);
+      ctx.fill();
+    }
 
     if (cell.revealed && cell.mine) {
       ctx.fillStyle = danger;
@@ -2012,24 +2025,26 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillText(`/ ${totalSafe} 안전칸`, panelX + 80, mineBoardY + 59);
   ctx.fillText(`표시 ${flaggedCount} / ${mineCount}`, panelX + 18, mineBoardY + 82);
 
-  const cursor = state.mineCells[state.mineCursor];
   ctx.fillStyle = "rgba(255,255,255,0.13)";
   ctx.beginPath();
-  ctx.roundRect(panelX + 18, mineBoardY + 102, 160, 44, 12);
+  ctx.roundRect(panelX + 18, mineBoardY + 102, 160, 58, 12);
   ctx.fill();
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(cursor?.revealed ? "열린 칸입니다" : cursor?.flagged ? "표시한 칸입니다" : "여기를 열어볼까요", panelX + 32, mineBoardY + 128);
+  ctx.fillText(cursor?.revealed ? (cursor.mine ? "터진 칸입니다" : `숫자 ${cursor.adjacent}`) : cursor?.flagged ? "표시한 칸입니다" : "여기를 열어볼까요", panelX + 32, mineBoardY + 124);
+  ctx.fillStyle = "rgba(255,255,255,0.66)";
+  ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`주변 닫힘 ${cursorSummary.closed} · 표시 ${cursorSummary.flagged}`, panelX + 32, mineBoardY + 144);
 
   ctx.fillStyle = "rgba(255,255,255,0.64)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("F 또는 Shift+클릭으로 표시합니다.", panelX + 18, mineBoardY + 174);
-  ctx.fillText("숫자는 가까운 위험 칸 수입니다.", panelX + 18, mineBoardY + 198);
+  ctx.fillText("F 또는 Shift+클릭으로 표시합니다.", panelX + 18, mineBoardY + 182);
+  ctx.fillText("숫자 칸을 다시 누르면 주변을 엽니다.", panelX + 18, mineBoardY + 206);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("클릭/Space로 열고, F/Shift+클릭/우클릭으로 의심 칸을 표시합니다.", 34, canvasHeight - 20);
+  ctx.fillText("클릭/Space로 열고, 숫자 칸은 표시 수가 맞을 때 주변 닫힌 칸을 같이 엽니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -2040,7 +2055,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("칸을 열고 숫자를 봅니다. 숫자는 가까운 위험 칸 수입니다.", canvasWidth / 2, 202);
-    ctx.fillText("의심되는 칸은 F, Shift+클릭, 우클릭으로 표시해둡니다.", canvasWidth / 2, 228);
+    ctx.fillText("표시 수가 맞는 숫자 칸은 한 번 더 눌러 주변을 엽니다.", canvasWidth / 2, 228);
   }
 }
 
