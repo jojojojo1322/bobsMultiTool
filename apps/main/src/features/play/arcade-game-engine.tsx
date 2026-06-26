@@ -2236,11 +2236,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillText(`${candidates.length}`, 48, 124);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(
-    state.passwordAttempts.length ? `이번 힌트로 ${candidateStats.narrowedBy}개 줄임` : "괜찮은 다음 수",
-    48,
-    146,
-  );
+  ctx.fillText(state.passwordAttempts.length ? `이번 힌트로 ${candidateStats.narrowedBy}개 줄임` : "첫 시도는 빠르게", 48, 146);
   ctx.fillStyle = "rgba(251,191,36,0.18)";
   ctx.beginPath();
   ctx.roundRect(passwordSuggestionRect.x, passwordSuggestionRect.y, passwordSuggestionRect.width, passwordSuggestionRect.height, 12);
@@ -2249,7 +2245,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("후보 바로 넣기", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
+  ctx.fillText("줄이는 후보", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
   candidateOptions.forEach((candidate, index) => {
     const rect = passwordCandidateOptionRect(index);
     const selected = candidate === currentGuess;
@@ -2415,7 +2411,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자키 입력, ←/→ 자리 이동, ↑/↓ 변경, R 추천, Space/Enter 확인. 후보도 누를 수 있습니다.", 34, passwordKeypadY - 18);
+  ctx.fillText("숫자키 입력, ←/→ 자리 이동, ↑/↓ 변경, R 추천 후보, Space/Enter 확인. 후보도 누를 수 있습니다.", 34, passwordKeypadY - 18);
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;
@@ -2431,8 +2427,8 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.textAlign = "center";
     ctx.fillText(content.title, centerX, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("세 자리 숫자를 맞춥니다. 숫자와 자리를 힌트로 줄여가면 됩니다.", centerX, 204);
-    ctx.fillText("숫자키로 바로 넣거나, 마우스 키패드와 방향키로 바꾸면 됩니다.", centerX, 230);
+    ctx.fillText("세 자리 숫자를 맞춥니다. 힌트 기록으로 남은 후보를 줄입니다.", centerX, 204);
+    ctx.fillText("숫자키로 넣거나 추천 후보를 눌러 바로 좁혀갑니다.", centerX, 230);
   }
 }
 

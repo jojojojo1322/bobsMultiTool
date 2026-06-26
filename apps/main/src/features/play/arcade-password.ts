@@ -243,16 +243,39 @@ export function formatPasswordOptionDigits(digits: number[]) {
 }
 
 export function passwordSuggestion(attempts: PasswordAttempt[]) {
-  const candidates = passwordCandidatesForAttempts(attempts);
-  const triedGuesses = new Set(attempts.map((attempt) => attempt.guess));
-  return candidates.find((candidate) => !triedGuesses.has(candidate.join("")))?.join("") ?? candidates[0]?.join("") ?? "---";
+  return passwordRankedCandidateOptions(attempts, 1)[0] ?? "---";
 }
 
 export function passwordCandidateOptions(attempts: PasswordAttempt[]) {
+  return passwordRankedCandidateOptions(attempts, passwordCandidateOptionCount);
+}
+
+function passwordRankedCandidateOptions(attempts: PasswordAttempt[], limit: number) {
   const candidates = passwordCandidatesForAttempts(attempts).map((candidate) => candidate.join(""));
   const triedGuesses = new Set(attempts.map((attempt) => attempt.guess));
   const untried = candidates.filter((candidate) => !triedGuesses.has(candidate));
-  return (untried.length ? untried : candidates).slice(0, passwordCandidateOptionCount);
+  const pool = untried.length ? untried : candidates;
+  if (!attempts.length || candidates.length > 240) return pool.slice(0, limit);
+
+  const candidateDigits = candidates.map(parsePasswordGuess);
+
+  return pool
+    .map((guess) => {
+      const buckets = new Map<string, number>();
+      const guessDigits = parsePasswordGuess(guess);
+      for (const possibleSecret of candidateDigits) {
+        const outcome = evaluatePasswordGuess(possibleSecret, guessDigits);
+        const key = `${outcome.exact}-${outcome.near}`;
+        buckets.set(key, (buckets.get(key) ?? 0) + 1);
+      }
+      const sizes = [...buckets.values()];
+      const worstRemaining = Math.max(...sizes);
+      const expectedRemaining = sizes.reduce((sum, size) => sum + size * size, 0) / candidates.length;
+      return { guess, expectedRemaining, worstRemaining };
+    })
+    .sort((left, right) => left.expectedRemaining - right.expectedRemaining || left.worstRemaining - right.worstRemaining || left.guess.localeCompare(right.guess))
+    .slice(0, limit)
+    .map((item) => item.guess);
 }
 
 export function passwordCandidateOptionRect(index: number) {
