@@ -136,6 +136,7 @@ export type ArcadeGameVariant =
   | "flight"
   | "brick-breaker"
   | "snake"
+  | "password"
   | "crossing"
   | "minesweeper"
   | "mole"

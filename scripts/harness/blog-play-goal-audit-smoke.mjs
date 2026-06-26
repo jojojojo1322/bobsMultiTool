@@ -76,7 +76,7 @@ const categoryCounts = Object.fromEntries(requiredCategories.map((category) => [
 const standaloneBlogCount = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0).length;
 
 if (blogEntries.length !== 39) failures.push(`audit expects 39 Blog posts, found ${blogEntries.length}`);
-if (playEntries.length !== 22) failures.push(`audit expects 22 Play entries, found ${playEntries.length}`);
+if (playEntries.length !== 23) failures.push(`audit expects 23 Play entries, found ${playEntries.length}`);
 if (standaloneBlogCount !== 13) failures.push(`audit expects 13 standalone Blog posts, found ${standaloneBlogCount}`);
 if (blogDates[0] !== "2026-01-28" || blogDates[blogDates.length - 1] !== "2026-06-26") {
   failures.push(`audit expects Blog date range 2026-01-28 through 2026-06-26, found ${blogDates[0]} through ${blogDates[blogDates.length - 1]}`);
@@ -103,21 +103,21 @@ for (const fragment of [
   "Date range: `2026-01-28` through `2026-06-26`",
   "Date-sensitive information lane: `3` posts live under `정보`",
   "Standalone Blog lane: `13` posts have no forced `relatedPlay`",
-  "Current count: `22` Play entries.",
+  "Current count: `23` Play entries.",
   "`arcade-game`",
-  "Sitemap URLs: `72`",
-  "Feed items: `61`",
+  "Sitemap URLs: `73`",
+  "Feed items: `62`",
   "Search Console sitemap row showed status `성공`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, and discovered pages `68`.",
   "Live `/sitemaps/en` had `68` URLs at that check, so Search Console sitemap discovery matched the prior XML count before the 정보 expansion.",
   "Latest performance observation showed total clicks `0` and total impressions `3`",
   "Latest page indexing observation still showed indexed pages `0` and not-indexed pages `5`.",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
-  "Latest submitted URL count: `72`",
-  "The 72-URL live sitemap set was submitted after the 정보 Blog expansion.",
+  "Latest submitted URL count: `73`",
+  "The 73-URL live sitemap set was submitted after the Play canvas upgrade.",
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
-  "Latest feed item counts: `61`, `61`",
+  "Latest feed item counts: `62`, `62`",
   "Discovery registration matrix:",
   "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
   "Submitted URL health:",
@@ -125,7 +125,7 @@ for (const fragment of [
   "Still Not Complete",
   "Search Console has started showing impressions (`3`)",
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
-  "Search Console sitemap discovery must be checked again against the new live sitemap URL count (`72`), and indexing is still unresolved.",
+  "Search Console sitemap discovery must be checked again against the new live sitemap URL count (`73`), and indexing is still unresolved.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Automation id: `bobob-indexing-observation`",
   "Do not mark the active goal complete",
@@ -134,8 +134,8 @@ for (const fragment of [
 }
 
 for (const fragment of [
-  "Current submitted sitemap URL count: `72`",
-  "Current feed item count: `61`",
+  "Current submitted sitemap URL count: `73`",
+  "Current feed item count: `62`",
   "Google Search Console sitemap",
   "Bing and IndexNow",
   "Do not mark the active Blog + Play goal complete",

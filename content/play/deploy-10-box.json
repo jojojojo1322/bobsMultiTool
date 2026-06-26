@@ -3,7 +3,7 @@
   "title": "마감 전 10칸 맞추기",
   "description": "마감 전에 숫자 조각으로 합 10을 만들고 칸을 비우는 캔버스 보드 게임입니다. 서두르면 상자가 넘치고, 천천히 보면 길이 보입니다.",
   "type": "arcade-game",
-  "durationLabel": "1-2분",
+  "durationLabel": "1분",
   "updatedAt": "2026-06-26",
   "shareText": "마감 전 10칸 맞추기를 해봤다. 오늘도 상자는 쉽게 넘치고, 딱 맞추면 괜히 기분 좋다.",
   "order": 11,
@@ -12,7 +12,7 @@
   "arcade": {
     "variant": "sum-box",
     "goal": "숫자 조각을 골라 합 10을 만들고, 남은 칸을 차근차근 비웁니다.",
-    "controls": "방향키 또는 WASD로 칸을 옮기고 Space/Enter로 고릅니다. 합 10을 만들면 사라집니다.",
+    "controls": "마우스로 칸을 누르거나 방향키/WASD로 옮깁니다. Space/Enter로 고르고, 합 10이면 사라집니다.",
     "rounds": 12,
     "targetScore": 22,
     "playerLabel": "상자",

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, Share2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ArcadeGameContent } from "@/features/content/types";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
@@ -19,6 +19,19 @@ const sumBoxTileWidth = (canvasWidth - 96 - sumBoxGap * (sumBoxColumns - 1)) / s
 const sumBoxTileHeight = 54;
 const sumBoxStartX = 48;
 const sumBoxStartY = 82;
+const snakeCellSize = 24;
+const snakeColumns = 24;
+const snakeRows = 14;
+const snakeBoardX = (canvasWidth - snakeColumns * snakeCellSize) / 2;
+const snakeBoardY = 58;
+const snakeMoveInterval = 0.18;
+const passwordDigitCount = 3;
+const passwordDigitWidth = 88;
+const passwordDigitHeight = 112;
+const passwordDigitGap = 20;
+const passwordDigitStartX = (canvasWidth - passwordDigitCount * passwordDigitWidth - (passwordDigitCount - 1) * passwordDigitGap) / 2;
+const passwordDigitY = 142;
+const passwordSubmitRect = { x: canvasWidth / 2 - 82, y: 292, width: 164, height: 46 };
 
 type Sprite = {
   id: number;
@@ -60,6 +73,25 @@ type SumTile = {
   cleared: boolean;
 };
 
+type SnakeDirection = "up" | "down" | "left" | "right";
+
+type SnakeCell = {
+  x: number;
+  y: number;
+};
+
+type SnakeFood = SnakeCell & {
+  label: string;
+  good: boolean;
+};
+
+type PasswordAttempt = {
+  guess: string;
+  exact: number;
+  near: number;
+  hint: string;
+};
+
 type HistoryItem = {
   label: string;
   detail: string;
@@ -83,6 +115,15 @@ type GameState = {
   bricks: Brick[];
   sumTiles: SumTile[];
   sumCursor: number;
+  snake: SnakeCell[];
+  snakeDirection: SnakeDirection;
+  snakeNextDirection: SnakeDirection;
+  snakeMoveTimer: number;
+  snakeFood: SnakeFood;
+  passwordGuess: number[];
+  passwordSecret: number[];
+  passwordCursor: number;
+  passwordAttempts: PasswordAttempt[];
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -95,6 +136,7 @@ type GameState = {
 type ViewState = Pick<GameState, "started" | "finished" | "elapsed" | "score" | "focus" | "actions" | "history">;
 
 function makeInitialState(content: ArcadeGameContent): GameState {
+  const snake = makeSnake();
   return {
     started: false,
     finished: false,
@@ -117,6 +159,15 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     bricks: makeBricks(content),
     sumTiles: makeSumTiles(content),
     sumCursor: 0,
+    snake,
+    snakeDirection: "right",
+    snakeNextDirection: "right",
+    snakeMoveTimer: snakeMoveInterval,
+    snakeFood: makeSnakeFood(content, 1, snake),
+    passwordGuess: [1, 2, 3],
+    passwordSecret: makePasswordSecret(content),
+    passwordCursor: 0,
+    passwordAttempts: [],
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -124,6 +175,49 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     brickLaunched: false,
     history: [],
     lastFrame: null,
+  };
+}
+
+function makePasswordSecret(content: ArcadeGameContent): number[] {
+  const digits: number[] = [];
+  for (let attempt = 0; digits.length < passwordDigitCount && attempt < 40; attempt += 1) {
+    const digit = Math.floor(pseudoRandom(content.slug.length * 53 + attempt * 17 + 7) * 10);
+    if (!digits.includes(digit)) digits.push(digit);
+  }
+  while (digits.length < passwordDigitCount) digits.push((digits.length * 3 + 4) % 10);
+  return digits;
+}
+
+function makeSnake(): SnakeCell[] {
+  const headX = Math.floor(snakeColumns / 2);
+  const headY = Math.floor(snakeRows / 2);
+  return [
+    { x: headX, y: headY },
+    { x: headX - 1, y: headY },
+    { x: headX - 2, y: headY },
+  ];
+}
+
+function makeSnakeFood(content: ArcadeGameContent, seed: number, snake: SnakeCell[]): SnakeFood {
+  const occupied = new Set(snake.map((cell) => `${cell.x}:${cell.y}`));
+  for (let attempt = 0; attempt < snakeColumns * snakeRows; attempt += 1) {
+    const rawSeed = seed * 37 + attempt * 11 + content.slug.length * 19;
+    const x = Math.floor(pseudoRandom(rawSeed + 1) * snakeColumns);
+    const y = Math.floor(pseudoRandom(rawSeed + 2) * snakeRows);
+    if (occupied.has(`${x}:${y}`)) continue;
+    const good = pseudoRandom(rawSeed + 3) > 0.22;
+    return {
+      x,
+      y,
+      good,
+      label: pickLabel(good ? content.arcade.goodLabels : content.arcade.badLabels, seed + attempt),
+    };
+  }
+  return {
+    x: 0,
+    y: 0,
+    good: true,
+    label: pickLabel(content.arcade.goodLabels, seed),
   };
 }
 
@@ -215,6 +309,228 @@ function selectedSumTiles(state: GameState) {
   return state.sumTiles.filter((tile) => !tile.cleared && tile.selected);
 }
 
+function sumTileIndexAt(state: GameState, x: number, y: number) {
+  return state.sumTiles.findIndex((tile) => !tile.cleared && x >= tile.x && x <= tile.x + tile.width && y >= tile.y && y <= tile.y + tile.height);
+}
+
+const snakeDirectionDeltas: Record<SnakeDirection, SnakeCell> = {
+  up: { x: 0, y: -1 },
+  down: { x: 0, y: 1 },
+  left: { x: -1, y: 0 },
+  right: { x: 1, y: 0 },
+};
+
+function snakeDirectionFromAction(action: "left" | "right" | "main" | "up" | "down"): SnakeDirection | null {
+  if (action === "up") return "up";
+  if (action === "down") return "down";
+  if (action === "left") return "left";
+  if (action === "right") return "right";
+  return null;
+}
+
+function isSnakeReverse(next: SnakeDirection, current: SnakeDirection) {
+  return (
+    (next === "up" && current === "down") ||
+    (next === "down" && current === "up") ||
+    (next === "left" && current === "right") ||
+    (next === "right" && current === "left")
+  );
+}
+
+function setSnakeDirection(state: GameState, direction: SnakeDirection) {
+  if (isSnakeReverse(direction, state.snakeDirection)) return;
+  state.snakeNextDirection = direction;
+}
+
+function nextSnakeHead(state: GameState, direction: SnakeDirection) {
+  const head = state.snake[0] ?? { x: Math.floor(snakeColumns / 2), y: Math.floor(snakeRows / 2) };
+  const delta = snakeDirectionDeltas[direction];
+  return { x: head.x + delta.x, y: head.y + delta.y };
+}
+
+function isSnakeCellUnsafe(state: GameState, direction: SnakeDirection) {
+  const head = nextSnakeHead(state, direction);
+  if (head.x < 0 || head.x >= snakeColumns || head.y < 0 || head.y >= snakeRows) return true;
+  return state.snake.slice(0, -1).some((cell) => cell.x === head.x && cell.y === head.y);
+}
+
+function snakeAutoSteerTowardFood(state: GameState) {
+  const head = state.snake[0];
+  if (!head) return;
+  const dx = state.snakeFood.x - head.x;
+  const dy = state.snakeFood.y - head.y;
+  const horizontal: SnakeDirection = dx < 0 ? "left" : "right";
+  const vertical: SnakeDirection = dy < 0 ? "up" : "down";
+  const preferred =
+    Math.abs(dx) >= Math.abs(dy)
+      ? [horizontal, vertical, state.snakeDirection, "up", "right", "down", "left"]
+      : [vertical, horizontal, state.snakeDirection, "up", "right", "down", "left"];
+
+  for (const direction of [...new Set(preferred)] as SnakeDirection[]) {
+    if (isSnakeReverse(direction, state.snakeDirection)) continue;
+    if (isSnakeCellUnsafe(state, direction)) continue;
+    setSnakeDirection(state, direction);
+    return;
+  }
+}
+
+function resetSnakeAfterCrash(content: ArcadeGameContent, state: GameState) {
+  const snake = makeSnake();
+  state.snake = snake;
+  state.snakeDirection = "right";
+  state.snakeNextDirection = "right";
+  state.snakeMoveTimer = snakeMoveInterval;
+  state.snakeFood = makeSnakeFood(content, state.actions + state.score + 17, snake);
+}
+
+function finishSnakeIfNeeded(content: ArcadeGameContent, state: GameState) {
+  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+    state.finished = true;
+  }
+}
+
+function advanceSnake(content: ArcadeGameContent, state: GameState, countAction: boolean) {
+  if (state.finished) return;
+  const direction = isSnakeReverse(state.snakeNextDirection, state.snakeDirection) ? state.snakeDirection : state.snakeNextDirection;
+  state.snakeDirection = direction;
+  if (countAction) state.actions += 1;
+
+  const head = nextSnakeHead(state, direction);
+  const willEat = head.x === state.snakeFood.x && head.y === state.snakeFood.y;
+  const bodyToCheck = willEat ? state.snake : state.snake.slice(0, -1);
+  const hitWall = head.x < 0 || head.x >= snakeColumns || head.y < 0 || head.y >= snakeRows;
+  const hitSelf = bodyToCheck.some((cell) => cell.x === head.x && cell.y === head.y);
+
+  if (hitWall || hitSelf) {
+    state.score = Math.max(0, state.score - 2);
+    state.focus = clamp(state.focus - 16, 0, 100);
+    addHistory(state, {
+      label: hitWall ? "벽" : "꼬리",
+      detail: hitWall ? "한 박자 늦음" : "욕심내다 꼬임",
+      score: -2,
+    });
+    resetSnakeAfterCrash(content, state);
+    finishSnakeIfNeeded(content, state);
+    return;
+  }
+
+  const movedSnake = [head, ...state.snake];
+  if (!willEat) {
+    state.snake = movedSnake.slice(0, state.snake.length);
+    finishSnakeIfNeeded(content, state);
+    return;
+  }
+
+  const delta = state.snakeFood.good ? 4 : -3;
+  state.score = Math.max(0, state.score + delta);
+  state.focus = clamp(state.focus + (state.snakeFood.good ? 3 : -10), 0, 100);
+  state.snake = state.snakeFood.good ? movedSnake : movedSnake.slice(0, Math.max(3, state.snake.length - 1));
+  addHistory(state, {
+    label: state.snakeFood.label,
+    detail: state.snakeFood.good ? "잘 먹음" : "괜히 물었음",
+    score: delta,
+  });
+  state.snakeFood = makeSnakeFood(content, state.actions + state.score + state.snake.length, state.snake);
+  finishSnakeIfNeeded(content, state);
+}
+
+function passwordGuessText(state: GameState) {
+  return state.passwordGuess.join("");
+}
+
+function movePasswordCursor(state: GameState, delta: number) {
+  state.passwordCursor = (state.passwordCursor + delta + passwordDigitCount) % passwordDigitCount;
+}
+
+function adjustPasswordDigit(state: GameState, delta: number) {
+  const current = state.passwordGuess[state.passwordCursor] ?? 0;
+  state.passwordGuess[state.passwordCursor] = (current + delta + 10) % 10;
+}
+
+function setPasswordDigitFromClick(state: GameState, digitIndex: number) {
+  state.passwordCursor = clamp(digitIndex, 0, passwordDigitCount - 1);
+  adjustPasswordDigit(state, 1);
+}
+
+function evaluatePasswordGuess(secret: number[], guess: number[]) {
+  let exact = 0;
+  const secretRemainder: number[] = [];
+  const guessRemainder: number[] = [];
+  for (let index = 0; index < passwordDigitCount; index += 1) {
+    if (guess[index] === secret[index]) {
+      exact += 1;
+    } else {
+      secretRemainder.push(secret[index] ?? -1);
+      guessRemainder.push(guess[index] ?? -2);
+    }
+  }
+  let near = 0;
+  for (const digit of guessRemainder) {
+    const matchIndex = secretRemainder.indexOf(digit);
+    if (matchIndex >= 0) {
+      near += 1;
+      secretRemainder.splice(matchIndex, 1);
+    }
+  }
+  return { exact, near };
+}
+
+function passwordHint(state: GameState, exact: number, near: number) {
+  if (exact === passwordDigitCount) return "열림";
+  if (exact === 0 && near === 0) return "숫자부터 다시 보는 게 낫습니다";
+  if (exact === 2) return "한 자리만 더 맞추면 됩니다";
+  if (near >= 2) return "숫자는 좋은데 자리가 어긋났습니다";
+  const guessSum = state.passwordGuess.reduce((sum, digit) => sum + digit, 0);
+  const secretSum = state.passwordSecret.reduce((sum, digit) => sum + digit, 0);
+  if (guessSum < secretSum) return "합이 조금 낮습니다";
+  if (guessSum > secretSum) return "합이 조금 높습니다";
+  return "방향은 나쁘지 않습니다";
+}
+
+function submitPasswordGuess(content: ArcadeGameContent, state: GameState) {
+  if (state.finished) return;
+  state.actions += 1;
+  const { exact, near } = evaluatePasswordGuess(state.passwordSecret, state.passwordGuess);
+  const hint = passwordHint(state, exact, near);
+  const guess = passwordGuessText(state);
+  const solved = exact === passwordDigitCount;
+  const delta = solved ? content.arcade.targetScore : Math.max(0, exact * 5 + near * 2 - (exact === 0 && near === 0 ? 1 : 0));
+
+  state.score = solved ? content.arcade.targetScore : Math.max(state.score, delta);
+  state.focus = clamp(state.focus + (solved ? 8 : exact > 0 || near > 0 ? -4 : -9), 0, 100);
+  state.passwordAttempts = [{ guess, exact, near, hint }, ...state.passwordAttempts].slice(0, 5);
+  addHistory(state, {
+    label: guess,
+    detail: solved ? "번호가 열림" : `${exact}자리, ${near}숫자`,
+    score: solved ? content.arcade.targetScore : delta,
+  });
+
+  if (solved || state.actions >= content.arcade.rounds || state.focus <= 0) {
+    state.finished = true;
+  }
+}
+
+function passwordDigitIndexAt(x: number, y: number) {
+  if (y < passwordDigitY || y > passwordDigitY + passwordDigitHeight) return -1;
+  for (let index = 0; index < passwordDigitCount; index += 1) {
+    const left = passwordDigitStartX + index * (passwordDigitWidth + passwordDigitGap);
+    if (x >= left && x <= left + passwordDigitWidth) return index;
+  }
+  return -1;
+}
+
+function pointInRect(point: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) {
+  return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
+}
+
+function canvasPointFromEvent(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement>) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: ((event.clientX - rect.left) / rect.width) * canvasWidth,
+    y: ((event.clientY - rect.top) / rect.height) * canvasHeight,
+  };
+}
+
 function moveSumCursor(state: GameState, delta: number) {
   const tileCount = state.sumTiles.length;
   if (!tileCount || state.sumTiles.every((tile) => tile.cleared)) return;
@@ -292,6 +608,8 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
   if (content.arcade.variant === "sum-box") return "고르기";
+  if (content.arcade.variant === "snake") return "한 칸";
+  if (content.arcade.variant === "password") return "확인";
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
@@ -321,6 +639,16 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "sum-box") {
     updateSumBox(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "snake") {
+    updateSnake(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "password") {
+    updatePassword(content, state, dt);
     return;
   }
 
@@ -408,6 +736,25 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   }
 }
 
+function updateSnake(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  state.snakeMoveTimer -= dt;
+
+  if (state.snakeMoveTimer <= 0) {
+    advanceSnake(content, state, false);
+    state.snakeMoveTimer = snakeMoveInterval;
+  }
+
+  finishSnakeIfNeeded(content, state);
+}
+
+function updatePassword(content: ArcadeGameContent, state: GameState, dt: number) {
+  state.elapsed += dt;
+  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+    state.finished = true;
+  }
+}
+
 function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) {
   state.elapsed += dt;
   if (
@@ -415,7 +762,7 @@ function updateSumBox(content: ArcadeGameContent, state: GameState, dt: number) 
     state.sumTiles.every((tile) => tile.cleared) ||
     state.actions >= content.arcade.rounds ||
     state.focus <= 0 ||
-    state.elapsed >= content.arcade.rounds * 8
+    state.elapsed >= content.arcade.rounds * 5
   ) {
     state.finished = true;
   }
@@ -634,6 +981,16 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "snake") {
+    drawSnake(content, state, ctx);
+    return;
+  }
+
+  if (content.arcade.variant === "password") {
+    drawPassword(content, state, ctx);
+    return;
+  }
+
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   for (let x = 40; x < canvasWidth; x += 80) {
@@ -696,20 +1053,225 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
   }
 }
 
-function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
-  const currentSum = selectedSum(state);
-  const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
+  const boardWidth = snakeColumns * snakeCellSize;
+  const boardHeight = snakeRows * snakeCellSize;
+
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
-  for (let x = 32; x < canvasWidth; x += 48) {
-    ctx.fillRect(x, 0, 1, canvasHeight);
+  ctx.beginPath();
+  ctx.roundRect(snakeBoardX - 12, snakeBoardY - 12, boardWidth + 24, boardHeight + 24, 18);
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  for (let column = 0; column <= snakeColumns; column += 1) {
+    const x = snakeBoardX + column * snakeCellSize;
+    ctx.fillRect(x, snakeBoardY, 1, boardHeight);
   }
-  for (let y = 52; y < canvasHeight; y += 48) {
-    ctx.fillRect(0, y, canvasWidth, 1);
+  for (let row = 0; row <= snakeRows; row += 1) {
+    const y = snakeBoardY + row * snakeCellSize;
+    ctx.fillRect(snakeBoardX, y, boardWidth, 1);
   }
+
+  ctx.fillStyle = state.snakeFood.good ? accent : danger;
+  ctx.beginPath();
+  ctx.roundRect(snakeBoardX + state.snakeFood.x * snakeCellSize + 4, snakeBoardY + state.snakeFood.y * snakeCellSize + 4, snakeCellSize - 8, snakeCellSize - 8, 9);
+  ctx.fill();
+  ctx.fillStyle = state.snakeFood.good ? "#172018" : "#fff7ed";
+  ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(state.snakeFood.label.slice(0, 3), snakeBoardX + state.snakeFood.x * snakeCellSize + snakeCellSize / 2, snakeBoardY + state.snakeFood.y * snakeCellSize + 16);
+
+  for (let index = state.snake.length - 1; index >= 0; index -= 1) {
+    const cell = state.snake[index];
+    if (!cell) continue;
+    const isHead = index === 0;
+    ctx.fillStyle = isHead ? primary : index % 2 === 0 ? "rgba(74,222,128,0.82)" : "rgba(52,211,153,0.72)";
+    ctx.beginPath();
+    ctx.roundRect(snakeBoardX + cell.x * snakeCellSize + 3, snakeBoardY + cell.y * snakeCellSize + 3, snakeCellSize - 6, snakeCellSize - 6, isHead ? 8 : 7);
+    ctx.fill();
+    if (isHead) {
+      ctx.fillStyle = "#0f172a";
+      const eyeY = snakeBoardY + cell.y * snakeCellSize + 9;
+      ctx.beginPath();
+      ctx.arc(snakeBoardX + cell.x * snakeCellSize + 9, eyeY, 2.4, 0, Math.PI * 2);
+      ctx.arc(snakeBoardX + cell.x * snakeCellSize + snakeCellSize - 9, eyeY, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`길이 ${state.snake.length}`, 34, 36);
+  ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.64)";
+  ctx.fillText(`다음 ${state.snakeFood.label}`, 130, 36);
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("방향키나 WASD로 방향을 틉니다. 벽과 꼬리는 피하고, 사과는 먹으면 됩니다.", 34, canvasHeight - 20);
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.7)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 166);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("방향키나 WASD로 방향을 틀고 사과를 먹습니다.", canvasWidth / 2, 204);
+    ctx.fillText("욕심내서 꺾으면 바로 꼬입니다. 천천히 가도 됩니다.", canvasWidth / 2, 230);
+  }
+}
+
+function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const centerX = canvasWidth / 2;
+  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(centerX, 94, 54, Math.PI * 1.08, Math.PI * 1.92);
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(centerX - 128, 88, 256, 238, 26);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.16)";
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("세 자리 번호", centerX, 122);
+
+  for (let index = 0; index < passwordDigitCount; index += 1) {
+    const x = passwordDigitStartX + index * (passwordDigitWidth + passwordDigitGap);
+    const selected = index === state.passwordCursor;
+    const digit = state.passwordGuess[index] ?? 0;
+    const gradient = ctx.createLinearGradient(0, passwordDigitY, 0, passwordDigitY + passwordDigitHeight);
+    gradient.addColorStop(0, selected ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.14)");
+    gradient.addColorStop(1, selected ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.05)");
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.roundRect(x, passwordDigitY, passwordDigitWidth, passwordDigitHeight, 18);
+    ctx.fill();
+    ctx.strokeStyle = selected ? primary : "rgba(255,255,255,0.2)";
+    ctx.lineWidth = selected ? 3 : 1;
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,0.42)";
+    ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("클릭", x + passwordDigitWidth / 2, passwordDigitY + 22);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "900 54px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillText(`${digit}`, x + passwordDigitWidth / 2, passwordDigitY + 76);
+    ctx.fillStyle = selected ? accent : "rgba(255,255,255,0.5)";
+    ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("▲", x + passwordDigitWidth / 2, passwordDigitY + 100);
+  }
+
+  const latest = state.passwordAttempts[0];
+  ctx.fillStyle = latest?.exact === passwordDigitCount ? primary : accent;
+  ctx.beginPath();
+  ctx.roundRect(passwordSubmitRect.x, passwordSubmitRect.y, passwordSubmitRect.width, passwordSubmitRect.height, 14);
+  ctx.fill();
+  ctx.fillStyle = "#111827";
+  ctx.font = "900 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("확인", centerX, passwordSubmitRect.y + 29);
+
+  const historyX = 510;
+  const historyY = 72;
+  const historyWidth = 176;
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.font = "800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("힌트 기록", historyX, historyY - 18);
+  ctx.font = "650 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.56)";
+  ctx.fillText("자리 / 숫자", historyX + 70, historyY - 18);
+
+  const attempts = state.passwordAttempts.slice(0, 4);
+  if (!attempts.length) {
+    ctx.fillStyle = "rgba(255,255,255,0.16)";
+    ctx.beginPath();
+    ctx.roundRect(historyX, historyY, historyWidth, 34, 10);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("아직 찍은 번호 없음", historyX + 14, historyY + 22);
+  }
+
+  attempts.forEach((attempt, index) => {
+    const y = historyY + index * 42;
+    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    ctx.beginPath();
+    ctx.roundRect(historyX, y, historyWidth, 34, 9);
+    ctx.fill();
+    ctx.fillStyle = attempt.exact === passwordDigitCount ? primary : "#f8fafc";
+    ctx.font = "900 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillText(attempt.guess, historyX + 12, y + 20);
+    ctx.fillStyle = attempt.exact ? primary : "rgba(255,255,255,0.68)";
+    ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(`${attempt.exact}자리`, historyX + 62, y + 20);
+    ctx.fillStyle = attempt.near ? accent : "rgba(255,255,255,0.56)";
+    ctx.fillText(`${attempt.near}숫자`, historyX + 110, y + 20);
+    ctx.fillStyle = "rgba(255,255,255,0.56)";
+    ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(attempt.hint.slice(0, 14), historyX + 12, y + 31);
+  });
+
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("←/→로 자리 이동, ↑/↓로 숫자 변경, Space/Enter로 확인합니다. 숫자는 마우스로도 올릴 수 있습니다.", 34, canvasHeight - 20);
+
+  if (state.focus < 35) {
+    ctx.fillStyle = danger;
+    ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("조급해졌습니다. 기록을 보고 하나씩 줄이세요.", 34, canvasHeight - 46);
+  }
+
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, centerX, 166);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("세 자리 숫자를 맞춥니다. 숫자와 자리를 힌트로 줄여가면 됩니다.", centerX, 204);
+    ctx.fillText("숫자를 클릭하거나 방향키로 바꾸고, 확인을 누르세요.", centerX, 230);
+  }
+}
+
+function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  const currentSum = selectedSum(state);
+  const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
+  const selected = selectedSumTiles(state);
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  const glow = ctx.createRadialGradient(canvasWidth / 2, 210, 40, canvasWidth / 2, 210, 360);
+  glow.addColorStop(0, "rgba(255,255,255,0.09)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  ctx.beginPath();
+  ctx.roundRect(30, 66, canvasWidth - 60, 288, 22);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.13)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
 
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -717,16 +1279,35 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillText(`합 ${currentSum} / 10`, 34, 42);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.66)";
-  ctx.fillText(`사라진 칸 ${cleared} / ${state.sumTiles.length}`, 166, 42);
+  ctx.fillText(`비운 칸 ${cleared} / ${state.sumTiles.length}`, 158, 42);
+  ctx.fillText(selected.length ? `고른 숫자 ${selected.map((tile) => tile.value).join(" + ")}` : "칸을 클릭해서 고릅니다", 300, 42);
 
   for (const tile of state.sumTiles) {
     const isCursor = tile.id === state.sumCursor;
+    const tileCenterX = tile.x + tile.width / 2;
+    const tileCenterY = tile.y + tile.height / 2;
     ctx.globalAlpha = tile.cleared ? 0.2 : 1;
-    ctx.fillStyle = tile.cleared ? "rgba(255,255,255,0.08)" : tile.selected ? accent : "rgba(255,255,255,0.12)";
+    ctx.fillStyle = "rgba(0,0,0,0.18)";
     ctx.beginPath();
-    ctx.roundRect(tile.x, tile.y, tile.width, tile.height, 10);
+    ctx.roundRect(tile.x + 4, tile.y + 6, tile.width, tile.height, 16);
     ctx.fill();
-    ctx.strokeStyle = tile.selected ? "rgba(255,255,255,0.74)" : "rgba(255,255,255,0.22)";
+
+    const tileGradient = ctx.createLinearGradient(tile.x, tile.y, tile.x, tile.y + tile.height);
+    if (tile.cleared) {
+      tileGradient.addColorStop(0, "rgba(255,255,255,0.08)");
+      tileGradient.addColorStop(1, "rgba(255,255,255,0.03)");
+    } else if (tile.selected) {
+      tileGradient.addColorStop(0, accent);
+      tileGradient.addColorStop(1, "rgba(251,191,36,0.78)");
+    } else {
+      tileGradient.addColorStop(0, "rgba(255,255,255,0.18)");
+      tileGradient.addColorStop(1, "rgba(255,255,255,0.08)");
+    }
+    ctx.fillStyle = tileGradient;
+    ctx.beginPath();
+    ctx.roundRect(tile.x, tile.y, tile.width, tile.height, 16);
+    ctx.fill();
+    ctx.strokeStyle = tile.selected ? "rgba(255,255,255,0.82)" : "rgba(255,255,255,0.22)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -734,33 +1315,45 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.strokeStyle = primary;
       ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.roundRect(tile.x - 4, tile.y - 4, tile.width + 8, tile.height + 8, 13);
+      ctx.roundRect(tile.x - 5, tile.y - 5, tile.width + 10, tile.height + 10, 20);
       ctx.stroke();
     }
 
+    ctx.fillStyle = tile.selected ? "rgba(17,24,39,0.16)" : "rgba(255,255,255,0.12)";
+    ctx.beginPath();
+    ctx.arc(tile.x + 22, tile.y + 18, 7, 0, Math.PI * 2);
+    ctx.arc(tile.x + tile.width - 20, tile.y + 17, 5, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.fillStyle = tile.selected ? "#111827" : "#f8fafc";
-    ctx.font = "900 25px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.font = "900 27px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.textAlign = "center";
-    ctx.fillText(`${tile.value}`, tile.x + tile.width / 2, tile.y + 32);
-    ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(`${tile.value}`, tileCenterX, tile.y + 34);
+    ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillStyle = tile.selected ? "rgba(17,24,39,0.72)" : "rgba(248,250,252,0.72)";
-    ctx.fillText(tile.label.slice(0, 6), tile.x + tile.width / 2, tile.y + 47);
+    ctx.fillText(tile.label.slice(0, 6), tileCenterX, tileCenterY + 20);
     ctx.globalAlpha = 1;
   }
 
   const barWidth = clamp((currentSum / 10) * (canvasWidth - 68), 0, canvasWidth - 68);
   ctx.fillStyle = "rgba(255,255,255,0.12)";
   ctx.beginPath();
-  ctx.roundRect(34, canvasHeight - 50, canvasWidth - 68, 12, 6);
+  ctx.roundRect(34, canvasHeight - 54, canvasWidth - 68, 14, 7);
   ctx.fill();
   ctx.fillStyle = currentSum > 10 ? danger : currentSum === 10 ? accent : primary;
   ctx.beginPath();
-  ctx.roundRect(34, canvasHeight - 50, barWidth, 12, 6);
+  ctx.roundRect(34, canvasHeight - 54, barWidth, 14, 7);
   ctx.fill();
+  if (currentSum === 10) {
+    ctx.fillStyle = "rgba(255,255,255,0.86)";
+    ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("지금 누르면 지워집니다", canvasWidth - 34, canvasHeight - 66);
+  }
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("방향키로 칸을 옮기고 Space로 고릅니다. 합 10을 만들면 칸이 사라집니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 칸을 누르거나 방향키로 옮겨 Space를 누릅니다. 합 10이면 칸이 사라집니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -770,7 +1363,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("방향키로 칸을 옮기고 Space로 숫자를 고릅니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스로 칸을 누르거나 방향키로 칸을 옮깁니다.", canvasWidth / 2, 202);
     ctx.fillText("합 10을 만들면 사라집니다. 많이 누르는 것보다 딱 맞추는 쪽입니다.", canvasWidth / 2, 228);
   }
 }
@@ -956,6 +1549,28 @@ export function ArcadeGameEngine({
         syncView();
         return;
       }
+      if (content.arcade.variant === "snake") {
+        const direction = snakeDirectionFromAction(action);
+        if (direction) setSnakeDirection(state, direction);
+        if (action === "main") {
+          snakeAutoSteerTowardFood(state);
+          advanceSnake(content, state, true);
+          state.snakeMoveTimer = snakeMoveInterval;
+        }
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (content.arcade.variant === "password") {
+        if (action === "left") movePasswordCursor(state, -1);
+        if (action === "right") movePasswordCursor(state, 1);
+        if (action === "up") adjustPasswordDigit(state, 1);
+        if (action === "down") adjustPasswordDigit(state, -1);
+        if (action === "main") submitPasswordGuess(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const stepX = content.arcade.variant === "crossing" ? crossingStepX : 52;
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
@@ -1017,6 +1632,40 @@ export function ArcadeGameEngine({
           if (event.code === "Space" || event.code === "Enter") performAction("main");
           return;
         }
+        if (content.arcade.variant === "snake") {
+          const directionByKey: Record<string, SnakeDirection | undefined> = {
+            ArrowLeft: "left",
+            KeyA: "left",
+            ArrowRight: "right",
+            KeyD: "right",
+            ArrowUp: "up",
+            KeyW: "up",
+            ArrowDown: "down",
+            KeyS: "down",
+          };
+          const direction = directionByKey[event.code];
+          if (direction) {
+            stateRef.current.started = true;
+            stateRef.current.lastFrame = performance.now();
+            setSnakeDirection(stateRef.current, direction);
+            setShareState("idle");
+            syncView();
+            return;
+          }
+          if ((event.code === "Space" || event.code === "Enter") && !event.repeat) {
+            performAction("main");
+            return;
+          }
+        }
+        if (content.arcade.variant === "password") {
+          if (event.repeat && (event.code === "Space" || event.code === "Enter")) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
         keys.add(event.code);
         if ((event.code === "Space" || event.code === "Enter") && !event.repeat) performAction("main");
       }
@@ -1030,7 +1679,7 @@ export function ArcadeGameEngine({
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
     };
-  }, [content, performAction]);
+  }, [content, performAction, syncView]);
 
   React.useEffect(() => {
     let frame = 0;
@@ -1048,6 +1697,44 @@ export function ArcadeGameEngine({
     frame = window.requestAnimationFrame(loop);
     return () => window.cancelAnimationFrame(frame);
   }, [content, syncView]);
+
+  const handleCanvasClick = React.useCallback(
+    (event: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const point = canvasPointFromEvent(canvas, event);
+      const state = stateRef.current;
+      if (state.finished) return;
+
+      if (content.arcade.variant === "sum-box") {
+        const index = sumTileIndexAt(state, point.x, point.y);
+        if (index < 0) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.sumCursor = index;
+        chooseSumTile(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+
+      if (content.arcade.variant === "password") {
+        state.started = true;
+        state.lastFrame = performance.now();
+        const digitIndex = passwordDigitIndexAt(point.x, point.y);
+        if (digitIndex >= 0) {
+          setPasswordDigitFromClick(state, digitIndex);
+        } else if (pointInRect(point, passwordSubmitRect)) {
+          submitPasswordGuess(content, state);
+        } else {
+          return;
+        }
+        setShareState("idle");
+        syncView();
+      }
+    },
+    [content, syncView],
+  );
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
@@ -1109,8 +1796,9 @@ export function ArcadeGameEngine({
               <canvas
                 ref={canvasRef}
                 tabIndex={0}
+                onClick={handleCanvasClick}
                 aria-label={`${content.title} canvas`}
-                className="block aspect-[12/7] w-full outline-none"
+                className={`block aspect-[12/7] w-full outline-none ${content.arcade.variant === "sum-box" || content.arcade.variant === "password" ? "cursor-pointer" : ""}`}
                 style={{ background: content.arcade.palette.background }}
               />
             </div>
@@ -1118,17 +1806,41 @@ export function ArcadeGameEngine({
               <p className="text-sm font-semibold">{content.arcade.goal}</p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              <Button variant="outline" className="h-12" onClick={() => performAction("left")} data-play-action="arcade-left">
-                왼쪽
-              </Button>
-              <Button className="h-12" onClick={() => performAction("main")} data-play-action="arcade-main">
-                {view.started ? mainActionLabel(content) : "시작"}
-              </Button>
-              <Button variant="outline" className="h-12" onClick={() => performAction("right")} data-play-action="arcade-right">
-                오른쪽
-              </Button>
-            </div>
+            {content.arcade.variant === "snake" || content.arcade.variant === "password" ? (
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <span aria-hidden />
+                <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
+                  <ArrowUp className="h-4 w-4" />
+                </Button>
+                <span aria-hidden />
+                <Button variant="outline" className="h-12" onClick={() => performAction("left")} data-play-action="arcade-left" aria-label="왼쪽">
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <Button className="h-12" onClick={() => performAction("main")} data-play-action="arcade-main">
+                  {view.started ? mainActionLabel(content) : "시작"}
+                </Button>
+                <Button variant="outline" className="h-12" onClick={() => performAction("right")} data-play-action="arcade-right" aria-label="오른쪽">
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <span aria-hidden />
+                <Button variant="outline" className="h-12" onClick={() => performAction("down")} data-play-action="arcade-down" aria-label="아래">
+                  <ArrowDown className="h-4 w-4" />
+                </Button>
+                <span aria-hidden />
+              </div>
+            ) : (
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <Button variant="outline" className="h-12" onClick={() => performAction("left")} data-play-action="arcade-left">
+                  왼쪽
+                </Button>
+                <Button className="h-12" onClick={() => performAction("main")} data-play-action="arcade-main">
+                  {view.started ? mainActionLabel(content) : "시작"}
+                </Button>
+                <Button variant="outline" className="h-12" onClick={() => performAction("right")} data-play-action="arcade-right">
+                  오른쪽
+                </Button>
+              </div>
+            )}
           </div>
           <HistoryPanel history={view.history} />
         </div>
