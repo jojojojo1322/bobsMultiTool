@@ -79,6 +79,21 @@ import {
   type MineCell,
 } from "@/features/play/arcade-minesweeper";
 import {
+  makeStackerBlocks,
+  nudgeStacker,
+  resetStackerActiveFromTop,
+  stackerBaseWidth,
+  stackerBaseY,
+  stackerBlockHeight,
+  stackerBoardHeight,
+  stackerBoardWidth,
+  stackerBoardX,
+  stackerBoardY,
+  stackerMinOverlap,
+  topStackerBlock,
+  type StackerBlock,
+} from "@/features/play/arcade-stacker";
+import {
   clearSumDrag,
   makeSumTiles,
   pointInSumBoard,
@@ -115,14 +130,6 @@ const snakeRows = 14;
 const snakeBoardX = (canvasWidth - snakeColumns * snakeCellSize) / 2;
 const snakeBoardY = 58;
 const snakeMoveInterval = 0.18;
-const stackerBoardX = 96;
-const stackerBoardY = 48;
-const stackerBoardWidth = 528;
-const stackerBoardHeight = 322;
-const stackerBlockHeight = 26;
-const stackerBaseWidth = 216;
-const stackerBaseY = stackerBoardY + stackerBoardHeight - stackerBlockHeight;
-const stackerMinOverlap = 18;
 const moleColumns = 3;
 const moleRows = 3;
 const moleHoleSize = 82;
@@ -180,16 +187,6 @@ type SnakeCell = {
 type SnakeFood = SnakeCell & {
   label: string;
   good: boolean;
-};
-
-type StackerBlock = {
-  id: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  label: string;
-  quality: "base" | "perfect" | "solid" | "thin" | "miss";
 };
 
 type MoleTarget = {
@@ -371,21 +368,6 @@ function resetMemoryPreview(content: ArcadeGameContent, state: GameState, keepSe
   state.memoryShowing = true;
   state.memoryFlashIndex = 0;
   state.memoryFlashTimer = 0;
-}
-
-function makeStackerBlocks(content: ArcadeGameContent): StackerBlock[] {
-  if (content.arcade.variant !== "stacker") return [];
-  return [
-    {
-      id: 0,
-      x: canvasWidth / 2 - stackerBaseWidth / 2,
-      y: stackerBaseY,
-      width: stackerBaseWidth,
-      height: stackerBlockHeight,
-      label: "바닥",
-      quality: "base",
-    },
-  ];
 }
 
 function makeSnake(): SnakeCell[] {
@@ -765,26 +747,6 @@ function commitGemSwap(content: ArcadeGameContent, state: GameState, first: numb
     swapGemKinds(state.gemTiles, first, second);
     if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
   }
-}
-
-function topStackerBlock(state: GameState) {
-  return state.stackerBlocks[state.stackerBlocks.length - 1];
-}
-
-function resetStackerActiveFromTop(state: GameState) {
-  const top = topStackerBlock(state);
-  const width = top ? top.width : stackerBaseWidth;
-  const y = top ? top.y - stackerBlockHeight : stackerBaseY - stackerBlockHeight;
-  const fromLeft = state.stackerLayer % 2 === 0;
-  state.stackerActiveWidth = width;
-  state.stackerActiveY = y;
-  state.stackerActiveX = fromLeft ? stackerBoardX : stackerBoardX + stackerBoardWidth - width;
-  state.stackerDirection = fromLeft ? 1 : -1;
-  state.stackerSpeed = 168 + Math.min(132, state.stackerLayer * 15);
-}
-
-function nudgeStacker(state: GameState, delta: number) {
-  state.stackerActiveX = clamp(state.stackerActiveX + delta, stackerBoardX, stackerBoardX + stackerBoardWidth - state.stackerActiveWidth);
 }
 
 function finishStackerIfNeeded(content: ArcadeGameContent, state: GameState) {
