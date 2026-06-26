@@ -589,6 +589,14 @@ function fireArcadeBullet(content: ArcadeGameContent, state: GameState) {
   if (state.actions >= content.arcade.rounds) state.finished = true;
 }
 
+function startFlightLift(content: ArcadeGameContent, state: GameState) {
+  state.started = true;
+  state.lastFrame = performance.now();
+  state.actions += 1;
+  state.playerVy = Math.min(state.playerVy - 180, -80);
+  if (state.actions >= content.arcade.rounds) state.finished = true;
+}
+
 function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<string>, now: number) {
   if (state.finished) return;
   if (!state.started) {
@@ -977,6 +985,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "flight") {
+    drawFlight(content, state, ctx);
+    return;
+  }
+
   if (content.arcade.variant === "shooter") {
     drawShooter(content, state, ctx);
     return;
@@ -1041,6 +1054,146 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(content.arcade.controls, canvasWidth / 2, 206);
     ctx.fillText("Space 또는 시작 버튼으로 바로 시작", canvasWidth / 2, 232);
+  }
+}
+
+function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
+  const { background, primary, accent, danger } = content.arcade.palette;
+  const liftActive = state.playerVy < -25;
+  const horizon = canvasHeight - 74;
+  const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+  backdrop.addColorStop(0, background);
+  backdrop.addColorStop(0.56, "rgba(30,41,59,0.95)");
+  backdrop.addColorStop(1, "rgba(2,6,23,1)");
+  ctx.fillStyle = backdrop;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = 1;
+  for (let x = (state.elapsed * 42) % 96; x < canvasWidth + 96; x += 96) {
+    ctx.beginPath();
+    ctx.moveTo(x, 54);
+    ctx.lineTo(x - 80, horizon);
+    ctx.stroke();
+  }
+  for (let y = 90; y < horizon; y += 62) {
+    ctx.beginPath();
+    ctx.moveTo(30, y);
+    ctx.lineTo(canvasWidth - 30, y + Math.sin(state.elapsed + y) * 5);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "rgba(15,23,42,0.56)";
+  ctx.beginPath();
+  ctx.roundRect(26, 20, canvasWidth - 52, 44, 14);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.stroke();
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("누르면 상승, 떼면 하강", 44, 48);
+  ctx.textAlign = "right";
+  ctx.fillStyle = liftActive ? primary : "rgba(255,255,255,0.64)";
+  ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(liftActive ? "상승 중" : "하강 중", canvasWidth - 44, 47);
+
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.beginPath();
+  ctx.roundRect(0, horizon, canvasWidth, canvasHeight - horizon, 0);
+  ctx.fill();
+  ctx.fillStyle = "rgba(250,204,21,0.14)";
+  ctx.beginPath();
+  ctx.roundRect(34, 80, 6, horizon - 110, 3);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(canvasWidth - 40, 80, 6, horizon - 110, 3);
+  ctx.fill();
+
+  for (const sprite of state.sprites) {
+    ctx.save();
+    ctx.translate(sprite.x, sprite.y);
+    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    ctx.beginPath();
+    ctx.ellipse(0, sprite.radius + 9, sprite.radius * 0.86, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (sprite.good) {
+      const gate = ctx.createLinearGradient(-sprite.radius, -sprite.radius, sprite.radius, sprite.radius);
+      gate.addColorStop(0, "rgba(255,255,255,0.86)");
+      gate.addColorStop(0.45, accent);
+      gate.addColorStop(1, "rgba(59,130,246,0.74)");
+      ctx.strokeStyle = gate;
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, sprite.radius + 12, sprite.radius + 20, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(15,23,42,0.76)";
+      ctx.beginPath();
+      ctx.roundRect(-sprite.radius - 10, -10, sprite.radius * 2 + 20, 24, 12);
+      ctx.fill();
+    } else {
+      const cloud = ctx.createRadialGradient(-sprite.radius * 0.2, -sprite.radius * 0.3, 4, 0, 0, sprite.radius * 1.5);
+      cloud.addColorStop(0, "rgba(255,255,255,0.84)");
+      cloud.addColorStop(0.42, danger);
+      cloud.addColorStop(1, "rgba(127,29,29,0.95)");
+      ctx.fillStyle = cloud;
+      ctx.beginPath();
+      ctx.arc(-sprite.radius * 0.42, 2, sprite.radius * 0.78, 0, Math.PI * 2);
+      ctx.arc(sprite.radius * 0.16, -sprite.radius * 0.18, sprite.radius * 0.9, 0, Math.PI * 2);
+      ctx.arc(sprite.radius * 0.58, 5, sprite.radius * 0.68, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.35)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.fillStyle = sprite.good ? "#f8fafc" : "#fff7ed";
+    ctx.font = "850 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(sprite.label.slice(0, 5), 0, sprite.good ? 5 : sprite.radius + 19);
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.translate(state.playerX, state.playerY);
+  ctx.fillStyle = liftActive ? "rgba(250,204,21,0.28)" : "rgba(147,197,253,0.18)";
+  ctx.beginPath();
+  ctx.ellipse(-32, 10, 42, 14, -0.16, 0, Math.PI * 2);
+  ctx.fill();
+  const body = ctx.createLinearGradient(-28, -20, 28, 18);
+  body.addColorStop(0, "#f8fafc");
+  body.addColorStop(0.48, primary);
+  body.addColorStop(1, "rgba(14,165,233,0.95)");
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.moveTo(34, 0);
+  ctx.lineTo(-24, -23);
+  ctx.lineTo(-10, 0);
+  ctx.lineTo(-24, 23);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.58)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(content.arcade.playerLabel.slice(0, 5), -5, 4);
+  ctx.restore();
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("캔버스를 누르고 있으면 뜨고, 손을 떼면 내려갑니다. Space/Enter도 됩니다.", 34, canvasHeight - 24);
+  if (!state.started) {
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(content.title, canvasWidth / 2, 166);
+    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("누르면 뜨고, 떼면 내려갑니다.", canvasWidth / 2, 204);
+    ctx.fillText("빈틈은 지나가고 벽은 피하세요.", canvasWidth / 2, 230);
   }
 }
 
@@ -2699,6 +2852,7 @@ export function ArcadeGameEngine({
   }, []);
 
   const restart = React.useCallback(() => {
+    keysRef.current.clear();
     stateRef.current = makeInitialState(content);
     setShareState("idle");
     syncView();
@@ -3134,17 +3288,30 @@ export function ArcadeGameEngine({
       setShareState("idle");
       syncView();
     },
-    [content.arcade.variant, syncView],
+    [content, syncView],
   );
 
   const handleCanvasPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+      if (content.arcade.variant === "flight") {
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        keysRef.current.add("Space");
+        startFlightLift(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "stacker") {
         event.preventDefault();
         try {
@@ -3191,17 +3358,21 @@ export function ArcadeGameEngine({
       setShareState("idle");
       syncView();
     },
-    [content.arcade.variant, syncView],
+    [content, syncView],
   );
 
   const handleCanvasPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
       if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
+      if (content.arcade.variant === "flight") {
+        if (event.buttons === 0) keysRef.current.delete("Space");
+        return;
+      }
       if (content.arcade.variant === "stacker") {
         if (event.buttons === 0) return;
         state.started = true;
@@ -3233,10 +3404,14 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerUp = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
+      if (content.arcade.variant === "flight" && state.finished) {
+        keysRef.current.delete("Space");
+        return;
+      }
       if (state.finished) return;
       event.preventDefault();
       const point = canvasPointFromEvent(canvas, event);
@@ -3244,6 +3419,12 @@ export function ArcadeGameEngine({
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
+      }
+      if (content.arcade.variant === "flight") {
+        keysRef.current.delete("Space");
+        setShareState("idle");
+        syncView();
+        return;
       }
       if (content.arcade.variant === "stacker") {
         state.started = true;
@@ -3294,8 +3475,9 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerCancel = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker" && content.arcade.variant !== "flight") return;
       const state = stateRef.current;
+      keysRef.current.delete("Space");
       clearSumDrag(state);
       clearGemDrag(state);
       try {
@@ -3383,6 +3565,7 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "match-three" ||
                   content.arcade.variant === "stacker" ||
                   content.arcade.variant === "shooter" ||
+                  content.arcade.variant === "flight" ||
                   content.arcade.variant === "mole" ||
                   content.arcade.variant === "memory"
                     ? "cursor-pointer touch-none"
