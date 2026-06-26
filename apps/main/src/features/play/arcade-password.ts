@@ -38,6 +38,14 @@ type PasswordHistoryItem = {
   score: number;
 };
 
+export type PasswordGuessPreview = {
+  issue?: "duplicate" | "contradiction";
+  candidatesBefore: number;
+  expectedRemaining: number;
+  worstRemaining: number;
+  outcomeCount: number;
+};
+
 type PasswordPlayState = {
   finished: boolean;
   elapsed: number;
@@ -225,7 +233,7 @@ export function passwordCandidateStats(attempts: PasswordAttempt[]) {
   };
 }
 
-export function passwordGuessPreview(attempts: PasswordAttempt[], guess: number[] | string) {
+export function passwordGuessPreview(attempts: PasswordAttempt[], guess: number[] | string): PasswordGuessPreview {
   const guessText = Array.isArray(guess) ? passwordGuessText(guess) : guess;
   const candidates = passwordCandidatesForAttempts(attempts);
   if (passwordGuessHasDuplicateDigits(guessText)) {
@@ -275,6 +283,22 @@ export function passwordGuessPreview(attempts: PasswordAttempt[], guess: number[
     worstRemaining: Math.max(...bucketSizes),
     outcomeCount: buckets.size,
   };
+}
+
+export function passwordGuessSplitRatio(preview: PasswordGuessPreview) {
+  if (preview.issue || preview.candidatesBefore <= 0) return 0;
+  return clamp(1 - preview.expectedRemaining / preview.candidatesBefore, 0, 1);
+}
+
+export function passwordGuessSplitLabel(preview: PasswordGuessPreview) {
+  if (preview.issue === "duplicate") return "중복";
+  if (preview.issue === "contradiction") return "충돌";
+  if (preview.candidatesBefore <= 0) return "후보 없음";
+  const ratio = passwordGuessSplitRatio(preview);
+  if (ratio >= 0.68 && preview.worstRemaining <= Math.ceil(preview.candidatesBefore * 0.38)) return "아주 좋음";
+  if (ratio >= 0.5) return "좋음";
+  if (ratio >= 0.32) return "보통";
+  return "약함";
 }
 
 export function passwordPositionOptions(candidates: number[][]) {
