@@ -54,7 +54,7 @@ function topicThings(keywords: string[]) {
 function playMetric(content: PlayContent) {
   if (content.type === "micro-sim") return `${content.turns.length}턴`;
   if (content.type === "tap-game") return `${content.targets.length}개 판단`;
-  if (content.type === "arcade-game") return `${content.arcade.rounds}번 조작`;
+  if (content.type === "arcade-game") return "바로 플레이";
   return `${content.items.length}개 분류`;
 }
 
@@ -208,7 +208,7 @@ export function playIndexStructuredData(contents: PlayContent[]) {
     "@type": "CollectionPage",
     name: "Play - bobob.app",
     url,
-    description: "단일 규칙과 짧은 조작으로 바로 시작하는 bobob.app의 웹 게임 목록.",
+    description: "단일 규칙과 짧은 플레이로 바로 시작하는 bobob.app의 웹 게임 목록.",
     inLanguage: contentLocale,
     keywords,
     about: topicThings(keywords),

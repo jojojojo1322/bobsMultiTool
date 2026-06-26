@@ -91,30 +91,17 @@ export function selectedSumTiles(state: { sumTiles: SumTile[] }) {
 
 export function updateSumBox(content: ArcadeGameContent, state: SumBoxPlayState, dt: number) {
   state.elapsed += dt;
-  const hasCombination = sumBoxCombinationHint(state).length > 0;
-  if (
-    !hasCombination &&
-    state.score < content.arcade.targetScore &&
-    state.actions < content.arcade.rounds &&
-    !state.sumTiles.every((tile) => tile.cleared) &&
-    state.history[0]?.label !== "남은 10 없음"
-  ) {
-    rememberSumHistory(state, {
-      label: "남은 10 없음",
-      detail: "판 종료",
-      score: 0,
-    });
-  }
-  if (
-    state.score >= content.arcade.targetScore ||
-    state.sumTiles.every((tile) => tile.cleared) ||
-    !hasCombination ||
-    state.actions >= content.arcade.rounds ||
-    state.focus <= 0 ||
-    state.elapsed >= sumBoxTimeLimitSeconds
-  ) {
+  if (state.elapsed >= sumBoxTimeLimitSeconds) {
     state.finished = true;
+    return;
   }
+
+  const hasCombination = sumBoxCombinationHint(state).length > 0;
+  if (state.sumTiles.every((tile) => tile.cleared)) {
+    refillSumBoxBoard(content, state, "판 비움");
+    return;
+  }
+  if (!hasCombination) refillSumBoxBoard(content, state, "남은 10 없음");
 }
 
 export function moveSumCursor(state: Pick<SumBoxPlayState, "sumTiles" | "sumCursor">, delta: number) {
@@ -150,7 +137,6 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
       score: delta,
     });
     moveSumCursor(state, 1);
-    if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
     return;
   }
 
@@ -194,7 +180,6 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
       score: -1,
     });
     moveSumCursor(state, 1);
-    if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
     return;
   }
 
@@ -210,7 +195,6 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
       score: delta,
     });
     moveSumCursor(state, 1);
-    if (state.score >= content.arcade.targetScore || state.sumTiles.every((item) => item.cleared)) state.finished = true;
     return;
   }
 
@@ -226,7 +210,22 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
     score: overflow ? -1 : 0,
   });
   moveSumCursor(state, 1);
-  if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
+}
+
+export function refillSumBoxBoard(content: ArcadeGameContent, state: SumBoxPlayState, reason: string) {
+  state.sumTiles = makeSumTiles(content);
+  state.sumCursor = 0;
+  state.sumDragStart = null;
+  state.sumDragCurrent = null;
+  state.sumDragMoved = false;
+  state.sumDragTileIds = [];
+  state.sumDragBlockedTileId = null;
+  state.sumStreak = 0;
+  rememberSumHistory(state, {
+    label: reason,
+    detail: "새 보드",
+    score: 0,
+  });
 }
 
 export function sumBoxSelectionSummary(state: { sumTiles: SumTile[] }, tiles: SumTile[]) {

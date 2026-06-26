@@ -1,7 +1,7 @@
 {
   "slug": "prompt-sum-box",
   "title": "숫자조각 10 맞추기",
-  "description": "숫자 사과를 고르고 합 10을 만들면 선택한 칸이 지워지는 1분 캔버스 보드 게임입니다. 놓기 전 결과 배지가 부족·넘침을 알려줍니다.",
+  "description": "숫자 사과를 고르고 합 10을 만들면 선택한 칸이 지워집니다. 1분 동안 몇 번이든 시도하며 기록을 쌓는 캔버스 보드 게임입니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-27",
@@ -11,8 +11,8 @@
   "relatedPlaySlugs": ["ten-box-rush", "prompt-gem-swap", "password-lock"],
   "arcade": {
     "variant": "sum-box",
-    "goal": "숫자 사과를 고르고, 합 10을 연속으로 만들어 선택한 칸을 지웁니다.",
-    "controls": "마우스로 사과를 쓸거나 방향키/WASD로 옮깁니다. 결과 배지를 보고 놓으면 되고, Space/Enter로 골라도 됩니다.",
+    "goal": "1분 동안 숫자 사과를 고르고, 합 10을 연속으로 만들어 선택한 칸을 지웁니다.",
+    "controls": "마우스로 사과를 쓸거나 방향키/WASD로 옮깁니다. Space/Enter로 골라도 되고, 1분 안에서는 계속 다시 고를 수 있습니다.",
     "rounds": 12,
     "targetScore": 20,
     "playerLabel": "상자",

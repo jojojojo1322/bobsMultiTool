@@ -17,6 +17,19 @@ import {
   type CrossingAction,
 } from "@/features/play/arcade-crossing";
 import {
+  drawLottery,
+  lotteryCellIndexAt,
+  lotteryColumns,
+  lotteryRevealedCount,
+  lotteryStageAt,
+  lotteryStages,
+  lotteryTicketComplete,
+  makeLotteryCells,
+  moveLotteryCursor,
+  revealLotteryCell,
+  type LotteryCell,
+} from "@/features/play/arcade-lottery";
+import {
   adjustPasswordDigit,
   applyPasswordCandidate,
   applyPasswordSuggestion,
@@ -272,6 +285,12 @@ type GameState = {
   sumDragBlockedTileId: number | null;
   sumStreak: number;
   sumBestStreak: number;
+  lotteryCells: LotteryCell[];
+  lotteryCursor: number;
+  lotteryStage: number;
+  lotteryDraws: number;
+  lotteryLastPrize: number;
+  lotteryTotalPrize: number;
   snake: SnakeCell[];
   snakeDirection: SnakeDirection;
   snakeNextDirection: SnakeDirection;
@@ -317,7 +336,26 @@ type GameState = {
   lastFrame: number | null;
 };
 
-type ViewState = Pick<GameState, "started" | "finished" | "elapsed" | "score" | "focus" | "actions" | "history">;
+type ViewState = Pick<
+  GameState,
+  | "started"
+  | "finished"
+  | "elapsed"
+  | "score"
+  | "focus"
+  | "actions"
+  | "sumStreak"
+  | "sumBestStreak"
+  | "lotteryStage"
+  | "lotteryDraws"
+  | "lotteryLastPrize"
+  | "lotteryTotalPrize"
+  | "history"
+> & {
+  sumClearedCount: number;
+  lotteryRevealedCount: number;
+  lotteryTicketDone: boolean;
+};
 
 function makeInitialState(content: ArcadeGameContent): GameState {
   const snake = makeSnake();
@@ -350,6 +388,12 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     sumDragBlockedTileId: null,
     sumStreak: 0,
     sumBestStreak: 0,
+    lotteryCells: makeLotteryCells(content),
+    lotteryCursor: 0,
+    lotteryStage: 0,
+    lotteryDraws: 0,
+    lotteryLastPrize: 0,
+    lotteryTotalPrize: 0,
     snake,
     snakeDirection: "right",
     snakeNextDirection: "right",
@@ -431,6 +475,15 @@ function snapshot(state: GameState): ViewState {
     score: state.score,
     focus: state.focus,
     actions: state.actions,
+    sumStreak: state.sumStreak,
+    sumBestStreak: state.sumBestStreak,
+    sumClearedCount: state.sumTiles.filter((tile) => tile.cleared).length,
+    lotteryStage: state.lotteryStage,
+    lotteryDraws: state.lotteryDraws,
+    lotteryLastPrize: state.lotteryLastPrize,
+    lotteryTotalPrize: state.lotteryTotalPrize,
+    lotteryRevealedCount: lotteryRevealedCount(state),
+    lotteryTicketDone: lotteryTicketComplete(state),
     history: state.history,
   };
 }
@@ -440,6 +493,7 @@ function addHistory(state: GameState, item: HistoryItem) {
 }
 
 function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
+  if (content.arcade.variant === "lottery") return 0;
   if (content.arcade.variant === "sum-box") return sumBoxTimeLimitSeconds;
   if (content.arcade.variant === "password") return passwordTimeLimitSeconds;
   return content.arcade.rounds * 5;
@@ -592,6 +646,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
   if (content.arcade.variant === "sum-box") return "고르기";
+  if (content.arcade.variant === "lottery") return "긁기";
   if (content.arcade.variant === "snake") return "한 칸";
   if (content.arcade.variant === "password") return "확인";
   if (content.arcade.variant === "minesweeper") return "열기";
@@ -659,6 +714,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "sum-box") {
     updateSumBox(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "lottery") {
+    state.elapsed += dt;
     return;
   }
 
@@ -989,6 +1049,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "lottery") {
+    drawLottery(content, state, ctx);
+    return;
+  }
+
   if (content.arcade.variant === "snake") {
     drawSnake(content, state, ctx);
     return;
@@ -1246,7 +1311,6 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         ? "invader"
         : "signal";
   const dangerLineY = canvasHeight - 96;
-  const shotsLeft = Math.max(0, content.arcade.rounds - state.actions);
 
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
@@ -1281,9 +1345,9 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillText(mode === "missile" ? "낙하 지점 보기" : mode === "bubble" ? "필요한 버블만 터뜨리기" : "진짜 신호만 쏘기", 44, 47);
   ctx.textAlign = "right";
-  ctx.fillStyle = shotsLeft <= 3 ? danger : "rgba(255,255,255,0.68)";
+  ctx.fillStyle = state.focus <= 30 ? danger : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`남은 발사 ${shotsLeft}`, canvasWidth - 44, 46);
+  ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, canvasWidth - 44, 46);
 
   ctx.strokeStyle = "rgba(255,255,255,0.16)";
   ctx.setLineDash([10, 10]);
@@ -1724,7 +1788,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`소음 ${noiseMoles}`, panelX + 66, 149);
   ctx.fillText(`곧 사라질 핵심 ${urgentGoodMoles}`, panelX + 18, 174);
-  ctx.fillText(`잡은 횟수 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, panelX + 18, 188);
+  ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
   ctx.fillText("링이 줄수록 시간이 없습니다.", panelX + 18, 222);
   ctx.fillText("빨강은 지나가게 두는 편이 낫습니다.", panelX + 18, 246);
 
@@ -1832,7 +1896,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`입력 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, panelX + 18, 224);
+  ctx.fillText(`순서 ${state.memoryInput.length}/${state.memorySequence.length}`, panelX + 18, 224);
   ctx.fillText("헷갈리면 R로 다시 봅니다.", panelX + 18, 252);
   ctx.fillText("외웠으면 숫자키로 바로 눌러도 됩니다.", panelX + 18, 276);
 
@@ -2138,7 +2202,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillText("색돌 보드", 36, 64);
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`이동 ${Math.min(state.actions, content.arcade.rounds)} / ${content.arcade.rounds}`, 36, 88);
+  ctx.fillText(hint ? "보이는 한 수 있음" : "콤보 만들기", 36, 88);
   ctx.fillText(`콤보 ${state.gemCombo}`, 36, 110);
 
   const selectedIndex = state.gemDragStartIndex ?? state.gemSelected;
@@ -3150,6 +3214,31 @@ export function ArcadeGameEngine({
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
   const ending = endingFor(content, view.score);
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
+  const isLiveResultVariant = content.arcade.variant === "sum-box" || content.arcade.variant === "lottery";
+  const activeActionLabel =
+    content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
+  const shareScoreLabel = content.arcade.variant === "lottery" ? `누적 당첨: ${view.lotteryTotalPrize}` : `점수: ${view.score}`;
+  const metricItems =
+    content.arcade.variant === "lottery"
+      ? [
+          { label: "단계", value: `${view.lotteryStage + 1}/${lotteryStages.length}` },
+          { label: "누적 당첨", value: view.lotteryTotalPrize },
+          { label: "긁은 장", value: view.lotteryDraws + 1 },
+          { label: "공개", value: `${view.lotteryRevealedCount}/9` },
+        ]
+      : content.arcade.variant === "sum-box"
+        ? [
+            { label: "기록", value: view.score },
+            { label: "남은 시간", value: `${timeLeft}s` },
+            { label: "연속", value: view.sumStreak },
+            { label: "비운 칸", value: `${view.sumClearedCount}/25` },
+          ]
+        : [
+            { label: "점수", value: view.score },
+            { label: "집중", value: view.focus },
+            { label: "남은 시간", value: `${timeLeft}s` },
+            { label: "상태", value: view.started ? "진행" : "대기" },
+          ];
 
   const syncView = React.useCallback(() => {
     setView(snapshot(stateRef.current));
@@ -3175,6 +3264,16 @@ export function ArcadeGameEngine({
         if (action === "up") moveSumCursor(state, -sumBoxColumns);
         if (action === "down") moveSumCursor(state, sumBoxColumns);
         if (action === "main") chooseSumTile(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (content.arcade.variant === "lottery") {
+        if (action === "left") moveLotteryCursor(state, -1);
+        if (action === "right") moveLotteryCursor(state, 1);
+        if (action === "up") moveLotteryCursor(state, -lotteryColumns);
+        if (action === "down") moveLotteryCursor(state, lotteryColumns);
+        if (action === "main") revealLotteryCell(content, state);
         setShareState("idle");
         syncView();
         return;
@@ -3312,6 +3411,15 @@ export function ArcadeGameEngine({
           return;
         }
         if (content.arcade.variant === "sum-box") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
+        if (content.arcade.variant === "lottery") {
           if (event.repeat) return;
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
           if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
@@ -3493,6 +3601,19 @@ export function ArcadeGameEngine({
       if (state.finished) return;
 
       if (content.arcade.variant === "sum-box" || content.arcade.variant === "match-three") {
+        return;
+      }
+
+      if (content.arcade.variant === "lottery") {
+        const index = lotteryCellIndexAt(state, point);
+        if (index < 0) return;
+        event.preventDefault();
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.lotteryCursor = index;
+        revealLotteryCell(content, state, index);
+        setShareState("idle");
+        syncView();
         return;
       }
 
@@ -3908,7 +4029,7 @@ export function ArcadeGameEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n점수: ${view.score}`;
+    const text = `${content.shareText}\n${shareScoreLabel}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -3932,10 +4053,9 @@ export function ArcadeGameEngine({
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-right sm:grid-cols-4">
-            <Metric label="점수" value={view.score} />
-            <Metric label="집중" value={view.focus} />
-            <Metric label="남은 시간" value={`${timeLeft}s`} />
-            <Metric label="조작" value={`${Math.min(view.actions, content.arcade.rounds)} / ${content.arcade.rounds}`} />
+            {metricItems.map((item) => (
+              <Metric key={item.label} label={item.label} value={item.value} />
+            ))}
           </div>
         </div>
       </div>
@@ -3976,6 +4096,7 @@ export function ArcadeGameEngine({
                 aria-label={`${content.title} canvas`}
                 className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
+                  content.arcade.variant === "lottery" ||
                   content.arcade.variant === "snake" ||
                   content.arcade.variant === "password" ||
                   content.arcade.variant === "minesweeper" ||
@@ -3999,6 +4120,7 @@ export function ArcadeGameEngine({
             </div>
             {content.arcade.variant === "snake" ||
             content.arcade.variant === "sum-box" ||
+            content.arcade.variant === "lottery" ||
             content.arcade.variant === "password" ||
             content.arcade.variant === "minesweeper" ||
             content.arcade.variant === "match-three" ||
@@ -4015,7 +4137,7 @@ export function ArcadeGameEngine({
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <Button className="h-12" onClick={() => performAction("main")} data-play-action="arcade-main">
-                  {view.started ? mainActionLabel(content) : "시작"}
+                  {activeActionLabel}
                 </Button>
                 <Button variant="outline" className="h-12" onClick={() => performAction("right")} data-play-action="arcade-right" aria-label="오른쪽">
                   <ArrowRight className="h-4 w-4" />
@@ -4050,7 +4172,7 @@ export function ArcadeGameEngine({
                   왼쪽
                 </Button>
                 <Button className="h-12" onClick={() => performAction("main")} data-play-action="arcade-main">
-                  {view.started ? mainActionLabel(content) : "시작"}
+                  {activeActionLabel}
                 </Button>
                 <Button variant="outline" className="h-12" onClick={() => performAction("right")} data-play-action="arcade-right">
                   오른쪽
@@ -4058,7 +4180,19 @@ export function ArcadeGameEngine({
               </div>
             )}
           </div>
-          <HistoryPanel history={view.history} />
+          {isLiveResultVariant ? (
+            <LiveArcadeResultPanel
+              content={content}
+              ending={ending}
+              onShare={shareResult}
+              relatedBlogLinks={relatedBlogLinks}
+              relatedPlayLinks={relatedPlayLinks}
+              shareState={shareState}
+              view={view}
+            />
+          ) : (
+            <HistoryPanel history={view.history} />
+          )}
         </div>
       )}
     </section>
@@ -4091,6 +4225,63 @@ function HistoryPanel({ history }: { history: HistoryItem[] }) {
         </ol>
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">방향키와 Space로 움직이면 방금 지나간 선택이 여기에 남습니다.</p>
+      )}
+    </aside>
+  );
+}
+
+function LiveArcadeResultPanel({
+  content,
+  ending,
+  onShare,
+  relatedBlogLinks,
+  relatedPlayLinks,
+  shareState,
+  view,
+}: {
+  content: ArcadeGameContent;
+  ending: { title: string; description: string };
+  onShare: () => void | Promise<void>;
+  relatedBlogLinks: PlayResultLink[];
+  relatedPlayLinks: PlayResultLink[];
+  shareState: "idle" | "copied" | "shared";
+  view: ViewState;
+}) {
+  const isLottery = content.arcade.variant === "lottery";
+  const stage = lotteryStageAt(view.lotteryStage);
+  const title = isLottery ? "현재 복권" : "현재 기록";
+  const headline = isLottery ? stage.title : ending.title;
+  const detail = isLottery
+    ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다 긁으면 다음 단계 복권으로 이어집니다.`
+    : `${view.score}점, 연속 ${view.sumStreak}. 제한은 1분 타이머 하나만 남겨둔 상태입니다.`;
+
+  return (
+    <aside className="rounded-md border bg-muted/20 p-3" data-play-history data-play-result>
+      <p className="text-sm font-semibold">{title}</p>
+      <h3 className="mt-2 text-lg font-semibold tracking-normal">{headline}</h3>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button size="sm" onClick={onShare} data-play-share>
+          <Share2 className="h-4 w-4" />
+          {shareState === "copied" ? "복사됨" : shareState === "shared" ? "공유됨" : "공유"}
+        </Button>
+      </div>
+      <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
+      {view.history.length ? (
+        <ol className="mt-3 space-y-2">
+          {view.history.slice(0, 5).map((item, index) => (
+            <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
+              <p className="text-sm font-medium">{item.label}</p>
+              <p className={item.score >= 0 ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
+                {item.detail} / {item.score > 0 ? `+${item.score}` : item.score}
+              </p>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          {isLottery ? "칸을 긁으면 당첨 기록이 여기에 남습니다." : "합 10을 만들면 방금 선택한 흔적이 여기에 남습니다."}
+        </p>
       )}
     </aside>
   );

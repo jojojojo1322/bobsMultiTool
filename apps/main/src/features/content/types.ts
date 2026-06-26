@@ -136,6 +136,7 @@ export type ArcadeGameVariant =
   | "shooter"
   | "conveyor"
   | "sum-box"
+  | "lottery"
   | "match-three"
   | "memory"
   | "flight"

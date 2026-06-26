@@ -93,7 +93,7 @@ export default function PlayIndexPage() {
                       : content.type === "tap-game"
                         ? `${content.targets.length}개 판단`
                         : content.type === "arcade-game"
-                          ? `${content.arcade.rounds}번 조작`
+                          ? "바로 플레이"
                           : `${content.items.length}개 분류`}
                   </Badge>
                   <Badge>{content.type === "arcade-game" ? "손으로 하는 게임" : content.type === "tap-game" ? "누르는 게임" : content.type === "sort-match-game" ? "분류 게임" : "짧은 선택"}</Badge>

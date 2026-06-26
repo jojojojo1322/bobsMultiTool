@@ -81,7 +81,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
       : content.type === "tap-game"
         ? `${content.targets.length}개 판단`
         : content.type === "arcade-game"
-          ? `${content.arcade.rounds}번 조작`
+          ? "바로 플레이"
           : `${content.items.length}개 분류`;
   const jsonLd = playDetailStructuredData({ content, relatedBlogs });
   const detailMaxWidth = content.type === "arcade-game" ? "max-w-7xl" : "max-w-6xl";
@@ -136,6 +136,14 @@ function PlayContext({
           ? "마우스나 키보드로 움직이는 판"
           : "몇 번 골라보고 끝내는 판";
   const firstBlog = relatedBlogLinks[0];
+  const pacingText =
+    content.type === "arcade-game" && content.arcade.variant === "lottery"
+      ? "시간이나 목표 점수로 끊지 않습니다. 한 장을 다 보면 다음 단계 복권으로 넘어가고, 그만하고 싶을 때 멈추면 됩니다."
+      : content.type === "arcade-game" && content.arcade.variant === "sum-box"
+        ? `한 판은 ${content.durationLabel} 동안만 갑니다. 몇 번 눌렀는지는 세지 않고, 결과는 그 시간 안에 만든 기록으로 남습니다.`
+        : content.type === "arcade-game"
+          ? `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 남고, 다시 해도 바로 이어집니다.`
+        : `한 판은 ${content.durationLabel}, ${playMetric} 정도로 끝납니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.`;
 
   return (
     <section className="mt-6 rounded-md border bg-muted/20 p-4" data-play-context>
@@ -145,12 +153,10 @@ function PlayContext({
         <p>
           이 판은 설명을 오래 읽고 시작하는 쪽이 아닙니다. {typeLabel}이라서 첫 움직임으로 감을 잡으면 됩니다. 맞으면 한 번 더 하고, 아니면 다음 카드로 넘어가세요.
         </p>
-        <p>
-          한 판은 {content.durationLabel}, {playMetric} 정도로 끝납니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.
-        </p>
+        <p>{pacingText}</p>
       </div>
       <p className="mt-3 text-sm leading-7 text-muted-foreground">
-        점수는 정답표가 아니라 한 판 기록입니다. 마우스와 키보드 조작은 브라우저 안에서 바로 처리되고, 결과 공유도 같은 화면에서 이어집니다. 방금 감이 맞았다면 한 번 더, 아니면 다른 카드로 넘어가도 충분합니다.
+        점수는 정답표가 아니라 한 판 기록입니다. 마우스와 키보드 입력은 브라우저 안에서 바로 처리되고, 결과 공유도 같은 화면에서 이어집니다. 방금 감이 맞았다면 한 번 더, 아니면 다른 카드로 넘어가도 충분합니다.
       </p>
       {firstBlog ? (
         <div className="mt-4 rounded-sm border bg-background p-3 text-sm">

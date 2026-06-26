@@ -45,7 +45,7 @@ export function llmsTxt() {
     "",
     "> 개발/AI 기록과 브라우저에서 바로 해보는 짧은 Play를 모은 정적 웹사이트입니다.",
     "",
-    "bobob.app은 Blog + Play 중심의 정적 웹사이트입니다. 글은 실제 개발, AI 활용, 사이드 프로젝트 운영 판단을 다루고, Play는 단일 규칙과 짧은 조작으로 바로 시작하는 웹 놀이입니다.",
+    "bobob.app은 Blog + Play 중심의 정적 웹사이트입니다. 글은 실제 개발, AI 활용, 사이드 프로젝트 운영 판단을 다루고, Play는 단일 규칙과 짧은 플레이로 바로 시작하는 웹 놀이입니다.",
     "",
     "## Core",
     markdownLink("Home", `${siteUrl}/`, "Blog, Play, archived Tools로 이어지는 canonical landing page."),

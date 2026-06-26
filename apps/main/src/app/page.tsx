@@ -93,7 +93,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
               <p>글은 날짜, 기준, 시행착오를 먼저 보여줍니다.</p>
-              <p>Play는 한 가지 규칙과 한 가지 조작으로 시작합니다.</p>
+              <p>Play는 한 가지 규칙과 한 가지 움직임으로 시작합니다.</p>
               <p>로그인, 랭킹, 댓글 없이 한 판 결과만 보고 넘어갑니다.</p>
             </div>
           </div>
