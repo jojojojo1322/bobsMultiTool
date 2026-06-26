@@ -166,6 +166,14 @@ for (const entry of blogEntries) {
   }
   if (entry.bodyChars < 450) failures.push(`${entry.slug ?? entry.file} body is too thin for MVP content: ${entry.bodyChars} chars`);
   if (!/^#{2}\s+/m.test(entry.body)) failures.push(`${entry.slug ?? entry.file} should include at least one section heading`);
+  if (entry.category === "정보") {
+    if (!/기준일은\s+\d{4}-\d{2}-\d{2}/.test(entry.body)) {
+      failures.push(`${entry.slug ?? entry.file} information posts should state a concrete 기준일`);
+    }
+    if (!/^##\s+한눈에 비교/m.test(entry.body) || !/^\|.+\|\s*\n\|[-:|\s]+\|/m.test(entry.body)) {
+      failures.push(`${entry.slug ?? entry.file} information posts should include a near-top comparison table`);
+    }
+  }
   for (const playSlug of entry.relatedPlaySlugs) {
     if (!playBySlug.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
   }

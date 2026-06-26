@@ -48,6 +48,7 @@
 - Play engines should expose stable QA hooks for the playable loop: `data-play-action`, `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
 - Home Featured Play should surface the current Play registry instead of staying capped to the original five-entry MVP lineup; new lightweight Play entries should not be hidden from the first screen by an old slice limit.
 - Blog posts should support broad categories such as `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, and date-sensitive `정보`. Blog is not subordinate to Play: keep standalone posts allowed and visible, and link to Play only when it helps the reader continue naturally.
+- Date-sensitive `정보` posts must include a concrete `기준일` and a near-top `한눈에 비교` Markdown table or data block so prices, discounts, targets, and tradeoffs can be copied into a deck or spreadsheet without reading the whole article first.
 - Source-locale Blog category hubs should live at `/blog/category/{slug}` for the main categories and can be included in the reduced MVP sitemap when each hub has real posts.
 - Play MVP pages should expose the game surface, result/share actions, and related content links without requiring ads, support links, login, ranking, comments, payment, user saves, or server state.
 - Blog post, Play entry, and Blog category source descriptions should be long enough to stand as submitted URL metadata; `npm run harness:blog-play-mvp` catches thin source descriptions before live URL health checks.

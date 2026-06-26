@@ -41,6 +41,7 @@ description: Use for Bob's Multi Tool monetization, tool priority, AdSense readi
 - Use `/tools` and localized tool directories as session-depth hubs: acquisition workflow clusters should connect high-demand tools into second and third tool paths using localized registry copy.
 - Treat guides as support content for tools, not as a separate generic blog.
 - Treat new `/blog` posts as original development, AI, diary, interests, date-sensitive information, side-project, or web-operations content. Blog posts do not need a forced Play attachment; keep enough standalone posts that Blog reads like its own lane, add `relatedPlay` only when it naturally helps the reader continue, and keep reciprocal Play metadata for those linked posts.
+- Treat date-sensitive `정보` posts as comparison-first content: they need a concrete 기준일 and a near-top Markdown table or compact data block that can be copied into a deck or spreadsheet before the prose expands the context.
 - Do not produce search-keyword-only Blog posts. Blog copy should contain a point of view, operating detail, concrete examples, or failure notes so the site does not read as thin SEO inventory.
 - Keep Blog, Play, and category descriptions specific enough to stand alone as submitted URL metadata; source-level checks should catch thin descriptions before live URL health checks fail.
 - Treat `/tools` and localized tool directories as acquisition hub pages for categories, core tools, and internal search.
