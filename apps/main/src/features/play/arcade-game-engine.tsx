@@ -79,6 +79,7 @@ import {
   type MineCell,
 } from "@/features/play/arcade-minesweeper";
 import {
+  centerStackerActiveAt,
   makeStackerBlocks,
   nudgeStacker,
   resetStackerActiveFromTop,
@@ -3413,11 +3414,6 @@ export function ArcadeGameEngine({
       }
 
       if (content.arcade.variant === "stacker") {
-        state.started = true;
-        state.lastFrame = performance.now();
-        placeStackerBlock(content, state);
-        setShareState("idle");
-        syncView();
         return;
       }
 
@@ -3449,12 +3445,26 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+      if (content.arcade.variant === "stacker") {
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        state.started = true;
+        state.lastFrame = performance.now();
+        centerStackerActiveAt(state, point.x);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       const index = content.arcade.variant === "sum-box" ? sumTileIndexAt(state, point.x, point.y) : gemCellIndexAt(point.x, point.y);
       if (content.arcade.variant === "sum-box") {
         if (index < 0 && !pointInSumBoard(point)) return;
@@ -3491,12 +3501,19 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
       if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
+      if (content.arcade.variant === "stacker") {
+        if (event.buttons === 0) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        centerStackerActiveAt(state, point.x);
+        return;
+      }
       if (content.arcade.variant === "sum-box") {
         if (!state.sumDragStart) return;
         const movedDistance = Math.hypot(point.x - state.sumDragStart.x, point.y - state.sumDragStart.y);
@@ -3521,7 +3538,7 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerUp = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       const state = stateRef.current;
@@ -3532,6 +3549,15 @@ export function ArcadeGameEngine({
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
+      }
+      if (content.arcade.variant === "stacker") {
+        state.started = true;
+        state.lastFrame = performance.now();
+        centerStackerActiveAt(state, point.x);
+        placeStackerBlock(content, state);
+        setShareState("idle");
+        syncView();
+        return;
       }
       if (content.arcade.variant === "sum-box") {
         if (!state.sumDragStart) return;
@@ -3573,7 +3599,7 @@ export function ArcadeGameEngine({
 
   const handleCanvasPointerCancel = React.useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
-      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three") return;
+      if (content.arcade.variant !== "sum-box" && content.arcade.variant !== "match-three" && content.arcade.variant !== "stacker") return;
       const state = stateRef.current;
       clearSumDrag(state);
       clearGemDrag(state);

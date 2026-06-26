@@ -69,3 +69,7 @@ export function resetStackerActiveFromTop(state: StackerActiveState) {
 export function nudgeStacker(state: Pick<StackerActiveState, "stackerActiveX" | "stackerActiveWidth">, delta: number) {
   state.stackerActiveX = clamp(state.stackerActiveX + delta, stackerBoardX, stackerBoardX + stackerBoardWidth - state.stackerActiveWidth);
 }
+
+export function centerStackerActiveAt(state: Pick<StackerActiveState, "stackerActiveX" | "stackerActiveWidth">, centerX: number) {
+  state.stackerActiveX = clamp(centerX - state.stackerActiveWidth / 2, stackerBoardX, stackerBoardX + stackerBoardWidth - state.stackerActiveWidth);
+}
