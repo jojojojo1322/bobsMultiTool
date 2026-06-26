@@ -1,5 +1,5 @@
 import type { ArcadeGameContent } from "@/features/content/types";
-import { pseudoRandom } from "@/features/play/arcade-engine-utils";
+import { clamp, pseudoRandom } from "@/features/play/arcade-engine-utils";
 
 const passwordCanvasWidth = 720;
 
@@ -26,6 +26,25 @@ export type PasswordAttempt = {
   hint: string;
   repeated: boolean;
   issue?: "duplicate" | "contradiction";
+};
+
+type PasswordHistoryItem = {
+  label: string;
+  detail: string;
+  score: number;
+};
+
+type PasswordPlayState = {
+  finished: boolean;
+  elapsed: number;
+  score: number;
+  focus: number;
+  actions: number;
+  passwordGuess: number[];
+  passwordSecret: number[];
+  passwordCursor: number;
+  passwordAttempts: PasswordAttempt[];
+  history: PasswordHistoryItem[];
 };
 
 export function makePasswordSecret(content: ArcadeGameContent): number[] {
@@ -75,6 +94,74 @@ export function passwordDigitFromKeyboardCode(code: string) {
   if (/^Digit\d$/.test(code)) return Number(code.slice(5));
   if (/^Numpad\d$/.test(code)) return Number(code.slice(6));
   return null;
+}
+
+export function updatePassword(content: ArcadeGameContent, state: PasswordPlayState, dt: number) {
+  state.elapsed += dt;
+  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= passwordTimeLimitSeconds) {
+    state.finished = true;
+  }
+}
+
+export function movePasswordCursor(state: Pick<PasswordPlayState, "passwordCursor">, delta: number) {
+  state.passwordCursor = (state.passwordCursor + delta + passwordDigitCount) % passwordDigitCount;
+}
+
+export function adjustPasswordDigit(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor">, delta: number) {
+  const current = state.passwordGuess[state.passwordCursor] ?? 0;
+  state.passwordGuess[state.passwordCursor] = (current + delta + 10) % 10;
+}
+
+export function setPasswordDigit(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor">, digit: number, advance: boolean) {
+  state.passwordGuess[state.passwordCursor] = clamp(Math.floor(digit), 0, 9);
+  if (advance) movePasswordCursor(state, 1);
+}
+
+export function setPasswordDigitFromClick(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor">, digitIndex: number) {
+  state.passwordCursor = clamp(digitIndex, 0, passwordDigitCount - 1);
+  adjustPasswordDigit(state, 1);
+}
+
+export function applyPasswordSuggestion(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts">) {
+  const suggestion = passwordSuggestion(state.passwordAttempts);
+  if (!/^\d{3}$/.test(suggestion)) return;
+  state.passwordGuess = parsePasswordGuess(suggestion);
+  state.passwordCursor = 0;
+}
+
+export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordPlayState) {
+  if (state.finished) return;
+  state.actions += 1;
+  const { exact, near } = evaluatePasswordGuess(state.passwordSecret, state.passwordGuess);
+  const guess = passwordGuessText(state.passwordGuess);
+  const duplicate = passwordGuessHasDuplicateDigits(state.passwordGuess);
+  const repeated = isRepeatedPasswordGuess(state.passwordAttempts, guess);
+  const contradiction = state.passwordAttempts.length > 0 && !duplicate && !repeated && !passwordGuessIsPossible(state.passwordAttempts, guess);
+  const issue: PasswordAttempt["issue"] | undefined = duplicate ? "duplicate" : contradiction ? "contradiction" : undefined;
+  const solved = !issue && exact === passwordDigitCount;
+  const hint = duplicate
+    ? "중복 숫자는 쓰지 않습니다"
+    : contradiction
+      ? "기록과 안 맞는 번호입니다"
+      : passwordHint(state.passwordSecret, state.passwordGuess, exact, near);
+  const delta = solved
+    ? content.arcade.targetScore
+    : issue
+      ? 0
+      : Math.max(0, exact * 5 + near * 2 - (exact === 0 && near === 0 ? 1 : 0) - (repeated ? 3 : 0));
+
+  state.score = solved ? content.arcade.targetScore : Math.max(state.score, delta);
+  state.focus = clamp(state.focus + (solved ? 8 : duplicate ? -14 : repeated ? -13 : contradiction ? -11 : exact > 0 || near > 0 ? -4 : -9), 0, 100);
+  state.passwordAttempts = [{ guess, exact, near, hint: repeated ? "이미 해본 번호입니다" : hint, repeated, issue }, ...state.passwordAttempts].slice(0, 6);
+  rememberPasswordHistory(state, {
+    label: guess,
+    detail: solved ? "번호가 열림" : duplicate ? "중복 숫자" : repeated ? "반복해서 손해" : contradiction ? "기록과 충돌" : `${exact}자리, ${near}숫자`,
+    score: solved ? content.arcade.targetScore : delta,
+  });
+
+  if (solved || state.actions >= content.arcade.rounds || state.focus <= 0) {
+    state.finished = true;
+  }
 }
 
 export function evaluatePasswordGuess(secret: number[], guess: number[]) {
@@ -195,4 +282,8 @@ function candidateMatchesAttempts(candidate: number[], attempts: PasswordAttempt
     const { exact, near } = evaluatePasswordGuess(candidate, parsePasswordGuess(attempt.guess));
     return exact === attempt.exact && near === attempt.near;
   });
+}
+
+function rememberPasswordHistory(state: Pick<PasswordPlayState, "history">, item: PasswordHistoryItem) {
+  state.history = [item, ...state.history].slice(0, 8);
 }
