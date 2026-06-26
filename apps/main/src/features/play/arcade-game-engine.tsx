@@ -4,6 +4,21 @@ import * as React from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ArcadeGameContent } from "@/features/content/types";
+import {
+  evaluatePasswordGuess,
+  formatPasswordOptionDigits,
+  isRepeatedPasswordGuess,
+  makePasswordSecret,
+  parsePasswordGuess,
+  passwordCandidateStats,
+  passwordDigitCount,
+  passwordDigitMarks,
+  passwordGuessText,
+  passwordHint,
+  passwordPositionOptions,
+  passwordSuggestion,
+  type PasswordAttempt,
+} from "@/features/play/arcade-password";
 import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
@@ -29,7 +44,6 @@ const snakeRows = 14;
 const snakeBoardX = (canvasWidth - snakeColumns * snakeCellSize) / 2;
 const snakeBoardY = 58;
 const snakeMoveInterval = 0.18;
-const passwordDigitCount = 3;
 const passwordDigitWidth = 112;
 const passwordDigitHeight = 136;
 const passwordDigitGap = 24;
@@ -136,14 +150,6 @@ type SnakeCell = {
 type SnakeFood = SnakeCell & {
   label: string;
   good: boolean;
-};
-
-type PasswordAttempt = {
-  guess: string;
-  exact: number;
-  near: number;
-  hint: string;
-  repeated: boolean;
 };
 
 type GemTile = {
@@ -447,16 +453,6 @@ function makeGemTiles(content: ArcadeGameContent): GemTile[] {
     }
   }
   return tiles;
-}
-
-function makePasswordSecret(content: ArcadeGameContent): number[] {
-  const digits: number[] = [];
-  for (let attempt = 0; digits.length < passwordDigitCount && attempt < 40; attempt += 1) {
-    const digit = Math.floor(pseudoRandom(content.slug.length * 53 + attempt * 17 + 7) * 10);
-    if (!digits.includes(digit)) digits.push(digit);
-  }
-  while (digits.length < passwordDigitCount) digits.push((digits.length * 3 + 4) % 10);
-  return digits;
 }
 
 function makeSnake(): SnakeCell[] {
@@ -889,10 +885,6 @@ function advanceSnake(content: ArcadeGameContent, state: GameState, countAction:
   finishSnakeIfNeeded(content, state);
 }
 
-function passwordGuessText(state: GameState) {
-  return state.passwordGuess.join("");
-}
-
 function movePasswordCursor(state: GameState, delta: number) {
   state.passwordCursor = (state.passwordCursor + delta + passwordDigitCount) % passwordDigitCount;
 }
@@ -912,142 +904,21 @@ function setPasswordDigitFromClick(state: GameState, digitIndex: number) {
   adjustPasswordDigit(state, 1);
 }
 
-function evaluatePasswordGuess(secret: number[], guess: number[]) {
-  let exact = 0;
-  const secretRemainder: number[] = [];
-  const guessRemainder: number[] = [];
-  for (let index = 0; index < passwordDigitCount; index += 1) {
-    if (guess[index] === secret[index]) {
-      exact += 1;
-    } else {
-      secretRemainder.push(secret[index] ?? -1);
-      guessRemainder.push(guess[index] ?? -2);
-    }
-  }
-  let near = 0;
-  for (const digit of guessRemainder) {
-    const matchIndex = secretRemainder.indexOf(digit);
-    if (matchIndex >= 0) {
-      near += 1;
-      secretRemainder.splice(matchIndex, 1);
-    }
-  }
-  return { exact, near };
-}
-
-function parsePasswordGuess(guess: string) {
-  return guess.split("").map((digit) => Number(digit));
-}
-
-function isRepeatedPasswordGuess(state: GameState, guess: string) {
-  return state.passwordAttempts.some((attempt) => attempt.guess === guess);
-}
-
-function candidateMatchesAttempts(candidate: number[], attempts: PasswordAttempt[]) {
-  return attempts.every((attempt) => {
-    const { exact, near } = evaluatePasswordGuess(candidate, parsePasswordGuess(attempt.guess));
-    return exact === attempt.exact && near === attempt.near;
-  });
-}
-
-function passwordCandidates(state: GameState) {
-  return passwordCandidatesForAttempts(state.passwordAttempts);
-}
-
-function passwordCandidatesForAttempts(attempts: PasswordAttempt[]) {
-  const candidates: number[][] = [];
-  for (let a = 0; a <= 9; a += 1) {
-    for (let b = 0; b <= 9; b += 1) {
-      if (b === a) continue;
-      for (let c = 0; c <= 9; c += 1) {
-        if (c === a || c === b) continue;
-        const candidate = [a, b, c];
-        if (candidateMatchesAttempts(candidate, attempts)) {
-          candidates.push(candidate);
-        }
-      }
-    }
-  }
-  return candidates;
-}
-
-function passwordCandidateStats(state: GameState) {
-  const candidates = passwordCandidates(state);
-  const previousCandidates = state.passwordAttempts.length ? passwordCandidatesForAttempts(state.passwordAttempts.slice(1)) : candidates;
-  return {
-    candidates,
-    previousCount: previousCandidates.length,
-    narrowedBy: Math.max(0, previousCandidates.length - candidates.length),
-  };
-}
-
-function passwordPositionOptions(candidates: number[][]) {
-  return Array.from({ length: passwordDigitCount }, (_, position) => {
-    const digits = new Set<number>();
-    for (const candidate of candidates) {
-      const digit = candidate[position];
-      if (digit !== undefined) digits.add(digit);
-    }
-    return [...digits].sort((left, right) => left - right);
-  });
-}
-
-function formatPasswordOptionDigits(digits: number[]) {
-  if (!digits.length) return "-";
-  if (digits.length >= 9) return "0-9";
-  return digits.join("");
-}
-
-function passwordSuggestion(state: GameState) {
-  const candidates = passwordCandidates(state);
-  const triedGuesses = new Set(state.passwordAttempts.map((attempt) => attempt.guess));
-  return candidates.find((candidate) => !triedGuesses.has(candidate.join("")))?.join("") ?? candidates[0]?.join("") ?? "---";
-}
-
 function applyPasswordSuggestion(state: GameState) {
-  const suggestion = passwordSuggestion(state);
+  const suggestion = passwordSuggestion(state.passwordAttempts);
   if (!/^\d{3}$/.test(suggestion)) return;
   state.passwordGuess = parsePasswordGuess(suggestion);
   state.passwordCursor = 0;
-}
-
-function passwordDigitMarks(state: GameState) {
-  const marks: Array<"unknown" | "candidate" | "absent"> = Array.from({ length: 10 }, () => "unknown");
-  for (const attempt of state.passwordAttempts) {
-    const digits = new Set(parsePasswordGuess(attempt.guess));
-    if (attempt.exact === 0 && attempt.near === 0) {
-      digits.forEach((digit) => {
-        marks[digit] = "absent";
-      });
-      continue;
-    }
-    digits.forEach((digit) => {
-      if (marks[digit] !== "absent") marks[digit] = "candidate";
-    });
-  }
-  return marks;
-}
-
-function passwordHint(state: GameState, exact: number, near: number) {
-  if (exact === passwordDigitCount) return "열림";
-  if (exact === 0 && near === 0) return "숫자부터 다시 보는 게 낫습니다";
-  if (exact === 2) return "한 자리만 더 맞추면 됩니다";
-  if (near >= 2) return "숫자는 좋은데 자리가 어긋났습니다";
-  const guessSum = state.passwordGuess.reduce((sum, digit) => sum + digit, 0);
-  const secretSum = state.passwordSecret.reduce((sum, digit) => sum + digit, 0);
-  if (guessSum < secretSum) return "합이 조금 낮습니다";
-  if (guessSum > secretSum) return "합이 조금 높습니다";
-  return "방향은 나쁘지 않습니다";
 }
 
 function submitPasswordGuess(content: ArcadeGameContent, state: GameState) {
   if (state.finished) return;
   state.actions += 1;
   const { exact, near } = evaluatePasswordGuess(state.passwordSecret, state.passwordGuess);
-  const hint = passwordHint(state, exact, near);
-  const guess = passwordGuessText(state);
+  const hint = passwordHint(state.passwordSecret, state.passwordGuess, exact, near);
+  const guess = passwordGuessText(state.passwordGuess);
   const solved = exact === passwordDigitCount;
-  const repeated = isRepeatedPasswordGuess(state, guess);
+  const repeated = isRepeatedPasswordGuess(state.passwordAttempts, guess);
   const delta = solved ? content.arcade.targetScore : Math.max(0, exact * 5 + near * 2 - (exact === 0 && near === 0 ? 1 : 0) - (repeated ? 3 : 0));
 
   state.score = solved ? content.arcade.targetScore : Math.max(state.score, delta);
@@ -3009,12 +2880,12 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
 function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const latest = state.passwordAttempts[0];
-  const candidateStats = passwordCandidateStats(state);
+  const candidateStats = passwordCandidateStats(state.passwordAttempts);
   const candidates = candidateStats.candidates;
   const positionOptions = passwordPositionOptions(candidates);
-  const suggestion = passwordSuggestion(state);
-  const digitMarks = passwordDigitMarks(state);
-  const currentGuess = passwordGuessText(state);
+  const suggestion = passwordSuggestion(state.passwordAttempts);
+  const digitMarks = passwordDigitMarks(state.passwordAttempts);
+  const currentGuess = passwordGuessText(state.passwordGuess);
   const repeatedCurrent = state.passwordAttempts.some((attempt, index) => attempt.guess === currentGuess && (index > 0 || attempt.repeated));
 
   ctx.fillStyle = background;
