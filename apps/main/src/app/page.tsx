@@ -20,12 +20,12 @@ interface HomePageProps {
 const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base64-tool", "cron-generator", "dns-lookup"];
 const contentLocale = "ko";
 const homeKeywords = homeContentKeywords(getBlogPosts(), getPlayContents());
-const homeShareTitle = "뭐라도 해보자. 짧게 읽고 바로 눌러보는 곳";
+const homeShareTitle = "짧게 읽고 바로 눌러보는 Blog + Play";
 const homeShareImage = openGraphImage({ kind: "home", title: homeShareTitle });
 
 export const metadata: Metadata = {
-  title: "bobob.app - 뭐라도 해보는 기록과 Play",
-  description: "거창한 서비스라고 말하기보다, 개발/AI 작업에서 막힌 것과 고친 기록을 남기고 떠오른 작은 Play를 그냥 하나씩 올립니다.",
+  title: "bobob.app - 개발/AI 기록과 짧은 Play",
+  description: "개발/AI 작업 기록과 1분 안팎의 Play를 모은 bobob.app입니다. 글을 읽고, 마우스나 키보드로 한 판 해보고, 필요한 도구까지 이어갑니다.",
   keywords: homeKeywords,
   alternates: {
     canonical: "https://www.bobob.app/",
@@ -34,14 +34,14 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://www.bobob.app/",
     siteName: "bobob.app",
-    title: "bobob.app - 뭐라도 해보는 기록과 Play",
-    description: "막히면 적고, 떠오르면 만들고, 별거 아니어도 일단 올려보는 개발/AI 기록과 작은 Play입니다.",
+    title: "bobob.app - 개발/AI 기록과 짧은 Play",
+    description: "개발/AI 작업 기록을 읽고, 짧은 Play를 마우스나 키보드로 바로 한 판 해봅니다.",
     images: [homeShareImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: "bobob.app - 뭐라도 해보는 기록과 Play",
-    description: "개발/AI 작업에서 막힌 것과 떠오른 작은 Play를 그냥 하나씩 올립니다.",
+    title: "bobob.app - 개발/AI 기록과 짧은 Play",
+    description: "개발/AI 작업 기록과 브라우저에서 바로 해보는 짧은 Play를 모았습니다.",
     images: [shareImageUrl({ kind: "home", title: homeShareTitle })],
   },
 };
@@ -63,13 +63,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <section className="border-b bg-muted/20">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
           <div>
-            <Badge>일단 해보는 Blog + Play</Badge>
+            <Badge>Blog + Play</Badge>
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal text-foreground md:text-5xl">
-              뭐라도 해보자. 짧게 읽고, 바로 눌러보고, 다시 고치는 곳
+              짧게 읽고, 바로 눌러보는 Blog + Play
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              bobob.app은 대단한 플랫폼을 만들겠다는 말보다, 오늘 막힌 개발/AI 작업을 적고 떠오르면 작은 Play도 하나씩 올리는 쪽으로 갑니다.
-              글은 글대로 쌓고, 퇴근 생존기나 회의 탈출 같은 건 바로 눌러보게 만듭니다. 좀 어설퍼도... 일단 해보고 고칩니다!
+              개발/AI 작업에서 막혔던 기록은 글로, 손으로 해보면 더 빨리 감이 오는 아이디어는 Play로 모았습니다. 로그인 없이 읽고 한 판 해본 뒤,
+              필요하면 남겨둔 도구까지 이어가면 됩니다.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
@@ -89,12 +89,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="rounded-lg border bg-background p-4 shadow-sm">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-muted-foreground" />
-              <p className="text-sm font-semibold">요즘 작업 방식</p>
+              <p className="text-sm font-semibold">바로 시작하는 방식</p>
             </div>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <p>글은 독립적으로 쌓고, 손으로 느끼면 더 좋겠다 싶은 아이디어만 Play로 만듭니다.</p>
-              <p>규칙은 하나만 둡니다. 오래 설명하면 이미 진 겁니다.</p>
-              <p>초기에는 로그인, 랭킹, 댓글 없이 갑니다. 만들고, 보고, 이상하면 다시 손봅니다.</p>
+              <p>글은 날짜, 기준, 시행착오를 먼저 보여줍니다.</p>
+              <p>Play는 한 가지 규칙과 한 가지 조작으로 시작합니다.</p>
+              <p>로그인, 랭킹, 댓글 없이 한 판 결과만 보고 넘어갑니다.</p>
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="mb-4 flex items-end justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Featured Play</p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-normal">일단 눌러보는 것들</h2>
+              <h2 className="mt-1 text-2xl font-semibold tracking-normal">바로 한 판 하는 Play</h2>
             </div>
             <Link href="/play" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               전체 Play 보기
@@ -165,8 +165,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <div className="mb-4 flex items-end justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Popular Tools</p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-normal">그래도 남겨둔 개발자 도구</h2>
-            <p className="mt-1 text-sm text-muted-foreground">예전에 만든 도구들은 버리지 않습니다. 필요하면 `/tools` 아래에서 계속 씁니다.</p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-normal">필요할 때 쓰는 개발자 도구</h2>
+            <p className="mt-1 text-sm text-muted-foreground">JSON, Regex, DNS 같은 도구는 /tools 아래에서 계속 씁니다.</p>
           </div>
           <Link href="/tools" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             도구 전체 보기
@@ -191,7 +191,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-sm text-muted-foreground">
-          <span>bobob.app, 일단 해보는 중</span>
+          <span>bobob.app Blog + Play</span>
           <div className="flex gap-3">
             <Link href="/about" className="hover:text-foreground">
               소개

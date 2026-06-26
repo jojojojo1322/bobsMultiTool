@@ -5,7 +5,7 @@
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-26",
-  "shareText": "밤길 비행을 해봤다. 누르고 놓는 감각 하나만 남겨도 꽤 게임 같다.",
+  "shareText": "밤길 비행을 해봤다. 누르고 놓는 타이밍 하나로 은근 오래 붙잡힌다.",
   "order": 10,
   "relatedBlogSlugs": ["small-web-games-retention", "why-small-web-toys-return"],
   "relatedPlaySlugs": ["office-survival", "deploy-crossing"],

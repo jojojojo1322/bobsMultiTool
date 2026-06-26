@@ -139,19 +139,18 @@ function PlayContext({
 
   return (
     <section className="mt-6 rounded-md border bg-muted/20 p-4" data-play-context>
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">한 판 메모</p>
-      <h2 className="mt-2 text-xl font-semibold tracking-normal">대충 이런 느낌</h2>
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">한 판 안내</p>
+      <h2 className="mt-2 text-xl font-semibold tracking-normal">규칙은 화면에서 바로 확인</h2>
       <div className="mt-3 grid gap-4 text-sm leading-7 text-muted-foreground md:grid-cols-2">
         <p>
-          이 판은 설명을 오래 읽고 시작하는 쪽이 아닙니다. {typeLabel}이라서 화면 보고 한 번 움직여보면 감이 옵니다. 맞으면 한 번 더 하고, 아니면 그냥 다음 카드로 넘어가면 됩니다.
+          이 판은 설명을 오래 읽고 시작하는 쪽이 아닙니다. {typeLabel}이라서 첫 움직임으로 감을 잡으면 됩니다. 맞으면 한 번 더 하고, 아니면 다음 카드로 넘어가세요.
         </p>
         <p>
-          한 판은 {content.durationLabel}, {playMetric} 정도로 끝납니다. 결과도 점수와 짧은 말 정도입니다. 마음에 남는 부분이 있으면 관련 글을 이어서 봐도 되고, 안 봐도
-          됩니다.
+          한 판은 {content.durationLabel}, {playMetric} 정도로 끝납니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.
         </p>
       </div>
       <p className="mt-3 text-sm leading-7 text-muted-foreground">
-        점수는 정답표가 아닙니다. 한 번 해보고 “이건 좀 되네” 싶으면 한 번 더, 아니면 다음 카드로 넘어가면 됩니다. 잘 안 맞으면 다른 카드로 가면 됩니다.
+        점수는 정답표가 아니라 한 판 기록입니다. 마우스와 키보드 조작은 브라우저 안에서 바로 처리되고, 결과 공유도 같은 화면에서 이어집니다. 방금 감이 맞았다면 한 번 더, 아니면 다른 카드로 넘어가도 충분합니다.
       </p>
       {firstBlog ? (
         <div className="mt-4 rounded-sm border bg-background p-3 text-sm">

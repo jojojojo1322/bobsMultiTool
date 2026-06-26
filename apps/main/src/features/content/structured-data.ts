@@ -208,7 +208,7 @@ export function playIndexStructuredData(contents: PlayContent[]) {
     "@type": "CollectionPage",
     name: "Play - bobob.app",
     url,
-    description: "단일 규칙과 짧은 조작으로 바로 끝나는 bobob.app의 가벼운 웹 게임과 실험 목록.",
+    description: "단일 규칙과 짧은 조작으로 바로 시작하는 bobob.app의 웹 게임 목록.",
     inLanguage: contentLocale,
     keywords,
     about: topicThings(keywords),

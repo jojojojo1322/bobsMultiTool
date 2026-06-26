@@ -1,17 +1,17 @@
 {
   "slug": "prompt-sum-box",
-  "title": "말조각 10칸 맞추기",
-  "description": "칸을 옮겨 다니며 숫자 조각을 고르고, 합 10을 만들면 지워지는 작은 캔버스 보드 게임입니다. 급하게 많이 누르면 금방 넘칩니다.",
+  "title": "숫자조각 10 맞추기",
+  "description": "숫자 조각을 고르고 합 10을 만들면 선택한 칸이 지워지는 1분 캔버스 보드 게임입니다. 급하게 많이 누르면 금방 넘칩니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-26",
-  "shareText": "말조각 10칸 맞추기를 해봤다. 숫자 두 개 고르는 일도 급하면 이상하게 꼬인다.",
+  "shareText": "숫자조각 10 맞추기를 해봤다. 숫자 두 개 고르는 일도 급하면 이상하게 꼬인다.",
   "order": 3,
   "relatedBlogSlugs": ["why-small-web-toys-return", "small-play-rules-note"],
   "relatedPlaySlugs": ["ten-box-rush", "prompt-gem-swap", "password-lock"],
   "arcade": {
     "variant": "sum-box",
-    "goal": "칸을 옮겨 다니며 숫자 조각을 고르고, 합 10을 만들면 지웁니다.",
+    "goal": "숫자 조각을 고르고, 합 10을 만들면 선택한 칸을 지웁니다.",
     "controls": "마우스로 칸을 누르거나 방향키/WASD로 옮깁니다. Space/Enter로 고르고, 합 10이면 사라집니다.",
     "rounds": 12,
     "targetScore": 20,
@@ -21,8 +21,8 @@
     "palette": { "background": "#15151d", "primary": "#a78bfa", "accent": "#facc15", "danger": "#fb7185" }
   },
   "endings": [
-    { "id": "neat-box", "title": "꽤 말끔함", "description": "필요한 조각만 잘 골랐다. 말이 길어지기 전에 손이 먼저 정리했다.", "minScore": 20 },
-    { "id": "almost", "title": "조금 넘침", "description": "나쁘지 않지만 욕심낸 조각이 몇 개 섞였다. 다음 판은 더 가볍게 가자.", "minScore": 10 },
+    { "id": "neat-box", "title": "꽤 말끔함", "description": "필요한 숫자만 잘 골랐다. 판이 붐비기 전에 손이 먼저 정리했다.", "minScore": 20 },
+    { "id": "almost", "title": "조금 넘침", "description": "나쁘지 않지만 욕심낸 조각이 몇 개 섞였다. 다음 판은 더 차분히 가자.", "minScore": 10 },
     { "id": "messy", "title": "상자가 넘침", "description": "좋은 조각과 소음이 같이 들어왔다. 한 박자 늦게 눌러도 된다.", "minScore": 0 }
   ]
 }
