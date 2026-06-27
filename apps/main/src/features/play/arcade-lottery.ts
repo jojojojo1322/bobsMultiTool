@@ -255,9 +255,12 @@ export function lotteryWinningLines(state: Pick<LotteryPlayState, "lotteryCells"
 export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const stage = lotteryStageAt(state.lotteryStage);
+  const nextStage = lotteryStageAt((state.lotteryStage + 1) % lotteryStages.length);
   const revealed = lotteryRevealedCount(state);
   const complete = lotteryTicketComplete(state);
   const winningLines = lotteryWinningLines(state);
+  const newestScratch = state.lotteryDragTrail[0] ?? null;
+  const activeScratchIndex = newestScratch ? lotteryCellIndexAt(state, newestScratch) : -1;
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, lotteryCanvasWidth, 520);
@@ -284,6 +287,25 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.fillStyle = "rgba(248,250,252,0.68)";
   ctx.fillText(stage.detail, 56, 78);
 
+  const stageDotX = 56;
+  const stageDotY = 91;
+  for (let index = 0; index < lotteryStages.length; index += 1) {
+    const x = stageDotX + index * 22;
+    ctx.fillStyle = index === state.lotteryStage ? accent : "rgba(255,255,255,0.24)";
+    ctx.beginPath();
+    ctx.roundRect(x, stageDotY - 5, index === state.lotteryStage ? 18 : 12, 8, 4);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.1)";
+  ctx.beginPath();
+  ctx.roundRect(184, 83, 286, 22, 11);
+  ctx.fill();
+  ctx.fillStyle = "rgba(248,250,252,0.76)";
+  ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`즉석 ${stage.instantSymbol} +${stage.instantPrize} · 한 줄 +${stage.linePrize} · 다음 ${nextStage.title.replace(/^[0-9]단계 /, "")}`, 196, 98);
+
   ctx.textAlign = "right";
   ctx.fillStyle = accent;
   ctx.font = "900 18px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
@@ -299,22 +321,9 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
   ctx.stroke();
 
-  for (const line of winningLines) {
-    const first = state.lotteryCells[line[0]];
-    const last = state.lotteryCells[line[line.length - 1]];
-    if (!first || !last) continue;
-    ctx.strokeStyle = "rgba(250,204,21,0.74)";
-    ctx.lineWidth = 8;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(first.x + lotteryCellSize / 2, first.y + lotteryCellSize / 2);
-    ctx.lineTo(last.x + lotteryCellSize / 2, last.y + lotteryCellSize / 2);
-    ctx.stroke();
-    ctx.lineCap = "butt";
-  }
-
   for (const cell of state.lotteryCells) {
     const isCursor = cell.id === state.lotteryCursor;
+    const isFreshScratch = cell.id === activeScratchIndex;
     ctx.fillStyle = "rgba(0,0,0,0.24)";
     ctx.beginPath();
     ctx.roundRect(cell.x + 5, cell.y + 7, lotteryCellSize, lotteryCellSize, 20);
@@ -334,8 +343,12 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.roundRect(cell.x, cell.y, lotteryCellSize, lotteryCellSize, 20);
     ctx.fill();
 
-    ctx.strokeStyle = cell.revealed ? "rgba(254,240,138,0.9)" : "rgba(255,255,255,0.34)";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = cell.revealed
+      ? isFreshScratch
+        ? "rgba(56,189,248,0.95)"
+        : "rgba(254,240,138,0.9)"
+      : "rgba(255,255,255,0.34)";
+    ctx.lineWidth = isFreshScratch ? 3 : 2;
     ctx.stroke();
 
     if (isCursor) {
@@ -347,6 +360,12 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     }
 
     if (cell.revealed) {
+      if (isFreshScratch) {
+        ctx.fillStyle = "rgba(56,189,248,0.18)";
+        ctx.beginPath();
+        ctx.roundRect(cell.x + 8, cell.y + 8, lotteryCellSize - 16, lotteryCellSize - 16, 16);
+        ctx.fill();
+      }
       ctx.fillStyle = "#111827";
       ctx.font = "900 26px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
@@ -391,7 +410,61 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
       ctx.lineTo(point.x, point.y);
     }
     ctx.stroke();
+    ctx.fillStyle = "rgba(248,250,252,0.9)";
+    state.lotteryDragTrail.slice(0, 8).forEach((point, index) => {
+      const radius = Math.max(2, 6 - index * 0.45);
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    if (newestScratch) {
+      ctx.fillStyle = "rgba(15,23,42,0.84)";
+      ctx.beginPath();
+      ctx.roundRect(clamp(newestScratch.x + 16, 36, lotteryCanvasWidth - 128), clamp(newestScratch.y + 16, 110, 430), 92, 28, 14);
+      ctx.fill();
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("긁는 중", clamp(newestScratch.x + 62, 82, lotteryCanvasWidth - 82), clamp(newestScratch.y + 34, 128, 448));
+    }
     ctx.restore();
+  }
+
+  for (const line of winningLines) {
+    const first = state.lotteryCells[line[0]];
+    const last = state.lotteryCells[line[line.length - 1]];
+    if (!first || !last) continue;
+    ctx.save();
+    ctx.shadowColor = "rgba(250,204,21,0.8)";
+    ctx.shadowBlur = 12;
+    ctx.strokeStyle = "rgba(250,204,21,0.9)";
+    ctx.lineWidth = 9;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(first.x + lotteryCellSize / 2, first.y + lotteryCellSize / 2);
+    ctx.lineTo(last.x + lotteryCellSize / 2, last.y + lotteryCellSize / 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if (complete) {
+    const bannerX = 178;
+    const bannerY = 224;
+    const bannerWidth = lotteryCanvasWidth - bannerX * 2;
+    ctx.fillStyle = "rgba(15,23,42,0.9)";
+    ctx.beginPath();
+    ctx.roundRect(bannerX, bannerY, bannerWidth, 72, 20);
+    ctx.fill();
+    ctx.strokeStyle = state.lotteryLastPrize > 0 ? "rgba(250,204,21,0.85)" : "rgba(255,255,255,0.24)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = state.lotteryLastPrize > 0 ? accent : "rgba(248,250,252,0.86)";
+    ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(state.lotteryLastPrize > 0 ? `이번 장 +${state.lotteryLastPrize}` : "이번 장 꽝", lotteryCanvasWidth / 2, bannerY + 30);
+    ctx.fillStyle = "rgba(248,250,252,0.72)";
+    ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(`다음은 ${nextStage.title} · Space/Enter로 계속`, lotteryCanvasWidth / 2, bannerY + 52);
   }
 
   ctx.fillStyle = "rgba(15,23,42,0.56)";

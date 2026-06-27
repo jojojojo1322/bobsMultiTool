@@ -4529,10 +4529,13 @@ function LiveArcadeResultPanel({
   const isLottery = content.arcade.variant === "lottery";
   const isSumBox = content.arcade.variant === "sum-box";
   const stage = lotteryStageAt(view.lotteryStage);
+  const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
   const title = isLottery ? "현재 복권" : "현재 기록";
   const headline = isLottery ? stage.title : ending.title;
   const detail = isLottery
-    ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다 긁으면 다음 단계 복권으로 이어집니다.`
+    ? view.lotteryTicketDone
+      ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다음은 ${nextStage.title}이고, 원하면 바로 이어서 긁습니다.`
+      : `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. ${9 - view.lotteryRevealedCount}칸 남았고, 시간이나 목표 점수 없이 이어집니다.`
     : isSumBox
       ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
