@@ -46,6 +46,14 @@ export type PasswordGuessPreview = {
   outcomeCount: number;
 };
 
+export type PasswordOutcomeBucket = {
+  exact: number;
+  near: number;
+  label: string;
+  count: number;
+  ratio: number;
+};
+
 type PasswordPlayState = {
   finished: boolean;
   elapsed: number;
@@ -298,6 +306,40 @@ export function passwordGuessPreview(attempts: PasswordAttempt[], guess: number[
     worstRemaining: Math.max(...bucketSizes),
     outcomeCount: buckets.size,
   };
+}
+
+export function passwordGuessOutcomeBuckets(attempts: PasswordAttempt[], guess: number[] | string, limit = 3): PasswordOutcomeBucket[] {
+  const guessText = Array.isArray(guess) ? passwordGuessText(guess) : guess;
+  const candidates = passwordCandidatesForAttempts(attempts);
+  if (!candidates.length || passwordGuessHasDuplicateDigits(guessText)) return [];
+
+  const alreadyTried = attempts.some((attempt) => attempt.guess === guessText);
+  const guessDigits = parsePasswordGuess(guessText);
+  const isCandidate = candidates.some((candidate) => candidate.join("") === guessText);
+  if (attempts.length > 0 && !alreadyTried && !isCandidate) return [];
+
+  const buckets = new Map<string, PasswordOutcomeBucket>();
+  for (const possibleSecret of candidates) {
+    const outcome = evaluatePasswordGuess(possibleSecret, guessDigits);
+    const key = `${outcome.exact}-${outcome.near}`;
+    const previous = buckets.get(key);
+    if (previous) {
+      previous.count += 1;
+    } else {
+      buckets.set(key, {
+        exact: outcome.exact,
+        near: outcome.near,
+        label: `${outcome.exact}자리 ${outcome.near}숫자`,
+        count: 1,
+        ratio: 0,
+      });
+    }
+  }
+
+  return [...buckets.values()]
+    .map((bucket) => ({ ...bucket, ratio: bucket.count / candidates.length }))
+    .sort((left, right) => right.count - left.count || right.exact - left.exact || right.near - left.near)
+    .slice(0, limit);
 }
 
 export function passwordGuessSplitRatio(preview: PasswordGuessPreview) {

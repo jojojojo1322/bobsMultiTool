@@ -54,6 +54,7 @@ import {
   passwordDigitWidth,
   passwordDigitY,
   passwordGuessHasDuplicateDigits,
+  passwordGuessOutcomeBuckets,
   passwordGuessIsPossible,
   passwordGuessSplitLabel,
   passwordGuessSplitRatio,
@@ -2485,6 +2486,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const impossibleCurrent =
     !duplicateCurrent && state.passwordAttempts.length > 0 && !state.passwordAttempts.some((attempt) => attempt.guess === currentGuess) && !passwordGuessIsPossible(state.passwordAttempts, currentGuess);
   const guessPreview = passwordGuessPreview(state.passwordAttempts, state.passwordGuess);
+  const outcomeBuckets = passwordGuessOutcomeBuckets(state.passwordAttempts, state.passwordGuess);
   const splitRatio = passwordGuessSplitRatio(guessPreview);
   const splitLabel = passwordGuessSplitLabel(guessPreview);
   const splitOutcomeText = guessPreview.issue
@@ -2756,6 +2758,42 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(candidateLine.slice(0, 20), historyX + 12, y + 30);
   });
+
+  const outcomeY = 284;
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("예상 힌트", historyX, outcomeY - 10);
+  if (!outcomeBuckets.length) {
+    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    ctx.beginPath();
+    ctx.roundRect(historyX, outcomeY, historyWidth, 32, 10);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.62)";
+    ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("번호를 고르면 분포가 나옵니다", historyX + 12, outcomeY + 20);
+  } else {
+    outcomeBuckets.forEach((bucket, index) => {
+      const y = outcomeY + index * 24;
+      const barWidth = Math.max(8, (historyWidth - 18) * bucket.ratio);
+      ctx.fillStyle = "rgba(255,255,255,0.1)";
+      ctx.beginPath();
+      ctx.roundRect(historyX, y, historyWidth, 19, 9);
+      ctx.fill();
+      ctx.fillStyle = index === 0 ? "rgba(251,191,36,0.34)" : "rgba(96,165,250,0.22)";
+      ctx.beginPath();
+      ctx.roundRect(historyX, y, barWidth, 19, 9);
+      ctx.fill();
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillText(bucket.label, historyX + 10, y + 13);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "rgba(255,255,255,0.76)";
+      ctx.font = "850 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.fillText(`${bucket.count}개`, historyX + historyWidth - 10, y + 13);
+      ctx.textAlign = "left";
+    });
+  }
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
