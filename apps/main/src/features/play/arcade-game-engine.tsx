@@ -160,6 +160,8 @@ import {
   moleHoleCenter,
   moleHoleSize,
   moleRows,
+  moleAvoidTarget,
+  molePriorityTarget,
   moleTargetTiming,
   moleWhackOutcome,
   moveMoleCursor,
@@ -615,7 +617,7 @@ function whackMole(content: ArcadeGameContent, state: GameState, hole = state.mo
     target = activeMoleAt(state, hole);
   }
   if (!target && state.moleTargets.length) {
-    target = state.moleTargets[0];
+    target = molePriorityTarget(state) ?? state.moleTargets[0];
     state.moleCursor = target.hole;
   }
 
@@ -2097,6 +2099,8 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
 
 function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
+  const priorityMole = molePriorityTarget(state);
+  const avoidMole = moleAvoidTarget(state);
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -2131,6 +2135,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     if (target) {
       const timing = moleTargetTiming(target);
       const outcome = moleWhackOutcome(target);
+      const isPriority = priorityMole?.id === target.id;
+      const isAvoid = avoidMole?.id === target.id;
       const urgencyAlpha = (0.36 + timing.urgency * 0.44).toFixed(2);
       ctx.strokeStyle = target.good ? `rgba(134,239,172,${urgencyAlpha})` : `rgba(251,113,133,${urgencyAlpha})`;
       ctx.lineWidth = 4;
@@ -2138,6 +2144,17 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.arc(center.x, center.y + 10, moleHoleSize / 2 + 8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * timing.remaining);
       ctx.stroke();
       ctx.lineWidth = 1;
+
+      if (isPriority || isAvoid) {
+        ctx.strokeStyle = isPriority ? "rgba(134,239,172,0.92)" : "rgba(251,113,133,0.86)";
+        ctx.lineWidth = isPriority ? 4 : 3;
+        ctx.setLineDash(isPriority ? [] : [7, 7]);
+        ctx.beginPath();
+        ctx.ellipse(center.x, center.y + 15, moleHoleSize / 2 + 15, 31, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.lineWidth = 1;
+      }
 
       const moleHeight = 42 * timing.pop;
       ctx.fillStyle = target.good ? accent : danger;
@@ -2153,6 +2170,16 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.fillStyle = target.good ? "rgba(220,252,231,0.92)" : "rgba(255,228,230,0.92)";
       ctx.font = "800 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
       ctx.fillText(`${outcome.score > 0 ? "+" : ""}${outcome.score}`, center.x, center.y - 38);
+
+      if (isPriority || isAvoid) {
+        ctx.fillStyle = isPriority ? "rgba(134,239,172,0.96)" : "rgba(251,113,133,0.94)";
+        ctx.beginPath();
+        ctx.roundRect(center.x - 25, center.y - 70, 50, 18, 9);
+        ctx.fill();
+        ctx.fillStyle = isPriority ? "#052e16" : "#fff7ed";
+        ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.fillText(isPriority ? "잡기" : "두기", center.x, center.y - 57);
+      }
     }
 
     if (hasCursor && !state.finished) {
@@ -2187,8 +2214,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillText(`소음 ${noiseMoles}`, panelX + 66, 149);
   ctx.fillText(`곧 사라질 핵심 ${urgentGoodMoles}`, panelX + 18, 174);
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
-  ctx.fillText("링이 줄수록 시간이 없습니다.", panelX + 18, 222);
-  ctx.fillText("빨강은 지나가게 두는 편이 낫습니다.", panelX + 18, 246);
+  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label}` : "초록 알림 기다리기", panelX + 18, 222);
+  ctx.fillText(avoidMole ? `${avoidMole.label}은 두기` : "빨강은 지나가게 두기", panelX + 18, 246);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";

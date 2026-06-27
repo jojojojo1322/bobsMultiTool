@@ -111,6 +111,26 @@ export function moleTargetTiming(target: MoleTarget): MoleTargetTiming {
   };
 }
 
+export function molePriorityTarget(state: MoleTargetState) {
+  return (
+    state.moleTargets
+      .filter((target) => target.good)
+      .sort((left, right) => {
+        const leftTiming = moleTargetTiming(left);
+        const rightTiming = moleTargetTiming(right);
+        return leftTiming.remaining - rightTiming.remaining;
+      })[0] ?? null
+  );
+}
+
+export function moleAvoidTarget(state: MoleTargetState) {
+  return (
+    state.moleTargets
+      .filter((target) => !target.good)
+      .sort((left, right) => moleTargetTiming(right).urgency - moleTargetTiming(left).urgency)[0] ?? null
+  );
+}
+
 export function moleWhackOutcome(target: MoleTarget): MoleWhackOutcome {
   const timing = moleTargetTiming(target);
   if (target.good) {
