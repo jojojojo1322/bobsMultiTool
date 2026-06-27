@@ -129,7 +129,7 @@ function PlayContext({
     content.type === "arcade-game" && content.arcade.variant === "lottery"
       ? "시간이나 목표 점수로 끊지 않습니다. 한 장을 다 보면 다음 단계 복권으로 넘어가고, 그만하고 싶을 때 멈추면 됩니다."
       : content.type === "arcade-game" && content.arcade.variant === "sum-box"
-        ? `한 판은 ${content.durationLabel} 동안만 갑니다. 결과는 그 시간 안에 만든 기록으로 남습니다.`
+        ? `한 판은 ${content.durationLabel} 동안 갑니다. 결과는 그 시간 안에 만든 기록으로 남습니다.`
         : content.type === "arcade-game"
           ? `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 남고, 다시 해도 바로 이어집니다.`
         : `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.`;

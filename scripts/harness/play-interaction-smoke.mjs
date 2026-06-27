@@ -80,7 +80,7 @@ async function playState(page) {
   return page.evaluate(() => ({
     result: Boolean(document.querySelector("[data-play-result]")),
     turn: document.querySelector("[data-play-turn]")?.getAttribute("data-play-turn") ?? null,
-    actionCount: document.querySelectorAll("[data-play-action]").length,
+    controlCount: document.querySelectorAll("[data-play-action]").length,
   }));
 }
 
@@ -123,7 +123,7 @@ async function verifyPlay(browser, content, viewport) {
     for (let index = 0; index < steps + 2; index += 1) {
       const beforeState = await playState(page);
       if (beforeState.result) break;
-      if (!beforeState.actionCount) break;
+      if (!beforeState.controlCount) break;
       await clickNextAction(page, content);
       await page
         .waitForFunction(
