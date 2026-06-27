@@ -230,7 +230,6 @@ import {
   sumBoxTimeLimitSeconds,
   sumBoxSelectionSummary,
   sumBoxStreakBonus,
-  sumBoxTenCombinationCount,
   sumDragTiles,
   sumTileIndexAt,
   updateSumBox,
@@ -3425,8 +3424,6 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const blockedSum = blockedTile ? shownSum + blockedTile.value : shownSum;
   const complementTileIds = selectionSummary.complementTileIds;
   const comboHint = sumBoxCombinationHint(state);
-  const tenCombinationCount = sumBoxTenCombinationCount(state);
-  const tenCombinationLabel = tenCombinationCount >= 99 ? "99+" : `${tenCombinationCount}`;
   const hintTiles = !dragging && !shownTiles.length ? comboHint : [];
   const hintTileIds = new Set(hintTiles.map((tile) => tile.id));
   const nextStreak = shownSum === 10 ? state.sumStreak + 1 : state.sumStreak;
@@ -3456,7 +3453,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         .slice(0, 5)
         .join(" + ") + (comboHint.length > 5 ? " + ..." : "")
     : "없음";
-  const cleared = state.sumTiles.filter((tile) => tile.cleared).length;
+  const flowLabel = state.sumStreak > 0 ? "흐름 유지" : "새 흐름";
+  const topSumLabel = dragging ? `손길 ${shownSum} / 10` : shownSum > 0 ? `합 ${shownSum} / 10` : "합 10 만들기";
+  const hintLabel = comboHint.length ? `힌트 ${comboHintLabel}` : "새 판 준비";
   const timeLimit = arcadeTimeLimitSeconds(content);
   const timeLeft = Math.max(0, Math.ceil(timeLimit - state.elapsed));
   const timeRatio = clamp(timeLeft / timeLimit, 0, 1);
@@ -3511,12 +3510,12 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.9)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`${dragging ? "드래그 합" : "합"} ${shownSum} / 10`, 42, 48);
+  ctx.fillText(topSumLabel, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.66)";
-  ctx.fillText(`비운 ${cleared}/${state.sumTiles.length} · 연속 ${state.sumStreak}`, 190, 48);
+  ctx.fillText(`점수 ${state.score} · ${flowLabel}`, 190, 48);
   ctx.fillStyle = comboHint.length ? "rgba(255,255,255,0.66)" : "rgba(251,113,133,0.88)";
-  ctx.fillText(`남은 10 ${tenCombinationLabel}개 · 힌트 ${comboHintLabel}`, 330, 48);
+  ctx.fillText(hintLabel, 330, 48);
   ctx.strokeStyle = "rgba(255,255,255,0.18)";
   ctx.lineWidth = 5;
   ctx.beginPath();
@@ -3537,11 +3536,13 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillText(
     blockedTile
       ? `${shownTiles.map((tile) => tile.value).join(" + ") || "0"} + ${blockedTile.value} = ${blockedSum} · 넘침`
-      : shownTiles.length
+        : shownTiles.length
         ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}${shownSum === 10 ? ` · ${clearScoreLabel}` : ""}`
         : hintTiles.length
-          ? `노란 힌트 사과를 그대로 쓸면 10 · 최고 연속 ${state.sumBestStreak}`
-          : `마우스로 쓸어 담기 · 최고 연속 ${state.sumBestStreak}`,
+          ? "노란 힌트 사과를 그대로 쓸면 바로 10"
+          : state.sumStreak > 0
+            ? "흐름이 살아 있습니다. 다음 10을 이어보세요."
+            : "마우스로 쓸어 담기",
     42,
     68,
   );
@@ -3718,15 +3719,15 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.font = "900 27px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillText(`${tile.value}`, tileCenterX, tileCenterY + 12);
-    const activeOrder = shownTiles.findIndex((item) => item.id === tile.id);
-    if (activeOrder >= 0) {
+    const isInActivePath = shownTiles.some((item) => item.id === tile.id);
+    if (isInActivePath) {
       ctx.fillStyle = shownSum === 10 ? accent : shownSum > 10 ? danger : primary;
       ctx.beginPath();
-      ctx.arc(tile.x + 16, tile.y + 16, 11, 0, Math.PI * 2);
+      ctx.roundRect(tile.x + 7, tile.y + 7, 34, 17, 8);
       ctx.fill();
       ctx.fillStyle = shownSum === 10 ? "#111827" : "#f8fafc";
-      ctx.font = "900 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
-      ctx.fillText(`${activeOrder + 1}`, tile.x + 16, tile.y + 20);
+      ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillText("담음", tile.x + 24, tile.y + 19);
     }
     if (tile.label !== `${tile.value}`) {
       ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -4102,7 +4103,7 @@ export function ArcadeGameEngine({
         ? [
             { label: "기록", value: view.score },
             { label: "남은 시간", value: `${timeLeft}s` },
-            { label: "연속", value: view.sumStreak },
+            { label: "흐름", value: view.sumStreak > 0 ? "이어짐" : "준비" },
             { label: "방식", value: "드래그" },
           ]
         : [
@@ -5261,7 +5262,7 @@ function LiveArcadeResultPanel({
       ? `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
       : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다.`
     : isSumBox
-      ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
+      ? `${view.score}점. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
 
   return (

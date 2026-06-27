@@ -116,7 +116,7 @@ export function updateSumBox(content: ArcadeGameContent, state: SumBoxPlayState,
     refillSumBoxBoard(content, state, "판 비움");
     return;
   }
-  if (!hasCombination) refillSumBoxBoard(content, state, "남은 10 없음");
+  if (!hasCombination) refillSumBoxBoard(content, state, "보이는 10 없음");
 }
 
 export function moveSumCursor(state: Pick<SumBoxPlayState, "sumTiles" | "sumCursor">, delta: number) {
@@ -279,18 +279,6 @@ export function sumBoxCombinationHint(state: { sumTiles: SumTile[] }) {
     }
   }
   return combinations[10] ?? [];
-}
-
-export function sumBoxTenCombinationCount(state: { sumTiles: SumTile[] }) {
-  const counts = Array.from({ length: 11 }, () => 0);
-  counts[0] = 1;
-  for (const tile of state.sumTiles) {
-    if (tile.cleared || tile.value > 10) continue;
-    for (let sum = 10; sum >= tile.value; sum -= 1) {
-      counts[sum] = Math.min(99, counts[sum] + counts[sum - tile.value]);
-    }
-  }
-  return counts[10];
 }
 
 export function sumBoxClearScore(tiles: SumTile[]) {
