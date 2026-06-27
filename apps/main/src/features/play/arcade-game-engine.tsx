@@ -21,12 +21,14 @@ import {
   drawLottery,
   lotteryCellIndexAt,
   lotteryColumns,
+  lotteryPrizeLabel,
   lotteryRevealedCount,
   lotteryStageAt,
   lotteryStages,
   lotteryTicketComplete,
   makeLotteryCells,
   moveLotteryCursor,
+  nextLotteryTicket,
   revealLotteryCell,
   scratchLotteryAt,
   type LotteryCell,
@@ -3446,7 +3448,7 @@ export function ArcadeGameEngine({
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
   const activeActionLabel =
     content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
-  const shareScoreLabel = content.arcade.variant === "lottery" ? `누적 당첨: ${view.lotteryTotalPrize}` : `점수: ${view.score}`;
+  const shareScoreLabel = content.arcade.variant === "lottery" ? `누적 당첨: ${lotteryPrizeLabel(view.lotteryTotalPrize)}` : `점수: ${view.score}`;
   const lotteryStage = lotteryStageAt(view.lotteryStage);
   const lotteryNextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
   const shortLotteryStageTitle = (title: string) => title.replace(/^[0-9]단계\s*/, "");
@@ -3455,8 +3457,8 @@ export function ArcadeGameEngine({
       ? [
           { label: "현재 단계", value: shortLotteryStageTitle(lotteryStage.title) },
           { label: "다음 단계", value: shortLotteryStageTitle(lotteryNextStage.title) },
-          { label: "누적 당첨", value: view.lotteryTotalPrize },
-          { label: "방식", value: "계속 긁기" },
+          { label: "이번 장", value: lotteryPrizeLabel(view.lotteryLastPrize) },
+          { label: "방식", value: "끝 없음" },
         ]
       : content.arcade.variant === "sum-box"
         ? [
@@ -3840,6 +3842,15 @@ export function ArcadeGameEngine({
           state.lotterySuppressClick = false;
           return;
         }
+        if (lotteryTicketComplete(state)) {
+          event.preventDefault();
+          state.started = true;
+          state.lastFrame = performance.now();
+          nextLotteryTicket(content, state);
+          setShareState("idle");
+          syncView();
+          return;
+        }
         const index = lotteryCellIndexAt(state, point);
         if (index < 0) return;
         event.preventDefault();
@@ -4002,6 +4013,17 @@ export function ArcadeGameEngine({
         return;
       }
       if (content.arcade.variant === "lottery") {
+        const alreadyComplete = lotteryTicketComplete(state);
+        if (alreadyComplete) {
+          event.preventDefault();
+          state.started = true;
+          state.lastFrame = performance.now();
+          state.lotterySuppressClick = true;
+          nextLotteryTicket(content, state);
+          setShareState("idle");
+          syncView();
+          return;
+        }
         const index = lotteryCellIndexAt(state, point);
         if (index < 0) return;
         event.preventDefault();
@@ -4012,15 +4034,10 @@ export function ArcadeGameEngine({
         }
         state.started = true;
         state.lastFrame = performance.now();
-        const alreadyComplete = lotteryTicketComplete(state);
-        state.lotteryDragging = !alreadyComplete;
-        state.lotterySuppressClick = !alreadyComplete;
-        if (!alreadyComplete) {
-          clearLotteryDragTrail(state);
-          scratchLotteryAt(content, state, point);
-        } else {
-          state.lotteryCursor = index;
-        }
+        state.lotteryDragging = true;
+        state.lotterySuppressClick = true;
+        clearLotteryDragTrail(state);
+        scratchLotteryAt(content, state, point);
         setShareState("idle");
         syncView();
         return;
@@ -4531,6 +4548,16 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+function historyDetailText(item: HistoryItem, isLottery = false) {
+  if (isLottery) return item.score > 0 ? `${item.detail} / 당첨 +${item.score}` : item.detail;
+  return `${item.detail} / ${item.score > 0 ? `+${item.score}` : item.score}`;
+}
+
+function historyToneClassName(item: HistoryItem, isLottery = false) {
+  if (isLottery) return item.score > 0 ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-muted-foreground";
+  return item.score >= 0 ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600";
+}
+
 function HistoryPanel({ history }: { history: HistoryItem[] }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
@@ -4540,9 +4567,7 @@ function HistoryPanel({ history }: { history: HistoryItem[] }) {
           {history.map((item, index) => (
             <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
               <p className="text-sm font-medium">{item.label}</p>
-              <p className={item.score >= 0 ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
-                {item.detail} / {item.score > 0 ? `+${item.score}` : item.score}
-              </p>
+              <p className={historyToneClassName(item)}>{historyDetailText(item)}</p>
             </li>
           ))}
         </ol>
@@ -4578,8 +4603,8 @@ function LiveArcadeResultPanel({
   const headline = isLottery ? stage.title : ending.title;
   const detail = isLottery
     ? view.lotteryTicketDone
-      ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다음은 ${nextStage.title}이고, 원하면 바로 이어서 긁습니다.`
-      : `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 시간이나 목표 점수 없이 이어집니다.`
+      ? `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
+      : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 시간, 목표 점수, 횟수 제한 없이 이어집니다.`
     : isSumBox
       ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
@@ -4601,9 +4626,7 @@ function LiveArcadeResultPanel({
           {view.history.slice(0, 5).map((item, index) => (
             <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
               <p className="text-sm font-medium">{item.label}</p>
-              <p className={item.score >= 0 ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
-                {item.detail} / {item.score > 0 ? `+${item.score}` : item.score}
-              </p>
+              <p className={historyToneClassName(item, isLottery)}>{historyDetailText(item, isLottery)}</p>
             </li>
           ))}
         </ol>

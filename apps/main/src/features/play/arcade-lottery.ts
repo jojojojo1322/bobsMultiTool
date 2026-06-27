@@ -227,20 +227,26 @@ export function nextLotteryTicket(content: ArcadeGameContent, state: LotteryPlay
   const previousStage = lotteryStageAt(state.lotteryStage);
   const nextStage = (state.lotteryStage + 1) % lotteryStages.length;
   state.lotteryDraws += 1;
+  state.playTick += 1;
   state.lotteryStage = nextStage;
   state.lotteryCursor = 0;
   state.lotteryLastPrize = 0;
+  state.focus = 100;
   state.lotteryDragTrail = [];
   state.lotteryCells = makeLotteryCells(content, nextStage, state.lotteryDraws);
   rememberLotteryHistory(state, {
     label: lotteryStageAt(nextStage).title,
-    detail: `${previousStage.title} 다음 장`,
+    detail: `${previousStage.title}에서 이어짐`,
     score: 0,
   });
 }
 
 export function lotteryRevealedCount(state: Pick<LotteryPlayState, "lotteryCells">) {
   return state.lotteryCells.filter((cell) => cell.revealed).length;
+}
+
+export function lotteryPrizeLabel(value: number) {
+  return value > 0 ? `+${value}` : "없음";
 }
 
 export function lotteryWinningLines(state: Pick<LotteryPlayState, "lotteryCells">) {
@@ -303,7 +309,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.fillStyle = "rgba(248,250,252,0.76)";
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`즉석 ${stage.instantSymbol} +${stage.instantPrize} · 한 줄 +${stage.linePrize} · 다음 ${nextStage.title.replace(/^[0-9]단계 /, "")}`, 196, 98);
+  ctx.fillText(`끝 없음 · 즉석 ${stage.instantSymbol} +${stage.instantPrize} · 한 줄 +${stage.linePrize} · 다음 ${nextStage.title.replace(/^[0-9]단계 /, "")}`, 196, 98);
 
   ctx.textAlign = "right";
   ctx.fillStyle = accent;
@@ -460,10 +466,10 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.fillStyle = state.lotteryLastPrize > 0 ? accent : "rgba(248,250,252,0.86)";
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(state.lotteryLastPrize > 0 ? `이번 장 +${state.lotteryLastPrize}` : "이번 장 꽝", lotteryCanvasWidth / 2, bannerY + 30);
+    ctx.fillText(state.lotteryLastPrize > 0 ? `이번 장 ${lotteryPrizeLabel(state.lotteryLastPrize)}` : "이번 장 꽝", lotteryCanvasWidth / 2, bannerY + 30);
     ctx.fillStyle = "rgba(248,250,252,0.72)";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`다음은 ${nextStage.title} · Space/Enter로 계속`, lotteryCanvasWidth / 2, bannerY + 52);
+    ctx.fillText(`다음은 ${nextStage.title} · 버튼이나 캔버스를 누르면 계속`, lotteryCanvasWidth / 2, bannerY + 52);
   }
 
   ctx.fillStyle = "rgba(15,23,42,0.56)";
@@ -474,8 +480,8 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
   const status = complete
-    ? `이번 장 ${state.lotteryLastPrize} 당첨 · Space 또는 가운데 버튼으로 다음 복권`
-    : "긁을 칸을 골라 계속 진행 · 시간이나 목표 점수 없이 계속";
+    ? `이번 장 ${lotteryPrizeLabel(state.lotteryLastPrize)} · 다음 복권으로 계속`
+    : "긁을 칸을 골라 진행 · 시간, 목표 점수, 횟수 제한 없음";
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
 
@@ -496,8 +502,8 @@ function settleLotteryTicket(state: LotteryPlayState) {
   }
 
   rememberLotteryHistory(state, {
-    label: "꽝",
-    detail: "다음 장으로",
+    label: state.lotteryLastPrize > 0 ? "즉석 당첨" : "꽝",
+    detail: state.lotteryLastPrize > 0 ? "줄은 없고 즉석만" : "다음 장으로",
     score: 0,
   });
 }
