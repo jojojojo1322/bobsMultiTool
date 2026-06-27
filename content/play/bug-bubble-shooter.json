@@ -20,7 +20,7 @@
   },
   "endings": [
     { "id": "pop", "title": "잘 터뜨림", "description": "터뜨릴 것과 지나갈 것을 잘 나눴다.", "minScore": 20 },
-    { "id": "foam", "title": "거품 조금 남음", "description": "핵심은 잡았지만 소음도 몇 번 건드렸다.", "minScore": 10 },
+    { "id": "foam", "title": "거품 조금 남음", "description": "핵심은 잡았지만 소음도 같이 건드렸다.", "minScore": 10 },
     { "id": "noise", "title": "거품에 갇힘", "description": "보이는 걸 다 쏘면 판이 더 흐려진다.", "minScore": 0 }
   ]
 }

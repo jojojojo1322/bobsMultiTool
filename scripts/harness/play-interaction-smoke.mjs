@@ -8,6 +8,7 @@ const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape"
 const failures = [];
 const actionCountPattern =
   /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
+const playCountTonePattern = /몇\s*번\s*(?:흔들|헛발|멈칫|스쳤|꼬임|건드렸)/i;
 
 let chromium;
 try {
@@ -122,8 +123,8 @@ async function verifyPlay(browser, content, viewport) {
       failures.push(`${content.slug} ${viewport.width}x${viewport.height} missing play history panel`);
     }
     const initialText = await page.locator("body").innerText().catch(() => "");
-    if (actionCountPattern.test(initialText)) {
-      failures.push(`${content.slug} ${viewport.width}x${viewport.height} exposes action-count or move-limit wording`);
+    if (actionCountPattern.test(initialText) || playCountTonePattern.test(initialText)) {
+      failures.push(`${content.slug} ${viewport.width}x${viewport.height} exposes action-count, move-limit, or count-toned wording`);
     }
 
     const steps = playLength(content);

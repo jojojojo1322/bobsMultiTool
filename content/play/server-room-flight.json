@@ -20,7 +20,7 @@
   },
   "endings": [
     { "id": "smooth", "title": "부드럽게 통과", "description": "높이를 잘 맞췄다. 누르고 놓는 리듬이 살아 있다.", "minScore": 20 },
-    { "id": "bumpy", "title": "조금 덜컹", "description": "몇 번 스쳤지만 계속 날았다.", "minScore": 10 },
+    { "id": "bumpy", "title": "조금 덜컹", "description": "아슬아슬한 접촉은 있었지만 계속 날았다.", "minScore": 10 },
     { "id": "ground", "title": "바닥에 닿음", "description": "너무 오래 누르거나 너무 빨리 놓았다. 다음엔 조금 짧게.", "minScore": 0 }
   ]
 }

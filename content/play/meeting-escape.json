@@ -4,7 +4,7 @@
   "description": "회의 중 진짜 결정 신호만 누르고 잡담 신호는 넘기는 탭 게임. 짧은 문장 속에서 회의를 끝낼 단서를 찾습니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
-  "updatedAt": "2026-06-25",
+  "updatedAt": "2026-06-27",
   "shareText": "나는 회의에서 결정 신호를 얼마나 잘 잡을까? 회의 탈출 버튼을 플레이했다.",
   "order": 21,
   "relatedBlogSlugs": ["routine-before-name", "small-reset-note", "tiny-web-things", "why-i-like-one-button-web", "small-play-rules-note", "why-small-web-toys-return", "small-web-games-retention", "why-bobob-shifted-to-content-lab"],
@@ -25,7 +25,7 @@
   ],
   "endings": [
     { "id": "escaped", "title": "회의 탈출 성공", "description": "결정 신호를 잘 잡았다. 회의는 짧아지고 다음 행동은 남았다.", "minScore": 18 },
-    { "id": "survived", "title": "회의 생존", "description": "몇 번 흔들렸지만 핵심 신호는 대체로 잡았다.", "minScore": 12 },
+    { "id": "survived", "title": "회의 생존", "description": "흔들리는 흐름 속에서도 핵심 신호는 대체로 잡았다.", "minScore": 12 },
     { "id": "loop", "title": "싱크 지옥 잔류", "description": "잡담과 결정을 구분하지 못해 회의가 한 바퀴 더 돌았다.", "minScore": 0 }
   ]
 }

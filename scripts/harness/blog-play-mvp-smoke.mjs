@@ -38,6 +38,7 @@ const minPlayDescriptionLength = 50;
 const minCategoryDescriptionLength = 50;
 const publicActionLimitPattern =
   /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
+const publicPlayCountTonePattern = /몇\s*번\s*(?:흔들|헛발|멈칫|스쳤|꼬임|건드렸)/i;
 const infoReaderIntentPatterns = [
   /궁금/,
   /헷갈/,
@@ -241,8 +242,8 @@ for (const entry of playEntries) {
   ]
     .filter(Boolean)
     .join("\n");
-  if (publicActionLimitPattern.test(publicPlayCopy)) {
-    failures.push(`${entry.slug ?? entry.file} should not expose action-count or move-limit wording in public Play copy`);
+  if (publicActionLimitPattern.test(publicPlayCopy) || publicPlayCountTonePattern.test(publicPlayCopy)) {
+    failures.push(`${entry.slug ?? entry.file} should not expose action-count, move-limit, or count-toned wording in public Play copy`);
   }
   if (entry.description && normalizedTextLength(entry.description) < minPlayDescriptionLength) {
     failures.push(`${entry.slug ?? entry.file} description is too short for submitted URL metadata: ${normalizedTextLength(entry.description)} chars`);

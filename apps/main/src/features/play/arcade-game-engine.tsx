@@ -348,6 +348,7 @@ type GameState = {
   stackerDirection: number;
   stackerSpeed: number;
   stackerLayer: number;
+  stackerDragX: number | null;
   moleTargets: MoleTarget[];
   moleCursor: number;
   moleSpawnTimer: number;
@@ -462,6 +463,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     stackerDirection: 1,
     stackerSpeed: 168,
     stackerLayer: 0,
+    stackerDragX: null,
     moleTargets: [],
     moleCursor: 4,
     moleSpawnTimer: 0,
@@ -1959,6 +1961,9 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   const overlap = preview?.overlap ?? 0;
   const cutTotal = preview ? preview.cutLeft + preview.cutRight : 0;
   const statusFill = preview?.quality === "miss" ? danger : preview?.quality === "perfect" ? accent : preview?.quality === "solid" ? primary : "rgba(251,113,133,0.86)";
+  const targetCenter = clamp(state.stackerDragX ?? activeCenter, stackerBoardX, stackerBoardX + stackerBoardWidth);
+  const targetGap = Math.abs(targetCenter - topCenter);
+  const isDraggingStacker = state.stackerDragX !== null;
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1992,6 +1997,40 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.lineTo(topCenter, stackerBaseY + stackerBlockHeight);
   ctx.stroke();
   ctx.setLineDash([]);
+
+  if (top) {
+    const zoneX = top.x + top.width / 2 - 8;
+    ctx.fillStyle = "rgba(167,243,208,0.13)";
+    ctx.strokeStyle = "rgba(167,243,208,0.44)";
+    ctx.beginPath();
+    ctx.roundRect(zoneX, stackerBoardY + 10, 16, stackerBoardHeight - 12, 8);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "rgba(167,243,208,0.9)";
+    ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("정렬권", clamp(topCenter, stackerBoardX + 34, stackerBoardX + stackerBoardWidth - 34), stackerBoardY + 3);
+  }
+
+  if (isDraggingStacker) {
+    ctx.strokeStyle = targetGap <= 7 ? "rgba(167,243,208,0.82)" : targetGap <= 26 ? "rgba(251,191,36,0.78)" : "rgba(251,113,133,0.72)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath();
+    ctx.moveTo(targetCenter, stackerBoardY + 14);
+    ctx.lineTo(targetCenter, stackerBaseY + stackerBlockHeight + 8);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.lineWidth = 1;
+    ctx.fillStyle = targetGap <= 7 ? accent : targetGap <= 26 ? primary : danger;
+    ctx.beginPath();
+    ctx.arc(targetCenter, state.stackerActiveY - 13, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("손 위치", clamp(targetCenter, 44, canvasWidth - 44), state.stackerActiveY - 24);
+  }
 
   for (const block of state.stackerBlocks) {
     const fill =
@@ -2082,7 +2121,11 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("Space/Enter나 마우스 클릭으로 멈춥니다. A/D는 살짝 보정만 합니다.", 34, canvasHeight - 20);
+  ctx.fillText(
+    isDraggingStacker ? "드래그로 가운데를 맞추고 떼면 쌓습니다. Space/Enter도 됩니다." : "마우스로 끌어 맞추고 떼면 쌓습니다. A/D는 살짝 보정합니다.",
+    34,
+    canvasHeight - 20,
+  );
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -2092,8 +2135,8 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("움직이는 블록이 아래층과 겹칠 때 멈춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스로 눌러도 되고, Space/Enter로 쌓아도 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText("움직이는 블록을 아래층 위에 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스/터치로 끌어 맞추고 떼거나, Space/Enter로 쌓습니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -3031,7 +3074,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillText(`${candidates.length}`, 48, 124);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(state.passwordAttempts.length ? `이번 힌트로 ${candidateStats.narrowedBy}개 줄임` : "첫 시도는 빠르게", 48, 146);
+  ctx.fillText(state.passwordAttempts.length ? `이번 힌트로 ${candidateStats.narrowedBy}개 줄임` : "첫 입력은 가볍게", 48, 146);
   ctx.fillStyle = duplicateCurrent || repeatedCurrent || impossibleCurrent ? danger : "rgba(255,255,255,0.62)";
   ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(guessPreviewText, 48, 166);
@@ -4138,7 +4181,10 @@ export function ArcadeGameEngine({
       if (content.arcade.variant === "stacker") {
         if (action === "left") nudgeStacker(state, -18);
         if (action === "right") nudgeStacker(state, 18);
-        if (action === "main") placeStackerBlock(content, state);
+        if (action === "main") {
+          state.stackerDragX = null;
+          placeStackerBlock(content, state);
+        }
         setShareState("idle");
         syncView();
         return;
@@ -4676,6 +4722,7 @@ export function ArcadeGameEngine({
         }
         state.started = true;
         state.lastFrame = performance.now();
+        state.stackerDragX = point.x;
         centerStackerActiveAt(state, point.x);
         setShareState("idle");
         syncView();
@@ -4775,9 +4822,13 @@ export function ArcadeGameEngine({
         return;
       }
       if (content.arcade.variant === "stacker") {
-        if (event.buttons === 0) return;
+        if (event.buttons === 0 && event.pointerType !== "touch") {
+          state.stackerDragX = null;
+          return;
+        }
         state.started = true;
         state.lastFrame = performance.now();
+        state.stackerDragX = point.x;
         centerStackerActiveAt(state, point.x);
         return;
       }
@@ -4825,6 +4876,11 @@ export function ArcadeGameEngine({
       }
       if (content.arcade.variant === "shooter" && state.finished) {
         state.shooterPointerActive = false;
+        return;
+      }
+      if (content.arcade.variant === "stacker" && state.finished) {
+        state.stackerDragX = null;
+        syncView();
         return;
       }
       if (state.finished) return;
@@ -4877,8 +4933,10 @@ export function ArcadeGameEngine({
       if (content.arcade.variant === "stacker") {
         state.started = true;
         state.lastFrame = performance.now();
+        state.stackerDragX = point.x;
         centerStackerActiveAt(state, point.x);
         placeStackerBlock(content, state);
+        state.stackerDragX = null;
         setShareState("idle");
         syncView();
         return;
@@ -4940,6 +4998,7 @@ export function ArcadeGameEngine({
       state.snakeDragStart = null;
       state.shooterPointerActive = false;
       state.lotteryDragging = false;
+      state.stackerDragX = null;
       clearLotteryDragTrail(state);
       clearSumDrag(state);
       clearGemDrag(state);

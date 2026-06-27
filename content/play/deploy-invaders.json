@@ -20,7 +20,7 @@
   },
   "endings": [
     { "id": "clear", "title": "방어선 유지", "description": "진짜 신호를 차분히 골라냈다. 화면은 시끄러웠지만 손은 덜 흔들렸다.", "minScore": 20 },
-    { "id": "half", "title": "아슬아슬 통과", "description": "몇 번 헛발이 있었지만 줄은 무너지지 않았다.", "minScore": 10 },
+    { "id": "half", "title": "아슬아슬 통과", "description": "헛발이 섞였지만 줄은 무너지지 않았다.", "minScore": 10 },
     { "id": "overrun", "title": "비상등에 밀림", "description": "빨간 것만 보고 너무 많이 쐈다. 다음 판은 더 늦게 눌러도 된다.", "minScore": 0 }
   ]
 }

@@ -20,7 +20,7 @@
   },
   "endings": [
     { "id": "cross", "title": "건넜다", "description": "빈틈을 보고 움직였다. 급하지 않아서 살았다.", "minScore": 15 },
-    { "id": "curb", "title": "턱에 걸림", "description": "몇 번 멈칫했지만 큰 충돌은 피했다.", "minScore": 10 },
+    { "id": "curb", "title": "턱에 걸림", "description": "멈칫하는 순간은 있었지만 큰 충돌은 피했다.", "minScore": 10 },
     { "id": "honk", "title": "빵빵거림", "description": "빨리 건너려다 타이밍을 놓쳤다.", "minScore": 0 }
   ]
 }

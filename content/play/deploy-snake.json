@@ -20,7 +20,7 @@
   },
   "endings": [
     { "id": "long", "title": "길게 이어짐", "description": "좋은 조각을 잘 골라 길이 이어졌다.", "minScore": 20 },
-    { "id": "turn", "title": "몇 번 꼬임", "description": "아슬아슬했지만 길은 끊기지 않았다.", "minScore": 10 },
+    { "id": "bend", "title": "아슬아슬한 골목", "description": "위험한 꺾임은 있었지만 길은 끊기지 않았다.", "minScore": 10 },
     { "id": "bite", "title": "꼬리를 밟음", "description": "욕심낸 조각 때문에 길이 꼬였다.", "minScore": 0 }
   ]
 }
