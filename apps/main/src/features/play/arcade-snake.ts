@@ -32,6 +32,17 @@ export type SnakeMovePreview = {
   nextFoodDistance: number;
 };
 
+export type SnakeDirectionOption = {
+  direction: SnakeDirection;
+  head: SnakeCell;
+  willEat: boolean;
+  hitWall: boolean;
+  hitSelf: boolean;
+  reverse: boolean;
+  safe: boolean;
+  closer: boolean;
+};
+
 type SnakeHistoryItem = {
   label: string;
   detail: string;
@@ -58,6 +69,8 @@ const snakeDirectionDeltas: Record<SnakeDirection, SnakeCell> = {
   left: { x: -1, y: 0 },
   right: { x: 1, y: 0 },
 };
+
+const snakeDirectionOrder: SnakeDirection[] = ["up", "right", "down", "left"];
 
 export function makeSnake(): SnakeCell[] {
   const headX = Math.floor(snakeColumns / 2);
@@ -165,6 +178,31 @@ export function snakeMovePreview(state: Pick<SnakePlayState, "snake" | "snakeDir
     foodDistance: Math.abs(state.snakeFood.x - currentHead.x) + Math.abs(state.snakeFood.y - currentHead.y),
     nextFoodDistance: Math.abs(state.snakeFood.x - head.x) + Math.abs(state.snakeFood.y - head.y),
   };
+}
+
+export function snakeDirectionOptions(state: Pick<SnakePlayState, "snake" | "snakeDirection" | "snakeFood">): SnakeDirectionOption[] {
+  const currentHead = state.snake[0] ?? { x: Math.floor(snakeColumns / 2), y: Math.floor(snakeRows / 2) };
+  const currentDistance = Math.abs(state.snakeFood.x - currentHead.x) + Math.abs(state.snakeFood.y - currentHead.y);
+
+  return snakeDirectionOrder.map((direction) => {
+    const head = nextSnakeHead(state, direction);
+    const willEat = head.x === state.snakeFood.x && head.y === state.snakeFood.y;
+    const bodyToCheck = willEat ? state.snake : state.snake.slice(0, -1);
+    const hitWall = head.x < 0 || head.x >= snakeColumns || head.y < 0 || head.y >= snakeRows;
+    const hitSelf = bodyToCheck.some((cell) => cell.x === head.x && cell.y === head.y);
+    const reverse = isSnakeReverse(direction, state.snakeDirection);
+    const nextFoodDistance = Math.abs(state.snakeFood.x - head.x) + Math.abs(state.snakeFood.y - head.y);
+    return {
+      direction,
+      head,
+      willEat,
+      hitWall,
+      hitSelf,
+      reverse,
+      safe: !reverse && !hitWall && !hitSelf && !(willEat && !state.snakeFood.good),
+      closer: nextFoodDistance < currentDistance,
+    };
+  });
 }
 
 export function snakeCellCenter(cell: SnakeCell) {
