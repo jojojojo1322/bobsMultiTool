@@ -133,7 +133,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 5, 0, 100);
     rememberMemoryHistory(state, {
-      label: `${state.memorySequence.length}칸`,
+      label: "패턴 성공",
       detail: "순서 맞음",
       score: delta,
     });
@@ -147,7 +147,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
   state.score = Math.max(0, state.score - 2);
   state.focus = clamp(state.focus - 13, 0, 100);
   rememberMemoryHistory(state, {
-    label: `${cell + 1}번`,
+    label: "다른 칸",
     detail: "순서 놓침",
     score: -2,
   });

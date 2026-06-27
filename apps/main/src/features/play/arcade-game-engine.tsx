@@ -2281,6 +2281,9 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
 function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent } = content.arcade.palette;
   const activeCell = activeMemoryFlashCell(state);
+  const hasMemoryInput = !state.memoryShowing && state.memoryInput.length > 0;
+  const lastMemoryInput = hasMemoryInput ? state.memoryInput[state.memoryInput.length - 1] : null;
+  const lastMemoryLabel = typeof lastMemoryInput === "number" ? pickLabel(content.arcade.goodLabels, lastMemoryInput) : "";
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -2299,7 +2302,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  if (!state.memoryShowing && state.memoryInput.length) {
+  if (hasMemoryInput) {
     const enteredCenters = state.memoryInput.map((cell) => memoryCellCenter(cell));
     if (enteredCenters.length > 1) {
       ctx.strokeStyle = "rgba(190,242,100,0.62)";
@@ -2319,6 +2322,19 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.beginPath();
       ctx.arc(center.x, center.y, 25, 0, Math.PI * 2);
       ctx.fill();
+    }
+    const lastCenter = typeof lastMemoryInput === "number" ? memoryCellCenter(lastMemoryInput) : null;
+    if (lastCenter) {
+      ctx.strokeStyle = "rgba(190,242,100,0.95)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(lastCenter.x, lastCenter.y, 35, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "rgba(190,242,100,0.95)";
+      ctx.font = "850 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("방금 누름", lastCenter.x, lastCenter.y - 45);
     }
   }
 
@@ -2358,14 +2374,13 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(label.slice(0, 4), x + memoryCellSize / 2, y + 58);
 
     if (!state.memoryShowing && isEntered) {
-      const inputOrder = state.memoryInput.lastIndexOf(cell) + 1;
       ctx.fillStyle = accent;
       ctx.beginPath();
-      ctx.arc(x + memoryCellSize - 15, y + 15, 12, 0, Math.PI * 2);
+      ctx.roundRect(x + memoryCellSize - 44, y + 8, 36, 18, 9);
       ctx.fill();
       ctx.fillStyle = "#111827";
-      ctx.font = "900 11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
-      ctx.fillText(`${inputOrder}`, x + memoryCellSize - 15, y + 19);
+      ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillText("맞음", x + memoryCellSize - 26, y + 21);
     }
   }
 
@@ -2380,10 +2395,10 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "#f8fafc";
   ctx.font = "850 17px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(state.memoryShowing ? "불빛 보는 중" : "이제 그대로 누르기", panelX + 18, 118);
+  ctx.fillText(state.memoryShowing ? "불빛을 따라봅니다" : hasMemoryInput ? "입력 흐름 유지" : "이제 그대로 누르기", panelX + 18, 118);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`차례 ${state.memoryRound} · 길이 ${state.memorySequence.length}`, panelX + 18, 146);
+  ctx.fillText(state.memoryShowing ? "빛난 칸을 눈으로 따라갑니다." : "처음 기억한 칸부터 이어 누릅니다.", panelX + 18, 146);
 
   const dotY = 184;
   for (let index = 0; index < state.memorySequence.length; index += 1) {
@@ -2398,15 +2413,14 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`순서 ${state.memoryInput.length}/${state.memorySequence.length}`, panelX + 18, 224);
-  ctx.fillText("맞게 누른 순서는 보드에 선으로 남습니다.", panelX + 18, 252);
-  ctx.fillText("헷갈리면 R로 다시 봅니다.", panelX + 18, 276);
+  ctx.fillText(state.memoryShowing ? "패턴 점이 지나가고 있습니다." : hasMemoryInput ? "초록 점까지 맞았습니다." : "첫 칸을 고를 차례입니다.", panelX + 18, 224);
+  ctx.fillText("맞은 칸은 선과 초록 표시로 남습니다.", panelX + 18, 252);
+  ctx.fillText("헷갈리면 R이나 다시 보기.", panelX + 18, 276);
 
-  if (!state.memoryShowing && state.memoryInput.length) {
-    const last = state.memoryInput[state.memoryInput.length - 1];
+  if (hasMemoryInput) {
     ctx.fillStyle = "rgba(190,242,100,0.9)";
     ctx.font = "850 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`방금 ${typeof last === "number" ? last + 1 : ""}번`, panelX + 18, 304);
+    ctx.fillText(`방금 ${lastMemoryLabel.slice(0, 4)} 칸`, panelX + 18, 304);
   }
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
