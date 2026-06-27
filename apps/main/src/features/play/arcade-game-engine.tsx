@@ -258,6 +258,15 @@ type Bullet = {
   vy: number;
 };
 
+type ShooterAimRead = {
+  target: Sprite | null;
+  noisy: Sprite | null;
+  title: string;
+  detail: string;
+  ready: boolean;
+  warning: boolean;
+};
+
 type Brick = {
   id: number;
   x: number;
@@ -696,6 +705,69 @@ function aimShooterAt(state: GameState, point: CanvasPoint) {
   state.playerX = clamp(point.x, 34, canvasWidth - 34);
   state.shooterAimX = state.playerX;
   state.shooterAimY = clamp(point.y, 72, state.playerY - 36);
+}
+
+function shooterHorizontalHint(sprite: Sprite, state: GameState) {
+  const gap = sprite.x - state.playerX;
+  if (Math.abs(gap) <= sprite.radius + 18) return "정렬됨";
+  return gap < 0 ? "왼쪽으로 조금" : "오른쪽으로 조금";
+}
+
+function shooterAimRead(state: GameState): ShooterAimRead {
+  const approaching = state.sprites.filter((sprite) => sprite.y < state.playerY - 18 && sprite.y > 34);
+  const scoreSprite = (sprite: Sprite) => Math.abs(sprite.x - state.playerX) + Math.abs(state.playerY - sprite.y) * 0.08;
+  const target =
+    approaching
+      .filter((sprite) => sprite.good)
+      .sort((left, right) => scoreSprite(left) - scoreSprite(right))[0] ?? null;
+  const noisy =
+    approaching
+      .filter((sprite) => !sprite.good)
+      .sort((left, right) => scoreSprite(left) - scoreSprite(right))[0] ?? null;
+  const targetReady = Boolean(target && Math.abs(target.x - state.playerX) <= target.radius + 18);
+  const noisyClose = Boolean(noisy && Math.abs(noisy.x - state.playerX) <= noisy.radius + 20);
+
+  if (noisyClose && !targetReady) {
+    return {
+      target,
+      noisy,
+      title: "소음 가까움",
+      detail: noisy ? `${noisy.label} 지나가게 두기` : "쏘지 말고 보기",
+      ready: false,
+      warning: true,
+    };
+  }
+
+  if (targetReady && target) {
+    return {
+      target,
+      noisy,
+      title: "맞출 표적",
+      detail: `${target.label} 정렬됨`,
+      ready: true,
+      warning: false,
+    };
+  }
+
+  if (target) {
+    return {
+      target,
+      noisy,
+      title: "표적 따라가기",
+      detail: `${target.label} · ${shooterHorizontalHint(target, state)}`,
+      ready: false,
+      warning: false,
+    };
+  }
+
+  return {
+    target: null,
+    noisy,
+    title: "표적 기다림",
+    detail: "좋은 신호가 내려올 때 쏘기",
+    ready: false,
+    warning: false,
+  };
 }
 
 function fireArcadeBullet(_content: ArcadeGameContent, state: GameState) {
@@ -1549,6 +1621,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         ? "invader"
         : "signal";
   const dangerLineY = canvasHeight - 96;
+  const aimRead = shooterAimRead(state);
 
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
@@ -1638,6 +1711,62 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   for (const sprite of state.sprites) {
     drawShooterSprite(ctx, sprite, mode, accent, danger);
   }
+
+  if (aimRead.target) {
+    const aligned = aimRead.ready;
+    ctx.strokeStyle = aligned ? accent : "rgba(167,243,208,0.46)";
+    ctx.lineWidth = aligned ? 4 : 2;
+    ctx.setLineDash(aligned ? [] : [7, 7]);
+    ctx.beginPath();
+    ctx.arc(aimRead.target.x, aimRead.target.y, aimRead.target.radius + 13, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = aligned ? "rgba(167,243,208,0.42)" : "rgba(167,243,208,0.2)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(state.playerX, state.playerY - 30);
+    ctx.lineTo(aimRead.target.x, aimRead.target.y);
+    ctx.stroke();
+    if (aligned) {
+      ctx.fillStyle = "rgba(167,243,208,0.96)";
+      ctx.beginPath();
+      ctx.roundRect(aimRead.target.x - 28, aimRead.target.y - aimRead.target.radius - 32, 56, 18, 9);
+      ctx.fill();
+      ctx.fillStyle = "#064e3b";
+      ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("쏘기", aimRead.target.x, aimRead.target.y - aimRead.target.radius - 19);
+    }
+  }
+
+  if (aimRead.warning && aimRead.noisy) {
+    ctx.strokeStyle = "rgba(251,113,133,0.82)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(aimRead.noisy.x, aimRead.noisy.y, aimRead.noisy.radius + 11, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(aimRead.noisy.x - aimRead.noisy.radius - 15, aimRead.noisy.y - aimRead.noisy.radius - 15);
+    ctx.lineTo(aimRead.noisy.x + aimRead.noisy.radius + 15, aimRead.noisy.y + aimRead.noisy.radius + 15);
+    ctx.moveTo(aimRead.noisy.x + aimRead.noisy.radius + 15, aimRead.noisy.y - aimRead.noisy.radius - 15);
+    ctx.lineTo(aimRead.noisy.x - aimRead.noisy.radius - 15, aimRead.noisy.y + aimRead.noisy.radius + 15);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "rgba(15,23,42,0.72)";
+  ctx.beginPath();
+  ctx.roundRect(44, 72, 196, 50, 14);
+  ctx.fill();
+  ctx.strokeStyle = aimRead.warning ? "rgba(251,113,133,0.52)" : aimRead.ready ? "rgba(167,243,208,0.48)" : "rgba(255,255,255,0.14)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = aimRead.warning ? danger : aimRead.ready ? accent : "rgba(255,255,255,0.82)";
+  ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(aimRead.title, 60, 92);
+  ctx.fillStyle = "rgba(255,255,255,0.64)";
+  ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(aimRead.detail, 60, 110);
 
   for (const bullet of state.bullets) {
     const beam = ctx.createLinearGradient(bullet.x, bullet.y - 22, bullet.x, bullet.y + 18);
