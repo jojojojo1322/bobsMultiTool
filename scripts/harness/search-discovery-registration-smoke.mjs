@@ -102,6 +102,8 @@ for (const fragment of [
   "Latest browser check reached the public landing page with `Sign In`",
   "Public Bing search",
   "Latest browser check hit a `계속하려면 아래 과제 해결` challenge",
+  "Naver Search Advisor",
+  "Needs a signed-in Search Advisor pass",
   "RSS feed",
   "Atom feed",
   "JSON Feed",
@@ -131,6 +133,7 @@ for (const fragment of [
   "Total impressions: `3`",
   "Indexed pages: `0`",
   "Not indexed pages: `5`",
+  "Naver Search Advisor still needs a signed-in pass.",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
 ]) {
   assertIncludes(observationLog, fragment, observationLogPath);

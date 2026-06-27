@@ -1096,7 +1096,7 @@ Next observation windows:
 - Automation:
   - Codex heartbeat automation id: `bobob-indexing-observation`
   - Schedule: starts `2026-07-02 10:00`, weekly, `2` runs.
-  - Purpose: continue this thread and record concrete Search Console/Bing changes instead of treating discovery submissions as indexing proof.
+  - Purpose: continue this thread and record concrete Search Console/Bing/Naver changes instead of treating discovery submissions as indexing proof.
 - `2026-07-02`:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
@@ -1104,15 +1104,17 @@ Next observation windows:
   - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `149` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, sum-box clear-feedback, password suggestion-cycle, Play action-limit wording cleanup, memory input-trail, Play count-limit label cleanup, brick-breaker landing guide, flight hold-release cue, snake next-cell preview, minesweeper chord-ready cue, shooter target-cue, mole priority-cue, Play state-hook cleanup, password slot-keypad, stacker drag-alignment, memory flow-cue, sum-box counter-cue, Play count-toned panel cleanup, snake open-turn cue, development Blog date distribution, play feedback development note, sum-box drag guide, and password slot candidate cue upgrades.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
+  - Naver Search Advisor still needs a signed-in pass. Check the canonical host, sitemap state, robots.txt state, and representative page collection/request status without treating a collection request as indexing proof.
 - `2026-07-09`:
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Repeat the same Search Console comparison.
   - If indexed pages still remain `0`, do not broaden sitemap scope yet. First check live URL inspection, canonical selection, crawl allowed status, and Bing Webmaster recommendations for missing `h1`, duplicate title/description, insufficient content, or weak inbound-link signals.
   - Bing Webmaster Tools still needs a signed-in pass. Public Bing `site:` search was blocked by a challenge in the latest attempt.
+  - Naver Search Advisor still needs a signed-in pass. Record any site collection, sitemap, robots.txt, page collection, or indexing-state changes separately from Google/Bing evidence.
   - If impressions appear, generate measured exports under the gitignored `reports/search-console.csv` or `reports/search-console.tsv` path and run `npm run harness:seo-opportunities`.
 
 Completion guard:
 
 - This Blog + Play migration should not be treated as indexed or search-ready only because deployment, sitemap fetch, live discovery, or IndexNow submission passed.
 - WebSub publish and repeated Search Console sitemap submission are discovery hints, not indexing proof.
-- The next Search Console check must record concrete changed numbers before closing the indexing part of the goal.
+- The next Search Console/Bing/Naver check must record concrete changed numbers or webmaster-tool state changes before closing the indexing part of the goal.

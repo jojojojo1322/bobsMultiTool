@@ -1,6 +1,6 @@
 # bobob.app Search Discovery Registration Matrix
 
-This matrix tracks the public discovery paths used for the Blog + Play migration. It is not indexing proof. Search readiness still needs later Search Console and Bing observation evidence.
+This matrix tracks the public discovery paths used for the Blog + Play migration. It is not indexing proof. Search readiness still needs later Search Console, Bing, and Naver observation evidence.
 
 ## Current Discovery Set
 
@@ -28,6 +28,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 | Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest response status `200`; submitted URL count `149` after the Play canvas upgrade, password guess preview, follow-up youth savings result expansion, sum-box combo bonus, stacker landing preview, notification mole urgency feedback, crossing lane preview, sum-box streak bonus, password split feedback, gem-swap hint, sum-box release preview, password clue history, latest information notes, endless lottery Play update, arcade action-cap removal, lottery scratch drag update, shooter drag aiming update, arcade count-field cleanup, lottery scratch stage note, sum-box backtrack drag update, visible Play counter cleanup, password digit heatmap update, endless lottery stage update, sum-box clear feedback update, password suggestion-cycle update, Play action-limit wording cleanup, memory input-trail update, Play count-limit label cleanup, brick-breaker landing guide update, flight hold-release cue update, snake next-cell preview update, minesweeper chord-ready cue update, shooter target-cue update, mole priority-cue update, Play state-hook cleanup, password slot-keypad update, stacker drag-alignment update, Play count-toned copy cleanup, memory flow-cue update, sum-box counter-cue cleanup, Play count-toned panel cleanup, snake open-turn cue update, development Blog date distribution update, play feedback development note, sum-box drag guide update, and password slot candidate cue update | Bing-compatible discovery ping accepted the current live sitemap URL set | It does not prove Bing indexed or ranked the pages |
 | Bing Webmaster Tools | `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app` | Latest browser check reached the public landing page with `Sign In`; site-specific recommendations were not visible | Bing Webmaster follow-up still needs a signed-in session | It does not provide indexing or recommendation evidence yet |
 | Public Bing search | `site:www.bobob.app` | Latest browser check hit a `계속하려면 아래 과제 해결` challenge | Public Bing search was attempted | It does not prove whether Bing has indexed the URL set |
+| Naver Search Advisor | `https://searchadvisor.naver.com/` | Needs a signed-in Search Advisor pass for the canonical host, sitemap state, robots.txt state, and representative page collection/request status | Naver follow-up can confirm whether the site and submitted URLs are visible to Search Advisor | It does not prove Naver indexed or ranked the pages |
 | RSS feed | `/feed.xml` | Live feed has `138` Blog + Play items and WebSub hub discovery | Feed readers and lightweight crawlers can discover current content | It does not replace sitemap or webmaster-tool evidence |
 | Atom feed | `/atom.xml` | Live feed has `138` Blog + Play entries and WebSub hub discovery | Feed readers and WebSub can discover current content | It does not prove search indexing |
 | JSON Feed | `/feed.json` | Live feed has `138` Blog + Play items and WebSub hub metadata | Programmatic readers can discover current content | It does not broaden the submitted sitemap scope |
@@ -47,6 +48,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
 - Open Bing Webmaster Tools in a signed-in session and check recommendation classes before closing the indexing loop.
 - Public Bing `site:` search may show a challenge; do not treat a blocked public search page as indexing evidence.
+- Open Naver Search Advisor in a signed-in session and check site ownership, sitemap, robots.txt, and representative page collection status before closing the indexing loop.
 
 ## Required Comparison Points
 
@@ -75,6 +77,6 @@ Latest Search Console observation from `bobob935@gmail.com`:
 
 ## Stop Rule
 
-Do not mark the active Blog + Play goal complete from deployment, sitemap fetches, Search Console submission success, IndexNow `200`, WebSub `204`, or public search spot checks alone.
+Do not mark the active Blog + Play goal complete from deployment, sitemap fetches, Search Console submission success, IndexNow `200`, WebSub `204`, Naver page collection request, or public search spot checks alone.
 
-Completion needs concrete changed Search Console or Bing evidence recorded in `docs/search-indexing-observation-log.md`: indexed pages, impressions, page indexing reason changes, representative URL inspection changes, Bing recommendation changes, or measured exports that cover the submitted Blog + Play URL set.
+Completion needs concrete changed Search Console, Bing, or Naver evidence recorded in `docs/search-indexing-observation-log.md`: indexed pages, impressions, page indexing reason changes, representative URL inspection changes, Bing recommendation changes, Naver Search Advisor collection/indexing changes, or measured exports that cover the submitted Blog + Play URL set.

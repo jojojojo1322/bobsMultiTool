@@ -3,7 +3,7 @@
   "title": "잡음 방어전",
   "description": "오른쪽에서 밀려오는 불편한 신호와 괜한 소음을 보고, 진짜 막아야 할 것만 쳐내는 짧은 캔버스 방어 게임입니다. 맞출 표적과 소음 가까움 표시를 같이 봅니다.",
   "type": "arcade-game",
-  "durationLabel": "45-60초",
+  "durationLabel": "1분",
   "updatedAt": "2026-06-27",
   "shareText": "나는 잡음 방어전에서 진짜 막아야 할 신호를 얼마나 잘 골랐을까?",
   "order": 22,

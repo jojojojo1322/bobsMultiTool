@@ -6,7 +6,7 @@ description: Use before changing Bob's Multi Tool UI, shadcn-style components, l
 # Bobob Design System
 
 - Visual changes must protect the current product loop: on Blog + Play pages, users should see the featured Play path, readable content, result/share actions, and related links before decorative or support content; on archived tool pages, preserve input, output, copy/review actions, and next-tool paths.
-- Blog + Play game screens should feel like compact web experiments, not landing pages: one clear rule, one primary interaction, stable dimensions, keyboard/canvas controls for arcade entries, mobile fallback controls, and no donation/ad/support prompts in the first pass.
+- Blog + Play game screens should feel like compact web experiments and old web mini-games, not landing pages or quizzes: one clear rule, one primary direct interaction, stable canvas dimensions, immediate mouse/touch/keyboard feedback for arcade entries, mobile fallback controls, and no donation/ad/support prompts in the first pass. Arcade entries should generally be `1분` score/time runs or clearly endless `계속` loops.
 - Home Featured Play should render the current Play registry in the compact card grid instead of capping at the original five MVP games; keep the grid dense and neutral when the list grows.
 - After changing CSS, layout, theme, or background behavior, verify the page in a real browser on `localhost`; if a build ran, restart the local server first to avoid stale CSS/JS chunk regressions.
 - Use shadcn/ui-style local primitives from `apps/main/src/components/ui`.

@@ -132,7 +132,7 @@ for (const fragment of [
   "Latest response statuses: `204`, `204`",
   `Latest feed item counts: \`${currentFeedItemCount}\`, \`${currentFeedItemCount}\``,
   "Discovery registration matrix:",
-  "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
+  "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
   "Submitted URL health:",
   "`npm run harness:submitted-url-health` verifies every submitted `/sitemaps/en` URL",
   "Still Not Complete",
@@ -140,6 +140,7 @@ for (const fragment of [
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
   `Search Console sitemap discovery must be checked again against the new live sitemap URL count (\`${currentSubmittedSitemapCount}\`), and indexing is still unresolved.`,
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
+  "Naver Search Advisor collection/indexing state still needs a signed-in follow-up pass",
   "Automation id: `bobob-indexing-observation`",
   "Do not mark the active goal complete",
 ]) {
@@ -151,6 +152,7 @@ for (const fragment of [
   `Current feed item count: \`${currentFeedItemCount}\``,
   "Google Search Console sitemap",
   "Bing and IndexNow",
+  "Naver Search Advisor",
   "Do not mark the active Blog + Play goal complete",
 ]) {
   assertIncludes(discoveryRegistration, fragment, discoveryRegistrationPath);
@@ -161,6 +163,7 @@ for (const fragment of [
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
   "Bing Webmaster recommendations",
+  "Naver Search Advisor still needs a signed-in pass.",
 ]) {
   assertIncludes(observationLog, fragment, observationLogPath);
 }

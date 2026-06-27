@@ -1,6 +1,6 @@
 # bobob.app Blog + Play Goal Audit
 
-This audit tracks the active first-pass goal. It is not a completion certificate. The goal stays open until the external indexing observation window produces concrete Search Console/Bing evidence.
+This audit tracks the active first-pass goal. It is not a completion certificate. The goal stays open until the external indexing observation window produces concrete Search Console/Bing/Naver evidence.
 
 ## Current Product State
 
@@ -11,8 +11,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Blog Evidence
 
 - Blog source: `content/blog/*.mdx`
-- Current count: `113` Blog posts.
-- Date range: `2026-01-05` through `2026-06-27`, with public dates spread across the first half of 2026 instead of piling up in late June.
+- Current count: `114` Blog posts.
+- Date range: `2026-01-05` through `2026-06-28`, with public dates spread across the first half of 2026 instead of piling up in late June.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
@@ -52,9 +52,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current live discovery snapshot:
-  - Sitemap URLs: `148`
-  - Feed items: `137`
-  - Blog posts: `113`
+  - Sitemap URLs: `149`
+  - Feed items: `138`
+  - Blog posts: `114`
   - Play entries: `24`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
@@ -69,18 +69,21 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
-  - Latest submitted URL count: `148`
+  - Latest submitted URL count: `149`
   - Latest response status: `200`
-  - The 148-URL live sitemap set was submitted after the Play canvas upgrade, information-content expansion, arcade count wording cleanup, latest Play cue updates, and the prior development Blog date distribution update.
+  - The 149-URL live sitemap set was submitted after the Play canvas upgrade, information-content expansion, arcade count wording cleanup, latest Play cue updates, and the prior development Blog date distribution update.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
+- Naver:
+  - Naver Search Advisor still needs a signed-in follow-up pass for the canonical host, sitemap state, robots.txt state, and representative page collection/request status.
+  - A Naver page collection request, when submitted, must be logged separately and must not be treated as indexing proof.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest feed item counts: `137`, `137`
+  - Latest feed item counts: `138`, `138`
 - Discovery registration matrix:
-  - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
+  - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
   - `npm run harness:submitted-url-health` verifies every submitted `/sitemaps/en` URL as a final 200 HTML response with matching canonical, one h1, unique title/description, social metadata, and indexable robots metadata.
 
@@ -88,9 +91,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Search Console has started showing impressions (`3`) in the `3개월` performance report, but clicks remain `0`.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`148`), and indexing is still unresolved.
+- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`149`), and indexing is still unresolved.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
-- Discovery submissions are hints only. They do not prove that Google or Bing indexed the new Blog + Play pages.
+- Naver Search Advisor collection/indexing state still needs a signed-in follow-up pass after deployment and submission propagation.
+- Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
 
 ## Scheduled Follow-up
 
@@ -104,7 +108,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/sitemaps/en` discovered pages
   - representative URL inspection results
   - Bing Webmaster recommendation classes
+  - Naver Search Advisor collection/indexing state
 
 ## Completion Rule
 
-Do not mark the active goal complete from local code, deployment status, sitemap fetches, WebSub `204`, IndexNow `200`, or Search Console submission success alone. Completion requires concrete post-submission Search Console/Bing observation evidence recorded in `docs/search-indexing-observation-log.md`.
+Do not mark the active goal complete from local code, deployment status, sitemap fetches, WebSub `204`, IndexNow `200`, Search Console submission success, or Naver page collection request alone. Completion requires concrete post-submission Search Console/Bing/Naver observation evidence recorded in `docs/search-indexing-observation-log.md`.

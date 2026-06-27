@@ -7,7 +7,7 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 
 - English is the source locale and stays unprefixed.
 - During the Blog + Play MVP, unprefixed Blog/Play pages are the submitted canonical content set. Do not add localized Blog/Play routes or hreflang alternates unless the visible prose, metadata, and content data are localized for that route.
-- Blog category prose such as `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, and date-sensitive `정보` belongs to the source-locale Blog MVP until localized Blog routes are intentionally added.
+- Blog category prose such as `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, and date-sensitive `정보` belongs to the source-locale Blog MVP until localized Blog routes are intentionally added. Source-locale Blog copy should still sound human: avoid generated-outline scaffolding such as "이 글에서는 ... 알아봅니다", "다음과 같습니다", keyword-only paragraphs, overbearing caveat blocks, and internal maker excuses.
 - `/blog/category/{slug}` routes are source-locale Blog category hubs during the Blog + Play MVP. Do not add localized category routes until localized Blog content is ready.
 - `/opensearch.xml` is the unprefixed source-locale search discovery document during the Blog + Play MVP. Do not add localized OpenSearch descriptors unless the related Blog/Play/search surfaces are localized and submitted as canonical locale content.
 - `/llms.txt` is the unprefixed source-locale machine-readable content map during the Blog + Play MVP. Do not add localized LLM maps unless the related Blog/Play/search surfaces are localized and submitted as canonical locale content.
@@ -51,5 +51,5 @@ description: Use before changing Bob's Multi Tool visible prose, locale dictiona
 - Locale-specific dictionary overrides must not re-spread English nested objects over common localized text. The merge order should preserve locale common text before applying only true per-locale overrides.
 - Arabic routes must keep `dir="rtl"` and visual QA coverage.
 - Locale routes must set the root `<html lang>` and `<html dir>` through the middleware locale handoff. A localized `<main>` alone is not enough for multilingual SEO or accessibility.
-- When visible prose, metadata copy, tool registry copy, guide copy, Blog/Play copy, or locale policy changes, update AGENTS.md, this skill, and the localization harness.
+- When visible prose, metadata copy, tool registry copy, guide copy, Blog/Play copy, or locale policy changes, update AGENTS.md, this skill, and the localization or Blog/Play prose harness.
 - Run `npm run harness:localization`, `npm run harness:i18n`, and browser or visual harness checks for `/ko`, `/ja`, `/de`, `/es`, `/hi`, `/th`, and `/ar`.

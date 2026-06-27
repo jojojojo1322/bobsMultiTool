@@ -53,6 +53,13 @@ const infoReaderIntentPatterns = [
   /어디(?:부터|를)?/,
   /\?/,
 ];
+const generatedOutlineBlogPattern =
+  /(?:이\s*글에서는|이번\s*글에서는).{0,60}(?:알아봅니다|살펴봅니다|정리합니다)|(?:요약하면|정리하면)\s*다음과\s*같습니다|다음과\s*같습니다[:.]|완벽한\s*(?:가이드|정리)|필수\s*(?:가이드|체크리스트)/i;
+const pastedInformationCaveatPattern =
+  /정보\s*글은\s*가격,\s*할인율,\s*제품\s*라인업|숫자는\s*출발점이고\s*마지막\s*확인은\s*늘\s*공식\s*페이지/i;
+const internalMakerExcusePattern =
+  /사용자가\s*알\s*바\s*아닌\s*내부|내부\s*제작자의?\s*다짐|제작자\s*내부\s*사정|이\s*게임은\s*언젠가\s*접습니다|실험장이라서\s*대충/i;
+const directArcadeControlPattern = /마우스|터치|드래그|클릭|키보드|방향키|WASD|Space|Enter|숫자키/i;
 
 const failures = [];
 
@@ -181,6 +188,8 @@ for (const category of requiredCategories) {
     failures.push(
       `Blog category "${category}" description is too short for submitted URL metadata: ${normalizedTextLength(categoryDefinition.description)} chars`,
     );
+  } else if (generatedOutlineBlogPattern.test(categoryDefinition.description) || pastedInformationCaveatPattern.test(categoryDefinition.description)) {
+    failures.push(`Blog category "${category}" description should not use generated-outline prose or the overbearing information caveat block`);
   }
 }
 const dates = blogEntries.map((entry) => entry.date).filter(Boolean).sort();
@@ -209,6 +218,7 @@ if (blogMonthCounts.size < 6 || crowdedBlogMonths.length) {
 }
 
 for (const entry of blogEntries) {
+  const publicBlogCopy = [entry.title, entry.description, entry.body].filter(Boolean).join("\n");
   if (!entry.slug || !entry.title || !entry.description || !entry.category) failures.push(`${entry.file} is missing required Blog frontmatter`);
   if (entry.updatedAt && !/^\d{4}-\d{2}-\d{2}$/.test(entry.updatedAt)) failures.push(`${entry.slug ?? entry.file} has invalid Blog updatedAt: ${entry.updatedAt}`);
   if (entry.updatedAt && entry.date && entry.updatedAt < entry.date) failures.push(`${entry.slug ?? entry.file} updatedAt should not be earlier than date`);
@@ -217,6 +227,15 @@ for (const entry of blogEntries) {
   }
   if (entry.bodyChars < 450) failures.push(`${entry.slug ?? entry.file} body is too thin for MVP content: ${entry.bodyChars} chars`);
   if (!/^#{2}\s+/m.test(entry.body)) failures.push(`${entry.slug ?? entry.file} should include at least one section heading`);
+  if (generatedOutlineBlogPattern.test(publicBlogCopy)) {
+    failures.push(`${entry.slug ?? entry.file} should avoid generated-outline blog scaffolding and sound like a person wrote it`);
+  }
+  if (pastedInformationCaveatPattern.test(publicBlogCopy)) {
+    failures.push(`${entry.slug ?? entry.file} should not reintroduce the overbearing information-category caveat block`);
+  }
+  if (internalMakerExcusePattern.test(publicBlogCopy)) {
+    failures.push(`${entry.slug ?? entry.file} should avoid internal maker excuses that users do not need`);
+  }
   if (entry.relatedPlaySlugs.length && publicActionLimitPattern.test([entry.title, entry.description, entry.body].filter(Boolean).join("\n"))) {
     failures.push(`${entry.slug ?? entry.file} should not describe related Play with action-count or move-limit wording`);
   }
@@ -257,6 +276,10 @@ for (const entry of blogEntries) {
 const standaloneBlogs = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0);
 if (standaloneBlogs.length < 8) {
   failures.push(`standalone Blog posts should remain allowed and visible, found only ${standaloneBlogs.length}`);
+}
+const arcadeEntries = playEntries.filter((entry) => entry.type === "arcade-game");
+if (arcadeEntries.length < Math.ceil(playEntries.length * 0.5)) {
+  failures.push(`Play roadmap should prioritize direct canvas/JS arcade games, found ${arcadeEntries.length}/${playEntries.length}`);
 }
 
 for (const entry of playEntries) {
@@ -330,6 +353,15 @@ for (const entry of playEntries.filter((item) => item.type === "arcade-game")) {
   if (!entry.arcade?.variant) failures.push(`${entry.slug} should declare an arcade variant`);
   if (!entry.arcade?.goal || normalizedTextLength(entry.arcade.goal) < 20) failures.push(`${entry.slug} should explain the arcade goal`);
   if (!entry.arcade?.controls || normalizedTextLength(entry.arcade.controls) < 20) failures.push(`${entry.slug} should explain keyboard controls`);
+  if (!directArcadeControlPattern.test(entry.arcade?.controls ?? "")) {
+    failures.push(`${entry.slug} should describe direct mouse/touch/keyboard control, not only a quiz-like choice loop`);
+  }
+  if (entry.arcade?.variant !== "lottery" && entry.durationLabel !== "1분") {
+    failures.push(`${entry.slug} arcade games should use a 1분 run unless they are an endless lottery-style loop`);
+  }
+  if (entry.arcade?.variant === "lottery" && entry.durationLabel !== "계속") {
+    failures.push(`${entry.slug} lottery-style arcade games should be endless 계속 loops`);
+  }
   if (!entry.arcade?.goodLabels?.length || !entry.arcade?.badLabels?.length) failures.push(`${entry.slug} should provide good and bad arcade labels`);
   if (!entry.endings?.length) failures.push(`${entry.slug} should provide arcade endings`);
 }

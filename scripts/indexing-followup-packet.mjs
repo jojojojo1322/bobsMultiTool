@@ -15,6 +15,7 @@ const searchConsoleProperty = "https://www.bobob.app/";
 const searchConsoleResource = encodeURIComponent(searchConsoleProperty);
 const searchConsoleSitemapsUrl = `https://search.google.com/u/1/search-console/sitemaps?resource_id=${searchConsoleResource}&pageId=none`;
 const bingWebmasterUrl = "https://www.bing.com/webmasters/";
+const naverSearchAdvisorUrl = "https://searchadvisor.naver.com/";
 const representativeUrls = [
   `${canonicalBaseUrl}/`,
   `${canonicalBaseUrl}/blog`,
@@ -121,7 +122,13 @@ function assertSnapshot(snapshot, log) {
   if (latestIndexNowCount !== null && checks.sitemapUrlCount !== latestIndexNowCount) {
     failures.push(`live sitemap URL count ${checks.sitemapUrlCount} should match latest logged IndexNow count ${latestIndexNowCount}`);
   }
-  for (const fragment of ["`2026-07-02`", "`2026-07-09`", "Bing Webmaster recommendations", "not be treated as indexed or search-ready"]) {
+  for (const fragment of [
+    "`2026-07-02`",
+    "`2026-07-09`",
+    "Bing Webmaster recommendations",
+    "Naver Search Advisor still needs a signed-in pass",
+    "not be treated as indexed or search-ready",
+  ]) {
     if (!log.includes(fragment)) failures.push(`observation log missing follow-up fragment: ${fragment}`);
   }
 
@@ -144,6 +151,8 @@ function assertPacket(packet, snapshot, log) {
     `same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}`,
     `live sitemap URL count ${liveSitemapUrlCount}`,
     `latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}`,
+    "## Naver Search Advisor Check",
+    "Naver Search Advisor checklist",
   ];
   const missing = requiredFragments.filter((fragment) => !packet.includes(fragment));
   if (missing.length) throw new Error(`indexing follow-up packet missing current-count guidance:\n${missing.join("\n")}`);
@@ -199,6 +208,13 @@ function renderPacket(snapshot, log) {
     "- Watch for the prior issue classes: missing h1, duplicate title, duplicate description, insufficient content, and weak inbound-link signals.",
     "- If Bing shows page-level examples, compare them against the live rendered route before changing public metadata.",
     "",
+    "## Naver Search Advisor Check",
+    "",
+    `- Open: ${naverSearchAdvisorUrl}`,
+    "- Naver Search Advisor checklist: confirm the `https://www.bobob.app` site property, sitemap submission state, robots.txt state, and representative URL collection/request status.",
+    "- If a page collection request is submitted, record the exact date, URL, and UI confirmation in `docs/search-indexing-observation-log.md`.",
+    "- Do not treat a Naver page collection request or sitemap submission as indexing proof; compare later collection/indexing evidence separately.",
+    "",
     "## Commands Before The Manual Check",
     "",
     "```bash",
@@ -211,8 +227,8 @@ function renderPacket(snapshot, log) {
     "",
     "## Stop Rule",
     "",
-    "- Do not mark search readiness complete from deployment, sitemap fetch, WebSub 204, or IndexNow 200 alone.",
-    "- The next completion evidence must be changed Search Console/Bing numbers or measured exports that cover the submitted Blog + Play URL set.",
+    "- Do not mark search readiness complete from deployment, sitemap fetch, WebSub 204, IndexNow 200, or a Naver collection request alone.",
+    "- The next completion evidence must be changed Search Console/Bing/Naver numbers or measured exports that cover the submitted Blog + Play URL set.",
     "",
   ].join("\n");
 }
