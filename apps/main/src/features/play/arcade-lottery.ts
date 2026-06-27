@@ -266,7 +266,14 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const stageIndexLabel = `${state.lotteryStage + 1}/${lotteryStages.length}`;
   const complete = lotteryTicketComplete(state);
   const winningLines = lotteryWinningLines(state);
+  const winningCellIds = new Set(winningLines.flat());
   const revealedCount = lotteryRevealedCount(state);
+  const progressHint =
+    winningLines.length > 0
+      ? `${winningLines.length}줄 보임 · 다 보면 다음은 ${nextStageShortTitle}`
+      : `${stageShortTitle}을 긁는 중 · 다 보면 다음은 ${nextStageShortTitle}`;
+  const completeLabel =
+    winningLines.length > 0 ? `${winningLines.length}줄 완성` : state.lotteryLastPrize > 0 ? "이번 장 즉석 당첨" : "이번 장 꽝";
   const newestScratch = state.lotteryDragTrail[0] ?? null;
   const activeScratchIndex = newestScratch ? lotteryCellIndexAt(state, newestScratch) : -1;
 
@@ -331,7 +338,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.fillStyle = "rgba(248,250,252,0.72)";
   ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(`${stageShortTitle}을 긁는 중 · 다 보면 다음은 ${nextStageShortTitle}`, lotteryCanvasWidth / 2, 119);
+  ctx.fillText(progressHint, lotteryCanvasWidth / 2, 119);
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
   ctx.beginPath();
@@ -343,6 +350,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   for (const cell of state.lotteryCells) {
     const isCursor = cell.id === state.lotteryCursor;
     const isFreshScratch = cell.id === activeScratchIndex;
+    const isWinningCell = winningCellIds.has(cell.id);
     ctx.fillStyle = "rgba(0,0,0,0.24)";
     ctx.beginPath();
     ctx.roundRect(cell.x + 5, cell.y + 7, lotteryCellSize, lotteryCellSize, 20);
@@ -363,11 +371,13 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.fill();
 
     ctx.strokeStyle = cell.revealed
-      ? isFreshScratch
-        ? "rgba(56,189,248,0.95)"
-        : "rgba(254,240,138,0.9)"
+      ? isWinningCell
+        ? "rgba(250,204,21,0.98)"
+        : isFreshScratch
+          ? "rgba(56,189,248,0.95)"
+          : "rgba(254,240,138,0.9)"
       : "rgba(255,255,255,0.34)";
-    ctx.lineWidth = isFreshScratch ? 3 : 2;
+    ctx.lineWidth = isWinningCell || isFreshScratch ? 3 : 2;
     ctx.stroke();
 
     if (isCursor) {
@@ -391,7 +401,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
       ctx.fillText(cell.symbol.slice(0, 3), cell.x + lotteryCellSize / 2, cell.y + 58);
       ctx.fillStyle = cell.symbol === stage.instantSymbol ? danger : "rgba(17,24,39,0.58)";
       ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-      ctx.fillText(cell.symbol === stage.instantSymbol ? "즉석 당첨" : "공개", cell.x + lotteryCellSize / 2, cell.y + 82);
+      ctx.fillText(isWinningCell ? "줄 완성" : cell.symbol === stage.instantSymbol ? "즉석 당첨" : "공개", cell.x + lotteryCellSize / 2, cell.y + 82);
     } else {
       ctx.strokeStyle = "rgba(255,255,255,0.2)";
       ctx.lineWidth = 2;
@@ -463,6 +473,16 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.moveTo(first.x + lotteryCellSize / 2, first.y + lotteryCellSize / 2);
     ctx.lineTo(last.x + lotteryCellSize / 2, last.y + lotteryCellSize / 2);
     ctx.stroke();
+    const midX = (first.x + last.x + lotteryCellSize) / 2;
+    const midY = (first.y + last.y + lotteryCellSize) / 2;
+    ctx.fillStyle = "rgba(15,23,42,0.86)";
+    ctx.beginPath();
+    ctx.roundRect(midX - 36, midY - 14, 72, 28, 14);
+    ctx.fill();
+    ctx.fillStyle = "#facc15";
+    ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("줄 완성", midX, midY + 4);
     ctx.restore();
   }
 
@@ -480,7 +500,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.fillStyle = state.lotteryLastPrize > 0 ? accent : "rgba(248,250,252,0.86)";
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(state.lotteryLastPrize > 0 ? "이번 장 당첨" : "이번 장 꽝", lotteryCanvasWidth / 2, bannerY + 30);
+    ctx.fillText(completeLabel, lotteryCanvasWidth / 2, bannerY + 30);
     ctx.fillStyle = "rgba(248,250,252,0.72)";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(`다음은 ${nextStageShortTitle} · 버튼이나 캔버스를 누르면 계속`, lotteryCanvasWidth / 2, bannerY + 52);
@@ -494,8 +514,10 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
   const status = complete
-    ? `이번 장 ${state.lotteryLastPrize > 0 ? "당첨" : "꽝"} · 다음은 ${nextStageShortTitle}`
-    : `${stageShortTitle} 긁는 중 · 다 보면 다음은 ${nextStageShortTitle}`;
+    ? `${completeLabel} · 다음은 ${nextStageShortTitle}`
+    : winningLines.length > 0
+      ? `${winningLines.length}줄 보임 · 다 보면 다음은 ${nextStageShortTitle}`
+      : `${stageShortTitle} 긁는 중 · 다 보면 다음은 ${nextStageShortTitle}`;
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
 
