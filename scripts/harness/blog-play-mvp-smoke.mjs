@@ -39,6 +39,8 @@ const minCategoryDescriptionLength = 50;
 const publicActionLimitPattern =
   /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
 const publicPlayCountTonePattern = /몇\s*번\s*(?:흔들|헛발|멈칫|스쳤|꼬임|건드렸)/i;
+const playEngineCountTonePattern =
+  /남은\s*후보|후보\s+\$\{|건넌\s*기록|방금\s*지나간\s*선택|오늘의\s*선택\s*로그|판단\s*로그|분류\s*로그|터치하거나\s*넘기면\s*판단\s*로그/i;
 const infoReaderIntentPatterns = [
   /궁금/,
   /헷갈/,
@@ -344,6 +346,9 @@ for (const fragment of ["## Play", "## Blog", "## Blog Categories", "## Discover
 }
 if (!opensearch.includes("/search?q={searchTerms}")) failures.push("OpenSearch should point to global /search");
 if (/fetch\(|\/api\//.test(playEngineSource)) failures.push("Play engines should remain static/client-only and not call API routes");
+if (playEngineCountTonePattern.test(playEngineSource)) {
+  failures.push("Play engines should describe state, score, time, and flow instead of count-toned action or remaining-candidate wording");
+}
 
 const publicSources = scanFiles(appSourceDir, (filePath) => /\.(tsx?|jsx?)$/.test(filePath));
 for (const filePath of publicSources) {

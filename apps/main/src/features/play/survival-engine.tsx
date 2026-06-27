@@ -215,7 +215,7 @@ export function SurvivalPlayEngine({
 function HistoryPanel({ content, history }: { content: MicroSimPlayContent; history: HistoryItem[] }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">오늘의 선택 로그</p>
+      <p className="text-sm font-semibold">오늘의 흐름</p>
       {history.length ? (
         <ol className="mt-3 space-y-3">
           {history.map((item, index) => (
@@ -237,7 +237,7 @@ function HistoryPanel({ content, history }: { content: MicroSimPlayContent; hist
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">선택을 시작하면 이곳에 하루의 경로가 쌓입니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">선택을 시작하면 하루의 경로가 보입니다.</p>
       )}
     </aside>
   );

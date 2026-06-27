@@ -130,7 +130,7 @@ export function TapGameEngine({
 function TapHistory({ history }: { history: Array<{ label: string; correct: boolean; points: number }> }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">판단 로그</p>
+      <p className="text-sm font-semibold">판단 흐름</p>
       {history.length ? (
         <ol className="mt-3 space-y-2">
           {history.slice(-8).map((item, index) => (
@@ -143,7 +143,7 @@ function TapHistory({ history }: { history: Array<{ label: string; correct: bool
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">터치하거나 넘기면 판단 로그가 쌓입니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">판단하면 결과 흐름이 바로 보입니다.</p>
       )}
     </aside>
   );

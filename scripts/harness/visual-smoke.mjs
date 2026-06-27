@@ -49,19 +49,19 @@ const scenarios = [
     name: "office-survival-mobile",
     path: "/play/office-survival",
     viewport: { width: 390, height: 844 },
-    expectedText: ["퇴근 생존기", "오늘의 선택 로그"],
+    expectedText: ["퇴근 생존기", "오늘의 흐름"],
   },
   {
     name: "prompt-cleanup-mobile",
     path: "/play/prompt-cleanup",
     viewport: { width: 390, height: 844 },
-    expectedText: ["프롬프트 정리함", "분류 로그"],
+    expectedText: ["프롬프트 정리함", "분류 흐름"],
   },
   {
     name: "meeting-escape-desktop",
     path: "/play/meeting-escape",
     viewport: { width: 1366, height: 900 },
-    expectedText: ["회의 탈출 버튼", "판단 로그"],
+    expectedText: ["회의 탈출 버튼", "판단 흐름"],
   },
   {
     name: "tools-desktop",

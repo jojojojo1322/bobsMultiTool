@@ -371,7 +371,7 @@ export function passwordGuessSplitRatio(preview: PasswordGuessPreview) {
 export function passwordGuessSplitLabel(preview: PasswordGuessPreview) {
   if (preview.issue === "duplicate") return "중복";
   if (preview.issue === "contradiction") return "충돌";
-  if (preview.candidatesBefore <= 0) return "후보 없음";
+  if (preview.candidatesBefore <= 0) return "흐름 막힘";
   const ratio = passwordGuessSplitRatio(preview);
   if (ratio >= 0.68 && preview.worstRemaining <= Math.ceil(preview.candidatesBefore * 0.38)) return "아주 좋음";
   if (ratio >= 0.5) return "좋음";
