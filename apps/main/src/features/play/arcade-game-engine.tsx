@@ -1229,6 +1229,72 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
   }
 }
 
+function flightCueFor(sprite: Sprite | null, projectedY: number) {
+  if (!sprite) {
+    return {
+      label: "리듬 유지",
+      detail: "다음 높이선 대기",
+      tone: "neutral" as const,
+      arrow: "steady" as const,
+    };
+  }
+
+  const gap = sprite.y - projectedY;
+  const close = Math.abs(gap) <= (sprite.good ? 28 : 44);
+
+  if (sprite.good) {
+    if (close) {
+      return {
+        label: "유지",
+        detail: "빈틈 높이 맞음",
+        tone: "good" as const,
+        arrow: "steady" as const,
+      };
+    }
+
+    if (gap < 0) {
+      return {
+        label: "짧게 누르기",
+        detail: "조금 더 위로",
+        tone: "good" as const,
+        arrow: "up" as const,
+      };
+    }
+
+    return {
+      label: "손 떼기",
+      detail: "조금 더 아래로",
+      tone: "good" as const,
+      arrow: "down" as const,
+    };
+  }
+
+  if (!close) {
+    return {
+      label: "유지",
+      detail: "벽과 거리 있음",
+      tone: "neutral" as const,
+      arrow: "steady" as const,
+    };
+  }
+
+  if (gap <= 0) {
+    return {
+      label: "손 떼기",
+      detail: "벽 아래로 피하기",
+      tone: "danger" as const,
+      arrow: "down" as const,
+    };
+  }
+
+  return {
+    label: "짧게 누르기",
+    detail: "벽 위로 피하기",
+    tone: "danger" as const,
+    arrow: "up" as const,
+  };
+}
+
 function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const liftActive = state.playerVy < -25;
@@ -1241,6 +1307,13 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const altitudeRange = Math.max(altitudeBottom - altitudeTop, 1);
   const playerAltitudeRatio = clamp((state.playerY - altitudeTop) / altitudeRange, 0, 1);
   const projectedY = clamp(state.playerY + state.playerVy * 0.18, altitudeTop, altitudeBottom);
+  const flightCue = flightCueFor(incomingSprite, projectedY);
+  const cueColor =
+    flightCue.tone === "danger"
+      ? danger
+      : flightCue.tone === "good"
+        ? primary
+        : "rgba(255,255,255,0.72)";
   const incomingLabel = incomingSprite
     ? incomingSprite.good
       ? "다음 빈틈"
@@ -1279,9 +1352,9 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillText("누르면 상승, 떼면 하강", 44, 48);
   ctx.textAlign = "right";
-  ctx.fillStyle = liftActive ? primary : "rgba(255,255,255,0.64)";
+  ctx.fillStyle = cueColor;
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`${incomingLabel} · ${liftActive ? "상승" : "하강"}`, canvasWidth - 44, 47);
+  ctx.fillText(`${incomingLabel} · ${flightCue.label}`, canvasWidth - 44, 47);
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
   ctx.beginPath();
@@ -1329,6 +1402,33 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.quadraticCurveTo(state.playerX + 42, (state.playerY + projectedY) / 2, state.playerX + 114, projectedY);
   ctx.stroke();
   ctx.setLineDash([]);
+
+  const cuePanelX = clamp(state.playerX + 54, 76, canvasWidth - 178);
+  const cuePanelY = clamp(projectedY - 35, 72, horizon - 78);
+  ctx.fillStyle =
+    flightCue.tone === "danger"
+      ? "rgba(127,29,29,0.52)"
+      : flightCue.tone === "good"
+        ? "rgba(113,63,18,0.5)"
+        : "rgba(15,23,42,0.54)";
+  ctx.beginPath();
+  ctx.roundRect(cuePanelX, cuePanelY, 136, 46, 14);
+  ctx.fill();
+  ctx.strokeStyle =
+    flightCue.tone === "danger"
+      ? "rgba(251,113,133,0.54)"
+      : flightCue.tone === "good"
+        ? "rgba(250,204,21,0.5)"
+        : "rgba(147,197,253,0.34)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = cueColor;
+  ctx.font = "900 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(flightCue.arrow === "up" ? "상승" : flightCue.arrow === "down" ? "하강" : "유지", cuePanelX + 16, cuePanelY + 22);
+  ctx.fillStyle = "rgba(248,250,252,0.76)";
+  ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(flightCue.detail, cuePanelX + 16, cuePanelY + 39);
 
   ctx.fillStyle = "rgba(15,23,42,0.5)";
   ctx.beginPath();
@@ -1423,7 +1523,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("높이선을 보고 누르거나 떼세요. Space/Enter도 됩니다.", 34, canvasHeight - 24);
+  ctx.fillText("높이선과 상승/하강 큐를 보고 누르거나 떼세요.", 34, canvasHeight - 24);
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
