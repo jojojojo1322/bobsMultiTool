@@ -3454,7 +3454,9 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    state.passwordAttempts.length ? "숫자키·추천칩·R·Enter / 키패드 막대=현재 칸 흐름" : "숫자키·추천칩·R 추천 순환·Enter / 막대=가능성 흐름",
+    state.passwordAttempts.length
+      ? "숫자키·칸 클릭 후보 순환·추천칩·Enter / 막대=현재 칸 흐름"
+      : "숫자키·칸 클릭 숫자 변경·추천칩·Enter / 막대=가능성 흐름",
     34,
     passwordKeypadY - 4,
   );

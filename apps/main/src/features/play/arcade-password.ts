@@ -144,8 +144,16 @@ export function setPasswordDigit(state: Pick<PasswordPlayState, "passwordGuess" 
   if (advance) movePasswordCursor(state, 1);
 }
 
-export function setPasswordDigitFromClick(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor">, digitIndex: number) {
+export function setPasswordDigitFromClick(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts">, digitIndex: number) {
   state.passwordCursor = clamp(digitIndex, 0, passwordDigitCount - 1);
+  const candidates = passwordCandidatesForAttempts(state.passwordAttempts);
+  const options = passwordPositionOptions(candidates)[state.passwordCursor] ?? [];
+  const current = state.passwordGuess[state.passwordCursor] ?? 0;
+  if (state.passwordAttempts.length > 0 && options.length > 0 && options.length < 10) {
+    const currentIndex = options.indexOf(current);
+    state.passwordGuess[state.passwordCursor] = options[(currentIndex + 1 + options.length) % options.length] ?? options[0] ?? current;
+    return;
+  }
   adjustPasswordDigit(state, 1);
 }
 
