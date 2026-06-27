@@ -225,6 +225,20 @@ for (const entry of playEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.type || !entry.durationLabel || !entry.updatedAt || !entry.shareText) {
     failures.push(`${entry.file} is missing required Play metadata`);
   }
+  const publicPlayCopy = [
+    entry.title,
+    entry.description,
+    entry.durationLabel,
+    entry.shareText,
+    entry.arcade?.goal,
+    entry.arcade?.controls,
+    ...(entry.endings ?? []).flatMap((ending) => [ending.title, ending.description]),
+  ]
+    .filter(Boolean)
+    .join("\n");
+  if (/조작\s*횟수|행동\s*횟수|횟수\s*제한|조작\s*제한|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit/i.test(publicPlayCopy)) {
+    failures.push(`${entry.slug ?? entry.file} should not expose action-count or move-limit wording in public Play copy`);
+  }
   if (entry.description && normalizedTextLength(entry.description) < minPlayDescriptionLength) {
     failures.push(`${entry.slug ?? entry.file} description is too short for submitted URL metadata: ${normalizedTextLength(entry.description)} chars`);
   }

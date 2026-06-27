@@ -4654,7 +4654,7 @@ function LiveArcadeResultPanel({
   const detail = isLottery
     ? view.lotteryTicketDone
       ? `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
-      : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 시간, 목표 점수, 조작 제한 없이 이어집니다.`
+      : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다.`
     : isSumBox
       ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
