@@ -2948,6 +2948,9 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const candidates = candidateStats.candidates;
   const positionOptions = passwordPositionOptions(candidates);
   const positionFrequency = passwordPositionDigitFrequency(candidates);
+  const selectedPositionOptions = new Set(positionOptions[state.passwordCursor] ?? []);
+  const selectedPositionFrequency = positionFrequency[state.passwordCursor] ?? [];
+  const selectedPositionHasSignal = state.passwordAttempts.length > 0 && selectedPositionFrequency.some((entry) => entry.count > 0);
   const digitFrequency = passwordDigitFrequency(candidates);
   const suggestion = passwordSuggestion(state.passwordAttempts);
   const candidateOptions = passwordCandidateOptions(state.passwordAttempts);
@@ -3090,6 +3093,9 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     const topDigits = formatTopPasswordDigits(positionFrequency[index] ?? []);
     ctx.fillText(`${topDigits} / ${formatPasswordOptionDigits(digits)}`, 86, y);
   });
+  ctx.fillStyle = selectedPositionHasSignal ? primary : "rgba(255,255,255,0.5)";
+  ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText(`현재 ${state.passwordCursor + 1}칸 추천 ${formatTopPasswordDigits(selectedPositionFrequency)}`, 48, 322);
   ctx.textAlign = "center";
 
   for (let index = 0; index < passwordDigitCount; index += 1) {
@@ -3190,27 +3196,49 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     const y = passwordKeypadY + row * (passwordKeypadHeight + passwordKeypadGap);
     const mark = digitMarks[digit];
     const frequency = digitFrequency[digit] ?? { count: 0, ratio: 0 };
-    ctx.fillStyle = mark === "absent" ? "rgba(148,163,184,0.18)" : mark === "candidate" ? "rgba(251,191,36,0.22)" : "rgba(255,255,255,0.1)";
+    const positionFrequencyEntry = selectedPositionFrequency[digit] ?? { count: 0, ratio: 0 };
+    const slotCandidate = selectedPositionHasSignal && selectedPositionOptions.has(digit);
+    const selectedDigit = digit === state.passwordGuess[state.passwordCursor];
+    const keypadFrequency = selectedPositionHasSignal ? positionFrequencyEntry : frequency;
+    ctx.fillStyle = selectedDigit
+      ? "rgba(96,165,250,0.34)"
+      : slotCandidate
+        ? "rgba(96,165,250,0.2)"
+        : selectedPositionHasSignal
+          ? "rgba(148,163,184,0.14)"
+          : mark === "absent"
+            ? "rgba(148,163,184,0.18)"
+            : mark === "candidate"
+              ? "rgba(251,191,36,0.22)"
+              : "rgba(255,255,255,0.1)";
     ctx.beginPath();
     ctx.roundRect(x, y, passwordKeypadWidth, passwordKeypadHeight, 10);
     ctx.fill();
-    ctx.strokeStyle = mark === "absent" ? "rgba(148,163,184,0.26)" : mark === "candidate" ? "rgba(251,191,36,0.55)" : "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = selectedDigit
+      ? primary
+      : slotCandidate
+        ? "rgba(96,165,250,0.68)"
+        : mark === "absent"
+          ? "rgba(148,163,184,0.26)"
+          : mark === "candidate"
+            ? "rgba(251,191,36,0.55)"
+            : "rgba(255,255,255,0.15)";
+    ctx.lineWidth = selectedDigit ? 2 : 1;
     ctx.stroke();
-    ctx.fillStyle = mark === "absent" ? "rgba(255,255,255,0.34)" : "#f8fafc";
+    ctx.fillStyle = selectedPositionHasSignal && !slotCandidate && !selectedDigit ? "rgba(255,255,255,0.34)" : "#f8fafc";
     ctx.font = "900 15px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.fillText(`${digit}`, x + passwordKeypadWidth / 2, y + 19);
     ctx.fillStyle = "rgba(255,255,255,0.14)";
     ctx.beginPath();
     ctx.roundRect(x + 10, y + passwordKeypadHeight - 9, passwordKeypadWidth - 20, 4, 2);
     ctx.fill();
-    ctx.fillStyle = mark === "absent" ? "rgba(148,163,184,0.38)" : frequency.count > 0 ? accent : "rgba(255,255,255,0.2)";
+    ctx.fillStyle = selectedDigit ? primary : slotCandidate ? accent : mark === "absent" ? "rgba(148,163,184,0.38)" : keypadFrequency.count > 0 ? accent : "rgba(255,255,255,0.2)";
     ctx.beginPath();
-    ctx.roundRect(x + 10, y + passwordKeypadHeight - 9, Math.max(3, (passwordKeypadWidth - 20) * frequency.ratio), 4, 2);
+    ctx.roundRect(x + 10, y + passwordKeypadHeight - 9, Math.max(3, (passwordKeypadWidth - 20) * keypadFrequency.ratio), 4, 2);
     ctx.fill();
     ctx.fillStyle = "rgba(255,255,255,0.58)";
     ctx.font = "750 9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
-    ctx.fillText(`${frequency.count}`, x + passwordKeypadWidth / 2, y + 33);
+    ctx.fillText(`${keypadFrequency.count}`, x + passwordKeypadWidth / 2, y + 33);
   }
   const historyX = 510;
   const historyY = 72;
@@ -3303,7 +3331,11 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자키·후보칩·R 추천 순환·Enter / 막대=후보 빈도", 34, passwordKeypadY - 4);
+  ctx.fillText(
+    state.passwordAttempts.length ? "숫자키·후보칩·R·Enter / 키패드 막대=현재 칸 후보" : "숫자키·후보칩·R 추천 순환·Enter / 막대=후보 빈도",
+    34,
+    passwordKeypadY - 4,
+  );
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;

@@ -7,7 +7,7 @@ const playDir = path.join(root, "content/play");
 const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker"];
 const failures = [];
 const actionCountPattern =
-  /조작\s*횟수|행동\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
+  /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
 
 let chromium;
 try {

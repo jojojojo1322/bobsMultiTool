@@ -36,6 +36,8 @@ const disallowedSupportLinkPatterns = [/buymeacoffee/i, /ko-fi/i, /paypal/i, /to
 const minBlogDescriptionLength = 50;
 const minPlayDescriptionLength = 50;
 const minCategoryDescriptionLength = 50;
+const publicActionLimitPattern =
+  /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
 const infoReaderIntentPatterns = [
   /궁금/,
   /헷갈/,
@@ -188,6 +190,9 @@ for (const entry of blogEntries) {
   }
   if (entry.bodyChars < 450) failures.push(`${entry.slug ?? entry.file} body is too thin for MVP content: ${entry.bodyChars} chars`);
   if (!/^#{2}\s+/m.test(entry.body)) failures.push(`${entry.slug ?? entry.file} should include at least one section heading`);
+  if (entry.relatedPlaySlugs.length && publicActionLimitPattern.test([entry.title, entry.description, entry.body].filter(Boolean).join("\n"))) {
+    failures.push(`${entry.slug ?? entry.file} should not describe related Play with action-count or move-limit wording`);
+  }
   if (entry.category === "정보") {
     if (!/기준일은\s+\d{4}-\d{2}-\d{2}/.test(entry.body)) {
       failures.push(`${entry.slug ?? entry.file} information posts should state a concrete 기준일`);
@@ -236,7 +241,7 @@ for (const entry of playEntries) {
   ]
     .filter(Boolean)
     .join("\n");
-  if (/조작\s*횟수|행동\s*횟수|횟수\s*제한|조작\s*제한|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit/i.test(publicPlayCopy)) {
+  if (publicActionLimitPattern.test(publicPlayCopy)) {
     failures.push(`${entry.slug ?? entry.file} should not expose action-count or move-limit wording in public Play copy`);
   }
   if (entry.description && normalizedTextLength(entry.description) < minPlayDescriptionLength) {

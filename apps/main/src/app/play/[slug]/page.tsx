@@ -127,7 +127,7 @@ function PlayContext({
   const firstBlog = relatedBlogLinks[0];
   const pacingText =
     content.type === "arcade-game" && content.arcade.variant === "lottery"
-      ? "시간이나 목표 점수로 끊지 않습니다. 한 장을 다 보면 다음 단계 복권으로 넘어가고, 그만하고 싶을 때 멈추면 됩니다."
+      ? "한 장을 다 긁으면 곧장 다음 단계 복권으로 넘어갑니다. 더 긁고 싶으면 이어가고, 그만하고 싶으면 그 자리에서 멈추면 됩니다."
       : content.type === "arcade-game" && content.arcade.variant === "sum-box"
         ? `한 판은 ${content.durationLabel} 동안 갑니다. 결과는 그 시간 안에 만든 기록으로 남습니다.`
         : content.type === "arcade-game"
