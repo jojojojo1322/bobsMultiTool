@@ -32,6 +32,8 @@ export type PasswordAttempt = {
   issue?: "duplicate" | "contradiction";
 };
 
+export type PasswordCurrentGuessIssue = "duplicate" | "repeated" | "contradiction";
+
 type PasswordHistoryItem = {
   label: string;
   detail: string;
@@ -163,6 +165,14 @@ export function applyPasswordSuggestion(
   const options = passwordCandidateOptions(state.passwordAttempts);
   const index = options.length ? state.passwordSuggestionCursor % options.length : 0;
   applyPasswordCandidate(state, options[index] ?? passwordSuggestion(state.passwordAttempts));
+}
+
+export function passwordCurrentGuessIssue(attempts: PasswordAttempt[], guess: number[] | string): PasswordCurrentGuessIssue | null {
+  const guessText = Array.isArray(guess) ? passwordGuessText(guess) : guess;
+  if (passwordGuessHasDuplicateDigits(guessText)) return "duplicate";
+  if (attempts.some((attempt) => attempt.guess === guessText)) return "repeated";
+  if (attempts.length > 0 && !passwordGuessIsPossible(attempts, guessText)) return "contradiction";
+  return null;
 }
 
 export function cyclePasswordSuggestion(

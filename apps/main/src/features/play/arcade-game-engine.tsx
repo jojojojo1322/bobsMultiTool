@@ -45,6 +45,7 @@ import {
   passwordCandidateOptions,
   passwordCandidateStats,
   passwordAttemptCandidateSummary,
+  passwordCurrentGuessIssue,
   passwordDigitFrequency,
   passwordGuessPreview,
   passwordDigitFromKeyboardCode,
@@ -56,9 +57,7 @@ import {
   passwordDigitStartX,
   passwordDigitWidth,
   passwordDigitY,
-  passwordGuessHasDuplicateDigits,
   passwordGuessOutcomeBuckets,
-  passwordGuessIsPossible,
   passwordGuessSplitLabel,
   passwordGuessSplitRatio,
   passwordGuessText,
@@ -3080,10 +3079,10 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const suggestionIndex = candidateOptions.length ? state.passwordSuggestionCursor % candidateOptions.length : -1;
   const digitMarks = passwordDigitMarks(state.passwordAttempts);
   const currentGuess = passwordGuessText(state.passwordGuess);
-  const duplicateCurrent = passwordGuessHasDuplicateDigits(state.passwordGuess);
-  const repeatedCurrent = state.passwordAttempts.some((attempt, index) => attempt.guess === currentGuess && (index > 0 || attempt.repeated));
-  const impossibleCurrent =
-    !duplicateCurrent && state.passwordAttempts.length > 0 && !state.passwordAttempts.some((attempt) => attempt.guess === currentGuess) && !passwordGuessIsPossible(state.passwordAttempts, currentGuess);
+  const currentIssue = passwordCurrentGuessIssue(state.passwordAttempts, state.passwordGuess);
+  const duplicateCurrent = currentIssue === "duplicate";
+  const repeatedCurrent = currentIssue === "repeated";
+  const impossibleCurrent = currentIssue === "contradiction";
   const guessPreview = passwordGuessPreview(state.passwordAttempts, state.passwordGuess);
   const outcomeBuckets = passwordGuessOutcomeBuckets(state.passwordAttempts, state.passwordGuess);
   const splitRatio = passwordGuessSplitRatio(guessPreview);
@@ -3292,7 +3291,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fill();
   ctx.fillStyle = "#111827";
   ctx.font = "900 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(duplicateCurrent || repeatedCurrent || impossibleCurrent ? "다른 번호" : "확인", centerX, passwordSubmitRect.y + 28);
+  ctx.fillText(currentIssue ? "추천 확인" : "확인", centerX, passwordSubmitRect.y + 28);
 
   const splitX = centerX - 140;
   const splitY = passwordSubmitRect.y + passwordSubmitRect.height + 5;
@@ -4158,6 +4157,13 @@ function passwordRatioMood(ratio: number, count: number) {
   return "낮음";
 }
 
+function pressPasswordMain(content: ArcadeGameContent, state: GameState) {
+  if (passwordCurrentGuessIssue(state.passwordAttempts, state.passwordGuess)) {
+    applyPasswordSuggestion(state);
+  }
+  submitPasswordGuess(content, state);
+}
+
 export function ArcadeGameEngine({
   content,
   relatedBlogLinks,
@@ -4257,7 +4263,7 @@ export function ArcadeGameEngine({
         if (action === "right") movePasswordCursor(state, 1);
         if (action === "up") adjustPasswordDigit(state, 1);
         if (action === "down") adjustPasswordDigit(state, -1);
-        if (action === "main") submitPasswordGuess(content, state);
+        if (action === "main") pressPasswordMain(content, state);
         setShareState("idle");
         syncView();
         return;
@@ -4611,7 +4617,7 @@ export function ArcadeGameEngine({
         } else if (pointInRect(point, passwordSuggestionRect)) {
           applyPasswordSuggestion(state);
         } else if (pointInRect(point, passwordSubmitRect)) {
-          submitPasswordGuess(content, state);
+          pressPasswordMain(content, state);
         } else {
           return;
         }

@@ -186,6 +186,13 @@ if (dates.length !== blogEntries.length) failures.push("all Blog posts must have
 if (dates.length && dateDaysBetween(dates[0], dates[dates.length - 1]) < 90) {
   failures.push(`Blog dates should look gradually published across several months, found ${dates[0]} to ${dates[dates.length - 1]}`);
 }
+const blogDateCounts = dates.reduce((counts, date) => counts.set(date, (counts.get(date) ?? 0) + 1), new Map());
+const crowdedBlogDates = Array.from(blogDateCounts.entries()).filter(([, count]) => count > 3);
+if (crowdedBlogDates.length) {
+  failures.push(
+    `Blog posts should not look dumped on one day; crowded dates: ${crowdedBlogDates.map(([date, count]) => `${date}=${count}`).join(", ")}`,
+  );
+}
 
 for (const entry of blogEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.category) failures.push(`${entry.file} is missing required Blog frontmatter`);
@@ -198,6 +205,12 @@ for (const entry of blogEntries) {
     failures.push(`${entry.slug ?? entry.file} should not describe related Play with action-count or move-limit wording`);
   }
   if (entry.category === "정보") {
+    if (/^\d{4}년\s+\d{1,2}월(?:\s+\d{1,2}일)?\s+/.test(entry.title ?? "")) {
+      failures.push(`${entry.slug ?? entry.file} information title should not start with a long date prefix; keep 기준일 in the body instead`);
+    }
+    if (/^\d{4}년\s+\d{1,2}월(?:\s+\d{1,2}일)?\s+/.test(entry.description ?? "")) {
+      failures.push(`${entry.slug ?? entry.file} information description should not start with a long date prefix; keep 기준일 in the body instead`);
+    }
     if (!/기준일은\s+\d{4}-\d{2}-\d{2}/.test(entry.body)) {
       failures.push(`${entry.slug ?? entry.file} information posts should state a concrete 기준일`);
     }
@@ -253,6 +266,9 @@ for (const entry of playEntries) {
     if (lotteryLimitScorePattern.test(publicPlayCopy)) {
       failures.push("lucky-scratch public copy should avoid scoreboards, timers, or move-limit wording");
     }
+  }
+  if (entry.slug === "password-lock" && !/추천\s*번호로\s*바꿔\s*확인/.test(publicPlayCopy)) {
+    failures.push("password-lock should explain that invalid keyboard confirmation applies a recommended candidate");
   }
   if (entry.description && normalizedTextLength(entry.description) < minPlayDescriptionLength) {
     failures.push(`${entry.slug ?? entry.file} description is too short for submitted URL metadata: ${normalizedTextLength(entry.description)} chars`);
