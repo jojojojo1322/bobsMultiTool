@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-27",
   "shareText": "단계 복권 긁기를 해봤다. 꽝이어도 다음 장을 또 긁게 된다.",
   "order": 12.5,
-  "relatedBlogSlugs": ["why-small-web-toys-return", "small-web-games-retention", "small-play-rules-note"],
+  "relatedBlogSlugs": ["lottery-scratch-stage-note", "why-small-web-toys-return", "small-web-games-retention", "small-play-rules-note"],
   "relatedPlaySlugs": ["ten-box-rush", "password-lock", "notification-mole"],
   "arcade": {
     "variant": "lottery",
