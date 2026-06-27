@@ -128,10 +128,8 @@ export function SurvivalPlayEngine({
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="rounded-md border bg-background px-3 py-2 text-right">
-            <p className="text-xs text-muted-foreground">진행</p>
-            <p className="text-sm font-semibold">
-              {Math.min(turnIndex, content.turns.length)} / {content.turns.length}
-            </p>
+            <p className="text-xs text-muted-foreground">상태</p>
+            <p className="text-sm font-semibold">{isFinished ? "완료" : "선택 중"}</p>
           </div>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-play-stats>
@@ -177,7 +175,7 @@ export function SurvivalPlayEngine({
       ) : currentTurn ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-turn={currentTurn.id}>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Turn {turnIndex + 1}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">상황 선택</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{currentTurn.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{currentTurn.situation}</p>
             <div className="mt-5 grid gap-3">

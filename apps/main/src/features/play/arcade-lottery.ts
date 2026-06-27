@@ -256,7 +256,6 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const { background, primary, accent, danger } = content.arcade.palette;
   const stage = lotteryStageAt(state.lotteryStage);
   const nextStage = lotteryStageAt((state.lotteryStage + 1) % lotteryStages.length);
-  const revealed = lotteryRevealedCount(state);
   const complete = lotteryTicketComplete(state);
   const winningLines = lotteryWinningLines(state);
   const newestScratch = state.lotteryDragTrail[0] ?? null;
@@ -476,7 +475,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.textAlign = "center";
   const status = complete
     ? `이번 장 ${state.lotteryLastPrize} 당첨 · Space 또는 가운데 버튼으로 다음 복권`
-    : `${revealed}/${state.lotteryCells.length}칸 공개 · 시간이나 목표 점수 없이 계속`;
+    : "긁을 칸을 골라 계속 진행 · 시간이나 목표 점수 없이 계속";
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
 

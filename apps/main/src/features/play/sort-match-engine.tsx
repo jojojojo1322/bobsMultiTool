@@ -41,7 +41,7 @@ export function SortMatchEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n점수: ${score}/${content.items.length}`;
+    const text = `${content.shareText}\n점수: ${score}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -66,9 +66,7 @@ export function SortMatchEngine({
           </div>
           <div className="rounded-md border bg-background px-3 py-2 text-right">
             <p className="text-xs text-muted-foreground">점수</p>
-            <p className="text-sm font-semibold tabular-nums">
-              {score} / {content.items.length}
-            </p>
+            <p className="text-sm font-semibold tabular-nums">{score}</p>
           </div>
         </div>
       </div>
@@ -97,9 +95,7 @@ export function SortMatchEngine({
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-turn={current.id}>
           <div>
             <div className="rounded-lg border bg-background p-5">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {Math.min(index + 1, content.items.length)} / {content.items.length}
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">지금 분류할 항목</p>
               <h3 className="mt-2 text-2xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>

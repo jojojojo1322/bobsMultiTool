@@ -75,10 +75,8 @@ export function TapGameEngine({
               <p className="text-sm font-semibold tabular-nums">{score}</p>
             </div>
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">진행</p>
-              <p className="text-sm font-semibold tabular-nums">
-                {Math.min(index, content.targets.length)} / {content.targets.length}
-              </p>
+              <p className="text-xs text-muted-foreground">상태</p>
+              <p className="text-sm font-semibold">{isFinished ? "완료" : current ? "판단 중" : "대기"}</p>
             </div>
           </div>
         </div>

@@ -3416,20 +3416,23 @@ export function ArcadeGameEngine({
   const activeActionLabel =
     content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
   const shareScoreLabel = content.arcade.variant === "lottery" ? `누적 당첨: ${view.lotteryTotalPrize}` : `점수: ${view.score}`;
+  const lotteryStage = lotteryStageAt(view.lotteryStage);
+  const lotteryNextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
+  const shortLotteryStageTitle = (title: string) => title.replace(/^[0-9]단계\s*/, "");
   const metricItems =
     content.arcade.variant === "lottery"
       ? [
-          { label: "단계", value: `${view.lotteryStage + 1}/${lotteryStages.length}` },
+          { label: "현재 단계", value: shortLotteryStageTitle(lotteryStage.title) },
+          { label: "다음 단계", value: shortLotteryStageTitle(lotteryNextStage.title) },
           { label: "누적 당첨", value: view.lotteryTotalPrize },
-          { label: "긁은 장", value: view.lotteryDraws + 1 },
-          { label: "공개", value: `${view.lotteryRevealedCount}/9` },
+          { label: "방식", value: "계속 긁기" },
         ]
       : content.arcade.variant === "sum-box"
         ? [
             { label: "기록", value: view.score },
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "연속", value: view.sumStreak },
-            { label: "비운 칸", value: `${view.sumClearedCount}/25` },
+            { label: "방식", value: "드래그" },
           ]
         : [
             { label: "점수", value: view.score },
@@ -4545,7 +4548,7 @@ function LiveArcadeResultPanel({
   const detail = isLottery
     ? view.lotteryTicketDone
       ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다음은 ${nextStage.title}이고, 원하면 바로 이어서 긁습니다.`
-      : `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. ${9 - view.lotteryRevealedCount}칸 남았고, 시간이나 목표 점수 없이 이어집니다.`
+      : `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 시간이나 목표 점수 없이 이어집니다.`
     : isSumBox
       ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
