@@ -133,6 +133,10 @@ function PlayContext({
         : content.type === "arcade-game"
           ? `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 남고, 다시 해도 바로 이어집니다.`
         : `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.`;
+  const recordText =
+    content.type === "arcade-game" && content.arcade.variant === "lottery"
+      ? "복권은 현재 단계와 공개된 칸만 남깁니다. 마우스와 키보드 입력은 브라우저 안에서 바로 처리되고, 공유도 같은 화면에서 이어집니다. 더 긁고 싶으면 이어가고, 아니면 다른 카드로 넘어가도 충분합니다."
+      : "점수는 정답표가 아니라 한 판 기록입니다. 마우스와 키보드 입력은 브라우저 안에서 바로 처리되고, 결과 공유도 같은 화면에서 이어집니다. 방금 감이 맞았다면 한 번 더, 아니면 다른 카드로 넘어가도 충분합니다.";
 
   return (
     <section className="mt-6 rounded-md border bg-muted/20 p-4" data-play-context>
@@ -145,7 +149,7 @@ function PlayContext({
         <p>{pacingText}</p>
       </div>
       <p className="mt-3 text-sm leading-7 text-muted-foreground">
-        점수는 정답표가 아니라 한 판 기록입니다. 마우스와 키보드 입력은 브라우저 안에서 바로 처리되고, 결과 공유도 같은 화면에서 이어집니다. 방금 감이 맞았다면 한 번 더, 아니면 다른 카드로 넘어가도 충분합니다.
+        {recordText}
       </p>
       {firstBlog ? (
         <div className="mt-4 rounded-sm border bg-background p-3 text-sm">

@@ -16,7 +16,7 @@ const playShareImage = openGraphImage({ kind: "play", title: playShareTitle });
 
 export const metadata: Metadata = {
   title: "Play - bobob.app",
-  description: "카드 하나 골라 바로 시작하는 bobob.app의 웹게임 목록입니다. 마우스로 쓸고, 방향키로 움직이고, 짧게 점수와 결과를 봅니다.",
+  description: "카드 하나 골라 바로 시작하는 bobob.app의 웹게임 목록입니다. 마우스로 쓸고, 방향키로 움직이고, 짧게 결과나 진행 상태를 봅니다.",
   keywords: playIndexKeywords(playContentsForMetadata),
   alternates: {
     canonical: "https://www.bobob.app/play",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/play",
     siteName: "bobob.app",
     title: "Play - bobob.app",
-    description: "카드 하나 골라 바로 시작합니다. 마우스로 쓸고, 방향키로 움직이고, 끝나면 점수와 짧은 결과를 봅니다.",
+    description: "카드 하나 골라 바로 시작합니다. 마우스로 쓸고, 방향키로 움직이고, 끝나면 결과나 진행 상태를 봅니다.",
     images: [playShareImage],
   },
   twitter: {
@@ -51,7 +51,7 @@ export default function PlayIndexPage() {
           <Badge>Play</Badge>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">심심하면 한 판</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            카드 하나 누르면 바로 시작합니다. 마우스로 쓸고, 방향키로 움직이고, 한 판이 끝나면 점수와 짧은 결과만 확인합니다.
+            카드 하나 누르면 바로 시작합니다. 마우스로 쓸고, 방향키로 움직이고, 끝나면 결과나 다음 흐름만 확인합니다.
           </p>
         </div>
       </section>
@@ -70,9 +70,9 @@ export default function PlayIndexPage() {
             </p>
           </div>
           <div>
-            <h2 className="text-base font-semibold tracking-normal text-foreground">점수만 보기</h2>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">결과만 보기</h2>
             <p className="mt-2">
-              끝나면 점수와 한 줄 결과만 봅니다. 성향 분석이나 가입 단계는 없습니다.
+              끝나면 한 줄 결과나 이어갈 상태만 봅니다. 성향 분석이나 가입 단계는 없습니다.
             </p>
           </div>
         </div>
