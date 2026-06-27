@@ -729,6 +729,28 @@ function launchOrNudgeBrickBall(state: GameState) {
   state.playTick += 1;
 }
 
+const brickPaddleWidth = 112;
+const brickBallRadius = 8;
+const brickWallPadding = 16;
+
+function reflectedBrickX(rawX: number) {
+  const min = brickWallPadding;
+  const max = canvasWidth - brickWallPadding;
+  const span = max - min;
+  if (span <= 0) return clamp(rawX, min, max);
+  const cycle = span * 2;
+  const normalized = (((rawX - min) % cycle) + cycle) % cycle;
+  return normalized <= span ? min + normalized : max - (normalized - span);
+}
+
+function brickLandingX(state: GameState) {
+  if (!state.brickLaunched || state.brickBallVy <= 0) return null;
+  const targetY = state.playerY - 20;
+  const secondsToPaddle = (targetY - state.brickBallY) / state.brickBallVy;
+  if (secondsToPaddle <= 0 || secondsToPaddle > 4) return null;
+  return reflectedBrickX(state.brickBallX + state.brickBallVx * secondsToPaddle);
+}
+
 function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<string>, now: number) {
   if (state.finished) return;
   if (!state.started) {
@@ -1012,14 +1034,13 @@ function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: 
       state.brickBallVy = Math.abs(state.brickBallVy);
     }
 
-    const paddleWidth = 112;
     const hitPaddle =
       state.brickBallVy > 0 &&
       state.brickBallY > state.playerY - 20 &&
       state.brickBallY < state.playerY + 10 &&
-      Math.abs(state.brickBallX - state.playerX) < paddleWidth / 2;
+      Math.abs(state.brickBallX - state.playerX) < brickPaddleWidth / 2;
     if (hitPaddle) {
-      const offset = (state.brickBallX - state.playerX) / (paddleWidth / 2);
+      const offset = (state.brickBallX - state.playerX) / (brickPaddleWidth / 2);
       state.brickBallY = state.playerY - 22;
       state.brickBallVy = -Math.abs(state.brickBallVy) - 8;
       state.brickBallVx = offset * 310;
@@ -3441,6 +3462,44 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   }
 }
 
+function drawBrickLandingGuide(state: GameState, ctx: CanvasRenderingContext2D, accent: string, danger: string) {
+  const landingX = brickLandingX(state);
+  if (landingX === null) return;
+
+  const catchable = Math.abs(landingX - state.playerX) <= brickPaddleWidth / 2;
+  const guideColor = catchable ? accent : danger;
+  const labelX = clamp(landingX, 70, canvasWidth - 70);
+  const paddleY = state.playerY - 8;
+
+  ctx.save();
+  ctx.setLineDash([6, 6]);
+  ctx.strokeStyle = catchable ? "rgba(163,230,53,0.72)" : "rgba(251,113,133,0.72)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(landingX, Math.max(state.brickBallY + 12, 88));
+  ctx.lineTo(landingX, paddleY - 10);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = catchable ? "rgba(163,230,53,0.18)" : "rgba(251,113,133,0.16)";
+  ctx.strokeStyle = catchable ? "rgba(163,230,53,0.7)" : "rgba(251,113,133,0.72)";
+  ctx.beginPath();
+  ctx.roundRect(landingX - brickPaddleWidth / 2, paddleY - 7, brickPaddleWidth, 22, 11);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = guideColor;
+  ctx.beginPath();
+  ctx.arc(landingX, paddleY - 16, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(catchable ? "받을 자리" : "패들 이동", labelX, paddleY - 28);
+  ctx.restore();
+}
+
 function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   ctx.fillStyle = background;
@@ -3469,13 +3528,19 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
     ctx.fillText(brick.label.slice(0, 8), brick.x + brick.width / 2, brick.y + 18);
   }
 
+  drawBrickLandingGuide(state, ctx, accent, danger);
+
   ctx.fillStyle = primary;
   ctx.beginPath();
-  ctx.roundRect(state.playerX - 56, state.playerY - 8, 112, 16, 8);
+  ctx.roundRect(state.playerX - brickPaddleWidth / 2, state.playerY - 8, brickPaddleWidth, 16, 8);
+  ctx.fill();
+  ctx.fillStyle = accent;
+  ctx.beginPath();
+  ctx.roundRect(state.playerX - 10, state.playerY - 10, 20, 20, 6);
   ctx.fill();
   ctx.fillStyle = "#f8fafc";
   ctx.beginPath();
-  ctx.arc(state.brickBallX, state.brickBallY, 8, 0, Math.PI * 2);
+  ctx.arc(state.brickBallX, state.brickBallY, brickBallRadius, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
@@ -3483,7 +3548,7 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
   ctx.textAlign = "left";
   ctx.fillText(`${state.bricks.filter((brick) => brick.alive).length}개 남음`, 24, canvasHeight - 22);
   ctx.textAlign = "right";
-  ctx.fillText("마우스/터치로 패들을 옮기고 누르면 공을 보냅니다.", canvasWidth - 24, canvasHeight - 22);
+  ctx.fillText("착지선을 보고 마우스/터치로 패들을 맞춥니다.", canvasWidth - 24, canvasHeight - 22);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.68)";
