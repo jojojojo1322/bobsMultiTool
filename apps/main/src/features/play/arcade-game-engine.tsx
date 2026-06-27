@@ -3549,6 +3549,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const blockedTile = dragging && state.sumDragBlockedTileId !== null ? state.sumTiles[state.sumDragBlockedTileId] : undefined;
   const blockedSum = blockedTile ? shownSum + blockedTile.value : shownSum;
   const complementTileIds = selectionSummary.complementTileIds;
+  const complementTiles = state.sumTiles.filter((tile) => complementTileIds.has(tile.id)).slice(0, 5);
   const comboHint = sumBoxCombinationHint(state);
   const hintTiles = !dragging && !shownTiles.length ? comboHint : [];
   const hintTileIds = new Set(hintTiles.map((tile) => tile.id));
@@ -3703,6 +3704,45 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       else ctx.lineTo(x, y);
     });
     ctx.stroke();
+  }
+
+  if (dragging && shownSum > 0 && shownSum < 10 && complementTiles.length) {
+    const lastTile = shownTiles[shownTiles.length - 1];
+    if (lastTile) {
+      const startX = lastTile.x + lastTile.width / 2;
+      const startY = lastTile.y + lastTile.height / 2;
+      ctx.save();
+      ctx.strokeStyle = "rgba(250,204,21,0.48)";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.setLineDash([7, 9]);
+      for (const tile of complementTiles) {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(tile.x + tile.width / 2, tile.y + tile.height / 2);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      const nearestTile = complementTiles
+        .map((tile) => ({
+          tile,
+          distance: Math.hypot(tile.x + tile.width / 2 - startX, tile.y + tile.height / 2 - startY),
+        }))
+        .sort((a, b) => a.distance - b.distance)[0]?.tile;
+      if (nearestTile) {
+        const labelX = clamp(nearestTile.x + nearestTile.width / 2 - 34, 28, canvasWidth - 96);
+        const labelY = clamp(nearestTile.y - 17, 78, canvasHeight - 92);
+        ctx.fillStyle = "rgba(250,204,21,0.94)";
+        ctx.beginPath();
+        ctx.roundRect(labelX, labelY, 68, 18, 9);
+        ctx.fill();
+        ctx.fillStyle = "#111827";
+        ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("여기로 10", labelX + 34, labelY + 13);
+      }
+      ctx.restore();
+    }
   }
 
   if (dragging && state.sumDragCurrent && dragTiles.length) {

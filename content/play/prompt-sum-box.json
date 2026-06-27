@@ -4,7 +4,7 @@
   "description": "숫자 사과를 고르고 합 10을 만들면 선택한 칸이 지워집니다. 1분 동안 손이 가는 만큼 이어서 기록을 쌓는 캔버스 보드 게임입니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
+  "updatedAt": "2026-06-28",
   "shareText": "숫자조각 10 맞추기를 해봤다. 숫자 두 개 고르는 일도 급하면 이상하게 꼬인다.",
   "order": 3,
   "relatedBlogSlugs": ["sum-box-counter-panel-note", "sum-box-clear-pop-note", "sum-box-backtrack-drag-note", "sum-box-release-preview-note", "why-small-web-toys-return", "small-play-rules-note"],

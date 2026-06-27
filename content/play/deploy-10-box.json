@@ -4,7 +4,7 @@
   "description": "숫자 사과를 쓸어 합 10을 만들고 칸을 비웁니다. 1분 동안 손이 가는 만큼 이어서 최대한 많이 맞추는 기록형 판입니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
+  "updatedAt": "2026-06-28",
   "shareText": "마감 전 사과 10을 해봤다. 딱 10으로 사라지면 괜히 기분 좋다.",
   "order": 11,
   "relatedBlogSlugs": ["sum-box-counter-panel-note", "sum-box-clear-pop-note", "sum-box-backtrack-drag-note", "sum-box-release-preview-note", "commit-small-visible-slice", "vercel-sitemap-canonical-log"],
