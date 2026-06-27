@@ -17,6 +17,7 @@ import {
   type CrossingAction,
 } from "@/features/play/arcade-crossing";
 import {
+  clearLotteryDragTrail,
   drawLottery,
   lotteryCellIndexAt,
   lotteryColumns,
@@ -27,6 +28,7 @@ import {
   makeLotteryCells,
   moveLotteryCursor,
   revealLotteryCell,
+  scratchLotteryAt,
   type LotteryCell,
 } from "@/features/play/arcade-lottery";
 import {
@@ -291,6 +293,9 @@ type GameState = {
   lotteryDraws: number;
   lotteryLastPrize: number;
   lotteryTotalPrize: number;
+  lotteryDragTrail: CanvasPoint[];
+  lotteryDragging: boolean;
+  lotterySuppressClick: boolean;
   snake: SnakeCell[];
   snakeDirection: SnakeDirection;
   snakeNextDirection: SnakeDirection;
@@ -394,6 +399,9 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     lotteryDraws: 0,
     lotteryLastPrize: 0,
     lotteryTotalPrize: 0,
+    lotteryDragTrail: [],
+    lotteryDragging: false,
+    lotterySuppressClick: false,
     snake,
     snakeDirection: "right",
     snakeNextDirection: "right",
@@ -3600,6 +3608,10 @@ export function ArcadeGameEngine({
       }
 
       if (content.arcade.variant === "lottery") {
+        if (state.lotterySuppressClick) {
+          state.lotterySuppressClick = false;
+          return;
+        }
         const index = lotteryCellIndexAt(state, point);
         if (index < 0) return;
         event.preventDefault();
@@ -3727,6 +3739,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
@@ -3737,6 +3750,30 @@ export function ArcadeGameEngine({
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+      if (content.arcade.variant === "lottery") {
+        const index = lotteryCellIndexAt(state, point);
+        if (index < 0) return;
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        state.started = true;
+        state.lastFrame = performance.now();
+        const alreadyComplete = lotteryTicketComplete(state);
+        state.lotteryDragging = !alreadyComplete;
+        state.lotterySuppressClick = !alreadyComplete;
+        if (!alreadyComplete) {
+          clearLotteryDragTrail(state);
+          scratchLotteryAt(content, state, point);
+        } else {
+          state.lotteryCursor = index;
+        }
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "snake") {
         if (!pointInSnakeBoard(point)) return;
         event.preventDefault();
@@ -3835,6 +3872,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
@@ -3845,6 +3883,15 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
+      if (content.arcade.variant === "lottery") {
+        if (!state.lotteryDragging || (event.buttons === 0 && event.pointerType !== "touch")) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        scratchLotteryAt(content, state, point);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "snake") {
         if ((event.buttons === 0 && event.pointerType !== "touch") || !state.snakeDragStart) return;
         const direction = snakeDirectionFromDrag(state.snakeDragStart, point);
@@ -3894,7 +3941,7 @@ export function ArcadeGameEngine({
       const target = gemTargetFromDrag(state, point);
       if (target >= 0 && state.gemTiles[target]) state.gemCursor = target;
     },
-    [content.arcade.variant, syncView],
+    [content, syncView],
   );
 
   const handleCanvasPointerUp = React.useCallback(
@@ -3903,6 +3950,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
@@ -3922,6 +3970,13 @@ export function ArcadeGameEngine({
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
+      }
+      if (content.arcade.variant === "lottery") {
+        if (state.lotteryDragging) scratchLotteryAt(content, state, point);
+        state.lotteryDragging = false;
+        setShareState("idle");
+        syncView();
+        return;
       }
       if (content.arcade.variant === "snake") {
         const direction = state.snakeDragStart ? snakeDirectionFromDrag(state.snakeDragStart, point) : snakeDirectionFromPoint(state, point);
@@ -4002,6 +4057,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "snake" &&
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
+        content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
@@ -4010,6 +4066,8 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       keysRef.current.delete("Space");
       state.snakeDragStart = null;
+      state.lotteryDragging = false;
+      clearLotteryDragTrail(state);
       clearSumDrag(state);
       clearGemDrag(state);
       try {

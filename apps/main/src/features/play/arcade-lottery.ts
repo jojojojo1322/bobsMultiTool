@@ -103,6 +103,7 @@ export type LotteryPlayState = LotteryHistoryState & {
   lotteryDraws: number;
   lotteryLastPrize: number;
   lotteryTotalPrize: number;
+  lotteryDragTrail: CanvasPoint[];
 };
 
 export function lotteryStageAt(index: number) {
@@ -157,11 +158,37 @@ export function moveLotteryCursor(state: Pick<LotteryPlayState, "lotteryCells" |
   state.lotteryCursor = (state.lotteryCursor + delta + count * Math.abs(delta || 1)) % count;
 }
 
-export function revealLotteryCell(content: ArcadeGameContent, state: LotteryPlayState, index = state.lotteryCursor) {
+export function clearLotteryDragTrail(state: Pick<LotteryPlayState, "lotteryDragTrail">) {
+  state.lotteryDragTrail = [];
+}
+
+export function rememberLotteryDragPoint(state: Pick<LotteryPlayState, "lotteryDragTrail">, point: CanvasPoint) {
+  const previous = state.lotteryDragTrail[0];
+  if (previous && Math.hypot(previous.x - point.x, previous.y - point.y) < 8) return;
+  state.lotteryDragTrail = [point, ...state.lotteryDragTrail].slice(0, 18);
+}
+
+export function scratchLotteryAt(content: ArcadeGameContent, state: LotteryPlayState, point: CanvasPoint) {
+  const index = lotteryCellIndexAt(state, point);
+  const cell = state.lotteryCells[index];
+  if (!cell || lotteryTicketComplete(state)) return false;
+  state.lotteryCursor = index;
+  rememberLotteryDragPoint(state, point);
+  if (cell.revealed) return false;
+  revealLotteryCell(content, state, index, { advanceWhenComplete: false });
+  return true;
+}
+
+export function revealLotteryCell(
+  content: ArcadeGameContent,
+  state: LotteryPlayState,
+  index = state.lotteryCursor,
+  options: { advanceWhenComplete?: boolean } = {},
+) {
   const cell = state.lotteryCells[index];
   if (!cell) return;
   if (lotteryTicketComplete(state)) {
-    nextLotteryTicket(content, state);
+    if (options.advanceWhenComplete !== false) nextLotteryTicket(content, state);
     return;
   }
   if (cell.revealed) {
@@ -203,6 +230,7 @@ export function nextLotteryTicket(content: ArcadeGameContent, state: LotteryPlay
   state.lotteryStage = nextStage;
   state.lotteryCursor = 0;
   state.lotteryLastPrize = 0;
+  state.lotteryDragTrail = [];
   state.lotteryCells = makeLotteryCells(content, nextStage, state.lotteryDraws);
   rememberLotteryHistory(state, {
     label: lotteryStageAt(nextStage).title,
@@ -340,6 +368,30 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
       ctx.textAlign = "center";
       ctx.fillText("긁기", cell.x + lotteryCellSize / 2, cell.y + 58);
     }
+  }
+
+  if (state.lotteryDragTrail.length > 1) {
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "rgba(56,189,248,0.58)";
+    ctx.lineWidth = 16;
+    ctx.beginPath();
+    const newest = state.lotteryDragTrail[0];
+    ctx.moveTo(newest.x, newest.y);
+    for (const point of state.lotteryDragTrail.slice(1)) {
+      ctx.lineTo(point.x, point.y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(248,250,252,0.72)";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(newest.x, newest.y);
+    for (const point of state.lotteryDragTrail.slice(1)) {
+      ctx.lineTo(point.x, point.y);
+    }
+    ctx.stroke();
+    ctx.restore();
   }
 
   ctx.fillStyle = "rgba(15,23,42,0.56)";
