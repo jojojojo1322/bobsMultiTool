@@ -2838,6 +2838,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const clearStreakBonus = shownSum === 10 ? sumBoxStreakBonus(nextStreak) : 0;
   const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) + clearStreakBonus : 0;
   const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}점(연속 +${clearStreakBonus})` : `+${clearScore}점`;
+  const dragPrimaryLabel = blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? "합 10" : shownSum > 0 ? `합 ${shownSum}` : "쓸기 시작";
+  const dragSecondaryLabel = blockedTile
+    ? "마지막 사과 빼기"
+    : shownSum === 10
+      ? `놓으면 +${clearScore}`
+      : shownSum > 0
+        ? `${selectionSummary.neededValue} 더 필요`
+        : "사과 위로 지나가기";
   const releaseLabel = blockedTile
     ? `${blockedSum} · 넘침`
     : shownSum === 10
@@ -3048,6 +3056,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.beginPath();
       ctx.roundRect(tile.x - 4, tile.y - 4, tile.width + 8, tile.height + 8, 19);
       ctx.stroke();
+      ctx.fillStyle = "rgba(250,204,21,0.94)";
+      ctx.beginPath();
+      ctx.roundRect(tile.x + 7, tile.y + tile.height - 23, 36, 17, 8);
+      ctx.fill();
+      ctx.fillStyle = "#111827";
+      ctx.font = "900 9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(`+${selectionSummary.neededValue}`, tile.x + 25, tile.y + tile.height - 11);
     }
 
     if (isHint) {
@@ -3126,17 +3142,21 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   }
 
   if (dragging && state.sumDragMoved && state.sumDragCurrent) {
-    const pillX = clamp(state.sumDragCurrent.x + 18, 36, canvasWidth - 96);
-    const pillY = clamp(state.sumDragCurrent.y + 18, 94, canvasHeight - 84);
-    const pillWidth = shownSum === 10 && !blockedTile ? 84 : 76;
+    const pillWidth = 124;
+    const pillHeight = 42;
+    const pillX = clamp(state.sumDragCurrent.x + 18, 36, canvasWidth - pillWidth - 36);
+    const pillY = clamp(state.sumDragCurrent.y + 18, 94, canvasHeight - pillHeight - 50);
     ctx.fillStyle = blockedTile ? "rgba(251,113,133,0.94)" : shownSum === 10 ? "rgba(251,191,36,0.95)" : shownSum > 10 ? "rgba(251,113,133,0.94)" : "rgba(15,23,42,0.86)";
     ctx.beginPath();
-    ctx.roundRect(pillX, pillY, pillWidth, 28, 14);
+    ctx.roundRect(pillX, pillY, pillWidth, pillHeight, 16);
     ctx.fill();
     ctx.fillStyle = shownSum === 10 && !blockedTile ? "#111827" : "#f8fafc";
     ctx.font = "900 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? `10/10 +${clearScore}` : `${shownSum} / 10`, pillX + pillWidth / 2, pillY + 19);
+    ctx.fillText(dragPrimaryLabel, pillX + pillWidth / 2, pillY + 17);
+    ctx.fillStyle = shownSum === 10 && !blockedTile ? "rgba(17,24,39,0.72)" : "rgba(248,250,252,0.72)";
+    ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(dragSecondaryLabel, pillX + pillWidth / 2, pillY + 32);
   }
 
   if (shownTiles.length || dragging) {
@@ -4514,7 +4534,7 @@ function LiveArcadeResultPanel({
   const detail = isLottery
     ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다 긁으면 다음 단계 복권으로 이어집니다.`
     : isSumBox
-      ? `${view.score}점, 연속 ${view.sumStreak}. 제한은 1분 타이머 하나만 남겨둔 상태입니다.`
+      ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
 
   return (

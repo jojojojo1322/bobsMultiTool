@@ -1,7 +1,7 @@
 {
   "slug": "ten-box-rush",
   "title": "사과 10 맞추기",
-  "description": "숫자가 적힌 사과를 마우스로 쓸어 합 10을 만들면 사라집니다. 1분 동안 계속 시도하며 기록을 올립니다.",
+  "description": "숫자가 적힌 사과를 마우스로 쓸어 합 10을 만들면 사라집니다. 1분 동안 손이 가는 만큼 이어서 기록을 올립니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-27",
@@ -12,7 +12,7 @@
   "arcade": {
     "variant": "sum-box",
     "goal": "1분 동안 사과를 쓸어 합 10을 만들고, 연속으로 맞춰 기록을 올립니다.",
-    "controls": "마우스로 드래그해서 사과를 묶습니다. 방향키/WASD와 Space/Enter도 됩니다. 1분 안에서는 계속 다시 고를 수 있습니다.",
+    "controls": "마우스로 드래그해서 사과를 묶습니다. 합과 남은 값 배지를 보며 이어가고, 방향키/WASD와 Space/Enter도 됩니다.",
     "playerLabel": "사과",
     "goodLabels": ["1", "2", "3", "4", "5"],
     "badLabels": ["흔들", "넘침", "빈칸", "덫", "삐끗"],
