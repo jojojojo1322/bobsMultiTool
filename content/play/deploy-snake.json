@@ -4,10 +4,10 @@
   "description": "방향키나 캔버스 드래그로 골목을 돌며 사과를 먹고, 벽과 꼬리를 피하는 스네이크 게임입니다. 열린 방향 표시와 다음 칸 예고를 보며 한 박자 먼저 꺾습니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
+  "updatedAt": "2026-06-28",
   "shareText": "골목 스네이크를 해봤다. 짧은 골목도 욕심내면 꼬인다.",
   "order": 13,
-  "relatedBlogSlugs": ["snake-open-turn-cue-note", "snake-next-cell-preview-note", "snake-swipe-control-note", "static-micro-games-architecture", "why-small-web-toys-return"],
+  "relatedBlogSlugs": ["game-feedback-before-score-note", "snake-open-turn-cue-note", "snake-next-cell-preview-note", "snake-swipe-control-note", "static-micro-games-architecture", "why-small-web-toys-return"],
   "relatedPlaySlugs": ["deploy-crossing", "ten-box-rush"],
   "arcade": {
     "variant": "snake",

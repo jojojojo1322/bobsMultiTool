@@ -4,10 +4,10 @@
   "description": "초록 알림은 빨리 잡고 빨간 소음은 흘려보내는 1분 캔버스 게임입니다. 잡기/두기 표시와 남은 시간 링을 보고 급한 알림부터 고릅니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
+  "updatedAt": "2026-06-28",
   "shareText": "알림 두더지를 해봤다. 초록은 빨리 잡고 빨강은 그냥 보냈다.",
   "order": 16,
-  "relatedBlogSlugs": ["mole-priority-cue-note", "mole-urgency-feedback-note", "ai-output-is-not-finished-work", "codex-work-note"],
+  "relatedBlogSlugs": ["game-feedback-before-score-note", "mole-priority-cue-note", "mole-urgency-feedback-note", "ai-output-is-not-finished-work", "codex-work-note"],
   "relatedPlaySlugs": ["bug-clicker", "ai-review-tap"],
   "arcade": {
     "variant": "mole",
