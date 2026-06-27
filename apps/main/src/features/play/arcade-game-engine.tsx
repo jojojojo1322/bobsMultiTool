@@ -3498,14 +3498,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}점(연속 +${clearStreakBonus})` : `+${clearScore}점`;
   const dragPrimaryLabel = blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? "합 10" : shownSum > 0 ? `합 ${shownSum}` : "쓸기 시작";
   const dragSecondaryLabel = blockedTile
-    ? "마지막 사과 빼기"
+    ? `되돌리면 합 ${shownSum}`
     : shownSum === 10
       ? `놓으면 +${clearScore}`
       : shownSum > 0
         ? `${selectionSummary.neededValue} 더 필요`
         : "사과 위로 지나가기";
   const releaseLabel = blockedTile
-    ? `${blockedSum} · 넘침`
+    ? `${blockedSum} · 되돌리면 ${shownSum}`
     : shownSum === 10
       ? dragging
         ? `놓으면 ${clearScoreLabel}`
@@ -3750,6 +3750,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.beginPath();
       ctx.roundRect(tile.x - 6, tile.y - 6, tile.width + 12, tile.height + 12, 21);
       ctx.stroke();
+      ctx.fillStyle = "rgba(127,29,29,0.94)";
+      ctx.beginPath();
+      ctx.roundRect(tile.x + tile.width - 51, tile.y + tile.height - 24, 43, 17, 8);
+      ctx.fill();
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`빼면 ${shownSum}`, tile.x + tile.width - 29.5, tile.y + tile.height - 12);
     }
 
     const appleGradient = ctx.createRadialGradient(tileCenterX - 9, tileCenterY - 10, 5, tileCenterX, tileCenterY, 29);
@@ -5359,7 +5367,7 @@ function LiveArcadeResultPanel({
         ? `${view.lotteryRevealedCount}/9칸 공개. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다.`
         : "아직 긁지 않았습니다. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다."
     : isSumBox
-      ? `${view.score}점. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
+      ? `${view.score}점. 1분 동안 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
 
   return (

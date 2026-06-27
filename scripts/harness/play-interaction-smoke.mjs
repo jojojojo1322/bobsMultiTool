@@ -134,6 +134,12 @@ async function verifyPlay(browser, content, viewport) {
         failures.push(`${content.slug} ${viewport.width}x${viewport.height} should render as endless lottery play without scoreboards, timers, or move limits`);
       }
     }
+    if (content.arcade?.variant === "sum-box") {
+      const engineText = await page.locator(`[data-play-engine="${content.slug}"]`).innerText().catch(() => "");
+      if (/타이머/.test(engineText)) {
+        failures.push(`${content.slug} ${viewport.width}x${viewport.height} should describe sum-box as 1분 동안 instead of timer wording`);
+      }
+    }
 
     const steps = playLength(content);
     for (let index = 0; index < steps + 2; index += 1) {

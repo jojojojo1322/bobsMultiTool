@@ -261,6 +261,9 @@ for (const entry of playEntries) {
   if (publicActionLimitPattern.test(publicPlayCopy) || publicPlayCountTonePattern.test(publicPlayCopy)) {
     failures.push(`${entry.slug ?? entry.file} should not expose action-count, move-limit, or count-toned wording in public Play copy`);
   }
+  if (entry.arcade?.variant === "sum-box" && /타이머/.test(publicPlayCopy)) {
+    failures.push(`${entry.slug ?? entry.file} sum-box public copy should frame play as 1분 동안, not timer wording`);
+  }
   if (entry.slug === "lucky-scratch") {
     if (entry.durationLabel !== "계속") failures.push("lucky-scratch should remain an endless lottery loop");
     if (lotteryLimitScorePattern.test(publicPlayCopy)) {
