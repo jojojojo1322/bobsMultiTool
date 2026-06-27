@@ -1,7 +1,7 @@
 {
   "slug": "server-room-flight",
   "title": "밤길 비행",
-  "description": "캔버스를 누르고 있으면 떠오르고 놓으면 내려가는 원버튼 비행 게임입니다. 움직이는 통로가 다가올 때 높이를 맞춰 지나갑니다.",
+  "description": "캔버스를 누르고 있으면 떠오르고 놓으면 내려가는 원버튼 비행 게임입니다. 다가오는 높이선을 보고 빈틈은 통과하고 벽은 피합니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-27",
@@ -11,8 +11,8 @@
   "relatedPlaySlugs": ["office-survival", "deploy-crossing"],
   "arcade": {
     "variant": "flight",
-    "goal": "누르고 있으면 뜨고, 손을 떼면 내려가며 빈틈을 통과합니다.",
-    "controls": "마우스/터치로 캔버스를 누르고 있으면 상승, 떼면 하강합니다. 키보드는 Space/Enter 또는 위 방향키로 상승합니다.",
+    "goal": "다가오는 높이선에 맞춰 고도를 조절하고, 빈틈은 통과하고 벽은 피합니다.",
+    "controls": "마우스/터치로 캔버스를 누르고 있으면 상승, 떼면 하강합니다. Space/Enter 또는 위 방향키도 같은 방식으로 작동합니다.",
     "playerLabel": "비행",
     "goodLabels": ["빈틈", "바람", "문", "길", "숨"],
     "badLabels": ["벽", "소음", "흔들", "안개", "급커브"],

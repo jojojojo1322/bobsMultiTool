@@ -11,7 +11,6 @@
   "relatedPlaySlugs": ["office-survival", "priority-sorter"],
   "targetLabel": "결정 신호",
   "decoyLabel": "넘기기",
-  "targetScore": 18,
   "targets": [
     { "id": "owner", "label": "누가 가져갈까요?", "detail": "담당자가 정해지면 회의가 끝날 수 있다.", "kind": "target", "points": 3 },
     { "id": "just-sync", "label": "일단 싱크만 하죠", "detail": "목적 없는 회의가 길어지는 신호다.", "kind": "decoy", "points": 2 },

@@ -659,6 +659,7 @@ function shouldUseSideScroller(content: ArcadeGameContent) {
 }
 
 function mainActionLabel(content: ArcadeGameContent) {
+  if (content.arcade.variant === "flight") return "상승";
   if (shouldUseSideScroller(content)) return "점프";
   if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
@@ -1196,6 +1197,19 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const { background, primary, accent, danger } = content.arcade.palette;
   const liftActive = state.playerVy < -25;
   const horizon = canvasHeight - 74;
+  const incomingSprite = state.sprites
+    .filter((sprite) => sprite.x > state.playerX - 42)
+    .sort((a, b) => a.x - b.x)[0] ?? null;
+  const altitudeTop = 82;
+  const altitudeBottom = horizon - 30;
+  const altitudeRange = Math.max(altitudeBottom - altitudeTop, 1);
+  const playerAltitudeRatio = clamp((state.playerY - altitudeTop) / altitudeRange, 0, 1);
+  const projectedY = clamp(state.playerY + state.playerVy * 0.18, altitudeTop, altitudeBottom);
+  const incomingLabel = incomingSprite
+    ? incomingSprite.good
+      ? "다음 빈틈"
+      : "피할 벽"
+    : "통로 대기";
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
   backdrop.addColorStop(0.56, "rgba(30,41,59,0.95)");
@@ -1231,7 +1245,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "right";
   ctx.fillStyle = liftActive ? primary : "rgba(255,255,255,0.64)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(liftActive ? "상승 중" : "하강 중", canvasWidth - 44, 47);
+  ctx.fillText(`${incomingLabel} · ${liftActive ? "상승" : "하강"}`, canvasWidth - 44, 47);
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
   ctx.beginPath();
@@ -1244,6 +1258,61 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.beginPath();
   ctx.roundRect(canvasWidth - 40, 80, 6, horizon - 110, 3);
   ctx.fill();
+
+  if (incomingSprite) {
+    const guideColor = incomingSprite.good ? accent : danger;
+    ctx.strokeStyle = guideColor;
+    ctx.globalAlpha = incomingSprite.good ? 0.58 : 0.5;
+    ctx.lineWidth = incomingSprite.good ? 3 : 2;
+    ctx.setLineDash(incomingSprite.good ? [16, 12] : [8, 8]);
+    ctx.beginPath();
+    ctx.moveTo(state.playerX + 26, incomingSprite.y);
+    ctx.lineTo(canvasWidth - 44, incomingSprite.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = incomingSprite.good ? "rgba(14,165,233,0.24)" : "rgba(251,113,133,0.22)";
+    ctx.beginPath();
+    ctx.roundRect(Math.min(canvasWidth - 176, Math.max(state.playerX + 42, incomingSprite.x - 74)), incomingSprite.y - 28, 142, 24, 12);
+    ctx.fill();
+    ctx.strokeStyle = incomingSprite.good ? "rgba(147,197,253,0.46)" : "rgba(251,113,133,0.5)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(incomingSprite.good ? "높이 맞추기" : "높이 피하기", Math.min(canvasWidth - 105, Math.max(state.playerX + 113, incomingSprite.x - 3)), incomingSprite.y - 12);
+  }
+
+  ctx.strokeStyle = liftActive ? "rgba(250,204,21,0.68)" : "rgba(147,197,253,0.5)";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([10, 9]);
+  ctx.beginPath();
+  ctx.moveTo(state.playerX - 34, state.playerY);
+  ctx.quadraticCurveTo(state.playerX + 42, (state.playerY + projectedY) / 2, state.playerX + 114, projectedY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = "rgba(15,23,42,0.5)";
+  ctx.beginPath();
+  ctx.roundRect(48, altitudeTop - 10, 18, altitudeRange + 20, 9);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.16)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = "rgba(248,250,252,0.26)";
+  ctx.beginPath();
+  ctx.roundRect(56, altitudeTop, 2, altitudeRange, 1);
+  ctx.fill();
+  ctx.fillStyle = liftActive ? primary : accent;
+  ctx.beginPath();
+  ctx.arc(57, altitudeTop + altitudeRange * playerAltitudeRatio, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "rgba(248,250,252,0.72)";
+  ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("고도", 42, altitudeBottom + 24);
 
   for (const sprite of state.sprites) {
     ctx.save();
@@ -1318,7 +1387,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("캔버스를 누르고 있으면 뜨고, 손을 떼면 내려갑니다. Space/Enter도 됩니다.", 34, canvasHeight - 24);
+  ctx.fillText("높이선을 보고 누르거나 떼세요. Space/Enter도 됩니다.", 34, canvasHeight - 24);
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1328,7 +1397,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("누르면 뜨고, 떼면 내려갑니다.", canvasWidth / 2, 204);
-    ctx.fillText("빈틈은 지나가고 벽은 피하세요.", canvasWidth / 2, 230);
+    ctx.fillText("다가오는 높이선을 보고 빈틈을 통과하세요.", canvasWidth / 2, 230);
   }
 }
 
@@ -4408,7 +4477,7 @@ function LiveArcadeResultPanel({
     ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다 긁으면 다음 단계 복권으로 이어집니다.`
     : isSumBox
       ? `${view.score}점, 연속 ${view.sumStreak}. 제한은 1분 타이머 하나만 남겨둔 상태입니다.`
-      : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간, 목표, 집중 상태에 맞춰 이어집니다.`;
+      : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
 
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history data-play-result>

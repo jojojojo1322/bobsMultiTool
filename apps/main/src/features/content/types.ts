@@ -99,7 +99,6 @@ export type TapGameContent = PlayBase & {
   type: "tap-game";
   targetLabel: string;
   decoyLabel: string;
-  targetScore: number;
   targets: TapGameTarget[];
   endings: PlayScoreEnding[];
 };

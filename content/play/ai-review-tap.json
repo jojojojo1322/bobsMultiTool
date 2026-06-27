@@ -17,7 +17,6 @@
   "relatedPlaySlugs": ["prompt-cleanup", "bug-clicker"],
   "targetLabel": "다시 확인",
   "decoyLabel": "그냥 통과",
-  "targetScore": 18,
   "targets": [
     { "id": "missing-file", "label": "없는 파일을 수정했다고 함", "detail": "실제 파일 확인 전에는 절대 통과시키면 안 된다.", "kind": "target", "points": 3 },
     { "id": "clear-summary", "label": "변경 파일을 짧게 요약함", "detail": "요약 자체는 도움 되지만, 이것만으로 위험 신호는 아니다.", "kind": "decoy", "points": 2 },
