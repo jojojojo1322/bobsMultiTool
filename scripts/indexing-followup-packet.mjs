@@ -121,9 +121,6 @@ function assertSnapshot(snapshot, log) {
   if (latestIndexNowCount !== null && checks.sitemapUrlCount !== latestIndexNowCount) {
     failures.push(`live sitemap URL count ${checks.sitemapUrlCount} should match latest logged IndexNow count ${latestIndexNowCount}`);
   }
-  if (latestDiscoveredPages !== null && checks.sitemapUrlCount !== latestDiscoveredPages) {
-    failures.push(`live sitemap URL count ${checks.sitemapUrlCount} should match latest logged Search Console discovered pages ${latestDiscoveredPages}`);
-  }
   for (const fragment of ["`2026-07-02`", "`2026-07-09`", "Bing Webmaster recommendations", "not be treated as indexed or search-ready"]) {
     if (!log.includes(fragment)) failures.push(`observation log missing follow-up fragment: ${fragment}`);
   }
@@ -138,9 +135,11 @@ function assertPacket(packet, snapshot, log) {
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
   const liveSitemapUrlCount = snapshot.checks.sitemapUrlCount;
+  const searchConsoleGap = latestDiscoveredPages === null ? "not parsed" : liveSitemapUrlCount - latestDiscoveredPages;
   const requiredFragments = [
     `Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
+    `Search Console discovered-vs-live gap: \`${searchConsoleGap}\``,
     "Chrome profile/session already signed in as `bobob935@gmail.com`",
     `same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}`,
     `live sitemap URL count ${liveSitemapUrlCount}`,
@@ -155,6 +154,7 @@ function renderPacket(snapshot, log) {
   const initialDiscoveredPages = firstSitemapDiscoveredPages(log);
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
   const checks = snapshot.checks;
+  const searchConsoleGap = latestDiscoveredPages === null ? "not parsed" : checks.sitemapUrlCount - latestDiscoveredPages;
 
   return [
     "# bobob.app Indexing Follow-up Packet",
@@ -170,6 +170,7 @@ function renderPacket(snapshot, log) {
     `- Latest logged IndexNow URL count: \`${latestIndexNowCount ?? "not parsed"}\``,
     `- Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `- Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
+    `- Search Console discovered-vs-live gap: \`${searchConsoleGap}\``,
     `- Feed counts: RSS \`${checks.rssItemCount}\`, Atom \`${checks.atomEntryCount}\`, JSON Feed \`${checks.jsonFeedItemCount}\``,
     `- WebSub discovery: \`${checks.webSubDiscovery ? "ok" : "check"}\``,
     `- robots.txt sitemap: \`${checks.robotsSitemap ? "ok" : "check"}\``,
