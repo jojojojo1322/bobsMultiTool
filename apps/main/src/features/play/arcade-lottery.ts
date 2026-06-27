@@ -481,7 +481,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.textAlign = "center";
   const status = complete
     ? `이번 장 ${lotteryPrizeLabel(state.lotteryLastPrize)} · 다음 복권으로 계속`
-    : "긁을 칸을 골라 진행 · 시간, 목표 점수, 횟수 제한 없음";
+    : "긁을 칸을 골라 진행 · 시간, 목표 점수, 조작 제한 없음";
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
 

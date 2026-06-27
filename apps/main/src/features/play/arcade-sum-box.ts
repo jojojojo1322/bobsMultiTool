@@ -32,6 +32,16 @@ type SumHistoryItem = {
   score: number;
 };
 
+export type SumBoxFeedback = {
+  id: number;
+  x: number;
+  y: number;
+  label: string;
+  age: number;
+  kind: "clear" | "miss";
+  points: CanvasPoint[];
+};
+
 type SumBoxPlayState = SumBoxDragState & {
   finished: boolean;
   elapsed: number;
@@ -41,6 +51,8 @@ type SumBoxPlayState = SumBoxDragState & {
   sumStreak: number;
   sumBestStreak: number;
   sumCursor: number;
+  sumFeedbacks: SumBoxFeedback[];
+  sumNextFeedbackId: number;
   history: SumHistoryItem[];
 };
 
@@ -91,6 +103,9 @@ export function selectedSumTiles(state: { sumTiles: SumTile[] }) {
 
 export function updateSumBox(content: ArcadeGameContent, state: SumBoxPlayState, dt: number) {
   state.elapsed += dt;
+  state.sumFeedbacks = state.sumFeedbacks
+    .map((item) => ({ ...item, age: item.age + dt }))
+    .filter((item) => item.age < 0.95);
   if (state.elapsed >= sumBoxTimeLimitSeconds) {
     state.finished = true;
     return;
@@ -131,6 +146,7 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
     const { delta, streakBonus } = applySumBoxClearScore(state, cleared);
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
+    rememberSumFeedback(state, cleared, `+${delta}`, "clear");
     rememberSumHistory(state, {
       label: cleared.map((item) => item.value).join(" + "),
       detail: sumBoxClearDetail(cleared.length >= 4 ? "길게 쓸어 10" : "딱 10", state.sumStreak, streakBonus),
@@ -146,6 +162,7 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
     state.sumStreak = 0;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 7, 0, 100);
+    rememberSumFeedback(state, [tile], "넘침", "miss");
     rememberSumHistory(state, {
       label: `${sum}`,
       detail: "넘침",
@@ -174,6 +191,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
     state.sumStreak = 0;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 6, 0, 100);
+    rememberSumFeedback(state, attemptedTiles, "넘침", "miss");
     rememberSumHistory(state, {
       label: attemptedTiles.map((item) => item.value).join(" + "),
       detail: `${attemptedSum - 10} 넘침`,
@@ -189,6 +207,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
     const { delta, streakBonus } = applySumBoxClearScore(state, cleared);
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
+    rememberSumFeedback(state, cleared, `+${delta}`, "clear");
     rememberSumHistory(state, {
       label: cleared.map((item) => item.value).join(" + "),
       detail: sumBoxClearDetail(cleared.length >= 4 ? "길게 쓸어 10" : "쓸어서 10", state.sumStreak, streakBonus),
@@ -204,6 +223,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
   const overflow = sum > 10;
   state.score = Math.max(0, state.score + (overflow ? -1 : 0));
   state.focus = clamp(state.focus + (overflow ? -6 : -2), 0, 100);
+  rememberSumFeedback(state, activeTiles, overflow ? "넘침" : "모자람", "miss");
   rememberSumHistory(state, {
     label: activeTiles.map((item) => item.value).join(" + "),
     detail: overflow ? "넘침" : "모자람",
@@ -412,6 +432,20 @@ function sumBoxClearDetail(label: string, streak: number, streakBonus: number) {
 
 function rememberSumHistory(state: Pick<SumBoxPlayState, "history">, item: SumHistoryItem) {
   state.history = [item, ...state.history].slice(0, 8);
+}
+
+function rememberSumFeedback(
+  state: Pick<SumBoxPlayState, "sumFeedbacks" | "sumNextFeedbackId">,
+  tiles: SumTile[],
+  label: string,
+  kind: SumBoxFeedback["kind"],
+) {
+  const points = tiles.map((tile) => ({ x: tile.x + tile.width / 2, y: tile.y + tile.height / 2 }));
+  if (!points.length) return;
+  const x = points.reduce((sum, point) => sum + point.x, 0) / points.length;
+  const y = points.reduce((sum, point) => sum + point.y, 0) / points.length;
+  state.sumFeedbacks = [{ id: state.sumNextFeedbackId, x, y, label, age: 0, kind, points }, ...state.sumFeedbacks].slice(0, 8);
+  state.sumNextFeedbackId += 1;
 }
 
 function tileIntersectsRect(tile: SumTile, rect: CanvasRect) {

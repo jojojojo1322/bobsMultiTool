@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-27",
   "shareText": "숫자조각 10 맞추기를 해봤다. 숫자 두 개 고르는 일도 급하면 이상하게 꼬인다.",
   "order": 3,
-  "relatedBlogSlugs": ["sum-box-backtrack-drag-note", "sum-box-release-preview-note", "why-small-web-toys-return", "small-play-rules-note"],
+  "relatedBlogSlugs": ["sum-box-clear-pop-note", "sum-box-backtrack-drag-note", "sum-box-release-preview-note", "why-small-web-toys-return", "small-play-rules-note"],
   "relatedPlaySlugs": ["ten-box-rush", "prompt-gem-swap", "password-lock"],
   "arcade": {
     "variant": "sum-box",

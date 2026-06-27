@@ -228,6 +228,7 @@ import {
   sumDragTiles,
   sumTileIndexAt,
   updateSumBox,
+  type SumBoxFeedback,
   type SumTile,
 } from "@/features/play/arcade-sum-box";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
@@ -294,6 +295,8 @@ type GameState = {
   sumDragBlockedTileId: number | null;
   sumStreak: number;
   sumBestStreak: number;
+  sumFeedbacks: SumBoxFeedback[];
+  sumNextFeedbackId: number;
   lotteryCells: LotteryCell[];
   lotteryCursor: number;
   lotteryStage: number;
@@ -405,6 +408,8 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     sumDragBlockedTileId: null,
     sumStreak: 0,
     sumBestStreak: 0,
+    sumFeedbacks: [],
+    sumNextFeedbackId: 1,
     lotteryCells: makeLotteryCells(content),
     lotteryCursor: 0,
     lotteryStage: 0,
@@ -3174,6 +3179,38 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.globalAlpha = 1;
   }
 
+  for (const feedback of state.sumFeedbacks) {
+    const progress = clamp(feedback.age / 0.95, 0, 1);
+    const alpha = 1 - progress;
+    const lift = progress * 32;
+    const clear = feedback.kind === "clear";
+    ctx.save();
+    for (const point of feedback.points) {
+      ctx.globalAlpha = alpha * (clear ? 0.72 : 0.48);
+      ctx.strokeStyle = clear ? "rgba(250,204,21,0.88)" : "rgba(251,113,133,0.82)";
+      ctx.lineWidth = clear ? 4 : 3;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 20 + progress * 18, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = alpha;
+    ctx.font = "900 16px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    const pillWidth = clamp(ctx.measureText(feedback.label).width + 30, 58, 116);
+    const pillX = clamp(feedback.x - pillWidth / 2, 28, canvasWidth - pillWidth - 28);
+    const pillY = clamp(feedback.y - 46 - lift, 76, canvasHeight - 88);
+    ctx.fillStyle = clear ? "rgba(250,204,21,0.95)" : "rgba(127,29,29,0.9)";
+    ctx.beginPath();
+    ctx.roundRect(pillX, pillY, pillWidth, 30, 15);
+    ctx.fill();
+    ctx.strokeStyle = clear ? "rgba(255,255,255,0.72)" : "rgba(251,113,133,0.86)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = clear ? "#111827" : "#f8fafc";
+    ctx.textAlign = "center";
+    ctx.fillText(feedback.label, pillX + pillWidth / 2, pillY + 21);
+    ctx.restore();
+  }
+
   if (dragging && state.sumDragMoved && state.sumDragCurrent) {
     const pillWidth = 124;
     const pillHeight = 42;
@@ -4604,7 +4641,7 @@ function LiveArcadeResultPanel({
   const detail = isLottery
     ? view.lotteryTicketDone
       ? `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
-      : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 시간, 목표 점수, 횟수 제한 없이 이어집니다.`
+      : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 시간, 목표 점수, 조작 제한 없이 이어집니다.`
     : isSumBox
       ? `${view.score}점, 연속 ${view.sumStreak}. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
