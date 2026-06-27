@@ -1977,6 +1977,29 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.lineWidth = 1;
   ctx.stroke();
 
+  if (!state.memoryShowing && state.memoryInput.length) {
+    const enteredCenters = state.memoryInput.map((cell) => memoryCellCenter(cell));
+    if (enteredCenters.length > 1) {
+      ctx.strokeStyle = "rgba(190,242,100,0.62)";
+      ctx.lineWidth = 5;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      enteredCenters.forEach((center, index) => {
+        if (index === 0) ctx.moveTo(center.x, center.y);
+        else ctx.lineTo(center.x, center.y);
+      });
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+    for (const center of enteredCenters) {
+      ctx.fillStyle = "rgba(190,242,100,0.22)";
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 25, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
   for (let cell = 0; cell < memoryColumns * memoryRows; cell += 1) {
     const column = cell % memoryColumns;
     const row = Math.floor(cell / memoryColumns);
@@ -2011,6 +2034,17 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(`${cell + 1}`, x + memoryCellSize / 2, y + 38);
     ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(label.slice(0, 4), x + memoryCellSize / 2, y + 58);
+
+    if (!state.memoryShowing && isEntered) {
+      const inputOrder = state.memoryInput.lastIndexOf(cell) + 1;
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(x + memoryCellSize - 15, y + 15, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#111827";
+      ctx.font = "900 11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.fillText(`${inputOrder}`, x + memoryCellSize - 15, y + 19);
+    }
   }
 
   const panelX = 430;
@@ -2043,8 +2077,8 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`순서 ${state.memoryInput.length}/${state.memorySequence.length}`, panelX + 18, 224);
-  ctx.fillText("헷갈리면 R로 다시 봅니다.", panelX + 18, 252);
-  ctx.fillText("외웠으면 숫자키로 바로 눌러도 됩니다.", panelX + 18, 276);
+  ctx.fillText("맞게 누른 순서는 보드에 선으로 남습니다.", panelX + 18, 252);
+  ctx.fillText("헷갈리면 R로 다시 봅니다.", panelX + 18, 276);
 
   if (!state.memoryShowing && state.memoryInput.length) {
     const last = state.memoryInput[state.memoryInput.length - 1];
@@ -2056,7 +2090,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스/방향키/숫자 1~9로 입력합니다. 헷갈리면 R로 같은 패턴을 다시 봅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스/방향키/숫자 1~9로 입력합니다. 맞게 누른 순서는 선으로 남고, 헷갈리면 R로 다시 봅니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
