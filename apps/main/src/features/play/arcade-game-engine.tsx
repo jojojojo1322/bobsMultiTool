@@ -3813,6 +3813,32 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.globalAlpha = 1;
   }
 
+  if (dragging && shownSum === 10 && !blockedTile && dragTiles.length) {
+    const pulseAlpha = 0.54 + Math.sin(state.elapsed * 13) * 0.18;
+    ctx.save();
+    ctx.globalAlpha = pulseAlpha;
+    ctx.strokeStyle = "rgba(250,204,21,0.92)";
+    ctx.lineWidth = 4;
+    for (const tile of dragTiles) {
+      ctx.beginPath();
+      ctx.roundRect(tile.x - 7, tile.y - 7, tile.width + 14, tile.height + 14, 22);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = "rgba(250,204,21,0.96)";
+    ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    const lastTile = dragTiles[dragTiles.length - 1];
+    if (lastTile) {
+      ctx.beginPath();
+      ctx.roundRect(lastTile.x + lastTile.width - 51, lastTile.y + 7, 43, 18, 9);
+      ctx.fill();
+      ctx.fillStyle = "#111827";
+      ctx.fillText("놓기", lastTile.x + lastTile.width - 29.5, lastTile.y + 20);
+    }
+    ctx.restore();
+  }
+
   for (const feedback of state.sumFeedbacks) {
     const progress = clamp(feedback.age / 0.95, 0, 1);
     const alpha = 1 - progress;
