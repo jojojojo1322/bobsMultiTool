@@ -3194,7 +3194,13 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("연속 10은 보너스가 붙습니다. 넘치거나 모자라면 연속이 끊깁니다.", 34, canvasHeight - 20);
+  ctx.fillText(
+    dragging
+      ? "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다."
+      : "연속 10은 보너스가 붙습니다. 넘치거나 모자라면 연속이 끊깁니다.",
+    34,
+    canvasHeight - 20,
+  );
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";

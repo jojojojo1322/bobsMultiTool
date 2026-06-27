@@ -307,9 +307,21 @@ export function pointInSumBoard(point: CanvasPoint) {
   );
 }
 
-export function rememberSumDragTile(state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds" | "sumDragBlockedTileId">, index: number) {
+export function rememberSumDragTile(
+  state: Pick<SumBoxDragState, "sumTiles" | "sumDragTileIds" | "sumDragBlockedTileId">,
+  index: number,
+  options: { allowBacktrack?: boolean } = {},
+) {
   const tile = state.sumTiles[index];
-  if (!tile || tile.cleared || state.sumDragTileIds.includes(index)) return;
+  if (!tile || tile.cleared) return;
+  const existingIndex = state.sumDragTileIds.indexOf(index);
+  if (existingIndex >= 0) {
+    if (options.allowBacktrack !== false && existingIndex < state.sumDragTileIds.length - 1) {
+      state.sumDragTileIds = state.sumDragTileIds.slice(0, existingIndex + 1);
+      state.sumDragBlockedTileId = null;
+    }
+    return;
+  }
   const currentSum = state.sumDragTileIds.reduce((sum, id) => sum + (state.sumTiles[id]?.value ?? 0), 0);
   if (currentSum >= 10 || currentSum + tile.value > 10) {
     state.sumDragBlockedTileId = index;
@@ -328,7 +340,7 @@ export function rememberSumDragSegment(state: Pick<SumBoxDragState, "sumTiles" |
   };
 
   for (const tile of state.sumTiles) {
-    if (!tile.cleared && tileIntersectsRect(tile, rect)) rememberSumDragTile(state, tile.id);
+    if (!tile.cleared && tileIntersectsRect(tile, rect)) rememberSumDragTile(state, tile.id, { allowBacktrack: false });
   }
 }
 

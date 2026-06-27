@@ -7,7 +7,7 @@
   "updatedAt": "2026-06-27",
   "shareText": "마감 전 사과 10을 해봤다. 딱 10으로 사라지면 괜히 기분 좋다.",
   "order": 11,
-  "relatedBlogSlugs": ["sum-box-release-preview-note", "commit-small-visible-slice", "vercel-sitemap-canonical-log"],
+  "relatedBlogSlugs": ["sum-box-backtrack-drag-note", "sum-box-release-preview-note", "commit-small-visible-slice", "vercel-sitemap-canonical-log"],
   "relatedPlaySlugs": ["ten-box-rush", "deploy-stacker"],
   "arcade": {
     "variant": "sum-box",
