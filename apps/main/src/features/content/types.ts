@@ -159,7 +159,6 @@ export type ArcadeGameConfig = {
   variant: ArcadeGameVariant;
   goal: string;
   controls: string;
-  targetScore: number;
   playerLabel: string;
   goodLabels: string[];
   badLabels: string[];

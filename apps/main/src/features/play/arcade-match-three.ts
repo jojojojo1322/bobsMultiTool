@@ -127,9 +127,9 @@ export function moveGemCursor(state: GemCursorState, delta: number) {
   state.gemCursor = (state.gemCursor + delta + total) % total;
 }
 
-export function updateGemSwap(content: ArcadeGameContent, state: GemPlayState, dt: number) {
+export function updateGemSwap(_content: ArcadeGameContent, state: GemPlayState, dt: number) {
   state.elapsed += dt;
-  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= 60) {
+  if (state.focus <= 0 || state.elapsed >= 60) {
     state.finished = true;
   }
 }
@@ -359,7 +359,7 @@ function resolveGemMatches(content: ArcadeGameContent, state: GemPlayState, swap
     resolveGemMatches(content, state, false);
   }
 
-  if (state.score >= content.arcade.targetScore || state.focus <= 0) {
+  if (state.focus <= 0) {
     state.finished = true;
   }
   return true;

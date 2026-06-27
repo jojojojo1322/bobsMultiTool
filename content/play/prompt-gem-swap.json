@@ -13,7 +13,6 @@
     "variant": "match-three",
     "goal": "색돌을 옆 칸과 바꿔 같은 색 셋을 맞춥니다.",
     "controls": "마우스로 색돌을 옆 칸으로 드래그합니다. 클릭 두 번이나 방향키/WASD + Space/Enter도 되고, 점선은 한 번 가능한 교환입니다.",
-    "targetScore": 20,
     "playerLabel": "손",
     "goodLabels": ["맑음", "반짝", "초록", "노랑", "파랑"],
     "badLabels": ["흐림", "금간", "먼지", "검정", "삐끗"],

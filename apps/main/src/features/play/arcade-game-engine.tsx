@@ -520,7 +520,6 @@ function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
 
 function finishStackerIfNeeded(content: ArcadeGameContent, state: GameState) {
   if (
-    state.score >= content.arcade.targetScore ||
     state.focus <= 0 ||
     state.elapsed >= arcadeTimeLimitSeconds(content) ||
     state.stackerActiveY <= stackerBoardY + 6
@@ -576,7 +575,7 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
 }
 
 function finishMoleIfNeeded(content: ArcadeGameContent, state: GameState) {
-  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
+  if (state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
     state.finished = true;
   }
 }

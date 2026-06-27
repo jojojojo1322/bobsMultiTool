@@ -13,7 +13,6 @@
     "variant": "stacker",
     "goal": "좌우로 움직이는 블록을 아래층 위에 쌓습니다. 남을 폭과 잘릴 폭을 보고 타이밍을 잡습니다.",
     "controls": "마우스로 캔버스를 누르거나 Space/Enter로 쌓습니다. A/D 또는 방향키는 마지막에 살짝 보정합니다.",
-    "targetScore": 22,
     "playerLabel": "블록",
     "goodLabels": ["정렬", "층", "딱", "중앙", "평평"],
     "badLabels": ["삐뚤", "금", "튀어", "흔들", "틈"],

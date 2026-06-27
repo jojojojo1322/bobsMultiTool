@@ -13,7 +13,6 @@
     "variant": "brick-breaker",
     "goal": "패들을 손으로 옮기고 공을 되받아 좋은 벽돌을 맞춥니다.",
     "controls": "마우스/터치로 패들을 옮기고, 공이 대기 중이면 누른 자리에서 바로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
-    "targetScore": 22,
     "playerLabel": "패들",
     "goodLabels": ["틈", "핵심", "균열", "단서", "정리"],
     "badLabels": ["소음", "과열", "착시", "헛힘", "벽"],

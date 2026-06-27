@@ -227,8 +227,8 @@ function resetSnakeAfterCrash(content: ArcadeGameContent, state: SnakePlayState)
   state.snakeFood = makeSnakeFood(content, state.actions + state.score + 17, snake);
 }
 
-function finishSnakeIfNeeded(content: ArcadeGameContent, state: SnakePlayState) {
-  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= 60) {
+function finishSnakeIfNeeded(_content: ArcadeGameContent, state: SnakePlayState) {
+  if (state.focus <= 0 || state.elapsed >= 60) {
     state.finished = true;
   }
 }

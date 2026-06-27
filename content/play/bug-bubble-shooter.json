@@ -13,7 +13,6 @@
     "variant": "shooter",
     "goal": "좌우 이동이나 직접 터치 조준으로 좋은 버블만 터뜨립니다.",
     "controls": "마우스/터치로 누른 채 조준선을 끌면 짧은 간격으로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
-    "targetScore": 22,
     "playerLabel": "조준",
     "goodLabels": ["단서", "흔적", "원인", "고리", "실마리"],
     "badLabels": ["소음", "헛점", "감", "착시", "과장"],

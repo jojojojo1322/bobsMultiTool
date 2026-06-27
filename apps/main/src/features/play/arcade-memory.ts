@@ -118,7 +118,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
       score: -1,
     });
     resetMemoryPreview(content, state, true);
-    finishMemoryIfNeeded(content, state);
+    finishMemoryIfNeeded(state);
     return;
   }
 
@@ -139,7 +139,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     });
     state.memoryRound += 1;
     resetMemoryPreview(content, state, false);
-    finishMemoryIfNeeded(content, state);
+    finishMemoryIfNeeded(state);
     return;
   }
 
@@ -152,7 +152,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     score: -2,
   });
   resetMemoryPreview(content, state, true);
-  finishMemoryIfNeeded(content, state);
+  finishMemoryIfNeeded(state);
 }
 
 export function replayMemoryPreview(content: ArcadeGameContent, state: MemoryPlayState) {
@@ -169,7 +169,7 @@ export function replayMemoryPreview(content: ArcadeGameContent, state: MemoryPla
     });
   }
   resetMemoryPreview(content, state, true);
-  finishMemoryIfNeeded(content, state);
+  finishMemoryIfNeeded(state);
 }
 
 export function updateMemory(content: ArcadeGameContent, state: MemoryPlayState, dt: number) {
@@ -191,11 +191,11 @@ export function updateMemory(content: ArcadeGameContent, state: MemoryPlayState,
     }
   }
 
-  finishMemoryIfNeeded(content, state);
+  finishMemoryIfNeeded(state);
 }
 
-function finishMemoryIfNeeded(content: ArcadeGameContent, state: MemoryPlayState) {
-  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= 60) {
+function finishMemoryIfNeeded(state: MemoryPlayState) {
+  if (state.focus <= 0 || state.elapsed >= 60) {
     state.finished = true;
   }
 }

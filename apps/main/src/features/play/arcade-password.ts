@@ -115,6 +115,10 @@ export function updatePassword(_content: ArcadeGameContent, state: PasswordPlayS
   }
 }
 
+function passwordSolvedScore(content: ArcadeGameContent) {
+  return Math.max(0, ...content.endings.map((ending) => ending.minScore));
+}
+
 export function movePasswordCursor(state: Pick<PasswordPlayState, "passwordCursor">, delta: number) {
   state.passwordCursor = (state.passwordCursor + delta + passwordDigitCount) % passwordDigitCount;
 }
@@ -154,24 +158,25 @@ export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordP
   const contradiction = state.passwordAttempts.length > 0 && !duplicate && !repeated && !passwordGuessIsPossible(state.passwordAttempts, guess);
   const issue: PasswordAttempt["issue"] | undefined = duplicate ? "duplicate" : contradiction ? "contradiction" : undefined;
   const solved = !issue && exact === passwordDigitCount;
+  const solvedScore = passwordSolvedScore(content);
   const hint = duplicate
     ? "중복 숫자는 쓰지 않습니다"
     : contradiction
       ? "기록과 안 맞는 번호입니다"
       : passwordHint(state.passwordSecret, state.passwordGuess, exact, near);
   const delta = solved
-    ? content.arcade.targetScore
+    ? solvedScore
     : issue
       ? 0
       : Math.max(0, exact * 5 + near * 2 - (exact === 0 && near === 0 ? 1 : 0) - (repeated ? 3 : 0));
 
-  state.score = solved ? content.arcade.targetScore : Math.max(state.score, delta);
+  state.score = solved ? solvedScore : Math.max(state.score, delta);
   state.focus = clamp(state.focus + (solved ? 8 : duplicate ? -14 : repeated ? -13 : contradiction ? -11 : exact > 0 || near > 0 ? -4 : -9), 0, 100);
   state.passwordAttempts = [{ guess, exact, near, hint: repeated ? "이미 해본 번호입니다" : hint, repeated, issue }, ...state.passwordAttempts].slice(0, 6);
   rememberPasswordHistory(state, {
     label: guess,
     detail: solved ? "번호가 열림" : duplicate ? "중복 숫자" : repeated ? "반복해서 손해" : contradiction ? "기록과 충돌" : `${exact}자리, ${near}숫자`,
-    score: solved ? content.arcade.targetScore : delta,
+    score: solved ? solvedScore : delta,
   });
 
   if (solved || state.focus <= 0) {

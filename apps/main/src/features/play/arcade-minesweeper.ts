@@ -280,9 +280,8 @@ function revealMineFlood(state: MineCellState, start: MineCell) {
   return revealed.size;
 }
 
-function finishMinesweeperIfNeeded(content: ArcadeGameContent, state: MinesweeperPlayState) {
+function finishMinesweeperIfNeeded(_content: ArcadeGameContent, state: MinesweeperPlayState) {
   if (
-    state.score >= content.arcade.targetScore ||
     revealedMineSafeCount(state) >= totalMineSafeCount(state) ||
     state.focus <= 0 ||
     state.elapsed >= 60
