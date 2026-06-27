@@ -37,6 +37,7 @@ import {
   adjustPasswordDigit,
   applyPasswordCandidate,
   applyPasswordSuggestion,
+  cyclePasswordSuggestion,
   formatPasswordOptionDigits,
   makePasswordSecret,
   movePasswordCursor,
@@ -77,6 +78,7 @@ import {
   passwordSuggestion,
   setPasswordDigit,
   setPasswordDigitFromClick,
+  setPasswordSuggestionCursor,
   submitPasswordGuess,
   updatePassword,
   formatTopPasswordDigits,
@@ -315,6 +317,7 @@ type GameState = {
   passwordGuess: number[];
   passwordSecret: number[];
   passwordCursor: number;
+  passwordSuggestionCursor: number;
   passwordAttempts: PasswordAttempt[];
   gemTiles: GemTile[];
   gemCursor: number;
@@ -428,6 +431,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     passwordGuess: [1, 2, 3],
     passwordSecret: makePasswordSecret(content),
     passwordCursor: 0,
+    passwordSuggestionCursor: 0,
     passwordAttempts: [],
     gemTiles: makeGemTiles(content),
     gemCursor: 0,
@@ -2491,6 +2495,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const digitFrequency = passwordDigitFrequency(candidates);
   const suggestion = passwordSuggestion(state.passwordAttempts);
   const candidateOptions = passwordCandidateOptions(state.passwordAttempts);
+  const suggestionIndex = candidateOptions.length ? state.passwordSuggestionCursor % candidateOptions.length : -1;
   const digitMarks = passwordDigitMarks(state.passwordAttempts);
   const currentGuess = passwordGuessText(state.passwordGuess);
   const duplicateCurrent = passwordGuessHasDuplicateDigits(state.passwordGuess);
@@ -2579,17 +2584,24 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("줄이는 후보", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
+  ctx.fillText("R 추천 순환", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
   candidateOptions.forEach((candidate, index) => {
     const rect = passwordCandidateOptionRect(index);
     const selected = candidate === currentGuess;
-    ctx.fillStyle = selected ? primary : index === 0 ? "rgba(251,191,36,0.9)" : "rgba(255,255,255,0.14)";
+    const keyboardTarget = index === suggestionIndex;
+    ctx.fillStyle = selected ? primary : keyboardTarget ? "rgba(96,165,250,0.84)" : index === 0 ? "rgba(251,191,36,0.9)" : "rgba(255,255,255,0.14)";
     ctx.beginPath();
     ctx.roundRect(rect.x, rect.y, rect.width, rect.height, 7);
     ctx.fill();
-    ctx.strokeStyle = selected ? "rgba(147,197,253,0.82)" : index === 0 ? "rgba(251,191,36,0.6)" : "rgba(255,255,255,0.18)";
+    ctx.strokeStyle = selected
+      ? "rgba(147,197,253,0.82)"
+      : keyboardTarget
+        ? "rgba(191,219,254,0.82)"
+        : index === 0
+          ? "rgba(251,191,36,0.6)"
+          : "rgba(255,255,255,0.18)";
     ctx.stroke();
-    ctx.fillStyle = selected || index === 0 ? "#111827" : "#f8fafc";
+    ctx.fillStyle = selected || keyboardTarget || index === 0 ? "#111827" : "#f8fafc";
     ctx.font = "900 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillText(candidate, rect.x + rect.width / 2, rect.y + 15);
@@ -2835,7 +2847,7 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("숫자키·후보칩·R·Enter / 막대=후보 빈도", 34, passwordKeypadY - 4);
+  ctx.fillText("숫자키·후보칩·R 추천 순환·Enter / 막대=후보 빈도", 34, passwordKeypadY - 4);
 
   if (state.focus < 35) {
     ctx.fillStyle = danger;
@@ -3746,7 +3758,7 @@ export function ArcadeGameEngine({
             if (event.repeat) return;
             stateRef.current.started = true;
             stateRef.current.lastFrame = performance.now();
-            applyPasswordSuggestion(stateRef.current);
+            cyclePasswordSuggestion(stateRef.current);
             setShareState("idle");
             syncView();
             return;
@@ -3912,6 +3924,7 @@ export function ArcadeGameEngine({
         } else if (digitIndex >= 0) {
           setPasswordDigitFromClick(state, digitIndex);
         } else if (candidateOptionIndex >= 0 && candidateOptions[candidateOptionIndex]) {
+          setPasswordSuggestionCursor(state, candidateOptionIndex, candidateOptions.length);
           applyPasswordCandidate(state, candidateOptions[candidateOptionIndex]);
         } else if (pointInRect(point, passwordSuggestionRect)) {
           applyPasswordSuggestion(state);

@@ -63,6 +63,7 @@ type PasswordPlayState = {
   passwordGuess: number[];
   passwordSecret: number[];
   passwordCursor: number;
+  passwordSuggestionCursor: number;
   passwordAttempts: PasswordAttempt[];
   history: PasswordHistoryItem[];
 };
@@ -152,8 +153,27 @@ export function applyPasswordCandidate(state: Pick<PasswordPlayState, "passwordG
   state.passwordCursor = 0;
 }
 
-export function applyPasswordSuggestion(state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts">) {
-  applyPasswordCandidate(state, passwordSuggestion(state.passwordAttempts));
+export function setPasswordSuggestionCursor(state: Pick<PasswordPlayState, "passwordSuggestionCursor">, index: number, optionCount: number) {
+  state.passwordSuggestionCursor = optionCount > 0 ? (Math.floor(index) + optionCount) % optionCount : 0;
+}
+
+export function applyPasswordSuggestion(
+  state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts" | "passwordSuggestionCursor">,
+) {
+  const options = passwordCandidateOptions(state.passwordAttempts);
+  const index = options.length ? state.passwordSuggestionCursor % options.length : 0;
+  applyPasswordCandidate(state, options[index] ?? passwordSuggestion(state.passwordAttempts));
+}
+
+export function cyclePasswordSuggestion(
+  state: Pick<PasswordPlayState, "passwordGuess" | "passwordCursor" | "passwordAttempts" | "passwordSuggestionCursor">,
+  delta = 1,
+) {
+  const options = passwordCandidateOptions(state.passwordAttempts);
+  if (!options.length) return;
+  const currentIndex = options.indexOf(passwordGuessText(state.passwordGuess));
+  setPasswordSuggestionCursor(state, currentIndex >= 0 ? currentIndex + delta : state.passwordSuggestionCursor, options.length);
+  applyPasswordCandidate(state, options[state.passwordSuggestionCursor] ?? options[0] ?? "---");
 }
 
 export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordPlayState) {
@@ -181,6 +201,7 @@ export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordP
   state.score = solved ? solvedScore : Math.max(state.score, delta);
   state.focus = clamp(state.focus + (solved ? 8 : duplicate ? -14 : repeated ? -13 : contradiction ? -11 : exact > 0 || near > 0 ? -4 : -9), 0, 100);
   state.passwordAttempts = [{ guess, exact, near, hint: repeated ? "이미 해본 번호입니다" : hint, repeated, issue }, ...state.passwordAttempts].slice(0, 6);
+  state.passwordSuggestionCursor = 0;
   rememberPasswordHistory(state, {
     label: guess,
     detail: solved ? "번호가 열림" : duplicate ? "중복 숫자" : repeated ? "반복해서 손해" : contradiction ? "기록과 충돌" : `${exact}자리, ${near}숫자`,
