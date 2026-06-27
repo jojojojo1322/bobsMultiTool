@@ -6,6 +6,8 @@ const baseUrl = (process.env.BOBOB_BASE_URL || "http://localhost:3000").replace(
 const playDir = path.join(root, "content/play");
 const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker"];
 const failures = [];
+const actionCountPattern =
+  /조작\s*횟수|행동\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
 
 let chromium;
 try {
@@ -79,8 +81,9 @@ function isIgnoredRuntimeError(message) {
 async function playState(page) {
   return page.evaluate(() => ({
     result: Boolean(document.querySelector("[data-play-result]")),
-    turn: document.querySelector("[data-play-turn]")?.getAttribute("data-play-turn") ?? null,
+    state: document.querySelector("[data-play-state]")?.getAttribute("data-play-state") ?? null,
     controlCount: document.querySelectorAll("[data-play-action]").length,
+    oldTurnHookCount: document.querySelectorAll("[data-play-turn]").length,
   }));
 }
 
@@ -118,21 +121,26 @@ async function verifyPlay(browser, content, viewport) {
     if (!(await page.locator("[data-play-history]").first().isVisible().catch(() => false))) {
       failures.push(`${content.slug} ${viewport.width}x${viewport.height} missing play history panel`);
     }
+    const initialText = await page.locator("body").innerText().catch(() => "");
+    if (actionCountPattern.test(initialText)) {
+      failures.push(`${content.slug} ${viewport.width}x${viewport.height} exposes action-count or move-limit wording`);
+    }
 
     const steps = playLength(content);
     for (let index = 0; index < steps + 2; index += 1) {
       const beforeState = await playState(page);
       if (beforeState.result) break;
       if (!beforeState.controlCount) break;
+      if (beforeState.oldTurnHookCount) failures.push(`${content.slug} ${viewport.width}x${viewport.height} still exposes old data-play-turn hook`);
       await clickNextAction(page, content);
       await page
         .waitForFunction(
-          (previousTurn) => {
+          (previousState) => {
             const result = Boolean(document.querySelector("[data-play-result]"));
-            const currentTurn = document.querySelector("[data-play-turn]")?.getAttribute("data-play-turn") ?? null;
-            return result || currentTurn !== previousTurn;
+            const currentState = document.querySelector("[data-play-state]")?.getAttribute("data-play-state") ?? null;
+            return result || currentState !== previousState;
           },
-          beforeState.turn,
+          beforeState.state,
           { timeout: 1_500 },
         )
         .catch(() => undefined);

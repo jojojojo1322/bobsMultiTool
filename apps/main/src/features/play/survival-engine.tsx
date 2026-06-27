@@ -173,7 +173,7 @@ export function SurvivalPlayEngine({
           <HistoryPanel content={content} history={history} />
         </div>
       ) : currentTurn ? (
-        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-turn={currentTurn.id}>
+        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-state={currentTurn.id}>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">상황 선택</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{currentTurn.title}</h3>

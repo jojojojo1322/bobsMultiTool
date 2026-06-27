@@ -3975,7 +3975,7 @@ function endingFor(content: ArcadeGameContent, score: number) {
   return [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
 }
 
-function arcadeTurnKey(playTick: number) {
+function arcadeStateKey(playTick: number) {
   return `arcade-${(((playTick + 1) * 2654435761) >>> 0).toString(36)}`;
 }
 
@@ -4975,7 +4975,7 @@ export function ArcadeGameEngine({
           <HistoryPanel history={view.history} />
         </div>
       ) : (
-        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-turn={arcadeTurnKey(view.playTick)}>
+        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-state={arcadeStateKey(view.playTick)}>
           <div>
             <div className="overflow-hidden rounded-lg border bg-background">
               <canvas

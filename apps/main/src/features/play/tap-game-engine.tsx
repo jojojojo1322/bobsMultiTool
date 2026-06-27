@@ -103,7 +103,7 @@ export function TapGameEngine({
           <TapHistory history={history} />
         </div>
       ) : current ? (
-        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-turn={current.id}>
+        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-state={current.id}>
           <div>
             <div className="rounded-lg border bg-background p-6 text-center">
               <Target className="mx-auto h-8 w-8 text-muted-foreground" />
