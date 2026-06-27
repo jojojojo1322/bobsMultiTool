@@ -1013,6 +1013,24 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
   - Search Console discovered pages remain at the latest recorded `68` against the current live `148` URL sitemap until the next signed-in Search Console follow-up.
   - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `148` still needs the scheduled signed-in observation.
+- Post-development Blog date distribution registration:
+  - Commit: `fb63a72`
+  - Change: spread `40` development Blog post dates that were clustered on `2026-06-26` and `2026-06-27` across `2026-01-31` through `2026-06-27`. Date-sensitive `정보` posts were left unchanged because their titles and bodies use explicit 기준일 values. Blog remains `113` posts while Play remains `24` entries.
+  - Deployment check: `npm run harness:deployment-status` returned `overallState: success` for `fb63a72536764db1cfc9ad5fddd7ce4b1f44ed67` after an initial Vercel pending state.
+  - Local verification: `git diff --check`, `npm run harness:blog-play-mvp`, `npm run build`, and `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed. Playwright verification on `/blog/category/development` confirmed the top rendered dates are spread across unique dates from `2026-06-27` down through May instead of repeating one date.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `148`, feed items `137`, Blog posts `113`, Play entries `24`.
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `148` final 200 sitemap URLs.
+  - WebSub dry-run: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` passed with RSS and Atom item counts `137`.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `148`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `137`, `137`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `148` URL sitemap until the next signed-in Search Console follow-up.
+  - Interpretation: discovery submission is refreshed for the date metadata update, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `148` still needs the scheduled signed-in observation.
 
 Decision:
 
@@ -1031,7 +1049,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `148` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, sum-box clear-feedback, password suggestion-cycle, Play action-limit wording cleanup, memory input-trail, Play count-limit label cleanup, brick-breaker landing guide, flight hold-release cue, snake next-cell preview, minesweeper chord-ready cue, shooter target-cue, mole priority-cue, Play state-hook cleanup, password slot-keypad, stacker drag-alignment, memory flow-cue, sum-box counter-cue, Play count-toned panel cleanup, and snake open-turn cue upgrades.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `148` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, sum-box clear-feedback, password suggestion-cycle, Play action-limit wording cleanup, memory input-trail, Play count-limit label cleanup, brick-breaker landing guide, flight hold-release cue, snake next-cell preview, minesweeper chord-ready cue, shooter target-cue, mole priority-cue, Play state-hook cleanup, password slot-keypad, stacker drag-alignment, memory flow-cue, sum-box counter-cue, Play count-toned panel cleanup, snake open-turn cue, and development Blog date distribution upgrades.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
