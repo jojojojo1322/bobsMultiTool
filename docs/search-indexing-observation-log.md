@@ -660,6 +660,23 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
   - Search Console discovered pages remain at the latest recorded `68` against the current live `131` URL sitemap until the next signed-in Search Console follow-up.
   - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `131` still needs the scheduled signed-in observation.
+- Post-sum-box backtrack and Play counter cleanup registration:
+  - Commits: `3861f4e`, `6219c8b`
+  - Change: added drag backtracking to the sum-box arcade games, added the `sum-box-backtrack-drag-note` development post, and removed visible progress/action counters from Play engine headers so games read as timed or endless loops instead of move-limited rounds. Blog is now `97` posts while Play remains `24` entries.
+  - Deployment check for `3861f4e`: `npm run harness:deployment-status` returned `overallState: success` for `3861f4ebb31c44ed22ede4d366ffaf616c20e24f`.
+  - Deployment check for `6219c8b`: `npm run harness:deployment-status` returned `overallState: success` for `6219c8bda130edfda8637920282ccbc17cbd5a06`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `132`, feed items `121`, Blog posts `97`, Play entries `24`.
+  - Live `/sitemaps/en` URL count: `132`
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `132`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `121`, `121`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `132` URL sitemap until the next signed-in Search Console follow-up.
+  - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `132` still needs the scheduled signed-in observation.
 
 Decision:
 
@@ -678,7 +695,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `131` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, and lottery scratch stage-note upgrades.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `132` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, and visible Play counter-cleanup upgrades.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
