@@ -11,7 +11,8 @@ type FeedItem = {
   title: string;
   description: string;
   url: string;
-  date: string;
+  publishedDate: string;
+  modifiedDate: string;
   categories: string[];
 };
 
@@ -29,7 +30,7 @@ function rfc822(date: string) {
 }
 
 function latestItemDate(items: FeedItem[]) {
-  return items.map((item) => item.date).sort((left, right) => right.localeCompare(left))[0] ?? "2026-06-25T00:00:00+09:00";
+  return items.map((item) => item.modifiedDate).sort((left, right) => right.localeCompare(left))[0] ?? "2026-06-25T00:00:00+09:00";
 }
 
 function isoDate(date: string) {
@@ -41,7 +42,8 @@ function blogFeedItems(): FeedItem[] {
     title: post.title,
     description: post.description,
     url: `${siteUrl}/blog/${post.slug}`,
-    date: `${post.date}T00:00:00+09:00`,
+    publishedDate: `${post.date}T00:00:00+09:00`,
+    modifiedDate: `${post.updatedAt ?? post.date}T00:00:00+09:00`,
     categories: blogPostKeywords(post).slice(0, 8),
   }));
 }
@@ -51,13 +53,14 @@ function playFeedItems(): FeedItem[] {
     title: content.title,
     description: content.description,
     url: `${siteUrl}/play/${content.slug}`,
-    date: `${content.updatedAt}T00:00:00+09:00`,
+    publishedDate: `${content.updatedAt}T00:00:00+09:00`,
+    modifiedDate: `${content.updatedAt}T00:00:00+09:00`,
     categories: playContentKeywords(content).slice(0, 8),
   }));
 }
 
 function feedItems() {
-  return [...blogFeedItems(), ...playFeedItems()].sort((a, b) => b.date.localeCompare(a.date));
+  return [...blogFeedItems(), ...playFeedItems()].sort((a, b) => b.modifiedDate.localeCompare(a.modifiedDate));
 }
 
 export function rssFeedXml() {
@@ -72,7 +75,7 @@ export function rssFeedXml() {
         `<link>${escapeXml(item.url)}</link>`,
         `<guid isPermaLink="true">${escapeXml(item.url)}</guid>`,
         `<description>${escapeXml(item.description)}</description>`,
-        `<pubDate>${escapeXml(rfc822(item.date))}</pubDate>`,
+        `<pubDate>${escapeXml(rfc822(item.publishedDate))}</pubDate>`,
         categories,
         "</item>",
       ].join("");
@@ -107,8 +110,8 @@ export function atomFeedXml() {
         `<title>${escapeXml(item.title)}</title>`,
         `<link href="${escapeXml(item.url)}" />`,
         `<id>${escapeXml(item.url)}</id>`,
-        `<published>${escapeXml(isoDate(item.date))}</published>`,
-        `<updated>${escapeXml(isoDate(item.date))}</updated>`,
+        `<published>${escapeXml(isoDate(item.publishedDate))}</published>`,
+        `<updated>${escapeXml(isoDate(item.modifiedDate))}</updated>`,
         `<summary>${escapeXml(item.description)}</summary>`,
         categories,
         "</entry>",
@@ -148,8 +151,8 @@ export function jsonFeed() {
       title: item.title,
       summary: item.description,
       content_text: item.description,
-      date_published: isoDate(item.date),
-      date_modified: isoDate(item.date),
+      date_published: isoDate(item.publishedDate),
+      date_modified: isoDate(item.modifiedDate),
       tags: item.categories,
     })),
   };

@@ -4,7 +4,7 @@ import { getBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
-const archiveLastmod = "2026-06-25";
+const archiveLastmod = "2026-06-27";
 const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
@@ -33,8 +33,12 @@ function latestDate(dates: string[]) {
   return dates.map((date) => date.slice(0, 10)).sort((left, right) => right.localeCompare(left))[0] ?? archiveLastmod;
 }
 
+function blogPostLastmod(post: { date: string; updatedAt?: string }) {
+  return post.updatedAt ?? post.date;
+}
+
 function blogLastmod() {
-  return latestDate(getBlogPosts().map((post) => post.date));
+  return latestDate(getBlogPosts().map(blogPostLastmod));
 }
 
 function playLastmod() {
@@ -65,13 +69,13 @@ function basePaths(): SitemapPath[] {
         path: blogCategoryPath(group.category.slug),
         changefreq: "weekly" as const,
         priority: "0.7",
-        lastmod: latestDate(group.posts.map((post) => post.date)),
+        lastmod: latestDate(group.posts.map(blogPostLastmod)),
       })),
     ...posts.map((post) => ({
       path: `/blog/${post.slug}`,
       changefreq: "monthly" as const,
       priority: "0.7",
-      lastmod: post.date,
+      lastmod: blogPostLastmod(post),
     })),
     { path: "/play", changefreq: "weekly", priority: "0.8", lastmod: latestPlayLastmod },
     ...getPlayContents().map((content) => ({

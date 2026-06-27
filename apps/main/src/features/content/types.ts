@@ -5,6 +5,7 @@ export type BlogPost = {
   title: string;
   description: string;
   date: string;
+  updatedAt?: string;
   category: string;
   readingMinutes: number;
   relatedPlaySlugs: string[];

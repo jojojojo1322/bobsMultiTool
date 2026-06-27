@@ -8,6 +8,7 @@ type Frontmatter = {
   title?: string;
   description?: string;
   date?: string;
+  updatedAt?: string;
   category?: string;
   readingMinutes?: string;
   relatedPlay?: string;
@@ -130,6 +131,7 @@ function readBlogPost(filePath: string): BlogPost {
     title,
     description,
     date,
+    updatedAt: frontmatter.updatedAt,
     category: frontmatter.category ?? "General",
     readingMinutes: Number(frontmatter.readingMinutes ?? 3),
     relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],

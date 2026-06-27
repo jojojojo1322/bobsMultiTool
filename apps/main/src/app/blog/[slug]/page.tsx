@@ -75,6 +75,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: post.title,
       description: post.description,
       publishedTime: post.date,
+      modifiedTime: post.updatedAt ?? post.date,
       images: [image],
     },
     twitter: {

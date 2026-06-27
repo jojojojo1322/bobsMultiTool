@@ -137,6 +137,7 @@ const blogEntries = listFiles(blogDir, ".mdx").map((file) => {
     title: frontmatter.title,
     description: frontmatter.description,
     date: frontmatter.date,
+    updatedAt: frontmatter.updatedAt,
     category: frontmatter.category,
     relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
   };
@@ -187,6 +188,9 @@ if (dates.length !== blogEntries.length) failures.push("all Blog posts must have
 if (dates.length && dateDaysBetween(dates[0], dates[dates.length - 1]) < 90) {
   failures.push(`Blog dates should look gradually published across several months, found ${dates[0]} to ${dates[dates.length - 1]}`);
 }
+if (dates.length && dates[0] > "2026-01-15") {
+  failures.push(`Blog dates should start near the beginning of 2026, found ${dates[0]}`);
+}
 const blogDateCounts = dates.reduce((counts, date) => counts.set(date, (counts.get(date) ?? 0) + 1), new Map());
 const crowdedBlogDates = Array.from(blogDateCounts.entries()).filter(([, count]) => count > 3);
 if (crowdedBlogDates.length) {
@@ -194,9 +198,20 @@ if (crowdedBlogDates.length) {
     `Blog posts should not look dumped on one day; crowded dates: ${crowdedBlogDates.map(([date, count]) => `${date}=${count}`).join(", ")}`,
   );
 }
+const blogMonthCounts = dates.reduce((counts, date) => counts.set(date.slice(0, 7), (counts.get(date.slice(0, 7)) ?? 0) + 1), new Map());
+const crowdedBlogMonths = Array.from(blogMonthCounts.entries()).filter(([, count]) => count > Math.max(24, Math.ceil(blogEntries.length * 0.24)));
+if (blogMonthCounts.size < 6 || crowdedBlogMonths.length) {
+  failures.push(
+    `Blog dates should be spread across the first half of 2026; month counts: ${Array.from(blogMonthCounts.entries())
+      .map(([month, count]) => `${month}=${count}`)
+      .join(", ")}`,
+  );
+}
 
 for (const entry of blogEntries) {
   if (!entry.slug || !entry.title || !entry.description || !entry.category) failures.push(`${entry.file} is missing required Blog frontmatter`);
+  if (entry.updatedAt && !/^\d{4}-\d{2}-\d{2}$/.test(entry.updatedAt)) failures.push(`${entry.slug ?? entry.file} has invalid Blog updatedAt: ${entry.updatedAt}`);
+  if (entry.updatedAt && entry.date && entry.updatedAt < entry.date) failures.push(`${entry.slug ?? entry.file} updatedAt should not be earlier than date`);
   if (entry.description && normalizedTextLength(entry.description) < minBlogDescriptionLength) {
     failures.push(`${entry.slug ?? entry.file} description is too short for submitted URL metadata: ${normalizedTextLength(entry.description)} chars`);
   }

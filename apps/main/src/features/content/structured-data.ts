@@ -58,6 +58,10 @@ function playGenre(content: PlayContent) {
   return "Sort and match game";
 }
 
+function blogModifiedDate(post: BlogPost) {
+  return post.updatedAt ?? post.date;
+}
+
 export function blogIndexStructuredData(posts: BlogPost[]) {
   const url = `${siteUrl}/blog`;
   const keywords = blogIndexKeywords(posts);
@@ -78,7 +82,7 @@ export function blogIndexStructuredData(posts: BlogPost[]) {
           description: post.description,
           url: postUrl,
           datePublished: post.date,
-          dateModified: post.date,
+          dateModified: blogModifiedDate(post),
           inLanguage: contentLocale,
           author: personNode(),
           publisher: organizationNode(),
@@ -130,7 +134,7 @@ export function blogCategoryStructuredData({ category, posts }: { category: Blog
           description: post.description,
           url: postUrl,
           datePublished: post.date,
-          dateModified: post.date,
+          dateModified: blogModifiedDate(post),
           articleSection: category.label,
           inLanguage: contentLocale,
           author: personNode(),
@@ -229,7 +233,7 @@ export function blogPostStructuredData({ post, relatedPlays }: { post: BlogPost;
     url,
     inLanguage: contentLocale,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: blogModifiedDate(post),
     articleSection: post.category,
     keywords,
     about: topicThings(keywords),

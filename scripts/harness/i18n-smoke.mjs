@@ -60,7 +60,7 @@ for (const fragment of ["homeTitle", "homeDescription", "toolDescription", "guid
 if (!config.includes('"x-default"')) failures.push("languageAlternates missing x-default hreflang");
 if (!sitemapSource.includes('hreflang="x-default"')) failures.push("localized sitemap missing x-default hreflang links");
 if (!sitemapSource.includes("xmlns:xhtml")) failures.push("localized sitemap missing xhtml alternate namespace");
-for (const fragment of ["archiveLastmod", "latestDate", "blogLastmod", "playLastmod", "siteLastmod", "lastmod: post.date", "lastmod: content.updatedAt", "<lastmod>${entry.lastmod}</lastmod>"]) {
+for (const fragment of ["archiveLastmod", "latestDate", "blogLastmod", "playLastmod", "siteLastmod", "blogPostLastmod", "lastmod: blogPostLastmod(post)", "lastmod: content.updatedAt", "<lastmod>${entry.lastmod}</lastmod>"]) {
   if (!sitemapSource.includes(fragment)) failures.push(`sitemap source missing dynamic lastmod fragment: ${fragment}`);
 }
 const latestContentDate = latestRelevantGitDate();
