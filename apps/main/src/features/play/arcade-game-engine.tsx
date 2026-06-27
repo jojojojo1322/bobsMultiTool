@@ -2161,6 +2161,29 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.lineWidth = 1;
   ctx.stroke();
 
+  if (priorityMole && priorityMole.hole !== state.moleCursor && !state.finished) {
+    const cursorCenter = moleHoleCenter(state.moleCursor);
+    const priorityCenter = moleHoleCenter(priorityMole.hole);
+    ctx.save();
+    ctx.setLineDash([8, 8]);
+    ctx.strokeStyle = "rgba(134,239,172,0.68)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cursorCenter.x, cursorCenter.y + 16);
+    ctx.lineTo(priorityCenter.x, priorityCenter.y - 34);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(134,239,172,0.95)";
+    ctx.beginPath();
+    ctx.roundRect(priorityCenter.x - 35, priorityCenter.y - 98, 70, 22, 11);
+    ctx.fill();
+    ctx.fillStyle = "#052e16";
+    ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("우선 잡기", priorityCenter.x, priorityCenter.y - 83);
+    ctx.restore();
+  }
+
   for (let hole = 0; hole < moleColumns * moleRows; hole += 1) {
     const center = moleHoleCenter(hole);
     const hasCursor = state.moleCursor === hole;
@@ -2257,7 +2280,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillText(`곧 사라질 핵심 ${urgentGoodMoles}`, panelX + 18, 174);
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
   ctx.fillText(priorityMole ? `먼저 ${priorityMole.label}` : "초록 알림 기다리기", panelX + 18, 222);
-  ctx.fillText(avoidMole ? `${avoidMole.label}은 두기` : "빨강은 지나가게 두기", panelX + 18, 246);
+  ctx.fillText(priorityMole ? "빈칸 Space는 우선 알림으로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
+  ctx.fillText(avoidMole ? `${avoidMole.label}은 두기` : "빨강은 지나가게 두기", panelX + 18, 270);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
