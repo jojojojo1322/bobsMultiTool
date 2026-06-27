@@ -50,7 +50,7 @@ async function gotoWithRetry(page, url) {
 function playLength(content) {
   if (content.type === "micro-sim") return content.turns.length;
   if (content.type === "tap-game") return content.targets.length;
-  if (content.type === "arcade-game") return content.arcade.rounds;
+  if (content.type === "arcade-game") return 12;
   return content.items.length;
 }
 
@@ -139,7 +139,7 @@ async function verifyPlay(browser, content, viewport) {
     }
 
     if (!(await page.locator("[data-play-result]").first().isVisible().catch(() => false))) {
-      failures.push(`${content.slug} ${viewport.width}x${viewport.height} did not reach result after ${steps} actions`);
+      failures.push(`${content.slug} ${viewport.width}x${viewport.height} did not reach result after ${steps} probes`);
       return;
     }
 

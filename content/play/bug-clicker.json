@@ -19,7 +19,6 @@
     "variant": "shooter",
     "goal": "좌우로 움직이거나 누른 위치로 조준해 진짜 신호만 쳐냅니다.",
     "controls": "마우스/터치로 누른 채 조준선을 끌면 짧은 간격으로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
-    "rounds": 12,
     "targetScore": 22,
     "playerLabel": "방패",
     "goodLabels": ["확인", "단서", "흔적", "원인", "증거"],

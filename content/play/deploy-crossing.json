@@ -13,7 +13,6 @@
     "variant": "crossing",
     "goal": "아래쪽에서 출발해 다음 한 칸 표시를 보고 위쪽 도착선까지 건넙니다.",
     "controls": "마우스/터치로 가고 싶은 방향을 누르면 한 칸 움직입니다. 키보드는 방향키 또는 WASD, Space/Enter는 위로 건너기입니다.",
-    "rounds": 21,
     "targetScore": 20,
     "playerLabel": "나",
     "goodLabels": ["빈칸", "틈", "초록", "쉼", "길"],

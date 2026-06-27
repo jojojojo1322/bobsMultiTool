@@ -263,7 +263,6 @@ for (const entry of playEntries.filter((item) => item.type === "arcade-game")) {
   if (!entry.arcade?.variant) failures.push(`${entry.slug} should declare an arcade variant`);
   if (!entry.arcade?.goal || normalizedTextLength(entry.arcade.goal) < 20) failures.push(`${entry.slug} should explain the arcade goal`);
   if (!entry.arcade?.controls || normalizedTextLength(entry.arcade.controls) < 20) failures.push(`${entry.slug} should explain keyboard controls`);
-  if (!entry.arcade?.rounds || entry.arcade.rounds < 8) failures.push(`${entry.slug} should have at least 8 arcade actions`);
   if (!entry.arcade?.goodLabels?.length || !entry.arcade?.badLabels?.length) failures.push(`${entry.slug} should provide good and bad arcade labels`);
   if (!entry.endings?.length) failures.push(`${entry.slug} should provide arcade endings`);
 }

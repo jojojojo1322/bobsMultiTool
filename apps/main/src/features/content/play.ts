@@ -28,7 +28,6 @@ function readPlayContent(slug: string): PlayContent {
       !content.arcade.controls ||
       !content.arcade.goodLabels?.length ||
       !content.arcade.badLabels?.length ||
-      !content.arcade.rounds ||
       !content.endings?.length)
   ) {
     throw new Error(`Arcade game content is missing required fields: ${filePath}`);

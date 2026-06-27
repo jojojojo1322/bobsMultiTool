@@ -3178,7 +3178,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`건넌 횟수 ${Math.floor(state.score / 5)} · 마우스/터치로 가고 싶은 방향을 누르면 한 칸 움직입니다.`, 24, canvasHeight - 18);
+  ctx.fillText(`건넌 기록 ${Math.floor(state.score / 5)} · 마우스/터치로 가고 싶은 방향을 누르면 한 칸 움직입니다.`, 24, canvasHeight - 18);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.68)";

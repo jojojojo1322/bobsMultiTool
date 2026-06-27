@@ -13,7 +13,6 @@
     "variant": "mole",
     "goal": "초록 알림은 남은 시간 링이 줄기 전에 잡고, 빨간 소음 알림은 지나가게 둡니다.",
     "controls": "마우스로 알림을 누르거나 방향키/WASD로 칸을 옮겨 Space/Enter로 잡습니다. 초록은 빠를수록 좋고 빨강은 누르지 않는 편이 낫습니다.",
-    "rounds": 24,
     "targetScore": 38,
     "playerLabel": "망치",
     "goodLabels": ["지금", "확인", "답장", "결정", "짧게"],

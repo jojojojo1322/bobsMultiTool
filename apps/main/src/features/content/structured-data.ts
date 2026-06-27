@@ -51,13 +51,6 @@ function topicThings(keywords: string[]) {
   }));
 }
 
-function playMetric(content: PlayContent) {
-  if (content.type === "micro-sim") return `${content.turns.length}턴`;
-  if (content.type === "tap-game") return `${content.targets.length}개 판단`;
-  if (content.type === "arcade-game") return "바로 플레이";
-  return `${content.items.length}개 분류`;
-}
-
 function playGenre(content: PlayContent) {
   if (content.type === "micro-sim") return "Micro simulation";
   if (content.type === "tap-game") return "Tap game";
@@ -289,7 +282,6 @@ export function playDetailStructuredData({ content, relatedBlogs }: { content: P
       minValue: 1,
       maxValue: 1,
     },
-    gameItem: playMetric(content),
     isPartOf: {
       "@type": "CollectionPage",
       name: "bobob.app Play",

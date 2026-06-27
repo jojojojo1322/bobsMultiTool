@@ -13,7 +13,6 @@
     "variant": "minesweeper",
     "goal": "칸을 열고 숫자를 보며 위험한 칸은 피합니다.",
     "controls": "클릭이나 Space/Enter로 현재 칸을 엽니다. 의심되는 칸은 F, Shift+클릭, 우클릭으로 표시합니다. 열린 숫자 칸은 표시 수가 맞을 때 한 번 더 눌러 주변 닫힌 칸을 같이 엽니다.",
-    "rounds": 12,
     "targetScore": 20,
     "playerLabel": "칸",
     "goodLabels": ["0", "1", "2", "안전", "열기"],

@@ -13,7 +13,6 @@
     "variant": "snake",
     "goal": "사과를 먹어 길이를 늘리고, 벽과 꼬리는 피합니다.",
     "controls": "방향키/WASD 또는 캔버스 드래그로 방향을 바꿉니다. Space/Enter는 한 칸 전진하고, 캔버스를 탭하면 머리 기준 가까운 방향으로 꺾습니다.",
-    "rounds": 12,
     "targetScore": 22,
     "playerLabel": "스네",
     "goodLabels": ["사과", "길", "점", "숨", "칸"],

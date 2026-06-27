@@ -75,14 +75,6 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
     const play = getPlayContentBySlug(playSlug);
     return play ? [{ slug: play.slug, title: play.title, description: play.description }] : [];
   });
-  const playMetric =
-    content.type === "micro-sim"
-      ? `${content.turns.length}턴`
-      : content.type === "tap-game"
-        ? `${content.targets.length}개 판단`
-        : content.type === "arcade-game"
-          ? "바로 플레이"
-          : `${content.items.length}개 분류`;
   const jsonLd = playDetailStructuredData({ content, relatedBlogs });
   const detailMaxWidth = content.type === "arcade-game" ? "max-w-7xl" : "max-w-6xl";
 
@@ -95,7 +87,6 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
           <div className="flex flex-wrap gap-2">
             <Badge>Play</Badge>
             <Badge>{content.durationLabel}</Badge>
-            <Badge>{playMetric}</Badge>
           </div>
           <h1 className="mt-4 text-4xl font-semibold tracking-normal">{content.title}</h1>
           <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">{content.description}</p>
@@ -111,7 +102,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
         ) : (
           <SortMatchEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         )}
-        <PlayContext content={content} relatedBlogLinks={relatedBlogLinks} playMetric={playMetric} />
+        <PlayContext content={content} relatedBlogLinks={relatedBlogLinks} />
       </section>
     </main>
   );
@@ -121,11 +112,9 @@ const contentLocale = "ko";
 function PlayContext({
   content,
   relatedBlogLinks,
-  playMetric,
 }: {
   content: PlayContent;
   relatedBlogLinks: Array<{ slug: string; title: string; description?: string }>;
-  playMetric: string;
 }) {
   const typeLabel =
     content.type === "tap-game"
@@ -134,16 +123,16 @@ function PlayContext({
         ? "이것저것 나눠 보는 판"
         : content.type === "arcade-game"
           ? "마우스나 키보드로 움직이는 판"
-          : "몇 번 골라보고 끝내는 판";
+          : "짧게 골라보는 판";
   const firstBlog = relatedBlogLinks[0];
   const pacingText =
     content.type === "arcade-game" && content.arcade.variant === "lottery"
       ? "시간이나 목표 점수로 끊지 않습니다. 한 장을 다 보면 다음 단계 복권으로 넘어가고, 그만하고 싶을 때 멈추면 됩니다."
       : content.type === "arcade-game" && content.arcade.variant === "sum-box"
-        ? `한 판은 ${content.durationLabel} 동안만 갑니다. 몇 번 눌렀는지는 세지 않고, 결과는 그 시간 안에 만든 기록으로 남습니다.`
+        ? `한 판은 ${content.durationLabel} 동안만 갑니다. 결과는 그 시간 안에 만든 기록으로 남습니다.`
         : content.type === "arcade-game"
           ? `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 남고, 다시 해도 바로 이어집니다.`
-        : `한 판은 ${content.durationLabel}, ${playMetric} 정도로 끝납니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.`;
+        : `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 점수와 짧은 말로 끝나고, 더 이어 보고 싶을 때만 관련 글을 열면 됩니다.`;
 
   return (
     <section className="mt-6 rounded-md border bg-muted/20 p-4" data-play-context>

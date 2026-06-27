@@ -13,7 +13,6 @@
     "variant": "memory",
     "goal": "빛난 칸 순서를 기억해서 같은 순서로 누릅니다.",
     "controls": "마우스로 칸을 누르거나 방향키/WASD로 옮겨 Space/Enter. 숫자 1~9도 됩니다. 헷갈리면 R이나 다시 보기 버튼으로 같은 패턴을 다시 봅니다.",
-    "rounds": 10,
     "targetScore": 34,
     "playerLabel": "눈",
     "goodLabels": ["파랑", "초록", "노랑", "흰빛", "작은"],

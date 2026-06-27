@@ -13,7 +13,6 @@
     "variant": "flight",
     "goal": "누르고 있으면 뜨고, 손을 떼면 내려가며 빈틈을 통과합니다.",
     "controls": "마우스/터치로 캔버스를 누르고 있으면 상승, 떼면 하강합니다. 키보드는 Space/Enter 또는 위 방향키로 상승합니다.",
-    "rounds": 12,
     "targetScore": 20,
     "playerLabel": "비행",
     "goodLabels": ["빈틈", "바람", "문", "길", "숨"],
