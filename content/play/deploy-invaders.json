@@ -12,7 +12,7 @@
   "arcade": {
     "variant": "shooter",
     "goal": "방어선을 옮기거나 누른 위치로 조준해 진짜 신호만 맞춥니다.",
-    "controls": "마우스/터치로 조준 위치를 누르면 바로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
+    "controls": "마우스/터치로 누른 채 조준선을 끌면 짧은 간격으로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
     "rounds": 12,
     "targetScore": 22,
     "playerLabel": "라인",

@@ -228,6 +228,7 @@ import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-lin
 
 const canvasWidth = 720;
 const canvasHeight = 520;
+const shooterPointerFireInterval = 0.26;
 
 type Sprite = {
   id: number;
@@ -337,6 +338,11 @@ type GameState = {
   brickBallVx: number;
   brickBallVy: number;
   brickLaunched: boolean;
+  shooterAimX: number;
+  shooterAimY: number;
+  shooterPointerActive: boolean;
+  shooterFireCooldown: number;
+  shooterSuppressClick: boolean;
   history: HistoryItem[];
   lastFrame: number | null;
 };
@@ -443,6 +449,11 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     brickBallVx: 180,
     brickBallVy: -260,
     brickLaunched: false,
+    shooterAimX: canvasWidth / 2,
+    shooterAimY: canvasHeight - 170,
+    shooterPointerActive: false,
+    shooterFireCooldown: 0,
+    shooterSuppressClick: false,
     history: [],
     lastFrame: null,
   };
@@ -664,7 +675,14 @@ function mainActionLabel(content: ArcadeGameContent) {
   return "발사";
 }
 
+function aimShooterAt(state: GameState, point: CanvasPoint) {
+  state.playerX = clamp(point.x, 34, canvasWidth - 34);
+  state.shooterAimX = state.playerX;
+  state.shooterAimY = clamp(point.y, 72, state.playerY - 36);
+}
+
 function fireArcadeBullet(_content: ArcadeGameContent, state: GameState) {
+  if (state.bullets.length >= 5) return;
   state.actions += 1;
   state.bullets.push({ x: state.playerX, y: state.playerY - 30, vy: -430 });
 }
@@ -776,6 +794,15 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
   if (down && content.arcade.variant !== "runner") state.playerY += 220 * dt;
   state.playerX = clamp(state.playerX, 34, canvasWidth - 34);
   state.playerY = clamp(state.playerY, 48, canvasHeight - 42);
+
+  if (content.arcade.variant === "shooter") {
+    state.shooterFireCooldown = Math.max(0, state.shooterFireCooldown - dt);
+    state.shooterAimX = state.playerX;
+    if (state.shooterPointerActive && state.shooterFireCooldown <= 0) {
+      fireArcadeBullet(content, state);
+      state.shooterFireCooldown = shooterPointerFireInterval;
+    }
+  }
 
   if (content.arcade.variant === "runner" || content.arcade.variant === "flight") {
     const lift = keys.has("Space") || keys.has("Enter") || up;
@@ -1362,6 +1389,37 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.stroke();
   ctx.setLineDash([]);
 
+  if (state.shooterPointerActive) {
+    const readyRatio = 1 - clamp(state.shooterFireCooldown / shooterPointerFireInterval, 0, 1);
+    ctx.strokeStyle = primary;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(state.playerX, state.playerY - 28);
+    ctx.lineTo(state.shooterAimX, state.shooterAimY);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(248,250,252,0.88)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(state.shooterAimX, state.shooterAimY, 18, 0, Math.PI * 2);
+    ctx.moveTo(state.shooterAimX - 26, state.shooterAimY);
+    ctx.lineTo(state.shooterAimX - 9, state.shooterAimY);
+    ctx.moveTo(state.shooterAimX + 9, state.shooterAimY);
+    ctx.lineTo(state.shooterAimX + 26, state.shooterAimY);
+    ctx.moveTo(state.shooterAimX, state.shooterAimY - 26);
+    ctx.lineTo(state.shooterAimX, state.shooterAimY - 9);
+    ctx.moveTo(state.shooterAimX, state.shooterAimY + 9);
+    ctx.lineTo(state.shooterAimX, state.shooterAimY + 26);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.beginPath();
+    ctx.roundRect(state.playerX - 38, state.playerY + 28, 76, 8, 4);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.roundRect(state.playerX - 38, state.playerY + 28, 76 * readyRatio, 8, 4);
+    ctx.fill();
+  }
+
   ctx.fillStyle = "rgba(255,255,255,0.08)";
   ctx.beginPath();
   ctx.roundRect(0, dangerLineY, canvasWidth, 5, 2);
@@ -1395,7 +1453,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("마우스/터치로 조준 위치를 누르면 바로 발사합니다. A/D와 Space도 됩니다.", 34, canvasHeight - 22);
+  ctx.fillText("마우스/터치로 누른 채 드래그하면 조준선이 따라가며 발사합니다. A/D와 Space도 됩니다.", 34, canvasHeight - 22);
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -1410,7 +1468,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("조준 위치를 누르거나 A/D로 움직여 Space로 쏩니다.", canvasWidth / 2, 204);
+    ctx.fillText("누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.", canvasWidth / 2, 204);
     ctx.fillText("좋은 신호만 맞히면 오래 버팁니다.", canvasWidth / 2, 230);
   }
 }
@@ -3677,10 +3735,14 @@ export function ArcadeGameEngine({
       }
 
       if (content.arcade.variant === "shooter") {
+        if (state.shooterSuppressClick) {
+          state.shooterSuppressClick = false;
+          return;
+        }
         event.preventDefault();
         state.started = true;
         state.lastFrame = performance.now();
-        state.playerX = clamp(point.x, 34, canvasWidth - 34);
+        aimShooterAt(state, point);
         fireArcadeBullet(content, state);
         setShareState("idle");
         syncView();
@@ -3741,6 +3803,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
       )
@@ -3750,6 +3813,24 @@ export function ArcadeGameEngine({
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+      if (content.arcade.variant === "shooter") {
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.shooterPointerActive = true;
+        state.shooterSuppressClick = true;
+        aimShooterAt(state, point);
+        fireArcadeBullet(content, state);
+        state.shooterFireCooldown = shooterPointerFireInterval;
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "lottery") {
         const index = lotteryCellIndexAt(state, point);
         if (index < 0) return;
@@ -3874,6 +3955,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
       )
@@ -3883,6 +3965,14 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       if (state.finished) return;
       const point = canvasPointFromEvent(canvas, event);
+      if (content.arcade.variant === "shooter") {
+        if (!state.shooterPointerActive || (event.buttons === 0 && event.pointerType !== "touch")) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        aimShooterAt(state, point);
+        setShareState("idle");
+        return;
+      }
       if (content.arcade.variant === "lottery") {
         if (!state.lotteryDragging || (event.buttons === 0 && event.pointerType !== "touch")) return;
         state.started = true;
@@ -3952,6 +4042,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
       )
@@ -3963,6 +4054,10 @@ export function ArcadeGameEngine({
         keysRef.current.delete("Space");
         return;
       }
+      if (content.arcade.variant === "shooter" && state.finished) {
+        state.shooterPointerActive = false;
+        return;
+      }
       if (state.finished) return;
       event.preventDefault();
       const point = canvasPointFromEvent(canvas, event);
@@ -3970,6 +4065,13 @@ export function ArcadeGameEngine({
         event.currentTarget.releasePointerCapture(event.pointerId);
       } catch {
         // Pointer capture may be unavailable in tests.
+      }
+      if (content.arcade.variant === "shooter") {
+        aimShooterAt(state, point);
+        state.shooterPointerActive = false;
+        setShareState("idle");
+        syncView();
+        return;
       }
       if (content.arcade.variant === "lottery") {
         if (state.lotteryDragging) scratchLotteryAt(content, state, point);
@@ -4059,6 +4161,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
         content.arcade.variant !== "stacker" &&
+        content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
         content.arcade.variant !== "brick-breaker"
       )
@@ -4066,6 +4169,7 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       keysRef.current.delete("Space");
       state.snakeDragStart = null;
+      state.shooterPointerActive = false;
       state.lotteryDragging = false;
       clearLotteryDragTrail(state);
       clearSumDrag(state);
