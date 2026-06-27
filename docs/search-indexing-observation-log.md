@@ -709,6 +709,23 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
   - Search Console discovered pages remain at the latest recorded `68` against the current live `134` URL sitemap until the next signed-in Search Console follow-up.
   - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `134` still needs the scheduled signed-in observation.
+- Post-sum-box clear feedback registration:
+  - Commit: `f1e99b1`
+  - Change: added short clear/miss feedback rings and score floaters to the `sum-box` canvas games, linked the `sum-box-clear-pop-note` development post from related Play entries, and removed public `조작 횟수` / `횟수 제한` wording from Play-facing copy. Blog is now `100` posts while Play remains `24` entries.
+  - Deployment check: `npm run harness:deployment-status` returned `overallState: success` for `f1e99b11480335d12300aada5cd2c2c3e7e74876`.
+  - Local verification: `git diff --check`, `npm run harness:blog-play-mvp`, `npm run lint`, `npm run build`, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:play-interaction`, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed. In-app browser verification on `/play/ten-box-rush` showed the `+6` clear floater after dragging `2 + 8`, kept the 1-minute timer, and found no count-limit wording or console errors.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `135`, feed items `124`, Blog posts `100`, Play entries `24`.
+  - Live `/sitemaps/en` URL count: `135`
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `135`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `124`, `124`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `135` URL sitemap until the next signed-in Search Console follow-up.
+  - Interpretation: discovery submission is refreshed, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `135` still needs the scheduled signed-in observation.
 
 Decision:
 
@@ -727,7 +744,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `134` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, and endless lottery stage-loop upgrades.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `135` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, and sum-box clear-feedback upgrades.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
 - `2026-07-09`:
