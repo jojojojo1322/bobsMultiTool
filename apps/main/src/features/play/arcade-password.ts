@@ -375,6 +375,37 @@ export function formatPasswordOptionDigits(digits: number[]) {
   return digits.join("");
 }
 
+export function passwordDigitFrequency(candidates: number[][]) {
+  const counts = Array.from({ length: 10 }, () => 0);
+  for (const candidate of candidates) {
+    for (const digit of candidate) counts[digit] += 1;
+  }
+  const max = Math.max(1, ...counts);
+  return counts.map((count) => ({ count, ratio: count / max }));
+}
+
+export function passwordPositionDigitFrequency(candidates: number[][]) {
+  const counts = Array.from({ length: passwordDigitCount }, () => Array.from({ length: 10 }, () => 0));
+  for (const candidate of candidates) {
+    candidate.forEach((digit, position) => {
+      if (counts[position]) counts[position][digit] += 1;
+    });
+  }
+  return counts.map((positionCounts) => {
+    const max = Math.max(1, ...positionCounts);
+    return positionCounts.map((count) => ({ count, ratio: count / max }));
+  });
+}
+
+export function formatTopPasswordDigits(positionCounts: Array<{ count: number }>, limit = 3) {
+  const ranked = positionCounts
+    .map((entry, digit) => ({ digit, count: entry.count }))
+    .filter((entry) => entry.count > 0)
+    .sort((left, right) => right.count - left.count || left.digit - right.digit)
+    .slice(0, limit);
+  return ranked.length ? ranked.map((entry) => entry.digit).join("") : "-";
+}
+
 export function passwordSuggestion(attempts: PasswordAttempt[]) {
   return passwordRankedCandidateOptions(attempts, 1)[0] ?? "---";
 }
