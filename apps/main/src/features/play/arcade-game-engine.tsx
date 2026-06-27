@@ -3131,6 +3131,16 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   const selectedPositionOptions = new Set(positionOptions[state.passwordCursor] ?? []);
   const selectedPositionFrequency = positionFrequency[state.passwordCursor] ?? [];
   const selectedPositionHasSignal = state.passwordAttempts.length > 0 && selectedPositionFrequency.some((entry) => entry.count > 0);
+  const positionTopDigits = positionFrequency.map((positionCounts) =>
+    state.passwordAttempts.length
+      ? positionCounts
+          .map((entry, digit) => ({ digit, ...entry }))
+          .filter((entry) => entry.count > 0)
+          .sort((left, right) => right.count - left.count || left.digit - right.digit)
+          .slice(0, 3)
+      : [],
+  );
+  const selectedTopDigits = positionTopDigits[state.passwordCursor] ?? [];
   const digitFrequency = passwordDigitFrequency(candidates);
   const suggestion = passwordSuggestion(state.passwordAttempts);
   const candidateOptions = passwordCandidateOptions(state.passwordAttempts);
@@ -3278,6 +3288,41 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillText(`현재 ${state.passwordCursor + 1}칸 추천 ${formatTopPasswordDigits(selectedPositionFrequency)}`, 48, 322);
   ctx.textAlign = "center";
 
+  if (selectedTopDigits.length) {
+    const selectedX = passwordDigitStartX + state.passwordCursor * (passwordDigitWidth + passwordDigitGap);
+    const railWidth = 106;
+    const railX = clamp(selectedX + passwordDigitWidth / 2 - railWidth / 2, 196, 418);
+    const railY = passwordDigitY - 28;
+    ctx.fillStyle = "rgba(15,23,42,0.9)";
+    ctx.beginPath();
+    ctx.roundRect(railX, railY, railWidth, 22, 11);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(96,165,250,0.58)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(191,219,254,0.82)";
+    ctx.font = "800 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("이 칸 후보", railX + 9, railY + 14);
+    selectedTopDigits.forEach((entry, index) => {
+      const chipX = railX + 60 + index * 15;
+      ctx.fillStyle = index === 0 ? accent : "rgba(96,165,250,0.76)";
+      ctx.beginPath();
+      ctx.roundRect(chipX, railY + 4, 13, 14, 6);
+      ctx.fill();
+      ctx.fillStyle = index === 0 ? "#111827" : "#f8fafc";
+      ctx.font = "900 9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(`${entry.digit}`, chipX + 6.5, railY + 14);
+    });
+    ctx.strokeStyle = "rgba(96,165,250,0.45)";
+    ctx.beginPath();
+    ctx.moveTo(selectedX + passwordDigitWidth / 2, railY + 22);
+    ctx.lineTo(selectedX + passwordDigitWidth / 2, passwordDigitY - 4);
+    ctx.stroke();
+    ctx.textAlign = "center";
+  }
+
   for (let index = 0; index < passwordDigitCount; index += 1) {
     const x = passwordDigitStartX + index * (passwordDigitWidth + passwordDigitGap);
     const selected = index === state.passwordCursor;
@@ -3320,8 +3365,8 @@ function drawPassword(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(positionDigit && positionDigit.count > 0 ? `가능성 ${passwordRatioMood(positionDigit.ratio, positionDigit.count)}` : "가능성 낮음", x + passwordDigitWidth / 2, passwordDigitY + 113);
     ctx.fillStyle = selected ? accent : "rgba(255,255,255,0.5)";
-    ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("↑↓", x + passwordDigitWidth / 2, passwordDigitY + 130);
+    ctx.font = selected ? "850 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif" : "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(selected && state.passwordAttempts.length ? "클릭 순환" : "↑↓", x + passwordDigitWidth / 2, passwordDigitY + 130);
   }
 
   ctx.textAlign = "center";
