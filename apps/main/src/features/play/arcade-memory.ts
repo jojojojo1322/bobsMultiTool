@@ -195,7 +195,7 @@ export function updateMemory(content: ArcadeGameContent, state: MemoryPlayState,
 }
 
 function finishMemoryIfNeeded(content: ArcadeGameContent, state: MemoryPlayState) {
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= 60) {
+  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= 60) {
     state.finished = true;
   }
 }

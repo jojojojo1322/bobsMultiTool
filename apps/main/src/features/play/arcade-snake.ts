@@ -228,7 +228,7 @@ function resetSnakeAfterCrash(content: ArcadeGameContent, state: SnakePlayState)
 }
 
 function finishSnakeIfNeeded(content: ArcadeGameContent, state: SnakePlayState) {
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= 60) {
     state.finished = true;
   }
 }

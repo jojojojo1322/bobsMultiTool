@@ -108,9 +108,9 @@ export function passwordDigitFromKeyboardCode(code: string) {
   return null;
 }
 
-export function updatePassword(content: ArcadeGameContent, state: PasswordPlayState, dt: number) {
+export function updatePassword(_content: ArcadeGameContent, state: PasswordPlayState, dt: number) {
   state.elapsed += dt;
-  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= passwordTimeLimitSeconds) {
+  if (state.focus <= 0 || state.elapsed >= passwordTimeLimitSeconds) {
     state.finished = true;
   }
 }
@@ -174,7 +174,7 @@ export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordP
     score: solved ? content.arcade.targetScore : delta,
   });
 
-  if (solved || state.actions >= content.arcade.rounds || state.focus <= 0) {
+  if (solved || state.focus <= 0) {
     state.finished = true;
   }
 }

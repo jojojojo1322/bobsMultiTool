@@ -284,9 +284,8 @@ function finishMinesweeperIfNeeded(content: ArcadeGameContent, state: Minesweepe
   if (
     state.score >= content.arcade.targetScore ||
     revealedMineSafeCount(state) >= totalMineSafeCount(state) ||
-    state.actions >= content.arcade.rounds ||
     state.focus <= 0 ||
-    state.elapsed >= content.arcade.rounds * 5
+    state.elapsed >= 60
   ) {
     state.finished = true;
   }

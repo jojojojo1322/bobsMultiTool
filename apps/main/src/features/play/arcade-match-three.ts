@@ -129,7 +129,7 @@ export function moveGemCursor(state: GemCursorState, delta: number) {
 
 export function updateGemSwap(content: ArcadeGameContent, state: GemPlayState, dt: number) {
   state.elapsed += dt;
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= 60) {
     state.finished = true;
   }
 }
@@ -177,7 +177,7 @@ export function commitGemSwap(content: ArcadeGameContent, state: GemPlayState, f
   const matched = resolveGemMatches(content, state, true);
   if (!matched) {
     swapGemKinds(state.gemTiles, first, second);
-    if (state.actions >= content.arcade.rounds || state.focus <= 0) state.finished = true;
+    if (state.focus <= 0) state.finished = true;
   }
 }
 
@@ -359,7 +359,7 @@ function resolveGemMatches(content: ArcadeGameContent, state: GemPlayState, swap
     resolveGemMatches(content, state, false);
   }
 
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0) {
+  if (state.score >= content.arcade.targetScore || state.focus <= 0) {
     state.finished = true;
   }
   return true;

@@ -496,15 +496,14 @@ function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
   if (content.arcade.variant === "lottery") return 0;
   if (content.arcade.variant === "sum-box") return sumBoxTimeLimitSeconds;
   if (content.arcade.variant === "password") return passwordTimeLimitSeconds;
-  return content.arcade.rounds * 5;
+  return 60;
 }
 
 function finishStackerIfNeeded(content: ArcadeGameContent, state: GameState) {
   if (
     state.score >= content.arcade.targetScore ||
-    state.actions >= content.arcade.rounds ||
     state.focus <= 0 ||
-    state.elapsed >= content.arcade.rounds * 5 ||
+    state.elapsed >= arcadeTimeLimitSeconds(content) ||
     state.stackerActiveY <= stackerBoardY + 6
   ) {
     state.finished = true;
@@ -558,7 +557,7 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
 }
 
 function finishMoleIfNeeded(content: ArcadeGameContent, state: GameState) {
-  if (state.score >= content.arcade.targetScore || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= 60) {
+  if (state.score >= content.arcade.targetScore || state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
     state.finished = true;
   }
 }
@@ -657,18 +656,16 @@ function mainActionLabel(content: ArcadeGameContent) {
   return "발사";
 }
 
-function fireArcadeBullet(content: ArcadeGameContent, state: GameState) {
+function fireArcadeBullet(_content: ArcadeGameContent, state: GameState) {
   state.actions += 1;
   state.bullets.push({ x: state.playerX, y: state.playerY - 30, vy: -430 });
-  if (state.actions >= content.arcade.rounds) state.finished = true;
 }
 
-function startFlightLift(content: ArcadeGameContent, state: GameState) {
+function startFlightLift(_content: ArcadeGameContent, state: GameState) {
   state.started = true;
   state.lastFrame = performance.now();
   state.actions += 1;
   state.playerVy = Math.min(state.playerVy - 180, -80);
-  if (state.actions >= content.arcade.rounds) state.finished = true;
 }
 
 function moveBrickPaddleTo(state: GameState, x: number) {
@@ -836,7 +833,7 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
     });
   }
 
-  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 4) {
+  if (state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
     state.finished = true;
   }
 }
@@ -934,7 +931,7 @@ function updateCrossing(content: ArcadeGameContent, state: GameState, dt: number
     });
   }
 
-  if (state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+  if (state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
     state.finished = true;
   }
 }
@@ -1014,7 +1011,7 @@ function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: 
   }
 
   const aliveCount = state.bricks.filter((brick) => brick.alive).length;
-  if (aliveCount === 0 || state.actions >= content.arcade.rounds || state.focus <= 0 || state.elapsed >= content.arcade.rounds * 5) {
+  if (aliveCount === 0 || state.focus <= 0 || state.elapsed >= arcadeTimeLimitSeconds(content)) {
     state.finished = true;
   }
 }
@@ -3214,7 +3211,6 @@ export function ArcadeGameEngine({
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
   const ending = endingFor(content, view.score);
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
-  const isLiveResultVariant = content.arcade.variant === "sum-box" || content.arcade.variant === "lottery";
   const activeActionLabel =
     content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
   const shareScoreLabel = content.arcade.variant === "lottery" ? `누적 당첨: ${view.lotteryTotalPrize}` : `점수: ${view.score}`;
@@ -3375,7 +3371,6 @@ export function ArcadeGameEngine({
         } else {
           fireArcadeBullet(content, state);
         }
-        if (state.actions >= content.arcade.rounds) state.finished = true;
       }
       setShareState("idle");
       syncView();
@@ -4180,19 +4175,15 @@ export function ArcadeGameEngine({
               </div>
             )}
           </div>
-          {isLiveResultVariant ? (
-            <LiveArcadeResultPanel
-              content={content}
-              ending={ending}
-              onShare={shareResult}
-              relatedBlogLinks={relatedBlogLinks}
-              relatedPlayLinks={relatedPlayLinks}
-              shareState={shareState}
-              view={view}
-            />
-          ) : (
-            <HistoryPanel history={view.history} />
-          )}
+          <LiveArcadeResultPanel
+            content={content}
+            ending={ending}
+            onShare={shareResult}
+            relatedBlogLinks={relatedBlogLinks}
+            relatedPlayLinks={relatedPlayLinks}
+            shareState={shareState}
+            view={view}
+          />
         </div>
       )}
     </section>
@@ -4248,12 +4239,15 @@ function LiveArcadeResultPanel({
   view: ViewState;
 }) {
   const isLottery = content.arcade.variant === "lottery";
+  const isSumBox = content.arcade.variant === "sum-box";
   const stage = lotteryStageAt(view.lotteryStage);
   const title = isLottery ? "현재 복권" : "현재 기록";
   const headline = isLottery ? stage.title : ending.title;
   const detail = isLottery
     ? `이번 장 ${view.lotteryLastPrize} / 누적 ${view.lotteryTotalPrize}. 다 긁으면 다음 단계 복권으로 이어집니다.`
-    : `${view.score}점, 연속 ${view.sumStreak}. 제한은 1분 타이머 하나만 남겨둔 상태입니다.`;
+    : isSumBox
+      ? `${view.score}점, 연속 ${view.sumStreak}. 제한은 1분 타이머 하나만 남겨둔 상태입니다.`
+      : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간, 목표, 집중 상태에 맞춰 이어집니다.`;
 
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history data-play-result>
@@ -4280,7 +4274,7 @@ function LiveArcadeResultPanel({
         </ol>
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          {isLottery ? "칸을 긁으면 당첨 기록이 여기에 남습니다." : "합 10을 만들면 방금 선택한 흔적이 여기에 남습니다."}
+          {isLottery ? "칸을 긁으면 당첨 기록이 여기에 남습니다." : "움직이면 방금 지나간 선택이 여기에 남습니다."}
         </p>
       )}
     </aside>
