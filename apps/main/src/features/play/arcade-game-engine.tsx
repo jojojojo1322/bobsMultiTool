@@ -21,7 +21,6 @@ import {
   drawLottery,
   lotteryCellIndexAt,
   lotteryColumns,
-  lotteryPrizeLabel,
   lotteryRevealedCount,
   lotteryStageAt,
   lotteryStages,
@@ -4175,18 +4174,18 @@ export function ArcadeGameEngine({
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
   const ending = endingFor(content, view.score);
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
-  const activeActionLabel =
-    content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
-  const shareScoreLabel = content.arcade.variant === "lottery" ? `누적 당첨: ${lotteryPrizeLabel(view.lotteryTotalPrize)}` : `점수: ${view.score}`;
   const lotteryStage = lotteryStageAt(view.lotteryStage);
   const lotteryNextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
   const shortLotteryStageTitle = (title: string) => title.replace(/^[0-9]단계\s*/, "");
+  const activeActionLabel =
+    content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
+  const shareScoreLabel = content.arcade.variant === "lottery" ? `복권 진행: ${shortLotteryStageTitle(lotteryStage.title)}` : `점수: ${view.score}`;
   const metricItems =
     content.arcade.variant === "lottery"
       ? [
           { label: "현재 단계", value: shortLotteryStageTitle(lotteryStage.title) },
           { label: "다음 단계", value: shortLotteryStageTitle(lotteryNextStage.title) },
-          { label: "이번 장", value: lotteryPrizeLabel(view.lotteryLastPrize) },
+          { label: "공개 칸", value: `${view.lotteryRevealedCount}/9` },
           { label: "방식", value: "끝 없음" },
         ]
       : content.arcade.variant === "sum-box"
@@ -5295,7 +5294,7 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 function historyDetailText(item: HistoryItem, isLottery = false) {
-  if (isLottery) return item.score > 0 ? `${item.detail} / 당첨 +${item.score}` : item.detail;
+  if (isLottery) return item.detail;
   return `${item.detail} / ${item.score > 0 ? `+${item.score}` : item.score}`;
 }
 
@@ -5349,8 +5348,10 @@ function LiveArcadeResultPanel({
   const headline = isLottery ? stage.title : ending.title;
   const detail = isLottery
     ? view.lotteryTicketDone
-      ? `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
-      : `이번 장 ${lotteryPrizeLabel(view.lotteryLastPrize)}. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다.`
+      ? `이번 장 ${view.lotteryLastPrize > 0 ? "당첨" : "꽝"}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
+      : view.lotteryRevealedCount > 0
+        ? `${view.lotteryRevealedCount}/9칸 공개. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다.`
+        : "아직 긁지 않았습니다. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다."
     : isSumBox
       ? `${view.score}점. 타이머가 끝날 때까지 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;

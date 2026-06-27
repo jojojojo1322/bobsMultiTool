@@ -10,6 +10,7 @@ const actionCountPattern =
   /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
 const playCountTonePattern =
   /몇\s*번\s*(?:흔들|헛발|멈칫|스쳤|꼬임|건드렸)|남은\s*후보|건넌\s*기록|방금\s*지나간\s*선택|오늘의\s*선택\s*로그|판단\s*로그|분류\s*로그/i;
+const lotteryRenderedLimitScorePattern = /점수판|스코어|남은\s*시간|타이머|누적\s*당첨|조작\s*횟수|횟수\s*제한|조작\s*제한/i;
 
 let chromium;
 try {
@@ -126,6 +127,12 @@ async function verifyPlay(browser, content, viewport) {
     const initialText = await page.locator("body").innerText().catch(() => "");
     if (actionCountPattern.test(initialText) || playCountTonePattern.test(initialText)) {
       failures.push(`${content.slug} ${viewport.width}x${viewport.height} exposes action-count, move-limit, or count-toned wording`);
+    }
+    if (content.slug === "lucky-scratch") {
+      const engineText = await page.locator(`[data-play-engine="${content.slug}"]`).innerText().catch(() => "");
+      if (lotteryRenderedLimitScorePattern.test(engineText)) {
+        failures.push(`${content.slug} ${viewport.width}x${viewport.height} should render as endless lottery play without scoreboards, timers, or move limits`);
+      }
     }
 
     const steps = playLength(content);
