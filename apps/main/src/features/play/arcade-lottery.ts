@@ -110,6 +110,10 @@ export function lotteryStageAt(index: number) {
   return lotteryStages[clamp(index, 0, lotteryStages.length - 1)] ?? lotteryStages[0];
 }
 
+export function lotteryShortStageTitle(title: string) {
+  return title.replace(/^[0-9]단계\s*/, "");
+}
+
 export function makeLotteryCells(content: ArcadeGameContent, stageIndex = 0, draw = 0): LotteryCell[] {
   const stage = lotteryStageAt(stageIndex);
   const seedBase = content.slug.length * 71 + stageIndex * 43 + draw * 131;
@@ -257,6 +261,9 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const { background, primary, accent, danger } = content.arcade.palette;
   const stage = lotteryStageAt(state.lotteryStage);
   const nextStage = lotteryStageAt((state.lotteryStage + 1) % lotteryStages.length);
+  const stageShortTitle = lotteryShortStageTitle(stage.title);
+  const nextStageShortTitle = lotteryShortStageTitle(nextStage.title);
+  const stageIndexLabel = `${state.lotteryStage + 1}/${lotteryStages.length}`;
   const complete = lotteryTicketComplete(state);
   const winningLines = lotteryWinningLines(state);
   const revealedCount = lotteryRevealedCount(state);
@@ -291,21 +298,27 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const stageDotX = 56;
   const stageDotY = 91;
   for (let index = 0; index < lotteryStages.length; index += 1) {
-    const x = stageDotX + index * 22;
-    ctx.fillStyle = index === state.lotteryStage ? accent : "rgba(255,255,255,0.24)";
+    const x = stageDotX + index * 36;
+    const isCurrent = index === state.lotteryStage;
+    const isNext = index === (state.lotteryStage + 1) % lotteryStages.length;
+    ctx.fillStyle = isCurrent ? accent : isNext ? "rgba(251,191,36,0.5)" : "rgba(255,255,255,0.18)";
     ctx.beginPath();
-    ctx.roundRect(x, stageDotY - 5, index === state.lotteryStage ? 18 : 12, 8, 4);
+    ctx.roundRect(x, stageDotY - 8, isCurrent ? 28 : 24, 16, 8);
     ctx.fill();
+    ctx.fillStyle = isCurrent || isNext ? "#111827" : "rgba(248,250,252,0.7)";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`${index + 1}`, x + (isCurrent ? 14 : 12), stageDotY + 4);
   }
 
   ctx.fillStyle = "rgba(255,255,255,0.1)";
   ctx.beginPath();
-  ctx.roundRect(184, 83, 286, 22, 11);
+  ctx.roundRect(250, 81, 286, 24, 12);
   ctx.fill();
   ctx.fillStyle = "rgba(248,250,252,0.76)";
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`끝 없음 · 즉석 ${stage.instantSymbol} · 같은 그림 한 줄 · 다음 ${nextStage.title.replace(/^[0-9]단계 /, "")}`, 196, 98);
+  ctx.fillText(`현재 ${stageIndexLabel} · 끝 없음 · 다음 ${nextStageShortTitle}`, 264, 97, 254);
 
   ctx.textAlign = "right";
   ctx.fillStyle = accent;
@@ -314,6 +327,11 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(248,250,252,0.62)";
   ctx.fillText("공개 칸", lotteryCanvasWidth - 58, 77);
+
+  ctx.fillStyle = "rgba(248,250,252,0.72)";
+  ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(`${stageShortTitle}을 긁는 중 · 다 보면 다음은 ${nextStageShortTitle}`, lotteryCanvasWidth / 2, 119);
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
   ctx.beginPath();
@@ -465,7 +483,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.fillText(state.lotteryLastPrize > 0 ? "이번 장 당첨" : "이번 장 꽝", lotteryCanvasWidth / 2, bannerY + 30);
     ctx.fillStyle = "rgba(248,250,252,0.72)";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`다음은 ${nextStage.title} · 버튼이나 캔버스를 누르면 계속`, lotteryCanvasWidth / 2, bannerY + 52);
+    ctx.fillText(`다음은 ${nextStageShortTitle} · 버튼이나 캔버스를 누르면 계속`, lotteryCanvasWidth / 2, bannerY + 52);
   }
 
   ctx.fillStyle = "rgba(15,23,42,0.56)";
@@ -476,8 +494,8 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
   const status = complete
-    ? `이번 장 ${state.lotteryLastPrize > 0 ? "당첨" : "꽝"} · 다음 복권으로 계속`
-    : "긁을 칸을 골라 진행 · 다 보면 다음 복권으로 계속";
+    ? `이번 장 ${state.lotteryLastPrize > 0 ? "당첨" : "꽝"} · 다음은 ${nextStageShortTitle}`
+    : `${stageShortTitle} 긁는 중 · 다 보면 다음은 ${nextStageShortTitle}`;
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
 
