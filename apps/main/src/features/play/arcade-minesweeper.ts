@@ -40,7 +40,7 @@ type MinesweeperPlayState = MineCursorState & {
   elapsed: number;
   score: number;
   focus: number;
-  actions: number;
+  playTick: number;
   history: MineHistoryItem[];
 };
 
@@ -178,7 +178,7 @@ export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPla
     return;
   }
 
-  state.actions += 1;
+  state.playTick += 1;
   if (cell.mine) {
     cell.revealed = true;
     state.score = Math.max(0, state.score - 3);
@@ -221,7 +221,7 @@ function openMineNeighborsFromNumber(content: ArcadeGameContent, state: Mineswee
     return true;
   }
 
-  state.actions += 1;
+  state.playTick += 1;
   let openedSafe = 0;
   let scoreDelta = 0;
   for (const neighbor of closed) {

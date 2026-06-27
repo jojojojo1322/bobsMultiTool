@@ -95,7 +95,7 @@ type LotteryHistoryState = {
 
 export type LotteryPlayState = LotteryHistoryState & {
   score: number;
-  actions: number;
+  playTick: number;
   focus: number;
   lotteryCells: LotteryCell[];
   lotteryCursor: number;
@@ -198,7 +198,7 @@ export function revealLotteryCell(
 
   const stage = lotteryStageAt(state.lotteryStage);
   cell.revealed = true;
-  state.actions += 1;
+  state.playTick += 1;
   state.focus = 100;
   if (cell.symbol === stage.instantSymbol) {
     state.lotteryLastPrize += stage.instantPrize;

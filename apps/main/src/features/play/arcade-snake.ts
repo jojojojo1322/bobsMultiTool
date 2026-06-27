@@ -33,7 +33,7 @@ type SnakePlayState = {
   elapsed: number;
   score: number;
   focus: number;
-  actions: number;
+  playTick: number;
   snake: SnakeCell[];
   snakeDirection: SnakeDirection;
   snakeNextDirection: SnakeDirection;
@@ -144,7 +144,7 @@ export function advanceSnake(content: ArcadeGameContent, state: SnakePlayState, 
   if (state.finished) return;
   const direction = isSnakeReverse(state.snakeNextDirection, state.snakeDirection) ? state.snakeDirection : state.snakeNextDirection;
   state.snakeDirection = direction;
-  if (countAction) state.actions += 1;
+  if (countAction) state.playTick += 1;
 
   const head = nextSnakeHead(state, direction);
   const willEat = head.x === state.snakeFood.x && head.y === state.snakeFood.y;
@@ -181,7 +181,7 @@ export function advanceSnake(content: ArcadeGameContent, state: SnakePlayState, 
     detail: state.snakeFood.good ? "잘 먹음" : "괜히 물었음",
     score: delta,
   });
-  state.snakeFood = makeSnakeFood(content, state.actions + state.score + state.snake.length, state.snake);
+  state.snakeFood = makeSnakeFood(content, state.playTick + state.score + state.snake.length, state.snake);
   finishSnakeIfNeeded(content, state);
 }
 
@@ -224,7 +224,7 @@ function resetSnakeAfterCrash(content: ArcadeGameContent, state: SnakePlayState)
   state.snakeDirection = "right";
   state.snakeNextDirection = "right";
   state.snakeMoveTimer = snakeMoveInterval;
-  state.snakeFood = makeSnakeFood(content, state.actions + state.score + 17, snake);
+  state.snakeFood = makeSnakeFood(content, state.playTick + state.score + 17, snake);
 }
 
 function finishSnakeIfNeeded(_content: ArcadeGameContent, state: SnakePlayState) {

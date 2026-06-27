@@ -51,7 +51,7 @@ type GemPlayState = GemCursorState &
     elapsed: number;
     score: number;
     focus: number;
-    actions: number;
+    playTick: number;
     gemSelected: number | null;
     gemCombo: number;
     history: GemHistoryItem[];
@@ -172,7 +172,7 @@ export function commitGemSwap(content: ArcadeGameContent, state: GemPlayState, f
   if (state.finished || !state.gemTiles[first] || !state.gemTiles[second] || !areGemAdjacent(first, second)) return;
   state.gemSelected = null;
   state.gemCursor = second;
-  state.actions += 1;
+  state.playTick += 1;
   swapGemKinds(state.gemTiles, first, second);
   const matched = resolveGemMatches(content, state, true);
   if (!matched) {
@@ -300,9 +300,9 @@ export function findGemMatches(tiles: GemTile[]) {
   return matches;
 }
 
-export function collapseGemBoard(content: ArcadeGameContent, state: { actions: number; score: number; gemTiles: GemTile[] }, matches: Set<number>) {
+export function collapseGemBoard(content: ArcadeGameContent, state: { playTick: number; score: number; gemTiles: GemTile[] }, matches: Set<number>) {
   const nextTiles = state.gemTiles.slice();
-  let fillSeed = state.actions * 101 + state.score * 13 + 31;
+  let fillSeed = state.playTick * 101 + state.score * 13 + 31;
   for (let column = 0; column < gemColumns; column += 1) {
     const survivors: GemTile[] = [];
     for (let row = gemRows - 1; row >= 0; row -= 1) {

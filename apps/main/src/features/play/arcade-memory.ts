@@ -23,7 +23,7 @@ type MemoryPlayState = {
   elapsed: number;
   score: number;
   focus: number;
-  actions: number;
+  playTick: number;
   memorySequence: number[];
   memoryInput: number[];
   memoryCursor: number;
@@ -53,7 +53,7 @@ export function makeMemorySequence(content: ArcadeGameContent, round: number, sa
 }
 
 export function resetMemoryPreview(content: ArcadeGameContent, state: MemoryPlayState, keepSequence = true) {
-  state.memorySequence = keepSequence ? state.memorySequence : makeMemorySequence(content, state.memoryRound, state.actions + state.score);
+  state.memorySequence = keepSequence ? state.memorySequence : makeMemorySequence(content, state.memoryRound, state.playTick + state.score);
   state.memoryInput = [];
   state.memoryShowing = true;
   state.memoryFlashIndex = 0;
@@ -109,7 +109,7 @@ export function activeMemoryFlashCell(state: MemoryPlayState) {
 export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlayState, cell = state.memoryCursor) {
   if (state.finished) return;
   if (state.memoryShowing) {
-    state.actions += 1;
+    state.playTick += 1;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 6, 0, 100);
     rememberMemoryHistory(state, {
@@ -128,7 +128,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     state.memoryInput = [...state.memoryInput, cell];
     if (state.memoryInput.length < state.memorySequence.length) return;
 
-    state.actions += 1;
+    state.playTick += 1;
     const delta = 4 + state.memorySequence.length;
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 5, 0, 100);
@@ -143,7 +143,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     return;
   }
 
-  state.actions += 1;
+  state.playTick += 1;
   state.score = Math.max(0, state.score - 2);
   state.focus = clamp(state.focus - 13, 0, 100);
   rememberMemoryHistory(state, {
@@ -159,7 +159,7 @@ export function replayMemoryPreview(content: ArcadeGameContent, state: MemoryPla
   if (state.finished) return;
   if (!state.memorySequence.length) resetMemoryPreview(content, state, false);
   if (!state.memoryShowing) {
-    state.actions += 1;
+    state.playTick += 1;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 5, 0, 100);
     rememberMemoryHistory(state, {

@@ -271,7 +271,7 @@ type GameState = {
   elapsed: number;
   score: number;
   focus: number;
-  actions: number;
+  playTick: number;
   playerX: number;
   playerY: number;
   playerVy: number;
@@ -355,7 +355,7 @@ type ViewState = Pick<
   | "elapsed"
   | "score"
   | "focus"
-  | "actions"
+  | "playTick"
   | "sumStreak"
   | "sumBestStreak"
   | "lotteryStage"
@@ -377,7 +377,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     elapsed: 0,
     score: 0,
     focus: 100,
-    actions: 0,
+    playTick: 0,
     playerX: canvasWidth / 2,
     playerY:
       content.arcade.variant === "runner" || content.arcade.variant === "flight"
@@ -494,7 +494,7 @@ function snapshot(state: GameState): ViewState {
     elapsed: state.elapsed,
     score: state.score,
     focus: state.focus,
-    actions: state.actions,
+    playTick: state.playTick,
     sumStreak: state.sumStreak,
     sumBestStreak: state.sumBestStreak,
     sumClearedCount: state.sumTiles.filter((tile) => tile.cleared).length,
@@ -536,7 +536,7 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
   const preview = stackerPlacementPreview(state);
   if (!preview) return;
 
-  state.actions += 1;
+  state.playTick += 1;
 
   if (preview.quality === "miss") {
     state.score = Math.max(0, state.score + preview.scoreDelta);
@@ -558,7 +558,7 @@ function placeStackerBlock(content: ArcadeGameContent, state: GameState) {
     y: previous.y - stackerBlockHeight,
     width: preview.placedWidth,
     height: stackerBlockHeight,
-    label: preview.nearPerfect ? "딱" : pickLabel(preview.quality === "thin" ? content.arcade.badLabels : content.arcade.goodLabels, state.actions),
+    label: preview.nearPerfect ? "딱" : pickLabel(preview.quality === "thin" ? content.arcade.badLabels : content.arcade.goodLabels, state.playTick),
     quality: preview.quality,
   };
   state.stackerBlocks.push(block);
@@ -594,7 +594,7 @@ function whackMole(content: ArcadeGameContent, state: GameState, hole = state.mo
     state.moleCursor = target.hole;
   }
 
-  state.actions += 1;
+  state.playTick += 1;
   if (!target) {
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 5, 0, 100);
@@ -684,14 +684,14 @@ function aimShooterAt(state: GameState, point: CanvasPoint) {
 
 function fireArcadeBullet(_content: ArcadeGameContent, state: GameState) {
   if (state.bullets.length >= 5) return;
-  state.actions += 1;
+  state.playTick += 1;
   state.bullets.push({ x: state.playerX, y: state.playerY - 30, vy: -430 });
 }
 
 function startFlightLift(_content: ArcadeGameContent, state: GameState) {
   state.started = true;
   state.lastFrame = performance.now();
-  state.actions += 1;
+  state.playTick += 1;
   state.playerVy = Math.min(state.playerVy - 180, -80);
 }
 
@@ -712,7 +712,7 @@ function launchOrNudgeBrickBall(state: GameState) {
     state.brickBallVx = clamp(state.brickBallVx + (state.brickBallX >= state.playerX ? 22 : -22), -340, 340);
     state.brickBallVy = Math.min(state.brickBallVy, -230);
   }
-  state.actions += 1;
+  state.playTick += 1;
 }
 
 function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<string>, now: number) {
@@ -1022,7 +1022,7 @@ function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: 
     if (hitBrick) {
       hitBrick.alive = false;
       state.brickBallVy *= -1;
-      state.actions += 1;
+      state.playTick += 1;
       const delta = hitBrick.good ? 3 : 1;
       state.score = Math.max(0, state.score + delta);
       state.focus = clamp(state.focus + (hitBrick.good ? 1 : -5), 0, 100);
@@ -3387,6 +3387,10 @@ function endingFor(content: ArcadeGameContent, score: number) {
   return [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
 }
 
+function arcadeTurnKey(playTick: number) {
+  return `arcade-${(((playTick + 1) * 2654435761) >>> 0).toString(36)}`;
+}
+
 export function ArcadeGameEngine({
   content,
   relatedBlogLinks,
@@ -3545,20 +3549,20 @@ export function ArcadeGameEngine({
       if (action === "left") state.playerX = clamp(state.playerX - stepX, 34, canvasWidth - 34);
       if (action === "right") state.playerX = clamp(state.playerX + stepX, 34, canvasWidth - 34);
       if (content.arcade.variant === "crossing" && action === "down") {
-        state.actions += 1;
+        state.playTick += 1;
         state.playerY = clamp(state.playerY + crossingStepY, crossingFinishY - 10, crossingStartY);
       }
       if (action === "main" || (content.arcade.variant === "crossing" && action === "up")) {
         if (content.arcade.variant === "crossing") {
-          state.actions += 1;
+          state.playTick += 1;
           state.playerY = clamp(state.playerY - crossingStepY, crossingFinishY - 10, crossingStartY);
         } else if (content.arcade.variant === "brick-breaker") {
           launchOrNudgeBrickBall(state);
         } else if (content.arcade.variant === "runner") {
-          state.actions += 1;
+          state.playTick += 1;
           state.playerVy = -390;
         } else if (content.arcade.variant === "flight") {
-          state.actions += 1;
+          state.playTick += 1;
           state.playerVy -= 250;
         } else {
           fireArcadeBullet(content, state);
@@ -4364,7 +4368,7 @@ export function ArcadeGameEngine({
           <HistoryPanel history={view.history} />
         </div>
       ) : (
-        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-turn={`arcade-${view.actions}`}>
+        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-turn={arcadeTurnKey(view.playTick)}>
           <div>
             <div className="overflow-hidden rounded-lg border bg-background">
               <canvas

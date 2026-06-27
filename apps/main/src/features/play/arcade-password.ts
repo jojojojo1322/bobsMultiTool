@@ -59,7 +59,7 @@ type PasswordPlayState = {
   elapsed: number;
   score: number;
   focus: number;
-  actions: number;
+  playTick: number;
   passwordGuess: number[];
   passwordSecret: number[];
   passwordCursor: number;
@@ -158,7 +158,7 @@ export function applyPasswordSuggestion(state: Pick<PasswordPlayState, "password
 
 export function submitPasswordGuess(content: ArcadeGameContent, state: PasswordPlayState) {
   if (state.finished) return;
-  state.actions += 1;
+  state.playTick += 1;
   const { exact, near } = evaluatePasswordGuess(state.passwordSecret, state.passwordGuess);
   const guess = passwordGuessText(state.passwordGuess);
   const duplicate = passwordGuessHasDuplicateDigits(state.passwordGuess);

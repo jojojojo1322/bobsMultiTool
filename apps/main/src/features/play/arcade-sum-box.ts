@@ -37,7 +37,7 @@ type SumBoxPlayState = SumBoxDragState & {
   elapsed: number;
   score: number;
   focus: number;
-  actions: number;
+  playTick: number;
   sumStreak: number;
   sumBestStreak: number;
   sumCursor: number;
@@ -127,7 +127,7 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
   const sum = selectedSum(state);
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
-    state.actions += 1;
+    state.playTick += 1;
     const { delta, streakBonus } = applySumBoxClearScore(state, cleared);
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
@@ -142,7 +142,7 @@ export function chooseSumTile(content: ArcadeGameContent, state: SumBoxPlayState
 
   if (sum > 10) {
     for (const item of state.sumTiles) item.selected = false;
-    state.actions += 1;
+    state.playTick += 1;
     state.sumStreak = 0;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 7, 0, 100);
@@ -170,7 +170,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
     const attemptedTiles = [...activeTiles, blockedTile];
     const attemptedSum = sumTilesTotal(attemptedTiles);
     for (const tile of state.sumTiles) tile.selected = false;
-    state.actions += 1;
+    state.playTick += 1;
     state.sumStreak = 0;
     state.score = Math.max(0, state.score - 1);
     state.focus = clamp(state.focus - 6, 0, 100);
@@ -185,7 +185,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
 
   if (sum === 10) {
     const cleared = clearSelectedSumTiles(state);
-    state.actions += 1;
+    state.playTick += 1;
     const { delta, streakBonus } = applySumBoxClearScore(state, cleared);
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 4, 0, 100);
@@ -199,7 +199,7 @@ export function commitDraggedSumTiles(content: ArcadeGameContent, state: SumBoxP
   }
 
   for (const tile of state.sumTiles) tile.selected = false;
-  state.actions += 1;
+  state.playTick += 1;
   state.sumStreak = 0;
   const overflow = sum > 10;
   state.score = Math.max(0, state.score + (overflow ? -1 : 0));
