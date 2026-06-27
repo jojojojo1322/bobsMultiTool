@@ -22,6 +22,16 @@ export type SnakeFood = SnakeCell & {
   good: boolean;
 };
 
+export type SnakeMovePreview = {
+  direction: SnakeDirection;
+  head: SnakeCell;
+  willEat: boolean;
+  hitWall: boolean;
+  hitSelf: boolean;
+  foodDistance: number;
+  nextFoodDistance: number;
+};
+
 type SnakeHistoryItem = {
   label: string;
   detail: string;
@@ -138,6 +148,30 @@ export function snakeAutoSteerTowardFood(state: SnakePlayState) {
     setSnakeDirection(state, direction);
     return;
   }
+}
+
+export function snakeMovePreview(state: Pick<SnakePlayState, "snake" | "snakeDirection" | "snakeNextDirection" | "snakeFood">): SnakeMovePreview {
+  const direction = isSnakeReverse(state.snakeNextDirection, state.snakeDirection) ? state.snakeDirection : state.snakeNextDirection;
+  const head = nextSnakeHead(state, direction);
+  const currentHead = state.snake[0] ?? head;
+  const willEat = head.x === state.snakeFood.x && head.y === state.snakeFood.y;
+  const bodyToCheck = willEat ? state.snake : state.snake.slice(0, -1);
+  return {
+    direction,
+    head,
+    willEat,
+    hitWall: head.x < 0 || head.x >= snakeColumns || head.y < 0 || head.y >= snakeRows,
+    hitSelf: bodyToCheck.some((cell) => cell.x === head.x && cell.y === head.y),
+    foodDistance: Math.abs(state.snakeFood.x - currentHead.x) + Math.abs(state.snakeFood.y - currentHead.y),
+    nextFoodDistance: Math.abs(state.snakeFood.x - head.x) + Math.abs(state.snakeFood.y - head.y),
+  };
+}
+
+export function snakeCellCenter(cell: SnakeCell) {
+  return {
+    x: snakeBoardX + cell.x * snakeCellSize + snakeCellSize / 2,
+    y: snakeBoardY + cell.y * snakeCellSize + snakeCellSize / 2,
+  };
 }
 
 export function advanceSnake(content: ArcadeGameContent, state: SnakePlayState, countAction: boolean) {
