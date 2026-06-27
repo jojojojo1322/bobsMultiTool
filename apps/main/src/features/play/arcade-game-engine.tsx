@@ -2535,6 +2535,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
         : movingCloser
           ? `${snakeDirectionLabel(preview.direction)} · 가까워짐`
           : `${snakeDirectionLabel(preview.direction)} · 돌아가기`;
+  const dangerBadge = preview.hitWall ? "벽" : preview.hitSelf ? "꼬리" : "피하기";
   const turnCue = previewDanger && suggestedTurn ? `꺾기 ${suggestedTurnCue}` : `다음 길 ${suggestedTurnCue}`;
   const headCenter = head ? snakeCellCenter(head) : null;
   const foodCenter = snakeCellCenter(state.snakeFood);
@@ -2621,6 +2622,39 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     ctx.beginPath();
     ctx.arc(previewCenter.x, previewCenter.y, snakeCellSize * 0.42, 0, Math.PI * 2);
     ctx.stroke();
+  }
+
+  if (previewDanger) {
+    ctx.fillStyle = "rgba(127,29,29,0.88)";
+    ctx.beginPath();
+    ctx.roundRect(clamp(previewCenter.x - 28, snakeBoardX + 4, snakeBoardX + boardWidth - 60), clamp(previewCenter.y - 36, snakeBoardY + 4, snakeBoardY + boardHeight - 24), 56, 22, 11);
+    ctx.fill();
+    ctx.fillStyle = "#fff7ed";
+    ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(dangerBadge, clamp(previewCenter.x, snakeBoardX + 32, snakeBoardX + boardWidth - 32), clamp(previewCenter.y - 21, snakeBoardY + 18, snakeBoardY + boardHeight - 8));
+  }
+
+  if (headCenter && previewDanger && suggestedTurn?.safe) {
+    const turnCenter = snakeCellCenter(suggestedTurn.head);
+    ctx.save();
+    ctx.strokeStyle = "rgba(250,204,21,0.72)";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 7]);
+    ctx.beginPath();
+    ctx.moveTo(headCenter.x, headCenter.y);
+    ctx.lineTo(turnCenter.x, turnCenter.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(250,204,21,0.95)";
+    ctx.beginPath();
+    ctx.roundRect(turnCenter.x - 25, turnCenter.y - 35, 50, 20, 10);
+    ctx.fill();
+    ctx.fillStyle = "#422006";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("꺾기", turnCenter.x, turnCenter.y - 21);
+    ctx.restore();
   }
 
   ctx.fillStyle = state.snakeFood.good ? accent : danger;
