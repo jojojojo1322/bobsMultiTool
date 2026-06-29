@@ -2468,6 +2468,13 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(target.label.slice(0, 5), center.x, center.y + 38 - moleHeight);
+      ctx.fillStyle = target.good ? "rgba(17,24,39,0.78)" : "rgba(127,29,29,0.76)";
+      ctx.beginPath();
+      ctx.roundRect(center.x - 24, center.y + 18 - moleHeight, 48, 12, 4);
+      ctx.fill();
+      ctx.fillStyle = target.good ? "rgba(220,252,231,0.96)" : "rgba(255,228,230,0.96)";
+      ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillText(target.good ? "NOW" : "MUTE", center.x, center.y + 27 - moleHeight);
       ctx.fillStyle = target.good ? "rgba(220,252,231,0.92)" : "rgba(255,228,230,0.92)";
       ctx.font = "800 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
       ctx.fillText(`${outcome.score > 0 ? "+" : ""}${outcome.score}`, center.x, center.y - 38);
@@ -2513,11 +2520,11 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`소음 ${noiseMoles}`, panelX + 66, 149);
-  ctx.fillText(`곧 사라질 핵심 ${urgentGoodMoles}`, panelX + 18, 174);
+  ctx.fillText(`곧 사라질 긴급 ${urgentGoodMoles}`, panelX + 18, 174);
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
-  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label}` : "초록 알림 기다리기", panelX + 18, 222);
-  ctx.fillText(priorityMole ? "빈칸 Space는 우선 알림으로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
-  ctx.fillText(avoidMole ? `${avoidMole.label}은 두기` : "빨강은 지나가게 두기", panelX + 18, 270);
+  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label}` : "긴급 알림 기다리기", panelX + 18, 222);
+  ctx.fillText(priorityMole ? "빈칸 Space는 긴급 알림으로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
+  ctx.fillText(avoidMole ? `${avoidMole.label}은 두기` : "소음은 지나가게 두기", panelX + 18, 270);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -2532,7 +2539,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("초록 알림만 잡고, 소음은 지나가게 둡니다.", canvasWidth / 2, 202);
+    ctx.fillText("긴급 알림만 잡고, 소음 알림은 지나가게 둡니다.", canvasWidth / 2, 202);
     ctx.fillText("마우스로 누르거나 방향키와 Space로 잡으면 됩니다.", canvasWidth / 2, 228);
   }
 }
@@ -4254,8 +4261,8 @@ const arcadeVariantCopy = {
   mole: {
     finalKicker: "알림 결과",
     liveTitle: "알림 기록",
-    scoreLabel: "잡은 알림",
-    liveDetail: "지금 볼 알림과 그냥 보낼 소음을 나눠 봅니다.",
+    scoreLabel: "잡은 긴급 알림",
+    liveDetail: "지금 볼 긴급 알림과 그냥 보낼 소음 알림을 나눠 봅니다.",
   },
   stacker: {
     finalKicker: "배포 정렬 결과",
