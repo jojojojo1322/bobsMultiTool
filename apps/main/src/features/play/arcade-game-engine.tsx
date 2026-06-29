@@ -24,6 +24,7 @@ import {
   lotteryRevealedCount,
   lotteryStageAt,
   lotteryStages,
+  lotteryShortStageTitle,
   lotteryTicketComplete,
   makeLotteryCells,
   moveLotteryCursor,
@@ -3826,6 +3827,135 @@ function arcadeStateKey(playTick: number) {
   return `arcade-${(((playTick + 1) * 2654435761) >>> 0).toString(36)}`;
 }
 
+type ArcadeVariantCopy = {
+  finalKicker: string;
+  liveTitle: string;
+  scoreLabel: string;
+  liveDetail: string;
+};
+
+const arcadeVariantCopy = {
+  runner: {
+    finalKicker: "달리기 결과",
+    liveTitle: "달린 흐름",
+    scoreLabel: "달린 기록",
+    liveDetail: "장애물과 빈틈을 읽은 흐름이 남습니다.",
+  },
+  shooter: {
+    finalKicker: "방어 결과",
+    liveTitle: "방어 기록",
+    scoreLabel: "막은 신호",
+    liveDetail: "표적을 맞힌 순간과 소음 반응을 같이 봅니다.",
+  },
+  conveyor: {
+    finalKicker: "분류 결과",
+    liveTitle: "분류 흐름",
+    scoreLabel: "처리 기록",
+    liveDetail: "흘려보낼 것과 잡을 것을 나눈 흐름을 봅니다.",
+  },
+  "sum-box": {
+    finalKicker: "묶음 결과",
+    liveTitle: "합 10 기록",
+    scoreLabel: "맞춘 묶음",
+    liveDetail: "합 10 후보와 연속 흐름을 보고 다음 묶음을 찾습니다.",
+  },
+  lottery: {
+    finalKicker: "복권 장부",
+    liveTitle: "복권 장부",
+    scoreLabel: "복권 단계",
+    liveDetail: "이번 장 로그와 다음 단계 복권을 같이 봅니다.",
+  },
+  "match-three": {
+    finalKicker: "색돌 결과",
+    liveTitle: "한 수 기록",
+    scoreLabel: "맞춘 줄",
+    liveDetail: "움직인 돌과 이어진 줄이 다음 한 수의 단서로 남습니다.",
+  },
+  memory: {
+    finalKicker: "기억 결과",
+    liveTitle: "순서 기록",
+    scoreLabel: "기억 길이",
+    liveDetail: "빛난 순서와 첫 실수 위치를 같이 봅니다.",
+  },
+  flight: {
+    finalKicker: "비행 결과",
+    liveTitle: "고도 기록",
+    scoreLabel: "통과 기록",
+    liveDetail: "눌렀다 뗀 리듬과 다음 높이선을 같이 봅니다.",
+  },
+  "brick-breaker": {
+    finalKicker: "벽돌 결과",
+    liveTitle: "착지 기록",
+    scoreLabel: "깬 벽돌",
+    liveDetail: "공이 내려올 자리와 패들 위치를 다시 봅니다.",
+  },
+  snake: {
+    finalKicker: "경로 결과",
+    liveTitle: "길 기록",
+    scoreLabel: "먹은 사과",
+    liveDetail: "다음 칸, 열린 방향, 꼬리와의 거리를 같이 봅니다.",
+  },
+  password: {
+    finalKicker: "추론 결과",
+    liveTitle: "힌트 기록",
+    scoreLabel: "좁힌 번호",
+    liveDetail: "지난 힌트와 살아 있는 숫자를 같이 봅니다.",
+  },
+  crossing: {
+    finalKicker: "건너기 결과",
+    liveTitle: "차선 기록",
+    scoreLabel: "넘은 차선",
+    liveDetail: "다음 한 칸의 위험 표시와 멈춘 타이밍을 봅니다.",
+  },
+  minesweeper: {
+    finalKicker: "추론 결과",
+    liveTitle: "열린 칸 기록",
+    scoreLabel: "안전 칸",
+    liveDetail: "숫자 주변의 표시 수와 열린 칸을 같이 봅니다.",
+  },
+  mole: {
+    finalKicker: "알림 결과",
+    liveTitle: "알림 기록",
+    scoreLabel: "잡은 알림",
+    liveDetail: "지금 볼 알림과 그냥 보낼 소음을 나눠 봅니다.",
+  },
+  stacker: {
+    finalKicker: "타이밍 결과",
+    liveTitle: "쌓은 기록",
+    scoreLabel: "쌓은 층",
+    liveDetail: "손 위치선, 정렬권, 잘린 폭을 같이 봅니다.",
+  },
+} satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
+
+function arcadeCopyFor(content: ArcadeGameContent) {
+  return arcadeVariantCopy[content.arcade.variant];
+}
+
+function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
+  if (content.arcade.variant === "lottery") {
+    return `복권 단계: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
+  }
+  return `${arcadeCopyFor(content).scoreLabel}: ${view.score}`;
+}
+
+function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
+  if (content.arcade.variant === "lottery") {
+    const stage = lotteryStageAt(view.lotteryStage);
+    const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
+    if (view.lotteryTicketDone) {
+      return `이번 장 ${view.lotteryLastPrize > 0 ? "당첨" : "꽝"}. 결과 로그를 보고 다음은 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
+    }
+    if (view.lotteryRevealedCount > 0) {
+      return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 공개. 같은 그림 한 줄과 즉석 보너스를 확인합니다.`;
+    }
+    return "아직 긁지 않았습니다. 9칸을 문질러 결과 장부를 채웁니다.";
+  }
+
+  const copy = arcadeCopyFor(content);
+  const prefix = content.arcade.variant === "sum-box" ? `${copy.scoreLabel} ${view.score}.` : `${copy.scoreLabel} ${view.score}, 집중 ${view.focus}.`;
+  return `${prefix} ${copy.liveDetail}`;
+}
+
 function pressPasswordMain(content: ArcadeGameContent, state: GameState) {
   if (passwordCurrentGuessIssue(state.passwordAttempts, state.passwordGuess)) {
     applyPasswordSuggestion(state);
@@ -3851,27 +3981,27 @@ export function ArcadeGameEngine({
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
   const lotteryStage = lotteryStageAt(view.lotteryStage);
   const lotteryNextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
-  const shortLotteryStageTitle = (title: string) => title.replace(/^[0-9]단계\s*/, "");
+  const copy = arcadeCopyFor(content);
   const activeActionLabel =
     content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
-  const shareScoreLabel = content.arcade.variant === "lottery" ? `복권 단계: ${shortLotteryStageTitle(lotteryStage.title)}` : `점수: ${view.score}`;
+  const shareScoreLabel = arcadeShareSummary(content, view);
   const metricItems =
     content.arcade.variant === "lottery"
       ? [
-          { label: "현재 단계", value: shortLotteryStageTitle(lotteryStage.title) },
-          { label: "다음 단계", value: shortLotteryStageTitle(lotteryNextStage.title) },
+          { label: "현재 단계", value: lotteryShortStageTitle(lotteryStage.title) },
+          { label: "다음 단계", value: lotteryShortStageTitle(lotteryNextStage.title) },
           { label: "공개 칸", value: `${view.lotteryRevealedCount}/9` },
           { label: "방식", value: "끝 없음" },
         ]
       : content.arcade.variant === "sum-box"
         ? [
-            { label: "기록", value: view.score },
+            { label: copy.scoreLabel, value: view.score },
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "흐름", value: view.sumStreak > 0 ? "이어짐" : "준비" },
             { label: "방식", value: "드래그" },
           ]
         : [
-            { label: "점수", value: view.score },
+            { label: copy.scoreLabel, value: view.score },
             { label: "집중", value: view.focus },
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "상태", value: view.started ? "진행" : "대기" },
@@ -4827,7 +4957,7 @@ export function ArcadeGameEngine({
       {view.finished ? (
         <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-result>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Result</p>
+            <p className="text-xs font-medium text-muted-foreground">{copy.finalKicker}</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{ending.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -4857,7 +4987,7 @@ export function ArcadeGameEngine({
                 onPointerUp={handleCanvasPointerUp}
                 onPointerCancel={handleCanvasPointerCancel}
                 onContextMenu={handleCanvasContextMenu}
-                aria-label={`${content.title} canvas`}
+                aria-label={`${content.title} 게임 화면`}
                 className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
                   content.arcade.variant === "lottery" ||
@@ -5016,20 +5146,11 @@ function LiveArcadeResultPanel({
   view: ViewState;
 }) {
   const isLottery = content.arcade.variant === "lottery";
-  const isSumBox = content.arcade.variant === "sum-box";
+  const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
-  const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
-  const title = isLottery ? "복권 장부" : "현재 기록";
+  const title = isLottery ? "복권 장부" : copy.liveTitle;
   const headline = isLottery ? stage.title : ending.title;
-  const detail = isLottery
-    ? view.lotteryTicketDone
-      ? `이번 장 ${view.lotteryLastPrize > 0 ? "당첨" : "꽝"}. 결과 로그를 보고 다음은 ${nextStage.title}입니다.`
-      : view.lotteryRevealedCount > 0
-        ? `${view.lotteryRevealedCount}/9칸 공개. 같은 그림 한 줄과 즉석 보너스를 확인합니다.`
-        : "아직 긁지 않았습니다. 9칸을 문질러 결과 장부를 채웁니다."
-    : isSumBox
-      ? `${view.score}점. 1분 동안 손이 가는 만큼 합 10을 이어갑니다.`
-      : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
+  const detail = arcadeLiveDetail(content, view);
 
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history data-play-result>
