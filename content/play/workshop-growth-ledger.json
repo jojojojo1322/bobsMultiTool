@@ -1,11 +1,11 @@
 {
   "slug": "workshop-growth-ledger",
-  "title": "작업대 키우기",
-  "description": "화면 안의 제작대에서 부품을 만들고 납품 상자를 채운 뒤, 힘·냉각·자동·장비 설비를 올려 작업장을 계속 키우는 성장 게임입니다.",
+  "title": "납품 작업대 키우기",
+  "description": "제작대에서 부품을 만들고 납품 상자를 채운 뒤, 모인 부품으로 힘·냉각·자동·장비 설비를 올리는 계속형 성장 게임입니다. 열이 차면 식히고, 납품이 막히면 설비 장부를 조정합니다.",
   "type": "arcade-game",
   "durationLabel": "계속",
   "updatedAt": "2026-06-29",
-  "shareText": "작업대 키우기에서 지금 내 성장 상태는?",
+  "shareText": "납품 작업대 키우기에서 지금 내 설비 흐름은?",
   "order": 23,
   "relatedBlogSlugs": [
     "small-web-games-retention",
@@ -21,8 +21,8 @@
   ],
   "arcade": {
     "variant": "growth",
-    "goal": "제작대에서 부품을 만들면 납품 상자가 찹니다. 상자가 차면 출고 보너스가 들어오고, 그 부품으로 설비 장부를 올려 더 큰 납품 루프를 만듭니다.",
-    "controls": "마우스/터치 조작은 캔버스 안에서만 합니다. 제작대, 설비 장부, 작업 방향 영역을 직접 누릅니다.",
+    "goal": "제작대에서 부품을 만들고 납품 상자를 채웁니다. 상자가 차면 출고 보너스가 들어오고, 그 부품으로 설비 장부를 올려 더 큰 납품 루프를 만듭니다.",
+    "controls": "마우스/터치 조작은 캔버스 안에서만 합니다. 제작대는 부품 생산, 설비 장부는 업그레이드, 작업 방향판은 출력·안정·자동 흐름 전환입니다.",
     "playerLabel": "작업대",
     "goodLabels": [
       "힘",
@@ -52,7 +52,7 @@
     {
       "id": "useful-line",
       "title": "쓸 만한 작업장이 됐다",
-      "description": "한쪽만 밀지 않고 필요한 설비를 챙겼다. 열이 몇 번 올라왔지만 납품 흐름을 다시 이어갈 틈을 만들었다.",
+      "description": "한쪽만 밀지 않고 필요한 설비를 챙겼다. 열이 치솟는 구간에서도 납품 흐름을 다시 이어갈 틈을 만들었다.",
       "minScore": 55
     },
     {
@@ -63,32 +63,35 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "육성형 idle/growth 작업대",
-    "planningIntent": "작업대 키우기는 단순 클릭 보상보다 비용 곡선, 힘 체감, 열 병목 bottleneck, 자동수입, 장비 선택이 첫 화면에서 읽혀야 한다. 외부 idle/incremental 자료에서 비용 증가와 생산 증가의 균형, generator 선택, prestige/reset의 선택 가능성을 확인한 뒤, 이 버전은 임의의 종료 캡 대신 제작대에서 부품을 만들고 납품 상자를 채우는 계속형 성장 루프로 잡는다.",
+    "gameMode": "제작·납품 성장 작업대",
+    "planningIntent": "납품 작업대 키우기는 반복 누르기 보상보다 부품 통화, 비용 곡선, 제작 힘 체감, 열 병목, 자동 설비, 장비 해금이 첫 화면에서 읽혀야 한다. 외부 idle/incremental 자료에서 비용 증가와 생산 증가의 균형, generator 선택, prestige/reset의 선택 가능성을 확인한 뒤, 이 버전은 reset을 화면에 꺼내지 않고 제작대에서 부품을 만들고 납품 상자를 채우는 계속형 성장 루프로 잡는다.",
     "researchPlan": {
       "webSearchSeeds": [
         "idle game progression curve upgrade economy power curve",
+        "Kongregate The Math of Idle Games cost production prestige generator",
         "growth game bottleneck design upgrade cost curve",
         "incremental game prestige reset mechanic automation unlock",
-        "character growth UI stat sheet equipment upgrade screen"
+        "character growth UI stat sheet equipment upgrade screen",
+        "workshop management game upgrade bottleneck heat resource UI"
       ],
       "referenceTypes": [
-        "idle/incremental 게임의 클릭 수입과 자동 수입이 교차하는 구간",
+        "idle/incremental 게임의 직접 생산과 자동 생산이 교차하는 구간",
+        "비용은 지수적으로 오르고 생산은 선형/다항식으로 오르며 막힘과 다음 선택을 만드는 성장 곡선",
         "RPG 캐릭터 시트처럼 공격력, 체력, 속도, 스킬, 장비를 한눈에 보는 UI",
         "작업대와 계기판처럼 비용, 막힘, 다음 해금을 숫자와 막대로 보여주고 그 표면 자체가 눌리는 화면",
         "prestige/reset이 완전한 손실이 아니라 다음 판 가속으로 읽히는 사례"
       ],
       "dataOrSimulationNeeds": [
-        "힘 비용은 10 * 1.55^레벨, 냉각은 14 * 1.58^레벨, 자동은 26 * 1.72^레벨로 두고 초반 12~14번 입력 안에 최소 두 번의 선택을 보게 되는지 확인한다.",
-        "힘, 열 상한, 회복 속도, 자동수입의 성장률을 따로 두어 한 업그레이드만 계속 누르면 열 병목 bottleneck과 납품 soft wall이 생기는지 확인한다.",
+        "힘 비용은 10 * 1.55^레벨, 냉각은 14 * 1.58^레벨, 자동은 26 * 1.72^레벨로 두고 초반 첫 납품 전후에 힘과 냉각 중 선택이 갈리는지 확인한다.",
+        "힘, 열 상한, 회복 속도, 자동 설비의 성장률을 따로 두어 한 업그레이드만 계속 누르면 열 병목 bottleneck과 납품 soft wall이 생기는지 확인한다.",
         "납품 목표량은 34 + 납품건수 * 22 + (납품건수 + 1)^1.38 * 7에서 장비 보정만 빼서, 초반 상자는 빨리 차고 이후에는 설비 선택이 필요하게 만든다.",
         "현재 기록은 결과 화면 강제가 아니라 공유 패널로만 남기고, 사용자가 직접 멈출 때까지 캔버스 작업장이 계속 남게 한다."
       ]
     },
     "systemQuestions": [
-      "공격력에 해당하는 힘은 첫 두 업그레이드에서 즉시 세져야 하지만, 열이 차면 그대로 밀 수 없게 되는가?",
+      "공격력에 해당하는 힘은 초반 업그레이드에서 즉시 세져야 하지만, 열이 차면 그대로 밀 수 없게 되는가?",
       "체력에 해당하는 냉각/내구는 실패를 무효화하지 않고 고열 구간을 통과할 여유로 읽히는가?",
-      "자동수입은 손을 쉬어도 부품이 조금 들어오는 느낌을 주되, 클릭을 완전히 대체하지 않는가?",
+      "자동 설비는 손을 쉬어도 부품이 조금 들어오는 느낌을 주되, 직접 제작을 완전히 대체하지 않는가?",
       "장비 업그레이드는 단순 숫자 증가가 아니라 납품 목표량을 낮추고 다음 설비 해금 조건을 앞당기는 레버로 보이는가?",
       "방향 선택은 출력 위주, 안정 위주, 자동 위주 중 무엇을 먼저 밀지 바꾸게 하는가?",
       "비용 곡선은 초반 빠른 성장, 첫 막힘, 해금, 짧은 회복 순서를 만들 만큼 가파른가?",
@@ -107,11 +110,11 @@
     "riskAndSafetyNotes": [
       "방치형 성장 문법을 빌리지만 실제 결제, 광고 보상, 계정 저장, 무한 접속 보상은 넣지 않는다.",
       "초기 버전에서는 prestige/reset을 화면에서 빼고, 끝나지 않는 작업대와 현재 공유만 남긴다.",
-      "자동수입과 반복 플레이 이유는 사용자를 붙잡는 보상 압박보다 막힘을 다르게 풀어보는 선택에서 오게 한다."
+      "자동 설비와 반복 플레이 이유는 사용자를 붙잡는 보상 압박보다 막힘을 다르게 풀어보는 선택에서 오게 한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "부품, 납품 상자, 힘, 냉각/열, 자동수입, 장비",
-      "progressionQuestion": "비용 곡선과 power curve가 초반에는 빠르게 오르고, 이후에는 납품 목표량과 해금 조건 때문에 냉각·자동수입·장비 중 하나를 고르게 만드는가?",
+      "primaryResource": "부품, 납품 상자, 힘, 냉각/열, 자동 설비, 장비",
+      "progressionQuestion": "비용 곡선과 power curve가 초반에는 빠르게 오르고, 이후에는 납품 목표량과 해금 조건 때문에 냉각·자동 설비·장비 중 하나를 고르게 만드는가?",
       "failureQuestion": "실패는 죽음이 아니라 과열, 재료 부족, 해금 지연으로 남아 다음 업그레이드 선택을 바꾸게 하는가?",
       "recoveryQuestion": "식히기, 냉각 업그레이드, 자동, 장비 중 하나로 막힌 구간을 회복할 수 있는가?"
     },

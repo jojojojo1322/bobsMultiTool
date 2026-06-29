@@ -57,7 +57,7 @@ const ledgerWidth = 314;
 const ledgerRowHeight = 56;
 
 const upgradeDefinitions: GrowthUpgradeDefinition[] = [
-  { key: "force", label: "힘", shortLabel: "힘", ledger: "제작대 한 번의 부품량 증가", baseCost: 10, scale: 1.55, unlockOrder: 0 },
+  { key: "force", label: "힘", shortLabel: "힘", ledger: "제작대 출력 증가", baseCost: 10, scale: 1.55, unlockOrder: 0 },
   { key: "cooling", label: "냉각", shortLabel: "냉각", ledger: "과열 전까지 더 오래 제작", baseCost: 14, scale: 1.58, unlockOrder: 0 },
   { key: "auto", label: "자동", shortLabel: "자동", ledger: "손을 떼도 납품 상자 채우기", baseCost: 26, scale: 1.72, unlockOrder: 1 },
   { key: "gear", label: "장비", shortLabel: "장비", ledger: "납품 목표량을 조금 낮추기", baseCost: 54, scale: 1.86, unlockOrder: 2 },
@@ -475,10 +475,10 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
   ctx.fillStyle = "rgba(248,250,252,0.82)";
   ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("부품 작업장", 44, 54);
+  ctx.fillText("납품 작업대", 44, 54);
   ctx.fillStyle = primary;
   ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("제작대에서 부품을 만들고 납품 상자를 채웁니다", 44, 78, 250);
+  ctx.fillText("부품을 만들고 상자를 채워 설비를 올립니다", 44, 78, 250);
 
   const statusItems = [
     { label: "납품", value: `${state.order}건` },
@@ -555,7 +555,7 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
   ctx.fillStyle = "rgba(255,255,255,0.68)";
   ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("한 번 제작", 76, 310);
+  ctx.fillText("제작 출력", 76, 310);
   ctx.fillStyle = accent;
   ctx.font = "950 29px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
   ctx.fillText(`+${output}`, 76, 342);
