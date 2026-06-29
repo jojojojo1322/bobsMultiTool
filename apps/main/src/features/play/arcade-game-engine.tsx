@@ -3288,63 +3288,68 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
 }
 
 function gemColor(content: ArcadeGameContent, tile: GemTile) {
+  if (content.slug === "prompt-gem-swap") {
+    const roleChipColors = ["#c9b37e", "#86a78a", "#8fa6c4", "#b68f73", "#9b7768", "#74706a"];
+    return roleChipColors[tile.kind % roleChipColors.length] ?? "#c9b37e";
+  }
   const colors = [content.arcade.palette.primary, content.arcade.palette.accent, "#86efac", "#fde68a", content.arcade.palette.danger, "#cbd5e1"];
   return colors[tile.kind % colors.length] ?? content.arcade.palette.primary;
 }
 
 function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
+  const roleChipBoard = content.slug === "prompt-gem-swap";
   const dragTarget = state.gemDragStartIndex !== null ? gemTargetFromDrag(state) : -1;
   const hint = state.gemSelected === null && state.gemDragStartIndex === null && !state.finished ? findGemSwapHint(state) : null;
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  const glow = ctx.createRadialGradient(canvasWidth / 2, 200, 40, canvasWidth / 2, 200, 350);
-  glow.addColorStop(0, "rgba(103,232,249,0.18)");
-  glow.addColorStop(1, "rgba(103,232,249,0)");
+  const glow = ctx.createRadialGradient(canvasWidth / 2, 210, 40, canvasWidth / 2, 210, 350);
+  glow.addColorStop(0, roleChipBoard ? "rgba(197,179,126,0.1)" : "rgba(103,232,249,0.18)");
+  glow.addColorStop(1, roleChipBoard ? "rgba(197,179,126,0)" : "rgba(103,232,249,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = "rgba(15,23,42,0.44)";
+  ctx.fillStyle = roleChipBoard ? "rgba(71,61,43,0.42)" : "rgba(15,23,42,0.44)";
   ctx.beginPath();
-  ctx.roundRect(gemBoardX - 18, gemBoardY - 18, gemBoardWidth + 36, gemBoardHeight + 36, 24);
+  ctx.roundRect(gemBoardX - 18, gemBoardY - 18, gemBoardWidth + 36, gemBoardHeight + 36, roleChipBoard ? 8 : 24);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.strokeStyle = roleChipBoard ? "rgba(231,214,172,0.26)" : "rgba(255,255,255,0.14)";
   ctx.lineWidth = 1;
   ctx.stroke();
 
   ctx.textAlign = "left";
-  ctx.fillStyle = "rgba(255,255,255,0.78)";
+  ctx.fillStyle = roleChipBoard ? "#eee4c9" : "rgba(255,255,255,0.78)";
   ctx.font = "800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("조각 정리판", 36, 64);
-  ctx.fillStyle = "rgba(255,255,255,0.58)";
+  ctx.fillText(roleChipBoard ? "질문 역할판" : "조각 정리판", 36, 64);
+  ctx.fillStyle = roleChipBoard ? "rgba(238,228,201,0.7)" : "rgba(255,255,255,0.58)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(hint ? "보이는 한 수 있음" : "역할 셋 찾기", 36, 88);
-  ctx.fillText(state.gemCombo > 0 ? "흐름 이어짐" : "흐름 준비", 36, 110);
+  ctx.fillText(hint ? (roleChipBoard ? "점선 한 수 있음" : "보이는 한 수 있음") : "역할 셋 찾기", 36, 88);
+  ctx.fillText(state.gemCombo > 0 ? (roleChipBoard ? "초안 정리중" : "흐름 이어짐") : "흐름 준비", 36, 110);
 
   const selectedIndex = state.gemDragStartIndex ?? state.gemSelected;
   const selectedTile = selectedIndex !== null ? state.gemTiles[selectedIndex] : null;
   if (selectedTile) {
-    ctx.fillStyle = "rgba(255,255,255,0.1)";
+    ctx.fillStyle = roleChipBoard ? "rgba(237,223,184,0.1)" : "rgba(255,255,255,0.1)";
     ctx.beginPath();
-    ctx.roundRect(34, 132, 122, 70, 14);
+    ctx.roundRect(34, 132, 122, 70, roleChipBoard ? 6 : 14);
     ctx.fill();
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = roleChipBoard ? "#f3ead3" : "#f8fafc";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(state.gemDragStartIndex !== null ? "잡은 조각" : "고른 조각", 48, 156);
+    ctx.fillText(state.gemDragStartIndex !== null ? (roleChipBoard ? "잡은 칩" : "잡은 조각") : roleChipBoard ? "고른 칩" : "고른 조각", 48, 156);
     ctx.fillStyle = gemColor(content, selectedTile);
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(selectedTile.label.slice(0, 6), 48, 184);
   } else if (hint) {
     const fromTile = state.gemTiles[hint.from];
     const toTile = state.gemTiles[hint.to];
-    ctx.fillStyle = "rgba(255,255,255,0.1)";
+    ctx.fillStyle = roleChipBoard ? "rgba(237,223,184,0.1)" : "rgba(255,255,255,0.1)";
     ctx.beginPath();
-    ctx.roundRect(34, 132, 122, 70, 14);
+    ctx.roundRect(34, 132, 122, 70, roleChipBoard ? 6 : 14);
     ctx.fill();
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = roleChipBoard ? "#f3ead3" : "#f8fafc";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("보이는 한 수", 48, 156);
+    ctx.fillText(roleChipBoard ? "점선 한 수" : "보이는 한 수", 48, 156);
     ctx.fillStyle = accent;
     ctx.font = "900 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(`${fromTile.label.slice(0, 3)} ↔ ${toTile.label.slice(0, 3)}`, 48, 184);
@@ -3353,7 +3358,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   if (hint) {
     const start = gemCellCenter(hint.from);
     const end = gemCellCenter(hint.to);
-    ctx.strokeStyle = "rgba(248,250,252,0.46)";
+    ctx.strokeStyle = roleChipBoard ? "rgba(238,228,201,0.5)" : "rgba(248,250,252,0.46)";
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
     ctx.setLineDash([7, 7]);
@@ -3374,27 +3379,39 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     const hinted = hint !== null && (hint.from === index || hint.to === index);
     const color = gemColor(content, tile);
 
-    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.fillStyle = roleChipBoard ? "rgba(238,228,201,0.08)" : "rgba(255,255,255,0.08)";
     ctx.beginPath();
-    ctx.roundRect(x, y, gemCellSize, gemCellSize, 14);
+    ctx.roundRect(x, y, gemCellSize, gemCellSize, roleChipBoard ? 6 : 14);
     ctx.fill();
 
     ctx.save();
     ctx.translate(x + gemCellSize / 2, y + gemCellSize / 2);
-    ctx.rotate(((tile.kind % 4) - 1.5) * 0.08);
+    ctx.rotate(roleChipBoard ? ((tile.id % 5) - 2) * 0.015 : ((tile.kind % 4) - 1.5) * 0.08);
     ctx.fillStyle = color;
     ctx.shadowColor = selected || cursor ? color : "transparent";
-    ctx.shadowBlur = selected || cursor ? 18 : 0;
+    ctx.shadowBlur = selected || cursor ? (roleChipBoard ? 8 : 18) : 0;
     ctx.beginPath();
-    ctx.roundRect(-18, -18, 36, 36, 10);
+    ctx.roundRect(-21, -17, 42, 34, roleChipBoard ? 4 : 10);
     ctx.fill();
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = tile.good ? "rgba(255,255,255,0.62)" : "rgba(15,23,42,0.62)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    if (roleChipBoard) {
+      ctx.strokeStyle = tile.good ? "rgba(64,52,35,0.56)" : "rgba(238,228,201,0.42)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(64,52,35,0.34)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-15, -3);
+      ctx.lineTo(15, -3);
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = tile.good ? "rgba(255,255,255,0.62)" : "rgba(15,23,42,0.62)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
     ctx.restore();
 
-    ctx.fillStyle = tile.good ? "#0f172a" : "#f8fafc";
+    ctx.fillStyle = roleChipBoard ? (tile.good ? "#2f261a" : "#f3ead3") : tile.good ? "#0f172a" : "#f8fafc";
     ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(tile.label.slice(0, 3), x + gemCellSize / 2, y + gemCellSize / 2 + 4);
@@ -3403,14 +3420,14 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.strokeStyle = selected ? accent : primary;
       ctx.lineWidth = selected ? 4 : 2;
       ctx.beginPath();
-      ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, 16);
+      ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, roleChipBoard ? 8 : 16);
       ctx.stroke();
     } else if (hinted) {
-      ctx.strokeStyle = "rgba(248,250,252,0.52)";
+      ctx.strokeStyle = roleChipBoard ? "rgba(238,228,201,0.58)" : "rgba(248,250,252,0.52)";
       ctx.lineWidth = 2;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
-      ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, 16);
+      ctx.roundRect(x - 4, y - 4, gemCellSize + 8, gemCellSize + 8, roleChipBoard ? 8 : 16);
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -3434,25 +3451,29 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   }
 
   ctx.textAlign = "left";
-  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.fillStyle = roleChipBoard ? "rgba(238,228,201,0.76)" : "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("마우스로 옆 칸에 끌어 놓습니다. 점선은 가능한 교환입니다.", 34, canvasHeight - 20);
+  ctx.fillText(
+    roleChipBoard ? "옆 칸으로 끌어 역할 칩 셋을 맞춥니다. 점선은 지금 가능한 한 수입니다." : "마우스로 옆 칸에 끌어 놓습니다. 점선은 가능한 교환입니다.",
+    34,
+    canvasHeight - 20,
+  );
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("초안이 흐려졌습니다. 가까운 조각만 바꿔 역할 셋을 맞추세요.", 34, canvasHeight - 44);
+    ctx.fillText(roleChipBoard ? "초안이 장황해졌습니다. 색보다 역할 라벨을 먼저 보세요." : "초안이 흐려졌습니다. 가까운 조각만 바꿔 역할 셋을 맞추세요.", 34, canvasHeight - 44);
   }
 
   if (!state.started) {
-    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillStyle = roleChipBoard ? "rgba(37,35,30,0.76)" : "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = roleChipBoard ? "#f4ecd8" : "#f8fafc";
     ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("문장 조각을 옆 칸으로 끌어 같은 역할 셋을 맞춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스로 드래그하거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText(roleChipBoard ? "종이 역할 칩을 옆 칸으로 끌어 같은 역할 3칸을 맞춥니다." : "문장 조각을 옆 칸으로 끌어 같은 역할 셋을 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText(roleChipBoard ? "색보다 목적, 맥락, 예시, 형식 라벨을 먼저 봅니다." : "마우스로 드래그하거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4418,6 +4439,12 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveTitle: "진행중 상자 기록",
     scoreLabel: "닫은 전표",
     liveDetail: "합 10으로 닫은 전표 묶음과 넘친 새 일을 같이 봅니다.",
+  },
+  "prompt-gem-swap": {
+    finalKicker: "역할칩 결과",
+    liveTitle: "초안 역할 기록",
+    scoreLabel: "맞춘 역할",
+    liveDetail: "옆 칸으로 민 역할칩과 이어진 셋맞춤이 다음 한 수의 단서로 남습니다.",
   },
   "deploy-invaders": {
     finalKicker: "릴리스 게이트 결과",
