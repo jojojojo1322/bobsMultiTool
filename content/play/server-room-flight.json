@@ -1,11 +1,11 @@
 {
   "slug": "server-room-flight",
-  "title": "덕트 틈 통과 드론",
-  "description": "캔버스를 누르면 점검 드론이 올라가고 떼면 내려갑니다. 오른쪽에서 오는 파란 덕트 틈은 통과하고 붉은 배선 뭉치는 피하는 1분 원버튼 비행 게임입니다.",
+  "title": "환풍 덕트 드론 띄우기",
+  "description": "화면을 누르면 점검 드론이 뜨고 손을 떼면 가라앉습니다. 오른쪽에서 오는 파란 환풍구 틈으로 지나가고 붉은 케이블 뭉치는 피하는 1분 원버튼 비행 게임입니다. 계속 누르는 게임이 아니라 누름과 뗌 길이를 짧게 조절하는 게임입니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-29",
-  "shareText": "덕트 틈 통과 드론을 해봤다. 계속 누르기보다 덕트 틈 앞에서 손을 떼는 타이밍이 더 중요했다.",
+  "updatedAt": "2026-06-30",
+  "shareText": "환풍 덕트 드론 띄우기를 해봤다. 계속 누르기보다 환풍구 앞에서 손을 떼는 길이가 더 중요했다.",
   "order": 10,
   "relatedBlogSlugs": [
     "flight-hold-release-cue-note",
@@ -19,106 +19,112 @@
   ],
   "arcade": {
     "variant": "flight",
-    "goal": "다가오는 파란 덕트 틈 높이에 맞춰 고도를 조절하고, 붉은 배선 뭉치와 팬 벽은 피합니다.",
-    "controls": "마우스/터치로 캔버스를 누르고 있으면 상승, 떼면 하강합니다. 다음 덕트 틈 옆 큐가 짧게 누를지 뗄지 알려줍니다. Space/Enter 또는 위 방향키도 같은 방식으로 작동합니다.",
+    "goal": "다가오는 파란 환풍구 틈 높이에 맞춰 드론을 띄우고, 붉은 케이블 뭉치와 팬 벽은 피합니다.",
+    "controls": "마우스/터치로 캔버스를 누르고 있으면 뜨고, 떼면 가라앉습니다. 다음 환풍구 옆 큐가 짧게 누를지 손을 뗄지 알려줍니다. Space/Enter 또는 위 방향키도 같은 방식으로 작동합니다.",
     "playerLabel": "점검 드론",
     "goodLabels": [
-      "덕트틈",
+      "환풍구",
       "파란틈",
       "냉기길",
-      "높은틈",
-      "낮은틈"
+      "윗틈",
+      "아랫틈"
     ],
     "badLabels": [
-      "배선벽",
-      "팬날",
       "케이블",
-      "열풍",
+      "팬날",
+      "열기",
+      "붉은벽",
       "좁은벽",
       "급커브"
     ],
     "palette": {
-      "background": "#0b1120",
-      "primary": "#facc15",
-      "accent": "#93c5fd",
-      "danger": "#fb7185"
+      "background": "#1c1a15",
+      "primary": "#d8ad55",
+      "accent": "#78a7a1",
+      "danger": "#b85b4a"
     }
   },
   "endings": [
     {
       "id": "smooth",
-      "title": "덕트 틈을 지나갔다",
-      "description": "계속 누르지 않고 덕트 틈 앞에서 높이를 잘 맞췄다. 누르고 놓는 리듬이 살아 있다.",
+      "title": "환풍구 사이를 지나감",
+      "description": "계속 누르지 않고 환풍구 앞에서 높이를 잘 맞췄다. 누르고 떼는 길이가 살아 있다.",
       "minScore": 20
     },
     {
       "id": "bumpy",
-      "title": "케이블을 스쳤다",
-      "description": "배선 벽을 아슬아슬하게 스쳤지만 다음 덕트 틈까지는 이어졌다.",
+      "title": "케이블 옆을 스침",
+      "description": "붉은 케이블을 아슬아슬하게 스쳤지만 다음 환풍구까지는 이어졌다.",
       "minScore": 10
     },
     {
       "id": "ground",
-      "title": "팬 아래로 떨어졌다",
-      "description": "너무 오래 누르거나 너무 빨리 놓았다. 다음엔 덕트 틈과 배선 높이를 먼저 보자.",
+      "title": "팬 아래로 가라앉음",
+      "description": "너무 오래 누르거나 너무 빨리 손을 뗐다. 다음엔 환풍구 틈과 케이블 높이를 먼저 보자.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "덕트 틈 통과와 배선 회피를 다루는 원버튼 상승 하강 게임",
-    "planningIntent": "덕트 틈 통과 드론은 설명이 긴 비행 게임이 아니라, Flappy류 원버튼 회피 문법처럼 누르면 상승하고 떼면 하강하는 한 가지 입력으로 파란 덕트 틈과 붉은 배선 뭉치를 즉시 구분하게 만드는 리듬 판단으로 검토해야 한다.",
+    "gameMode": "환풍구 틈을 원버튼 누름/뗌 길이로 지나가는 드론 비행 게임",
+    "planningIntent": "환풍 덕트 드론 띄우기는 설명이 긴 비행 게임이 아니라, Flappy류 원버튼 회피 문법처럼 누르면 뜨고 떼면 가라앉는 한 가지 입력을 손 길이로 익히게 해야 한다. 첫 5초에는 점수보다 드론, 환풍구 틈, 붉은 케이블, 지금 눌러야 하는지 떼야 하는지가 먼저 읽혀야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Flappy Bird tap to flap avoid pipes gap first seconds",
-        "Flappy Bird one button tap flight obstacle gap readability",
         "one button game hold release control feedback",
-        "mobile canvas hold release input UX",
-        "one button game restrictions small game design",
-        "progressive disclosure first time user onboarding"
+        "mobile canvas pointerdown pointerup touch input feedback",
+        "one button games design constraints small games",
+        "Flappy Bird pipe gap readability clone tutorial",
+        "mobile game visual feedback for touch controls"
       ],
       "referenceTypes": [
         "Flappy류 원버튼 상승/하강과 파이프/틈 통과 구조",
+        "one-button game이 입력 제약을 재미의 중심으로 삼는 방식",
+        "MDN Pointer Events처럼 마우스/펜/터치를 같은 pointerdown/pointerup 흐름으로 다루는 캔버스 입력 구조",
         "누름/뗌 상태를 즉시 보여주는 입력 피드백",
         "모바일 캔버스에서 손가락이 화면을 가릴 때의 큐 배치",
         "한 버튼 제약을 중심 규칙으로 쓰는 소형 게임 사례",
         "첫 화면에서 한 번에 모든 설명을 열지 않는 안내 방식"
       ],
       "dataOrSimulationNeeds": [
-        "덕트 틈 속도와 빈틈 크기별 통과 가능성",
-        "누름/뗌 큐가 과도한 자동 안내로 보이지 않는 범위"
+        "환풍구 틈 속도와 빈틈 크기별 통과 가능성",
+        "누름/뗌 큐가 과도한 자동 안내로 보이지 않는 범위",
+        "손가락이 드론을 가릴 때도 환풍구 높이선과 큐가 남는 위치"
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '누르면 뜨고 떼면 내려간다'가 읽히는가?",
-      "유저는 점수보다 다음 덕트 틈과 배선 벽 사이 빈틈을 먼저 보는가?",
-      "너무 오래 누른 실패와 너무 빨리 뗀 실패가 다르게 보이는가?",
+      "첫 5초 안에 '누르면 뜨고 떼면 가라앉는다'가 읽히는가?",
+      "유저는 점수보다 다음 환풍구 틈과 붉은 케이블 사이 빈틈을 먼저 보는가?",
+      "너무 오래 누른 실패와 너무 빨리 손을 뗀 실패가 다르게 보이는가?",
       "상승/하강 큐가 긴장을 죽이지 않고 리듬만 보조하는가?",
-      "다음 판에서 더 짧게 누르거나 더 오래 떼는 전략을 시도하게 되는가?"
+      "다음 판에서 더 짧게 누르거나 더 오래 손을 떼는 전략을 시도하게 되는가?",
+      "모바일에서 손가락이 화면 일부를 가려도 드론 앞 환풍구 높이가 보이는가?"
     ],
     "visualQuestions": [
-      "점검 드론, 파란 덕트 틈 높이선, 붉은 배선 벽이 점수보다 먼저 보이는가?",
-      "누르는 상태와 떼는 상태가 색상 외 위치/기울기로도 구분되는가?",
-      "투박한 서버실 덕트판처럼 파란 통과 틈과 붉은 배선이 단순하게 보이는가?",
-      "결과는 거리보다 누름/뗌 타이밍 실패를 남기는가?"
+      "점검 드론, 파란 환풍구 틈 높이선, 붉은 케이블 벽이 점수보다 먼저 보이는가?",
+      "누르는 상태와 떼는 상태가 색상 외 드론 기울기, 꼬리선, 고도 핀으로도 구분되는가?",
+      "투박한 서버실 환풍 덕트판처럼 파란 통과 틈과 붉은 케이블이 단순하게 보이는가?",
+      "결과는 거리보다 누름/뗌 타이밍 실패를 남기는가?",
+      "상단 패널이 어두운 슈팅 HUD가 아니라 낡은 점검판처럼 보이는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "고도, 누름 지속 시간, 하강 리듬, 다음 덕트 틈과 배선 빈틈",
+      "primaryResource": "고도, 누름 지속 시간, 하강 리듬, 다음 환풍구 틈과 케이블 빈틈",
       "progressionQuestion": "성장은 속도나 수치보다 누르고 떼는 길이를 조절하는 리듬으로 체감되는가?",
-      "failureQuestion": "충돌은 너무 오래 눌렀는지 너무 빨리 뗐는지 읽히는가?",
+      "failureQuestion": "충돌은 너무 오래 눌렀는지 너무 빨리 손을 뗐는지 읽히는가?",
       "recoveryQuestion": "재시작은 짧고, 바로 다른 누름 길이를 시험할 수 있는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "어두운 서버실 덕트 통로와 원버튼 점검 드론",
-      "primarySurface": "점검 드론, 파란 덕트 틈, 붉은 배선 뭉치, 누름/뗌 고도 큐가 있는 큰 캔버스",
-      "roughnessTarget": "낮은 반경, 굵은 덕트선, 제한된 노랑/파랑/붉은 큐로 만든 투박한 서버실 기계감",
-      "differenceFromGenericPlay": "누름/뗌 상태와 다음 파란 덕트 틈 높이선이 외곽 UI보다 먼저 보인다.",
+      "metaphor": "낡은 서버실 환풍 덕트와 원버튼 점검 드론",
+      "primarySurface": "점검 드론, 파란 환풍구 틈, 붉은 케이블 뭉치, 누름/뗌 고도 핀이 있는 큰 캔버스",
+      "roughnessTarget": "광택 HUD보다 누런 점검판, 굵은 환풍구 선, 청록 통과 틈, 붉은 케이블, 낮은 반경의 투박한 기계감",
+      "differenceFromGenericPlay": "점수 패널보다 누름/뗌 상태, 드론 앞 고도 핀, 다음 파란 환풍구 틈 높이선이 먼저 보인다.",
       "mustAvoid": [
         "마케팅 카드형 설명 영역",
-        "게임 오브젝트보다 큰 장식 헤더"
+        "게임 오브젝트보다 큰 장식 헤더",
+        "일반 우주 슈팅처럼 보이는 어두운 네온 배경"
       ]
     }
   }
