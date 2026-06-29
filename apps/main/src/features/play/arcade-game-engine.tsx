@@ -2922,12 +2922,12 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
       : cursorCanChord
         ? "주변 열기 준비"
         : cursorHasTooManyFlags
-          ? "표시가 많습니다"
+          ? "깃발이 많습니다"
           : cursor.adjacent > 0
             ? `숫자 ${cursor.adjacent}`
             : "빈칸입니다"
     : cursor?.flagged
-      ? "표시한 칸입니다"
+      ? "깃발 칸입니다"
       : "여기를 열어볼까요";
   const cursorActionDetail = cursor?.revealed
     ? cursor.mine
@@ -2935,14 +2935,14 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
       : cursorCanChord
         ? `다시 누르면 ${cursorSummary.closed}칸 같이 열림`
         : cursorHasTooManyFlags
-          ? `${cursorSummary.flagged - cursor.adjacent}개 표시가 많음`
+          ? `${cursorSummary.flagged - cursor.adjacent}개 깃발이 많음`
           : cursor.adjacent > 0
             ? cursorNeedsFlags > 0
-              ? `표시 ${cursorNeedsFlags}개 더 필요`
+              ? `깃발 ${cursorNeedsFlags}개 더 필요`
               : "닫힌 칸을 다시 확인"
             : "주변까지 열린 빈칸"
     : cursor?.flagged
-      ? "F로 표시를 해제할 수 있음"
+      ? "F로 깃발을 해제할 수 있음"
       : "열기 또는 표시 선택";
 
   ctx.fillStyle = background;
@@ -3113,7 +3113,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillStyle = "rgba(255,255,255,0.66)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(cursorActionDetail, panelX + 32, mineBoardY + 142);
-  ctx.fillText(`주변 닫힘 ${cursorSummary.closed} · 표시 ${cursorSummary.flagged}`, panelX + 32, mineBoardY + 156);
+  ctx.fillText(`주변 닫힘 ${cursorSummary.closed} · 깃발 ${cursorSummary.flagged}`, panelX + 32, mineBoardY + 156);
 
   ctx.fillStyle = "rgba(255,255,255,0.64)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -3123,7 +3123,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("클릭/Space로 열고, 숫자 칸은 표시 수가 맞을 때 주변 닫힌 칸을 같이 엽니다.", 34, canvasHeight - 20);
+  ctx.fillText("클릭/Space로 열고, 숫자 칸은 깃발 수가 맞을 때 주변 닫힌 칸을 같이 엽니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -3134,7 +3134,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("칸을 열고 숫자를 봅니다. 숫자는 가까운 위험 칸 수입니다.", canvasWidth / 2, 202);
-    ctx.fillText("표시 수가 맞는 숫자 칸은 한 번 더 눌러 주변을 엽니다.", canvasWidth / 2, 228);
+    ctx.fillText("깃발 수가 맞는 숫자 칸은 한 번 더 눌러 주변을 엽니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4125,10 +4125,10 @@ const arcadeVariantCopy = {
     liveDetail: "다음 칸 색과 기다린 타이밍을 같이 봅니다.",
   },
   minesweeper: {
-    finalKicker: "추론 결과",
-    liveTitle: "열린 칸 기록",
+    finalKicker: "지뢰찾기 결과",
+    liveTitle: "지뢰 지도",
     scoreLabel: "안전 칸",
-    liveDetail: "숫자 주변의 표시 수와 열린 칸을 같이 봅니다.",
+    liveDetail: "숫자 주변의 깃발 수와 열린 칸을 같이 봅니다.",
   },
   mole: {
     finalKicker: "알림 결과",
