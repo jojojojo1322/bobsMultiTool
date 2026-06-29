@@ -259,6 +259,13 @@ const arcadeContextGuides = {
 function playContextGuide(content: PlayContent): PlayContextGuide {
   if (content.type === "arcade-game") {
     const arcadeContextGuideOverrides: Partial<Record<string, Omit<PlayContextGuide, "kicker">>> = {
+      "ten-box-rush": {
+        title: "숫자 사과를 쓸어 합 10길을 비우는 과일상자",
+        firstLook: "과일상자 격자, 숫자 사과, 현재 합계, 노란 10길 힌트를 먼저 봅니다.",
+        firstMove: "첫 움직임은 드래그입니다. 1+9 짝만 집지 말고 세 개 이상 이어지는 10길도 훑습니다.",
+        pacingText: "한 판은 1분 과일상자 정리입니다. 결과는 숫자 보상보다 어떤 길을 보고 상자를 비웠는지로 남습니다.",
+        recordText: "기록은 산수 점검표가 아니라 다음 10길을 더 빨리 찾기 위한 손길 메모입니다. 넘쳤다면 손을 되돌릴 지점을 다시 봅니다.",
+      },
       "bug-clicker": {
         title: "버그 단서와 소문을 나누는 방패 판",
         firstLook: "위에서 내려오는 버그 신호 카드, 표식이 붙은 단서, 하단 방패선, 소문 라벨을 먼저 봅니다.",

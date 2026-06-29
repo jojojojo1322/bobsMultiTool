@@ -3384,6 +3384,20 @@ type SumBoxSurface = {
 };
 
 function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
+  if (content.slug === "ten-box-rush") {
+    return {
+      hintReadyText: "노란 10길을 그대로 쓸면 바로 10",
+      idleActionText: "숫자 사과 위로 지나가기",
+      idleBoardText: "과일상자 쓸어 비우기",
+      backtrackText: "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
+      footerText: "딱 10인 길은 사과가 비워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
+      startLine1: "마우스로 숫자 사과를 쓸어 담습니다. 노란 힌트는 한 10길만 보여줍니다.",
+      startLine2: "짧은 짝만 보지 말고 과일상자 안의 긴 10길도 찾습니다.",
+      ticketStamp: "",
+      shape: "apple",
+    };
+  }
+
   if (content.slug === "deploy-10-box") {
     return {
       hintReadyText: "노란 마감표를 그대로 쓸면 바로 10",
@@ -4286,6 +4300,12 @@ const arcadeVariantCopy = {
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
 const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
+  "ten-box-rush": {
+    finalKicker: "과일상자 결과",
+    liveTitle: "과일상자 기록",
+    scoreLabel: "비운 10길",
+    liveDetail: "짧은 짝과 긴 10길, 넘친 손길을 같이 봅니다.",
+  },
   "bug-clicker": {
     finalKicker: "버그 방패 결과",
     liveTitle: "단서 방패 기록",
