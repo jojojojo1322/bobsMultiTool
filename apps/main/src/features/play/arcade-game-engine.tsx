@@ -820,7 +820,17 @@ function shooterHorizontalHint(sprite: Sprite, state: GameState) {
 
 function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
   const copy =
-    mode === "invader"
+    mode === "missile"
+      ? {
+          noisyCloseTitle: "미끼 가까움",
+          noisyCloseDetail: (label: string) => `${label} 넘기기`,
+          readyTitle: "요격 대상",
+          readyDetail: (label: string) => `${label} 조준됨`,
+          trackingTitle: "충돌점 따라가기",
+          waitingTitle: "미사일 대기",
+          waitingDetail: "방어선 가까운 미사일이 내려올 때 쏘기",
+        }
+      : mode === "invader"
       ? {
           noisyCloseTitle: "미끼 가까움",
           noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
@@ -1781,10 +1791,10 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     mode === "missile"
       ? {
           header: "낙하 지점 보기",
-          footer: "마우스/터치로 낙하지점을 조준해 발사합니다. A/D와 Space도 됩니다.",
-          focusWarning: "먼 불씨보다 바닥에 가까운 낙하지점을 먼저 막으세요.",
-          startLine1: "누른 채 낙하지점을 겨누거나 A/D로 움직여 Space로 쏩니다.",
-          startLine2: "바닥에 가까운 불씨부터 한 발씩 막습니다.",
+          footer: "마우스/터치로 충돌점을 조준해 요격탄을 쏩니다. A/D와 Space도 됩니다.",
+          focusWarning: "먼 미사일보다 방어선 가까운 충돌점을 먼저 막으세요.",
+          startLine1: "누른 채 충돌점을 겨누거나 A/D로 움직여 Space로 쏩니다.",
+          startLine2: "도시 방어선 가까운 미사일부터 한 발씩 막습니다.",
         }
       : mode === "bubble"
         ? {
@@ -2082,15 +2092,25 @@ function drawShooterPlayer(
   ctx.fillStyle = primary;
   if (mode === "missile") {
     ctx.beginPath();
-    ctx.arc(0, 0, 30, Math.PI, Math.PI * 2);
-    ctx.lineTo(30, 6);
-    ctx.lineTo(-30, 6);
-    ctx.closePath();
+    ctx.roundRect(-38, 4, 76, 18, 6);
     ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,0.58)";
     ctx.lineWidth = 2;
     ctx.stroke();
-    ctx.fillRect(-3, 6, 6, 24);
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.roundRect(-8, -28, 16, 34, 5);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.48)";
+    ctx.stroke();
+    ctx.fillStyle = primary;
+    ctx.beginPath();
+    ctx.arc(0, 4, 18, Math.PI, Math.PI * 2);
+    ctx.lineTo(18, 8);
+    ctx.lineTo(-18, 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
   } else {
     ctx.beginPath();
     ctx.roundRect(-34, -18, 68, 36, 12);
@@ -4162,6 +4182,12 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveTitle: "침입자 방어 기록",
     scoreLabel: "막은 침입자",
     liveDetail: "표식 침입자를 맞힌 순간과 미끼 경고에 흔들린 순간을 같이 봅니다.",
+  },
+  "deploy-missile-defense": {
+    finalKicker: "옥상 요격 결과",
+    liveTitle: "도시 방어 기록",
+    scoreLabel: "막은 미사일",
+    liveDetail: "요격한 미사일과 미끼에 흔들린 순간을 같이 봅니다.",
   },
 };
 
