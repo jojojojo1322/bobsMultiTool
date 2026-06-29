@@ -843,13 +843,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
           }
       : mode === "invader"
       ? {
-          noisyCloseTitle: "미끼 경고 정렬",
+          noisyCloseTitle: "주황 미끼 정렬",
           noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
-          readyTitle: "쏠 표식 침입자",
+          readyTitle: "쏠 확인 표식",
           readyDetail: (label: string) => `${label} 정렬됨`,
-          trackingTitle: "방어포 정렬",
-          waitingTitle: "침입자 대기",
-          waitingDetail: "표식 침입자가 방어선 쪽으로 내려올 때 쏘기",
+          trackingTitle: "게이트 방어포 정렬",
+          waitingTitle: "게이트 침입자 대기",
+          waitingDetail: "확인 표식이 게이트선 쪽으로 내려올 때 쏘기",
         }
       : mode === "signal"
         ? {
@@ -1824,11 +1824,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
           }
         : mode === "invader"
           ? {
-              header: "표식 침입자 방어포",
-              footer: "하단 방어포를 마우스/터치로 끌어 표식 침입자에만 방어탄을 쏩니다. A/D와 Space도 됩니다.",
-              focusWarning: "미끼 경고까지 쏘면 방어선이 먼저 밀립니다. 방어선 가까운 표식부터 보세요.",
+              header: "릴리스 게이트 방어포",
+              footer: "하단 방어포를 마우스/터치로 끌어 확인 표식 침입자에만 방어탄을 쏩니다. A/D와 Space도 됩니다.",
+              focusWarning: "주황 미끼까지 쏘면 게이트선이 먼저 밀립니다. 게이트선 가까운 확인 표식부터 보세요.",
               startLine1: "하단 방어포를 끌거나 A/D로 움직여 Space로 쏩니다.",
-              startLine2: "표식 침입자만 쏘고 주황 미끼 경고는 흘려보냅니다.",
+              startLine2: "확인 표식 침입자만 쏘고 주황 미끼 경고는 흘려보냅니다.",
             }
           : {
               header: "버그 단서만 막기",
@@ -1839,15 +1839,16 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
             };
   const dangerLineY = canvasHeight - 96;
   const aimRead = shooterAimRead(state, mode);
+  const invaderMode = mode === "invader";
 
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
-  backdrop.addColorStop(0.62, "rgba(15,23,42,0.96)");
-  backdrop.addColorStop(1, "rgba(2,6,23,1)");
+  backdrop.addColorStop(0.62, invaderMode ? "rgba(31,38,29,0.96)" : "rgba(15,23,42,0.96)");
+  backdrop.addColorStop(1, invaderMode ? "rgba(15,19,14,1)" : "rgba(2,6,23,1)");
   ctx.fillStyle = backdrop;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.strokeStyle = invaderMode ? "rgba(143,191,123,0.13)" : "rgba(255,255,255,0.08)";
   ctx.lineWidth = 1;
   for (let x = 60; x < canvasWidth; x += 74) {
     ctx.beginPath();
@@ -1862,22 +1863,22 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.stroke();
   }
 
-  ctx.fillStyle = "rgba(15,23,42,0.54)";
+  ctx.fillStyle = invaderMode ? "rgba(28,34,25,0.72)" : "rgba(15,23,42,0.54)";
   ctx.beginPath();
   ctx.roundRect(28, 20, canvasWidth - 56, 42, 14);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.strokeStyle = invaderMode ? "rgba(216,196,106,0.22)" : "rgba(255,255,255,0.12)";
   ctx.stroke();
-  ctx.fillStyle = "rgba(255,255,255,0.82)";
+  ctx.fillStyle = invaderMode ? "#f0ead2" : "rgba(255,255,255,0.82)";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(drawCopy.header, 44, 47);
   ctx.textAlign = "right";
-  ctx.fillStyle = state.focus <= 30 ? danger : "rgba(255,255,255,0.68)";
+  ctx.fillStyle = state.focus <= 30 ? danger : invaderMode ? "rgba(240,234,210,0.72)" : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, canvasWidth - 44, 46);
 
-  ctx.strokeStyle = "rgba(255,255,255,0.16)";
+  ctx.strokeStyle = invaderMode ? "rgba(216,196,106,0.24)" : "rgba(255,255,255,0.16)";
   ctx.setLineDash([10, 10]);
   ctx.beginPath();
   ctx.moveTo(state.playerX, 68);
@@ -1916,11 +1917,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fill();
   }
 
-  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.fillStyle = invaderMode ? "rgba(216,196,106,0.16)" : "rgba(255,255,255,0.08)";
   ctx.beginPath();
   ctx.roundRect(0, dangerLineY, canvasWidth, 5, 2);
   ctx.fill();
-  ctx.fillStyle = state.focus < 38 ? "rgba(251,113,133,0.42)" : "rgba(96,165,250,0.16)";
+  ctx.fillStyle = state.focus < 38 ? "rgba(197,106,58,0.42)" : invaderMode ? "rgba(143,191,123,0.18)" : "rgba(96,165,250,0.16)";
   ctx.beginPath();
   ctx.roundRect(32, dangerLineY + 16, canvasWidth - 64, 28, 14);
   ctx.fill();
@@ -1970,18 +1971,26 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.stroke();
   }
 
-  ctx.fillStyle = "rgba(15,23,42,0.72)";
+  ctx.fillStyle = invaderMode ? "rgba(28,34,25,0.78)" : "rgba(15,23,42,0.72)";
   ctx.beginPath();
   ctx.roundRect(44, 72, 196, 50, 14);
   ctx.fill();
-  ctx.strokeStyle = aimRead.warning ? "rgba(251,113,133,0.52)" : aimRead.ready ? "rgba(167,243,208,0.48)" : "rgba(255,255,255,0.14)";
+  ctx.strokeStyle = aimRead.warning
+    ? "rgba(197,106,58,0.58)"
+    : aimRead.ready
+      ? invaderMode
+        ? "rgba(216,196,106,0.52)"
+        : "rgba(167,243,208,0.48)"
+      : invaderMode
+        ? "rgba(143,191,123,0.2)"
+        : "rgba(255,255,255,0.14)";
   ctx.lineWidth = 1;
   ctx.stroke();
   ctx.fillStyle = aimRead.warning ? danger : aimRead.ready ? accent : "rgba(255,255,255,0.82)";
   ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(aimRead.title, 60, 92);
-  ctx.fillStyle = "rgba(255,255,255,0.64)";
+  ctx.fillStyle = invaderMode ? "rgba(240,234,210,0.68)" : "rgba(255,255,255,0.64)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(aimRead.detail, 60, 110);
 
@@ -2003,7 +2012,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   drawShooterPlayer(ctx, content, state, mode, primary, accent);
 
   ctx.textAlign = "left";
-  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.fillStyle = invaderMode ? "rgba(240,234,210,0.74)" : "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(drawCopy.footer, 34, canvasHeight - 22);
   if (state.focus < 35) {
@@ -2013,9 +2022,9 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   }
 
   if (!state.started) {
-    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillStyle = invaderMode ? "rgba(23,27,24,0.78)" : "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = invaderMode ? "#f0ead2" : "#f8fafc";
     ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
@@ -2082,13 +2091,33 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
     ctx.arc(-sprite.radius * 0.32, -sprite.radius * 0.38, 5, 0, Math.PI * 2);
     ctx.fill();
   } else if (mode === "invader") {
+    ctx.fillStyle = sprite.good ? "rgba(143,191,123,0.95)" : "rgba(197,106,58,0.92)";
     ctx.beginPath();
-    ctx.roundRect(-sprite.radius, -sprite.radius, sprite.radius * 2, sprite.radius * 1.8, 8);
+    ctx.roundRect(-sprite.radius, -sprite.radius, sprite.radius * 2, sprite.radius * 1.8, 4);
     ctx.fill();
-    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillStyle = "rgba(23,27,24,0.76)";
     ctx.fillRect(-sprite.radius * 0.42, -sprite.radius * 0.25, 5, 5);
     ctx.fillRect(sprite.radius * 0.28, -sprite.radius * 0.25, 5, 5);
-    ctx.strokeStyle = fill;
+    if (sprite.good) {
+      ctx.fillStyle = "rgba(240,234,210,0.9)";
+      ctx.beginPath();
+      ctx.roundRect(-sprite.radius * 0.54, sprite.radius * 0.25, sprite.radius * 1.08, 11, 3);
+      ctx.fill();
+      ctx.fillStyle = "#172018";
+      ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("OK", 0, sprite.radius * 0.25 + 8);
+    } else {
+      ctx.strokeStyle = "rgba(240,234,210,0.72)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-sprite.radius * 0.44, sprite.radius * 0.22);
+      ctx.lineTo(sprite.radius * 0.44, sprite.radius * 0.54);
+      ctx.moveTo(sprite.radius * 0.44, sprite.radius * 0.22);
+      ctx.lineTo(-sprite.radius * 0.44, sprite.radius * 0.54);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = sprite.good ? "rgba(216,196,106,0.7)" : "rgba(240,234,210,0.42)";
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(-sprite.radius * 0.82, sprite.radius * 0.98);
@@ -2147,6 +2176,22 @@ function drawShooterPlayer(
     ctx.lineTo(-18, 8);
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
+  } else if (mode === "invader") {
+    ctx.beginPath();
+    ctx.roundRect(-38, -8, 76, 28, 5);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(240,234,210,0.5)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(0, -34);
+    ctx.lineTo(13, -8);
+    ctx.lineTo(-13, -8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(23,27,24,0.38)";
     ctx.stroke();
   } else {
     ctx.beginPath();
@@ -4325,10 +4370,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "합 10으로 닫은 마감표와 넘친 새 일을 같이 봅니다.",
   },
   "deploy-invaders": {
-    finalKicker: "침입자 방어 결과",
-    liveTitle: "방어포 기록",
-    scoreLabel: "차단한 침입자",
-    liveDetail: "차단한 표식 침입자, 놓친 방어선, 미끼 경고에 흔들린 순간을 같이 봅니다.",
+    finalKicker: "릴리스 게이트 결과",
+    liveTitle: "게이트 방어 기록",
+    scoreLabel: "차단한 표식",
+    liveDetail: "차단한 확인 표식, 놓친 게이트선, 주황 미끼에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
     finalKicker: "도시 방어 결과",
