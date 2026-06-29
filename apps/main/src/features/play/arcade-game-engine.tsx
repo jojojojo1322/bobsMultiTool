@@ -791,7 +791,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "flight") return "상승";
   if (shouldUseSideScroller(content)) return "점프";
   if (content.arcade.variant === "crossing") return "건너기";
-  if (content.arcade.variant === "brick-breaker") return "치기";
+  if (content.arcade.variant === "brick-breaker") return "받기";
   if (content.slug === "deploy-10-box") return "묶기";
   if (content.arcade.variant === "sum-box") return "고르기";
   if (content.arcade.variant === "lottery-economy") return "사기";
@@ -1308,7 +1308,7 @@ function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: 
       state.focus = clamp(state.focus + (hitBrick.good ? 1 : -5), 0, 100);
       addHistory(state, {
         label: hitBrick.label,
-        detail: hitBrick.good ? "제대로 깸" : "괜히 힘 씀",
+        detail: hitBrick.good ? "단서 벽돌 깸" : "소문 벽돌 건드림",
         score: delta,
       });
     }
@@ -1320,7 +1320,7 @@ function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: 
       state.brickBallVy = -260;
       addHistory(state, {
         label: "공 놓침",
-        detail: "받침대가 늦음",
+        detail: "착지선 놓침",
         score: -2,
       });
     }
@@ -4198,16 +4198,16 @@ function drawBrickLandingGuide(state: GameState, ctx: CanvasRenderingContext2D, 
 
   ctx.save();
   ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = catchable ? "rgba(163,230,53,0.72)" : "rgba(251,113,133,0.72)";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = catchable ? "rgba(248,250,252,0.78)" : "rgba(214,107,95,0.78)";
+  ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(landingX, Math.max(state.brickBallY + 12, 88));
   ctx.lineTo(landingX, paddleY - 10);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  ctx.fillStyle = catchable ? "rgba(163,230,53,0.18)" : "rgba(251,113,133,0.16)";
-  ctx.strokeStyle = catchable ? "rgba(163,230,53,0.7)" : "rgba(251,113,133,0.72)";
+  ctx.fillStyle = catchable ? "rgba(143,211,176,0.18)" : "rgba(214,107,95,0.16)";
+  ctx.strokeStyle = catchable ? "rgba(143,211,176,0.72)" : "rgba(214,107,95,0.72)";
   ctx.beginPath();
   ctx.roundRect(landingX - brickPaddleWidth / 2, paddleY - 7, brickPaddleWidth, 22, 11);
   ctx.fill();
@@ -4221,7 +4221,7 @@ function drawBrickLandingGuide(state: GameState, ctx: CanvasRenderingContext2D, 
   ctx.fillStyle = "#f8fafc";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(catchable ? "패치 자리" : "패들 이동", labelX, paddleY - 28);
+  ctx.fillText(catchable ? "받을 자리" : "패들 옮김", labelX, paddleY - 30);
   ctx.restore();
 }
 
@@ -4230,24 +4230,52 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.fillStyle = "rgba(255,255,255,0.045)";
+  ctx.beginPath();
+  ctx.roundRect(18, 18, canvasWidth - 36, canvasHeight - 36, 12);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.18)";
   ctx.lineWidth = 1;
-  for (let x = 40; x < canvasWidth; x += 48) {
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
+  ctx.fillRect(32, 62, canvasWidth - 64, 96);
+  ctx.fillStyle = "rgba(0,0,0,0.16)";
+  ctx.fillRect(32, canvasHeight - 120, canvasWidth - 64, 72);
+
+  ctx.strokeStyle = "rgba(248,250,252,0.1)";
+  ctx.lineWidth = 1;
+  for (let x = 42; x < canvasWidth; x += 56) {
     ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvasHeight);
+    ctx.moveTo(x, 24);
+    ctx.lineTo(x, canvasHeight - 34);
     ctx.stroke();
   }
+
+  ctx.fillStyle = "rgba(248,250,252,0.76)";
+  ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("재현 단서 벽돌", 42, 48);
+  ctx.textAlign = "right";
+  ctx.fillText("하단 패치 레일", canvasWidth - 42, canvasHeight - 34);
 
   for (const brick of state.bricks) {
     if (!brick.alive) continue;
     ctx.fillStyle = brick.good ? accent : danger;
     ctx.beginPath();
-    ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 6);
+    ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 3);
     ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,0.34)";
     ctx.stroke();
-    ctx.fillStyle = "#0f172a";
+    if (!brick.good) {
+      ctx.strokeStyle = "rgba(32,28,23,0.32)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(brick.x + 8, brick.y + 6);
+      ctx.lineTo(brick.x + brick.width - 8, brick.y + brick.height - 6);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#201c17";
     ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(brick.label.slice(0, 8), brick.x + brick.width / 2, brick.y + 18);
@@ -4257,41 +4285,50 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
 
   ctx.fillStyle = primary;
   ctx.beginPath();
-  ctx.roundRect(state.playerX - brickPaddleWidth / 2, state.playerY - 8, brickPaddleWidth, 16, 8);
+  ctx.roundRect(state.playerX - brickPaddleWidth / 2, state.playerY - 9, brickPaddleWidth, 18, 4);
   ctx.fill();
+  ctx.strokeStyle = "rgba(248,250,252,0.42)";
+  ctx.stroke();
   ctx.fillStyle = accent;
   ctx.beginPath();
-  ctx.roundRect(state.playerX - 10, state.playerY - 10, 20, 20, 6);
+  ctx.roundRect(state.playerX - 9, state.playerY - 12, 18, 24, 4);
   ctx.fill();
+  ctx.fillStyle = "rgba(32,28,23,0.82)";
+  ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("패치", state.playerX, state.playerY + 4);
   ctx.fillStyle = "#f8fafc";
   ctx.beginPath();
   ctx.arc(state.brickBallX, state.brickBallY, brickBallRadius, 0, Math.PI * 2);
   ctx.fill();
+  ctx.strokeStyle = "rgba(32,28,23,0.62)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`${state.bricks.filter((brick) => brick.alive).length}개 남음`, 24, canvasHeight - 22);
+  ctx.fillText(`단서벽 ${state.bricks.filter((brick) => brick.alive).length}`, 24, canvasHeight - 22);
   ctx.textAlign = "right";
-  ctx.fillText("착지선을 보고 마우스/터치로 패치 패들을 맞춥니다.", canvasWidth - 24, canvasHeight - 22);
+  ctx.fillText("흰 착지선에 패들 중심을 맞춥니다.", canvasWidth - 24, canvasHeight - 22);
 
   if (!state.started) {
-    ctx.fillStyle = "rgba(15,23,42,0.68)";
+    ctx.fillStyle = "rgba(32,28,23,0.78)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.fillStyle = "#f8fafc";
     ctx.font = "700 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 172);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("패치 패들을 움직일 곳을 누르면 바로 공을 보냅니다.", canvasWidth / 2, 208);
-    ctx.fillText("버그 벽돌을 다급하게 쫓지 말고, 공이 돌아올 자리를 먼저 잡으세요.", canvasWidth / 2, 234);
+    ctx.fillText("하단 패치 패들을 밀어 공을 되받습니다.", canvasWidth / 2, 208);
+    ctx.fillText("상단 단서벽보다 먼저 흰 착지선을 보고 받을 자리를 잡으세요.", canvasWidth / 2, 234);
   } else if (!state.brickLaunched) {
-    ctx.fillStyle = "rgba(15,23,42,0.5)";
+    ctx.fillStyle = "rgba(32,28,23,0.58)";
     ctx.fillRect(0, canvasHeight - 116, canvasWidth, 42);
     ctx.fillStyle = "#f8fafc";
     ctx.font = "600 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("패들 위치를 누르거나 Space로 다시 시작", canvasWidth / 2, canvasHeight - 90);
+    ctx.fillText("받을 자리로 패들을 옮기고 Space 또는 터치로 발사", canvasWidth / 2, canvasHeight - 90);
   }
 }
 
@@ -4433,6 +4470,12 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveTitle: "단서 버블 기록",
     scoreLabel: "터뜨린 단서",
     liveDetail: "터뜨린 버그 단서와 소문 버블에 흔들린 순간을 같이 봅니다.",
+  },
+  "bug-brick-breaker": {
+    finalKicker: "패치 패들 결과",
+    liveTitle: "패치 착지 기록",
+    scoreLabel: "깬 단서벽",
+    liveDetail: "흰 착지선, 패들 중심, 재현 단서 벽돌을 같이 봅니다.",
   },
   "deploy-10-box": {
     finalKicker: "마감 전표 결과",
