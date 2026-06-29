@@ -3486,7 +3486,7 @@ type SumBoxSurface = {
   startLine1: string;
   startLine2: string;
   ticketStamp: string;
-  shape: "apple" | "ticket";
+  shape: "apple" | "ticket" | "paper";
 };
 
 function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
@@ -3518,19 +3518,27 @@ function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
     };
   }
 
+  if (content.slug === "prompt-sum-box") {
+    return {
+      hintReadyText: "노란 질문 종이를 그대로 쓸면 바로 10",
+      idleActionText: "질문 종이 위로 지나가기",
+      idleBoardText: "질문 종이 10길 찾기",
+      backtrackText: "지나온 질문 종이 쪽으로 되돌아가면 마지막 조각이 빠집니다.",
+      footerText: "딱 10인 질문 종이 길은 초안판에서 지워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
+      startLine1: "마우스로 질문 종이 조각을 쓸어 지웁니다. 노란 힌트는 한 10길만 보여줍니다.",
+      startLine2: "목적·맥락·제약 조각을 작게 묶고, 장황한 조각은 되돌려 뺍니다.",
+      ticketStamp: "초안",
+      shape: "paper",
+    };
+  }
+
   return {
-    hintReadyText: content.slug === "prompt-sum-box" ? "노란 질문 조각을 그대로 쓸면 바로 10" : "노란 힌트 사과를 그대로 쓸면 바로 10",
-    idleActionText: content.slug === "prompt-sum-box" ? "질문 조각 위로 지나가기" : "사과 위로 지나가기",
+    hintReadyText: "노란 힌트 사과를 그대로 쓸면 바로 10",
+    idleActionText: "사과 위로 지나가기",
     idleBoardText: "마우스로 쓸어 담기",
-    backtrackText:
-      content.slug === "prompt-sum-box"
-        ? "지나온 질문 조각 쪽으로 되돌아가면 마지막 선택이 빠집니다."
-        : "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
+    backtrackText: "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
     footerText: "연속 10은 보너스가 붙습니다. 넘치거나 모자라면 연속이 끊깁니다.",
-    startLine1:
-      content.slug === "prompt-sum-box"
-        ? "마우스로 질문 조각을 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다."
-        : "마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.",
+    startLine1: "마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.",
     startLine2: "합 10을 이어가면 연속 보너스가 붙습니다.",
     ticketStamp: "",
     shape: "apple",
@@ -3541,6 +3549,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const { background, primary, accent, danger } = content.arcade.palette;
   const surface = sumBoxSurfaceFor(content);
   const deployBox = content.slug === "deploy-10-box";
+  const promptPaper = surface.shape === "paper";
   const dragging = state.sumDragStart !== null && state.sumDragCurrent !== null;
   const dragTiles = dragging ? sumDragTiles(state) : [];
   const dragTileIds = new Set(dragTiles.map((tile) => tile.id));
@@ -3557,7 +3566,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const nextStreak = shownSum === 10 ? state.sumStreak + 1 : state.sumStreak;
   const clearStreakBonus = shownSum === 10 ? sumBoxStreakBonus(nextStreak) : 0;
   const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) + clearStreakBonus : 0;
-  const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}점(연속 +${clearStreakBonus})` : `+${clearScore}점`;
+  const clearScoreUnit = promptPaper ? "장" : "점";
+  const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}${clearScoreUnit}(연속 +${clearStreakBonus})` : `+${clearScore}${clearScoreUnit}`;
   const dragPrimaryLabel = blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? "합 10" : shownSum > 0 ? `합 ${shownSum}` : "쓸기 시작";
   const dragSecondaryLabel = blockedTile
     ? `되돌리면 합 ${shownSum}`
@@ -3593,16 +3603,16 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   const glow = ctx.createRadialGradient(canvasWidth / 2, 212, 30, canvasWidth / 2, 212, 360);
-  glow.addColorStop(0, deployBox ? "rgba(120,166,163,0.1)" : "rgba(255,255,255,0.12)");
+  glow.addColorStop(0, deployBox ? "rgba(120,166,163,0.1)" : promptPaper ? "rgba(217,179,95,0.11)" : "rgba(255,255,255,0.12)");
   glow.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = deployBox ? "rgba(111,78,45,0.18)" : "rgba(255,255,255,0.06)";
+  ctx.fillStyle = deployBox ? "rgba(111,78,45,0.18)" : promptPaper ? "rgba(246,232,195,0.09)" : "rgba(255,255,255,0.06)";
   ctx.beginPath();
-  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, deployBox ? 8 : 22);
+  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, deployBox || promptPaper ? 8 : 22);
   ctx.fill();
-  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.24)" : "rgba(255,255,255,0.13)";
+  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.24)" : promptPaper ? "rgba(246,232,195,0.22)" : "rgba(255,255,255,0.13)";
   ctx.lineWidth = 1;
   ctx.stroke();
   for (let row = 0; row < sumBoxRows; row += 1) {
@@ -3619,11 +3629,11 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.stroke();
   }
 
-  ctx.fillStyle = deployBox ? "rgba(47,43,33,0.72)" : "rgba(15,23,42,0.36)";
+  ctx.fillStyle = deployBox ? "rgba(47,43,33,0.72)" : promptPaper ? "rgba(39,34,26,0.78)" : "rgba(15,23,42,0.36)";
   ctx.beginPath();
-  ctx.roundRect(24, 18, canvasWidth - 48, 48, deployBox ? 6 : 16);
+  ctx.roundRect(24, 18, canvasWidth - 48, 48, deployBox || promptPaper ? 6 : 16);
   ctx.fill();
-  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.22)" : "rgba(255,255,255,0.12)";
+  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.22)" : promptPaper ? "rgba(246,232,195,0.2)" : "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.12)";
@@ -3635,14 +3645,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.roundRect(canvasWidth - 176, 52, 132 * timeRatio, 6, 3);
   ctx.fill();
 
-  ctx.fillStyle = deployBox ? "#f0ead6" : "rgba(255,255,255,0.9)";
+  ctx.fillStyle = deployBox || promptPaper ? "#f0ead6" : "rgba(255,255,255,0.9)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(topSumLabel, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillStyle = deployBox ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)";
-  ctx.fillText(`점수 ${state.score} · ${flowLabel}`, 190, 48);
-  ctx.fillStyle = comboHint.length ? (deployBox ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)") : "rgba(251,113,133,0.88)";
+  ctx.fillStyle = deployBox || promptPaper ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)";
+  ctx.fillText(`${promptPaper ? "지운 종이" : "점수"} ${state.score} · ${flowLabel}`, 190, 48);
+  ctx.fillStyle = comboHint.length ? (deployBox || promptPaper ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)") : "rgba(251,113,133,0.88)";
   ctx.fillText(hintLabel, 330, 48);
   ctx.strokeStyle = "rgba(255,255,255,0.18)";
   ctx.lineWidth = 5;
@@ -3892,6 +3902,40 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.font = "900 8px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(surface.ticketStamp, tileCenterX, tile.y + 18);
+    } else if (surface.shape === "paper") {
+      const paperGradient = ctx.createLinearGradient(tile.x, tile.y, tile.x, tile.y + tile.height);
+      if (isActive) {
+        paperGradient.addColorStop(0, "#fff4d1");
+        paperGradient.addColorStop(1, "#d9b35f");
+      } else {
+        paperGradient.addColorStop(0, "#f5e7c8");
+        paperGradient.addColorStop(1, "#b7a17a");
+      }
+      ctx.fillStyle = paperGradient;
+      ctx.beginPath();
+      ctx.moveTo(tile.x + 12, tile.y + 8);
+      ctx.lineTo(tile.x + tile.width - 11, tile.y + 5);
+      ctx.lineTo(tile.x + tile.width - 7, tile.y + tile.height - 13);
+      ctx.lineTo(tile.x + 16, tile.y + tile.height - 7);
+      ctx.lineTo(tile.x + 8, tile.y + 18);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = isActive ? "rgba(41,37,26,0.58)" : "rgba(246,232,195,0.38)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.strokeStyle = isActive ? "rgba(41,37,26,0.2)" : "rgba(41,37,26,0.14)";
+      ctx.lineWidth = 1;
+      for (let line = 0; line < 3; line += 1) {
+        const y = tile.y + 22 + line * 13;
+        ctx.beginPath();
+        ctx.moveTo(tile.x + 18, y);
+        ctx.lineTo(tile.x + tile.width - 18, y - 2);
+        ctx.stroke();
+      }
+      ctx.fillStyle = isActive ? "rgba(41,37,26,0.82)" : "rgba(41,37,26,0.56)";
+      ctx.font = "900 8px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(surface.ticketStamp, tileCenterX, tile.y + 17);
     } else {
       const appleGradient = ctx.createRadialGradient(tileCenterX - 9, tileCenterY - 10, 5, tileCenterX, tileCenterY, 29);
       if (isActive) {
@@ -3923,7 +3967,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.restore();
     }
 
-    ctx.fillStyle = surface.shape === "ticket" ? (isActive ? "#111827" : "#fff7ed") : "#fffaf0";
+    ctx.fillStyle =
+      surface.shape === "ticket" ? (isActive ? "#111827" : "#fff7ed") : surface.shape === "paper" ? "#2d2418" : "#fffaf0";
     ctx.font = "900 27px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillText(`${tile.value}`, tileCenterX, tileCenterY + 12);
@@ -3939,7 +3984,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     }
     if (tile.label !== `${tile.value}`) {
       ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-      ctx.fillStyle = isActive ? "rgba(17,24,39,0.72)" : "rgba(248,250,252,0.72)";
+      ctx.fillStyle =
+        surface.shape === "paper" ? "rgba(45,36,24,0.82)" : isActive ? "rgba(17,24,39,0.72)" : "rgba(248,250,252,0.72)";
       ctx.fillText(tile.label.slice(0, 5), tileCenterX, tile.y + tile.height - 7);
     }
     ctx.globalAlpha = 1;
@@ -4482,6 +4528,12 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveTitle: "진행중 상자 기록",
     scoreLabel: "닫은 전표",
     liveDetail: "합 10으로 닫은 전표 묶음과 넘친 새 일을 같이 봅니다.",
+  },
+  "prompt-sum-box": {
+    finalKicker: "질문 종이 결과",
+    liveTitle: "초안 10길 기록",
+    scoreLabel: "지운 질문 종이",
+    liveDetail: "쓸어 지운 10길, 되돌린 조각, 넘친 질문 종이를 같이 봅니다.",
   },
   "prompt-gem-swap": {
     finalKicker: "역할칩 결과",
