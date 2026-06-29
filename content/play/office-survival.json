@@ -1,11 +1,11 @@
 {
   "slug": "office-survival",
-  "title": "정시 퇴근까지 버티기",
-  "description": "10개의 직장 상황에서 선택지를 골라 체력, 멘탈, 업무량, 평판을 조절하는 3-5분 자원관리 게임입니다. 하루 진행과 위험 자원을 보며 업무량은 낮추고 체력과 멘탈을 지켜 정시 퇴근 엔딩을 노립니다.",
+  "title": "정시 퇴근 관제판",
+  "description": "10개의 직장 상황에서 요구, 통제, 지원, 일더미를 읽고 체력·멘탈·업무량·신뢰를 조절하는 3-5분 자원관리 게임입니다. 급한 부탁을 다 받는 게임이 아니라, 오늘 남길 일과 끊어낼 일을 고르는 퇴근 운영판입니다.",
   "type": "micro-sim",
   "durationLabel": "3-5분",
   "updatedAt": "2026-06-29",
-  "shareText": "정시 퇴근까지 버티기를 해봤다. 상황마다 체력, 멘탈, 업무량, 평판의 대가가 달랐다.",
+  "shareText": "정시 퇴근 관제판을 해봤다. 급한 부탁마다 체력, 멘탈, 업무량, 신뢰의 대가가 달랐다.",
   "order": 1,
   "relatedBlogSlugs": [
     "office-survival-workday",
@@ -33,7 +33,7 @@
     },
     {
       "key": "reputation",
-      "label": "평판",
+      "label": "신뢰",
       "initial": 50
     }
   ],
@@ -65,7 +65,7 @@
         },
         {
           "label": "읽음 표시만 남기고 커피부터 산다",
-          "detail": "체력은 회복되지만 평판이 깎일 수 있다.",
+          "detail": "체력은 회복되지만 신뢰가 깎일 수 있다.",
           "effects": {
             "stamina": 6,
             "mental": 4,
@@ -243,7 +243,7 @@
         },
         {
           "label": "내 일정을 밀고 먼저 처리한다",
-          "detail": "평판은 오르지만 야근 그림자가 생긴다.",
+          "detail": "신뢰는 오르지만 야근 그림자가 생긴다.",
           "effects": {
             "stamina": -12,
             "mental": -5,
@@ -310,7 +310,7 @@
         },
         {
           "label": "일단 내 담당 아니라고 선을 긋는다",
-          "detail": "내 일은 줄지만 평판도 줄 수 있다.",
+          "detail": "내 일은 줄지만 신뢰도 줄 수 있다.",
           "effects": {
             "stamina": 5,
             "mental": 2,
@@ -431,7 +431,7 @@
         },
         {
           "label": "로그를 끝까지 파기 시작한다",
-          "detail": "평판은 크게 오르지만 체력과 업무량이 크게 흔들린다.",
+          "detail": "신뢰는 크게 오르지만 체력과 업무량이 크게 흔들린다.",
           "effects": {
             "stamina": -12,
             "mental": -6,
@@ -551,8 +551,8 @@
     },
     {
       "id": "reputation-builder",
-      "title": "평판 관리자",
-      "description": "몸은 피곤하지만 신뢰 잔고가 늘었다. 다음에는 그 평판으로 회의를 줄여보자.",
+      "title": "신뢰 잔고 관리자",
+      "description": "몸은 피곤하지만 신뢰 잔고가 늘었다. 다음에는 그 신뢰로 회의와 부탁 범위를 줄여보자.",
       "conditions": [
         {
           "stat": "reputation",
@@ -600,7 +600,7 @@
     {
       "id": "meeting-ghost",
       "title": "회의실 지박령",
-      "description": "평판은 지켰지만 회의와 싱크가 하루를 먹었다. 다음 생에는 안건 없는 회의에 질문을 던지자.",
+      "description": "신뢰는 지켰지만 회의와 싱크가 하루를 먹었다. 다음 판에는 안건 없는 회의에 질문을 던지자.",
       "conditions": [
         {
           "stat": "reputation",
@@ -622,42 +622,49 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "정시 퇴근을 목표로 한 직장 자원관리 시뮬레이션",
-    "planningIntent": "정시 퇴근까지 버티기는 선택지 나열이 아니라 체력, 멘탈, 업무량, 평판 사이의 손익, 회복 루프, 누적 결과가 첫 화면과 선택 직후에 읽히는지 검토해야 한다.",
+    "gameMode": "정시 퇴근을 목표로 한 업무 요구/자원 관제 시뮬레이션",
+    "planningIntent": "정시 퇴근 관제판은 선택지 나열이 아니라 요구(demands), 통제(control), 지원(support), 관계/역할/변화 같은 업무 스트레스 요인을 짧은 사건으로 바꿔 보는 자원관리 게임이다. NIOSH는 직무 요구가 개인의 능력, 자원, 필요와 맞지 않을 때 직무 스트레스가 생긴다고 설명하고, HSE는 demands, control, support, relationships, role, change를 관리 기준으로 본다. 따라서 이 게임은 '좋은 직원 되기'가 아니라 오늘의 일더미를 낮추면서 체력, 멘탈, 신뢰가 어떤 대가로 움직이는지 관제판에서 즉시 읽히게 해야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
+        "CDC NIOSH job stress demands resources worker needs",
+        "HSE management standards demands control support relationships role change",
         "resource management micro simulation game design",
         "meaningful choices game design consequences feedback",
         "game UX meaningful choices player consequences feedback",
-        "Nielsen Norman Group visibility of system status feedback",
+        "choice consequences ability to plan game design",
         "resource management game UI status indicators",
         "choice based game UI immediate stat feedback",
-        "workplace survival game stats choices endings",
+        "workplace stress workload control support visual dashboard",
         "resource management game tradeoffs feedback loops"
       ],
       "referenceTypes": [
+        "NIOSH의 job demands, worker resources, needs 불일치에 따른 직무 스트레스 설명",
+        "HSE Management Standards의 demands, control, support, relationships, role, change 위험 요인",
         "짧은 선택형 시뮬레이션의 스탯 피드백",
         "자원 관리 게임의 회복/소모 균형",
-        "의미 있는 선택과 결과 피드백을 설명한 게임 디자인 글",
-        "하루 진행 상태와 가장 위험한 자원을 먼저 보여주는 상태 표시",
-        "사용자 행동 직후 시스템 상태 변화를 보여주는 UX 원칙",
+        "의미 있는 선택이 행동과 다음 계획을 바꾸는 게임 디자인 사례",
+        "하루 진행 상태와 가장 흔들리는 자원을 먼저 보여주는 상태 표시",
         "엔딩 조건을 보여주는 결과 화면",
-        "업무/시간관리 보드에서 비용과 효과를 함께 보여주는 화면"
+        "업무/시간관리 보드에서 요구, 통제, 지원, 비용과 효과를 함께 보여주는 화면"
       ],
       "dataOrSimulationNeeds": [
         "선택 경로별 스탯 분포와 엔딩 도달률",
         "회복 선택이 너무 강하거나 약하지 않은지 비교",
         "선택지 효과 칩을 보기 전후에 유저가 고른 선택이 달라지는지 비교",
-        "업무량 감소만 정답이 되지 않도록 평판/체력 비용의 분포 확인"
+        "업무량 감소만 정답이 되지 않도록 신뢰/체력 비용의 분포 확인",
+        "요구를 낮추는 선택, 통제를 늘리는 선택, 지원을 요청하는 선택이 서로 다른 대가로 보이는지 확인",
+        "일더미가 낮아도 체력·멘탈이 무너지면 좋은 엔딩으로 읽히지 않는지 확인"
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '정시 퇴근을 위해 네 자원을 조절한다'가 읽히는가?",
-      "현재 사건이 하루 흐름에서 어디쯤인지 보이는가?",
-      "가장 위험한 자원이 체력, 멘탈, 업무량, 평판 중 무엇인지 바로 보이는가?",
+      "첫 5초 안에 '정시 퇴근을 위해 요구를 낮추고 자원을 지킨다'가 읽히는가?",
+      "현재 사건이 하루 흐름에서 어디쯤인지 근무 시각처럼 보이는가?",
+      "가장 위험한 자원이 체력, 멘탈, 업무량, 신뢰 중 무엇인지 바로 보이는가?",
       "선택마다 무엇을 얻고 무엇을 잃는지 명확한가?",
-      "업무량은 낮을수록 좋고 체력/멘탈/평판은 높을수록 좋다는 방향이 화면에 보이는가?",
+      "업무량은 낮을수록 좋고 체력/멘탈/신뢰는 높을수록 좋다는 방향이 화면에 보이는가?",
       "회복 선택은 쉬운 정답이 아니라 기회비용을 갖는가?",
+      "범위 확인, 비동기 전환, 도움 요청처럼 통제를 되찾는 선택이 실제로 일더미와 멘탈을 바꾸는가?",
+      "모든 부탁을 받아 신뢰만 올리는 경로가 좋은 결말로 고정되지 않는가?",
       "엔딩은 랜덤이 아니라 누적 선택의 결과로 읽히는가?",
       "다음 판에서 다른 성격의 운영을 시험하고 싶은가?",
       "스탯 수가 짧은 게임에 비해 과하지 않은가?",
@@ -665,30 +672,36 @@
     ],
     "visualQuestions": [
       "사무실 운영판처럼 스탯과 사건이 분리되어 보이는가?",
-      "상단 상태줄이 점수판이 아니라 하루 진행과 위험 자원으로 읽히는가?",
-      "선택지는 문장보다 비용/효과가 먼저 읽히는가?",
+      "상단 상태줄이 순위판이 아니라 근무 시각, 퇴근선, 가장 흔들리는 자원으로 읽히는가?",
+      "선택지는 예쁜 답변 카드가 아니라 비용/효과가 찍힌 업무 전표처럼 보이는가?",
       "업무량 증가와 감소가 같은 숫자처럼 보이지 않고 부담/완화로 구분되는가?",
-      "엔딩은 보고서처럼 짧고 투박하게 남는가?",
-      "게임 화면이 일반 퀴즈 카드처럼 보이지 않는가?"
+      "엔딩은 성취 배지가 아니라 하루 마감 보고서처럼 짧고 투박하게 남는가?",
+      "게임 화면이 일반 퀴즈 화면처럼 보이지 않고 퇴근 전 관제판, 체크리스트, 전표 묶음처럼 보이는가?",
+      "모바일에서도 네 자원과 현재 사건이 위아래로 겹치지 않고 먼저 읽히는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
-      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다.",
+      "직장 스트레스나 번아웃을 의학적 진단처럼 다루지 않고, 작은 시뮬레이션의 자원 은유로만 다룬다.",
+      "야근, 과로, 책임 회피를 영웅화하지 않는다.",
+      "퇴근을 '무조건 도망'으로만 표현하지 않고 범위 확인, 기록, 지원 요청 같은 통제 회복 선택을 남긴다."
     ],
     "mechanicProfile": {
-      "primaryResource": "체력, 멘탈, 업무량, 평판",
+      "primaryResource": "체력, 멘탈, 업무량, 신뢰, 요구/통제/지원 판단",
       "progressionQuestion": "성장은 좋은 선택 암기가 아니라 상황별 손익을 더 빨리 읽는 능력인가?",
       "failureQuestion": "실패 엔딩이 어느 자원을 방치했는지 설명하는가?",
       "recoveryQuestion": "회복 선택은 다음 사건의 여지를 만들지만 다른 자원을 압박하는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "퇴근 전 사무실 상황판",
-      "primarySurface": "스탯 장부와 사건 선택지가 붙은 운영판",
-      "roughnessTarget": "회색 사무 문서와 빨간 체크 표시의 건조한 느낌",
-      "differenceFromGenericPlay": "캐릭터 일러스트보다 자원 장부와 선택 비용이 먼저 보인다.",
+      "metaphor": "퇴근 전 사무실 관제판과 마감 전표",
+      "primarySurface": "근무 시각, 퇴근선, 네 자원 막대, 현재 사건 전표, 선택 비용 도장, 하루 기록지",
+      "roughnessTarget": "회색 사무 문서, 얇은 표 선, 빨간/노란 체크 표시, 복사기 종이 같은 건조한 느낌",
+      "differenceFromGenericPlay": "캐릭터 일러스트나 퀴즈 버튼보다 근무 시각, 자원 장부, 선택 비용 도장이 먼저 보인다.",
       "mustAvoid": [
         "과한 캐릭터 감정 일러스트",
-        "선택 효과가 숨겨진 긴 문장만 있는 화면"
+        "선택 효과가 숨겨진 긴 문장만 있는 화면",
+        "야근을 영웅화하는 보상 연출",
+        "단순 숫자판처럼 보이는 하루 진행 표시"
       ]
     }
   }

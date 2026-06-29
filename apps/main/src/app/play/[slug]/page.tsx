@@ -167,7 +167,7 @@ const arcadeContextGuides = {
     title: "한 장 로그를 보고 다음 장으로 넘기는 복권 판",
     firstLook: "현재 단계, 9칸 복권지, 이번 장 결과 로그가 어디에 남는지 먼저 봅니다.",
     firstMove: "첫 움직임은 긁기입니다. 한 장을 다 보면 당첨 여부보다 결과 로그와 다음 단계를 먼저 읽습니다.",
-    pacingText: "이 판은 끝나는 점수판이 아니라 계속 이어지는 복권 장부입니다. 더 긁고 싶으면 다음 장으로 가고, 멈추고 싶으면 그 자리에서 멈춥니다.",
+    pacingText: "이 판은 끝나는 순위판이 아니라 계속 이어지는 복권 장부입니다. 더 긁고 싶으면 다음 장으로 가고, 멈추고 싶으면 그 자리에서 멈춥니다.",
     recordText: "현재 공개 버전은 실제 돈, 결제, 현금화가 없습니다. 기록은 단계와 로그만 남기고 손실 만회 문구로 밀어붙이지 않습니다.",
   },
   "lottery-economy": {
@@ -352,7 +352,7 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
         firstLook: "현재 메모, 할 일/배경/예시/출력 형식/금지·제약 칸, 오른쪽 요청서 붙임 기록을 먼저 봅니다.",
         firstMove: "첫 움직임은 메모 붙이기입니다. 문장이 AI가 할 일인지, 배경인지, 예시인지, 답의 형식인지, 하지 말라는 제약인지 고릅니다.",
         pacingText: `${content.durationLabel} 동안 빠르게 맞히기보다 요청이 어디서 뭉쳤는지 분리합니다. 예시와 출력 형식은 금지 문구와 따로 봅니다.`,
-        recordText: "기록은 점수표가 아니라 다음 프롬프트를 쓰기 위한 요청서 메모입니다. 헷갈린 문장은 한 문장에 역할이 둘 이상 섞였는지 다시 봅니다.",
+        recordText: "기록은 결과 자랑판이 아니라 다음 프롬프트를 쓰기 위한 요청서 메모입니다. 헷갈린 문장은 한 문장에 역할이 둘 이상 섞였는지 다시 봅니다.",
       };
     }
     if (content.slug === "priority-sorter") {
@@ -373,6 +373,17 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
       firstMove: "첫 움직임은 분류입니다. 카드가 지금 막는 일인지, 시간을 잡을 일인지, 버릴 일인지 먼저 가릅니다.",
       pacingText: `한 판은 ${content.durationLabel} 정도로 짧게 갑니다. 결과는 맞춘 수보다 분류 기준이 선명해졌는지로 남습니다.`,
       recordText: "기록은 다음 카드 기준을 조정하기 위한 메모입니다. 헷갈린 카드는 모든 일이 중요해 보였는지부터 다시 봅니다.",
+    };
+  }
+
+  if (content.slug === "office-survival") {
+    return {
+      kicker: "첫 5초 안내",
+      title: "요구를 낮추고 자원을 지키는 퇴근 관제판",
+      firstLook: "근무 시각, 흔들리는 자원, 체력·멘탈·업무량·신뢰 막대, 현재 전표를 먼저 봅니다.",
+      firstMove: "첫 움직임은 가장 좋아 보이는 답을 고르는 것이 아니라, 요구를 낮출지 통제를 되찾을지 지원을 요청할지 판단하는 것입니다.",
+      pacingText: `${content.durationLabel} 동안 하루 전표를 처리합니다. 결과는 빠른 탈출보다 어떤 자원을 방치했고 어떤 요구를 줄였는지로 남습니다.`,
+      recordText: "기록은 결과 자랑판이 아니라 퇴근 기록지입니다. 업무량만 낮추려다 체력, 멘탈, 신뢰 중 무엇을 태웠는지 다음 판에서 다시 봅니다.",
     };
   }
 

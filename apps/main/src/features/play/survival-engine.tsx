@@ -1,10 +1,8 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { withLocale } from "@/features/i18n/config";
 import type { MicroSimPlayContent, PlayEnding, PlayStatKey } from "@/features/content/types";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
@@ -48,7 +46,7 @@ function formatEffect(value: number) {
 }
 
 function statGoal(key: PlayStatKey) {
-  return key === "workload" ? "낮을수록 좋음" : "높을수록 좋음";
+  return key === "workload" ? "낮을수록 퇴근선 가까움" : "높을수록 버팀";
 }
 
 function statRiskScore(key: PlayStatKey, value: number) {
@@ -63,8 +61,9 @@ function statRiskLabel(key: PlayStatKey, value: number) {
 }
 
 function effectMeaning(key: PlayStatKey, value: number) {
-  if (key === "workload") return value > 0 ? "증가" : "감소";
-  return value > 0 ? "상승" : "하락";
+  if (key === "workload") return value > 0 ? "부담 증가" : "부담 감소";
+  if (key === "reputation") return value > 0 ? "신뢰 증가" : "신뢰 손상";
+  return value > 0 ? "회복" : "소모";
 }
 
 function effectTone(key: PlayStatKey, value: number) {
@@ -103,6 +102,7 @@ export function SurvivalPlayEngine({
   const currentTurn = content.turns[turnIndex];
   const totalTurns = content.turns.length;
   const progressLabel = isFinished ? `${totalTurns}/${totalTurns}` : `${turnIndex + 1}/${totalTurns}`;
+  const timeLabel = isFinished ? "18:10 마감" : (currentTurn?.title.split(",")[0] ?? "대기");
   const mostPressingStat = [...content.stats].sort((a, b) => statRiskScore(b.key, stats[b.key]) - statRiskScore(a.key, stats[a.key]))[0];
   const riskLabel = mostPressingStat ? `${mostPressingStat.label} ${statRiskLabel(mostPressingStat.key, stats[mostPressingStat.key])}` : "대기";
 
@@ -150,21 +150,21 @@ export function SurvivalPlayEngine({
   }
 
   return (
-    <section className="rounded-lg border bg-card shadow-sm" data-play-engine={content.slug}>
+    <section className="rounded-lg border bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--muted)/0.2))] shadow-sm" data-play-engine={content.slug}>
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium text-muted-foreground">퇴근 운영판</p>
+            <p className="text-xs font-medium text-muted-foreground">퇴근 관제판</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-right">
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">하루 진행</p>
-              <p className="text-sm font-semibold tabular-nums">{progressLabel}</p>
+              <p className="text-xs text-muted-foreground">근무 시각</p>
+              <p className="text-sm font-semibold tabular-nums">{timeLabel}</p>
             </div>
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">위험 자원</p>
+              <p className="text-xs text-muted-foreground">흔들리는 자원</p>
               <p className="text-sm font-semibold">{isFinished ? "정산 완료" : riskLabel}</p>
             </div>
           </div>
@@ -186,7 +186,9 @@ export function SurvivalPlayEngine({
             </div>
           ))}
         </div>
-        <p className="mt-3 text-xs leading-5 text-muted-foreground">업무량은 낮을수록 좋고, 체력·멘탈·평판은 높을수록 퇴근길이 가벼워집니다.</p>
+        <p className="mt-3 text-xs leading-5 text-muted-foreground">
+          업무량은 낮을수록 퇴근선이 가까워지고, 체력·멘탈·신뢰는 높을수록 하루를 버틸 여지가 남습니다. 사건 흐름 {progressLabel}
+        </p>
       </div>
 
       {ending ? (
@@ -206,18 +208,13 @@ export function SurvivalPlayEngine({
               </Button>
             </div>
             <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
-            <div className="mt-3">
-              <Link href={withLocale("/tools", "en")} className="inline-flex rounded-md border bg-background px-3 py-2 text-sm hover:bg-muted">
-                보관된 개발자 도구 열기
-              </Link>
-            </div>
           </div>
           <HistoryPanel content={content} history={history} />
         </div>
       ) : currentTurn ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-state={currentTurn.id}>
           <div>
-            <p className="text-xs font-medium text-muted-foreground">현재 사건</p>
+            <p className="text-xs font-medium text-muted-foreground">현재 전표</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{currentTurn.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{currentTurn.situation}</p>
             <div className="mt-5 grid gap-3">
@@ -227,13 +224,13 @@ export function SurvivalPlayEngine({
                   type="button"
                   data-play-action="choice"
                   data-play-choice-index={choiceIndex}
-                  className="rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="rounded-md border border-l-4 border-l-zinc-300 bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-l-zinc-700"
                   onClick={() => choose(choiceIndex)}
                 >
                   <span className="block text-sm font-semibold">{choice.label}</span>
                   <span className="mt-1 block text-sm leading-6 text-muted-foreground">{choice.detail}</span>
                   <span className="mt-3 flex flex-wrap gap-1.5">
-                    <span className="rounded-sm border bg-muted/40 px-2 py-1 text-xs text-muted-foreground">선택 후 변화</span>
+                    <span className="rounded-sm border bg-muted/40 px-2 py-1 text-xs text-muted-foreground">비용 도장</span>
                     {content.stats.map((stat) => {
                       const effect = choice.effects[stat.key] ?? 0;
                       if (!effect) return null;
@@ -258,7 +255,7 @@ export function SurvivalPlayEngine({
 function HistoryPanel({ content, history }: { content: MicroSimPlayContent; history: HistoryItem[] }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">오늘의 흐름</p>
+      <p className="text-sm font-semibold">퇴근 기록지</p>
       {history.length ? (
         <ol className="mt-3 space-y-3">
           {history.map((item, index) => (
@@ -280,7 +277,7 @@ function HistoryPanel({ content, history }: { content: MicroSimPlayContent; hist
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">선택을 시작하면 하루의 경로가 보입니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">첫 전표를 처리하면 오늘의 요구, 통제, 지원 판단이 여기에 남습니다.</p>
       )}
     </aside>
   );
