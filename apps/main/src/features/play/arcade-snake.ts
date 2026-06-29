@@ -229,7 +229,7 @@ export function advanceSnake(content: ArcadeGameContent, state: SnakePlayState, 
     state.focus = clamp(state.focus - 16, 0, 100);
     rememberSnakeHistory(state, {
       label: hitWall ? "벽" : "꼬리",
-      detail: hitWall ? "한 박자 늦음" : "욕심내다 꼬임",
+      detail: hitWall ? "한 박자 늦음" : "큐가 꼬임",
       score: -2,
     });
     resetSnakeAfterCrash(content, state);
@@ -250,7 +250,7 @@ export function advanceSnake(content: ArcadeGameContent, state: SnakePlayState, 
   state.snake = state.snakeFood.good ? movedSnake : movedSnake.slice(0, Math.max(3, state.snake.length - 1));
   rememberSnakeHistory(state, {
     label: state.snakeFood.label,
-    detail: state.snakeFood.good ? "잘 먹음" : "괜히 물었음",
+    detail: state.snakeFood.good ? "큐에 붙임" : "괜히 물었음",
     score: delta,
   });
   state.snakeFood = makeSnakeFood(content, state.playTick + state.score + state.snake.length, state.snake);

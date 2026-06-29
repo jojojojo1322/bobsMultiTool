@@ -2718,8 +2718,8 @@ function snakeOptionLabel(option: SnakeDirectionOption, foodGood: boolean) {
   if (option.reverse) return "반대";
   if (option.hitWall) return "벽";
   if (option.hitSelf) return "꼬리";
-  if (option.willEat) return foodGood ? "먹기" : "피하기";
-  if (option.closer) return "먹이 쪽";
+  if (option.willEat) return foodGood ? "붙이기" : "피하기";
+  if (option.closer) return "조각 쪽";
   return "우회";
 }
 
@@ -2766,14 +2766,14 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   const safeFallback = directionOptions.find((option) => option.safe);
   const suggestedTurn = directEat ?? safeCloser ?? safeFallback ?? null;
   const suggestedTurnCue = suggestedTurn ? `${snakeDirectionLabel(suggestedTurn.direction)} · ${snakeOptionLabel(suggestedTurn, state.snakeFood.good)}` : "열린 길 없음";
-  const foodCue = state.snakeFood.good ? (movingCloser ? "먹이 쪽" : "길 찾기") : previewDanger ? "건드리지 말기" : "비켜가기";
+  const foodCue = state.snakeFood.good ? (movingCloser ? "조각 쪽" : "길 찾기") : previewDanger ? "건드리지 말기" : "비켜가기";
   const nextCue = preview.hitWall
     ? "다음 칸 벽"
     : preview.hitSelf
       ? "다음 칸 꼬리"
       : preview.willEat
         ? state.snakeFood.good
-          ? "다음 칸 사과"
+          ? "다음 칸 조각"
           : "다음 칸 피하기"
         : movingCloser
           ? `${snakeDirectionLabel(preview.direction)} · 가까워짐`
@@ -2790,20 +2790,20 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = "rgba(15,23,42,0.42)";
+  ctx.fillStyle = "rgba(15,23,42,0.48)";
   ctx.beginPath();
-  ctx.roundRect(24, 14, canvasWidth - 48, 34, 14);
+  ctx.roundRect(24, 14, canvasWidth - 48, 34, 9);
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,0.1)";
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.fillStyle = "rgba(209,250,229,0.07)";
   ctx.beginPath();
-  ctx.roundRect(snakeBoardX - 12, snakeBoardY - 12, boardWidth + 24, boardHeight + 24, 18);
+  ctx.roundRect(snakeBoardX - 12, snakeBoardY - 12, boardWidth + 24, boardHeight + 24, 9);
   ctx.fill();
 
-  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  ctx.fillStyle = "rgba(209,250,229,0.055)";
   for (let column = 0; column <= snakeColumns; column += 1) {
     const x = snakeBoardX + column * snakeCellSize;
     ctx.fillRect(x, snakeBoardY, 1, boardHeight);
@@ -2829,7 +2829,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     const optionCenter = snakeCellCenter(option.head);
     const optionDanger = option.hitSelf || (option.willEat && !state.snakeFood.good);
     const optionStrong = option.safe && (option.willEat || option.closer);
-    ctx.fillStyle = optionDanger ? "rgba(251,113,133,0.14)" : optionStrong ? "rgba(250,204,21,0.14)" : "rgba(74,222,128,0.1)";
+    ctx.fillStyle = optionDanger ? "rgba(251,113,133,0.14)" : optionStrong ? "rgba(250,204,21,0.14)" : "rgba(125,211,252,0.09)";
     ctx.beginPath();
     ctx.roundRect(
       snakeBoardX + option.head.x * snakeCellSize + 5,
@@ -2839,14 +2839,14 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
       7,
     );
     ctx.fill();
-    ctx.strokeStyle = optionDanger ? "rgba(251,113,133,0.44)" : optionStrong ? "rgba(250,204,21,0.62)" : "rgba(74,222,128,0.36)";
+    ctx.strokeStyle = optionDanger ? "rgba(251,113,133,0.44)" : optionStrong ? "rgba(250,204,21,0.62)" : "rgba(125,211,252,0.34)";
     ctx.lineWidth = option.direction === preview.direction ? 2 : 1;
     ctx.stroke();
     drawSnakeDirectionMarker(ctx, optionCenter, option.direction, optionDanger ? danger : optionStrong ? accent : primary);
   }
 
   if (previewInBounds) {
-    ctx.fillStyle = previewDanger ? "rgba(251,113,133,0.32)" : preview.willEat ? "rgba(250,204,21,0.36)" : "rgba(74,222,128,0.22)";
+    ctx.fillStyle = previewDanger ? "rgba(251,113,133,0.32)" : preview.willEat ? "rgba(250,204,21,0.36)" : "rgba(125,211,252,0.2)";
     ctx.beginPath();
     ctx.roundRect(
       snakeBoardX + preview.head.x * snakeCellSize + 2,
@@ -2856,7 +2856,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
       8,
     );
     ctx.fill();
-    ctx.strokeStyle = previewDanger ? "rgba(251,113,133,0.78)" : preview.willEat ? "rgba(250,204,21,0.82)" : "rgba(74,222,128,0.68)";
+    ctx.strokeStyle = previewDanger ? "rgba(251,113,133,0.78)" : preview.willEat ? "rgba(250,204,21,0.82)" : "rgba(125,211,252,0.66)";
     ctx.lineWidth = 2;
     ctx.stroke();
   } else {
@@ -2913,7 +2913,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     const cell = state.snake[index];
     if (!cell) continue;
     const isHead = index === 0;
-    ctx.fillStyle = isHead ? primary : index % 2 === 0 ? "rgba(74,222,128,0.82)" : "rgba(52,211,153,0.72)";
+    ctx.fillStyle = isHead ? primary : index % 2 === 0 ? "rgba(125,211,252,0.78)" : "rgba(56,189,248,0.66)";
     ctx.beginPath();
     ctx.roundRect(snakeBoardX + cell.x * snakeCellSize + 3, snakeBoardY + cell.y * snakeCellSize + 3, snakeCellSize - 6, snakeCellSize - 6, isHead ? 8 : 7);
     ctx.fill();
@@ -2933,7 +2933,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, 34, 36, 128);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.64)";
-  ctx.fillText(`먹이 ${state.snakeFood.label} · ${foodCue}`, 172, 36, 210);
+  ctx.fillText(`조각 ${state.snakeFood.label} · ${foodCue}`, 172, 36, 210);
   ctx.textAlign = "right";
   ctx.fillStyle = previewDanger ? danger : preview.willEat || movingCloser ? accent : "rgba(255,255,255,0.72)";
   ctx.fillText(previewDanger ? `${nextCue} · ${turnCue}` : turnCue, canvasWidth - 34, 36, 310);
@@ -2941,7 +2941,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("예고 칸과 먹이 방향선을 보며 방향키/WASD 또는 캔버스 드래그로 꺾습니다.", 34, canvasHeight - 20);
+  ctx.fillText("예고 칸과 조각 방향선을 보며 방향키/WASD 또는 캔버스 드래그로 큐를 꺾습니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -2951,8 +2951,8 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("예고 칸을 보며 방향키/WASD나 캔버스 드래그로 방향을 틉니다.", canvasWidth / 2, 204);
-    ctx.fillText("먹이 방향선만 따라가도 되지만, 꼬리 앞에서는 한 박자 먼저 꺾어야 합니다.", canvasWidth / 2, 230);
+    ctx.fillText("예고 칸을 보며 방향키/WASD나 캔버스 드래그로 큐를 꺾습니다.", canvasWidth / 2, 204);
+    ctx.fillText("조각 방향선만 따라가도 되지만, 꼬리 앞에서는 한 박자 먼저 꺾어야 합니다.", canvasWidth / 2, 230);
   }
 }
 
@@ -4235,10 +4235,10 @@ const arcadeVariantCopy = {
     liveDetail: "공이 내려올 자리와 패치 패들 위치를 다시 봅니다.",
   },
   snake: {
-    finalKicker: "스네이크 결과",
-    liveTitle: "골목 기록",
-    scoreLabel: "먹은 사과",
-    liveDetail: "다음 칸, 열린 방향, 몸통과의 거리를 같이 봅니다.",
+    finalKicker: "릴리스 큐 결과",
+    liveTitle: "큐 경로 기록",
+    scoreLabel: "붙인 조각",
+    liveDetail: "다음 칸, 열린 방향, 꼬리와의 거리를 같이 봅니다.",
   },
   password: {
     finalKicker: "추론 결과",
