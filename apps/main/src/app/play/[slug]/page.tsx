@@ -323,6 +323,16 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
         recordText: "기록은 검색 순위 상상이 아니라 어떤 대기표를 확인했는지 남기는 운영 메모입니다.",
       };
     }
+    if (content.slug === "meeting-escape") {
+      return {
+        kicker: "첫 5초 안내",
+        title: "회의 발언을 결정 도장과 넘김 도장으로 닫는 화이트보드",
+        firstLook: "회의 발언 전표, 결정 도장, 넘김 도장, owner/deadline/next action 체크줄을 먼저 봅니다.",
+        firstMove: "첫 움직임은 도장입니다. 담당자·마감·다음 행동·범위 축소가 보이면 결정, 싱크·느낌·다음 회의는 넘김입니다.",
+        pacingText: `${content.durationLabel} 동안 회의를 빨리 끊는 것이 아니라 실행으로 넘어갈 발언만 골라 닫습니다.`,
+        recordText: "기록은 숫자 결과보다 어떤 발언을 닫았는지 남기는 회의 화이트보드 메모입니다.",
+      };
+    }
 
     return {
       kicker: "첫 5초 안내",

@@ -1,11 +1,11 @@
 {
   "slug": "meeting-escape",
-  "title": "회의 끝낼 단서 찾기",
-  "description": "회의 문장 중 담당자, 마감, 다음 행동처럼 회의를 끝낼 단서만 누르는 30-60초 탭 게임입니다. 잡담과 분위기 말은 넘기고 결정 신호만 고릅니다.",
+  "title": "회의 종료 도장판",
+  "description": "회의 발언 한 줄을 보고 담당자·마감·다음 행동처럼 회의를 닫는 말에는 결정 도장을, 싱크·느낌·다음 회의 같은 말에는 넘김 도장을 찍는 30-60초 탭 게임입니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
   "updatedAt": "2026-06-29",
-  "shareText": "회의 끝낼 단서 찾기를 해봤다. 담당자, 마감, 다음 행동이 보이면 회의가 짧아졌다.",
+  "shareText": "회의 종료 도장판을 해봤다. 담당자, 마감, 다음 행동이 보일 때만 결정 도장을 찍었다.",
   "order": 21,
   "relatedBlogSlugs": [
     "routine-before-name",
@@ -21,76 +21,76 @@
     "office-survival",
     "priority-sorter"
   ],
-  "targetLabel": "결정 신호",
-  "decoyLabel": "넘기기",
+  "targetLabel": "결정 도장",
+  "decoyLabel": "넘김 도장",
   "targets": [
     {
       "id": "owner",
-      "label": "누가 가져갈까요?",
-      "detail": "담당자가 정해지면 회의가 끝날 수 있다.",
+      "label": "이 일은 민지가 가져가죠",
+      "detail": "담당자가 생기면 회의가 끝날 수 있다.",
       "kind": "target",
       "points": 3
     },
     {
       "id": "just-sync",
       "label": "일단 싱크만 하죠",
-      "detail": "목적 없는 회의가 길어지는 신호다.",
+      "detail": "무엇을 정할지 없으면 회의가 계속 늘어진다.",
       "kind": "decoy",
       "points": 2
     },
     {
       "id": "deadline",
-      "label": "오늘 안에 필요한가요?",
-      "detail": "마감이 정해지면 범위가 줄어든다.",
+      "label": "오늘 5시까지 필요한가요?",
+      "detail": "마감이 정해지면 범위와 다음 움직임이 줄어든다.",
       "kind": "target",
       "points": 3
     },
     {
       "id": "vibe",
       "label": "느낌상 그럴 것 같아요",
-      "detail": "결정 근거가 아니라 분위기다.",
+      "detail": "분위기는 결정 근거가 아니다.",
       "kind": "decoy",
       "points": 2
     },
     {
       "id": "next-action",
-      "label": "다음 행동만 정리하죠",
-      "detail": "회의 종료에 가까운 문장이다.",
+      "label": "다음 행동만 화이트보드에 남기죠",
+      "detail": "회의를 닫고 실행으로 넘기는 문장이다.",
       "kind": "target",
       "points": 3
     },
     {
       "id": "circle",
       "label": "다시 처음부터 보면",
-      "detail": "이미 같은 이야기가 반복되는 순간이다.",
+      "detail": "이미 돈 이야기를 한 바퀴 더 돌리는 신호다.",
       "kind": "decoy",
       "points": 2
     },
     {
       "id": "doc",
-      "label": "문서에 남기고 비동기로 볼까요?",
-      "detail": "회의를 줄이는 좋은 탈출문이다.",
+      "label": "문서에 남기고 비동기로 봅시다",
+      "detail": "회의 밖에서 처리할 길을 여는 탈출문이다.",
       "kind": "target",
       "points": 3
     },
     {
       "id": "another-meeting",
       "label": "이건 다음 회의에서 더 보죠",
-      "detail": "다음 회의를 하나 더 만드는 신호다.",
+      "detail": "결정 없이 회의만 하나 더 만드는 문장이다.",
       "kind": "decoy",
       "points": 2
     },
     {
       "id": "scope",
-      "label": "이번 범위에서 빼도 되나요?",
-      "detail": "범위를 줄이면 오늘의 시간이 살아난다.",
+      "label": "이번 범위에서는 빼도 되나요?",
+      "detail": "범위가 닫히면 오늘 할 일이 선명해진다.",
       "kind": "target",
       "points": 3
     },
     {
       "id": "everyone",
-      "label": "모두 한마디씩 해볼까요?",
-      "detail": "결정과 멀어지는 확장 신호다.",
+      "label": "모두 한마디씩 더 해볼까요?",
+      "detail": "결정을 닫기보다 발언을 다시 여는 말이다.",
       "kind": "decoy",
       "points": 2
     }
@@ -98,73 +98,78 @@
   "endings": [
     {
       "id": "escaped",
-      "title": "회의 탈출 성공",
-      "description": "결정 신호를 잘 잡았다. 회의는 짧아지고 다음 행동은 남았다.",
+      "title": "회의가 닫힘",
+      "description": "담당자, 마감, 다음 행동을 잘 잡았다. 발언은 줄고 실행할 문장만 남았다.",
       "minScore": 18
     },
     {
       "id": "survived",
-      "title": "회의 생존",
-      "description": "흔들리는 흐름 속에서도 핵심 신호는 대체로 잡았다.",
+      "title": "대체로 닫아냄",
+      "description": "핵심 결정 도장은 찍었다. 이제 분위기 말과 다음 회의 문장을 조금 더 빨리 넘기면 된다.",
       "minScore": 12
     },
     {
       "id": "loop",
-      "title": "회의 한 바퀴 더",
-      "description": "잡담과 결정을 구분하지 못해 회의가 한 바퀴 더 돌았다.",
+      "title": "회의가 한 바퀴 더 돎",
+      "description": "잡담과 결정을 섞어 봤다. 다음 판에서는 담당자, 마감, 다음 행동부터 찾는다.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "회의 결정 신호 판별 탭 게임",
-    "planningIntent": "회의 끝낼 단서 찾기는 빠르게 누르는 반응 게임이 아니라, 회의 문장 속에서 담당자, 마감, 다음 행동처럼 회의를 끝낼 수 있는 결정 신호를 고르는 판단 게임으로 검토해야 한다.",
+    "gameMode": "회의 발언을 결정 도장과 넘김 도장으로 나누는 종료 체크 게임",
+    "planningIntent": "회의 종료 도장판은 빠르게 누르는 반응 게임이 아니라, 회의 발언 속에서 owner, deadline, next action처럼 회의를 실제로 닫는 액션아이템 신호와 싱크, 느낌, 다음 회의처럼 시간을 다시 여는 발언을 나누는 회의 운영 루틴이다. 액션아이템은 누가, 무엇을, 언제까지 할지 분명해야 하고 회의 끝에는 후속 행동과 책임자가 남아야 한다는 회의 운영 자료를 기준으로 삼는다.",
     "researchPlan": {
       "webSearchSeeds": [
-        "meeting facilitation decision action items owner deadline",
-        "tap game signal detection UX decoy feedback",
-        "mobile button label clarity interaction design"
+        "effective meetings action items owner deadline next steps",
+        "meeting facilitation decisions action items follow up",
+        "meeting notes action items owner due date official guide",
+        "mobile tap game binary choice feedback large buttons"
       ],
       "referenceTypes": [
-        "회의록의 action item, owner, deadline 구분 사례",
-        "짧은 문장 속 표적/미끼를 고르는 탭 게임",
-        "모바일 큰 터치 영역과 명확한 버튼 라벨 사례"
+        "회의 액션아이템이 owner, task, due date를 포함해야 한다는 운영 체크리스트",
+        "회의 마지막에 decision, next step, follow-up을 남기는 진행 방식",
+        "회의록에서 결정과 잡담을 분리해 후속 실행으로 넘기는 사례",
+        "두 개의 큰 선택 버튼과 짧은 기록으로 기준을 학습시키는 모바일 탭 게임"
       ],
       "dataOrSimulationNeeds": [
-        "결정 문장과 잡담 문장 비율별 오탭 가능성",
-        "회의 문장 길이와 애매한 표현이 반응 시간을 얼마나 늘리는지 비교"
+        "결정 도장과 넘김 도장을 5:5로 섞어 모든 발언을 결정처럼 보거나 모든 발언을 넘기는 편향을 줄인다.",
+        "발언 문장은 한 줄 중심으로 유지해 담당자, 마감, 다음 행동, 범위 축소 중 하나가 첫 5초 안에 보이는지 확인한다.",
+        "오답 후에는 긴 설명보다 어떤 회의 종료 기준을 놓쳤는지 운영 기록에 남기는지 확인한다."
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '회의를 끝낼 단서만 누른다'가 읽히는가?",
-      "결정 신호는 담당자, 마감, 다음 행동처럼 실제 종료 근거를 갖는가?",
-      "잡담 신호는 불공정한 함정이 아니라 회의가 길어지는 익숙한 말로 보이는가?",
-      "틀린 탭이 다음 회의 문장에서 어떤 단어를 봐야 하는지 알려주는가?",
-      "모바일에서 긴 회의 문장도 두 선택 버튼을 가리지 않는가?"
+      "첫 5초 안에 '회의를 닫는 말에는 결정 도장, 늘리는 말에는 넘김 도장'이 읽히는가?",
+      "결정 도장은 담당자, 마감, 다음 행동, 범위 축소처럼 실제 회의 종료 근거를 갖는가?",
+      "넘김 도장은 함정이 아니라 회의에서 익숙하게 시간을 늘리는 말로 보이는가?",
+      "문서화와 비동기 전환은 회피가 아니라 회의를 닫는 실행 경로로 읽히는가?",
+      "오답 기록은 다음 발언에서 owner, deadline, next action 중 무엇을 봐야 하는지 남기는가?",
+      "모바일에서 발언 전표와 두 도장 버튼이 서로 가리지 않는가?"
     ],
     "visualQuestions": [
-      "회의실 장식보다 현재 발언 카드와 선택 버튼이 먼저 보이는가?",
-      "결정 신호가 결과 전에 색으로 과하게 암시되지 않는가?",
-      "오탭 피드백은 짧게 끝나고 담당자/마감/다음 행동 기준만 남는가?",
-      "결과는 빠름보다 회의를 줄인 결정 기준을 남기는가?"
+      "회의실 그림보다 화이트보드 전표, 결정 칸, 도장 버튼이 먼저 보이는가?",
+      "결정 도장과 넘김 도장이 같은 무게로 보여 넘김이 실패처럼 보이지 않는가?",
+      "잡담 발언은 빨간 경고가 아니라 조용히 넘길 항목으로 보이는가?",
+      "회의 기록은 숫자 결과보다 방금 닫은 발언과 다음 행동 기준을 남기는 화이트보드 메모처럼 보이는가?"
     ],
     "riskAndSafetyNotes": [
-      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
-      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+      "실제 회의 데이터, 계정, 서버 저장, 녹취 업로드는 넣지 않는다.",
+      "반복 플레이는 회의 혐오를 부추기는 문구가 아니라 종료 기준을 익히는 짧은 복기에서 오게 한다.",
+      "모든 발언을 끊어내는 게임처럼 보이지 않게 좋은 비동기 전환과 범위 축소도 결정 신호로 넣는다."
     ],
     "mechanicProfile": {
-      "primaryResource": "결정 신호, 잡담 신호, 회의 종료 기준, 판단 로그",
-      "progressionQuestion": "성장은 더 빨리 누르는 것보다 회의를 끝낼 말과 늘릴 말을 구분하는 기준이 선명해지는가?",
-      "failureQuestion": "오탭이 손 실수인지 분위기 말에 끌린 것인지 구분되는가?",
-      "recoveryQuestion": "다음 발언에서 바로 담당자, 마감, 다음 행동 기준을 시험할 수 있는가?"
+      "primaryResource": "결정 도장, 넘김 도장, 회의 발언 전표, 종료 기록",
+      "progressionQuestion": "성장은 더 빨리 누르는 것보다 회의에서 담당자, 마감, 다음 행동, 범위 축소를 더 빨리 분리하는 감각인가?",
+      "failureQuestion": "오답은 손 실수인지, 분위기 말과 다음 회의 제안을 결정처럼 착각한 것인지 구분되는가?",
+      "recoveryQuestion": "다음 발언에서 바로 담당자, 마감, 다음 행동, 문서화 기준을 다시 시험할 수 있는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "회의실 화이트보드와 결정 도장",
-      "primarySurface": "큰 발언 카드, 결정/넘김 버튼, 작은 회의 종료 기록",
-      "roughnessTarget": "회의실 일러스트보다 화이트보드 줄, 도장, 체크박스의 투박함",
-      "differenceFromGenericPlay": "여러 장식보다 회의 발언과 결정 신호 버튼이 화면을 만든다.",
+      "metaphor": "회의실 화이트보드 전표에 결정/넘김 도장을 찍는 종료 창구",
+      "primarySurface": "회의 발언 전표, 결정 도장 버튼, 넘김 도장 버튼, 작은 owner/deadline/next action 체크줄과 회의 기록",
+      "roughnessTarget": "회의실 일러스트보다 흰 보드, 검은 마커줄, 체크칸, 도장 자국이 있는 투박한 종료판",
+      "differenceFromGenericPlay": "정답 카드가 아니라 회의 발언을 닫는 전표와 도장 흐름이 화면의 성격을 만든다.",
       "mustAvoid": [
-        "작은 탭 대상 여러 개를 흩뿌리는 배치",
-        "판정 전 과한 색 힌트"
+        "사람 얼굴이나 회의실 장식을 크게 그리는 화면",
+        "잡담 발언을 실패나 손실처럼 겁주는 화면"
       ]
     }
   }
