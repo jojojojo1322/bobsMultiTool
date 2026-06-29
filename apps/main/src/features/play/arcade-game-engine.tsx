@@ -2975,47 +2975,47 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   const cursorNeighborIds = new Set(cursor?.revealed && !cursor.mine && cursor.adjacent > 0 ? mineNeighborIds(state, state.mineCursor) : []);
   const cursorActionTitle = cursor?.revealed
     ? cursor.mine
-      ? "터진 칸입니다"
+      ? "위험 구역입니다"
       : cursorCanChord
         ? "주변 열기 준비"
         : cursorHasTooManyFlags
           ? "깃발이 많습니다"
           : cursor.adjacent > 0
             ? `숫자 ${cursor.adjacent}`
-            : "빈칸입니다"
+            : "빈 구역입니다"
     : cursor?.flagged
-      ? "깃발 칸입니다"
-      : "여기를 열어볼까요";
+      ? "깃발 구역입니다"
+      : "이 구역을 열까요";
   const cursorActionDetail = cursor?.revealed
     ? cursor.mine
-      ? "다음 칸으로 옮기세요"
+      ? "다음 구역으로 옮기세요"
       : cursorCanChord
-        ? `다시 누르면 ${cursorSummary.closed}칸 같이 열림`
+        ? `다시 누르면 ${cursorSummary.closed}구역 같이 열림`
         : cursorHasTooManyFlags
           ? `${cursorSummary.flagged - cursor.adjacent}개 깃발이 많음`
           : cursor.adjacent > 0
             ? cursorNeedsFlags > 0
               ? `깃발 ${cursorNeedsFlags}개 더 필요`
-              : "닫힌 칸을 다시 확인"
-            : "주변까지 열린 빈칸"
+              : "닫힌 구역을 다시 확인"
+            : "주변까지 열린 빈 구역"
     : cursor?.flagged
       ? "F로 깃발을 해제할 수 있음"
-      : "열기 또는 표시 선택";
+      : "열기 또는 깃발 선택";
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   const glow = ctx.createRadialGradient(mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 40, mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 310);
-  glow.addColorStop(0, "rgba(147,197,253,0.14)");
-  glow.addColorStop(1, "rgba(147,197,253,0)");
+  glow.addColorStop(0, "rgba(250,204,21,0.12)");
+  glow.addColorStop(1, "rgba(250,204,21,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  ctx.fillStyle = "rgba(245,238,216,0.1)";
   ctx.beginPath();
-  ctx.roundRect(mineBoardX - 14, mineBoardY - 14, mineBoardWidth + 28, mineBoardHeight + 28, 18);
+  ctx.roundRect(mineBoardX - 14, mineBoardY - 14, mineBoardWidth + 28, mineBoardHeight + 28, 10);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.strokeStyle = "rgba(245,238,216,0.24)";
   ctx.lineWidth = 1;
   ctx.stroke();
 
@@ -3031,7 +3031,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.fill();
 
     if (isCursorNeighbor) {
-      ctx.fillStyle = isChordReadyNeighbor ? "rgba(147,197,253,0.28)" : "rgba(147,197,253,0.15)";
+      ctx.fillStyle = isChordReadyNeighbor ? "rgba(250,204,21,0.26)" : "rgba(245,238,216,0.12)";
       ctx.beginPath();
       ctx.roundRect(x - 3, y - 3, mineCellSize + 6, mineCellSize + 6, 12);
       ctx.fill();
@@ -3040,7 +3040,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     if (cell.revealed && cell.mine) {
       ctx.fillStyle = danger;
     } else if (cell.revealed) {
-      ctx.fillStyle = cell.adjacent === 0 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.16)";
+      ctx.fillStyle = cell.adjacent === 0 ? "rgba(245,238,216,0.24)" : "rgba(245,238,216,0.18)";
     } else if (cell.flagged) {
       const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
       gradient.addColorStop(0, "rgba(248,113,113,0.42)");
@@ -3048,14 +3048,14 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
       ctx.fillStyle = gradient;
     } else {
       const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
-      gradient.addColorStop(0, "rgba(255,255,255,0.22)");
-      gradient.addColorStop(1, "rgba(255,255,255,0.08)");
+      gradient.addColorStop(0, "rgba(245,238,216,0.2)");
+      gradient.addColorStop(1, "rgba(245,238,216,0.07)");
       ctx.fillStyle = gradient;
     }
     ctx.beginPath();
     ctx.roundRect(x, y, mineCellSize, mineCellSize, 9);
     ctx.fill();
-    ctx.strokeStyle = isChordReadyNeighbor ? "rgba(147,197,253,0.9)" : cell.revealed ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.24)";
+    ctx.strokeStyle = isChordReadyNeighbor ? "rgba(250,204,21,0.9)" : cell.revealed ? "rgba(245,238,216,0.2)" : "rgba(245,238,216,0.24)";
     ctx.lineWidth = isChordReadyNeighbor ? 2 : 1;
     ctx.stroke();
     ctx.lineWidth = 1;
@@ -3125,7 +3125,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   if (cursorCanChord && cursor) {
     const cursorCenterX = mineBoardX + cursor.column * (mineCellSize + mineGap) + mineCellSize / 2;
     const cursorCenterY = mineBoardY + cursor.row * (mineCellSize + mineGap) + mineCellSize / 2;
-    ctx.strokeStyle = "rgba(147,197,253,0.32)";
+    ctx.strokeStyle = "rgba(250,204,21,0.34)";
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 7]);
     for (const id of cursorNeighborIds) {
@@ -3140,24 +3140,24 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   }
 
   const panelX = 466;
-  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.fillStyle = "rgba(245,238,216,0.09)";
   ctx.beginPath();
-  ctx.roundRect(panelX, mineBoardY - 12, 196, 238, 18);
+  ctx.roundRect(panelX, mineBoardY - 12, 196, 238, 10);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.14)";
+  ctx.strokeStyle = "rgba(245,238,216,0.2)";
   ctx.stroke();
 
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("열린 칸", panelX + 18, mineBoardY + 22);
+  ctx.fillText("열린 구역", panelX + 18, mineBoardY + 22);
   ctx.font = "900 32px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
   ctx.fillStyle = accent;
   ctx.fillText(`${openedSafe}`, panelX + 18, mineBoardY + 62);
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.62)";
-  ctx.fillText(`/ ${totalSafe} 안전칸`, panelX + 80, mineBoardY + 59);
-  ctx.fillText(`표시 ${flaggedCount} / ${mineCount}`, panelX + 18, mineBoardY + 82);
+  ctx.fillText(`/ ${totalSafe} 안전구역`, panelX + 80, mineBoardY + 59);
+  ctx.fillText(`깃발 ${flaggedCount} / ${mineCount}`, panelX + 18, mineBoardY + 82);
 
   ctx.fillStyle = "rgba(255,255,255,0.13)";
   ctx.beginPath();
@@ -3174,13 +3174,13 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
 
   ctx.fillStyle = "rgba(255,255,255,0.64)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("F 또는 Shift+클릭으로 표시합니다.", panelX + 18, mineBoardY + 182);
-  ctx.fillText("숫자 칸을 다시 누르면 주변을 엽니다.", panelX + 18, mineBoardY + 206);
+  ctx.fillText("F 또는 Shift+클릭으로 깃발 표시.", panelX + 18, mineBoardY + 182);
+  ctx.fillText("숫자 구역을 다시 누르면 주변 열기.", panelX + 18, mineBoardY + 206);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("클릭/Space로 열고, 숫자 칸은 깃발 수가 맞을 때 주변 닫힌 칸을 같이 엽니다.", 34, canvasHeight - 20);
+  ctx.fillText("클릭/Space로 열고, 숫자 구역은 깃발 수가 맞을 때 주변 닫힌 구역을 같이 엽니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -3190,8 +3190,8 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("칸을 열고 숫자를 봅니다. 숫자는 가까운 위험 칸 수입니다.", canvasWidth / 2, 202);
-    ctx.fillText("깃발 수가 맞는 숫자 칸은 한 번 더 눌러 주변을 엽니다.", canvasWidth / 2, 228);
+    ctx.fillText("구역을 열고 숫자를 봅니다. 숫자는 가까운 위험 구역 수입니다.", canvasWidth / 2, 202);
+    ctx.fillText("깃발 수가 맞는 숫자 구역은 한 번 더 눌러 주변을 엽니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4253,10 +4253,10 @@ const arcadeVariantCopy = {
     liveDetail: "다음 칸 색과 기다린 타이밍을 같이 봅니다.",
   },
   minesweeper: {
-    finalKicker: "지뢰찾기 결과",
-    liveTitle: "지뢰 지도",
-    scoreLabel: "안전 칸",
-    liveDetail: "숫자 주변의 깃발 수와 열린 칸을 같이 봅니다.",
+    finalKicker: "위험 지도 결과",
+    liveTitle: "배포 위험 지도",
+    scoreLabel: "안전 구역",
+    liveDetail: "숫자 주변의 깃발 수와 열린 구역을 같이 봅니다.",
   },
   mole: {
     finalKicker: "알림 결과",

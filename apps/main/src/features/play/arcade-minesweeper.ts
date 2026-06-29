@@ -154,8 +154,8 @@ export function toggleMineFlag(state: MinesweeperPlayState, index = state.mineCu
   cell.flagged = !cell.flagged;
   state.focus = clamp(state.focus + (cell.flagged ? 1 : -1), 0, 100);
   rememberMineHistory(state, {
-    label: cell.flagged ? "표시" : "해제",
-    detail: cell.flagged ? "의심 칸 보류" : "다시 볼 칸",
+    label: cell.flagged ? "깃발" : "해제",
+    detail: cell.flagged ? "의심 구역 보류" : "다시 볼 구역",
     score: 0,
   });
 }
@@ -166,8 +166,8 @@ export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPla
   state.mineCursor = index;
   if (cell.flagged) {
     rememberMineHistory(state, {
-      label: "표시",
-      detail: "표시한 칸은 보류",
+      label: "깃발",
+      detail: "표시한 구역은 보류",
       score: 0,
     });
     return;
@@ -184,8 +184,8 @@ export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPla
     state.score = Math.max(0, state.score - 3);
     state.focus = clamp(state.focus - 20, 0, 100);
     rememberMineHistory(state, {
-      label: "펑",
-      detail: "너무 빨리 눌렀음",
+      label: "위험",
+      detail: "너무 빨리 열었음",
       score: -3,
     });
   } else {
@@ -194,8 +194,8 @@ export function revealMineCell(content: ArcadeGameContent, state: MinesweeperPla
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + (cell.adjacent === 0 ? 3 : 1), 0, 100);
     rememberMineHistory(state, {
-      label: cell.adjacent === 0 ? "빈칸" : `${cell.adjacent}`,
-      detail: cell.adjacent === 0 ? `${opened}칸 열림` : "숫자 확인",
+      label: cell.adjacent === 0 ? "빈 구역" : `${cell.adjacent}`,
+      detail: cell.adjacent === 0 ? `${opened}구역 열림` : "숫자 확인",
       score: delta,
     });
     moveMineCursorToNextSafe(state);
@@ -230,8 +230,8 @@ function openMineNeighborsFromNumber(content: ArcadeGameContent, state: Mineswee
       state.score = Math.max(0, state.score - 3);
       state.focus = clamp(state.focus - 20, 0, 100);
       rememberMineHistory(state, {
-        label: "펑",
-        detail: "표시가 빗나감",
+        label: "위험",
+        detail: "깃발이 빗나감",
         score: -3,
       });
       finishMinesweeperIfNeeded(content, state);
@@ -248,7 +248,7 @@ function openMineNeighborsFromNumber(content: ArcadeGameContent, state: Mineswee
     state.focus = clamp(state.focus + Math.min(5, openedSafe), 0, 100);
     rememberMineHistory(state, {
       label: "주변",
-      detail: `${openedSafe}칸 같이 열림`,
+      detail: `${openedSafe}구역 같이 열림`,
       score: scoreDelta,
     });
     moveMineCursorToNextSafe(state);
