@@ -30,6 +30,22 @@ export function SortMatchEngine({
   const isFinished = index >= content.items.length;
   const totalItems = content.items.length;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
+  const engineCopy =
+    content.slug === "priority-sorter"
+      ? {
+          boardLabel: "WIP 병목판",
+          scoreLabel: "정리한 카드",
+          currentLabel: "오늘 들어온 카드",
+          historyTitle: "WIP 보드 기록",
+          emptyHistory: "카드를 한 장 보내면 오늘 판에서 어떤 기준으로 갈랐는지 여기에 남습니다.",
+        }
+      : {
+          boardLabel: "분류 보드",
+          scoreLabel: "맞춘 항목",
+          currentLabel: "현재 카드",
+          historyTitle: "선택 기준",
+          emptyHistory: "카드를 한 장 보내면 선택한 기준이 여기에 남습니다.",
+        };
 
   function choose(categoryId: string) {
     if (!current) return;
@@ -49,7 +65,7 @@ export function SortMatchEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n맞춘 항목: ${score}/${totalItems}`;
+    const text = `${content.shareText}\n${engineCopy.scoreLabel}: ${score}/${totalItems}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -68,12 +84,12 @@ export function SortMatchEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium text-muted-foreground">분류 보드</p>
+            <p className="text-xs font-medium text-muted-foreground">{engineCopy.boardLabel}</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="rounded-md border bg-background px-3 py-2 text-right">
-            <p className="text-xs text-muted-foreground">맞춘 항목</p>
+            <p className="text-xs text-muted-foreground">{engineCopy.scoreLabel}</p>
             <p className="text-sm font-semibold tabular-nums">
               {score}/{totalItems}
             </p>
@@ -99,13 +115,13 @@ export function SortMatchEngine({
             </div>
             <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
           </div>
-          <SortHistory content={content} history={history} />
+          <SortHistory content={content} history={history} title={engineCopy.historyTitle} emptyText={engineCopy.emptyHistory} />
         </div>
       ) : current ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-state={current.id}>
           <div>
             <div className="rounded-lg border bg-background p-5">
-              <p className="text-xs font-medium text-muted-foreground">현재 카드</p>
+              <p className="text-xs font-medium text-muted-foreground">{engineCopy.currentLabel}</p>
               <h3 className="mt-2 text-2xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
@@ -116,7 +132,7 @@ export function SortMatchEngine({
                   type="button"
                   data-play-action="category"
                   data-play-category-id={category.id}
-                  className="rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className={`rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${priorityCategoryClassName(content.slug, category.id)}`}
                   onClick={() => choose(category.id)}
                 >
                   <span className="block text-sm font-semibold">{category.label}</span>
@@ -125,7 +141,7 @@ export function SortMatchEngine({
               ))}
             </div>
           </div>
-          <SortHistory content={content} history={history} />
+          <SortHistory content={content} history={history} title={engineCopy.historyTitle} emptyText={engineCopy.emptyHistory} />
         </div>
       ) : null}
     </section>
@@ -135,13 +151,17 @@ export function SortMatchEngine({
 function SortHistory({
   content,
   history,
+  title,
+  emptyText,
 }: {
   content: SortMatchGameContent;
   history: SortHistoryItem[];
+  title: string;
+  emptyText: string;
 }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">선택 기준</p>
+      <p className="text-sm font-semibold">{title}</p>
       {history.length ? (
         <ol className="mt-3 space-y-2">
           {history.slice(-8).map((item, index) => {
@@ -160,8 +180,16 @@ function SortHistory({
           })}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">카드를 한 장 보내면 선택한 기준이 여기에 남습니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">{emptyText}</p>
       )}
     </aside>
   );
+}
+
+function priorityCategoryClassName(slug: string, categoryId: string) {
+  if (slug !== "priority-sorter") return "";
+  if (categoryId === "now") return "border-red-300/70 bg-red-50/70 hover:bg-red-50 dark:border-red-900/60 dark:bg-red-950/20";
+  if (categoryId === "schedule") return "border-amber-300/70 bg-amber-50/70 hover:bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20";
+  if (categoryId === "drop") return "border-zinc-300/80 bg-zinc-50/80 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900/40";
+  return "";
 }
