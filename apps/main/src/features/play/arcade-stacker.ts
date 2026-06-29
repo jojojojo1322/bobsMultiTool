@@ -63,7 +63,7 @@ export function makeStackerBlocks(content: ArcadeGameContent): StackerBlock[] {
       y: stackerBaseY,
       width: stackerBaseWidth,
       height: stackerBlockHeight,
-      label: "바닥",
+      label: "기반",
       quality: "base",
     },
   ];
@@ -122,7 +122,7 @@ export function stackerPlacementPreview(state: StackerActiveState): StackerPlace
       quality: "miss",
       scoreDelta: -2,
       focusDelta: -18,
-      status: "놓침",
+      status: "릴리스 끊김",
       detail: "겹친 면이 거의 없음",
     };
   }
@@ -149,7 +149,7 @@ export function stackerPlacementPreview(state: StackerActiveState): StackerPlace
     quality,
     scoreDelta,
     focusDelta,
-    status: nearPerfect ? "딱 맞음" : quality === "solid" ? "잘 겹침" : "아슬아슬",
-    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "잘 겹침" : "아슬아슬",
+    status: nearPerfect ? "정렬 통과" : quality === "solid" ? "배포 안정" : "롤백 경고",
+    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "안정 겹침" : "폭이 얇아짐",
   };
 }

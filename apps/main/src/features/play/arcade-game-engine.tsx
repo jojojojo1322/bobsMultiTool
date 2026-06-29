@@ -2044,7 +2044,7 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     y: state.stackerActiveY,
     width: state.stackerActiveWidth,
     height: stackerBlockHeight,
-    label: "쌓기",
+    label: "배포",
     quality: preview?.quality === "miss" ? "thin" : (preview?.quality ?? (centerGap <= 7 ? "perfect" : overlap >= state.stackerActiveWidth * 0.72 ? "solid" : "thin")),
   };
   drawStackerBlock(ctx, activeBlock, preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : statusFill, "#111827");
@@ -2067,16 +2067,16 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`층 ${state.stackerLayer}`, 34, 36);
+  ctx.fillText(`릴리스 ${state.stackerLayer}`, 34, 36);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    `폭 ${Math.round(state.stackerActiveWidth)} · 놓으면 ${Math.round(preview?.placedWidth ?? 0)} · 잘림 ${Math.round(cutTotal)}`,
+    `현재폭 ${Math.round(state.stackerActiveWidth)} · 남을폭 ${Math.round(preview?.placedWidth ?? 0)} · 잘림 ${Math.round(cutTotal)}`,
     94,
     36,
   );
   ctx.fillStyle = preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : preview?.quality === "perfect" ? "rgba(167,243,208,0.9)" : "rgba(255,255,255,0.68)";
-  ctx.fillText(preview ? `${preview.status} · 차이 ${Math.round(centerGap)}` : `차이 ${Math.round(centerGap)}`, 94, 56);
+  ctx.fillText(preview ? `${preview.status} · 중앙차 ${Math.round(centerGap)}` : `중앙차 ${Math.round(centerGap)}`, 94, 56);
 
   const meterX = 34;
   const meterY = 66;
@@ -2091,12 +2091,12 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fill();
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(preview?.quality === "miss" ? "거의 안 겹침" : centerGap <= 7 ? "지금 좋아요" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
+  ctx.fillText(preview?.quality === "miss" ? "겹침 부족" : centerGap <= 7 ? "배포 가능" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    isDraggingStacker ? "드래그로 가운데를 맞추고 떼면 쌓습니다. Space/Enter도 됩니다." : "마우스로 끌어 맞추고 떼면 쌓습니다. A/D는 살짝 보정합니다.",
+    isDraggingStacker ? "드래그로 배포 블록을 맞추고 떼면 올립니다. Space/Enter도 됩니다." : "마우스로 끌어 맞추고 떼면 올립니다. A/D는 살짝 보정합니다.",
     34,
     canvasHeight - 20,
   );
@@ -2109,8 +2109,8 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("움직이는 블록을 아래층 위에 맞춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스/터치로 끌어 맞추고 떼거나, Space/Enter로 쌓습니다.", canvasWidth / 2, 228);
+    ctx.fillText("움직이는 배포 블록을 아래 릴리스 층 위에 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("마우스/터치로 끌어 맞추고 떼거나, Space/Enter로 올립니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -3920,10 +3920,10 @@ const arcadeVariantCopy = {
     liveDetail: "지금 볼 알림과 그냥 보낼 소음을 나눠 봅니다.",
   },
   stacker: {
-    finalKicker: "타이밍 결과",
-    liveTitle: "쌓은 기록",
-    scoreLabel: "쌓은 층",
-    liveDetail: "손 위치선, 정렬권, 잘린 폭을 같이 봅니다.",
+    finalKicker: "배포 정렬 결과",
+    liveTitle: "배포층 기록",
+    scoreLabel: "쌓은 배포층",
+    liveDetail: "손 위치선, 정렬권, 잘린 폭과 롤백 위험을 같이 봅니다.",
   },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 

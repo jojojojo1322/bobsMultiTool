@@ -1,11 +1,11 @@
 {
   "slug": "deploy-stacker",
-  "title": "블록 맞춰 쌓기",
-  "description": "왕복하는 블록을 아래층 위에 맞춰 놓는 1분 타이밍 게임입니다. 손 위치선, 정렬권, 남을 폭과 잘릴 폭을 보며 최대한 곧게 쌓습니다.",
+  "title": "배포 블록 쌓기",
+  "description": "움직이는 배포 블록을 아래 릴리스 층 위에 맞춰 올리는 1분 타이밍 게임입니다. 정렬권, 남을 폭, 잘릴 폭을 보며 성급한 배포보다 안정적인 탑을 남깁니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-29",
-  "shareText": "블록 맞춰 쌓기를 해봤다. 멈추는 타이밍보다 남을 폭을 보는 게 먼저였다.",
+  "shareText": "배포 블록 쌓기를 해봤다. 높이보다 잘릴 폭을 먼저 보게 됐다.",
   "order": 17,
   "relatedBlogSlugs": [
     "stacker-drag-align-note",
@@ -19,22 +19,22 @@
   ],
   "arcade": {
     "variant": "stacker",
-    "goal": "좌우로 움직이는 블록을 아래층 위에 쌓습니다. 손 위치선, 정렬권, 남을 폭과 잘릴 폭을 보고 타이밍을 잡습니다.",
-    "controls": "마우스나 터치로 캔버스를 끌어 현재 블록을 맞추고 떼면 쌓습니다. Space/Enter로 바로 쌓을 수도 있고, A/D 또는 방향키는 마지막에 살짝 보정합니다.",
-    "playerLabel": "블록",
+    "goal": "좌우로 움직이는 배포 블록을 아래 릴리스 층 위에 올립니다. 손 위치선, 정렬권, 남을 폭과 잘릴 폭을 보고 타이밍을 잡습니다.",
+    "controls": "마우스나 터치로 캔버스를 끌어 현재 배포 블록을 맞추고 떼면 올립니다. Space/Enter로 바로 올릴 수도 있고, A/D 또는 방향키는 마지막에 살짝 보정합니다.",
+    "playerLabel": "배포 블록",
     "goodLabels": [
       "정렬",
-      "층",
-      "딱",
-      "중앙",
-      "평평"
+      "안정",
+      "배포",
+      "통과",
+      "고정"
     ],
     "badLabels": [
-      "삐뚤",
-      "금",
-      "튀어",
+      "잘림",
+      "틈",
       "흔들",
-      "틈"
+      "롤백",
+      "미끄럼"
     ],
     "palette": {
       "background": "#111827",
@@ -46,36 +46,39 @@
   "endings": [
     {
       "id": "tower",
-      "title": "타워가 섰다",
-      "description": "서두르지 않고 잘 쌓았다. 작은 타이밍이 꽤 중요했다.",
+      "title": "릴리스 탑이 섰다",
+      "description": "성급하게 올리지 않고 남을 폭을 보며 안정적으로 쌓았다.",
       "minScore": 20
     },
     {
       "id": "leaning",
-      "title": "조금 기울어짐",
-      "description": "몇 층은 삐뚤었지만 아직 서 있다.",
+      "title": "롤백 전 경고",
+      "description": "폭이 얇아졌지만 아직 흐름은 보인다. 다음 배포 블록은 더 가운데를 봐야 한다.",
       "minScore": 10
     },
     {
       "id": "fall",
-      "title": "와르르",
-      "description": "멈추기 전에 손이 먼저 나갔다. 다음엔 가운데를 보고 누르자.",
+      "title": "릴리스가 끊겼다",
+      "description": "손이 먼저 나가면서 겹친 면이 사라졌다. 다음엔 중앙선과 잘릴 폭을 먼저 보자.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "정렬 타이밍과 누적 성장 아케이드",
-    "planningIntent": "블록 맞춰 쌓기는 블록 높이 숫자보다 남을 폭, 잘릴 폭, 정렬권, 다음 층 부담을 어떻게 읽히게 할지 검토해야 한다.",
+    "gameMode": "배포 블록 정렬 타이밍과 누적 손실 아케이드",
+    "planningIntent": "배포 블록 쌓기는 단순한 높이 기록보다 남을 폭, 잘릴 폭, 정렬권, 다음 릴리스 층 부담을 어떻게 읽히게 할지 검토해야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
+        "Ketchapp Stack game timing feedback",
         "stacker arcade game timing difficulty curve",
         "tower stacking game feedback cut width",
-        "mobile timing game UX anticipation"
+        "mobile timing game UX anticipation",
+        "progressive disclosure game onboarding simple UI"
       ],
       "referenceTypes": [
-        "타워 스태킹 게임의 절단 피드백",
+        "한 번 누르는 타워 스태킹 게임의 절단 피드백",
         "타이밍 게임의 예고선 UI",
-        "누적 높이와 실패 압박 사례"
+        "누적 손실이 다음 난이도로 이어지는 사례",
+        "복잡한 규칙을 첫 화면에서 조금씩 드러내는 UX 자료"
       ],
       "dataOrSimulationNeeds": [
         "층별 이동 속도와 남는 폭의 난이도 곡선",
@@ -83,33 +86,33 @@
       ]
     },
     "systemQuestions": [
-      "높아질수록 무엇이 실제로 어려워지는가?",
+      "릴리스 탑이 높아질수록 무엇이 실제로 어려워지는가?",
       "정렬권은 실력 보조인가 자동 성공인가?",
-      "잘린 폭이 다음 선택의 압박으로 보이는가?",
+      "잘린 폭이 다음 배포의 압박으로 보이는가?",
       "초반 실수와 후반 실수의 무게가 다른가?",
-      "한 판 뒤 더 안전하게 쌓을 전략이 생기는가?"
+      "한 판 뒤 더 안전하게 배포 블록을 올릴 전략이 생기는가?"
     ],
     "visualQuestions": [
-      "블록 맞춰 쌓기는 공장 계기판인가 오래된 아케이드 기계인가?",
+      "배포 블록 쌓기는 서버실 릴리스 보드인가 오래된 아케이드 기계인가?",
       "잘릴 부분과 남을 부분이 즉시 구분되는가?",
       "높이 기록보다 현재 손 위치선이 먼저 보이는가?",
-      "결과는 쌓은 층과 낭비한 폭을 같이 남기는가?"
+      "결과는 쌓은 릴리스 층과 낭비한 폭을 같이 남기는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "블록 폭, 정렬권, 층 높이, 이동 속도",
+      "primaryResource": "배포 블록 폭, 정렬권, 릴리스 층, 이동 속도",
       "progressionQuestion": "성장은 공격력 같은 수치보다 손실 폭을 줄이는 타이밍 감각인가?",
       "failureQuestion": "실패는 너무 늦게 놓은 것인지, 폭을 이미 잃은 누적 결과인지 읽히는가?",
-      "recoveryQuestion": "정렬 보정은 다음 층을 살릴 선택으로 제한되는가?"
+      "recoveryQuestion": "정렬 보정은 다음 릴리스 층을 살릴 선택으로 제한되는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "작은 벽돌 적재 작업대",
-      "primarySurface": "수직 타워와 손 위치선이 있는 캔버스",
-      "roughnessTarget": "공장 작업표처럼 건조한 선과 절단 표시",
-      "differenceFromGenericPlay": "높이보다 남는 폭과 잘리는 폭이 시각 중심이다.",
+      "metaphor": "거친 서버 릴리스 적재 작업대",
+      "primarySurface": "수직 릴리스 탑과 손 위치선이 있는 캔버스",
+      "roughnessTarget": "오래된 빌드 보드처럼 건조한 선, 절단 표시, 얇은 경고색",
+      "differenceFromGenericPlay": "높이보다 남는 폭, 잘리는 폭, 롤백 위험이 시각 중심이다.",
       "mustAvoid": [
         "과한 축하 애니메이션",
         "블록 폭 정보를 숨기는 장식"
