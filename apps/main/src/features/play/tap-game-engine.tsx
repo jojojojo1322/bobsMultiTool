@@ -31,7 +31,14 @@ export function TapGameEngine({
   const current = content.targets[index];
   const isFinished = index >= content.targets.length;
   const totalItems = content.targets.length;
+  const isAiReviewStampboard = content.slug === "ai-review-tap";
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
+  const scoreLabel = isAiReviewStampboard ? "검수 점수" : "판정 점수";
+  const progressLabel = isAiReviewStampboard ? "전표" : "진행";
+  const frameKicker = isAiReviewStampboard ? "검수 도장판" : "탭 판정";
+  const playBodyClassName = isAiReviewStampboard
+    ? "grid gap-4 p-3 sm:p-4 lg:grid-cols-[minmax(0,1fr)_270px]"
+    : "grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]";
 
   function answer(action: "tap" | "skip") {
     if (!current) return;
@@ -56,7 +63,7 @@ export function TapGameEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n판정 점수: ${score}`;
+    const text = `${content.shareText}\n${scoreLabel}: ${score}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -75,17 +82,17 @@ export function TapGameEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium text-muted-foreground">탭 판정</p>
+            <p className="text-xs font-medium text-muted-foreground">{frameKicker}</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-right">
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">판정 점수</p>
+              <p className="text-xs text-muted-foreground">{scoreLabel}</p>
               <p className="text-sm font-semibold tabular-nums">{score}</p>
             </div>
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">진행</p>
+              <p className="text-xs text-muted-foreground">{progressLabel}</p>
               <p className="text-sm font-semibold tabular-nums">
                 {isFinished ? `${totalItems}/${totalItems}` : `${index + 1}/${totalItems}`}
               </p>
@@ -95,7 +102,7 @@ export function TapGameEngine({
       </div>
 
       {isFinished ? (
-        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-result>
+        <div className={playBodyClassName} data-play-result>
           <div>
             <p className="text-xs font-medium text-muted-foreground">결과</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
@@ -115,22 +122,46 @@ export function TapGameEngine({
           <TapHistory content={content} history={history} />
         </div>
       ) : current ? (
-        <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-state={current.id}>
+        <div className={playBodyClassName} data-play-state={current.id}>
           <div>
-            <div className="rounded-lg border bg-background p-6 text-center">
-              <Target className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-4 text-xs font-medium text-muted-foreground">현재 신호</p>
-              <h3 className="mt-2 text-3xl font-semibold tracking-normal">{current.label}</h3>
-              <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted-foreground">{current.detail}</p>
-              <p className="mt-4 text-xs text-muted-foreground">
-                기준: {content.targetLabel} / {content.decoyLabel}
-              </p>
-            </div>
+            {isAiReviewStampboard ? (
+              <div className="rounded-lg border bg-zinc-50 p-4 text-left shadow-inner dark:bg-zinc-950/40">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
+                  <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">AI 답변 전표</p>
+                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">근거 먼저</span>
+                </div>
+                <div className="mt-4 border-l-4 border-zinc-500 bg-background p-4">
+                  <p className="text-xs font-medium text-muted-foreground">검수 문장</p>
+                  <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-normal">{current.label}</h3>
+                  <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
+                </div>
+                <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                  <div className="rounded-sm border bg-background px-3 py-2">
+                    <p className="font-semibold text-foreground">{content.targetLabel}</p>
+                    <p className="mt-1 leading-5">파일, 명령, 출처, 의존성 근거가 비면 멈춥니다.</p>
+                  </div>
+                  <div className="rounded-sm border bg-background px-3 py-2">
+                    <p className="font-semibold text-foreground">{content.decoyLabel}</p>
+                    <p className="mt-1 leading-5">실제 경로, 결과, 한계 표시가 있으면 넘깁니다.</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-lg border bg-background p-6 text-center">
+                <Target className="mx-auto h-8 w-8 text-muted-foreground" />
+                <p className="mt-4 text-xs font-medium text-muted-foreground">현재 신호</p>
+                <h3 className="mt-2 text-3xl font-semibold tracking-normal">{current.label}</h3>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted-foreground">{current.detail}</p>
+                <p className="mt-4 text-xs text-muted-foreground">
+                  기준: {content.targetLabel} / {content.decoyLabel}
+                </p>
+              </div>
+            )}
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <Button className="h-14 text-base" onClick={() => answer("tap")} data-play-action="tap">
+              <Button className={isAiReviewStampboard ? "h-16 text-base" : "h-14 text-base"} onClick={() => answer("tap")} data-play-action="tap">
                 {content.targetLabel}
               </Button>
-              <Button className="h-14 text-base" variant="outline" onClick={() => answer("skip")} data-play-action="skip">
+              <Button className={isAiReviewStampboard ? "h-16 text-base" : "h-14 text-base"} variant="outline" onClick={() => answer("skip")} data-play-action="skip">
                 {content.decoyLabel}
               </Button>
             </div>
@@ -143,28 +174,36 @@ export function TapGameEngine({
 }
 
 function TapHistory({ content, history }: { content: TapGameContent; history: TapHistoryItem[] }) {
+  const isAiReviewStampboard = content.slug === "ai-review-tap";
+
   function labelForAction(action: "tap" | "skip") {
     return action === "tap" ? content.targetLabel : content.decoyLabel;
   }
 
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">선택 기준</p>
+      <p className="text-sm font-semibold">{isAiReviewStampboard ? "검수 기록" : "선택 기준"}</p>
       {history.length ? (
         <ol className="mt-3 space-y-2">
           {history.slice(-8).map((item, index) => (
             <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
               <p className="text-sm font-medium">{item.label}</p>
               <p className={item.correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
-                {item.correct
-                  ? `선택: ${labelForAction(item.action)} / 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
-                  : `선택: ${labelForAction(item.action)} / 기준: ${labelForAction(item.expectedAction)}`}
+                {isAiReviewStampboard
+                  ? item.correct
+                    ? `도장: ${labelForAction(item.action)} / 근거 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
+                    : `도장: ${labelForAction(item.action)} / 다시 볼 기준: ${labelForAction(item.expectedAction)}`
+                  : item.correct
+                    ? `선택: ${labelForAction(item.action)} / 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
+                    : `선택: ${labelForAction(item.action)} / 기준: ${labelForAction(item.expectedAction)}`}
               </p>
             </li>
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">하나를 누르면 선택한 기준이 바로 남습니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          {isAiReviewStampboard ? "도장을 찍으면 전표와 기준이 여기에 남습니다." : "하나를 누르면 선택한 기준이 바로 남습니다."}
+        </p>
       )}
     </aside>
   );
