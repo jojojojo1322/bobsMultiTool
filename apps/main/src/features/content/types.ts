@@ -138,6 +138,7 @@ export type ArcadeGameVariant =
   | "conveyor"
   | "sum-box"
   | "lottery"
+  | "lottery-economy"
   | "match-three"
   | "memory"
   | "flight"
@@ -147,7 +148,8 @@ export type ArcadeGameVariant =
   | "crossing"
   | "minesweeper"
   | "mole"
-  | "stacker";
+  | "stacker"
+  | "growth";
 
 export type ArcadeGamePalette = {
   background: string;

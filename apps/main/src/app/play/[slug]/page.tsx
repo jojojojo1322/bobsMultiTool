@@ -76,7 +76,16 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
     return play ? [{ slug: play.slug, title: play.title, description: play.description }] : [];
   });
   const jsonLd = playDetailStructuredData({ content, relatedBlogs });
-  const detailMaxWidth = content.type === "arcade-game" ? "max-w-7xl" : "max-w-6xl";
+  const detailMaxWidth =
+    content.type === "arcade-game" && content.arcade.variant === "growth"
+      ? "max-w-[1500px]"
+      : content.type === "arcade-game"
+        ? "max-w-7xl"
+        : "max-w-6xl";
+  const detailSpacingClassName =
+    content.type === "arcade-game" && content.arcade.variant === "growth"
+      ? "px-2 py-5 sm:px-4 sm:py-8"
+      : "px-4 py-8";
 
   return (
     <main
@@ -99,7 +108,7 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
           <p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">{content.description}</p>
         </div>
       </section>
-      <section className={`mx-auto ${detailMaxWidth} px-4 py-8`}>
+      <section className={`mx-auto ${detailMaxWidth} ${detailSpacingClassName}`}>
         {content.type === "micro-sim" ? (
           <SurvivalPlayEngine content={content} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
         ) : content.type === "tap-game" ? (
@@ -160,6 +169,13 @@ const arcadeContextGuides = {
     firstMove: "첫 움직임은 긁기입니다. 한 장을 다 보면 당첨 여부보다 결과 로그와 다음 단계를 먼저 읽습니다.",
     pacingText: "이 판은 끝나는 점수판이 아니라 계속 이어지는 복권 장부입니다. 더 긁고 싶으면 다음 장으로 가고, 멈추고 싶으면 그 자리에서 멈춥니다.",
     recordText: "현재 공개 버전은 실제 돈, 결제, 현금화가 없습니다. 기록은 단계와 로그만 남기고 손실 만회 문구로 밀어붙이지 않습니다.",
+  },
+  "lottery-economy": {
+    title: "지갑과 빚을 같이 보는 복권 장부",
+    firstLook: "지갑, 빚, 10금화/25금화/55금화 복권의 손실률을 먼저 봅니다.",
+    firstMove: "첫 움직임은 10금화 복권을 사서 은박을 긁는 것입니다. 결과가 열리면 바로 다음 장보다 지갑과 빚을 먼저 봅니다.",
+    pacingText: "복권은 한 장씩 갑니다. 손실이 커지면 10금화로 낮아지고, 부족하면 한 번만 재기할 수 있습니다.",
+    recordText: "실제 돈, 결제, 현금화는 없습니다. 기록은 당첨 자랑보다 비용, 지급, 빚, 멈춤 선택을 남깁니다.",
   },
   "match-three": {
     title: "문장 조각 역할을 맞추는 판",
@@ -230,6 +246,13 @@ const arcadeContextGuides = {
     firstMove: "첫 움직임은 멈추기입니다. 가운데를 보고 남을 폭이 넓을 때만 쌓습니다.",
     pacingText: "한 판은 짧은 타이밍 쌓기입니다. 결과는 층수보다 정렬권과 잘린 폭으로 남습니다.",
     recordText: "기록은 다음 멈춤 타이밍을 잡기 위한 흔적입니다. 무너졌다면 손이 먼저 나간 순간을 다시 봅니다.",
+  },
+  growth: {
+    title: "부품을 만들고 납품 상자를 채우는 성장판",
+    firstLook: "왼쪽 제작대, 아래 납품 라인, 오른쪽 설비 장부, 열 게이지를 먼저 봅니다.",
+    firstMove: "첫 움직임은 제작대입니다. 부품을 만들어 납품 상자를 채우고, 모인 부품으로 설비 장부를 올립니다.",
+    pacingText: "이 판은 자동으로 결과 화면으로 넘어가지 않습니다. 납품 건수와 설비 흐름을 보며 같은 작업장을 계속 키웁니다.",
+    recordText: "기록은 납품 건수, 납품 상자 진행도, 설비 흐름만 남깁니다. 조작은 제작대, 설비 장부, 작업 방향처럼 화면 안 표면에서 끝납니다.",
   },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], Omit<PlayContextGuide, "kicker">>;
 

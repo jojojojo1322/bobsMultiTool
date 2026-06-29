@@ -352,17 +352,19 @@ for (const entry of playEntries.filter((item) => item.type === "sort-match-game"
   if (entry.items.length < 8) failures.push(`${entry.slug} should have at least 8 sortable items`);
 }
 for (const entry of playEntries.filter((item) => item.type === "arcade-game")) {
+  const endlessArcadeVariant =
+    entry.arcade?.variant === "lottery" || entry.arcade?.variant === "lottery-economy" || entry.arcade?.variant === "growth";
   if (!entry.arcade?.variant) failures.push(`${entry.slug} should declare an arcade variant`);
   if (!entry.arcade?.goal || normalizedTextLength(entry.arcade.goal) < 20) failures.push(`${entry.slug} should explain the arcade goal`);
   if (!entry.arcade?.controls || normalizedTextLength(entry.arcade.controls) < 20) failures.push(`${entry.slug} should explain keyboard controls`);
   if (!directArcadeControlPattern.test(entry.arcade?.controls ?? "")) {
     failures.push(`${entry.slug} should describe direct mouse/touch/keyboard control, not only a quiz-like choice loop`);
   }
-  if (entry.arcade?.variant !== "lottery" && entry.durationLabel !== "1분") {
-    failures.push(`${entry.slug} arcade games should use a 1분 run unless they are an endless lottery-style loop`);
+  if (!endlessArcadeVariant && entry.durationLabel !== "1분") {
+    failures.push(`${entry.slug} arcade games should use a 1분 run unless they are a clearly endless loop`);
   }
-  if (entry.arcade?.variant === "lottery" && entry.durationLabel !== "계속") {
-    failures.push(`${entry.slug} lottery-style arcade games should be endless 계속 loops`);
+  if (endlessArcadeVariant && entry.durationLabel !== "계속") {
+    failures.push(`${entry.slug} ${entry.arcade.variant}-style arcade games should be endless 계속 loops`);
   }
   if (!entry.arcade?.goodLabels?.length || !entry.arcade?.badLabels?.length) failures.push(`${entry.slug} should provide good and bad arcade labels`);
   if (!entry.endings?.length) failures.push(`${entry.slug} should provide arcade endings`);

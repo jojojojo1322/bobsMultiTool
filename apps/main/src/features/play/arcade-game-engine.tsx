@@ -34,6 +34,31 @@ import {
   type LotteryCell,
 } from "@/features/play/arcade-lottery";
 import {
+  drawLotteryLedger,
+  lotteryLedgerInitialGold,
+  lotteryLedgerLoanRect,
+  lotteryLedgerMainActionLabel,
+  lotteryLedgerMainRect,
+  lotteryLedgerPointAction,
+  lotteryLedgerRevealedCount,
+  lotteryLedgerStatusText,
+  lotteryLedgerStopRect,
+  lotteryLedgerTicketRect,
+  lotteryLedgerTierAt,
+  lotteryLedgerTierIndexAt,
+  lotteryLedgerTierRectAt,
+  lotteryLedgerTiers,
+  moveLotteryLedgerTier,
+  pressLotteryLedgerMain,
+  scratchLotteryLedgerAt,
+  selectLotteryLedgerTier,
+  shortLotteryLedgerTierTitle,
+  stopLotteryLedgerSession,
+  takeLotteryLedgerRecovery,
+  type LotteryLedgerStatus,
+  type LotteryLedgerTicket,
+} from "@/features/play/arcade-lottery-economy";
+import {
   adjustPasswordDigit,
   applyPasswordCandidate,
   applyPasswordSuggestion,
@@ -57,7 +82,7 @@ import {
   type PasswordAttempt,
 } from "@/features/play/arcade-password";
 import { drawPassword } from "@/features/play/arcade-password-renderer";
-import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint } from "@/features/play/arcade-engine-utils";
+import { clamp, pickLabel, pointInRect, pseudoRandom, type CanvasPoint, type CanvasRect } from "@/features/play/arcade-engine-utils";
 import {
   chooseGemTile,
   clearGemDrag,
@@ -80,6 +105,25 @@ import {
   updateGemSwap,
   type GemTile,
 } from "@/features/play/arcade-match-three";
+import {
+  buyGrowthUpgrade,
+  cycleGrowthBuild,
+  drawGrowthWorkshop,
+  growthActionAt,
+  growthAutoIncome,
+  growthBottleneckLabel,
+  growthBuildLabel,
+  growthCurrentOrderTarget,
+  growthHeatCap,
+  growthOutput,
+  growthScore,
+  growthUpgradeKeys,
+  makeGrowthWorkshop,
+  performGrowthMainAction,
+  updateGrowthWorkshop,
+  type GrowthUpgradeKey,
+  type GrowthWorkshopState,
+} from "@/features/play/arcade-growth";
 import {
   activeMemoryFlashCell,
   chooseMemoryCell,
@@ -295,6 +339,17 @@ type GameState = {
   lotteryDragTrail: CanvasPoint[];
   lotteryDragging: boolean;
   lotterySuppressClick: boolean;
+  lotteryLedgerGold: number;
+  lotteryLedgerDebt: number;
+  lotteryLedgerSelectedTier: number;
+  lotteryLedgerDraws: number;
+  lotteryLedgerTicket: LotteryLedgerTicket | null;
+  lotteryLedgerStatus: LotteryLedgerStatus;
+  lotteryLedgerLossStreak: number;
+  lotteryLedgerLoans: number;
+  lotteryLedgerLastNet: number;
+  lotteryLedgerMessage: string;
+  lotteryLedgerDragging: boolean;
   snake: SnakeCell[];
   snakeDirection: SnakeDirection;
   snakeNextDirection: SnakeDirection;
@@ -333,6 +388,7 @@ type GameState = {
   memoryShowing: boolean;
   memoryFlashIndex: number;
   memoryFlashTimer: number;
+  growth: GrowthWorkshopState;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -361,12 +417,37 @@ type ViewState = Pick<
   | "lotteryDraws"
   | "lotteryLastPrize"
   | "lotteryTotalPrize"
+  | "lotteryLedgerGold"
+  | "lotteryLedgerDebt"
+  | "lotteryLedgerSelectedTier"
+  | "lotteryLedgerDraws"
+  | "lotteryLedgerTicket"
+  | "lotteryLedgerStatus"
+  | "lotteryLedgerLossStreak"
+  | "lotteryLedgerLoans"
+  | "lotteryLedgerLastNet"
+  | "lotteryLedgerMessage"
   | "history"
 > & {
   sumClearedCount: number;
   lotteryRevealedCount: number;
   lotteryTicketDone: boolean;
+  lotteryLedgerRevealedCount: number;
+  lotteryLedgerTicketDone: boolean;
+  lotteryLedgerTicketActive: boolean;
+  growthScrap: number;
+  growthOutput: number;
+  growthAutoIncome: number;
+  growthHeat: number;
+  growthHeatCap: number;
+  growthOrder: number;
+  growthOrderTarget: number;
+  growthOrderProgress: number;
+  growthBuildLabel: string;
+  growthBottleneck: string;
 };
+
+type ArcadeControlAction = "left" | "right" | "main" | "up" | "down" | "stop" | "loan";
 
 function makeInitialState(content: ArcadeGameContent): GameState {
   const snake = makeSnake();
@@ -410,6 +491,17 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     lotteryDragTrail: [],
     lotteryDragging: false,
     lotterySuppressClick: false,
+    lotteryLedgerGold: lotteryLedgerInitialGold,
+    lotteryLedgerDebt: 0,
+    lotteryLedgerSelectedTier: 0,
+    lotteryLedgerDraws: 0,
+    lotteryLedgerTicket: null,
+    lotteryLedgerStatus: "idle",
+    lotteryLedgerLossStreak: 0,
+    lotteryLedgerLoans: 0,
+    lotteryLedgerLastNet: 0,
+    lotteryLedgerMessage: "10금화 복권부터 시작합니다.",
+    lotteryLedgerDragging: false,
     snake,
     snakeDirection: "right",
     snakeNextDirection: "right",
@@ -448,6 +540,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     memoryShowing: true,
     memoryFlashIndex: 0,
     memoryFlashTimer: 0,
+    growth: makeGrowthWorkshop(),
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -507,6 +600,29 @@ function snapshot(state: GameState): ViewState {
     lotteryTotalPrize: state.lotteryTotalPrize,
     lotteryRevealedCount: lotteryRevealedCount(state),
     lotteryTicketDone: lotteryTicketComplete(state),
+    lotteryLedgerGold: state.lotteryLedgerGold,
+    lotteryLedgerDebt: state.lotteryLedgerDebt,
+    lotteryLedgerSelectedTier: state.lotteryLedgerSelectedTier,
+    lotteryLedgerDraws: state.lotteryLedgerDraws,
+    lotteryLedgerTicket: state.lotteryLedgerTicket,
+    lotteryLedgerStatus: state.lotteryLedgerStatus,
+    lotteryLedgerLossStreak: state.lotteryLedgerLossStreak,
+    lotteryLedgerLoans: state.lotteryLedgerLoans,
+    lotteryLedgerLastNet: state.lotteryLedgerLastNet,
+    lotteryLedgerMessage: state.lotteryLedgerMessage,
+    lotteryLedgerRevealedCount: lotteryLedgerRevealedCount(state),
+    lotteryLedgerTicketDone: Boolean(state.lotteryLedgerTicket?.settled),
+    lotteryLedgerTicketActive: Boolean(state.lotteryLedgerTicket && !state.lotteryLedgerTicket.settled),
+    growthScrap: Math.round(state.growth.scrap),
+    growthOutput: growthOutput(state.growth),
+    growthAutoIncome: growthAutoIncome(state.growth),
+    growthHeat: Math.round(state.growth.heat),
+    growthHeatCap: growthHeatCap(state.growth),
+    growthOrder: state.growth.order,
+    growthOrderTarget: growthCurrentOrderTarget(state.growth),
+    growthOrderProgress: Math.round(state.growth.orderProgress),
+    growthBuildLabel: growthBuildLabel(state.growth),
+    growthBottleneck: growthBottleneckLabel(state.growth),
     history: state.history,
   };
 }
@@ -515,7 +631,16 @@ function addHistory(state: GameState, item: HistoryItem) {
   state.history = [item, ...state.history].slice(0, 8);
 }
 
+function syncGrowthState(state: GameState) {
+  state.score = growthScore(state.growth);
+  state.focus = clamp(100 - (state.growth.heat / Math.max(1, growthHeatCap(state.growth))) * 100, 0, 100);
+  state.playTick = state.growth.tick;
+  state.history = state.growth.history;
+  if (state.growth.finished) state.finished = true;
+}
+
 function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
+  if (content.arcade.variant === "lottery-economy") return 0;
   if (content.arcade.variant === "lottery") return 0;
   if (content.arcade.variant === "sum-box") return sumBoxTimeLimitSeconds;
   if (content.arcade.variant === "password") return passwordTimeLimitSeconds;
@@ -618,7 +743,7 @@ function whackMole(content: ArcadeGameContent, state: GameState, hole = state.mo
   finishMoleIfNeeded(content, state);
 }
 
-function canvasPointFromEvent(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement> | React.PointerEvent<HTMLCanvasElement>) {
+function canvasPointFromEvent(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLElement> | React.PointerEvent<HTMLElement>) {
   const rect = canvas.getBoundingClientRect();
   return {
     x: ((event.clientX - rect.left) / rect.width) * canvasWidth,
@@ -668,6 +793,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
   if (content.arcade.variant === "sum-box") return "고르기";
+  if (content.arcade.variant === "lottery-economy") return "사기";
   if (content.arcade.variant === "lottery") return "긁기";
   if (content.arcade.variant === "snake") return "한 칸";
   if (content.arcade.variant === "password") return "확인";
@@ -676,6 +802,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
+  if (content.arcade.variant === "growth") return "부품 만들기";
   return "발사";
 }
 
@@ -864,6 +991,11 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
     return;
   }
 
+  if (content.arcade.variant === "lottery-economy") {
+    state.elapsed += dt;
+    return;
+  }
+
   if (content.arcade.variant === "snake") {
     updateSnake(content, state, dt);
     return;
@@ -896,6 +1028,13 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "memory") {
     updateMemory(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "growth") {
+    state.elapsed += dt;
+    updateGrowthWorkshop(content, state.growth, dt);
+    syncGrowthState(state);
     return;
   }
 
@@ -1204,6 +1343,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
     return;
   }
 
+  if (content.arcade.variant === "lottery-economy") {
+    drawLotteryLedger(content, state, ctx);
+    return;
+  }
+
   if (content.arcade.variant === "snake") {
     drawSnake(content, state, ctx);
     return;
@@ -1236,6 +1380,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
 
   if (content.arcade.variant === "memory") {
     drawMemory(content, state, ctx);
+    return;
+  }
+
+  if (content.arcade.variant === "growth") {
+    drawGrowthWorkshop(content, state.growth, ctx, state.started);
     return;
   }
 
@@ -3927,6 +4076,12 @@ const arcadeVariantCopy = {
     scoreLabel: "복권 단계",
     liveDetail: "이번 장 로그와 다음 단계 복권을 같이 봅니다.",
   },
+  "lottery-economy": {
+    finalKicker: "장부 결과",
+    liveTitle: "복권 장부",
+    scoreLabel: "지갑",
+    liveDetail: "지갑, 빚, 손실 위험을 같이 봅니다.",
+  },
   "match-three": {
     finalKicker: "조각 결과",
     liveTitle: "초안 기록",
@@ -3987,6 +4142,12 @@ const arcadeVariantCopy = {
     scoreLabel: "쌓은 배포층",
     liveDetail: "손 위치선, 정렬권, 잘린 폭과 롤백 위험을 같이 봅니다.",
   },
+  growth: {
+    finalKicker: "작업장 기록",
+    liveTitle: "현재 기록",
+    scoreLabel: "납품",
+    liveDetail: "제작대, 납품 상자, 설비 장부, 열 상태를 같이 봅니다.",
+  },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
 const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
@@ -4009,13 +4170,32 @@ function arcadeCopyFor(content: ArcadeGameContent) {
 }
 
 function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
+  if (content.arcade.variant === "lottery-economy") {
+    return `장부: 금화 ${view.lotteryLedgerGold} / 빚 ${view.lotteryLedgerDebt}`;
+  }
   if (content.arcade.variant === "lottery") {
     return `복권 단계: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
+  }
+  if (content.arcade.variant === "growth") {
+    return `납품 ${view.growthOrder}건 · 부품 ${view.growthScrap}`;
   }
   return `${arcadeCopyFor(content).scoreLabel}: ${view.score}`;
 }
 
 function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
+  if (content.arcade.variant === "lottery-economy") {
+    const tier = lotteryLedgerTierAt(view.lotteryLedgerSelectedTier);
+    if (view.lotteryLedgerTicketActive) {
+      return `${shortLotteryLedgerTierTitle(tier)}을 긁는 중입니다. 은박을 충분히 문지르면 결과가 열립니다.`;
+    }
+    if (view.lotteryLedgerStatus === "bankrupt") {
+      return view.lotteryLedgerLoans < 1
+        ? "금화가 부족합니다. 재기는 한 번만 열리고 10금화 복권으로 돌아갑니다."
+        : "금화가 부족하고 재기는 이미 썼습니다. 장부를 닫습니다.";
+    }
+    return view.lotteryLedgerMessage || `지갑 ${view.lotteryLedgerGold}, 빚 ${view.lotteryLedgerDebt}.`;
+  }
+
   if (content.arcade.variant === "lottery") {
     const stage = lotteryStageAt(view.lotteryStage);
     const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
@@ -4026,6 +4206,9 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
       return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 공개. 같은 그림 한 줄과 즉석 보너스를 확인합니다.`;
     }
     return "아직 긁지 않았습니다. 9칸을 문질러 결과 장부를 채웁니다.";
+  }
+  if (content.arcade.variant === "growth") {
+    return `부품 ${view.growthScrap}. 다음 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
   }
 
   const copy = arcadeCopyFor(content);
@@ -4054,22 +4237,45 @@ export function ArcadeGameEngine({
   const keysRef = React.useRef<Set<string>>(new Set());
   const [view, setView] = React.useState<ViewState>(() => snapshot(stateRef.current));
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
+  const isGrowthGame = content.arcade.variant === "growth";
   const ending = endingFor(content, view.score);
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
   const lotteryStage = lotteryStageAt(view.lotteryStage);
   const lotteryNextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
+  const isLotteryLedgerPlay = content.arcade.variant === "lottery-economy";
+  const lotteryLedgerTier = lotteryLedgerTierAt(view.lotteryLedgerSelectedTier);
   const copy = arcadeCopyFor(content);
   const activeActionLabel =
-    content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
+    isLotteryLedgerPlay
+      ? lotteryLedgerMainActionLabel(view)
+      : content.arcade.variant === "lottery" && view.lotteryTicketDone
+        ? "다음 복권"
+        : view.started
+          ? mainActionLabel(content)
+          : "시작";
   const shareScoreLabel = arcadeShareSummary(content, view);
   const metricItems =
-    content.arcade.variant === "lottery"
+    isLotteryLedgerPlay
+      ? [
+          { label: "지갑", value: view.lotteryLedgerGold },
+          { label: "빚", value: view.lotteryLedgerDebt },
+          { label: "선택", value: shortLotteryLedgerTierTitle(lotteryLedgerTier) },
+          { label: "상태", value: lotteryLedgerStatusText(view) },
+        ]
+      : content.arcade.variant === "lottery"
       ? [
           { label: "현재 단계", value: lotteryShortStageTitle(lotteryStage.title) },
           { label: "다음 단계", value: lotteryShortStageTitle(lotteryNextStage.title) },
           { label: "공개 칸", value: `${view.lotteryRevealedCount}/9` },
           { label: "방식", value: "끝 없음" },
         ]
+      : isGrowthGame
+        ? [
+            { label: "납품", value: `${view.growthOrder}건` },
+            { label: "상자", value: `${view.growthOrderProgress}/${view.growthOrderTarget}` },
+            { label: "부품", value: view.growthScrap },
+            { label: "열", value: `${view.growthHeat}/${view.growthHeatCap}` },
+          ]
       : content.arcade.variant === "sum-box"
         ? [
             { label: copy.scoreLabel, value: view.score },
@@ -4083,6 +4289,11 @@ export function ArcadeGameEngine({
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "상태", value: view.started ? "진행" : "대기" },
           ];
+  const playPanelGridClassName = isLotteryLedgerPlay
+    ? "grid gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1fr)_220px]"
+    : isGrowthGame
+    ? "grid gap-4 p-2 sm:p-3"
+    : "grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]";
 
   const syncView = React.useCallback(() => {
     setView(snapshot(stateRef.current));
@@ -4096,12 +4307,34 @@ export function ArcadeGameEngine({
   }, [content, syncView]);
 
   const performAction = React.useCallback(
-    (action: "left" | "right" | "main" | "up" | "down") => {
+    (action: ArcadeControlAction) => {
       const state = stateRef.current;
       if (state.finished) return;
       const wasStarted = state.started;
       state.started = true;
       state.lastFrame = performance.now();
+      if (content.arcade.variant === "lottery-economy") {
+        if (action === "left" || action === "up") moveLotteryLedgerTier(state, -1);
+        if (action === "right" || action === "down") moveLotteryLedgerTier(state, 1);
+        if (action === "main") pressLotteryLedgerMain(content, state);
+        if (action === "stop") stopLotteryLedgerSession(state);
+        if (action === "loan") takeLotteryLedgerRecovery(state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (content.arcade.variant === "growth") {
+        if (action === "left") buyGrowthUpgrade(content, state.growth, "cooling");
+        if (action === "right") buyGrowthUpgrade(content, state.growth, "auto");
+        if (action === "up") buyGrowthUpgrade(content, state.growth, "force");
+        if (action === "down") cycleGrowthBuild(state.growth);
+        if (action === "main") performGrowthMainAction(content, state.growth);
+        syncGrowthState(state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (action === "stop" || action === "loan") return;
       if (content.arcade.variant === "sum-box") {
         if (action === "left") moveSumCursor(state, -1);
         if (action === "right") moveSumCursor(state, 1);
@@ -4229,6 +4462,96 @@ export function ArcadeGameEngine({
     [content, syncView],
   );
 
+  const selectLotteryLedgerTierFromOverlay = React.useCallback(
+    (index: number) => {
+      const state = stateRef.current;
+      if (state.finished) return;
+      state.started = true;
+      state.lastFrame = performance.now();
+      selectLotteryLedgerTier(state, index);
+      setShareState("idle");
+      syncView();
+    },
+    [syncView],
+  );
+
+  const handleLotteryLedgerScratchPointerDown = React.useCallback(
+    (event: React.PointerEvent<HTMLElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const state = stateRef.current;
+      if (state.finished) return;
+      event.preventDefault();
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {
+        // Pointer capture may be unavailable in tests.
+      }
+      state.started = true;
+      state.lastFrame = performance.now();
+      if (!state.lotteryLedgerTicket || state.lotteryLedgerTicket.settled) {
+        pressLotteryLedgerMain(content, state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      state.lotteryLedgerDragging = true;
+      scratchLotteryLedgerAt(content, state, canvasPointFromEvent(canvas, event));
+      setShareState("idle");
+      syncView();
+    },
+    [content, syncView],
+  );
+
+  const handleLotteryLedgerScratchPointerMove = React.useCallback(
+    (event: React.PointerEvent<HTMLElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const state = stateRef.current;
+      if (!state.lotteryLedgerDragging || state.finished || (event.buttons === 0 && event.pointerType !== "touch")) return;
+      event.preventDefault();
+      state.started = true;
+      state.lastFrame = performance.now();
+      scratchLotteryLedgerAt(content, state, canvasPointFromEvent(canvas, event));
+      setShareState("idle");
+      syncView();
+    },
+    [content, syncView],
+  );
+
+  const handleLotteryLedgerScratchPointerUp = React.useCallback(
+    (event: React.PointerEvent<HTMLElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const state = stateRef.current;
+      if (state.finished) return;
+      event.preventDefault();
+      if (state.lotteryLedgerDragging) scratchLotteryLedgerAt(content, state, canvasPointFromEvent(canvas, event));
+      state.lotteryLedgerDragging = false;
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch {
+        // Pointer capture may be unavailable in tests.
+      }
+      setShareState("idle");
+      syncView();
+    },
+    [content, syncView],
+  );
+
+  const handleLotteryLedgerScratchPointerCancel = React.useCallback(
+    (event: React.PointerEvent<HTMLElement>) => {
+      stateRef.current.lotteryLedgerDragging = false;
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch {
+        // Pointer capture may be unavailable in tests.
+      }
+      syncView();
+    },
+    [syncView],
+  );
+
   React.useEffect(() => {
     const keys = keysRef.current;
     function keyDown(event: KeyboardEvent) {
@@ -4238,6 +4561,9 @@ export function ArcadeGameEngine({
       const mineFlagKey = content.arcade.variant === "minesweeper" && event.code === "KeyF";
       const memoryDigitKey = content.arcade.variant === "memory" ? memoryDigitFromKeyboardCode(event.code) : -1;
       const memoryReplayKey = content.arcade.variant === "memory" && event.code === "KeyR";
+      const growthDigitKey =
+        content.arcade.variant === "growth" && /^Digit[1-4]$/.test(event.code) ? Number(event.code.replace("Digit", "")) - 1 : -1;
+      const growthBuildKey = content.arcade.variant === "growth" && event.code === "KeyB";
       if (
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code) ||
         passwordDigitKey !== null ||
@@ -4245,9 +4571,31 @@ export function ArcadeGameEngine({
         passwordSuggestionKey ||
         mineFlagKey ||
         memoryDigitKey >= 0 ||
-        memoryReplayKey
+        memoryReplayKey ||
+        growthDigitKey >= 0 ||
+        growthBuildKey
       ) {
         event.preventDefault();
+        if (content.arcade.variant === "growth") {
+          if (event.repeat) return;
+          const state = stateRef.current;
+          state.started = true;
+          state.lastFrame = performance.now();
+          if (growthDigitKey >= 0) {
+            const key = growthUpgradeKeys()[growthDigitKey] as GrowthUpgradeKey | undefined;
+            if (key) buyGrowthUpgrade(content, state.growth, key);
+          }
+          if (growthBuildKey) cycleGrowthBuild(state.growth);
+          if (event.code === "ArrowLeft" || event.code === "KeyA") buyGrowthUpgrade(content, state.growth, "cooling");
+          if (event.code === "ArrowRight" || event.code === "KeyD") buyGrowthUpgrade(content, state.growth, "auto");
+          if (event.code === "ArrowUp" || event.code === "KeyW") buyGrowthUpgrade(content, state.growth, "force");
+          if (event.code === "ArrowDown" || event.code === "KeyS") cycleGrowthBuild(state.growth);
+          if (event.code === "Space" || event.code === "Enter") performGrowthMainAction(content, state.growth);
+          syncGrowthState(state);
+          setShareState("idle");
+          syncView();
+          return;
+        }
         if (content.arcade.variant === "crossing") {
           if (event.repeat) return;
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
@@ -4270,6 +4618,15 @@ export function ArcadeGameEngine({
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
           if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
           if (event.code === "ArrowUp" || event.code === "KeyW") performAction("up");
+          if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
+          if (event.code === "Space" || event.code === "Enter") performAction("main");
+          return;
+        }
+        if (content.arcade.variant === "lottery-economy") {
+          if (event.repeat) return;
+          if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
+          if (event.code === "ArrowRight" || event.code === "KeyD") performAction("right");
+          if (event.code === "ArrowUp" || event.code === "KeyW") performAction("stop");
           if (event.code === "ArrowDown" || event.code === "KeyS") performAction("down");
           if (event.code === "Space" || event.code === "Enter") performAction("main");
           return;
@@ -4446,7 +4803,39 @@ export function ArcadeGameEngine({
       const state = stateRef.current;
       if (state.finished) return;
 
+      if (content.arcade.variant === "growth") {
+        event.preventDefault();
+        state.started = true;
+        state.lastFrame = performance.now();
+        const growthAction = growthActionAt(point);
+        if (growthAction === "work") performGrowthMainAction(content, state.growth);
+        else if (growthAction === "build") cycleGrowthBuild(state.growth);
+        else buyGrowthUpgrade(content, state.growth, growthAction);
+        syncGrowthState(state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+
       if (content.arcade.variant === "sum-box" || content.arcade.variant === "match-three") {
+        return;
+      }
+
+      if (content.arcade.variant === "lottery-economy") {
+        const action = lotteryLedgerPointAction(point);
+        const tierIndex = lotteryLedgerTierIndexAt(point);
+        const scratchesTicket = pointInRect(point, lotteryLedgerTicketRect);
+        if (!action && tierIndex < 0 && !scratchesTicket) return;
+        event.preventDefault();
+        state.started = true;
+        state.lastFrame = performance.now();
+        if (action === "main") pressLotteryLedgerMain(content, state);
+        if (action === "stop") stopLotteryLedgerSession(state);
+        if (action === "loan") takeLotteryLedgerRecovery(state);
+        if (tierIndex >= 0) selectLotteryLedgerTier(state, tierIndex);
+        if (!action && tierIndex < 0 && scratchesTicket) scratchLotteryLedgerAt(content, state, point);
+        setShareState("idle");
+        syncView();
         return;
       }
 
@@ -4597,6 +4986,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
+        content.arcade.variant !== "lottery-economy" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
@@ -4652,6 +5042,22 @@ export function ArcadeGameEngine({
         state.lotterySuppressClick = true;
         clearLotteryDragTrail(state);
         scratchLotteryAt(content, state, point);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (content.arcade.variant === "lottery-economy") {
+        if (!pointInRect(point, lotteryLedgerTicketRect)) return;
+        event.preventDefault();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Some synthetic browser environments do not expose pointer capture.
+        }
+        state.started = true;
+        state.lastFrame = performance.now();
+        state.lotteryLedgerDragging = true;
+        scratchLotteryLedgerAt(content, state, point);
         setShareState("idle");
         syncView();
         return;
@@ -4756,6 +5162,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
+        content.arcade.variant !== "lottery-economy" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
@@ -4780,6 +5187,15 @@ export function ArcadeGameEngine({
         state.started = true;
         state.lastFrame = performance.now();
         scratchLotteryAt(content, state, point);
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (content.arcade.variant === "lottery-economy") {
+        if (!state.lotteryLedgerDragging || (event.buttons === 0 && event.pointerType !== "touch")) return;
+        state.started = true;
+        state.lastFrame = performance.now();
+        scratchLotteryLedgerAt(content, state, point);
         setShareState("idle");
         syncView();
         return;
@@ -4847,6 +5263,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
+        content.arcade.variant !== "lottery-economy" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
@@ -4887,6 +5304,13 @@ export function ArcadeGameEngine({
       if (content.arcade.variant === "lottery") {
         if (state.lotteryDragging) scratchLotteryAt(content, state, point);
         state.lotteryDragging = false;
+        setShareState("idle");
+        syncView();
+        return;
+      }
+      if (content.arcade.variant === "lottery-economy") {
+        if (state.lotteryLedgerDragging) scratchLotteryLedgerAt(content, state, point);
+        state.lotteryLedgerDragging = false;
         setShareState("idle");
         syncView();
         return;
@@ -4973,6 +5397,7 @@ export function ArcadeGameEngine({
         content.arcade.variant !== "sum-box" &&
         content.arcade.variant !== "match-three" &&
         content.arcade.variant !== "lottery" &&
+        content.arcade.variant !== "lottery-economy" &&
         content.arcade.variant !== "stacker" &&
         content.arcade.variant !== "shooter" &&
         content.arcade.variant !== "flight" &&
@@ -4984,6 +5409,7 @@ export function ArcadeGameEngine({
       state.snakeDragStart = null;
       state.shooterPointerActive = false;
       state.lotteryDragging = false;
+      state.lotteryLedgerDragging = false;
       state.stackerDragX = null;
       clearLotteryDragTrail(state);
       clearSumDrag(state);
@@ -5032,7 +5458,7 @@ export function ArcadeGameEngine({
       </div>
 
       {view.finished ? (
-        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-result>
+        <div className={playPanelGridClassName} data-play-result>
           <div>
             <p className="text-xs font-medium text-muted-foreground">{copy.finalKicker}</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
@@ -5052,9 +5478,9 @@ export function ArcadeGameEngine({
           <HistoryPanel history={view.history} />
         </div>
       ) : (
-        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-state={arcadeStateKey(view.playTick)}>
+        <div className={playPanelGridClassName} data-play-state={arcadeStateKey(view.playTick)}>
           <div>
-            <div className="overflow-hidden rounded-lg border bg-background">
+            <div className="relative overflow-hidden rounded-lg border bg-background">
               <canvas
                 ref={canvasRef}
                 tabIndex={0}
@@ -5065,9 +5491,11 @@ export function ArcadeGameEngine({
                 onPointerCancel={handleCanvasPointerCancel}
                 onContextMenu={handleCanvasContextMenu}
                 aria-label={`${content.title} 게임 화면`}
+                data-play-action={isGrowthGame ? "arcade-main" : undefined}
                 className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
                   content.arcade.variant === "lottery" ||
+                  content.arcade.variant === "lottery-economy" ||
                   content.arcade.variant === "snake" ||
                   content.arcade.variant === "password" ||
                   content.arcade.variant === "minesweeper" ||
@@ -5078,26 +5506,43 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "brick-breaker" ||
                   content.arcade.variant === "mole" ||
                   content.arcade.variant === "memory" ||
-                  content.arcade.variant === "crossing"
+                  content.arcade.variant === "crossing" ||
+                  content.arcade.variant === "growth"
                     ? "cursor-pointer touch-none"
                     : ""
                 }`}
                 style={{ background: content.arcade.palette.background }}
               />
+              {isLotteryLedgerPlay ? (
+                <LotteryLedgerScreenControls
+                  view={view}
+                  activeActionLabel={activeActionLabel}
+                  onAction={performAction}
+                  onTierSelect={selectLotteryLedgerTierFromOverlay}
+                  onScratchPointerDown={handleLotteryLedgerScratchPointerDown}
+                  onScratchPointerMove={handleLotteryLedgerScratchPointerMove}
+                  onScratchPointerUp={handleLotteryLedgerScratchPointerUp}
+                  onScratchPointerCancel={handleLotteryLedgerScratchPointerCancel}
+                />
+              ) : null}
             </div>
-            <div className="mt-3 rounded-md border bg-muted/20 p-3">
-              <p className="text-sm font-semibold">{content.arcade.goal}</p>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
-            </div>
-            {content.arcade.variant === "snake" ||
-            content.arcade.variant === "sum-box" ||
-            content.arcade.variant === "lottery" ||
-            content.arcade.variant === "password" ||
-            content.arcade.variant === "minesweeper" ||
-            content.arcade.variant === "match-three" ||
-            content.arcade.variant === "mole" ||
-            content.arcade.variant === "memory" ||
-            content.arcade.variant === "crossing" ? (
+            {!isLotteryLedgerPlay && !isGrowthGame ? (
+              <div className="mt-3 rounded-md border bg-muted/20 p-3">
+                <p className="text-sm font-semibold">{content.arcade.goal}</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
+              </div>
+            ) : null}
+            {!isLotteryLedgerPlay &&
+            !isGrowthGame &&
+            (content.arcade.variant === "snake" ||
+              content.arcade.variant === "sum-box" ||
+              content.arcade.variant === "lottery" ||
+              content.arcade.variant === "password" ||
+              content.arcade.variant === "minesweeper" ||
+              content.arcade.variant === "match-three" ||
+              content.arcade.variant === "mole" ||
+              content.arcade.variant === "memory" ||
+              content.arcade.variant === "crossing") ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
@@ -5137,7 +5582,7 @@ export function ArcadeGameEngine({
                   </Button>
                 ) : null}
               </div>
-            ) : (
+            ) : !isLotteryLedgerPlay && !isGrowthGame ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <Button variant="outline" className="h-12" onClick={() => performAction("left")} data-play-action="arcade-left">
                   왼쪽
@@ -5149,7 +5594,7 @@ export function ArcadeGameEngine({
                   오른쪽
                 </Button>
               </div>
-            )}
+            ) : null}
           </div>
           <LiveArcadeResultPanel
             content={content}
@@ -5163,6 +5608,104 @@ export function ArcadeGameEngine({
         </div>
       )}
     </section>
+  );
+}
+
+const lotteryLedgerHitTargetClassName =
+  "absolute z-10 flex items-center justify-center rounded-md border border-transparent bg-transparent p-0 text-[11px] font-black leading-tight text-[#2f2419] outline-none focus-visible:border-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/70 sm:text-[0px] sm:text-transparent";
+const lotteryLedgerScratchTargetClassName =
+  "absolute z-10 rounded-md border border-transparent bg-transparent p-0 text-[0px] text-transparent outline-none focus-visible:border-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/70";
+
+function canvasRectStyle(rect: CanvasRect): React.CSSProperties {
+  return {
+    left: `${(rect.x / canvasWidth) * 100}%`,
+    top: `${(rect.y / canvasHeight) * 100}%`,
+    width: `${(rect.width / canvasWidth) * 100}%`,
+    height: `${(rect.height / canvasHeight) * 100}%`,
+    minWidth: "44px",
+    minHeight: "44px",
+  };
+}
+
+function LotteryLedgerScreenControls({
+  view,
+  activeActionLabel,
+  onAction,
+  onTierSelect,
+  onScratchPointerDown,
+  onScratchPointerMove,
+  onScratchPointerUp,
+  onScratchPointerCancel,
+}: {
+  view: ViewState;
+  activeActionLabel: string;
+  onAction: (action: ArcadeControlAction) => void;
+  onTierSelect: (index: number) => void;
+  onScratchPointerDown: (event: React.PointerEvent<HTMLElement>) => void;
+  onScratchPointerMove: (event: React.PointerEvent<HTMLElement>) => void;
+  onScratchPointerUp: (event: React.PointerEvent<HTMLElement>) => void;
+  onScratchPointerCancel: (event: React.PointerEvent<HTMLElement>) => void;
+}) {
+  const scratchLabel = view.lotteryLedgerTicketActive ? "복권 은박 긁기" : "복권지에서 사기";
+
+  return (
+    <>
+      {lotteryLedgerTiers.map((tier, index) => (
+        <button
+          key={tier.id}
+          type="button"
+          className={lotteryLedgerHitTargetClassName}
+          style={canvasRectStyle(lotteryLedgerTierRectAt(index))}
+          onClick={() => onTierSelect(index)}
+          data-play-action={`lottery-tier-${index}`}
+          aria-label={`${shortLotteryLedgerTierTitle(tier)} 선택`}
+          aria-pressed={view.lotteryLedgerSelectedTier === index}
+        >
+          {tier.cost}금
+        </button>
+      ))}
+      <button
+        type="button"
+        className={lotteryLedgerHitTargetClassName}
+        style={canvasRectStyle(lotteryLedgerMainRect)}
+        onClick={() => onAction("main")}
+        data-play-action="arcade-main"
+        aria-label={activeActionLabel}
+      >
+        {activeActionLabel}
+      </button>
+      <button
+        type="button"
+        className={lotteryLedgerHitTargetClassName}
+        style={canvasRectStyle(lotteryLedgerStopRect)}
+        onClick={() => onAction("stop")}
+        data-play-action="lottery-stop"
+        aria-label="멈춤"
+      >
+        멈춤
+      </button>
+      <button
+        type="button"
+        className={lotteryLedgerHitTargetClassName}
+        style={canvasRectStyle(lotteryLedgerLoanRect)}
+        onClick={() => onAction("loan")}
+        data-play-action="lottery-loan"
+        aria-label="재기"
+      >
+        재기
+      </button>
+      <button
+        type="button"
+        className={`${lotteryLedgerScratchTargetClassName} touch-none`}
+        style={canvasRectStyle(lotteryLedgerTicketRect)}
+        onPointerDown={onScratchPointerDown}
+        onPointerMove={onScratchPointerMove}
+        onPointerUp={onScratchPointerUp}
+        onPointerCancel={onScratchPointerCancel}
+        data-play-action="lottery-scratch"
+        aria-label={scratchLabel}
+      />
+    </>
   );
 }
 
@@ -5223,10 +5766,17 @@ function LiveArcadeResultPanel({
   view: ViewState;
 }) {
   const isLottery = content.arcade.variant === "lottery";
+  const isLotteryLedger = content.arcade.variant === "lottery-economy";
   const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
-  const title = isLottery ? "복권 장부" : copy.liveTitle;
-  const headline = isLottery ? stage.title : ending.title;
+  const title = isLottery || isLotteryLedger ? "복권 장부" : copy.liveTitle;
+  const headline = isLottery
+    ? stage.title
+    : isLotteryLedger
+      ? shortLotteryLedgerTierTitle(lotteryLedgerTierAt(view.lotteryLedgerSelectedTier))
+      : content.arcade.variant === "growth"
+        ? `납품 ${view.growthOrder}건`
+        : ending.title;
   const detail = arcadeLiveDetail(content, view);
 
   return (
@@ -5240,19 +5790,23 @@ function LiveArcadeResultPanel({
           {shareState === "copied" ? "복사됨" : shareState === "shared" ? "공유됨" : "공유"}
         </Button>
       </div>
-      <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
+      <PlayResultLinks compact={isLotteryLedger} relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
       {view.history.length ? (
         <ol className="mt-3 space-y-2">
           {view.history.slice(0, 5).map((item, index) => (
             <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
               <p className="text-sm font-medium">{item.label}</p>
-              <p className={historyToneClassName(item, isLottery)}>{historyDetailText(item, isLottery)}</p>
+              <p className={historyToneClassName(item, isLottery || isLotteryLedger)}>{historyDetailText(item, isLottery || isLotteryLedger)}</p>
             </li>
           ))}
         </ol>
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          {isLottery ? "긁은 결과와 다음 단계가 여기에 이어집니다." : "시작하면 판의 흐름이 여기에 보입니다."}
+          {isLotteryLedger
+            ? "산 복권, 당첨, 멈춤 기록이 여기에 남습니다."
+            : isLottery
+              ? "긁은 결과와 다음 단계가 여기에 이어집니다."
+              : "시작하면 판의 흐름이 여기에 보입니다."}
         </p>
       )}
     </aside>
