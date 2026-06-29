@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import type { SortMatchGameContent } from "@/features/content/types";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
+type SortHistoryItem = {
+  label: string;
+  category: string;
+  correctCategory: string;
+  correct: boolean;
+};
+
 export function SortMatchEngine({
   content,
   relatedBlogLinks,
@@ -17,17 +24,18 @@ export function SortMatchEngine({
 }) {
   const [index, setIndex] = React.useState(0);
   const [score, setScore] = React.useState(0);
-  const [history, setHistory] = React.useState<Array<{ label: string; category: string; correct: boolean }>>([]);
+  const [history, setHistory] = React.useState<SortHistoryItem[]>([]);
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
   const current = content.items[index];
   const isFinished = index >= content.items.length;
+  const totalItems = content.items.length;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
 
   function choose(categoryId: string) {
     if (!current) return;
     const correct = current.categoryId === categoryId;
     setScore((value) => value + (correct ? 1 : 0));
-    setHistory((items) => [...items, { label: current.label, category: categoryId, correct }]);
+    setHistory((items) => [...items, { label: current.label, category: categoryId, correctCategory: current.categoryId, correct }]);
     setIndex((value) => value + 1);
     setShareState("idle");
   }
@@ -41,7 +49,7 @@ export function SortMatchEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n점수: ${score}`;
+    const text = `${content.shareText}\n맞춘 항목: ${score}/${totalItems}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -60,13 +68,15 @@ export function SortMatchEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sort Match</p>
+            <p className="text-xs font-medium text-muted-foreground">분류 보드</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="rounded-md border bg-background px-3 py-2 text-right">
-            <p className="text-xs text-muted-foreground">점수</p>
-            <p className="text-sm font-semibold tabular-nums">{score}</p>
+            <p className="text-xs text-muted-foreground">맞춘 항목</p>
+            <p className="text-sm font-semibold tabular-nums">
+              {score}/{totalItems}
+            </p>
           </div>
         </div>
       </div>
@@ -74,7 +84,7 @@ export function SortMatchEngine({
       {isFinished ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-result>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Result</p>
+            <p className="text-xs font-medium text-muted-foreground">결과</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{ending.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -95,7 +105,7 @@ export function SortMatchEngine({
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-state={current.id}>
           <div>
             <div className="rounded-lg border bg-background p-5">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">지금 분류할 항목</p>
+              <p className="text-xs font-medium text-muted-foreground">현재 카드</p>
               <h3 className="mt-2 text-2xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
@@ -127,27 +137,30 @@ function SortHistory({
   history,
 }: {
   content: SortMatchGameContent;
-  history: Array<{ label: string; category: string; correct: boolean }>;
+  history: SortHistoryItem[];
 }) {
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">분류 흐름</p>
+      <p className="text-sm font-semibold">선택 기준</p>
       {history.length ? (
         <ol className="mt-3 space-y-2">
           {history.slice(-8).map((item, index) => {
-            const category = content.categories.find((entry) => entry.id === item.category);
+            const selectedCategory = content.categories.find((entry) => entry.id === item.category);
+            const correctCategory = content.categories.find((entry) => entry.id === item.correctCategory);
             return (
               <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
                 <p className="text-sm font-medium">{item.label}</p>
                 <p className={item.correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
-                  {category?.label ?? item.category} / {item.correct ? "정답" : "오답"}
+                  {item.correct
+                    ? `선택: ${selectedCategory?.label ?? item.category} / 맞음`
+                    : `선택: ${selectedCategory?.label ?? item.category} / 기준: ${correctCategory?.label ?? item.correctCategory}`}
                 </p>
               </li>
             );
           })}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">항목을 분류하면 흐름이 보입니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">카드를 한 장 보내면 선택한 기준이 여기에 남습니다.</p>
       )}
     </aside>
   );

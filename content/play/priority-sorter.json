@@ -1,11 +1,11 @@
 {
   "slug": "priority-sorter",
   "title": "지금 할 일 고르기",
-  "description": "들어오는 일을 지금 처리, 시간 잡기, 버리기로 나누는 1-2분 분류 게임입니다. 바쁜 느낌이 아니라 오늘 흐름을 막는 일을 먼저 고릅니다.",
+  "description": "업무 카드가 하나씩 나오면 지금 처리, 시간 잡기, 버리기로 나누는 1-2분 분류 게임입니다. 바쁜 느낌보다 오늘 흐름을 막는 병목과 지금 WIP에서 뺄 일을 구분합니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
   "updatedAt": "2026-06-29",
-  "shareText": "지금 할 일 고르기를 해봤다. 바쁜 일과 지금 막는 일은 달랐다.",
+  "shareText": "지금 할 일 고르기를 해봤다. 바쁜 일과 병목, 지금 버릴 일을 나누니 오늘 흐름이 가벼워졌다.",
   "order": 18,
   "relatedBlogSlugs": [
     "static-first-before-server",
@@ -21,18 +21,18 @@
   "categories": [
     {
       "id": "now",
-      "label": "지금",
-      "description": "오늘 흐름을 막는 핵심 일"
+      "label": "지금 처리",
+      "description": "오늘 흐름을 막는 병목"
     },
     {
       "id": "schedule",
-      "label": "예약",
-      "description": "시간을 잡고 처리할 일"
+      "label": "시간 잡기",
+      "description": "집중 시간을 잡아 처리할 일"
     },
     {
       "id": "drop",
-      "label": "버림",
-      "description": "지금 하지 않아도 되는 일"
+      "label": "버리기",
+      "description": "지금 WIP에서 뺄 일"
     }
   ],
   "items": [
@@ -117,12 +117,17 @@
     "researchPlan": {
       "webSearchSeeds": [
         "task prioritization urgent important decision matrix",
+        "card sorting UX category labels feedback",
+        "Eisenhower matrix urgent important tasks",
         "kanban triage board visual hierarchy",
+        "kanban WIP limits task prioritization",
         "sorting game decision criteria feedback"
       ],
       "referenceTypes": [
         "긴급/중요 업무 판단과 병목 제거 기준",
-        "칸반/트리아지 보드의 지금/예약/버림 분리",
+        "카드 정렬 UX에서 카테고리 라벨이 사용자의 멘탈 모델을 드러내는 방식",
+        "칸반/트리아지 보드의 지금 처리/시간 잡기/버리기 분리",
+        "진행 중인 일을 제한해 집중 흐름을 보호하는 WIP 기준",
         "카드 분류 게임의 기준 피드백"
       ],
       "dataOrSimulationNeeds": [
@@ -131,14 +136,17 @@
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '지금/예약/버림으로 나눈다'가 읽히는가?",
+      "첫 5초 안에 '지금 처리/시간 잡기/버리기로 나눈다'가 읽히는가?",
+      "카테고리 라벨만 보고도 사용자가 같은 기준으로 카드를 보낼 수 있는가?",
       "지금 할 일은 바쁜 일이 아니라 흐름을 막는 일로 구분되는가?",
+      "시간 잡기는 회피가 아니라 집중 슬롯을 확보하는 판단으로 읽히는가?",
       "버림 카테고리가 실패가 아니라 에너지 보존 선택으로 읽히는가?",
+      "버리기가 일을 포기하는 말보다 WIP를 줄이는 판단으로 보이는가?",
       "오분류는 왜 틀렸는지 업무 기준으로 알려주는가?",
       "다음 항목에서 바로 다른 우선순위 기준을 적용할 수 있는가?"
     ],
     "visualQuestions": [
-      "지금, 시간 잡기, 버리기 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
+      "지금 처리, 시간 잡기, 버리기 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
       "현재 업무 카드는 짧지만 막는 일인지 미룰 일인지 먼저 읽히는가?",
       "맞고 틀림보다 우선순위 기준 설명이 더 중요하게 남는가?",
       "전체 화면이 마케팅 카드 그리드가 아니라 업무 트리아지 보드처럼 보이는가?"
