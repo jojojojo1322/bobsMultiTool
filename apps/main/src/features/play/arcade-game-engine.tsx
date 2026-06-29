@@ -158,6 +158,7 @@ import {
   mineGap,
   mineNeighborIds,
   mineNeighborSummary,
+  mineRows,
   moveMineCursor,
   revealMineCell,
   revealedMineSafeCount,
@@ -3134,29 +3135,29 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   const cursorNeighborIds = new Set(cursor?.revealed && !cursor.mine && cursor.adjacent > 0 ? mineNeighborIds(state, state.mineCursor) : []);
   const cursorActionTitle = cursor?.revealed
     ? cursor.mine
-      ? "위험 구역입니다"
+      ? "지뢰칸을 열었습니다"
       : cursorCanChord
-        ? "주변 열기 준비"
+        ? "숫자와 깃발이 맞음"
         : cursorHasTooManyFlags
           ? "깃발이 많습니다"
           : cursor.adjacent > 0
             ? `숫자 ${cursor.adjacent}`
-            : "빈 구역입니다"
+            : "빈칸입니다"
     : cursor?.flagged
-      ? "깃발 구역입니다"
-      : "이 구역을 열까요";
+      ? "깃발 칸입니다"
+      : "이 칸을 열까요";
   const cursorActionDetail = cursor?.revealed
     ? cursor.mine
-      ? "다음 구역으로 옮기세요"
+      ? "숫자와 깃발 수를 다시 봅니다"
       : cursorCanChord
-        ? `다시 누르면 ${cursorSummary.closed}구역 같이 열림`
+        ? `다시 누르면 ${cursorSummary.closed}칸 같이 열림`
         : cursorHasTooManyFlags
           ? `${cursorSummary.flagged - cursor.adjacent}개 깃발이 많음`
           : cursor.adjacent > 0
             ? cursorNeedsFlags > 0
               ? `깃발 ${cursorNeedsFlags}개 더 필요`
-              : "닫힌 구역을 다시 확인"
-            : "주변까지 열린 빈 구역"
+              : "닫힌 주변 칸을 다시 확인"
+            : "주변까지 열린 빈칸"
     : cursor?.flagged
       ? "F로 깃발을 해제할 수 있음"
       : "열기 또는 깃발 선택";
@@ -3164,19 +3165,36 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  const glow = ctx.createRadialGradient(mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 40, mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 310);
-  glow.addColorStop(0, "rgba(250,204,21,0.12)");
-  glow.addColorStop(1, "rgba(250,204,21,0)");
+  const glow = ctx.createRadialGradient(mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 50, mineBoardX + mineBoardWidth / 2, mineBoardY + mineBoardHeight / 2, 340);
+  glow.addColorStop(0, "rgba(216,196,154,0.14)");
+  glow.addColorStop(1, "rgba(216,196,154,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = "rgba(245,238,216,0.1)";
+  ctx.fillStyle = "rgba(59,48,34,0.88)";
+  ctx.fillRect(0, 0, canvasWidth, 52);
+  ctx.fillStyle = "rgba(216,196,154,0.86)";
+  ctx.font = "900 17px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("릴리스 지뢰 지도", 28, 32);
+  ctx.fillStyle = "rgba(216,196,154,0.62)";
+  ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "right";
+  ctx.fillText("숫자=주변 지뢰 · 깃발=보류 · 맞으면 주변 열기", canvasWidth - 28, 32);
+
+  ctx.fillStyle = "rgba(109,84,55,0.45)";
   ctx.beginPath();
-  ctx.roundRect(mineBoardX - 14, mineBoardY - 14, mineBoardWidth + 28, mineBoardHeight + 28, 10);
+  ctx.roundRect(mineBoardX - 20, mineBoardY - 20, mineBoardWidth + 40, mineBoardHeight + 40, 6);
   ctx.fill();
-  ctx.strokeStyle = "rgba(245,238,216,0.24)";
+  ctx.strokeStyle = "rgba(216,196,154,0.28)";
   ctx.lineWidth = 1;
   ctx.stroke();
+  ctx.fillStyle = "rgba(216,196,154,0.08)";
+  for (let row = 0; row < mineRows; row += 1) {
+    if (row % 2 === 1) {
+      ctx.fillRect(mineBoardX - 10, mineBoardY + row * (mineCellSize + mineGap) - 4, mineBoardWidth + 20, mineCellSize + 8);
+    }
+  }
 
   for (const cell of state.mineCells) {
     const x = mineBoardX + cell.column * (mineCellSize + mineGap);
@@ -3184,37 +3202,37 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     const isCursor = cell.id === state.mineCursor;
     const isCursorNeighbor = cursorNeighborIds.has(cell.id) && !cell.revealed && !cell.flagged;
     const isChordReadyNeighbor = cursorCanChord && isCursorNeighbor;
-    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    ctx.fillStyle = "rgba(0,0,0,0.24)";
     ctx.beginPath();
-    ctx.roundRect(x + 3, y + 4, mineCellSize, mineCellSize, 9);
+    ctx.roundRect(x + 3, y + 4, mineCellSize, mineCellSize, 3);
     ctx.fill();
 
     if (isCursorNeighbor) {
-      ctx.fillStyle = isChordReadyNeighbor ? "rgba(250,204,21,0.26)" : "rgba(245,238,216,0.12)";
+      ctx.fillStyle = isChordReadyNeighbor ? "rgba(120,185,141,0.24)" : "rgba(216,196,154,0.12)";
       ctx.beginPath();
-      ctx.roundRect(x - 3, y - 3, mineCellSize + 6, mineCellSize + 6, 12);
+      ctx.roundRect(x - 3, y - 3, mineCellSize + 6, mineCellSize + 6, 4);
       ctx.fill();
     }
 
     if (cell.revealed && cell.mine) {
       ctx.fillStyle = danger;
     } else if (cell.revealed) {
-      ctx.fillStyle = cell.adjacent === 0 ? "rgba(245,238,216,0.24)" : "rgba(245,238,216,0.18)";
+      ctx.fillStyle = cell.adjacent === 0 ? "rgba(216,196,154,0.2)" : "rgba(216,196,154,0.3)";
     } else if (cell.flagged) {
       const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
-      gradient.addColorStop(0, "rgba(248,113,113,0.42)");
-      gradient.addColorStop(1, "rgba(248,113,113,0.18)");
+      gradient.addColorStop(0, "rgba(207,93,77,0.52)");
+      gradient.addColorStop(1, "rgba(207,93,77,0.22)");
       ctx.fillStyle = gradient;
     } else {
       const gradient = ctx.createLinearGradient(x, y, x, y + mineCellSize);
-      gradient.addColorStop(0, "rgba(245,238,216,0.2)");
-      gradient.addColorStop(1, "rgba(245,238,216,0.07)");
+      gradient.addColorStop(0, "rgba(216,196,154,0.22)");
+      gradient.addColorStop(1, "rgba(216,196,154,0.08)");
       ctx.fillStyle = gradient;
     }
     ctx.beginPath();
-    ctx.roundRect(x, y, mineCellSize, mineCellSize, 9);
+    ctx.roundRect(x, y, mineCellSize, mineCellSize, 3);
     ctx.fill();
-    ctx.strokeStyle = isChordReadyNeighbor ? "rgba(250,204,21,0.9)" : cell.revealed ? "rgba(245,238,216,0.2)" : "rgba(245,238,216,0.24)";
+    ctx.strokeStyle = isChordReadyNeighbor ? "rgba(120,185,141,0.92)" : cell.revealed ? "rgba(78,61,42,0.42)" : "rgba(216,196,154,0.24)";
     ctx.lineWidth = isChordReadyNeighbor ? 2 : 1;
     ctx.stroke();
     ctx.lineWidth = 1;
@@ -3223,17 +3241,17 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
       ctx.strokeStyle = accent;
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.roundRect(x - 4, y - 4, mineCellSize + 8, mineCellSize + 8, 12);
+      ctx.roundRect(x - 4, y - 4, mineCellSize + 8, mineCellSize + 8, 5);
       ctx.stroke();
       ctx.lineWidth = 1;
     }
 
     if (isChordReadyNeighbor) {
-      ctx.fillStyle = "rgba(147,197,253,0.94)";
+      ctx.fillStyle = "rgba(120,185,141,0.96)";
       ctx.beginPath();
-      ctx.roundRect(x + 6, y + mineCellSize - 17, 28, 13, 6);
+      ctx.roundRect(x + 6, y + mineCellSize - 17, 28, 13, 3);
       ctx.fill();
-      ctx.fillStyle = "#111827";
+      ctx.fillStyle = "#17130f";
       ctx.font = "900 8px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("열기", x + 20, y + mineCellSize - 7);
@@ -3242,11 +3260,11 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     if (cell.revealed) {
       ctx.textAlign = "center";
       if (cell.mine) {
-        ctx.fillStyle = "#111827";
+        ctx.fillStyle = "#17130f";
         ctx.beginPath();
         ctx.arc(x + mineCellSize / 2, y + mineCellSize / 2, 8, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = "#111827";
+        ctx.strokeStyle = "#17130f";
         ctx.beginPath();
         ctx.moveTo(x + 12, y + 12);
         ctx.lineTo(x + 26, y + 26);
@@ -3258,13 +3276,13 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
         ctx.font = "900 19px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
         ctx.fillText(`${cell.adjacent}`, x + mineCellSize / 2, y + 25);
       } else {
-        ctx.fillStyle = "rgba(255,255,255,0.38)";
+        ctx.fillStyle = "rgba(216,196,154,0.46)";
         ctx.beginPath();
         ctx.arc(x + mineCellSize / 2, y + mineCellSize / 2, 4, 0, Math.PI * 2);
         ctx.fill();
       }
     } else if (cell.flagged) {
-      ctx.strokeStyle = "#111827";
+      ctx.strokeStyle = "#17130f";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(x + 15, y + 11);
@@ -3284,7 +3302,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   if (cursorCanChord && cursor) {
     const cursorCenterX = mineBoardX + cursor.column * (mineCellSize + mineGap) + mineCellSize / 2;
     const cursorCenterY = mineBoardY + cursor.row * (mineCellSize + mineGap) + mineCellSize / 2;
-    ctx.strokeStyle = "rgba(250,204,21,0.34)";
+    ctx.strokeStyle = "rgba(120,185,141,0.42)";
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 7]);
     for (const id of cursorNeighborIds) {
@@ -3299,58 +3317,61 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   }
 
   const panelX = 466;
-  ctx.fillStyle = "rgba(245,238,216,0.09)";
+  ctx.fillStyle = "rgba(59,48,34,0.78)";
   ctx.beginPath();
-  ctx.roundRect(panelX, mineBoardY - 12, 196, 238, 10);
+  ctx.roundRect(panelX, mineBoardY - 12, 196, 248, 6);
   ctx.fill();
-  ctx.strokeStyle = "rgba(245,238,216,0.2)";
+  ctx.strokeStyle = "rgba(216,196,154,0.2)";
   ctx.stroke();
 
-  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.fillStyle = "rgba(216,196,154,0.9)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("열린 구역", panelX + 18, mineBoardY + 22);
+  ctx.fillText("숫자-깃발 대조표", panelX + 18, mineBoardY + 22);
+  ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillStyle = "rgba(216,196,154,0.58)";
+  ctx.fillText("현재 칸 기준으로 주변을 셉니다", panelX + 18, mineBoardY + 40);
   ctx.font = "900 32px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
   ctx.fillStyle = accent;
-  ctx.fillText(`${openedSafe}`, panelX + 18, mineBoardY + 62);
+  ctx.fillText(`${openedSafe}`, panelX + 18, mineBoardY + 78);
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillStyle = "rgba(255,255,255,0.62)";
-  ctx.fillText(`/ ${totalSafe} 안전구역`, panelX + 80, mineBoardY + 59);
-  ctx.fillText(`깃발 ${flaggedCount} / ${mineCount}`, panelX + 18, mineBoardY + 82);
+  ctx.fillStyle = "rgba(216,196,154,0.62)";
+  ctx.fillText(`/ ${totalSafe} 안전칸`, panelX + 80, mineBoardY + 75);
+  ctx.fillText(`깃발 ${flaggedCount} / ${mineCount}`, panelX + 18, mineBoardY + 98);
 
-  ctx.fillStyle = "rgba(255,255,255,0.13)";
+  ctx.fillStyle = "rgba(216,196,154,0.12)";
   ctx.beginPath();
-  ctx.roundRect(panelX + 18, mineBoardY + 102, 160, 58, 12);
+  ctx.roundRect(panelX + 18, mineBoardY + 118, 160, 64, 4);
   ctx.fill();
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = cursorCanChord ? accent : cursorHasTooManyFlags ? danger : "#f8fafc";
-  ctx.fillText(cursorActionTitle, panelX + 32, mineBoardY + 124);
-  ctx.fillStyle = "rgba(255,255,255,0.66)";
+  ctx.fillText(cursorActionTitle, panelX + 32, mineBoardY + 140);
+  ctx.fillStyle = "rgba(216,196,154,0.72)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(cursorActionDetail, panelX + 32, mineBoardY + 142);
-  ctx.fillText(`주변 닫힘 ${cursorSummary.closed} · 깃발 ${cursorSummary.flagged}`, panelX + 32, mineBoardY + 156);
+  ctx.fillText(cursorActionDetail, panelX + 32, mineBoardY + 158);
+  ctx.fillText(`주변 닫힘 ${cursorSummary.closed} · 깃발 ${cursorSummary.flagged}`, panelX + 32, mineBoardY + 174);
 
-  ctx.fillStyle = "rgba(255,255,255,0.64)";
+  ctx.fillStyle = "rgba(216,196,154,0.66)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("F 또는 Shift+클릭으로 깃발 표시.", panelX + 18, mineBoardY + 182);
-  ctx.fillText("숫자 구역을 다시 누르면 주변 열기.", panelX + 18, mineBoardY + 206);
+  ctx.fillText("F / 우클릭: 깃발", panelX + 18, mineBoardY + 210);
+  ctx.fillText("숫자 다시 누름: 주변 열기", panelX + 18, mineBoardY + 230);
 
-  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.fillStyle = "rgba(216,196,154,0.8)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("클릭/Space로 열고, 숫자 구역은 깃발 수가 맞을 때 주변 닫힌 구역을 같이 엽니다.", 34, canvasHeight - 20);
+  ctx.fillText("숫자와 주변 깃발 수가 맞으면 닫힌 주변 칸이 함께 열립니다.", 36, canvasHeight - 20);
 
   if (!state.started) {
-    ctx.fillStyle = "rgba(15,23,42,0.72)";
+    ctx.fillStyle = "rgba(23,19,15,0.78)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = "#e8ddbd";
     ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("구역을 열고 숫자를 봅니다. 숫자는 가까운 위험 구역 수입니다.", canvasWidth / 2, 202);
-    ctx.fillText("깃발 수가 맞는 숫자 구역은 한 번 더 눌러 주변을 엽니다.", canvasWidth / 2, 228);
+    ctx.fillText("숫자는 주변 지뢰 수입니다. 의심 칸은 F 또는 우클릭으로 깃발을 꽂습니다.", canvasWidth / 2, 202);
+    ctx.fillText("숫자와 깃발 수가 맞으면 숫자를 다시 눌러 주변 칸을 엽니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4587,10 +4608,10 @@ const arcadeVariantCopy = {
     liveDetail: "앞 칸 색, 대기선에서 기다린 타이밍, 충돌한 위험차를 같이 봅니다.",
   },
   minesweeper: {
-    finalKicker: "위험 지도 결과",
-    liveTitle: "배포 위험 지도",
-    scoreLabel: "안전 구역",
-    liveDetail: "숫자 주변의 깃발 수와 열린 구역을 같이 봅니다.",
+    finalKicker: "지뢰 지도 결과",
+    liveTitle: "릴리스 지뢰 지도",
+    scoreLabel: "안전칸",
+    liveDetail: "숫자 주변의 깃발 수와 열린 칸을 같이 봅니다.",
   },
   mole: {
     finalKicker: "알림 결과",
