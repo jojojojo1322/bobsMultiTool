@@ -1801,10 +1801,10 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   const drawCopy =
     mode === "missile"
       ? {
-          header: "낙하 지점 보기",
+          header: "도시 방어선 요격포",
           footer: "마우스/터치로 충돌점을 조준해 요격탄을 쏩니다. A/D와 Space도 됩니다.",
           focusWarning: "먼 미사일보다 방어선 가까운 충돌점을 먼저 막으세요.",
-          startLine1: "누른 채 충돌점을 겨누거나 A/D로 움직여 Space로 쏩니다.",
+          startLine1: "하단 요격포를 움직여 충돌점을 겨누고 Space로 쏩니다.",
           startLine2: "도시 방어선 가까운 미사일부터 한 발씩 막습니다.",
         }
       : mode === "bubble"
@@ -4304,10 +4304,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "차단한 표식 침입자, 놓친 방어선, 미끼 경고에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
-    finalKicker: "옥상 요격 결과",
+    finalKicker: "도시 방어 결과",
     liveTitle: "도시 방어 기록",
     scoreLabel: "막은 미사일",
-    liveDetail: "요격한 미사일과 미끼에 흔들린 순간을 같이 봅니다.",
+    liveDetail: "요격한 미사일, 놓친 충돌점, 미끼에 흔들린 순간을 같이 봅니다.",
   },
 };
 

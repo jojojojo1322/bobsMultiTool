@@ -1,11 +1,11 @@
 {
   "slug": "deploy-missile-defense",
-  "title": "옥상 미사일 막기",
-  "description": "위에서 내려오는 미사일이 도시 방어선에 닿기 전에 조준점으로 요격하는 1분 방어 게임입니다. 먼 미끼와 잔광은 넘기고, 충돌점이 방어선에 가까운 미사일부터 막습니다.",
+  "title": "도시 방어선 요격포",
+  "description": "위에서 내려오는 미사일이 하단 도시 방어선에 닿기 전에 조준점으로 요격하는 1분 방어 게임입니다. 먼 미끼와 잔광은 넘기고, 충돌점이 방어선에 가까운 미사일부터 막습니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-29",
-  "shareText": "옥상 미사일 막기를 해봤다. 화면 위보다 방어선 가까운 충돌점부터 지우는 게 나았다.",
+  "shareText": "도시 방어선 요격포를 해봤다. 화면 위보다 방어선 가까운 충돌점부터 지우는 게 나았다.",
   "order": 5,
   "relatedBlogSlugs": [
     "shooter-target-cue-note",
@@ -18,8 +18,8 @@
   ],
   "arcade": {
     "variant": "shooter",
-    "goal": "내려오는 미사일이 도시 방어선에 닿기 전에 요격합니다. 미끼와 잔광은 넘기고, 충돌점이 가까운 미사일부터 한 발씩 막습니다.",
-    "controls": "마우스/터치로 누른 채 조준선을 끌면 요격탄을 발사합니다. 키보드는 A/D 또는 방향키로 옥상 요격포를 움직이고, Space/Enter로 발사합니다. 미끼 가까움이 뜨면 쏘지 않고 다음 미사일을 봅니다.",
+    "goal": "내려오는 미사일이 하단 도시 방어선에 닿기 전에 요격합니다. 미끼와 잔광은 넘기고, 충돌점이 가까운 미사일부터 한 발씩 막습니다.",
+    "controls": "마우스/터치로 누른 채 조준선을 끌면 요격탄을 발사합니다. 키보드는 A/D 또는 방향키로 하단 요격포를 움직이고, Space/Enter로 발사합니다. 미끼 가까움이 뜨면 쏘지 않고 다음 미사일을 봅니다.",
     "playerLabel": "요격포",
     "goodLabels": [
       "미사일",
@@ -63,18 +63,20 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "도시 방어선 미사일 요격 게임",
-    "planningIntent": "옥상 미사일 막기는 무작정 발사하는 슈팅보다 도시 방어선, 충돌까지 남은 시간, 조준점과 요격탄 타이밍, 미끼 신호를 보고 가까운 충돌점부터 지우는 방어 판단으로 검토해야 한다.",
+    "gameMode": "도시 방어선 충돌점 우선 미사일 요격 게임",
+    "planningIntent": "도시 방어선 요격포는 무작정 발사하는 슈팅보다 도시 방어선, 충돌까지 남은 시간, 조준점과 요격탄 타이밍, 미끼 신호를 보고 가까운 충돌점부터 지우는 방어 판단으로 검토해야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Missile Command gameplay defend cities incoming missiles",
         "Missile Command manual counter missiles cities",
+        "Missile Command trackball crosshair explosion city defense",
         "arcade defense game threat prioritization impact point",
         "missile command reticle explosion radius visual feedback",
         "falling object defense game closest to base priority"
       ],
       "referenceTypes": [
         "Missile Command 계열의 도시/기지 방어, 조준점, 요격탄 루프",
+        "trackball/crosshair 조작이 충돌점 선택을 중심에 두는 사례",
         "하단 도시 방어선과 위에서 내려오는 위협 궤적이 먼저 읽히는 오래된 아케이드 화면",
         "가까운 충돌점과 먼 미사일을 시간-충돌 기준으로 나누는 우선순위 UI",
         "미끼와 실제 미사일을 색상 외 꼬리, 모양, 라벨로 구분하는 사례"
@@ -86,7 +88,7 @@
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '도시 방어선에 닿기 전에 미사일을 요격한다'가 읽히는가?",
+      "첫 5초 안에 '하단 도시 방어선에 닿기 전에 충돌점 가까운 미사일부터 요격한다'가 읽히는가?",
       "방어선 가까운 충돌점이 화면 위의 먼 미사일보다 먼저 막아야 할 대상으로 보이는가?",
       "조준점, 발사 위치, 요격탄 궤적이 한 번에 이어져 보이는가?",
       "미끼와 잔광을 쏘지 않아도 된다는 피드백이 충분한가?",
@@ -111,7 +113,7 @@
       "recoveryQuestion": "짧은 재시작과 충돌점 힌트가 다음 요격 순서를 바꾸게 하는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "낡은 도시 방어 관제판과 옥상 요격포",
+      "metaphor": "낡은 도시 방어 관제판과 하단 요격포",
       "primarySurface": "위에서 내려오는 미사일 궤적, 아래 도시 방어선, 조준점과 요격탄, 충돌점 경고",
       "roughnessTarget": "깨끗한 HUD보다 하늘 격자, 하단 도시선, 미사일 꼬리, 손으로 그은 조준점의 투박한 대비",
       "differenceFromGenericPlay": "설명 카드보다 미사일 궤적과 하단 방어선까지 남은 시간이 화면을 지배한다.",
