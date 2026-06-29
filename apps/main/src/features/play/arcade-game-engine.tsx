@@ -1806,11 +1806,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
           }
         : mode === "invader"
           ? {
-              header: "표식 침입자만 격추",
-              footer: "하단 방어포를 마우스/터치로 끌어 표식 침입자에만 발사합니다. A/D와 Space도 됩니다.",
+              header: "표식 침입자만 차단",
+              footer: "하단 방어포를 마우스/터치로 끌어 표식 침입자에만 방어탄을 쏩니다. A/D와 Space도 됩니다.",
               focusWarning: "미끼 경고까지 쏘면 방어선이 먼저 밀립니다. 표식 침입자만 보세요.",
               startLine1: "하단 방어포를 끌거나 A/D로 움직여 Space로 쏩니다.",
-              startLine2: "표식 침입자만 격추하고 미끼 경고는 흘려보냅니다.",
+              startLine2: "표식 침입자만 차단하고 미끼 경고는 흘려보냅니다.",
             }
           : {
               header: "버그 단서만 막기",
@@ -4178,10 +4178,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "재현 단서를 막은 순간과 소문에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-invaders": {
-    finalKicker: "배포 방어 결과",
-    liveTitle: "침입자 방어 기록",
-    scoreLabel: "막은 침입자",
-    liveDetail: "표식 침입자를 맞힌 순간과 미끼 경고에 흔들린 순간을 같이 봅니다.",
+    finalKicker: "게이트 방어 결과",
+    liveTitle: "배포 게이트 기록",
+    scoreLabel: "차단한 침입자",
+    liveDetail: "차단한 표식 침입자와 미끼 경고에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
     finalKicker: "옥상 요격 결과",
