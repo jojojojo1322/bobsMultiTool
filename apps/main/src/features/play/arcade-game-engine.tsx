@@ -804,6 +804,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
   if (content.arcade.variant === "growth") return "부품 만들기";
+  if (content.slug === "bug-clicker") return "접수";
   return "발사";
 }
 
@@ -853,13 +854,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
         }
       : mode === "signal"
         ? {
-            noisyCloseTitle: "소문 가까움",
-            noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
-            readyTitle: "버그 단서",
-            readyDetail: (label: string) => `${label} 정렬됨`,
-            trackingTitle: "단서 따라가기",
-            waitingTitle: "단서 기다림",
-            waitingDetail: "재현 단서가 내려올 때 막기",
+            noisyCloseTitle: "소문 티켓 접근",
+            noisyCloseDetail: (label: string) => `${label} 접수 금지`,
+            readyTitle: "접수할 버그 티켓",
+            readyDetail: (label: string) => `${label} 티켓 정렬`,
+            trackingTitle: "접수 방패 정렬",
+            waitingTitle: "접수 티켓 대기",
+            waitingDetail: "재현/로그 티켓이 접수선 쪽으로 내려올 때 받기",
           }
       : {
           noisyCloseTitle: "소음 가까움",
@@ -1831,24 +1832,25 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
               startLine2: "확인 표식 침입자만 쏘고 주황 미끼 경고는 흘려보냅니다.",
             }
           : {
-              header: "버그 단서만 막기",
-              footer: "하단 방패선을 마우스/터치로 끌어 표식 단서에만 방패탄을 쏩니다. A/D와 Space도 됩니다.",
-              focusWarning: "소문까지 다 막으면 방패선이 먼저 밀립니다. 버그 단서만 고르세요.",
-              startLine1: "하단 방패선을 끌거나 A/D로 움직여 Space로 쏩니다.",
-              startLine2: "재현 단서와 증거만 막고 소문은 흘려보냅니다.",
+              header: "버그 접수 방패판",
+              footer: "재현·로그·환경 티켓만 접수합니다. 느낌·소문 티켓은 비켜둡니다.",
+              focusWarning: "느낌 티켓까지 받으면 접수선이 막힙니다. 재현/로그 티켓만 고르세요.",
+              startLine1: "하단 접수 방패를 끌거나 A/D로 움직여 Space로 받습니다.",
+              startLine2: "재현, 로그, 환경 티켓은 받고 느낌·소문 티켓은 흘려보냅니다.",
             };
   const dangerLineY = canvasHeight - 96;
   const aimRead = shooterAimRead(state, mode);
   const invaderMode = mode === "invader";
+  const signalMode = mode === "signal";
 
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
-  backdrop.addColorStop(0.62, invaderMode ? "rgba(31,38,29,0.96)" : "rgba(15,23,42,0.96)");
-  backdrop.addColorStop(1, invaderMode ? "rgba(15,19,14,1)" : "rgba(2,6,23,1)");
+  backdrop.addColorStop(0.62, signalMode ? "rgba(42,39,31,0.96)" : invaderMode ? "rgba(31,38,29,0.96)" : "rgba(15,23,42,0.96)");
+  backdrop.addColorStop(1, signalMode ? "rgba(22,23,18,1)" : invaderMode ? "rgba(15,19,14,1)" : "rgba(2,6,23,1)");
   ctx.fillStyle = backdrop;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.strokeStyle = invaderMode ? "rgba(143,191,123,0.13)" : "rgba(255,255,255,0.08)";
+  ctx.strokeStyle = signalMode ? "rgba(239,231,204,0.1)" : invaderMode ? "rgba(143,191,123,0.13)" : "rgba(255,255,255,0.08)";
   ctx.lineWidth = 1;
   for (let x = 60; x < canvasWidth; x += 74) {
     ctx.beginPath();
@@ -1863,22 +1865,22 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.stroke();
   }
 
-  ctx.fillStyle = invaderMode ? "rgba(28,34,25,0.72)" : "rgba(15,23,42,0.54)";
+  ctx.fillStyle = signalMode ? "rgba(48,43,33,0.72)" : invaderMode ? "rgba(28,34,25,0.72)" : "rgba(15,23,42,0.54)";
   ctx.beginPath();
-  ctx.roundRect(28, 20, canvasWidth - 56, 42, 14);
+  ctx.roundRect(28, 20, canvasWidth - 56, 42, signalMode ? 6 : 14);
   ctx.fill();
-  ctx.strokeStyle = invaderMode ? "rgba(216,196,106,0.22)" : "rgba(255,255,255,0.12)";
+  ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.22)" : "rgba(255,255,255,0.12)";
   ctx.stroke();
-  ctx.fillStyle = invaderMode ? "#f0ead2" : "rgba(255,255,255,0.82)";
+  ctx.fillStyle = signalMode ? "#efe7cc" : invaderMode ? "#f0ead2" : "rgba(255,255,255,0.82)";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(drawCopy.header, 44, 47);
   ctx.textAlign = "right";
-  ctx.fillStyle = state.focus <= 30 ? danger : invaderMode ? "rgba(240,234,210,0.72)" : "rgba(255,255,255,0.68)";
+  ctx.fillStyle = state.focus <= 30 ? danger : signalMode ? "rgba(239,231,204,0.72)" : invaderMode ? "rgba(240,234,210,0.72)" : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, canvasWidth - 44, 46);
 
-  ctx.strokeStyle = invaderMode ? "rgba(216,196,106,0.24)" : "rgba(255,255,255,0.16)";
+  ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.24)" : "rgba(255,255,255,0.16)";
   ctx.setLineDash([10, 10]);
   ctx.beginPath();
   ctx.moveTo(state.playerX, 68);
@@ -1917,14 +1919,27 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fill();
   }
 
-  ctx.fillStyle = invaderMode ? "rgba(216,196,106,0.16)" : "rgba(255,255,255,0.08)";
+  ctx.fillStyle = signalMode ? "rgba(184,165,106,0.22)" : invaderMode ? "rgba(216,196,106,0.16)" : "rgba(255,255,255,0.08)";
   ctx.beginPath();
   ctx.roundRect(0, dangerLineY, canvasWidth, 5, 2);
   ctx.fill();
-  ctx.fillStyle = state.focus < 38 ? "rgba(197,106,58,0.42)" : invaderMode ? "rgba(143,191,123,0.18)" : "rgba(96,165,250,0.16)";
+  ctx.fillStyle = state.focus < 38 ? "rgba(184,93,77,0.42)" : signalMode ? "rgba(131,176,138,0.17)" : invaderMode ? "rgba(143,191,123,0.18)" : "rgba(96,165,250,0.16)";
   ctx.beginPath();
-  ctx.roundRect(32, dangerLineY + 16, canvasWidth - 64, 28, 14);
+  ctx.roundRect(32, dangerLineY + 16, canvasWidth - 64, 28, signalMode ? 6 : 14);
   ctx.fill();
+  if (signalMode) {
+    ctx.strokeStyle = "rgba(239,231,204,0.2)";
+    ctx.lineWidth = 1;
+    for (let x = 52; x < canvasWidth - 70; x += 112) {
+      ctx.beginPath();
+      ctx.roundRect(x, dangerLineY + 21, 86, 18, 3);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(239,231,204,0.58)";
+    ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("접수선", 44, dangerLineY + 37);
+  }
 
   for (const sprite of state.sprites) {
     drawShooterSprite(ctx, sprite, mode, accent, danger);
@@ -1953,7 +1968,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.fillStyle = "#064e3b";
       ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("쏘기", aimRead.target.x, aimRead.target.y - aimRead.target.radius - 19);
+      ctx.fillText(signalMode ? "접수" : "쏘기", aimRead.target.x, aimRead.target.y - aimRead.target.radius - 19);
     }
   }
 
@@ -1971,12 +1986,12 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.stroke();
   }
 
-  ctx.fillStyle = invaderMode ? "rgba(28,34,25,0.78)" : "rgba(15,23,42,0.72)";
+  ctx.fillStyle = signalMode ? "rgba(48,43,33,0.78)" : invaderMode ? "rgba(28,34,25,0.78)" : "rgba(15,23,42,0.72)";
   ctx.beginPath();
-  ctx.roundRect(44, 72, 196, 50, 14);
+  ctx.roundRect(44, 72, 196, 50, signalMode ? 6 : 14);
   ctx.fill();
   ctx.strokeStyle = aimRead.warning
-    ? "rgba(197,106,58,0.58)"
+    ? "rgba(184,93,77,0.58)"
     : aimRead.ready
       ? invaderMode
         ? "rgba(216,196,106,0.52)"
@@ -1990,7 +2005,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(aimRead.title, 60, 92);
-  ctx.fillStyle = invaderMode ? "rgba(240,234,210,0.68)" : "rgba(255,255,255,0.64)";
+  ctx.fillStyle = signalMode ? "rgba(239,231,204,0.68)" : invaderMode ? "rgba(240,234,210,0.68)" : "rgba(255,255,255,0.64)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(aimRead.detail, 60, 110);
 
@@ -2012,7 +2027,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   drawShooterPlayer(ctx, content, state, mode, primary, accent);
 
   ctx.textAlign = "left";
-  ctx.fillStyle = invaderMode ? "rgba(240,234,210,0.74)" : "rgba(255,255,255,0.72)";
+  ctx.fillStyle = signalMode ? "rgba(239,231,204,0.74)" : invaderMode ? "rgba(240,234,210,0.74)" : "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(drawCopy.footer, 34, canvasHeight - 22);
   if (state.focus < 35) {
@@ -2022,9 +2037,9 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   }
 
   if (!state.started) {
-    ctx.fillStyle = invaderMode ? "rgba(23,27,24,0.78)" : "rgba(15,23,42,0.72)";
+    ctx.fillStyle = signalMode ? "rgba(22,23,18,0.78)" : invaderMode ? "rgba(23,27,24,0.78)" : "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = invaderMode ? "#f0ead2" : "#f8fafc";
+    ctx.fillStyle = signalMode ? "#efe7cc" : invaderMode ? "#f0ead2" : "#f8fafc";
     ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
@@ -2126,18 +2141,41 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
     ctx.lineTo(sprite.radius * 1.12, sprite.radius * 1.28);
     ctx.stroke();
   } else {
+    ctx.fillStyle = sprite.good ? "rgba(239,231,204,0.96)" : "rgba(184,93,77,0.94)";
     ctx.beginPath();
-    ctx.roundRect(-sprite.radius - 6, -sprite.radius * 0.72, sprite.radius * 2 + 12, sprite.radius * 1.44, 12);
+    ctx.roundRect(-sprite.radius - 9, -sprite.radius * 0.74, sprite.radius * 2 + 18, sprite.radius * 1.5, 4);
     ctx.fill();
+    ctx.fillStyle = sprite.good ? "rgba(131,176,138,0.95)" : "rgba(64,38,30,0.72)";
+    ctx.beginPath();
+    ctx.roundRect(-sprite.radius - 5, -sprite.radius * 0.64, sprite.radius * 2 + 10, 10, 2);
+    ctx.fill();
+    if (sprite.good) {
+      ctx.strokeStyle = "rgba(47,74,54,0.82)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-sprite.radius * 0.55, 2);
+      ctx.lineTo(-sprite.radius * 0.22, sprite.radius * 0.34);
+      ctx.lineTo(sprite.radius * 0.58, -sprite.radius * 0.32);
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = "rgba(239,231,204,0.78)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-sprite.radius * 0.55, -sprite.radius * 0.3);
+      ctx.lineTo(sprite.radius * 0.55, sprite.radius * 0.34);
+      ctx.moveTo(sprite.radius * 0.55, -sprite.radius * 0.3);
+      ctx.lineTo(-sprite.radius * 0.55, sprite.radius * 0.34);
+      ctx.stroke();
+    }
   }
 
   ctx.strokeStyle = sprite.good ? "rgba(255,255,255,0.58)" : "rgba(255,255,255,0.34)";
   ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.fillStyle = sprite.good ? "#0f172a" : "#f8fafc";
+  ctx.fillStyle = mode === "signal" ? (sprite.good ? "#2b2416" : "#f8f1dc") : sprite.good ? "#0f172a" : "#f8fafc";
   ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(sprite.label.slice(0, 5), 0, mode === "missile" ? 9 : sprite.radius + 19);
+  ctx.fillText(sprite.label.slice(0, 5), 0, mode === "missile" ? 9 : mode === "signal" ? sprite.radius * 0.54 : sprite.radius + 19);
   ctx.restore();
 }
 
@@ -2195,18 +2233,20 @@ function drawShooterPlayer(
     ctx.stroke();
   } else {
     ctx.beginPath();
-    ctx.roundRect(-34, -18, 68, 36, 12);
+    ctx.roundRect(-42, -12, 84, 30, 5);
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.55)";
+    ctx.strokeStyle = "rgba(239,231,204,0.58)";
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.fillStyle = accent;
     ctx.beginPath();
-    ctx.moveTo(0, -34);
-    ctx.lineTo(12, -16);
-    ctx.lineTo(-12, -16);
-    ctx.closePath();
+    ctx.roundRect(-22, -28, 44, 14, 3);
     ctx.fill();
+    ctx.strokeStyle = "rgba(47,43,33,0.45)";
+    ctx.beginPath();
+    ctx.moveTo(-16, -21);
+    ctx.lineTo(16, -21);
+    ctx.stroke();
   }
   ctx.fillStyle = "#0f172a";
   ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -4352,10 +4392,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "짧은 짝과 긴 10길, 넘친 손길을 같이 봅니다.",
   },
   "bug-clicker": {
-    finalKicker: "버그 방패 결과",
-    liveTitle: "단서 방패 기록",
-    scoreLabel: "막은 단서",
-    liveDetail: "재현 단서를 막은 순간과 소문에 흔들린 순간을 같이 봅니다.",
+    finalKicker: "버그 접수 결과",
+    liveTitle: "접수선 기록",
+    scoreLabel: "접수 티켓",
+    liveDetail: "재현/로그 티켓을 받은 순간과 소문 티켓에 흔들린 순간을 같이 봅니다.",
   },
   "bug-bubble-shooter": {
     finalKicker: "버그 버블 결과",
