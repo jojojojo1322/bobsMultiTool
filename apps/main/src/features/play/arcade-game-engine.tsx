@@ -1285,7 +1285,7 @@ function flightCueFor(sprite: Sprite | null, projectedY: number) {
   if (!sprite) {
     return {
       label: "리듬 유지",
-      detail: "다음 높이선 대기",
+      detail: "다음 통풍구 대기",
       tone: "neutral" as const,
       arrow: "steady" as const,
     };
@@ -1368,9 +1368,9 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         : "rgba(255,255,255,0.72)";
   const incomingLabel = incomingSprite
     ? incomingSprite.good
-      ? "다음 빈틈"
-      : "피할 벽"
-    : "통로 대기";
+      ? "다음 통풍구"
+      : "피할 배선"
+    : "팬 바람 대기";
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
   backdrop.addColorStop(0.56, "rgba(30,41,59,0.95)");
@@ -1402,7 +1402,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("누르면 상승, 떼면 하강", 44, 48);
+  ctx.fillText("서버실 통풍구 조종", 44, 48);
   ctx.textAlign = "right";
   ctx.fillStyle = cueColor;
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -1443,7 +1443,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillStyle = "#f8fafc";
     ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(incomingSprite.good ? "높이 맞추기" : "높이 피하기", Math.min(canvasWidth - 105, Math.max(state.playerX + 113, incomingSprite.x - 3)), incomingSprite.y - 12);
+    ctx.fillText(incomingSprite.good ? "통풍구 맞추기" : "배선 피하기", Math.min(canvasWidth - 105, Math.max(state.playerX + 113, incomingSprite.x - 3)), incomingSprite.y - 12);
   }
 
   ctx.strokeStyle = liftActive ? "rgba(250,204,21,0.68)" : "rgba(147,197,253,0.5)";
@@ -1575,7 +1575,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("높이선과 상승/하강 큐를 보고 누르거나 떼세요.", 34, canvasHeight - 24);
+  ctx.fillText("통풍구 높이선과 상승/하강 큐를 보고 누르거나 떼세요.", 34, canvasHeight - 24);
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1584,8 +1584,8 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("누르면 뜨고, 떼면 내려갑니다.", canvasWidth / 2, 204);
-    ctx.fillText("다가오는 높이선을 보고 빈틈을 통과하세요.", canvasWidth / 2, 230);
+    ctx.fillText("누르면 점검 드론이 뜨고, 떼면 내려갑니다.", canvasWidth / 2, 204);
+    ctx.fillText("다가오는 통풍구 높이선을 보고 배선을 피하세요.", canvasWidth / 2, 230);
   }
 }
 
@@ -3878,10 +3878,10 @@ const arcadeVariantCopy = {
     liveDetail: "빛난 순서와 첫 실수 위치를 같이 봅니다.",
   },
   flight: {
-    finalKicker: "비행 결과",
-    liveTitle: "고도 기록",
-    scoreLabel: "통과 기록",
-    liveDetail: "눌렀다 뗀 리듬과 다음 높이선을 같이 봅니다.",
+    finalKicker: "통풍구 비행 결과",
+    liveTitle: "통풍구 기록",
+    scoreLabel: "지나간 통풍구",
+    liveDetail: "눌렀다 뗀 리듬과 다음 통풍구 높이선을 같이 봅니다.",
   },
   "brick-breaker": {
     finalKicker: "벽돌 결과",
