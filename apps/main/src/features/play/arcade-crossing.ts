@@ -63,6 +63,6 @@ export function crossingDangerForY(sprites: CrossingSpriteLike[], playerX: numbe
 
 export function crossingDangerLabel(danger: CrossingDanger) {
   if (danger.level === "danger") return "빨강 차선";
-  if (danger.level === "watch") return "노랑 대기";
-  return "빈틈";
+  if (danger.level === "watch") return "노랑 경고";
+  return "초록 빈틈";
 }

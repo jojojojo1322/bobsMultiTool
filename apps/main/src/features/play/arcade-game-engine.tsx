@@ -4200,34 +4200,61 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = "#182235";
+  ctx.fillStyle = "#1d211b";
   ctx.fillRect(0, 42, canvasWidth, canvasHeight - 98);
-  ctx.fillStyle = "#233047";
+  ctx.fillStyle = "#29301f";
   ctx.fillRect(0, 0, canvasWidth, 42);
+  ctx.fillStyle = "rgba(80,69,42,0.78)";
   ctx.fillRect(0, crossingStartY - 23, canvasWidth, 58);
 
-  for (const y of crossingLanes) {
+  ctx.fillStyle = "rgba(134,200,143,0.16)";
+  ctx.fillRect(0, 42, canvasWidth, 34);
+  ctx.strokeStyle = "rgba(232,221,174,0.22)";
+  ctx.lineWidth = 1;
+  for (let x = 52; x < canvasWidth - 30; x += crossingStepX) {
+    ctx.beginPath();
+    ctx.moveTo(x, 42);
+    ctx.lineTo(x, crossingStartY + 36);
+    ctx.stroke();
+  }
+
+  for (const [laneIndex, y] of crossingLanes.entries()) {
     const laneDanger = crossingDangerForY(state.sprites, state.playerX, y);
+    ctx.fillStyle = laneIndex % 2 === 0 ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.08)";
+    ctx.fillRect(0, y - 25, canvasWidth, 50);
     if (laneDanger.level !== "safe") {
       ctx.fillStyle = laneDanger.level === "danger" ? "rgba(251,113,133,0.16)" : "rgba(250,204,21,0.11)";
       ctx.fillRect(0, y - 26, canvasWidth, 52);
     }
-    ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.strokeStyle = "rgba(232,221,174,0.2)";
     ctx.setLineDash([16, 14]);
     ctx.beginPath();
     ctx.moveTo(24, y + 27);
     ctx.lineTo(canvasWidth - 24, y + 27);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.fillStyle = laneDanger.level === "danger" ? danger : laneDanger.level === "watch" ? primary : "rgba(232,221,174,0.62)";
+    ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(`차선 ${laneIndex + 1}`, 24, y - 9);
   }
 
   ctx.fillStyle = accent;
   ctx.fillRect(0, 42, canvasWidth, 4);
-  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.fillStyle = "rgba(232,221,174,0.86)";
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("도착선", 20, 30);
+  ctx.fillText("도착 슬롯", 20, 30);
+  ctx.textAlign = "right";
+  ctx.fillStyle = "rgba(232,221,174,0.62)";
+  ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("초록이면 한 칸, 노랑/빨강이면 대기", canvasWidth - 22, 29);
 
+  ctx.fillStyle =
+    nextDanger.level === "danger" ? "rgba(200,95,89,0.2)" : nextDanger.level === "watch" ? "rgba(216,185,79,0.18)" : "rgba(134,200,143,0.16)";
+  ctx.beginPath();
+  ctx.roundRect(state.playerX - 24, nextY - 24, 48, 48, 4);
+  ctx.fill();
   ctx.strokeStyle = nextColor;
   ctx.lineWidth = 3;
   ctx.setLineDash([8, 7]);
@@ -4238,64 +4265,84 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.lineWidth = 1;
 
   for (const sprite of state.sprites) {
-    ctx.fillStyle = danger;
+    const carFill = sprite.vx < 0 ? "rgba(200,95,89,0.96)" : "rgba(179,82,76,0.94)";
+    ctx.fillStyle = "rgba(0,0,0,0.26)";
     ctx.beginPath();
-    ctx.roundRect(sprite.x - sprite.radius, sprite.y - 15, sprite.radius * 2, 30, 8);
+    ctx.ellipse(sprite.x, sprite.y + 19, sprite.radius * 0.9, 6, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.86)";
+    ctx.fillStyle = carFill;
+    ctx.beginPath();
+    ctx.roundRect(sprite.x - sprite.radius, sprite.y - 15, sprite.radius * 2, 30, 5);
+    ctx.fill();
+    ctx.fillStyle = "rgba(232,221,174,0.88)";
     ctx.beginPath();
     ctx.arc(sprite.x + (sprite.vx < 0 ? -sprite.radius + 8 : sprite.radius - 8), sprite.y - 8, 3, 0, Math.PI * 2);
     ctx.arc(sprite.x + (sprite.vx < 0 ? -sprite.radius + 8 : sprite.radius - 8), sprite.y + 8, 3, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#111827";
+    ctx.fillStyle = "#171a15";
     ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(sprite.label.slice(0, 6), sprite.x, sprite.y + 4);
+    ctx.fillStyle = "rgba(232,221,174,0.72)";
+    ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText(sprite.vx < 0 ? "<" : ">", sprite.x + (sprite.vx < 0 ? -sprite.radius + 15 : sprite.radius - 15), sprite.y + 4);
   }
 
+  ctx.fillStyle = "rgba(0,0,0,0.28)";
+  ctx.beginPath();
+  ctx.ellipse(state.playerX, state.playerY + 22, 26, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
   ctx.fillStyle = primary;
   ctx.beginPath();
-  ctx.roundRect(state.playerX - 17, state.playerY - 17, 34, 34, 10);
+  ctx.moveTo(state.playerX, state.playerY - 24);
+  ctx.lineTo(state.playerX + 23, state.playerY);
+  ctx.lineTo(state.playerX, state.playerY + 24);
+  ctx.lineTo(state.playerX - 23, state.playerY);
+  ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.65)";
+  ctx.strokeStyle = "rgba(232,221,174,0.76)";
   ctx.stroke();
-  ctx.fillStyle = "#111827";
-  ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillStyle = "#171a15";
+  ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(content.arcade.playerLabel.slice(0, 4), state.playerX, state.playerY + 4);
+  ctx.fillText(content.arcade.playerLabel.slice(0, 4), state.playerX, state.playerY + 3);
 
-  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.fillStyle = "rgba(31,35,25,0.86)";
   ctx.beginPath();
-  ctx.roundRect(500, 64, 178, 116, 18);
+  ctx.roundRect(500, 64, 178, 116, 6);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.15)";
+  ctx.strokeStyle = "rgba(232,221,174,0.22)";
   ctx.stroke();
-  ctx.fillStyle = "#f8fafc";
+  ctx.fillStyle = "#e8ddae";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("다음 칸", 518, 98);
+  ctx.fillText("앞 칸 표시", 518, 98);
   ctx.fillStyle = nextColor;
   ctx.font = "900 24px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(crossingDangerLabel(nextDanger), 518, 132);
-  ctx.fillStyle = "rgba(255,255,255,0.68)";
+  ctx.fillStyle = "rgba(232,221,174,0.72)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   const secondsText = nextDanger.seconds === null ? "차 간격을 보고 이동" : `${nextDanger.seconds.toFixed(1)}초 안에 위험차`;
   ctx.fillText(secondsText, 518, 156);
 
-  ctx.fillStyle = "rgba(255,255,255,0.76)";
+  ctx.fillStyle = "rgba(232,221,174,0.8)";
+  ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("대기선", 22, crossingStartY + 15);
+  ctx.fillStyle = "rgba(232,221,174,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("초록 빈틈이면 한 칸 전진하고, 노랑/빨강 차선이면 기다립니다.", 24, canvasHeight - 18);
+  ctx.fillText("초록 빈틈이면 한 칸 전진하고, 노랑/빨강 차선이면 대기선에서 기다립니다.", 24, canvasHeight - 18);
 
   if (!state.started) {
-    ctx.fillStyle = "rgba(15,23,42,0.68)";
+    ctx.fillStyle = "rgba(23,26,21,0.78)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = "#e8ddae";
     ctx.font = "700 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 168);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("다음 칸이 초록이면 건너고, 노랑이나 빨강이면 잠깐 기다립니다.", canvasWidth / 2, 204);
+    ctx.fillText("앞 칸이 초록이면 건너고, 노랑이나 빨강이면 대기선에서 기다립니다.", canvasWidth / 2, 204);
     ctx.fillText("방향키/WASD 또는 마우스/터치로 차선을 한 칸씩 건넙니다.", canvasWidth / 2, 230);
   }
 }
@@ -4534,10 +4581,10 @@ const arcadeVariantCopy = {
     liveDetail: "지난 힌트와 살아 있는 숫자를 같이 봅니다.",
   },
   crossing: {
-    finalKicker: "차선 건너기 결과",
-    liveTitle: "차선 기록",
-    scoreLabel: "넘은 도착선",
-    liveDetail: "다음 칸 색, 기다린 타이밍, 충돌한 위험차를 같이 봅니다.",
+    finalKicker: "빈틈 차선 결과",
+    liveTitle: "앞 칸 판단 기록",
+    scoreLabel: "도착 슬롯",
+    liveDetail: "앞 칸 색, 대기선에서 기다린 타이밍, 충돌한 위험차를 같이 봅니다.",
   },
   minesweeper: {
     finalKicker: "위험 지도 결과",
