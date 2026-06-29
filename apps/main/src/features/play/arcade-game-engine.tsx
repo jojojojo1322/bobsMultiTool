@@ -834,13 +834,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
         }
       : mode === "bubble"
         ? {
-            noisyCloseTitle: "소문 버블 가까움",
-            noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
-            readyTitle: "버그 단서",
-            readyDetail: (label: string) => `${label} 정렬됨`,
-            trackingTitle: "단서 버블 따라가기",
-            waitingTitle: "단서 대기",
-            waitingDetail: "재현/증거 버블이 내려올 때 쏘기",
+          noisyCloseTitle: "소문 버블 가까움",
+          noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
+          readyTitle: "버그 단서",
+          readyDetail: (label: string) => `${label} 정렬됨`,
+          trackingTitle: "단서 버블 따라가기",
+          waitingTitle: "단서 대기",
+          waitingDetail: "재현/로그/원인 버블이 내려올 때 쏘기",
           }
       : mode === "invader"
       ? {
@@ -1817,11 +1817,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         }
       : mode === "bubble"
         ? {
-            header: "버그 단서 버블만 터뜨리기",
-            footer: "마우스/터치로 조준선을 끌어 재현·증거 버블에 발사합니다. A/D와 Space도 됩니다.",
-            focusWarning: "소문 버블까지 터뜨리면 판이 흐려집니다. 버그 단서 버블만 고르세요.",
-            startLine1: "누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.",
-            startLine2: "재현, 증거, 로그 표식이 붙은 버그 버블만 터뜨립니다.",
+            header: "버그 단서 버블 조준판",
+            footer: "하단 발사대에서 점선 조준선을 맞춰 재현·로그·원인 버블만 쏩니다. 소문 버블은 흘립니다.",
+            focusWarning: "소문 버블까지 터뜨리면 판이 흐려집니다. 바닥선 가까운 단서 버블부터 보세요.",
+            startLine1: "하단 발사대를 끌거나 A/D로 움직여 Space로 쏩니다.",
+            startLine2: "재현, 로그, 원인 표식 버블만 겨냥하고 소문 버블은 흘립니다.",
           }
         : mode === "invader"
           ? {
@@ -1840,17 +1840,27 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
             };
   const dangerLineY = canvasHeight - 96;
   const aimRead = shooterAimRead(state, mode);
+  const bubbleMode = mode === "bubble";
   const invaderMode = mode === "invader";
   const signalMode = mode === "signal";
 
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
-  backdrop.addColorStop(0.62, signalMode ? "rgba(42,39,31,0.96)" : invaderMode ? "rgba(31,38,29,0.96)" : "rgba(15,23,42,0.96)");
-  backdrop.addColorStop(1, signalMode ? "rgba(22,23,18,1)" : invaderMode ? "rgba(15,19,14,1)" : "rgba(2,6,23,1)");
+  backdrop.addColorStop(
+    0.62,
+    signalMode ? "rgba(42,39,31,0.96)" : invaderMode ? "rgba(31,38,29,0.96)" : bubbleMode ? "rgba(29,34,27,0.96)" : "rgba(15,23,42,0.96)",
+  );
+  backdrop.addColorStop(1, signalMode ? "rgba(22,23,18,1)" : invaderMode ? "rgba(15,19,14,1)" : bubbleMode ? "rgba(16,18,14,1)" : "rgba(2,6,23,1)");
   ctx.fillStyle = backdrop;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.strokeStyle = signalMode ? "rgba(239,231,204,0.1)" : invaderMode ? "rgba(143,191,123,0.13)" : "rgba(255,255,255,0.08)";
+  ctx.strokeStyle = signalMode
+    ? "rgba(239,231,204,0.1)"
+    : invaderMode
+      ? "rgba(143,191,123,0.13)"
+      : bubbleMode
+        ? "rgba(214,179,95,0.12)"
+        : "rgba(255,255,255,0.08)";
   ctx.lineWidth = 1;
   for (let x = 60; x < canvasWidth; x += 74) {
     ctx.beginPath();
@@ -1865,22 +1875,22 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.stroke();
   }
 
-  ctx.fillStyle = signalMode ? "rgba(48,43,33,0.72)" : invaderMode ? "rgba(28,34,25,0.72)" : "rgba(15,23,42,0.54)";
+  ctx.fillStyle = signalMode ? "rgba(48,43,33,0.72)" : invaderMode ? "rgba(28,34,25,0.72)" : bubbleMode ? "rgba(44,39,27,0.66)" : "rgba(15,23,42,0.54)";
   ctx.beginPath();
   ctx.roundRect(28, 20, canvasWidth - 56, 42, signalMode ? 6 : 14);
   ctx.fill();
-  ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.22)" : "rgba(255,255,255,0.12)";
+  ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.22)" : bubbleMode ? "rgba(214,179,95,0.34)" : "rgba(255,255,255,0.12)";
   ctx.stroke();
-  ctx.fillStyle = signalMode ? "#efe7cc" : invaderMode ? "#f0ead2" : "rgba(255,255,255,0.82)";
+  ctx.fillStyle = signalMode ? "#efe7cc" : invaderMode ? "#f0ead2" : bubbleMode ? "#f2e7c9" : "rgba(255,255,255,0.82)";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(drawCopy.header, 44, 47);
   ctx.textAlign = "right";
-  ctx.fillStyle = state.focus <= 30 ? danger : signalMode ? "rgba(239,231,204,0.72)" : invaderMode ? "rgba(240,234,210,0.72)" : "rgba(255,255,255,0.68)";
+  ctx.fillStyle = state.focus <= 30 ? danger : signalMode ? "rgba(239,231,204,0.72)" : invaderMode ? "rgba(240,234,210,0.72)" : bubbleMode ? "rgba(242,231,201,0.74)" : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, canvasWidth - 44, 46);
 
-  ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.24)" : "rgba(255,255,255,0.16)";
+  ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.24)" : bubbleMode ? "rgba(214,179,95,0.28)" : "rgba(255,255,255,0.16)";
   ctx.setLineDash([10, 10]);
   ctx.beginPath();
   ctx.moveTo(state.playerX, 68);
@@ -1919,11 +1929,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fill();
   }
 
-  ctx.fillStyle = signalMode ? "rgba(184,165,106,0.22)" : invaderMode ? "rgba(216,196,106,0.16)" : "rgba(255,255,255,0.08)";
+  ctx.fillStyle = signalMode ? "rgba(184,165,106,0.22)" : invaderMode ? "rgba(216,196,106,0.16)" : bubbleMode ? "rgba(214,179,95,0.24)" : "rgba(255,255,255,0.08)";
   ctx.beginPath();
   ctx.roundRect(0, dangerLineY, canvasWidth, 5, 2);
   ctx.fill();
-  ctx.fillStyle = state.focus < 38 ? "rgba(184,93,77,0.42)" : signalMode ? "rgba(131,176,138,0.17)" : invaderMode ? "rgba(143,191,123,0.18)" : "rgba(96,165,250,0.16)";
+  ctx.fillStyle = state.focus < 38 ? "rgba(184,93,77,0.42)" : signalMode ? "rgba(131,176,138,0.17)" : invaderMode ? "rgba(143,191,123,0.18)" : bubbleMode ? "rgba(125,211,168,0.16)" : "rgba(96,165,250,0.16)";
   ctx.beginPath();
   ctx.roundRect(32, dangerLineY + 16, canvasWidth - 64, 28, signalMode ? 6 : 14);
   ctx.fill();
@@ -1939,6 +1949,21 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("접수선", 44, dangerLineY + 37);
+  } else if (bubbleMode) {
+    ctx.strokeStyle = "rgba(242,231,201,0.22)";
+    ctx.lineWidth = 1;
+    for (let x = 52; x < canvasWidth - 70; x += 98) {
+      ctx.beginPath();
+      ctx.arc(x, dangerLineY + 30, 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x + 22, dangerLineY + 30, 8, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(242,231,201,0.62)";
+    ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("바닥 경고선", 44, dangerLineY + 37);
   }
 
   for (const sprite of state.sprites) {
@@ -1968,7 +1993,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.fillStyle = "#064e3b";
       ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(signalMode ? "접수" : "쏘기", aimRead.target.x, aimRead.target.y - aimRead.target.radius - 19);
+      ctx.fillText(signalMode ? "접수" : bubbleMode ? "단서" : "쏘기", aimRead.target.x, aimRead.target.y - aimRead.target.radius - 19);
     }
   }
 
@@ -1986,7 +2011,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.stroke();
   }
 
-  ctx.fillStyle = signalMode ? "rgba(48,43,33,0.78)" : invaderMode ? "rgba(28,34,25,0.78)" : "rgba(15,23,42,0.72)";
+  ctx.fillStyle = signalMode ? "rgba(48,43,33,0.78)" : invaderMode ? "rgba(28,34,25,0.78)" : bubbleMode ? "rgba(44,39,27,0.78)" : "rgba(15,23,42,0.72)";
   ctx.beginPath();
   ctx.roundRect(44, 72, 196, 50, signalMode ? 6 : 14);
   ctx.fill();
@@ -2005,7 +2030,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(aimRead.title, 60, 92);
-  ctx.fillStyle = signalMode ? "rgba(239,231,204,0.68)" : invaderMode ? "rgba(240,234,210,0.68)" : "rgba(255,255,255,0.64)";
+  ctx.fillStyle = signalMode ? "rgba(239,231,204,0.68)" : invaderMode ? "rgba(240,234,210,0.68)" : bubbleMode ? "rgba(242,231,201,0.68)" : "rgba(255,255,255,0.64)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(aimRead.detail, 60, 110);
 
@@ -2027,7 +2052,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   drawShooterPlayer(ctx, content, state, mode, primary, accent);
 
   ctx.textAlign = "left";
-  ctx.fillStyle = signalMode ? "rgba(239,231,204,0.74)" : invaderMode ? "rgba(240,234,210,0.74)" : "rgba(255,255,255,0.72)";
+  ctx.fillStyle = signalMode ? "rgba(239,231,204,0.74)" : invaderMode ? "rgba(240,234,210,0.74)" : bubbleMode ? "rgba(242,231,201,0.76)" : "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(drawCopy.footer, 34, canvasHeight - 22);
   if (state.focus < 35) {
@@ -2037,9 +2062,9 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   }
 
   if (!state.started) {
-    ctx.fillStyle = signalMode ? "rgba(22,23,18,0.78)" : invaderMode ? "rgba(23,27,24,0.78)" : "rgba(15,23,42,0.72)";
+    ctx.fillStyle = signalMode ? "rgba(22,23,18,0.78)" : invaderMode ? "rgba(23,27,24,0.78)" : bubbleMode ? "rgba(22,25,19,0.8)" : "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = signalMode ? "#efe7cc" : invaderMode ? "#f0ead2" : "#f8fafc";
+    ctx.fillStyle = signalMode ? "#efe7cc" : invaderMode ? "#f0ead2" : bubbleMode ? "#f2e7c9" : "#f8fafc";
     ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
@@ -2076,23 +2101,40 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
     ctx.ellipse(0, sprite.radius + 16, 7, 14, 0, 0, Math.PI * 2);
     ctx.fill();
   } else if (mode === "bubble") {
+    const bubbleOuter = sprite.good ? "rgba(125,211,168,0.94)" : "rgba(191,95,90,0.88)";
     ctx.beginPath();
     ctx.arc(0, 0, sprite.radius + 5, 0, Math.PI * 2);
+    ctx.fillStyle = bubbleOuter;
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.64)";
+    ctx.strokeStyle = sprite.good ? "rgba(242,231,201,0.76)" : "rgba(242,231,201,0.34)";
     ctx.lineWidth = 3;
     ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.beginPath();
+    ctx.arc(-sprite.radius * 0.32, -sprite.radius * 0.38, 5, 0, Math.PI * 2);
+    ctx.fill();
     if (sprite.good) {
-      ctx.fillStyle = "rgba(15,23,42,0.78)";
+      ctx.fillStyle = "rgba(242,231,201,0.9)";
       ctx.beginPath();
-      ctx.roundRect(-sprite.radius * 0.74, -sprite.radius * 0.22, sprite.radius * 1.48, 13, 4);
+      ctx.roundRect(-sprite.radius * 0.74, -sprite.radius * 0.48, sprite.radius * 1.48, 15, 3);
       ctx.fill();
-      ctx.fillStyle = "rgba(190,242,100,0.95)";
+      ctx.fillStyle = "rgba(31,41,32,0.9)";
       ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("BUG", 0, -sprite.radius * 0.22 + 9);
+      ctx.fillText("단서표", 0, -sprite.radius * 0.48 + 10);
+      ctx.strokeStyle = "rgba(31,41,32,0.72)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-sprite.radius * 0.5, sprite.radius * 0.22);
+      ctx.lineTo(-sprite.radius * 0.18, sprite.radius * 0.5);
+      ctx.lineTo(sprite.radius * 0.5, -sprite.radius * 0.2);
+      ctx.stroke();
     } else {
-      ctx.strokeStyle = "rgba(15,23,42,0.62)";
+      ctx.fillStyle = "rgba(45,37,32,0.5)";
+      ctx.beginPath();
+      ctx.ellipse(0, 2, sprite.radius * 0.74, sprite.radius * 0.32, 0.15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(242,231,201,0.48)";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(-sprite.radius * 0.62, -sprite.radius * 0.12);
@@ -2101,10 +2143,6 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
       ctx.lineTo(sprite.radius * 0.46, sprite.radius * 0.48);
       ctx.stroke();
     }
-    ctx.fillStyle = "rgba(255,255,255,0.55)";
-    ctx.beginPath();
-    ctx.arc(-sprite.radius * 0.32, -sprite.radius * 0.38, 5, 0, Math.PI * 2);
-    ctx.fill();
   } else if (mode === "invader") {
     ctx.fillStyle = sprite.good ? "rgba(143,191,123,0.95)" : "rgba(197,106,58,0.92)";
     ctx.beginPath();
@@ -2172,10 +2210,15 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
   ctx.strokeStyle = sprite.good ? "rgba(255,255,255,0.58)" : "rgba(255,255,255,0.34)";
   ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.fillStyle = mode === "signal" ? (sprite.good ? "#2b2416" : "#f8f1dc") : sprite.good ? "#0f172a" : "#f8fafc";
+  ctx.fillStyle =
+    mode === "signal" ? (sprite.good ? "#2b2416" : "#f8f1dc") : mode === "bubble" ? (sprite.good ? "#132018" : "#f8f1dc") : sprite.good ? "#0f172a" : "#f8fafc";
   ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(sprite.label.slice(0, 5), 0, mode === "missile" ? 9 : mode === "signal" ? sprite.radius * 0.54 : sprite.radius + 19);
+  ctx.fillText(
+    sprite.label.slice(0, 5),
+    0,
+    mode === "missile" ? 9 : mode === "signal" ? sprite.radius * 0.54 : mode === "bubble" ? sprite.radius * 0.14 : sprite.radius + 19,
+  );
   ctx.restore();
 }
 
@@ -2230,6 +2273,30 @@ function drawShooterPlayer(
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = "rgba(23,27,24,0.38)";
+    ctx.stroke();
+  } else if (mode === "bubble") {
+    ctx.beginPath();
+    ctx.roundRect(-46, 4, 92, 18, 7);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(242,231,201,0.48)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(125,211,168,0.92)";
+    ctx.beginPath();
+    ctx.arc(0, -18, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(242,231,201,0.74)";
+    ctx.stroke();
+    ctx.fillStyle = "#132018";
+    ctx.font = "900 8px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("단서", 0, -15);
+    ctx.strokeStyle = "rgba(242,231,201,0.5)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-28, 3);
+    ctx.lineTo(0, -12);
+    ctx.lineTo(28, 3);
     ctx.stroke();
   } else {
     ctx.beginPath();
@@ -4512,10 +4579,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "재현/로그 티켓을 받은 순간과 소문 티켓에 흔들린 순간을 같이 봅니다.",
   },
   "bug-bubble-shooter": {
-    finalKicker: "버그 버블 결과",
-    liveTitle: "단서 버블 기록",
-    scoreLabel: "터뜨린 단서",
-    liveDetail: "터뜨린 버그 단서와 소문 버블에 흔들린 순간을 같이 봅니다.",
+    finalKicker: "디버그 조준 결과",
+    liveTitle: "단서 조준 기록",
+    scoreLabel: "맞힌 단서 버블",
+    liveDetail: "맞힌 버그 단서와 소문 버블에 흔들린 순간을 같이 봅니다.",
   },
   "bug-brick-breaker": {
     finalKicker: "패치 패들 결과",
