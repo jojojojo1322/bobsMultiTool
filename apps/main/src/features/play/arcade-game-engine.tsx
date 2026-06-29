@@ -691,7 +691,27 @@ function shooterHorizontalHint(sprite: Sprite, state: GameState) {
   return gap < 0 ? "왼쪽으로 조금" : "오른쪽으로 조금";
 }
 
-function shooterAimRead(state: GameState): ShooterAimRead {
+function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
+  const copy =
+    mode === "invader"
+      ? {
+          noisyCloseTitle: "미끼 가까움",
+          noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
+          readyTitle: "표식 침입자",
+          readyDetail: (label: string) => `${label} 정렬됨`,
+          trackingTitle: "침입자 따라가기",
+          waitingTitle: "표식 기다림",
+          waitingDetail: "표식 침입자가 내려올 때 쏘기",
+        }
+      : {
+          noisyCloseTitle: "소음 가까움",
+          noisyCloseDetail: (label: string) => `${label} 지나가게 두기`,
+          readyTitle: "맞출 표적",
+          readyDetail: (label: string) => `${label} 정렬됨`,
+          trackingTitle: "표적 따라가기",
+          waitingTitle: "표적 기다림",
+          waitingDetail: "좋은 신호가 내려올 때 쏘기",
+        };
   const approaching = state.sprites.filter((sprite) => sprite.y < state.playerY - 18 && sprite.y > 34);
   const scoreSprite = (sprite: Sprite) => Math.abs(sprite.x - state.playerX) + Math.abs(state.playerY - sprite.y) * 0.08;
   const target =
@@ -709,8 +729,8 @@ function shooterAimRead(state: GameState): ShooterAimRead {
     return {
       target,
       noisy,
-      title: "소음 가까움",
-      detail: noisy ? `${noisy.label} 지나가게 두기` : "쏘지 말고 보기",
+      title: copy.noisyCloseTitle,
+      detail: noisy ? copy.noisyCloseDetail(noisy.label) : "쏘지 말고 보기",
       ready: false,
       warning: true,
     };
@@ -720,8 +740,8 @@ function shooterAimRead(state: GameState): ShooterAimRead {
     return {
       target,
       noisy,
-      title: "맞출 표적",
-      detail: `${target.label} 정렬됨`,
+      title: copy.readyTitle,
+      detail: copy.readyDetail(target.label),
       ready: true,
       warning: false,
     };
@@ -731,7 +751,7 @@ function shooterAimRead(state: GameState): ShooterAimRead {
     return {
       target,
       noisy,
-      title: "표적 따라가기",
+      title: copy.trackingTitle,
       detail: `${target.label} · ${shooterHorizontalHint(target, state)}`,
       ready: false,
       warning: false,
@@ -741,8 +761,8 @@ function shooterAimRead(state: GameState): ShooterAimRead {
   return {
     target: null,
     noisy,
-    title: "표적 기다림",
-    detail: "좋은 신호가 내려올 때 쏘기",
+    title: copy.waitingTitle,
+    detail: copy.waitingDetail,
     ready: false,
     warning: false,
   };
@@ -1598,8 +1618,40 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       : content.slug.includes("invaders")
         ? "invader"
         : "signal";
+  const drawCopy =
+    mode === "missile"
+      ? {
+          header: "낙하 지점 보기",
+          footer: "마우스/터치로 낙하지점을 조준해 발사합니다. A/D와 Space도 됩니다.",
+          focusWarning: "먼 불씨보다 바닥에 가까운 낙하지점을 먼저 막으세요.",
+          startLine1: "누른 채 낙하지점을 겨누거나 A/D로 움직여 Space로 쏩니다.",
+          startLine2: "바닥에 가까운 불씨부터 한 발씩 막습니다.",
+        }
+      : mode === "bubble"
+        ? {
+            header: "단서 버블만 터뜨리기",
+            footer: "마우스/터치로 조준선을 끌어 단서 버블에 발사합니다. A/D와 Space도 됩니다.",
+            focusWarning: "소음 버블까지 터뜨리면 판이 흐려집니다. 단서 버블만 고르세요.",
+            startLine1: "누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.",
+            startLine2: "표적 표시가 붙은 단서 버블만 터뜨립니다.",
+          }
+        : mode === "invader"
+          ? {
+              header: "표식 침입자만 격추",
+              footer: "하단 방어포를 마우스/터치로 끌어 표식 침입자에만 발사합니다. A/D와 Space도 됩니다.",
+              focusWarning: "미끼 경고까지 쏘면 방어선이 먼저 밀립니다. 표식 침입자만 보세요.",
+              startLine1: "하단 방어포를 끌거나 A/D로 움직여 Space로 쏩니다.",
+              startLine2: "표식 침입자만 격추하고 미끼 경고는 흘려보냅니다.",
+            }
+          : {
+              header: "진짜 신호만 쏘기",
+              footer: "마우스/터치로 누른 채 드래그하면 조준선이 따라가며 발사합니다. A/D와 Space도 됩니다.",
+              focusWarning: "눈에 띄는 걸 다 쏘면 먼저 지칩니다. 좋은 신호만 고르세요.",
+              startLine1: "누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.",
+              startLine2: "좋은 신호만 맞히면 오래 버팁니다.",
+            };
   const dangerLineY = canvasHeight - 96;
-  const aimRead = shooterAimRead(state);
+  const aimRead = shooterAimRead(state, mode);
 
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
   backdrop.addColorStop(0, background);
@@ -1632,7 +1684,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = "rgba(255,255,255,0.82)";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(mode === "missile" ? "낙하 지점 보기" : mode === "bubble" ? "필요한 버블만 터뜨리기" : "진짜 신호만 쏘기", 44, 47);
+  ctx.fillText(drawCopy.header, 44, 47);
   ctx.textAlign = "right";
   ctx.fillStyle = state.focus <= 30 ? danger : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -1766,11 +1818,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("마우스/터치로 누른 채 드래그하면 조준선이 따라가며 발사합니다. A/D와 Space도 됩니다.", 34, canvasHeight - 22);
+  ctx.fillText(drawCopy.footer, 34, canvasHeight - 22);
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("눈에 띄는 걸 다 쏘면 먼저 지칩니다. 좋은 신호만 고르세요.", 34, canvasHeight - 48);
+    ctx.fillText(drawCopy.focusWarning, 34, canvasHeight - 48);
   }
 
   if (!state.started) {
@@ -1781,8 +1833,8 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.", canvasWidth / 2, 204);
-    ctx.fillText("좋은 신호만 맞히면 오래 버팁니다.", canvasWidth / 2, 230);
+    ctx.fillText(drawCopy.startLine1, canvasWidth / 2, 204);
+    ctx.fillText(drawCopy.startLine2, canvasWidth / 2, 230);
   }
 }
 
@@ -3927,8 +3979,17 @@ const arcadeVariantCopy = {
   },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
+const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
+  "deploy-invaders": {
+    finalKicker: "배포 방어 결과",
+    liveTitle: "침입자 방어 기록",
+    scoreLabel: "막은 침입자",
+    liveDetail: "표식 침입자를 맞힌 순간과 미끼 경고에 흔들린 순간을 같이 봅니다.",
+  },
+};
+
 function arcadeCopyFor(content: ArcadeGameContent) {
-  return arcadeVariantCopy[content.arcade.variant];
+  return arcadeSlugCopyOverrides[content.slug] ?? arcadeVariantCopy[content.arcade.variant];
 }
 
 function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {

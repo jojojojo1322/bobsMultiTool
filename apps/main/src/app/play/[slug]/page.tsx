@@ -235,7 +235,16 @@ const arcadeContextGuides = {
 
 function playContextGuide(content: PlayContent): PlayContextGuide {
   if (content.type === "arcade-game") {
-    const guide = arcadeContextGuides[content.arcade.variant];
+    const arcadeContextGuideOverrides: Partial<Record<string, Omit<PlayContextGuide, "kicker">>> = {
+      "deploy-invaders": {
+        title: "표식 침입자와 미끼 경고를 나누는 방어 판",
+        firstLook: "위에서 내려오는 침입자 줄, 표식이 붙은 목표, 하단 방어포, 방어선까지 남은 거리를 먼저 봅니다.",
+        firstMove: "첫 움직임은 하단 방어포 조준입니다. 빨간 미끼까지 다 쏘지 말고 표식 침입자에만 선을 맞춥니다.",
+        pacingText: "한 판은 1분 배포 침입자 방어입니다. 결과는 많이 쏜 수보다 표식 침입자를 골라 막은 흐름으로 남습니다.",
+        recordText: "기록은 공격력 표가 아니라 방어선 메모입니다. 미끼에 흔들렸다면 다음 판에서는 방어포를 더 늦게 움직입니다.",
+      },
+    };
+    const guide = arcadeContextGuideOverrides[content.slug] ?? arcadeContextGuides[content.arcade.variant];
     return {
       kicker: "첫 5초 안내",
       ...guide,
