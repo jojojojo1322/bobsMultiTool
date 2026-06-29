@@ -1138,11 +1138,13 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
     if (!hitPlayer) continue;
     state.sprites = state.sprites.filter((item) => item.id !== sprite.id);
     const delta = sprite.good ? 2 : -4;
+    const detail =
+      content.arcade.variant === "flight" ? (sprite.good ? "덕트 통과" : "배선 충돌") : sprite.good ? "챙김" : "부딪힘";
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + (sprite.good ? 3 : -10), 0, 100);
     addHistory(state, {
       label: sprite.label,
-      detail: sprite.good ? "챙김" : "부딪힘",
+      detail,
       score: delta,
     });
   }
@@ -1485,7 +1487,7 @@ function flightCueFor(sprite: Sprite | null, projectedY: number) {
   if (!sprite) {
     return {
       label: "리듬 유지",
-      detail: "다음 통풍구 대기",
+      detail: "다음 덕트 대기",
       tone: "neutral" as const,
       arrow: "steady" as const,
     };
@@ -1498,7 +1500,7 @@ function flightCueFor(sprite: Sprite | null, projectedY: number) {
     if (close) {
       return {
         label: "유지",
-        detail: "빈틈 높이 맞음",
+        detail: "덕트 틈 높이 맞음",
         tone: "good" as const,
         arrow: "steady" as const,
       };
@@ -1568,7 +1570,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         : "rgba(255,255,255,0.72)";
   const incomingLabel = incomingSprite
     ? incomingSprite.good
-      ? "다음 통풍구"
+      ? "다음 덕트 틈"
       : "피할 배선"
     : "팬 바람 대기";
   const backdrop = ctx.createLinearGradient(0, 0, 0, canvasHeight);
@@ -1602,7 +1604,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("서버실 통풍구 조종", 44, 48);
+  ctx.fillText("덕트 틈 드론 비행", 44, 48);
   ctx.textAlign = "right";
   ctx.fillStyle = cueColor;
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -1643,7 +1645,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillStyle = "#f8fafc";
     ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(incomingSprite.good ? "통풍구 맞추기" : "배선 피하기", Math.min(canvasWidth - 105, Math.max(state.playerX + 113, incomingSprite.x - 3)), incomingSprite.y - 12);
+    ctx.fillText(incomingSprite.good ? "덕트 틈 맞추기" : "배선 피하기", Math.min(canvasWidth - 105, Math.max(state.playerX + 113, incomingSprite.x - 3)), incomingSprite.y - 12);
   }
 
   ctx.strokeStyle = liftActive ? "rgba(250,204,21,0.68)" : "rgba(147,197,253,0.5)";
@@ -1710,18 +1712,23 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.ellipse(0, sprite.radius + 9, sprite.radius * 0.86, 7, 0, 0, Math.PI * 2);
     ctx.fill();
     if (sprite.good) {
-      const gate = ctx.createLinearGradient(-sprite.radius, -sprite.radius, sprite.radius, sprite.radius);
-      gate.addColorStop(0, "rgba(255,255,255,0.86)");
-      gate.addColorStop(0.45, accent);
-      gate.addColorStop(1, "rgba(59,130,246,0.74)");
-      ctx.strokeStyle = gate;
-      ctx.lineWidth = 8;
+      const ductWidth = sprite.radius * 2 + 38;
+      const slabHeight = 18;
+      const duct = ctx.createLinearGradient(-ductWidth / 2, -sprite.radius - 30, ductWidth / 2, sprite.radius + 30);
+      duct.addColorStop(0, "rgba(148,163,184,0.94)");
+      duct.addColorStop(0.5, "rgba(30,41,59,0.96)");
+      duct.addColorStop(1, "rgba(59,130,246,0.78)");
+      ctx.fillStyle = duct;
       ctx.beginPath();
-      ctx.ellipse(0, 0, sprite.radius + 12, sprite.radius + 20, 0, 0, Math.PI * 2);
+      ctx.roundRect(-ductWidth / 2, -sprite.radius - 28, ductWidth, slabHeight, 4);
+      ctx.roundRect(-ductWidth / 2, sprite.radius + 10, ductWidth, slabHeight, 4);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(147,197,253,0.68)";
+      ctx.lineWidth = 2;
       ctx.stroke();
-      ctx.fillStyle = "rgba(15,23,42,0.76)";
+      ctx.fillStyle = "rgba(14,165,233,0.18)";
       ctx.beginPath();
-      ctx.roundRect(-sprite.radius - 10, -10, sprite.radius * 2 + 20, 24, 12);
+      ctx.roundRect(-sprite.radius - 8, -sprite.radius + 2, sprite.radius * 2 + 16, sprite.radius * 2 + 6, 12);
       ctx.fill();
     } else {
       const cloud = ctx.createRadialGradient(-sprite.radius * 0.2, -sprite.radius * 0.3, 4, 0, 0, sprite.radius * 1.5);
@@ -1775,7 +1782,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("통풍구 높이선과 상승/하강 큐를 보고 누르거나 떼세요.", 34, canvasHeight - 24);
+  ctx.fillText("파란 덕트 틈과 상승/하강 큐를 보고 누르거나 떼세요.", 34, canvasHeight - 24);
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1785,7 +1792,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("누르면 점검 드론이 뜨고, 떼면 내려갑니다.", canvasWidth / 2, 204);
-    ctx.fillText("다가오는 통풍구 높이선을 보고 배선을 피하세요.", canvasWidth / 2, 230);
+    ctx.fillText("파란 덕트 틈 높이선을 보고 붉은 배선을 피하세요.", canvasWidth / 2, 230);
   }
 }
 
@@ -4223,10 +4230,10 @@ const arcadeVariantCopy = {
     liveDetail: "배포 램프 순서와 첫 실수 위치를 같이 봅니다.",
   },
   flight: {
-    finalKicker: "통풍구 비행 결과",
-    liveTitle: "통풍구 기록",
-    scoreLabel: "지나간 통풍구",
-    liveDetail: "눌렀다 뗀 리듬과 다음 통풍구 높이선을 같이 봅니다.",
+    finalKicker: "덕트 비행 결과",
+    liveTitle: "덕트 기록",
+    scoreLabel: "통과한 덕트",
+    liveDetail: "누르고 뗀 리듬과 다음 덕트 틈 높이선을 같이 봅니다.",
   },
   "brick-breaker": {
     finalKicker: "버그 벽돌 결과",
