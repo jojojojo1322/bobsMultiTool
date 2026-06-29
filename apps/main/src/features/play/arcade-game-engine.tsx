@@ -3637,7 +3637,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(255,255,255,0.8)";
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("도착선", 20, 30);
+  ctx.fillText("릴리스선", 20, 30);
 
   ctx.strokeStyle = nextColor;
   ctx.lineWidth = 3;
@@ -3684,19 +3684,19 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("다음 한 칸", 518, 98);
+  ctx.fillText("다음 배포칸", 518, 98);
   ctx.fillStyle = nextColor;
   ctx.font = "900 24px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(crossingDangerLabel(nextDanger), 518, 132);
   ctx.fillStyle = "rgba(255,255,255,0.68)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  const secondsText = nextDanger.seconds === null ? "차 간격을 보고 이동" : `${nextDanger.seconds.toFixed(1)}초 안에 차가 옴`;
+  const secondsText = nextDanger.seconds === null ? "차 간격을 보고 이동" : `${nextDanger.seconds.toFixed(1)}초 안에 트래픽`;
   ctx.fillText(secondsText, 518, 156);
 
   ctx.fillStyle = "rgba(255,255,255,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("다음 칸 표시를 보고 마우스/터치로 가고 싶은 방향을 누릅니다.", 24, canvasHeight - 18);
+  ctx.fillText("다음 배포칸 표시를 보고 마우스/터치로 가고 싶은 방향을 누릅니다.", 24, canvasHeight - 18);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.68)";
@@ -3706,7 +3706,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 168);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("다음 칸 표시가 초록이면 건너고, 노랑이나 빨강이면 잠깐 봅니다.", canvasWidth / 2, 204);
+    ctx.fillText("다음 배포칸이 초록이면 건너고, 노랑이나 빨강이면 잠깐 봅니다.", canvasWidth / 2, 204);
     ctx.fillText("방향키/WASD 또는 마우스/터치로 한 칸씩 움직입니다.", canvasWidth / 2, 230);
   }
 }
@@ -3902,10 +3902,10 @@ const arcadeVariantCopy = {
     liveDetail: "지난 힌트와 살아 있는 숫자를 같이 봅니다.",
   },
   crossing: {
-    finalKicker: "건너기 결과",
-    liveTitle: "차선 기록",
-    scoreLabel: "넘은 차선",
-    liveDetail: "다음 한 칸의 위험 표시와 멈춘 타이밍을 봅니다.",
+    finalKicker: "배포 차선 결과",
+    liveTitle: "배포 차선 기록",
+    scoreLabel: "넘은 배포선",
+    liveDetail: "다음 배포칸의 위험 표시와 멈춘 타이밍을 봅니다.",
   },
   minesweeper: {
     finalKicker: "추론 결과",
