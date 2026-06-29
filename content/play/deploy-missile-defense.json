@@ -1,26 +1,118 @@
 {
   "slug": "deploy-missile-defense",
-  "title": "우산 미사일 디펜스",
-  "description": "위에서 떨어지는 작은 불덩이를 보고, 바닥에 닿기 전에 맞춰 터뜨리는 캔버스 방어 게임입니다. 맞출 표적 표시와 소음 경고를 보고 한 발씩 고릅니다.",
+  "title": "떨어지는 불씨 막기",
+  "description": "위에서 떨어지는 불씨가 바닥에 닿기 전에 조준해 터뜨리는 1분 방어 게임입니다. 먼지와 반짝임은 넘기고, 낙하지점이 가까운 불씨부터 한 발씩 막습니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
-  "shareText": "우산 미사일 디펜스를 해봤다. 한 발씩 보고 쏘는 게 더 오래 간다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "떨어지는 불씨 막기를 해봤다. 가까운 것부터 한 발씩 막는 게 더 오래 간다.",
   "order": 5,
-  "relatedBlogSlugs": ["shooter-target-cue-note", "static-first-before-server", "vercel-sitemap-canonical-log"],
-  "relatedPlaySlugs": ["deploy-invaders", "bug-clicker"],
+  "relatedBlogSlugs": [
+    "shooter-target-cue-note",
+    "static-first-before-server",
+    "vercel-sitemap-canonical-log"
+  ],
+  "relatedPlaySlugs": [
+    "deploy-invaders",
+    "bug-clicker"
+  ],
   "arcade": {
     "variant": "shooter",
-    "goal": "좌우로 움직이거나 누른 위치로 조준해 떨어지는 위험 신호를 요격합니다. 맞출 표적 표시가 뜰 때 쏘면 덜 흔들립니다.",
+    "goal": "떨어지는 불씨가 바닥에 닿기 전에 요격합니다. 먼지와 반짝임은 넘기고, 낙하지점이 가까운 불씨부터 한 발씩 막습니다.",
     "controls": "마우스/터치로 누른 채 조준선을 끌면 짧은 간격으로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다. 소음 가까움이 뜨면 한 발 아낍니다.",
     "playerLabel": "우산",
-    "goodLabels": ["불씨", "낙하", "틈", "흔들", "빗점"],
-    "badLabels": ["먼지", "반짝", "그림", "잔말", "가짜"],
-    "palette": { "background": "#0f172a", "primary": "#60a5fa", "accent": "#fde68a", "danger": "#f87171" }
+    "goodLabels": [
+      "불씨",
+      "낙하",
+      "틈",
+      "흔들",
+      "빗점"
+    ],
+    "badLabels": [
+      "먼지",
+      "반짝",
+      "그림",
+      "잔말",
+      "가짜"
+    ],
+    "palette": {
+      "background": "#0f172a",
+      "primary": "#60a5fa",
+      "accent": "#fde68a",
+      "danger": "#f87171"
+    }
   },
   "endings": [
-    { "id": "dry", "title": "젖지 않았다", "description": "좋은 타이밍으로 막았다. 화면이 급해 보여도 손은 차분했다.", "minScore": 20 },
-    { "id": "damp", "title": "조금 젖음", "description": "몇 개는 놓쳤지만 버틸 만했다. 다음에는 한 발 아껴보자.", "minScore": 10 },
-    { "id": "rain", "title": "비 맞음", "description": "너무 빨리 쐈다. 떨어지는 위치를 보고 쏘면 훨씬 낫다.", "minScore": 0 }
-  ]
+    {
+      "id": "dry",
+      "title": "젖지 않았다",
+      "description": "좋은 타이밍으로 막았다. 화면이 급해 보여도 손은 차분했다.",
+      "minScore": 20
+    },
+    {
+      "id": "damp",
+      "title": "조금 젖음",
+      "description": "몇 개는 놓쳤지만 버틸 만했다. 다음에는 한 발 아껴보자.",
+      "minScore": 10
+    },
+    {
+      "id": "rain",
+      "title": "비 맞음",
+      "description": "너무 빨리 쐈다. 떨어지는 위치를 보고 쏘면 훨씬 낫다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "낙하 위험 우선순위 방어 게임",
+    "planningIntent": "떨어지는 불씨 막기는 많이 쏘는 슈팅보다 낙하지점, 충돌까지 남은 거리, 미끼 신호를 보고 한 발씩 막는 방어 판단으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "missile command threat priority UX",
+        "arcade defense game impact point feedback",
+        "falling objects game visual warning design"
+      ],
+      "referenceTypes": [
+        "낙하지점과 충돌 임박 표시가 있는 방어 게임",
+        "한 발씩 아끼게 만드는 요격 UI",
+        "불씨와 먼지를 색상 외 모양으로 구분하는 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "낙하 속도와 바닥까지 남은 시간별 요격 가능성",
+        "요격 실패와 오발 페널티가 짧은 재시작을 막지 않는지 비교"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '바닥에 닿기 전 막는다'가 읽히는가?",
+      "가까운 불씨가 먼 불씨보다 먼저 막아야 할 대상으로 보이는가?",
+      "먼지와 반짝임을 쏘지 않아도 된다는 피드백이 충분한가?",
+      "실패가 낙하지점 판단 실패인지 오발인지 늦은 요격인지 분명한가?",
+      "다음 판에서 한 발을 아끼는 선택을 시도하게 되는가?"
+    ],
+    "visualQuestions": [
+      "하늘, 낙하지점, 바닥 방어선이 단순하게 읽히는가?",
+      "가까운 불씨와 미끼 먼지는 색상 외 크기/꼬리/흔들림으로 구분되는가?",
+      "조준선은 낙하지점과 발사 방향을 투박하지만 즉시 보여주는가?",
+      "결과는 처치 수보다 막은 불씨와 놓친 낙하지점을 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "낙하지점, 남은 거리, 한 발 타이밍, 미끼 구분",
+      "progressionQuestion": "반복 플레이가 공격력 상승보다 가까운 불씨부터 막는 우선순위 감각으로 느껴지는가?",
+      "failureQuestion": "낙하 충돌, 먼지 오발, 늦은 요격이 서로 다른 피드백으로 남는가?",
+      "recoveryQuestion": "짧은 재시작과 낙하지점 힌트가 다음 요격 순서를 바꾸게 하는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "비 오는 옥상 방공 우산과 낙하지점 표시판",
+      "primarySurface": "위에서 아래로 떨어지는 불씨, 바닥 방어선, 작은 충돌 기록",
+      "roughnessTarget": "깨끗한 HUD보다 낙하지점 선, 우산 방어선, 불씨 꼬리의 투박한 대비",
+      "differenceFromGenericPlay": "설명 카드보다 떨어지는 거리와 바닥 충돌 위험이 화면을 지배한다.",
+      "mustAvoid": [
+        "버튼만 누르는 퀴즈형 슈팅",
+        "표적을 가리는 배경 장식"
+      ]
+    }
+  }
 }

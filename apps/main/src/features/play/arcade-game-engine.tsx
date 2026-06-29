@@ -3854,7 +3854,7 @@ export function ArcadeGameEngine({
   const shortLotteryStageTitle = (title: string) => title.replace(/^[0-9]단계\s*/, "");
   const activeActionLabel =
     content.arcade.variant === "lottery" && view.lotteryTicketDone ? "다음 복권" : view.started ? mainActionLabel(content) : "시작";
-  const shareScoreLabel = content.arcade.variant === "lottery" ? `복권 진행: ${shortLotteryStageTitle(lotteryStage.title)}` : `점수: ${view.score}`;
+  const shareScoreLabel = content.arcade.variant === "lottery" ? `복권 단계: ${shortLotteryStageTitle(lotteryStage.title)}` : `점수: ${view.score}`;
   const metricItems =
     content.arcade.variant === "lottery"
       ? [
@@ -5019,14 +5019,14 @@ function LiveArcadeResultPanel({
   const isSumBox = content.arcade.variant === "sum-box";
   const stage = lotteryStageAt(view.lotteryStage);
   const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
-  const title = isLottery ? "현재 복권" : "현재 기록";
+  const title = isLottery ? "복권 장부" : "현재 기록";
   const headline = isLottery ? stage.title : ending.title;
   const detail = isLottery
     ? view.lotteryTicketDone
-      ? `이번 장 ${view.lotteryLastPrize > 0 ? "당첨" : "꽝"}. 다음은 ${nextStage.title}이고, 누르면 바로 이어서 긁습니다.`
+      ? `이번 장 ${view.lotteryLastPrize > 0 ? "당첨" : "꽝"}. 결과 로그를 보고 다음은 ${nextStage.title}입니다.`
       : view.lotteryRevealedCount > 0
-        ? `${view.lotteryRevealedCount}/9칸 공개. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다.`
-        : "아직 긁지 않았습니다. 마음 가는 칸부터 긁고, 다 보면 다음 장으로 이어집니다."
+        ? `${view.lotteryRevealedCount}/9칸 공개. 같은 그림 한 줄과 즉석 보너스를 확인합니다.`
+        : "아직 긁지 않았습니다. 9칸을 문질러 결과 장부를 채웁니다."
     : isSumBox
       ? `${view.score}점. 1분 동안 손이 가는 만큼 합 10을 이어갑니다.`
       : `${view.score}점, 집중 ${view.focus}. 지금 기록을 바로 공유할 수 있고 판은 시간과 집중 상태에 맞춰 이어집니다.`;
@@ -5054,7 +5054,7 @@ function LiveArcadeResultPanel({
         </ol>
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          {isLottery ? "긁은 결과가 여기에 이어집니다." : "시작하면 판의 흐름이 여기에 보입니다."}
+          {isLottery ? "긁은 결과와 다음 단계가 여기에 이어집니다." : "시작하면 판의 흐름이 여기에 보입니다."}
         </p>
       )}
     </aside>

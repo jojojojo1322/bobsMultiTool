@@ -1,24 +1,120 @@
 {
   "slug": "lucky-scratch",
-  "title": "단계 복권 긁기",
-  "description": "한 장을 다 긁으면 종이, 은색, 금색, 네온, 잭팟 단계로 바로 이어지는 복권 게임입니다. 한 장이 끝나도 다음 장으로 계속 이어집니다.",
+  "title": "복권 9칸 긁기",
+  "description": "복권 한 장의 9칸을 문질러 긁고, 같은 그림 한 줄이나 즉석 보너스가 나오는지 확인하는 게임입니다. 한 장을 다 보면 종이, 은색, 금색, 네온, 잭팟 단계로 넘어가며 이번 장 로그와 다음 단계를 봅니다.",
   "type": "arcade-game",
   "durationLabel": "계속",
-  "updatedAt": "2026-06-27",
-  "shareText": "단계 복권 긁기를 해봤다. 꽝이어도 다음 장을 또 긁게 된다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "복권 9칸 긁기를 해봤다. 이번 장 로그를 보고 다음 단계로 넘겼다.",
   "order": 12.5,
-  "relatedBlogSlugs": ["lottery-endless-stage-loop-note", "lottery-scratch-stage-note", "why-small-web-toys-return", "small-web-games-retention", "small-play-rules-note"],
-  "relatedPlaySlugs": ["ten-box-rush", "password-lock", "notification-mole"],
+  "relatedBlogSlugs": [
+    "lottery-endless-stage-loop-note",
+    "lottery-scratch-stage-note",
+    "why-small-web-toys-return",
+    "small-web-games-retention",
+    "small-play-rules-note"
+  ],
+  "relatedPlaySlugs": [
+    "ten-box-rush",
+    "password-lock",
+    "notification-mole"
+  ],
   "arcade": {
     "variant": "lottery",
-    "goal": "복권 한 장의 9칸을 긁고, 같은 그림 줄이나 즉석 보너스를 봅니다. 다 긁으면 종이, 은색, 금색, 네온, 잭팟 단계로 계속 이어집니다.",
-    "controls": "마우스나 터치로 칸을 문지르듯 긁습니다. 한 장이 끝나면 버튼이나 캔버스를 눌러 다음 단계로 넘어갑니다. 방향키/WASD와 Space/Enter도 됩니다.",
+    "goal": "복권 한 장의 9칸을 문질러 긁고, 같은 그림 한 줄이나 즉석 보너스를 확인합니다. 한 장을 다 보면 이번 장 결과와 다음 단계 이름을 보고 이어서 긁습니다.",
+    "controls": "마우스나 터치로 칸을 문지르듯 긁습니다. 한 장이 끝나면 결과 로그를 보고 버튼이나 캔버스를 눌러 다음 단계로 넘어갑니다. 방향키/WASD와 Space/Enter도 됩니다.",
     "playerLabel": "복권",
-    "goodLabels": ["별", "7", "보석", "왕관", "잭팟"],
-    "badLabels": ["꽝", "다음", "빈칸", "아쉽", "한번더"],
-    "palette": { "background": "#151316", "primary": "#fbbf24", "accent": "#38bdf8", "danger": "#fb7185" }
+    "goodLabels": [
+      "별",
+      "7",
+      "보석",
+      "왕관",
+      "잭팟"
+    ],
+    "badLabels": [
+      "꽝",
+      "다음",
+      "빈칸",
+      "아쉽",
+      "한번더"
+    ],
+    "palette": {
+      "background": "#151316",
+      "primary": "#fbbf24",
+      "accent": "#38bdf8",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "continue", "title": "계속 긁는 중", "description": "이 복권은 끝을 정하지 않습니다. 한 장을 다 보면 다음 단계로 이어집니다.", "minScore": 0 }
-  ]
+    {
+      "id": "continue",
+      "title": "복권 장부 이어짐",
+      "description": "이번 장 결과를 보고 다음 단계 복권으로 넘깁니다. 점수 경쟁보다 당첨 로그와 단계 흐름을 보는 구조입니다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "결과 로그와 단계 전환을 보는 9칸 복권 게임",
+    "planningIntent": "복권 9칸 긁기는 현재 돈 없는 미니게임이지만, 다음 단계에서 금화, 티켓 가격, 대출, 복귀 자금을 붙일 경우 확률, 기대값, 손실 추격, 멈춤 판단을 먼저 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "scratch card odds disclosure expected value ticket design",
+        "loot box odds disclosure ethical design consumer protection",
+        "responsible gambling loss chasing warning game design",
+        "lottery game economy expected value risk of ruin",
+        "simulated gambling game UX debt recovery safeguards"
+      ],
+      "referenceTypes": [
+        "복권/스크래치 게임의 공개 확률과 당첨 구조 표시",
+        "확률형 아이템 소비자 보호와 단순한 확률 설명 자료",
+        "재기 자금과 손실 추격을 분리한 보드게임/경제 게임 사례",
+        "실제 복권 결과지를 읽을 때 보이는 번호, 보너스, 당첨 로그 구성"
+      ],
+      "dataOrSimulationNeeds": [
+        "티켓 가격별 기대값, 분산, 파산 확률 계산",
+        "현재 구현처럼 돈이 없을 때 단계 차이가 충분히 읽히는지 비교",
+        "대출 후 고위험 재진입을 제한했을 때 회복률 비교",
+        "꽝 직후 바로 다음 장을 누르는 흐름과 결과 로그를 먼저 읽는 흐름의 이탈/재시도 비교"
+      ]
+    },
+    "systemQuestions": [
+      "현재 구현처럼 금화 없이 단계만 넘어갈 때도 종이, 은색, 금색, 네온, 잭팟 차이가 첫 화면에서 읽히는가?",
+      "1단계 복권과 다음 단계 복권은 가격만 다른가, 플레이 판단도 달라지는가?",
+      "금화가 부족할 때 재기 자금은 안전망인가, 손실 추격 버튼인가?",
+      "꽝 결과가 다음 선택을 어떻게 바꾸는가?",
+      "꽝 직후 바로 다음 장을 누르게 할 것인가, 이번 장 로그와 멈춤 선택을 먼저 보게 할 것인가?",
+      "확률표를 어디까지 공개해야 유저가 위험을 읽을 수 있는가?",
+      "상위 단계 진입 조건에 금화 외 숙련이나 절제 조건이 필요한가?"
+    ],
+    "visualQuestions": [
+      "복권 결과지는 반짝이는 카지노가 아니라 장부와 전표처럼 읽히는가?",
+      "현재 구현에서는 9칸, 당첨 줄, 즉석 보너스, 다음 단계 중 무엇을 가장 크게 둬야 하는가?",
+      "금화/빚을 붙인다면 현재 금화, 빚, 단계, 확률 중 무엇을 가장 크게 둬야 하는가?",
+      "대출 UI가 유혹 버튼이 아니라 재기 조건처럼 보이는가?",
+      "한 장이 끝난 뒤 멈춤과 다음 장 선택이 같은 무게로 보이는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "현재 공개 버전은 실제 돈, 결제, 현금화, 대출, 부채를 쓰지 않는다.",
+      "금화 경제를 붙일 경우 확률, 기대값, 단계별 위험을 숨기지 않는다.",
+      "손실 추격을 부추기는 문구와 무한 대출을 금지한다.",
+      "대출과 재기 자금은 고위험 복권 재진입보다 1단계 기본 루프 복구에 묶는다.",
+      "당첨 연출보다 결과 로그와 멈춤 판단이 먼저 보이게 한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "금화, 티켓 단계, 재기 자금, 빚 상태",
+      "progressionQuestion": "다음 단계 복권은 더 큰 숫자가 아니라 다른 위험 판단과 확률 제어를 열어주는가?",
+      "failureQuestion": "파산은 운 탓으로 끝나는가, 위험 선택과 멈춤 실패를 복기하게 하는가?",
+      "recoveryQuestion": "재기 자금은 다시 1단계부터 계획하게 만드는가, 즉시 더 큰 도박으로 이어지는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "낡은 복권 판매대와 손익 장부",
+      "primarySurface": "복권지, 지갑, 빚 전표, 단계표가 붙은 작업대",
+      "roughnessTarget": "반짝임보다 종이 질감과 숫자 장부가 먼저 보이는 투박함",
+      "differenceFromGenericPlay": "캔버스 중앙 게임판보다 손익표와 단계 이동 판단이 화면의 성격을 만든다.",
+      "mustAvoid": [
+        "카지노풍 광택과 과한 잭팟 연출",
+        "재도전을 압박하는 커다란 단일 버튼"
+      ]
+    }
+  }
 }

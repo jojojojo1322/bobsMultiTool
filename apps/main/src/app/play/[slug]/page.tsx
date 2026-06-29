@@ -79,7 +79,14 @@ export default async function PlayDetailPage({ params }: PlayPageProps) {
   const detailMaxWidth = content.type === "arcade-game" ? "max-w-7xl" : "max-w-6xl";
 
   return (
-    <main className="min-h-screen bg-background" lang={contentLocale} dir={dictionary.dir}>
+    <main
+      className="min-h-screen bg-background"
+      lang={contentLocale}
+      dir={dictionary.dir}
+      data-play-mode={content.planningBrief.gameMode}
+      data-play-visual-metaphor={content.planningBrief.initialVisualDirection.metaphor}
+      data-play-primary-surface={content.planningBrief.initialVisualDirection.primarySurface}
+    >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ContentNav dictionary={dictionary} />
       <section className="border-b bg-muted/20">

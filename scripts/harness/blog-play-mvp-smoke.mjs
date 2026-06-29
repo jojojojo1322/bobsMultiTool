@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { validatePlayPlanningBriefs } from "./play-planning-rules.mjs";
 
 const root = process.cwd();
 const blogDir = path.join(root, "content/blog");
@@ -153,6 +154,7 @@ const playEntries = listFiles(playDir, ".json").map((file) => ({
   file,
   ...JSON.parse(read(path.join(playDir, file))),
 }));
+failures.push(...validatePlayPlanningBriefs(playEntries));
 const blogBySlug = new Map(blogEntries.map((entry) => [entry.slug, entry]));
 const playBySlug = new Map(playEntries.map((entry) => [entry.slug, entry]));
 const categorySource = read(blogCategoryPath);

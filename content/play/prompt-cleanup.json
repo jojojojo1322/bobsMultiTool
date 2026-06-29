@@ -1,33 +1,166 @@
 {
   "slug": "prompt-cleanup",
-  "title": "프롬프트 정리함",
-  "description": "AI에게 던질 문장을 목적, 맥락, 제약으로 빠르게 분류하는 1분짜리 정리 게임. 좋은 답보다 좋은 질문을 먼저 나눠봅니다.",
+  "title": "프롬프트 재료 나누기",
+  "description": "AI에게 줄 문장을 목적, 맥락, 제약으로 나누는 1-2분 분류 게임입니다. 좋은 답을 기대하기 전에 질문 재료를 세 칸으로 먼저 나눕니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
-  "updatedAt": "2026-06-25",
-  "shareText": "나는 프롬프트를 얼마나 잘 정리할까? 프롬프트 정리함을 플레이했다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "프롬프트 재료 나누기를 해봤다. 목적, 맥락, 제약을 나누니 질문이 덜 뭉쳤다.",
   "order": 2,
-  "relatedBlogSlugs": ["ai-answer-review-habit", "ai-before-delegation-checklist", "ai-side-project-realistic-order", "human-decisions-in-ai-coding"],
-  "relatedPlaySlugs": ["priority-sorter", "bug-clicker"],
+  "relatedBlogSlugs": [
+    "ai-answer-review-habit",
+    "ai-before-delegation-checklist",
+    "ai-side-project-realistic-order",
+    "human-decisions-in-ai-coding"
+  ],
+  "relatedPlaySlugs": [
+    "priority-sorter",
+    "bug-clicker"
+  ],
   "categories": [
-    { "id": "goal", "label": "목적", "description": "AI가 무엇을 끝내야 하는지" },
-    { "id": "context", "label": "맥락", "description": "상황, 대상, 기존 조건" },
-    { "id": "constraint", "label": "제약", "description": "형식, 금지, 기준, 범위" }
+    {
+      "id": "goal",
+      "label": "목적",
+      "description": "AI가 무엇을 끝내야 하는지"
+    },
+    {
+      "id": "context",
+      "label": "맥락",
+      "description": "상황, 대상, 기존 조건"
+    },
+    {
+      "id": "constraint",
+      "label": "제약",
+      "description": "형식, 금지, 기준, 범위"
+    }
   ],
   "items": [
-    { "id": "landing", "label": "랜딩 페이지 초안을 만들어줘", "detail": "완료해야 할 작업 자체를 말한다.", "categoryId": "goal" },
-    { "id": "ko-user", "label": "대상은 한국어 모바일 사용자야", "detail": "누구를 위한 결과인지 정한다.", "categoryId": "context" },
-    { "id": "no-hero", "label": "마케팅식 hero 말고 바로 쓰는 화면으로", "detail": "결과의 방향을 제한한다.", "categoryId": "constraint" },
-    { "id": "existing-css", "label": "이미 shadcn 스타일 컴포넌트를 쓰고 있어", "detail": "현재 코드베이스의 조건이다.", "categoryId": "context" },
-    { "id": "five-bullets", "label": "결과는 다섯 개 bullet 안으로", "detail": "출력 형식을 좁힌다.", "categoryId": "constraint" },
-    { "id": "bug-fix", "label": "이 에러가 나는 원인을 찾아줘", "detail": "AI가 수행해야 하는 작업이다.", "categoryId": "goal" },
-    { "id": "do-not-touch", "label": "인증 코드는 건드리지 마", "detail": "변경 범위를 막는 제약이다.", "categoryId": "constraint" },
-    { "id": "prod-issue", "label": "프로덕션에서만 발생해", "detail": "문제 상황을 설명하는 맥락이다.", "categoryId": "context" },
-    { "id": "compare", "label": "두 접근의 장단점을 비교해줘", "detail": "원하는 산출물의 목적이다.", "categoryId": "goal" }
+    {
+      "id": "landing",
+      "label": "랜딩 페이지 초안을 만들어줘",
+      "detail": "완료해야 할 작업 자체를 말한다.",
+      "categoryId": "goal"
+    },
+    {
+      "id": "ko-user",
+      "label": "대상은 한국어 모바일 사용자야",
+      "detail": "누구를 위한 결과인지 정한다.",
+      "categoryId": "context"
+    },
+    {
+      "id": "no-hero",
+      "label": "마케팅식 hero 말고 바로 쓰는 화면으로",
+      "detail": "결과의 방향을 제한한다.",
+      "categoryId": "constraint"
+    },
+    {
+      "id": "existing-css",
+      "label": "이미 shadcn 스타일 컴포넌트를 쓰고 있어",
+      "detail": "현재 코드베이스의 조건이다.",
+      "categoryId": "context"
+    },
+    {
+      "id": "five-bullets",
+      "label": "결과는 다섯 개 bullet 안으로",
+      "detail": "출력 형식을 좁힌다.",
+      "categoryId": "constraint"
+    },
+    {
+      "id": "bug-fix",
+      "label": "이 에러가 나는 원인을 찾아줘",
+      "detail": "AI가 수행해야 하는 작업이다.",
+      "categoryId": "goal"
+    },
+    {
+      "id": "do-not-touch",
+      "label": "인증 코드는 건드리지 마",
+      "detail": "변경 범위를 막는 제약이다.",
+      "categoryId": "constraint"
+    },
+    {
+      "id": "prod-issue",
+      "label": "프로덕션에서만 발생해",
+      "detail": "문제 상황을 설명하는 맥락이다.",
+      "categoryId": "context"
+    },
+    {
+      "id": "compare",
+      "label": "두 접근의 장단점을 비교해줘",
+      "detail": "원하는 산출물의 목적이다.",
+      "categoryId": "goal"
+    }
   ],
   "endings": [
-    { "id": "architect", "title": "프롬프트 설계자", "description": "목적, 맥락, 제약을 분리해서 AI가 헛돌 가능성을 크게 줄였다.", "minScore": 8 },
-    { "id": "operator", "title": "실무형 정리러", "description": "대부분의 문장을 제대로 정리했다. 이제 결과물 검토 기준만 조금 더 선명하면 된다.", "minScore": 6 },
-    { "id": "messy", "title": "질문부터 리팩터링 필요", "description": "AI가 나쁜 답을 하는 게 아니라 질문이 아직 한 덩어리일 수 있다.", "minScore": 0 }
-  ]
+    {
+      "id": "architect",
+      "title": "프롬프트 설계자",
+      "description": "목적, 맥락, 제약을 분리해서 AI가 헛돌 가능성을 크게 줄였다.",
+      "minScore": 8
+    },
+    {
+      "id": "operator",
+      "title": "실무형 정리러",
+      "description": "대부분의 문장을 제대로 정리했다. 이제 결과물 검토 기준만 조금 더 선명하면 된다.",
+      "minScore": 6
+    },
+    {
+      "id": "messy",
+      "title": "질문부터 리팩터링 필요",
+      "description": "AI가 나쁜 답을 하는 게 아니라 질문이 아직 한 덩어리일 수 있다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "프롬프트 구성요소 분류 게임",
+    "planningIntent": "프롬프트 재료 나누기는 정답 맞히기보다 AI에게 줄 문장을 목적, 맥락, 제약으로 나누며 질문이 왜 흔들리는지 손으로 확인하는 분류 훈련으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "prompt engineering goal context constraints examples",
+        "card sorting UX category labels feedback",
+        "classification game visual hierarchy mobile"
+      ],
+      "referenceTypes": [
+        "프롬프트 구성요소를 목적/맥락/제약으로 나누는 사례",
+        "카드 분류 게임의 카테고리 라벨과 오분류 피드백",
+        "세 칸 분류 보드가 모바일에서 읽히는 UI"
+      ],
+      "dataOrSimulationNeeds": [
+        "목적/맥락/제약 항목별 오분류 가능성",
+        "카테고리 설명 길이가 모바일 완료율과 오탭에 미치는 영향"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '문장을 세 재료로 나눈다'가 읽히는가?",
+      "목적, 맥락, 제약의 차이가 카테고리 설명만 보고도 이해되는가?",
+      "오분류는 왜 틀렸는지 프롬프트 개선 기준으로 알려주는가?",
+      "애매한 문장은 게임의 학습 지점이지 억지 함정이 아닌가?",
+      "다음 항목에서 바로 다른 기준을 적용할 수 있는가?"
+    ],
+    "visualQuestions": [
+      "목적, 맥락, 제약 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
+      "현재 문장 카드는 짧지만 분류 기준이 먼저 읽히는가?",
+      "맞고 틀림보다 질문 재료를 나누는 기준 설명이 더 오래 남는가?",
+      "전체 화면이 마케팅 카드 그리드가 아니라 문서 작업대처럼 보이는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "문장 조각, 목적/맥락/제약 기준, 오분류 피드백, 질문 선명도",
+      "progressionQuestion": "성장은 정답 암기가 아니라 질문 재료를 더 빨리 분리하는 능력인가?",
+      "failureQuestion": "틀린 항목이 카테고리 기준 오해 때문인지 문장이 너무 뭉쳐 있기 때문인지 알려주는가?",
+      "recoveryQuestion": "다음 항목에서 곧장 다른 프롬프트 구성 기준을 적용할 수 있는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "초안 종이를 세 칸으로 찢어 넣는 문서 작업대",
+      "primarySurface": "목적/맥락/제약 세 분류 칸과 현재 문장 메모",
+      "roughnessTarget": "반짝이는 AI 화면보다 종이 조각, 분류함, 연필선 같은 낮은 장식",
+      "differenceFromGenericPlay": "게임판보다 프롬프트 재료와 세 분류 기준이 화면의 성격을 만든다.",
+      "mustAvoid": [
+        "게임 장르와 무관한 화려한 뱃지",
+        "모든 카테고리가 같은 색으로 보이는 배치"
+      ]
+    }
+  }
 }

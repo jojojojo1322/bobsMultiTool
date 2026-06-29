@@ -15,6 +15,7 @@ Run the narrow checks first:
 
 ```bash
 npm run harness:registry
+npm run harness:play-planning
 npm run harness:blog-play-mvp
 npm run harness:goal-audit
 npm run harness:blog-play-quality
@@ -93,6 +94,7 @@ Include:
 - `npm run harness:blog-play-mvp` should fail source-level Blog, Play, or Blog category descriptions that are too thin for submitted URL metadata, before rendered/live URL checks run.
 - The goal audit at `docs/blog-play-goal-audit.md` should separate completed Blog/Play implementation evidence from still-pending Search Console/Bing/Naver observation evidence, and `npm run harness:goal-audit` should stay green before anyone marks the active goal complete.
 - Play interaction checks should click every Play entry through mobile and desktop completion, cover keyboard/canvas arcade entries through their stable `data-play-action` hooks, and confirm `data-play-result`, `data-play-share`, `data-play-result-links`, `data-play-related-play`, and `data-play-related-blog`.
+- Play planning checks should keep every `content/play/*.json` entry tied to a `planningBrief` with web-search seed queries, comparable reference types, data/simulation needs, system questions, visual questions, risk/safety notes, mechanic questions, and a starting visual direction. This gate should not freeze one correct genre taxonomy or visual skin; it should fail only when Play work skips external research prompts, deep system questions, or game-specific visual reasoning.
 - Blog source checks should reject generated-outline prose and overbearing disclaimers: no "이 글에서는 ... 알아봅니다", no "다음과 같습니다" summary scaffolding, no keyword-only paragraphs, no pasted information-category caveat block, and no internal maker excuses that users do not need.
 - Play public copy and rendered Play screens should avoid action-count, move-limit, and count-toned wording such as "조작 횟수", "남은 횟수", or "몇 번 흔들림"; games should read as score, time, state, stage, or direct feedback instead. Arcade games should feel like direct old-web mini-games with stable canvas, mouse/touch/keyboard controls, visible hit/drag/aim feedback, and either a `1분` run or a clearly endless `계속` loop. Endless lottery-style games should not show scoreboards, timers, move limits, or cumulative score labels.
 - Live discovery checks should confirm the deployed canonical host returns the apex-to-www redirect, reduced sitemap, feeds, OpenSearch descriptor, llms.txt, IndexNow key file, ads.txt, and representative Blog/Play structured data. If CLI TLS trust fails, pass temporary TLS overrides only at command time and do not store them.

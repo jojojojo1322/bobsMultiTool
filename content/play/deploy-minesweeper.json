@@ -1,26 +1,121 @@
 {
   "slug": "deploy-minesweeper",
-  "title": "조용한 지뢰찾기",
-  "description": "칸을 열고 숫자를 보며 위험한 칸을 피해 가는 1분짜리 캔버스 지뢰찾기입니다. 숫자 칸에는 주변 열기 준비 상태가 떠서 다시 눌러도 되는지 바로 볼 수 있습니다.",
+  "title": "숫자 보고 지뢰 피하기",
+  "description": "닫힌 칸을 열고 숫자를 읽어 지뢰가 있을 칸은 표시로 미뤄두는 1분 추론 퍼즐입니다. 열린 숫자 칸의 표시 수가 맞으면 다시 눌러 주변 칸을 한 번에 엽니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
-  "shareText": "조용한 지뢰찾기를 해봤다. 안전해 보이는 칸도 한 번 더 봐야 하더라.",
+  "updatedAt": "2026-06-29",
+  "shareText": "숫자 보고 지뢰 피하기를 해봤다. 안전해 보여도 표시 수를 먼저 세는 게 나았다.",
   "order": 15,
-  "relatedBlogSlugs": ["minesweeper-chord-ready-note", "minesweeper-number-open-note", "minesweeper-flag-note", "small-web-games-retention", "why-small-web-toys-return"],
-  "relatedPlaySlugs": ["password-lock", "ten-box-rush", "deploy-pattern-memory"],
+  "relatedBlogSlugs": [
+    "minesweeper-chord-ready-note",
+    "minesweeper-number-open-note",
+    "minesweeper-flag-note",
+    "small-web-games-retention",
+    "why-small-web-toys-return"
+  ],
+  "relatedPlaySlugs": [
+    "password-lock",
+    "ten-box-rush",
+    "deploy-pattern-memory"
+  ],
   "arcade": {
     "variant": "minesweeper",
     "goal": "칸을 열고 숫자를 보며 위험한 칸은 피합니다. 숫자 칸의 표시 수가 맞으면 주변 닫힌 칸을 같이 열 수 있습니다.",
     "controls": "클릭이나 Space/Enter로 현재 칸을 엽니다. 의심되는 칸은 F, Shift+클릭, 우클릭으로 표시합니다. 열린 숫자 칸은 패널에 주변 열기 준비가 뜰 때 한 번 더 눌러 주변 닫힌 칸을 같이 엽니다.",
     "playerLabel": "칸",
-    "goodLabels": ["0", "1", "2", "안전", "열기"],
-    "badLabels": ["펑", "함정", "급함", "깜빡", "덫"],
-    "palette": { "background": "#111827", "primary": "#94a3b8", "accent": "#93c5fd", "danger": "#f87171" }
+    "goodLabels": [
+      "0",
+      "1",
+      "2",
+      "안전",
+      "열기"
+    ],
+    "badLabels": [
+      "펑",
+      "함정",
+      "급함",
+      "깜빡",
+      "덫"
+    ],
+    "palette": {
+      "background": "#111827",
+      "primary": "#94a3b8",
+      "accent": "#93c5fd",
+      "danger": "#f87171"
+    }
   },
   "endings": [
-    { "id": "safe", "title": "조용히 열림", "description": "무리하지 않고 안전한 칸을 골랐다.", "minScore": 20 },
-    { "id": "flag", "title": "표시는 해둠", "description": "몇 칸은 애매했지만 위험한 칸을 크게 밟진 않았다.", "minScore": 10 },
-    { "id": "boom", "title": "펑", "description": "안전해 보인다고 바로 누르면 터진다.", "minScore": 0 }
-  ]
+    {
+      "id": "safe",
+      "title": "조용히 열림",
+      "description": "무리하지 않고 안전한 칸을 골랐다.",
+      "minScore": 20
+    },
+    {
+      "id": "flag",
+      "title": "표시는 해둠",
+      "description": "몇 칸은 애매했지만 위험한 칸을 크게 밟진 않았다.",
+      "minScore": 10
+    },
+    {
+      "id": "boom",
+      "title": "펑",
+      "description": "안전해 보인다고 바로 누르면 터진다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "숫자 단서와 표시 기반 지뢰 회피 퍼즐",
+    "planningIntent": "숫자 보고 지뢰 피하기는 지뢰찾기 규칙을 재현하는 데서 끝내지 말고, 숫자를 읽고 표시를 세고 안전한 주변 열기 타이밍을 확신하는 과정을 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "Minesweeper number clue flag chord rules",
+        "minesweeper mobile flag reveal UX",
+        "logic puzzle uncertainty visual feedback"
+      ],
+      "referenceTypes": [
+        "Minesweeper의 숫자 단서, 깃발 표시, 주변 열기 규칙",
+        "모바일 칸 열기와 표시 전환의 오입력 방지",
+        "위험 추론 퍼즐의 확신/추측 상태 표시"
+      ],
+      "dataOrSimulationNeeds": [
+        "초기 안전칸 밀도와 막힘 확률",
+        "숫자 주변 표시 수가 맞을 때 주변 열기 성공률과 오입력률"
+      ]
+    },
+    "systemQuestions": [
+      "유저가 숫자를 읽고 여는 칸, 표시로 미루는 칸, 아직 모르는 칸을 구분할 수 있는가?",
+      "숫자 칸의 주변 열기는 표시 수가 맞는 순간에만 안전하게 읽히는가?",
+      "실패가 불운인지 표시 수를 잘못 센 것인지 화면에 남는가?",
+      "작은 보드에서도 추측보다 확신으로 여는 긴장이 충분한가?",
+      "다음 판에서 더 보수적으로 표시하고 열 이유가 생기는가?"
+    ],
+    "visualQuestions": [
+      "보드는 종이 지뢰 지도처럼 절제되어 숫자와 표시가 가장 먼저 보이는가?",
+      "위험 후보, 표시한 칸, 열어도 되는 주변 칸이 색상 하나에만 의존하지 않는가?",
+      "실패 칸은 폭발 연출보다 어떤 숫자를 잘못 읽었는지 먼저 남기는가?",
+      "결과는 안전 확장과 무리한 추측을 같이 보여주는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "닫힌 칸, 숫자 단서, 표시한 지뢰 후보, 주변 열기 타이밍",
+      "progressionQuestion": "성장은 찍기가 아니라 숫자 주변의 확실한 안전 칸을 더 빨리 찾는 능력인가?",
+      "failureQuestion": "터진 칸이 추측 영역이었는지 표시 수 계산 오류였는지 알 수 있는가?",
+      "recoveryQuestion": "재시작은 같은 보드 복기가 아니라 새로운 숫자 판단 연습으로 이어지는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "작은 지뢰 지도와 연필로 남긴 표시",
+      "primarySurface": "숫자 단서, 표시 칸, 주변 열기 준비가 보이는 낮은 장식 격자판",
+      "roughnessTarget": "밝은 퍼즐 종이, 또렷한 숫자, 손으로 그은 위험 표시",
+      "differenceFromGenericPlay": "보드 숫자와 표시 상태가 거의 모든 시각 정보를 맡고 장식은 뒤로 물러난다.",
+      "mustAvoid": [
+        "숫자를 흐리는 배경 텍스처",
+        "위험을 지나치게 귀엽게 만드는 표시"
+      ]
+    }
+  }
 }

@@ -1,33 +1,167 @@
 {
   "slug": "priority-sorter",
-  "title": "업무 우선순위 분류기",
-  "description": "들어오는 일을 지금, 예약, 버림으로 빠르게 나누는 1-2분 분류 게임입니다. 바쁨과 중요한 일을 손으로 구분합니다.",
+  "title": "지금 할 일 고르기",
+  "description": "들어오는 일을 지금 처리, 시간 잡기, 버리기로 나누는 1-2분 분류 게임입니다. 바쁜 느낌이 아니라 오늘 흐름을 막는 일을 먼저 고릅니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
-  "updatedAt": "2026-06-25",
-  "shareText": "나는 일을 얼마나 잘 분류할까? 업무 우선순위 분류기를 플레이했다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "지금 할 일 고르기를 해봤다. 바쁜 일과 지금 막는 일은 달랐다.",
   "order": 18,
-  "relatedBlogSlugs": ["static-first-before-server", "not-building-login-yet", "static-site-limit", "search-console-misreads-for-indie-devs", "static-micro-games-architecture"],
-  "relatedPlaySlugs": ["prompt-cleanup", "meeting-escape"],
+  "relatedBlogSlugs": [
+    "static-first-before-server",
+    "not-building-login-yet",
+    "static-site-limit",
+    "search-console-misreads-for-indie-devs",
+    "static-micro-games-architecture"
+  ],
+  "relatedPlaySlugs": [
+    "prompt-cleanup",
+    "meeting-escape"
+  ],
   "categories": [
-    { "id": "now", "label": "지금", "description": "오늘 흐름을 막는 핵심 일" },
-    { "id": "schedule", "label": "예약", "description": "시간을 잡고 처리할 일" },
-    { "id": "drop", "label": "버림", "description": "지금 하지 않아도 되는 일" }
+    {
+      "id": "now",
+      "label": "지금",
+      "description": "오늘 흐름을 막는 핵심 일"
+    },
+    {
+      "id": "schedule",
+      "label": "예약",
+      "description": "시간을 잡고 처리할 일"
+    },
+    {
+      "id": "drop",
+      "label": "버림",
+      "description": "지금 하지 않아도 되는 일"
+    }
   ],
   "items": [
-    { "id": "prod-error", "label": "프로덕션 오류 알림", "detail": "영향 범위 확인이 먼저다.", "categoryId": "now" },
-    { "id": "nice-refactor", "label": "언젠가 하고 싶은 리팩터링", "detail": "좋지만 오늘의 병목은 아니다.", "categoryId": "drop" },
-    { "id": "weekly-report", "label": "금요일 주간 회고", "detail": "캘린더에 묶으면 된다.", "categoryId": "schedule" },
-    { "id": "blocked-colleague", "label": "동료가 막힌 배포 키", "detail": "누군가의 진행을 막고 있다.", "categoryId": "now" },
-    { "id": "random-tool", "label": "새 도구 후보 20개 조사", "detail": "아이디어는 좋지만 오늘의 MVP는 아니다.", "categoryId": "drop" },
-    { "id": "content-batch", "label": "다음 글 3개 초안 잡기", "detail": "집중 시간이 필요하다.", "categoryId": "schedule" },
-    { "id": "broken-link", "label": "sitemap 404 확인", "detail": "검색 유입 기반이면 즉시 확인할 가치가 있다.", "categoryId": "now" },
-    { "id": "theme-polish", "label": "카드 그림자 조금 바꾸기", "detail": "측정 전 장식은 미뤄도 된다.", "categoryId": "drop" },
-    { "id": "reader-mail", "label": "문의 답장", "detail": "짧게 시간을 잡고 처리하면 된다.", "categoryId": "schedule" }
+    {
+      "id": "prod-error",
+      "label": "프로덕션 오류 알림",
+      "detail": "영향 범위 확인이 먼저다.",
+      "categoryId": "now"
+    },
+    {
+      "id": "nice-refactor",
+      "label": "언젠가 하고 싶은 리팩터링",
+      "detail": "좋지만 오늘의 병목은 아니다.",
+      "categoryId": "drop"
+    },
+    {
+      "id": "weekly-report",
+      "label": "금요일 주간 회고",
+      "detail": "캘린더에 묶으면 된다.",
+      "categoryId": "schedule"
+    },
+    {
+      "id": "blocked-colleague",
+      "label": "동료가 막힌 배포 키",
+      "detail": "누군가의 진행을 막고 있다.",
+      "categoryId": "now"
+    },
+    {
+      "id": "random-tool",
+      "label": "새 도구 후보 20개 조사",
+      "detail": "아이디어는 좋지만 오늘의 MVP는 아니다.",
+      "categoryId": "drop"
+    },
+    {
+      "id": "content-batch",
+      "label": "다음 글 3개 초안 잡기",
+      "detail": "집중 시간이 필요하다.",
+      "categoryId": "schedule"
+    },
+    {
+      "id": "broken-link",
+      "label": "sitemap 404 확인",
+      "detail": "검색 유입 기반이면 즉시 확인할 가치가 있다.",
+      "categoryId": "now"
+    },
+    {
+      "id": "theme-polish",
+      "label": "카드 그림자 조금 바꾸기",
+      "detail": "측정 전 장식은 미뤄도 된다.",
+      "categoryId": "drop"
+    },
+    {
+      "id": "reader-mail",
+      "label": "문의 답장",
+      "detail": "짧게 시간을 잡고 처리하면 된다.",
+      "categoryId": "schedule"
+    }
   ],
   "endings": [
-    { "id": "clear", "title": "우선순위 정리 완료", "description": "지금 할 일과 버릴 일을 분리했다. 오늘의 에너지를 낭비하지 않는다.", "minScore": 8 },
-    { "id": "ok", "title": "대체로 정리됨", "description": "큰 흐름은 맞다. 다만 장식성 작업을 조금 더 과감히 버려도 된다.", "minScore": 6 },
-    { "id": "busy", "title": "바쁨 착각 경보", "description": "모든 일을 중요하게 보면 결국 아무 일도 끝나지 않는다.", "minScore": 0 }
-  ]
+    {
+      "id": "clear",
+      "title": "우선순위 정리 완료",
+      "description": "지금 할 일과 버릴 일을 분리했다. 오늘의 에너지를 낭비하지 않는다.",
+      "minScore": 8
+    },
+    {
+      "id": "ok",
+      "title": "대체로 정리됨",
+      "description": "큰 흐름은 맞다. 다만 장식성 작업을 조금 더 과감히 버려도 된다.",
+      "minScore": 6
+    },
+    {
+      "id": "busy",
+      "title": "바쁨 착각 경보",
+      "description": "모든 일을 중요하게 보면 결국 아무 일도 끝나지 않는다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "업무 우선순위 선택 분류 게임",
+    "planningIntent": "지금 할 일 고르기는 정답 맞히기보다 들어오는 일을 지금 처리, 시간 잡기, 버리기로 나누며 바쁨과 병목을 구분하는 업무 판단 게임으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "task prioritization urgent important decision matrix",
+        "kanban triage board visual hierarchy",
+        "sorting game decision criteria feedback"
+      ],
+      "referenceTypes": [
+        "긴급/중요 업무 판단과 병목 제거 기준",
+        "칸반/트리아지 보드의 지금/예약/버림 분리",
+        "카드 분류 게임의 기준 피드백"
+      ],
+      "dataOrSimulationNeeds": [
+        "긴급해 보이는 항목과 실제 병목 항목의 오분류 가능성",
+        "세 카테고리 설명 길이가 모바일 완료율과 오탭에 미치는 영향"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '지금/예약/버림으로 나눈다'가 읽히는가?",
+      "지금 할 일은 바쁜 일이 아니라 흐름을 막는 일로 구분되는가?",
+      "버림 카테고리가 실패가 아니라 에너지 보존 선택으로 읽히는가?",
+      "오분류는 왜 틀렸는지 업무 기준으로 알려주는가?",
+      "다음 항목에서 바로 다른 우선순위 기준을 적용할 수 있는가?"
+    ],
+    "visualQuestions": [
+      "지금, 시간 잡기, 버리기 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
+      "현재 업무 카드는 짧지만 막는 일인지 미룰 일인지 먼저 읽히는가?",
+      "맞고 틀림보다 우선순위 기준 설명이 더 중요하게 남는가?",
+      "전체 화면이 마케팅 카드 그리드가 아니라 업무 트리아지 보드처럼 보이는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "업무 항목, 지금/예약/버림 기준, 오분류 피드백, 판단 피로도",
+      "progressionQuestion": "성장은 정답 암기가 아니라 병목과 장식을 더 빨리 구분하는 능력인가?",
+      "failureQuestion": "틀린 항목이 기준 오해 때문인지 바쁨 착각 때문인지 알려주는가?",
+      "recoveryQuestion": "다음 항목에서 곧장 다른 우선순위 기준을 적용할 수 있는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "작은 업무 트리아지 보드와 종이 할 일 카드",
+      "primarySurface": "지금/시간 잡기/버림 세 분류 칸과 현재 업무 카드",
+      "roughnessTarget": "깨끗한 생산성 대시보드보다 종이 카드, 손글씨 줄, 얇은 칸막이의 투박함",
+      "differenceFromGenericPlay": "게임판보다 업무 카드와 세 우선순위 칸이 화면의 성격을 만든다.",
+      "mustAvoid": [
+        "게임 장르와 무관한 화려한 뱃지",
+        "모든 카테고리가 같은 색으로 보이는 배치"
+      ]
+    }
+  }
 }

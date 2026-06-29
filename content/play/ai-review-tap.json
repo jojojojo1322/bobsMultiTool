@@ -1,11 +1,11 @@
 {
   "slug": "ai-review-tap",
-  "title": "AI 답변 검수 버튼",
-  "description": "AI가 그럴듯하게 낸 답에서 바로 믿어도 될 신호와 사람이 다시 확인해야 할 신호를 나누는 짧은 탭 게임입니다.",
+  "title": "AI 답변 위험 신호 찾기",
+  "description": "AI 답변 문장마다 바로 믿어도 될지, 다시 확인해야 할지 누르는 30-60초 탭 게임입니다. 없는 파일, 조용히 추가한 패키지, 미검증 주장을 먼저 잡습니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
-  "updatedAt": "2026-06-25",
-  "shareText": "나는 AI 답변에서 다시 확인할 신호를 얼마나 잘 잡을까? AI 답변 검수 버튼을 플레이했다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "AI 답변 위험 신호 찾기를 해봤다. 그럴듯한 말보다 확인 근거가 먼저였다.",
   "order": 20,
   "relatedBlogSlugs": [
     "ai-output-is-not-finished-work",
@@ -14,24 +14,155 @@
     "human-decisions-in-ai-coding",
     "codex-work-note"
   ],
-  "relatedPlaySlugs": ["prompt-cleanup", "bug-clicker"],
+  "relatedPlaySlugs": [
+    "prompt-cleanup",
+    "bug-clicker"
+  ],
   "targetLabel": "다시 확인",
   "decoyLabel": "그냥 통과",
   "targets": [
-    { "id": "missing-file", "label": "없는 파일을 수정했다고 함", "detail": "실제 파일 확인 전에는 절대 통과시키면 안 된다.", "kind": "target", "points": 3 },
-    { "id": "clear-summary", "label": "변경 파일을 짧게 요약함", "detail": "요약 자체는 도움 되지만, 이것만으로 위험 신호는 아니다.", "kind": "decoy", "points": 2 },
-    { "id": "new-dependency", "label": "새 패키지를 조용히 추가함", "detail": "의도한 선택인지, 기존 코드로 충분한지 다시 봐야 한다.", "kind": "target", "points": 3 },
-    { "id": "same-pattern", "label": "근처 컴포넌트 패턴을 따라감", "detail": "확인은 필요하지만 일단 좋은 신호에 가깝다.", "kind": "decoy", "points": 2 },
-    { "id": "no-test-claim", "label": "테스트는 안 돌렸지만 된다고 말함", "detail": "말보다 명령 결과가 필요하다.", "kind": "target", "points": 3 },
-    { "id": "plain-limitation", "label": "확인 못 한 범위를 명시함", "detail": "불완전함을 말하는 건 오히려 검토에 도움이 된다.", "kind": "decoy", "points": 2 },
-    { "id": "changed-copy-tone", "label": "사이트 말투와 다른 홍보 문구를 넣음", "detail": "콘텐츠 사이트에서는 문체도 품질이다.", "kind": "target", "points": 3 },
-    { "id": "small-diff", "label": "작은 diff로 한 문제만 고침", "detail": "범위가 좁으면 검토가 쉬워진다.", "kind": "decoy", "points": 2 },
-    { "id": "secret-leak", "label": "토큰을 예시 코드에 남김", "detail": "즉시 멈추고 제거해야 하는 신호다.", "kind": "target", "points": 3 },
-    { "id": "exact-command", "label": "실행한 명령과 결과를 적음", "detail": "검증 근거가 있어서 그냥 의심 신호는 아니다.", "kind": "decoy", "points": 2 }
+    {
+      "id": "missing-file",
+      "label": "없는 파일을 수정했다고 함",
+      "detail": "실제 파일 확인 전에는 절대 통과시키면 안 된다.",
+      "kind": "target",
+      "points": 3
+    },
+    {
+      "id": "clear-summary",
+      "label": "변경 파일을 짧게 요약함",
+      "detail": "요약 자체는 도움 되지만, 이것만으로 위험 신호는 아니다.",
+      "kind": "decoy",
+      "points": 2
+    },
+    {
+      "id": "new-dependency",
+      "label": "새 패키지를 조용히 추가함",
+      "detail": "의도한 선택인지, 기존 코드로 충분한지 다시 봐야 한다.",
+      "kind": "target",
+      "points": 3
+    },
+    {
+      "id": "same-pattern",
+      "label": "근처 컴포넌트 패턴을 따라감",
+      "detail": "확인은 필요하지만 일단 좋은 신호에 가깝다.",
+      "kind": "decoy",
+      "points": 2
+    },
+    {
+      "id": "no-test-claim",
+      "label": "테스트는 안 돌렸지만 된다고 말함",
+      "detail": "말보다 명령 결과가 필요하다.",
+      "kind": "target",
+      "points": 3
+    },
+    {
+      "id": "plain-limitation",
+      "label": "확인 못 한 범위를 명시함",
+      "detail": "불완전함을 말하는 건 오히려 검토에 도움이 된다.",
+      "kind": "decoy",
+      "points": 2
+    },
+    {
+      "id": "changed-copy-tone",
+      "label": "사이트 말투와 다른 홍보 문구를 넣음",
+      "detail": "콘텐츠 사이트에서는 문체도 품질이다.",
+      "kind": "target",
+      "points": 3
+    },
+    {
+      "id": "small-diff",
+      "label": "작은 diff로 한 문제만 고침",
+      "detail": "범위가 좁으면 검토가 쉬워진다.",
+      "kind": "decoy",
+      "points": 2
+    },
+    {
+      "id": "secret-leak",
+      "label": "토큰을 예시 코드에 남김",
+      "detail": "즉시 멈추고 제거해야 하는 신호다.",
+      "kind": "target",
+      "points": 3
+    },
+    {
+      "id": "exact-command",
+      "label": "실행한 명령과 결과를 적음",
+      "detail": "검증 근거가 있어서 그냥 의심 신호는 아니다.",
+      "kind": "decoy",
+      "points": 2
+    }
   ],
   "endings": [
-    { "id": "reviewer", "title": "검수 루틴 생김", "description": "없는 파일, 새 의존성, 미검증 주장 같은 위험 신호를 잘 잡았다.", "minScore": 18 },
-    { "id": "careful", "title": "대체로 조심함", "description": "큰 위험은 잡았다. 이제 문체와 범위 변경도 조금 더 빠르게 보면 된다.", "minScore": 12 },
-    { "id": "too-trusting", "title": "AI 말투에 설득됨", "description": "그럴듯한 말과 검증된 결과를 조금 섞어 봤다. 다음 판에서는 파일과 명령 결과부터 보자.", "minScore": 0 }
-  ]
+    {
+      "id": "reviewer",
+      "title": "검수 루틴 생김",
+      "description": "없는 파일, 새 의존성, 미검증 주장 같은 위험 신호를 잘 잡았다.",
+      "minScore": 18
+    },
+    {
+      "id": "careful",
+      "title": "대체로 조심함",
+      "description": "큰 위험은 잡았다. 이제 문체와 범위 변경도 조금 더 빠르게 보면 된다.",
+      "minScore": 12
+    },
+    {
+      "id": "too-trusting",
+      "title": "AI 말투에 설득됨",
+      "description": "그럴듯한 말과 검증된 결과를 조금 섞어 봤다. 다음 판에서는 파일과 명령 결과부터 보자.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "AI 답변 신뢰 신호 판별 탭 게임",
+    "planningIntent": "AI 답변 위험 신호 찾기는 빠르게 누르는 반응 게임이 아니라, AI 문장 속에서 파일, 의존성, 검증 주장처럼 다시 확인해야 할 근거 신호를 고르는 검수 판단으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "AI generated code review red flags checklist",
+        "UI copy clear action labels verb noun buttons",
+        "tap game target decoy feedback mobile"
+      ],
+      "referenceTypes": [
+        "검수 체크리스트의 위험 신호 분류",
+        "짧은 버튼 라벨이 행동을 설명하는 UI 사례",
+        "표적과 미끼를 큰 터치 영역으로 나누는 탭 게임"
+      ],
+      "dataOrSimulationNeeds": [
+        "위험 신호와 안전 신호 비율별 오탭 가능성",
+        "문장 길이와 전문 용어가 모바일 판별 시간을 얼마나 늘리는지 비교"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '위험하면 확인, 괜찮으면 넘김'이 읽히는가?",
+      "위험 신호는 그럴듯한 말투가 아니라 실제 검증 근거 부족으로 구분되는가?",
+      "틀린 탭이 다음 답변에서 어떤 단어를 더 조심해야 하는지 알려주는가?",
+      "안전 신호를 계속 의심하는 피로가 게임을 흐리지 않는가?",
+      "모바일에서 두 선택 버튼은 엄지로 안정적으로 누를 만큼 큰가?"
+    ],
+    "visualQuestions": [
+      "답변 문장 카드와 확인/넘김 버튼이 먼저 보이는가?",
+      "위험 신호가 결과 전에 색으로 과하게 암시되지 않는가?",
+      "오탭 피드백은 버튼 주변에서 짧게 끝나고 기준 문장만 남는가?",
+      "결과는 빠름보다 어떤 근거를 확인했는지 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "위험 신호, 안전 신호, 확인 근거, 판단 로그",
+      "progressionQuestion": "성장은 더 빨리 누르는 것보다 검증 근거가 없는 문장을 더 빨리 알아보는 감각인가?",
+      "failureQuestion": "오탭이 손 실수인지 AI 말투에 설득된 것인지 구분되는가?",
+      "recoveryQuestion": "다음 문장에서 바로 파일, 명령 결과, 새 의존성 기준을 다시 시험할 수 있는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "검수 도장판과 작은 증거 체크리스트",
+      "primarySurface": "큰 답변 문장 카드, 확인/넘김 버튼, 짧은 검수 기록",
+      "roughnessTarget": "반짝이는 AI 카드보다 도장판, 체크칸, 밑줄 표시가 있는 건조한 검수대",
+      "differenceFromGenericPlay": "여러 장식보다 AI 문장과 확인 근거 버튼이 화면을 만든다.",
+      "mustAvoid": [
+        "작은 탭 대상 여러 개를 흩뿌리는 배치",
+        "판정 전 과한 색 힌트"
+      ]
+    }
+  }
 }

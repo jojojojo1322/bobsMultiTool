@@ -1,26 +1,121 @@
 {
   "slug": "deploy-snake",
-  "title": "골목 스네이크",
-  "description": "방향키나 캔버스 드래그로 골목을 돌며 사과를 먹고, 벽과 꼬리를 피하는 스네이크 게임입니다. 열린 방향 표시와 다음 칸 예고를 보며 한 박자 먼저 꺾습니다.",
+  "title": "사과 먹고 꼬리 피하기",
+  "description": "방향키나 캔버스 드래그로 움직이며 사과를 먹고, 벽과 자기 꼬리를 피하는 1분 스네이크 게임입니다. 열린 방향 표시와 다음 칸 예고를 보고 한 박자 먼저 꺾습니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-28",
-  "shareText": "골목 스네이크를 해봤다. 짧은 골목도 욕심내면 꼬인다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "사과 먹고 꼬리 피하기를 해봤다. 사과만 보고 달리면 꼬리가 먼저 막았다.",
   "order": 13,
-  "relatedBlogSlugs": ["game-feedback-before-score-note", "snake-open-turn-cue-note", "snake-next-cell-preview-note", "snake-swipe-control-note", "static-micro-games-architecture", "why-small-web-toys-return"],
-  "relatedPlaySlugs": ["deploy-crossing", "ten-box-rush"],
+  "relatedBlogSlugs": [
+    "game-feedback-before-score-note",
+    "snake-open-turn-cue-note",
+    "snake-next-cell-preview-note",
+    "snake-swipe-control-note",
+    "static-micro-games-architecture",
+    "why-small-web-toys-return"
+  ],
+  "relatedPlaySlugs": [
+    "deploy-crossing",
+    "ten-box-rush"
+  ],
   "arcade": {
     "variant": "snake",
     "goal": "열린 방향 표시와 먹이 방향선을 보며 사과를 먹고, 벽과 꼬리는 피합니다.",
     "controls": "방향키/WASD 또는 캔버스 드래그로 방향을 바꿉니다. 화면에는 다음 칸 예고, 열린 방향 표시, 먹이까지의 방향선이 보입니다. Space/Enter는 한 칸 전진하고, 캔버스를 탭하면 머리 기준 가까운 방향으로 꺾습니다.",
-    "playerLabel": "스네",
-    "goodLabels": ["사과", "길", "점", "숨", "칸"],
-    "badLabels": ["꼬임", "벽", "소음", "돌", "급함"],
-    "palette": { "background": "#102016", "primary": "#4ade80", "accent": "#fef08a", "danger": "#fb7185" }
+    "playerLabel": "머리",
+    "goodLabels": [
+      "사과",
+      "길",
+      "점",
+      "숨",
+      "칸"
+    ],
+    "badLabels": [
+      "꼬임",
+      "벽",
+      "꼬리",
+      "돌",
+      "급함"
+    ],
+    "palette": {
+      "background": "#102016",
+      "primary": "#4ade80",
+      "accent": "#fef08a",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "long", "title": "길게 이어짐", "description": "좋은 조각을 잘 골라 길이 이어졌다.", "minScore": 20 },
-    { "id": "bend", "title": "아슬아슬한 골목", "description": "위험한 꺾임은 있었지만 길은 끊기지 않았다.", "minScore": 10 },
-    { "id": "bite", "title": "꼬리를 밟음", "description": "욕심낸 조각 때문에 길이 꼬였다.", "minScore": 0 }
-  ]
+    {
+      "id": "long",
+      "title": "길게 이어짐",
+      "description": "좋은 조각을 잘 골라 길이 이어졌다.",
+      "minScore": 20
+    },
+    {
+      "id": "bend",
+      "title": "아슬아슬한 골목",
+      "description": "위험한 꺾임은 있었지만 길은 끊기지 않았다.",
+      "minScore": 10
+    },
+    {
+      "id": "bite",
+      "title": "꼬리를 밟음",
+      "description": "욕심낸 조각 때문에 길이 꼬였다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "꼬리 충돌 예측과 방향 전환 아케이드",
+    "planningIntent": "사과 먹고 꼬리 피하기는 점수 사과를 모으는 게임보다 다음 칸, 열린 방향, 자기 꼬리의 위치를 읽고 욕심낼지 돌아갈지 고르는 경로 판단으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "Snake game next move collision readability",
+        "mobile swipe snake controls feedback",
+        "grid movement game safe direction cue"
+      ],
+      "referenceTypes": [
+        "스네이크의 벽/꼬리 충돌 예고 사례",
+        "스와이프 방향 전환과 반대 방향 제한 피드백",
+        "격자 게임의 안전 방향 표시 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "다음 칸 예고가 충돌 납득도에 주는 영향",
+        "사과 거리와 꼬리 위험이 선택을 바꾸는 빈도"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '사과를 먹고 벽과 꼬리를 피한다'가 읽히는가?",
+      "유저는 사과 방향보다 다음 칸의 벽/꼬리 위험을 먼저 보는가?",
+      "반대 방향 입력이 막히는 이유가 스네이크 규칙으로 납득되는가?",
+      "실패가 늦은 꺾기인지 욕심낸 사과 루트 때문인지 보이는가?",
+      "다음 판에서 덜 직선으로 가는 전략을 시도하게 되는가?"
+    ],
+    "visualQuestions": [
+      "머리, 꼬리, 사과, 다음 칸이 점수보다 먼저 보이는가?",
+      "열린 방향과 막힌 방향은 색상 외 형태로도 구분되는가?",
+      "투박한 격자판처럼 한 칸 전진과 꺾임이 분명한가?",
+      "결과는 먹은 사과보다 꼬리에 막힌 원인을 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "머리 위치, 꼬리 경로, 사과 방향, 다음 칸 위험",
+      "progressionQuestion": "성장은 속도보다 한 칸 뒤 위험을 보고 꺾는 경로 감각으로 체감되는가?",
+      "failureQuestion": "충돌은 벽, 꼬리, 늦은 방향 전환 중 무엇 때문인지 읽히는가?",
+      "recoveryQuestion": "재시작은 짧고, 바로 다른 회전 루트를 시험할 수 있는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "낡은 격자 골목판과 꼬리 경로 표시",
+      "primarySurface": "머리, 꼬리, 사과, 다음 칸 예고가 있는 큰 격자 캔버스",
+      "roughnessTarget": "낮은 반경, 굵은 격자선, 제한된 초록/위험색으로 만든 투박한 스네이크판",
+      "differenceFromGenericPlay": "다음 칸과 꼬리 경로가 외곽 UI보다 먼저 보인다.",
+      "mustAvoid": [
+        "마케팅 카드형 설명 영역",
+        "게임 오브젝트보다 큰 장식 헤더"
+      ]
+    }
+  }
 }

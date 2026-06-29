@@ -1,19 +1,41 @@
 {
   "slug": "office-survival",
-  "title": "퇴근 생존기",
-  "description": "회의, 메신저, 긴급 요청 사이에서 체력과 멘탈을 관리하며 정시 퇴근을 노리는 짧은 직장 생존 시뮬레이터.",
+  "title": "정시 퇴근까지 버티기",
+  "description": "10개의 직장 상황에서 선택지를 골라 체력, 멘탈, 업무량, 평판을 조절하는 3-5분 선택형 시뮬레이션입니다. 업무량은 낮추고 체력과 멘탈을 지켜 정시 퇴근 엔딩을 노립니다.",
   "type": "micro-sim",
   "durationLabel": "3-5분",
-  "updatedAt": "2026-06-25",
-  "shareText": "나는 오늘 퇴근에 성공했을까? 퇴근 생존기를 플레이해 봤다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "정시 퇴근까지 버티기를 해봤다. 체력, 멘탈, 업무량, 평판이 동시에 흔들렸다.",
   "order": 1,
-  "relatedBlogSlugs": ["office-survival-workday", "vercel-sitemap-canonical-log"],
-  "relatedPlaySlugs": ["meeting-escape", "priority-sorter"],
+  "relatedBlogSlugs": [
+    "office-survival-workday",
+    "vercel-sitemap-canonical-log"
+  ],
+  "relatedPlaySlugs": [
+    "meeting-escape",
+    "priority-sorter"
+  ],
   "stats": [
-    { "key": "stamina", "label": "체력", "initial": 62 },
-    { "key": "mental", "label": "멘탈", "initial": 58 },
-    { "key": "workload", "label": "업무량", "initial": 46 },
-    { "key": "reputation", "label": "평판", "initial": 50 }
+    {
+      "key": "stamina",
+      "label": "체력",
+      "initial": 62
+    },
+    {
+      "key": "mental",
+      "label": "멘탈",
+      "initial": 58
+    },
+    {
+      "key": "workload",
+      "label": "업무량",
+      "initial": 46
+    },
+    {
+      "key": "reputation",
+      "label": "평판",
+      "initial": 50
+    }
   ],
   "turns": [
     {
@@ -21,10 +43,46 @@
       "title": "09:04, 출근하자마자 메신저가 울린다",
       "situation": "팀장이 어제 퇴근 직전에 보낸 자료를 지금 바로 볼 수 있냐고 묻는다. 커피는 아직 한 모금도 못 마셨다.",
       "choices": [
-        { "label": "바로 확인하고 요약을 보낸다", "detail": "아침 체력을 조금 쓰지만 신뢰를 얻는다.", "effects": { "stamina": -8, "mental": -3, "workload": -4, "reputation": 8 } },
-        { "label": "10분만 달라고 하고 우선순위를 정리한다", "detail": "속도는 늦지만 하루 흐름을 잡는다.", "effects": { "stamina": -3, "mental": 5, "workload": -2, "reputation": 2 } },
-        { "label": "읽음 표시만 남기고 커피부터 산다", "detail": "몸은 살지만 평판 리스크가 생긴다.", "effects": { "stamina": 6, "mental": 4, "workload": 4, "reputation": -7 } },
-        { "label": "동료에게 먼저 맥락을 물어본다", "detail": "혼자 삽질을 줄이지만 부탁 빚이 생긴다.", "effects": { "stamina": -2, "mental": 2, "workload": -5, "reputation": 1 } }
+        {
+          "label": "바로 확인하고 요약을 보낸다",
+          "detail": "아침 체력을 조금 쓰지만 신뢰를 얻는다.",
+          "effects": {
+            "stamina": -8,
+            "mental": -3,
+            "workload": -4,
+            "reputation": 8
+          }
+        },
+        {
+          "label": "10분만 달라고 하고 우선순위를 정리한다",
+          "detail": "속도는 늦지만 하루 흐름을 잡는다.",
+          "effects": {
+            "stamina": -3,
+            "mental": 5,
+            "workload": -2,
+            "reputation": 2
+          }
+        },
+        {
+          "label": "읽음 표시만 남기고 커피부터 산다",
+          "detail": "체력은 회복되지만 평판이 깎일 수 있다.",
+          "effects": {
+            "stamina": 6,
+            "mental": 4,
+            "workload": 4,
+            "reputation": -7
+          }
+        },
+        {
+          "label": "동료에게 먼저 맥락을 물어본다",
+          "detail": "혼자 삽질을 줄이지만 부탁 빚이 생긴다.",
+          "effects": {
+            "stamina": -2,
+            "mental": 2,
+            "workload": -5,
+            "reputation": 1
+          }
+        }
       ]
     },
     {
@@ -32,10 +90,46 @@
       "title": "10:00, 빈 시간에 회의가 꽂혔다",
       "situation": "30분짜리라던 회의 초대가 90분으로 늘어났다. 안건은 '간단히 싱크'라고 적혀 있다.",
       "choices": [
-        { "label": "참석 전 안건과 결정 필요 항목을 묻는다", "detail": "회의 시간을 줄일 가능성이 생긴다.", "effects": { "stamina": -2, "mental": 6, "workload": -6, "reputation": 5 } },
-        { "label": "그냥 들어가서 조용히 듣는다", "detail": "마찰은 없지만 시간이 사라진다.", "effects": { "stamina": -8, "mental": -6, "workload": 8, "reputation": 1 } },
-        { "label": "자료를 먼저 보내고 비동기 진행을 제안한다", "detail": "성공하면 최고지만 약간의 용기가 필요하다.", "effects": { "stamina": -4, "mental": 4, "workload": -8, "reputation": 4 } },
-        { "label": "다른 긴급 업무를 이유로 불참한다", "detail": "시간은 벌지만 관계 온도가 내려간다.", "effects": { "stamina": 3, "mental": 3, "workload": -3, "reputation": -8 } }
+        {
+          "label": "참석 전 안건과 결정 필요 항목을 묻는다",
+          "detail": "회의 시간을 줄일 가능성이 생긴다.",
+          "effects": {
+            "stamina": -2,
+            "mental": 6,
+            "workload": -6,
+            "reputation": 5
+          }
+        },
+        {
+          "label": "그냥 들어가서 조용히 듣는다",
+          "detail": "마찰은 없지만 시간이 사라진다.",
+          "effects": {
+            "stamina": -8,
+            "mental": -6,
+            "workload": 8,
+            "reputation": 1
+          }
+        },
+        {
+          "label": "자료를 먼저 보내고 비동기 진행을 제안한다",
+          "detail": "업무량은 크게 줄지만 먼저 정리할 에너지가 든다.",
+          "effects": {
+            "stamina": -4,
+            "mental": 4,
+            "workload": -8,
+            "reputation": 4
+          }
+        },
+        {
+          "label": "다른 긴급 업무를 이유로 불참한다",
+          "detail": "시간은 벌지만 관계 온도가 내려간다.",
+          "effects": {
+            "stamina": 3,
+            "mental": 3,
+            "workload": -3,
+            "reputation": -8
+          }
+        }
       ]
     },
     {
@@ -43,10 +137,46 @@
       "title": "11:47, 점심 직전 질문 폭탄",
       "situation": "후배가 '이거 5분이면 되나요?'라며 슬랙에 긴 에러 로그를 붙였다. 점심 약속은 13분 뒤다.",
       "choices": [
-        { "label": "5분만 보고 재현 방법을 알려준다", "detail": "도움을 주되 시간을 제한한다.", "effects": { "stamina": -4, "mental": 1, "workload": -3, "reputation": 5 } },
-        { "label": "점심 후 페어로 보자고 예약한다", "detail": "기대치를 정리하고 식사를 지킨다.", "effects": { "stamina": 4, "mental": 5, "workload": 1, "reputation": 2 } },
-        { "label": "대신 처리해 버린다", "detail": "빠르게 끝나지만 내 일이 된다.", "effects": { "stamina": -10, "mental": -6, "workload": 10, "reputation": 6 } },
-        { "label": "검색 키워드만 던지고 도망간다", "detail": "즉시 벗어나지만 도움의 질은 낮다.", "effects": { "stamina": 5, "mental": 1, "workload": -1, "reputation": -5 } }
+        {
+          "label": "5분만 보고 재현 방법을 알려준다",
+          "detail": "도움을 주되 시간을 제한한다.",
+          "effects": {
+            "stamina": -4,
+            "mental": 1,
+            "workload": -3,
+            "reputation": 5
+          }
+        },
+        {
+          "label": "점심 후 페어로 보자고 예약한다",
+          "detail": "기대치를 정리하고 식사를 지킨다.",
+          "effects": {
+            "stamina": 4,
+            "mental": 5,
+            "workload": 1,
+            "reputation": 2
+          }
+        },
+        {
+          "label": "대신 처리해 버린다",
+          "detail": "빠르게 끝나지만 내 일이 된다.",
+          "effects": {
+            "stamina": -10,
+            "mental": -6,
+            "workload": 10,
+            "reputation": 6
+          }
+        },
+        {
+          "label": "검색 키워드만 던지고 도망간다",
+          "detail": "즉시 벗어나지만 도움의 질은 낮다.",
+          "effects": {
+            "stamina": 5,
+            "mental": 1,
+            "workload": -1,
+            "reputation": -5
+          }
+        }
       ]
     },
     {
@@ -54,10 +184,46 @@
       "title": "13:36, 식곤증과 마감 알림이 동시에 온다",
       "situation": "오후 집중 시간이 필요하지만 몸은 느리고 마감 알림은 빨간색이다.",
       "choices": [
-        { "label": "25분 타이머를 켜고 가장 작은 작업부터 끝낸다", "detail": "작게 자르며 흐름을 되찾는다.", "effects": { "stamina": -3, "mental": 5, "workload": -8, "reputation": 2 } },
-        { "label": "카페인을 추가 투입한다", "detail": "지금은 살지만 뒤가 흔들린다.", "effects": { "stamina": 8, "mental": -2, "workload": -3, "reputation": 0 } },
-        { "label": "메일함 정리로 워밍업한다", "detail": "정리한 느낌은 있는데 핵심 일은 남는다.", "effects": { "stamina": -2, "mental": 2, "workload": 5, "reputation": 1 } },
-        { "label": "10분 산책 후 돌아온다", "detail": "리듬을 회복하지만 시간이 조금 든다.", "effects": { "stamina": 6, "mental": 8, "workload": 3, "reputation": -1 } }
+        {
+          "label": "25분 타이머를 켜고 가장 작은 작업부터 끝낸다",
+          "detail": "작게 자르며 흐름을 되찾는다.",
+          "effects": {
+            "stamina": -3,
+            "mental": 5,
+            "workload": -8,
+            "reputation": 2
+          }
+        },
+        {
+          "label": "카페인을 추가 투입한다",
+          "detail": "지금은 살지만 뒤가 흔들린다.",
+          "effects": {
+            "stamina": 8,
+            "mental": -2,
+            "workload": -3,
+            "reputation": 0
+          }
+        },
+        {
+          "label": "메일함 정리로 워밍업한다",
+          "detail": "정리한 느낌은 있는데 핵심 일은 남는다.",
+          "effects": {
+            "stamina": -2,
+            "mental": 2,
+            "workload": 5,
+            "reputation": 1
+          }
+        },
+        {
+          "label": "10분 산책 후 돌아온다",
+          "detail": "리듬을 회복하지만 시간이 조금 든다.",
+          "effects": {
+            "stamina": 6,
+            "mental": 8,
+            "workload": 3,
+            "reputation": -1
+          }
+        }
       ]
     },
     {
@@ -65,10 +231,46 @@
       "title": "14:22, '진짜 급한' 요청이 들어왔다",
       "situation": "다른 팀에서 오늘 중으로 숫자 하나만 확인해 달라고 한다. 숫자 하나라고 했지만 파일은 다섯 개다.",
       "choices": [
-        { "label": "요청 범위와 마감 시간을 다시 적어 확인한다", "detail": "모호함을 줄이고 방어선을 만든다.", "effects": { "stamina": -3, "mental": 4, "workload": -5, "reputation": 4 } },
-        { "label": "내 일정을 밀고 먼저 처리한다", "detail": "평판은 오르지만 야근 그림자가 생긴다.", "effects": { "stamina": -12, "mental": -5, "workload": 10, "reputation": 8 } },
-        { "label": "내일 오전 처리로 협상한다", "detail": "오늘 퇴근 가능성을 지킨다.", "effects": { "stamina": 1, "mental": 5, "workload": -4, "reputation": -2 } },
-        { "label": "관련 문서 링크만 보내고 종료한다", "detail": "빠르지만 상대가 다시 올 수 있다.", "effects": { "stamina": 4, "mental": 0, "workload": 2, "reputation": -4 } }
+        {
+          "label": "요청 범위와 마감 시간을 다시 적어 확인한다",
+          "detail": "모호함을 줄이고 방어선을 만든다.",
+          "effects": {
+            "stamina": -3,
+            "mental": 4,
+            "workload": -5,
+            "reputation": 4
+          }
+        },
+        {
+          "label": "내 일정을 밀고 먼저 처리한다",
+          "detail": "평판은 오르지만 야근 그림자가 생긴다.",
+          "effects": {
+            "stamina": -12,
+            "mental": -5,
+            "workload": 10,
+            "reputation": 8
+          }
+        },
+        {
+          "label": "내일 오전 처리로 협상한다",
+          "detail": "오늘 퇴근 가능성을 지킨다.",
+          "effects": {
+            "stamina": 1,
+            "mental": 5,
+            "workload": -4,
+            "reputation": -2
+          }
+        },
+        {
+          "label": "관련 문서 링크만 보내고 종료한다",
+          "detail": "빠르지만 상대가 다시 올 수 있다.",
+          "effects": {
+            "stamina": 4,
+            "mental": 0,
+            "workload": 2,
+            "reputation": -4
+          }
+        }
       ]
     },
     {
@@ -76,10 +278,46 @@
       "title": "15:05, 버그인지 기능인지 논쟁이 시작된다",
       "situation": "채팅방에 스크린샷 하나가 올라왔고 모두가 각자 다른 결론을 낸다.",
       "choices": [
-        { "label": "재현 조건과 기대 결과를 템플릿으로 묻는다", "detail": "논쟁을 데이터로 바꾼다.", "effects": { "stamina": -4, "mental": 6, "workload": -7, "reputation": 5 } },
-        { "label": "회의를 열어 바로 결론낸다", "detail": "빠른 듯하지만 회의 비용이 든다.", "effects": { "stamina": -8, "mental": -3, "workload": 5, "reputation": 2 } },
-        { "label": "기획서부터 다시 읽는다", "detail": "정확하지만 시간이 꽤 든다.", "effects": { "stamina": -6, "mental": 2, "workload": 1, "reputation": 3 } },
-        { "label": "일단 내 담당 아니라고 선을 긋는다", "detail": "내 일은 줄지만 평판도 줄 수 있다.", "effects": { "stamina": 5, "mental": 2, "workload": -4, "reputation": -7 } }
+        {
+          "label": "재현 조건과 기대 결과를 템플릿으로 묻는다",
+          "detail": "논쟁을 데이터로 바꾼다.",
+          "effects": {
+            "stamina": -4,
+            "mental": 6,
+            "workload": -7,
+            "reputation": 5
+          }
+        },
+        {
+          "label": "회의를 열어 바로 결론낸다",
+          "detail": "빠른 듯하지만 회의 비용이 든다.",
+          "effects": {
+            "stamina": -8,
+            "mental": -3,
+            "workload": 5,
+            "reputation": 2
+          }
+        },
+        {
+          "label": "기획서부터 다시 읽는다",
+          "detail": "정확하지만 시간이 꽤 든다.",
+          "effects": {
+            "stamina": -6,
+            "mental": 2,
+            "workload": 1,
+            "reputation": 3
+          }
+        },
+        {
+          "label": "일단 내 담당 아니라고 선을 긋는다",
+          "detail": "내 일은 줄지만 평판도 줄 수 있다.",
+          "effects": {
+            "stamina": 5,
+            "mental": 2,
+            "workload": -4,
+            "reputation": -7
+          }
+        }
       ]
     },
     {
@@ -87,10 +325,46 @@
       "title": "16:10, 팀장이 진행률을 묻는다",
       "situation": "아직 끝난 건 적지만 막힌 지점은 분명하다. 답을 어떻게 보내느냐에 따라 남은 오후가 달라진다.",
       "choices": [
-        { "label": "완료/진행/리스크를 세 줄로 보낸다", "detail": "짧지만 관리 가능한 상태가 된다.", "effects": { "stamina": -2, "mental": 5, "workload": -5, "reputation": 7 } },
-        { "label": "거의 다 됐다고 말한다", "detail": "순간은 편하지만 미래의 나에게 청구된다.", "effects": { "stamina": 1, "mental": -8, "workload": 8, "reputation": -3 } },
-        { "label": "상세 장문 보고서를 쓴다", "detail": "정성은 보이지만 시간이 빠진다.", "effects": { "stamina": -7, "mental": -2, "workload": 4, "reputation": 4 } },
-        { "label": "막힌 부분만 콕 집어 도움을 요청한다", "detail": "자존심은 살짝 아프지만 막힘이 풀린다.", "effects": { "stamina": -3, "mental": 4, "workload": -8, "reputation": 3 } }
+        {
+          "label": "완료/진행/리스크를 세 줄로 보낸다",
+          "detail": "짧지만 관리 가능한 상태가 된다.",
+          "effects": {
+            "stamina": -2,
+            "mental": 5,
+            "workload": -5,
+            "reputation": 7
+          }
+        },
+        {
+          "label": "거의 다 됐다고 말한다",
+          "detail": "순간은 편하지만 미래의 나에게 청구된다.",
+          "effects": {
+            "stamina": 1,
+            "mental": -8,
+            "workload": 8,
+            "reputation": -3
+          }
+        },
+        {
+          "label": "상세 장문 보고서를 쓴다",
+          "detail": "정성은 보이지만 시간이 빠진다.",
+          "effects": {
+            "stamina": -7,
+            "mental": -2,
+            "workload": 4,
+            "reputation": 4
+          }
+        },
+        {
+          "label": "막힌 부분만 콕 집어 도움을 요청한다",
+          "detail": "자존심은 살짝 아프지만 막힘이 풀린다.",
+          "effects": {
+            "stamina": -3,
+            "mental": 4,
+            "workload": -8,
+            "reputation": 3
+          }
+        }
       ]
     },
     {
@@ -98,10 +372,46 @@
       "title": "17:02, 퇴근 전 회의가 부활했다",
       "situation": "캘린더에서 사라졌던 회의가 다시 나타났다. 제목은 '5분만'.",
       "choices": [
-        { "label": "회의 목적과 끝나는 시간을 먼저 확인한다", "detail": "퇴근선을 명확히 만든다.", "effects": { "stamina": -2, "mental": 5, "workload": -3, "reputation": 3 } },
-        { "label": "회의록 담당을 자처해 빠르게 정리한다", "detail": "주도권은 잡지만 에너지를 쓴다.", "effects": { "stamina": -8, "mental": -2, "workload": -2, "reputation": 8 } },
-        { "label": "내일 아침 안건으로 넘기자고 제안한다", "detail": "잘 먹히면 퇴근길이 열린다.", "effects": { "stamina": 3, "mental": 6, "workload": -5, "reputation": -1 } },
-        { "label": "카메라 끄고 몰래 남은 일을 처리한다", "detail": "멀티태스킹은 늘 대가가 있다.", "effects": { "stamina": -6, "mental": -7, "workload": -4, "reputation": -2 } }
+        {
+          "label": "회의 목적과 끝나는 시간을 먼저 확인한다",
+          "detail": "퇴근선을 명확히 만든다.",
+          "effects": {
+            "stamina": -2,
+            "mental": 5,
+            "workload": -3,
+            "reputation": 3
+          }
+        },
+        {
+          "label": "회의록 담당을 자처해 빠르게 정리한다",
+          "detail": "주도권은 잡지만 에너지를 쓴다.",
+          "effects": {
+            "stamina": -8,
+            "mental": -2,
+            "workload": -2,
+            "reputation": 8
+          }
+        },
+        {
+          "label": "내일 아침 안건으로 넘기자고 제안한다",
+          "detail": "잘 먹히면 퇴근길이 열린다.",
+          "effects": {
+            "stamina": 3,
+            "mental": 6,
+            "workload": -5,
+            "reputation": -1
+          }
+        },
+        {
+          "label": "카메라 끄고 몰래 남은 일을 처리한다",
+          "detail": "멀티태스킹은 늘 대가가 있다.",
+          "effects": {
+            "stamina": -6,
+            "mental": -7,
+            "workload": -4,
+            "reputation": -2
+          }
+        }
       ]
     },
     {
@@ -109,10 +419,46 @@
       "title": "17:38, 배포 알림이 떴다",
       "situation": "내가 만진 영역은 아니지만 실패 알림에 모두가 조용해졌다.",
       "choices": [
-        { "label": "내 변경 영향 여부만 빠르게 확인한다", "detail": "책임 범위를 확인하고 불필요한 공포를 줄인다.", "effects": { "stamina": -4, "mental": 4, "workload": -2, "reputation": 4 } },
-        { "label": "로그를 끝까지 파기 시작한다", "detail": "영웅 루트지만 퇴근은 멀어진다.", "effects": { "stamina": -12, "mental": -6, "workload": 12, "reputation": 9 } },
-        { "label": "담당자에게 필요한 정보만 전달한다", "detail": "돕되 소유권을 넘기지 않는다.", "effects": { "stamina": -3, "mental": 3, "workload": -3, "reputation": 5 } },
-        { "label": "알림을 못 본 척한다", "detail": "오늘은 편할 수 있지만 기록은 남는다.", "effects": { "stamina": 6, "mental": 2, "workload": -1, "reputation": -9 } }
+        {
+          "label": "내 변경 영향 여부만 빠르게 확인한다",
+          "detail": "책임 범위를 확인하고 불필요한 공포를 줄인다.",
+          "effects": {
+            "stamina": -4,
+            "mental": 4,
+            "workload": -2,
+            "reputation": 4
+          }
+        },
+        {
+          "label": "로그를 끝까지 파기 시작한다",
+          "detail": "평판은 크게 오르지만 체력과 업무량이 크게 흔들린다.",
+          "effects": {
+            "stamina": -12,
+            "mental": -6,
+            "workload": 12,
+            "reputation": 9
+          }
+        },
+        {
+          "label": "담당자에게 필요한 정보만 전달한다",
+          "detail": "돕되 소유권을 넘기지 않는다.",
+          "effects": {
+            "stamina": -3,
+            "mental": 3,
+            "workload": -3,
+            "reputation": 5
+          }
+        },
+        {
+          "label": "알림을 못 본 척한다",
+          "detail": "오늘은 편할 수 있지만 기록은 남는다.",
+          "effects": {
+            "stamina": 6,
+            "mental": 2,
+            "workload": -1,
+            "reputation": -9
+          }
+        }
       ]
     },
     {
@@ -120,10 +466,46 @@
       "title": "18:01, 마지막 선택",
       "situation": "가방은 닫혔고 모니터는 아직 켜져 있다. 오늘을 어떻게 마무리할까?",
       "choices": [
-        { "label": "남은 일과 내일 첫 행동을 한 줄씩 남긴다", "detail": "퇴근과 내일의 시작을 동시에 지킨다.", "effects": { "stamina": -2, "mental": 6, "workload": -7, "reputation": 4 } },
-        { "label": "끝까지 붙잡고 오늘 다 끝낸다", "detail": "결과는 좋지만 사람은 닳는다.", "effects": { "stamina": -14, "mental": -10, "workload": -12, "reputation": 8 } },
-        { "label": "상태 공유 없이 바로 퇴근한다", "detail": "몸은 탈출하지만 내일 아침이 불안하다.", "effects": { "stamina": 8, "mental": -2, "workload": 4, "reputation": -6 } },
-        { "label": "동료에게 감사 메시지를 보내고 종료한다", "detail": "작은 신뢰를 남기고 하루를 닫는다.", "effects": { "stamina": -1, "mental": 5, "workload": -3, "reputation": 6 } }
+        {
+          "label": "남은 일과 내일 첫 행동을 한 줄씩 남긴다",
+          "detail": "퇴근과 내일의 시작을 동시에 지킨다.",
+          "effects": {
+            "stamina": -2,
+            "mental": 6,
+            "workload": -7,
+            "reputation": 4
+          }
+        },
+        {
+          "label": "끝까지 붙잡고 오늘 다 끝낸다",
+          "detail": "업무량은 줄지만 체력과 멘탈을 크게 쓴다.",
+          "effects": {
+            "stamina": -14,
+            "mental": -10,
+            "workload": -12,
+            "reputation": 8
+          }
+        },
+        {
+          "label": "상태 공유 없이 바로 퇴근한다",
+          "detail": "몸은 탈출하지만 내일 아침이 불안하다.",
+          "effects": {
+            "stamina": 8,
+            "mental": -2,
+            "workload": 4,
+            "reputation": -6
+          }
+        },
+        {
+          "label": "동료에게 감사 메시지를 보내고 종료한다",
+          "detail": "작은 신뢰를 남기고 하루를 닫는다.",
+          "effects": {
+            "stamina": -1,
+            "mental": 5,
+            "workload": -3,
+            "reputation": 6
+          }
+        }
       ]
     }
   ],
@@ -133,9 +515,21 @@
       "title": "칼퇴 생존자",
       "description": "업무량을 낮추고 관계도 무너뜨리지 않았다. 오늘의 승자는 조용히 엘리베이터를 탔다.",
       "conditions": [
-        { "stat": "workload", "op": "<=", "value": 38 },
-        { "stat": "mental", "op": ">=", "value": 50 },
-        { "stat": "reputation", "op": ">=", "value": 50 }
+        {
+          "stat": "workload",
+          "op": "<=",
+          "value": 38
+        },
+        {
+          "stat": "mental",
+          "op": ">=",
+          "value": 50
+        },
+        {
+          "stat": "reputation",
+          "op": ">=",
+          "value": 50
+        }
       ]
     },
     {
@@ -143,8 +537,16 @@
       "title": "조용한 탈출러",
       "description": "큰 사고 없이 빠져나왔다. 내일 아침 알림이 조금 무섭지만 오늘 밤은 확보했다.",
       "conditions": [
-        { "stat": "workload", "op": "<=", "value": 45 },
-        { "stat": "stamina", "op": ">=", "value": 35 }
+        {
+          "stat": "workload",
+          "op": "<=",
+          "value": 45
+        },
+        {
+          "stat": "stamina",
+          "op": ">=",
+          "value": 35
+        }
       ]
     },
     {
@@ -152,7 +554,11 @@
       "title": "평판 관리자",
       "description": "몸은 피곤하지만 신뢰 잔고가 늘었다. 다음에는 그 평판으로 회의를 줄여보자.",
       "conditions": [
-        { "stat": "reputation", "op": ">=", "value": 78 }
+        {
+          "stat": "reputation",
+          "op": ">=",
+          "value": 78
+        }
       ]
     },
     {
@@ -160,7 +566,11 @@
       "title": "번아웃 경보",
       "description": "멘탈 게이지가 바닥에 닿았다. 퇴근보다 회복 루틴이 먼저 필요한 하루다.",
       "conditions": [
-        { "stat": "mental", "op": "<=", "value": 22 }
+        {
+          "stat": "mental",
+          "op": "<=",
+          "value": 22
+        }
       ]
     },
     {
@@ -168,7 +578,11 @@
       "title": "체력 방전",
       "description": "일은 굴러갔지만 몸이 로그아웃했다. 오늘은 집에 가서 충전기부터 찾아야 한다.",
       "conditions": [
-        { "stat": "stamina", "op": "<=", "value": 18 }
+        {
+          "stat": "stamina",
+          "op": "<=",
+          "value": 18
+        }
       ]
     },
     {
@@ -176,7 +590,11 @@
       "title": "업무 폭탄 잔류",
       "description": "작은 부탁들이 합쳐져 퇴근길을 막았다. 내일은 범위 확인부터 시작해야 한다.",
       "conditions": [
-        { "stat": "workload", "op": ">=", "value": 72 }
+        {
+          "stat": "workload",
+          "op": ">=",
+          "value": 72
+        }
       ]
     },
     {
@@ -184,8 +602,16 @@
       "title": "회의실 지박령",
       "description": "평판은 지켰지만 회의와 싱크가 하루를 먹었다. 다음 생에는 안건 없는 회의에 질문을 던지자.",
       "conditions": [
-        { "stat": "reputation", "op": ">=", "value": 65 },
-        { "stat": "workload", "op": ">=", "value": 55 }
+        {
+          "stat": "reputation",
+          "op": ">=",
+          "value": 65
+        },
+        {
+          "stat": "workload",
+          "op": ">=",
+          "value": 55
+        }
       ]
     },
     {
@@ -194,5 +620,68 @@
       "description": "완벽한 하루는 아니었지만 기록은 남겼다. 내일의 내가 화내지 않을 정도면 충분하다.",
       "conditions": []
     }
-  ]
+  ],
+  "planningBrief": {
+    "gameMode": "정시 퇴근을 목표로 한 직장 자원관리 시뮬레이션",
+    "planningIntent": "정시 퇴근까지 버티기는 선택지 나열이 아니라 체력, 멘탈, 업무량, 평판 사이의 손익, 회복 루프, 누적 결과가 첫 화면과 선택 직후에 읽히는지 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "resource management micro simulation game design",
+        "meaningful choices game design consequences feedback",
+        "choice based game UI immediate stat feedback",
+        "workplace survival game stats choices endings",
+        "resource management game tradeoffs feedback loops"
+      ],
+      "referenceTypes": [
+        "짧은 선택형 시뮬레이션의 스탯 피드백",
+        "자원 관리 게임의 회복/소모 균형",
+        "의미 있는 선택과 결과 피드백을 설명한 게임 디자인 글",
+        "엔딩 조건을 보여주는 결과 화면",
+        "업무/시간관리 보드에서 비용과 효과를 함께 보여주는 화면"
+      ],
+      "dataOrSimulationNeeds": [
+        "선택 경로별 스탯 분포와 엔딩 도달률",
+        "회복 선택이 너무 강하거나 약하지 않은지 비교",
+        "선택지 효과 칩을 보기 전후에 유저가 고른 선택이 달라지는지 비교",
+        "업무량 감소만 정답이 되지 않도록 평판/체력 비용의 분포 확인"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '정시 퇴근을 위해 네 자원을 조절한다'가 읽히는가?",
+      "선택마다 무엇을 얻고 무엇을 잃는지 명확한가?",
+      "업무량은 낮을수록 좋고 체력/멘탈/평판은 높을수록 좋다는 방향이 화면에 보이는가?",
+      "회복 선택은 쉬운 정답이 아니라 기회비용을 갖는가?",
+      "엔딩은 랜덤이 아니라 누적 선택의 결과로 읽히는가?",
+      "다음 판에서 다른 성격의 운영을 시험하고 싶은가?",
+      "스탯 수가 짧은 게임에 비해 과하지 않은가?",
+      "선택 직후 어떤 자원을 방치했는지 히스토리에서 복기할 수 있는가?"
+    ],
+    "visualQuestions": [
+      "사무실 운영판처럼 스탯과 사건이 분리되어 보이는가?",
+      "선택지는 문장보다 비용/효과가 먼저 읽히는가?",
+      "업무량 증가와 감소가 같은 숫자처럼 보이지 않고 부담/완화로 구분되는가?",
+      "엔딩은 보고서처럼 짧고 투박하게 남는가?",
+      "게임 화면이 일반 퀴즈 카드처럼 보이지 않는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "체력, 멘탈, 업무량, 평판",
+      "progressionQuestion": "성장은 좋은 선택 암기가 아니라 상황별 손익을 더 빨리 읽는 능력인가?",
+      "failureQuestion": "실패 엔딩이 어느 자원을 방치했는지 설명하는가?",
+      "recoveryQuestion": "회복 선택은 다음 사건의 여지를 만들지만 다른 자원을 압박하는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "퇴근 전 사무실 상황판",
+      "primarySurface": "스탯 장부와 사건 선택지가 붙은 운영판",
+      "roughnessTarget": "회색 사무 문서와 빨간 체크 표시의 건조한 느낌",
+      "differenceFromGenericPlay": "캐릭터 일러스트보다 자원 장부와 선택 비용이 먼저 보인다.",
+      "mustAvoid": [
+        "과한 캐릭터 감정 일러스트",
+        "선택 효과가 숨겨진 긴 문장만 있는 화면"
+      ]
+    }
+  }
 }

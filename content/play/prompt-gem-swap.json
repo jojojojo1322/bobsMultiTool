@@ -7,20 +7,112 @@
   "updatedAt": "2026-06-27",
   "shareText": "색돌 셋 맞추기를 해봤다. 셋만 맞추면 되는데 자꾸 한 칸이 아쉽다.",
   "order": 6,
-  "relatedBlogSlugs": ["gem-swap-hint-note", "why-small-web-toys-return", "small-play-rules-note"],
-  "relatedPlaySlugs": ["prompt-sum-box", "prompt-cleanup"],
+  "relatedBlogSlugs": [
+    "gem-swap-hint-note",
+    "why-small-web-toys-return",
+    "small-play-rules-note"
+  ],
+  "relatedPlaySlugs": [
+    "prompt-sum-box",
+    "prompt-cleanup"
+  ],
   "arcade": {
     "variant": "match-three",
     "goal": "색돌을 옆 칸과 바꿔 같은 색 셋을 맞춥니다.",
     "controls": "마우스로 색돌을 옆 칸으로 드래그합니다. 클릭 두 번이나 방향키/WASD + Space/Enter도 되고, 점선은 한 번 가능한 교환입니다.",
     "playerLabel": "손",
-    "goodLabels": ["맑음", "반짝", "초록", "노랑", "파랑"],
-    "badLabels": ["흐림", "금간", "먼지", "검정", "삐끗"],
-    "palette": { "background": "#1e1b2e", "primary": "#c084fc", "accent": "#67e8f9", "danger": "#fb7185" }
+    "goodLabels": [
+      "맑음",
+      "반짝",
+      "초록",
+      "노랑",
+      "파랑"
+    ],
+    "badLabels": [
+      "흐림",
+      "금간",
+      "먼지",
+      "검정",
+      "삐끗"
+    ],
+    "palette": {
+      "background": "#1e1b2e",
+      "primary": "#c084fc",
+      "accent": "#67e8f9",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "match", "title": "손에 감김", "description": "색이 잘 보였다. 생각보다 금방 이어진다.", "minScore": 20 },
-    { "id": "loose", "title": "몇 개 섞임", "description": "맞춘 것도 있고, 괜히 건드린 돌도 조금 있다.", "minScore": 10 },
-    { "id": "scatter", "title": "돌 흩어짐", "description": "눈에 띄는 걸 다 움직였다. 다음에는 한 박자 늦게 보자.", "minScore": 0 }
-  ]
+    {
+      "id": "match",
+      "title": "손에 감김",
+      "description": "색이 잘 보였다. 생각보다 금방 이어진다.",
+      "minScore": 20
+    },
+    {
+      "id": "loose",
+      "title": "몇 개 섞임",
+      "description": "맞춘 것도 있고, 괜히 건드린 돌도 조금 있다.",
+      "minScore": 10
+    },
+    {
+      "id": "scatter",
+      "title": "돌 흩어짐",
+      "description": "눈에 띄는 걸 다 움직였다. 다음에는 한 박자 늦게 보자.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "보드 정리와 욕심 조절 퍼즐",
+    "planningIntent": "색돌 셋 맞추기는 색 맞추기를 단순 스왑으로 끝내지 말고 안정형 선택과 큰 콤보 욕심 사이의 갈등을 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "match three board game strategy risk reward design",
+        "match 3 hint UX combo feedback",
+        "tile swap puzzle visual clarity mobile"
+      ],
+      "referenceTypes": [
+        "매치3 보드의 후보 힌트 표시",
+        "콤보 피드백과 보드 재배치 사례",
+        "모바일 드래그 스왑 입력 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "초기 보드의 유효 스왑 수와 막힘 확률",
+        "큰 콤보 후보와 안전한 매치 후보 비율"
+      ]
+    },
+    "systemQuestions": [
+      "유저가 지금 안전하게 지울지, 다음 큰 콤보를 준비할지 고민하는가?",
+      "힌트는 답안지가 아니라 시야 회복 장치인가?",
+      "보드가 섞일 때 유저가 납득할 이유가 있는가?",
+      "실패 후 다음 판에서 욕심 조절을 바꿔볼 수 있는가?",
+      "색 구분은 접근성까지 고려했는가?"
+    ],
+    "visualQuestions": [
+      "색돌은 장난감처럼 보일지, 작업대의 칩처럼 보일지 정해야 한다.",
+      "콤보 피드백은 화면을 덮지 않고 보드 위에서 끝나는가?",
+      "힌트선이 보드 읽기를 돕고 시선을 뺏지 않는가?",
+      "결과 화면은 성향을 남길 수 있는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "색돌 배치, 유효 스왑, 콤보 후보, 힌트 상태",
+      "progressionQuestion": "유저가 더 센 아이템 없이도 보드 읽기와 선행 배치로 성장하는가?",
+      "failureQuestion": "막힘은 완전 랜덤인가, 이전 스왑의 결과로 읽을 수 있는가?",
+      "recoveryQuestion": "힌트와 셔플은 숙련을 무효화하지 않고 다음 판단을 열어주는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "작은 공방의 색 칩 정리판",
+      "primarySurface": "테두리 강한 보드와 최소한의 콤보 표시",
+      "roughnessTarget": "반짝임보다 손으로 끌어 맞추는 물성",
+      "differenceFromGenericPlay": "색상 장식보다 스왑 가능한 칸과 보드 상태가 먼저 읽힌다.",
+      "mustAvoid": [
+        "전체 화면 파티클",
+        "과한 보상 배지와 긴 결과 문구"
+      ]
+    }
+  }
 }

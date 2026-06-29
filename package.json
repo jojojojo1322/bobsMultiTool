@@ -12,6 +12,7 @@
     "start": "npm run start --workspace @bobob/main",
     "lint": "npm run lint --workspace @bobob/main",
     "harness:registry": "node scripts/harness/validate-registry.mjs",
+    "harness:play-planning": "node scripts/harness/play-planning-smoke.mjs",
     "harness:blog-play-mvp": "node scripts/harness/blog-play-mvp-smoke.mjs",
     "harness:goal-audit": "node scripts/harness/blog-play-goal-audit-smoke.mjs",
     "harness:blog-play-quality": "node scripts/harness/blog-play-rendered-quality.mjs",

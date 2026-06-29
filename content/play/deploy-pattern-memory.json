@@ -1,26 +1,120 @@
 {
   "slug": "deploy-pattern-memory",
-  "title": "불빛 패턴 메모리",
-  "description": "잠깐 빛난 칸 흐름을 외워 그대로 누르는 1분 기억 게임입니다. 맞은 칸은 보드의 선과 초록 표시로 남고, 헷갈리면 R이나 다시 보기 버튼으로 같은 패턴을 한 번 더 볼 수 있습니다.",
+  "title": "불빛 순서 따라 누르기",
+  "description": "잠깐 빛난 칸 순서를 기억해 같은 순서로 다시 누르는 1분 기억 게임입니다. 맞게 누른 칸은 선과 초록 표시로 남고, 헷갈리면 R이나 다시 보기로 같은 순서를 한 번 더 봅니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
-  "shareText": "불빛 패턴 메모리를 해봤다. 짧은 순서도 급하면 이상하게 놓친다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "불빛 순서 따라 누르기를 해봤다. 반짝인 순서를 입으로 세고 나니 덜 흔들렸다.",
   "order": 7,
-  "relatedBlogSlugs": ["memory-flow-panel-note", "memory-input-trail-note", "memory-replay-note", "small-play-rules-note", "static-micro-games-architecture"],
-  "relatedPlaySlugs": ["deploy-stacker", "notification-mole"],
+  "relatedBlogSlugs": [
+    "memory-flow-panel-note",
+    "memory-input-trail-note",
+    "memory-replay-note",
+    "small-play-rules-note",
+    "static-micro-games-architecture"
+  ],
+  "relatedPlaySlugs": [
+    "deploy-stacker",
+    "notification-mole"
+  ],
   "arcade": {
     "variant": "memory",
-    "goal": "빛난 칸 흐름을 기억해서 같은 흐름으로 누릅니다.",
-    "controls": "마우스로 칸을 누르거나 방향키/WASD로 옮겨 Space/Enter. 숫자 1~9도 됩니다. 맞은 칸은 선과 초록 표시로 남고, 헷갈리면 R이나 다시 보기 버튼으로 같은 패턴을 다시 봅니다.",
+    "goal": "빛난 칸 순서를 기억해서 같은 순서로 누릅니다.",
+    "controls": "마우스로 칸을 누르거나 방향키/WASD로 옮겨 Space/Enter. 숫자 1~9도 됩니다. 맞은 칸은 선과 초록 표시로 남고, 헷갈리면 R이나 다시 보기 버튼으로 같은 순서를 다시 봅니다.",
     "playerLabel": "눈",
-    "goodLabels": ["파랑", "초록", "노랑", "흰빛", "작은"],
-    "badLabels": ["번짐", "흐림", "소음", "잔상", "깜빡"],
-    "palette": { "background": "#111827", "primary": "#818cf8", "accent": "#bef264", "danger": "#fb7185" }
+    "goodLabels": [
+      "파랑",
+      "초록",
+      "노랑",
+      "흰빛",
+      "작은"
+    ],
+    "badLabels": [
+      "번짐",
+      "흐림",
+      "소음",
+      "잔상",
+      "깜빡"
+    ],
+    "palette": {
+      "background": "#111827",
+      "primary": "#818cf8",
+      "accent": "#bef264",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "clear", "title": "순서가 보임", "description": "불빛이 빨라도 필요한 패턴은 잘 남겼다.", "minScore": 18 },
-    { "id": "okay", "title": "반쯤 기억", "description": "큰 흐름은 잡았다. 급한 손만 조금 줄이면 된다.", "minScore": 9 },
-    { "id": "blink", "title": "눈만 깜빡", "description": "반짝이는 것에 손이 먼저 나갔다. 다음에는 한 번 보고 누르자.", "minScore": 0 }
-  ]
+    {
+      "id": "clear",
+      "title": "순서가 보임",
+      "description": "불빛이 빨라도 필요한 순서는 잘 남겼다.",
+      "minScore": 18
+    },
+    {
+      "id": "okay",
+      "title": "반쯤 기억",
+      "description": "큰 흐름은 잡았다. 급한 손만 조금 줄이면 된다.",
+      "minScore": 9
+    },
+    {
+      "id": "blink",
+      "title": "눈만 깜빡",
+      "description": "반짝이는 것에 손이 먼저 나갔다. 다음에는 한 번 보고 누르자.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "불빛 순서 기억과 재입력 숙련 게임",
+    "planningIntent": "불빛 순서 따라 누르기는 반짝임을 보는 순간, 머릿속에 순서를 저장하는 순간, 다시 누르는 순간을 분리해 기억 실패와 입력 실수를 구분해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "Simon electronic game sequence memory rules",
+        "memory sequence game replay feedback UX",
+        "working memory game difficulty curve visual cues"
+      ],
+      "referenceTypes": [
+        "Simon 계열의 보기-기억-반복 구조",
+        "기억 게임의 실수 위치 피드백",
+        "짧은 반복 패턴의 길이 증가와 재보기 흐름"
+      ],
+      "dataOrSimulationNeeds": [
+        "패턴 길이별 성공률과 첫 실수 위치 가정",
+        "재보기 버튼 제공 시 완료율과 반복 의존도 변화"
+      ]
+    },
+    "systemQuestions": [
+      "실패는 순서를 잊은 것인지, 알고도 다른 칸을 누른 입력 실수인지 구분되는가?",
+      "패턴 길이는 유저가 방금 성공한 기억 단위보다 한 박자만 길어지는가?",
+      "재보기는 치트가 아니라 같은 순서를 다시 보는 학습 보조로 보이는가?",
+      "맞춘 구간과 처음 틀린 위치가 결과에서 바로 복기되는가?",
+      "모바일에서 손가락이 가린 칸도 입력 피드백이 충분한가?"
+    ],
+    "visualQuestions": [
+      "기억 콘솔처럼 빛난 순서가 화면의 주인공으로 남는가?",
+      "배경보다 칸의 점등, 입력선, 맞은 위치 흔적이 우선인가?",
+      "다시 보기 버튼은 작지만 흔들릴 때 바로 찾을 수 있는가?",
+      "결과는 점수보다 기억 길이와 첫 실수 위치를 투박하게 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "불빛 순서, 재보기 기회, 입력 흔적, 첫 실수 위치",
+      "progressionQuestion": "성장은 더 긴 순서를 외우는가, 더 안정적인 보기-말하기-누르기 루틴을 만드는가?",
+      "failureQuestion": "틀림이 어느 순서에서 났는지 유저가 바로 알 수 있는가?",
+      "recoveryQuestion": "재보기와 재시작은 무작정 반복이 아니라 기억 전략을 다시 세우게 하는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "낡은 전자 기억 콘솔과 순서 램프",
+      "primarySurface": "점등 칸, 입력선, 첫 실수 위치가 있는 조작판",
+      "roughnessTarget": "검은 패널 위 선명한 램프와 작은 손기록표",
+      "differenceFromGenericPlay": "일반 점수판보다 점등 순서, 입력 흔적, 재보기 버튼이 핵심 화면이다.",
+      "mustAvoid": [
+        "여러 장식 카드로 패턴을 분산",
+        "점등보다 배경 효과가 강한 화면"
+      ]
+    }
+  }
 }

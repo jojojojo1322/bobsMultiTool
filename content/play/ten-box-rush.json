@@ -1,26 +1,128 @@
 {
   "slug": "ten-box-rush",
-  "title": "사과 10 맞추기",
-  "description": "숫자가 적힌 사과를 마우스로 쓸어 합 10을 만들면 사라집니다. 1분 동안 손이 가는 만큼 이어서 기록을 올립니다.",
+  "title": "사과 묶어 10 만들기",
+  "description": "숫자가 적힌 사과를 드래그로 묶어 합이 정확히 10이 되면 지우는 1분 퍼즐입니다. 1+9만 찾지 말고 세 개 이상 길게 묶어 판을 넓게 비웁니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-28",
-  "shareText": "사과 10 맞추기를 해봤다. 합 10을 놓치면 괜히 억울하다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "사과 묶어 10 만들기를 해봤다. 두 개만 보다가 긴 묶음을 놓치기 쉬웠다.",
   "order": 8,
-  "relatedBlogSlugs": ["sum-box-counter-panel-note", "sum-box-clear-pop-note", "sum-box-backtrack-drag-note", "sum-box-release-preview-note", "sum-box-streak-note", "sum-box-combo-bonus-note", "sum-box-hint-highlight-note", "sum-box-overflow-drag-note", "sum-box-visible-ten-hint-note", "drag-feedback-small-game-note", "small-web-games-retention", "tiny-web-things"],
-  "relatedPlaySlugs": ["prompt-sum-box", "deploy-10-box", "password-lock"],
+  "relatedBlogSlugs": [
+    "sum-box-counter-panel-note",
+    "sum-box-clear-pop-note",
+    "sum-box-backtrack-drag-note",
+    "sum-box-release-preview-note",
+    "sum-box-streak-note",
+    "sum-box-combo-bonus-note",
+    "sum-box-hint-highlight-note",
+    "sum-box-overflow-drag-note",
+    "sum-box-visible-ten-hint-note",
+    "drag-feedback-small-game-note",
+    "small-web-games-retention",
+    "tiny-web-things"
+  ],
+  "relatedPlaySlugs": [
+    "prompt-sum-box",
+    "deploy-10-box",
+    "password-lock"
+  ],
   "arcade": {
     "variant": "sum-box",
-    "goal": "1분 동안 사과를 쓸어 합 10을 만들고, 연속으로 맞춰 기록을 올립니다.",
-    "controls": "마우스로 드래그해서 사과를 묶습니다. 지나온 사과로 되돌아가면 마지막 선택이 빠지고, 방향키/WASD와 Space/Enter도 됩니다.",
+    "goal": "1분 동안 사과를 드래그로 묶고, 합 10을 연속으로 만들어 보드를 비웁니다.",
+    "controls": "마우스나 터치로 이어진 사과를 쓸어 묶습니다. 지나온 사과로 되돌아가면 마지막 선택이 빠지고, 방향키/WASD와 Space/Enter도 됩니다.",
     "playerLabel": "사과",
-    "goodLabels": ["1", "2", "3", "4", "5"],
-    "badLabels": ["흔들", "넘침", "빈칸", "덫", "삐끗"],
-    "palette": { "background": "#172026", "primary": "#22c55e", "accent": "#fbbf24", "danger": "#ef4444" }
+    "goodLabels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "badLabels": [
+      "흔들",
+      "넘침",
+      "빈칸",
+      "덫",
+      "삐끗"
+    ],
+    "palette": {
+      "background": "#172026",
+      "primary": "#22c55e",
+      "accent": "#fbbf24",
+      "danger": "#ef4444"
+    }
   },
   "endings": [
-    { "id": "ten", "title": "딱 맞음", "description": "손이 급하지 않았다. 좋은 조각만 들어오니 판이 깔끔해졌다.", "minScore": 20 },
-    { "id": "near", "title": "거의 맞음", "description": "몇 칸 넘쳤지만 리듬은 살아 있다.", "minScore": 10 },
-    { "id": "spill", "title": "상자 엎어짐", "description": "많이 받는 것보다 맞게 받는 게 더 어렵다.", "minScore": 0 }
-  ]
+    {
+      "id": "ten",
+      "title": "딱 맞음",
+      "description": "손이 급하지 않았다. 좋은 조각만 들어오니 판이 깔끔해졌다.",
+      "minScore": 20
+    },
+    {
+      "id": "near",
+      "title": "거의 맞음",
+      "description": "몇 칸 넘쳤지만 리듬은 살아 있다.",
+      "minScore": 10
+    },
+    {
+      "id": "spill",
+      "title": "상자 엎어짐",
+      "description": "많이 받는 것보다 맞게 받는 게 더 어렵다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "사과 묶기와 합 10 보드 정리 퍼즐",
+    "planningIntent": "사과 묶어 10 만들기는 드래그로 여러 사과를 묶어 정확히 10을 만드는 손맛, 후보 시야, 긴 묶음 욕심, 남은 보드 형태를 중심으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "Fruit Box game drag apples sum 10 rules",
+        "Make 10 number puzzle board clear strategy",
+        "mobile drag number puzzle visual feedback"
+      ],
+      "referenceTypes": [
+        "Fruit Box처럼 숫자 사과를 묶는 보드 피드백",
+        "Make 10 퍼즐의 후보 표시와 보드 비우기 리듬",
+        "모바일 드래그 보드의 오입력 방지 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "무작위 보드에서 두 개짜리와 세 개 이상 합 10 후보 수 분포",
+        "1분 런에서 평균 성공 수, 긴 묶음 성공률, 막힘 빈도"
+      ]
+    },
+    "systemQuestions": [
+      "유저는 1+9 같은 쉬운 짝만 찾는가, 세 개 이상 긴 묶음까지 보려 하는가?",
+      "연속 성공은 점수보다 다음 후보를 더 빨리 읽게 만드는가?",
+      "되돌아 긁기는 실수를 살리되 아무거나 훑는 습관을 만들지 않는가?",
+      "작은 10을 바로 지우는 선택과 큰 보드 정리 사이에 어떤 유혹이 생기는가?",
+      "실패 후 다음 판에서 더 넓게 볼 이유가 분명한가?"
+    ],
+    "visualQuestions": [
+      "사과 숫자와 드래그 선이 장식보다 먼저 읽히는가?",
+      "현재 합계, 10까지 남은 수, 노란 후보 중 무엇을 가장 크게 둘까?",
+      "성공 피드백은 과장보다 사과가 지워지는 손맛으로 충분한가?",
+      "결과 화면은 점수보다 두 개 묶음과 긴 묶음의 차이를 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "숫자 사과, 현재 선택 합계, 긴 묶음 후보, 보드 빈자리, 남은 시간 감각",
+      "progressionQuestion": "실력이 늘수록 두 개짜리 10을 넘어서 세 개 이상 묶음과 보드 정리 루트를 보는가?",
+      "failureQuestion": "실패는 운 나쁜 보드인가, 쉬운 짝만 보고 넓은 묶음을 놓친 시야 문제인가?",
+      "recoveryQuestion": "힌트나 되돌림이 답을 대신 주지 않고 다음 묶음을 다시 찾게 하는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "낡은 과일 상자 위 숫자 사과와 손으로 그은 선택선",
+      "primarySurface": "사과 격자 보드, 현재 합계 배지, 노란 10 후보 표시",
+      "roughnessTarget": "광택 과일보다 종이 상자, 굵은 숫자, 손으로 훑은 선 느낌",
+      "differenceFromGenericPlay": "장식 패널보다 숫자 사과, 드래그 선, 지워지는 빈칸이 화면의 대부분을 차지한다.",
+      "mustAvoid": [
+        "화려한 보석류 스킨",
+        "작은 숫자를 여러 패널에 흩트리는 배치"
+      ]
+    }
+  }
 }

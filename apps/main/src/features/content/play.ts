@@ -9,8 +9,17 @@ function readPlayContent(slug: string): PlayContent {
   const filePath = path.join(resolveContentDir("play"), `${slug}.json`);
   const content = JSON.parse(fs.readFileSync(filePath, "utf8")) as PlayContent;
 
-  if (!content.slug || !content.title || !content.description || !content.type || !content.durationLabel || !content.updatedAt) {
+  if (!content.slug || !content.title || !content.description || !content.type || !content.durationLabel || !content.updatedAt || !content.planningBrief) {
     throw new Error(`Play content is missing required fields: ${filePath}`);
+  }
+  if (
+    !content.planningBrief.gameMode ||
+    !content.planningBrief.planningIntent ||
+    !content.planningBrief.researchPlan ||
+    !content.planningBrief.mechanicProfile ||
+    !content.planningBrief.initialVisualDirection
+  ) {
+    throw new Error(`Play content is missing planning brief fields: ${filePath}`);
   }
   if (content.type === "micro-sim" && (!content.turns?.length || !content.endings?.length || !content.stats?.length)) {
     throw new Error(`Micro sim content is missing required fields: ${filePath}`);

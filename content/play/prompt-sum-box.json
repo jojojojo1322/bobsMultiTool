@@ -1,26 +1,122 @@
 {
   "slug": "prompt-sum-box",
-  "title": "숫자조각 10 맞추기",
-  "description": "숫자 사과를 고르고 합 10을 만들면 선택한 칸이 지워집니다. 1분 동안 손이 가는 만큼 이어서 기록을 쌓는 캔버스 보드 게임입니다.",
+  "title": "질문 조각 10 맞추기",
+  "description": "AI에게 줄 질문 조각을 골라 합 10이 되면 지우는 1분 퍼즐입니다. 목적, 맥락, 제약 같은 필요한 조각과 장황한 조각이 섞였을 때 지금 묶을 숫자를 먼저 봅니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-28",
-  "shareText": "숫자조각 10 맞추기를 해봤다. 숫자 두 개 고르는 일도 급하면 이상하게 꼬인다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "질문 조각 10 맞추기를 해봤다. 질문도 숫자도 한 덩어리로 보면 금방 넘쳤다.",
   "order": 3,
-  "relatedBlogSlugs": ["sum-box-counter-panel-note", "sum-box-clear-pop-note", "sum-box-backtrack-drag-note", "sum-box-release-preview-note", "why-small-web-toys-return", "small-play-rules-note"],
-  "relatedPlaySlugs": ["ten-box-rush", "prompt-gem-swap", "password-lock"],
+  "relatedBlogSlugs": [
+    "sum-box-counter-panel-note",
+    "sum-box-clear-pop-note",
+    "sum-box-backtrack-drag-note",
+    "sum-box-release-preview-note",
+    "why-small-web-toys-return",
+    "small-play-rules-note"
+  ],
+  "relatedPlaySlugs": [
+    "ten-box-rush",
+    "prompt-gem-swap",
+    "password-lock"
+  ],
   "arcade": {
     "variant": "sum-box",
-    "goal": "1분 동안 숫자 사과를 고르고, 합 10을 연속으로 만들어 선택한 칸을 지웁니다.",
-    "controls": "마우스로 사과를 쓸거나 방향키/WASD로 옮깁니다. 지나온 칸으로 되돌아가면 마지막 선택이 빠지고, Space/Enter로 골라도 됩니다.",
-    "playerLabel": "상자",
-    "goodLabels": ["목적", "맥락", "제약", "예시", "확인"],
-    "badLabels": ["장황", "중복", "헛말", "흐림", "핑계"],
-    "palette": { "background": "#15151d", "primary": "#a78bfa", "accent": "#facc15", "danger": "#fb7185" }
+    "goal": "1분 동안 질문 조각을 고르고, 합 10을 연속으로 만들어 선택한 칸을 지웁니다.",
+    "controls": "마우스나 터치로 질문 조각을 쓸거나 방향키/WASD로 옮깁니다. 지나온 칸으로 되돌아가면 마지막 선택이 빠지고, Space/Enter로 골라도 됩니다.",
+    "playerLabel": "조각",
+    "goodLabels": [
+      "목적",
+      "맥락",
+      "제약",
+      "예시",
+      "확인"
+    ],
+    "badLabels": [
+      "장황",
+      "중복",
+      "헛말",
+      "흐림",
+      "핑계"
+    ],
+    "palette": {
+      "background": "#15151d",
+      "primary": "#a78bfa",
+      "accent": "#facc15",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "neat-box", "title": "꽤 말끔함", "description": "필요한 숫자만 잘 골랐다. 판이 붐비기 전에 손이 먼저 정리했다.", "minScore": 20 },
-    { "id": "almost", "title": "조금 넘침", "description": "나쁘지 않지만 욕심낸 조각이 몇 개 섞였다. 다음 판은 더 차분히 가자.", "minScore": 10 },
-    { "id": "messy", "title": "상자가 넘침", "description": "좋은 조각과 소음이 같이 들어왔다. 한 박자 늦게 눌러도 된다.", "minScore": 0 }
-  ]
+    {
+      "id": "neat-box",
+      "title": "꽤 말끔함",
+      "description": "필요한 조각만 잘 골랐다. 질문이 붐비기 전에 손이 먼저 정리했다.",
+      "minScore": 20
+    },
+    {
+      "id": "almost",
+      "title": "조금 넘침",
+      "description": "나쁘지 않지만 욕심낸 조각이 몇 개 섞였다. 다음 판은 더 차분히 가자.",
+      "minScore": 10
+    },
+    {
+      "id": "messy",
+      "title": "질문이 넘침",
+      "description": "좋은 조각과 장황한 조각이 같이 들어왔다. 한 박자 늦게 골라도 된다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "질문 조각 선택과 되돌림 합 10 퍼즐",
+    "planningIntent": "질문 조각 10 맞추기는 숫자 퍼즐의 합 10 규칙을 프롬프트 정리 감각과 연결해, 필요한 조각을 묶고 장황한 조각을 넘치는 선택으로 느끼게 해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "make 10 puzzle drag numbers feedback",
+        "prompt engineering context constraint examples",
+        "mobile puzzle backtrack drag interaction"
+      ],
+      "referenceTypes": [
+        "합 10 퍼즐의 선택 합계와 넘침 피드백",
+        "프롬프트를 목적/맥락/제약으로 나누는 사례",
+        "모바일 드래그 중 되돌림 입력 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "무작위 보드에서 쉬운 10 후보와 장황한 조각 라벨 분포",
+        "1분 런에서 되돌림 사용률과 넘침 빈도"
+      ]
+    },
+    "systemQuestions": [
+      "유저는 숫자를 맞추는가, 질문 조각을 목적/맥락/제약 단위로 줄이는가?",
+      "장황, 중복, 흐림 같은 조각은 넘침 피드백으로 바로 읽히는가?",
+      "되돌림은 잘못 고른 조각을 빼는 프롬프트 수정 감각과 연결되는가?",
+      "연속 성공은 점수보다 질문이 정리되는 느낌을 주는가?",
+      "실패 후 다음 판에서 질문을 덜 뭉뚱그려 볼 이유가 생기는가?"
+    ],
+    "visualQuestions": [
+      "숫자 보드가 보석판이 아니라 초안 종이 조각처럼 보이는가?",
+      "현재 합계와 조각 라벨 중 무엇이 첫 시선에 들어와야 하는가?",
+      "넘침은 숫자 실패이면서 장황한 질문의 느낌으로도 읽히는가?",
+      "결과 화면은 기록보다 어떤 질문 재료를 덜어냈는지 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "질문 조각, 현재 선택 합계, 목적/맥락/제약 라벨, 되돌림 경로",
+      "progressionQuestion": "실력이 늘수록 숫자 합과 질문 구성 단위를 함께 읽는가?",
+      "failureQuestion": "실패는 숫자 계산 실수인가, 필요 없는 조각까지 넣은 질문 설계 실패인가?",
+      "recoveryQuestion": "되돌림이 마지막 조각을 빼며 질문을 다시 정리하는 감각을 주는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "AI에게 던질 초안 종이를 잘라 놓은 조각판",
+      "primarySurface": "질문 조각 격자, 현재 합계 배지, 되돌림 흔적",
+      "roughnessTarget": "반짝이는 AI 화면보다 찢은 종이, 연필선, 조각 라벨 중심",
+      "differenceFromGenericPlay": "같은 합 10 엔진이라도 사과가 아니라 질문 조각과 되돌림 흔적이 화면의 성격을 만든다.",
+      "mustAvoid": [
+        "화려한 보석류 스킨",
+        "작은 숫자를 여러 패널에 흩트리는 배치"
+      ]
+    }
+  }
 }

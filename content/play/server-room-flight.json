@@ -1,26 +1,119 @@
 {
   "slug": "server-room-flight",
-  "title": "밤길 비행",
-  "description": "캔버스를 누르고 있으면 떠오르고 놓으면 내려가는 원버튼 비행 게임입니다. 다가오는 높이선과 상승/하강 큐를 보고 빈틈은 통과하고 벽은 피합니다.",
+  "title": "누르고 떼서 날기",
+  "description": "캔버스를 누르면 올라가고 떼면 내려가는 1분 원버튼 비행 게임입니다. 다가오는 높이선과 상승/하강 큐를 보고 빈틈은 통과하고 벽은 피합니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
-  "shareText": "밤길 비행을 해봤다. 누르고 놓는 타이밍 하나로 은근 오래 붙잡힌다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "누르고 떼서 날기를 해봤다. 오래 누를지 바로 뗄지 한 박자가 전부였다.",
   "order": 10,
-  "relatedBlogSlugs": ["flight-hold-release-cue-note", "flight-touch-hold-note", "small-web-games-retention", "why-small-web-toys-return"],
-  "relatedPlaySlugs": ["office-survival", "deploy-crossing"],
+  "relatedBlogSlugs": [
+    "flight-hold-release-cue-note",
+    "flight-touch-hold-note",
+    "small-web-games-retention",
+    "why-small-web-toys-return"
+  ],
+  "relatedPlaySlugs": [
+    "office-survival",
+    "deploy-crossing"
+  ],
   "arcade": {
     "variant": "flight",
     "goal": "다가오는 높이선에 맞춰 고도를 조절하고, 상승/하강 큐를 보며 빈틈은 통과하고 벽은 피합니다.",
     "controls": "마우스/터치로 캔버스를 누르고 있으면 상승, 떼면 하강합니다. 다음 높이선 옆 큐가 짧게 누를지 뗄지 알려줍니다. Space/Enter 또는 위 방향키도 같은 방식으로 작동합니다.",
-    "playerLabel": "비행",
-    "goodLabels": ["빈틈", "바람", "문", "길", "숨"],
-    "badLabels": ["벽", "소음", "흔들", "안개", "급커브"],
-    "palette": { "background": "#0b1120", "primary": "#facc15", "accent": "#93c5fd", "danger": "#fb7185" }
+    "playerLabel": "기체",
+    "goodLabels": [
+      "빈틈",
+      "바람",
+      "문",
+      "길",
+      "숨"
+    ],
+    "badLabels": [
+      "벽",
+      "소음",
+      "흔들",
+      "안개",
+      "급커브"
+    ],
+    "palette": {
+      "background": "#0b1120",
+      "primary": "#facc15",
+      "accent": "#93c5fd",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "smooth", "title": "부드럽게 통과", "description": "높이를 잘 맞췄다. 누르고 놓는 리듬이 살아 있다.", "minScore": 20 },
-    { "id": "bumpy", "title": "조금 덜컹", "description": "아슬아슬한 접촉은 있었지만 계속 날았다.", "minScore": 10 },
-    { "id": "ground", "title": "바닥에 닿음", "description": "너무 오래 누르거나 너무 빨리 놓았다. 다음엔 조금 짧게.", "minScore": 0 }
-  ]
+    {
+      "id": "smooth",
+      "title": "부드럽게 통과",
+      "description": "높이를 잘 맞췄다. 누르고 놓는 리듬이 살아 있다.",
+      "minScore": 20
+    },
+    {
+      "id": "bumpy",
+      "title": "조금 덜컹",
+      "description": "아슬아슬한 접촉은 있었지만 계속 날았다.",
+      "minScore": 10
+    },
+    {
+      "id": "ground",
+      "title": "바닥에 닿음",
+      "description": "너무 오래 누르거나 너무 빨리 놓았다. 다음엔 조금 짧게.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "원버튼 상승 하강 리듬 회피 게임",
+    "planningIntent": "누르고 떼서 날기는 설명이 긴 비행 게임이 아니라, 누르는 동안 상승하고 떼면 하강하는 한 가지 입력으로 높이선과 벽 사이 빈틈을 맞추는 리듬 판단으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "Flappy Bird one button tap flight obstacle gap readability",
+        "one button game hold release control feedback",
+        "mobile canvas hold release input UX"
+      ],
+      "referenceTypes": [
+        "Flappy류 원버튼 상승/하강과 장애물 빈틈 구조",
+        "누름/뗌 상태를 즉시 보여주는 입력 피드백",
+        "모바일 캔버스에서 손가락이 화면을 가릴 때의 큐 배치"
+      ],
+      "dataOrSimulationNeeds": [
+        "높이선 속도와 빈틈 크기별 통과 가능성",
+        "누름/뗌 큐가 과도한 자동 안내로 보이지 않는 범위"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '누르면 뜨고 떼면 내려간다'가 읽히는가?",
+      "유저는 점수보다 다음 높이선과 벽 사이 빈틈을 먼저 보는가?",
+      "너무 오래 누른 실패와 너무 빨리 뗀 실패가 다르게 보이는가?",
+      "상승/하강 큐가 긴장을 죽이지 않고 리듬만 보조하는가?",
+      "다음 판에서 더 짧게 누르거나 더 오래 떼는 전략을 시도하게 되는가?"
+    ],
+    "visualQuestions": [
+      "비행체, 높이선, 벽 빈틈이 점수보다 먼저 보이는가?",
+      "누르는 상태와 떼는 상태가 색상 외 위치/기울기로도 구분되는가?",
+      "투박한 야간 통로판처럼 벽과 빈틈이 단순하게 보이는가?",
+      "결과는 거리보다 누름/뗌 타이밍 실패를 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "고도, 누름 지속 시간, 하강 리듬, 다음 벽 빈틈",
+      "progressionQuestion": "성장은 속도나 수치보다 누르고 떼는 길이를 조절하는 리듬으로 체감되는가?",
+      "failureQuestion": "충돌은 너무 오래 눌렀는지 너무 빨리 뗐는지 읽히는가?",
+      "recoveryQuestion": "재시작은 짧고, 바로 다른 누름 길이를 시험할 수 있는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "어두운 환기 통로와 원버튼 고도 계기판",
+      "primarySurface": "비행체, 높이선, 벽 빈틈, 누름 상태가 있는 큰 캔버스",
+      "roughnessTarget": "낮은 반경, 굵은 통로선, 제한된 노랑/파랑 큐로 만든 투박한 원버튼 기계감",
+      "differenceFromGenericPlay": "누름/뗌 상태와 다음 높이선이 외곽 UI보다 먼저 보인다.",
+      "mustAvoid": [
+        "마케팅 카드형 설명 영역",
+        "게임 오브젝트보다 큰 장식 헤더"
+      ]
+    }
+  }
 }

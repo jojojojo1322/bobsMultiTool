@@ -1,11 +1,11 @@
 {
   "slug": "bug-clicker",
-  "title": "잡음 방어전",
-  "description": "오른쪽에서 밀려오는 불편한 신호와 괜한 소음을 보고, 진짜 막아야 할 것만 쳐내는 짧은 캔버스 방어 게임입니다. 맞출 표적과 소음 가까움 표시를 같이 봅니다.",
+  "title": "진짜 신호 막기",
+  "description": "오른쪽에서 밀려오는 신호 중 확인, 단서, 증거처럼 막아야 할 것만 쳐내는 1분 방어 게임입니다. 소문과 과장은 지나가게 두고, 표적 표시가 붙은 신호부터 막습니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
-  "shareText": "나는 잡음 방어전에서 진짜 막아야 할 신호를 얼마나 잘 골랐을까?",
+  "updatedAt": "2026-06-29",
+  "shareText": "진짜 신호 막기를 해봤다. 소문까지 다 막으려 하면 더 빨리 밀린다.",
   "order": 22,
   "relatedBlogSlugs": [
     "shooter-target-cue-note",
@@ -15,14 +15,29 @@
     "why-i-like-one-button-web",
     "why-small-web-toys-return"
   ],
-  "relatedPlaySlugs": ["notification-mole", "meeting-escape"],
+  "relatedPlaySlugs": [
+    "notification-mole",
+    "meeting-escape"
+  ],
   "arcade": {
     "variant": "shooter",
-    "goal": "좌우로 움직이거나 누른 위치로 조준해 진짜 신호만 쳐냅니다. 맞출 표적 표시가 뜬 신호부터 막습니다.",
+    "goal": "오른쪽에서 밀려오는 신호 중 진짜 확인할 것만 쳐냅니다. 소문과 과장은 흘려보내고, 표적 표시가 붙은 신호부터 막습니다.",
     "controls": "마우스/터치로 누른 채 조준선을 끌면 짧은 간격으로 발사합니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다. 소음 가까움이 뜨면 잠깐 비켜도 됩니다.",
     "playerLabel": "방패",
-    "goodLabels": ["확인", "단서", "흔적", "원인", "증거"],
-    "badLabels": ["소문", "감", "잡담", "착각", "과장"],
+    "goodLabels": [
+      "확인",
+      "단서",
+      "흔적",
+      "원인",
+      "증거"
+    ],
+    "badLabels": [
+      "소문",
+      "감",
+      "잡담",
+      "착각",
+      "과장"
+    ],
     "palette": {
       "background": "#101820",
       "primary": "#2dd4bf",
@@ -49,5 +64,58 @@
       "description": "눈에 띄는 걸 다 치다 보니 힘이 먼저 빠졌다. 다음 판은 천천히 보고 쏘자.",
       "minScore": 0
     }
-  ]
+  ],
+  "planningBrief": {
+    "gameMode": "옆에서 밀려오는 신호 방어 게임",
+    "planningIntent": "진짜 신호 막기는 많이 쳐내는 게임이 아니라, 오른쪽에서 밀려오는 신호 중 확인해야 할 것과 흘려보낼 소문을 구분하는 방어 판단으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "side scrolling defense game target priority",
+        "arcade game signal noise feedback",
+        "game UX lane defense threat readability"
+      ],
+      "referenceTypes": [
+        "옆에서 들어오는 위협을 차선으로 읽히게 하는 방어 게임",
+        "막을 대상과 흘려보낼 대상을 단어/형태로 구분하는 사례",
+        "방패선과 충돌 직전 경고 피드백 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "신호 이동 속도와 방패선까지 남은 거리별 반응 시간",
+        "소문을 막았을 때 페널티가 과도하지 않은지 비교"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '막을 신호와 흘릴 소문을 나눈다'가 읽히는가?",
+      "진짜 신호와 소문은 색상 외 단어, 형태, 이동감으로 구분되는가?",
+      "방패선에 가까운 신호가 우선순위로 읽히는가?",
+      "실패가 막을 대상을 놓친 것인지 소문에 반응한 것인지 분명한가?",
+      "다음 판에서 모든 것을 막지 않는 전략을 시도하게 되는가?"
+    ],
+    "visualQuestions": [
+      "오른쪽에서 밀려오는 차선과 왼쪽 방패선이 먼저 보이는가?",
+      "표적 표시와 충돌 직전 경고만 강하게 읽히는가?",
+      "조준선은 방패가 어디를 막고 있는지 확실히 알려주는가?",
+      "결과는 막은 수보다 소문에 흔들렸는지 여부를 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "신호 거리, 표적 표시, 방패 위치, 소문 반응 억제",
+      "progressionQuestion": "반복 플레이가 공격력 상승보다 밀려오는 신호를 덜 흔들리고 고르는 감각으로 느껴지는가?",
+      "failureQuestion": "놓친 신호, 소문 반응, 늦은 방패 이동이 서로 다른 피드백으로 남는가?",
+      "recoveryQuestion": "짧은 재시작과 차선 힌트가 다음 방어 위치 선택을 바꾸게 하는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "복도 방패선과 밀려오는 신호 카드",
+      "primarySurface": "오른쪽에서 들어오는 신호 차선, 왼쪽 방패선, 작은 소문 반응 기록",
+      "roughnessTarget": "깨끗한 대시보드보다 신호 카드, 방패선, 충돌 경고의 투박한 대비",
+      "differenceFromGenericPlay": "설명 카드보다 밀려오는 신호와 방패선까지의 거리가 화면을 지배한다.",
+      "mustAvoid": [
+        "버튼만 누르는 퀴즈형 슈팅",
+        "표적을 가리는 배경 장식"
+      ]
+    }
+  }
 }

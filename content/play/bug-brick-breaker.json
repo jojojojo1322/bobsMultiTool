@@ -1,26 +1,119 @@
 {
   "slug": "bug-brick-breaker",
-  "title": "불편한 벽돌깨기",
-  "description": "마우스나 터치로 패들을 움직여 공을 되받고, 내려오는 공의 착지선을 보며 꼭 깨야 할 벽돌만 노리는 캔버스 벽돌깨기 게임입니다.",
+  "title": "공 받아 벽돌 깨기",
+  "description": "내려오는 공의 착지선을 보고 패들을 옮겨 되받는 1분 벽돌깨기 게임입니다. 모든 벽돌을 무리해서 노리기보다 꼭 깨야 할 벽돌과 받을 자리를 먼저 봅니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
-  "updatedAt": "2026-06-27",
-  "shareText": "불편한 벽돌깨기를 해봤다. 깨는 맛은 있는데 욕심내면 바로 흔들린다.",
+  "updatedAt": "2026-06-29",
+  "shareText": "공 받아 벽돌 깨기를 해봤다. 깨는 맛보다 받을 자리를 먼저 보는 게 중요했다.",
   "order": 12,
-  "relatedBlogSlugs": ["brick-breaker-landing-guide-note", "brick-breaker-paddle-touch-note", "cursor-codex-web-service-bottlenecks", "small-web-games-retention"],
-  "relatedPlaySlugs": ["bug-bubble-shooter", "bug-clicker"],
+  "relatedBlogSlugs": [
+    "brick-breaker-landing-guide-note",
+    "brick-breaker-paddle-touch-note",
+    "cursor-codex-web-service-bottlenecks",
+    "small-web-games-retention"
+  ],
+  "relatedPlaySlugs": [
+    "bug-bubble-shooter",
+    "bug-clicker"
+  ],
   "arcade": {
     "variant": "brick-breaker",
     "goal": "패들을 손으로 옮기고 공을 되받아 좋은 벽돌을 맞춥니다. 공이 내려올 때는 착지선을 보고 먼저 자리를 잡습니다.",
     "controls": "마우스/터치로 패들을 옮기고, 공이 대기 중이면 누른 자리에서 바로 발사합니다. 내려오는 공에는 받을 자리 표시가 뜹니다. 키보드는 A/D 또는 방향키로 이동, Space/Enter로 발사합니다.",
     "playerLabel": "패들",
-    "goodLabels": ["틈", "핵심", "균열", "단서", "정리"],
-    "badLabels": ["소음", "과열", "착시", "헛힘", "벽"],
-    "palette": { "background": "#0f172a", "primary": "#22d3ee", "accent": "#a3e635", "danger": "#fb7185" }
+    "goodLabels": [
+      "틈",
+      "핵심",
+      "균열",
+      "단서",
+      "정리"
+    ],
+    "badLabels": [
+      "막힘",
+      "과열",
+      "착시",
+      "헛힘",
+      "벽"
+    ],
+    "palette": {
+      "background": "#0f172a",
+      "primary": "#22d3ee",
+      "accent": "#a3e635",
+      "danger": "#fb7185"
+    }
   },
   "endings": [
-    { "id": "break", "title": "길이 열림", "description": "필요한 벽돌을 잘 깼다.", "minScore": 20 },
-    { "id": "chip", "title": "조금 깨짐", "description": "핵심은 맞췄지만 헛힘도 조금 썼다.", "minScore": 10 },
-    { "id": "wall", "title": "벽 앞에서 멈춤", "description": "공을 따라가기보다 위치를 먼저 잡아야 했다.", "minScore": 0 }
-  ]
+    {
+      "id": "break",
+      "title": "길이 열림",
+      "description": "필요한 벽돌을 잘 깼다.",
+      "minScore": 20
+    },
+    {
+      "id": "chip",
+      "title": "조금 깨짐",
+      "description": "핵심은 맞췄지만 헛힘도 조금 썼다.",
+      "minScore": 10
+    },
+    {
+      "id": "wall",
+      "title": "벽 앞에서 멈춤",
+      "description": "공을 따라가기보다 위치를 먼저 잡아야 했다.",
+      "minScore": 0
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "패들 위치와 공 반사각 숙련 아케이드",
+    "planningIntent": "공 받아 벽돌 깨기는 벽돌을 많이 깨는 게임보다 내려오는 공의 착지선, 패들 중심, 반사각을 읽고 다음 받을 자리를 먼저 잡는 조작 숙련으로 검토해야 한다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "Breakout paddle ball brick gameplay visual feedback",
+        "brick breaker landing guide paddle control UX",
+        "mobile brick breaker touch paddle readability"
+      ],
+      "referenceTypes": [
+        "Breakout/Arkanoid 계열의 공-패들-벽돌 관계",
+        "착지선과 패들 중심 표시가 조작을 돕는 사례",
+        "모바일 터치에서 패들이 손을 따라오는 사례"
+      ],
+      "dataOrSimulationNeeds": [
+        "공 하강 속도별 착지선 인지 시간",
+        "패들 중심 표시가 반사각 이해에 주는 영향"
+      ]
+    },
+    "systemQuestions": [
+      "첫 5초 안에 '공을 받아 벽돌을 깬다'가 읽히는가?",
+      "유저는 깨야 할 벽돌보다 먼저 공이 내려올 자리를 보는가?",
+      "패들 중심과 끝에 맞았을 때 반사 차이가 납득되는가?",
+      "공을 놓친 이유가 패들 위치인지 늦은 이동인지 즉시 보이는가?",
+      "다음 판에서 더 빨리 받을 자리를 잡아보고 싶어지는가?"
+    ],
+    "visualQuestions": [
+      "공, 착지선, 패들이 벽돌 라벨보다 먼저 보이는가?",
+      "꼭 깨야 할 벽돌과 소음 벽돌은 색상 외 형태로도 갈리는가?",
+      "투박한 브레이크아웃 보드처럼 하단 패들과 상단 벽돌이 분명한가?",
+      "결과는 깬 수보다 놓친 공과 받을 자리 판단을 남기는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "공 착지선, 패들 중심, 반사각, 벽돌 우선순위",
+      "progressionQuestion": "성장은 더 강한 패들이 아니라 공이 내려오기 전 받을 자리를 잡는 눈으로 체감되는가?",
+      "failureQuestion": "놓친 공이 늦은 이동 때문인지 반사각 판단 때문인지 읽히는가?",
+      "recoveryQuestion": "재시작은 짧고, 바로 다른 패들 위치를 시험할 수 있는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "낡은 벽돌깨기 캐비닛과 공 착지 가이드",
+      "primarySurface": "상단 벽돌, 하단 패들, 공 착지선이 있는 큰 캔버스",
+      "roughnessTarget": "낮은 반경, 굵은 공 궤적, 제한된 벽돌색으로 만든 투박한 기계감",
+      "differenceFromGenericPlay": "공 착지선과 패들 중심이 외곽 UI보다 먼저 보인다.",
+      "mustAvoid": [
+        "마케팅 카드형 설명 영역",
+        "게임 오브젝트보다 큰 장식 헤더"
+      ]
+    }
+  }
 }

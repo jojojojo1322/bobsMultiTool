@@ -26,6 +26,7 @@ type PlayBase = {
   relatedBlogSlugs: string[];
   relatedPlaySlugs: string[];
   order?: number;
+  planningBrief: PlayPlanningBrief;
 };
 
 export type BlogBlock =
@@ -153,6 +154,32 @@ export type ArcadeGamePalette = {
   primary: string;
   accent: string;
   danger: string;
+};
+
+export type PlayPlanningBrief = {
+  gameMode: string;
+  planningIntent: string;
+  researchPlan: {
+    webSearchSeeds: string[];
+    referenceTypes: string[];
+    dataOrSimulationNeeds: string[];
+  };
+  systemQuestions: string[];
+  visualQuestions: string[];
+  riskAndSafetyNotes: string[];
+  mechanicProfile: {
+    primaryResource: string;
+    progressionQuestion: string;
+    failureQuestion: string;
+    recoveryQuestion: string;
+  };
+  initialVisualDirection: {
+    metaphor: string;
+    primarySurface: string;
+    roughnessTarget: string;
+    differenceFromGenericPlay: string;
+    mustAvoid: string[];
+  };
 };
 
 export type ArcadeGameConfig = {

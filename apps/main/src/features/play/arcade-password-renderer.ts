@@ -126,7 +126,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("금고 번호 맞히기", centerX, 120);
+  ctx.fillText("힌트 보고 금고 열기", centerX, 120);
 
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.1)";
