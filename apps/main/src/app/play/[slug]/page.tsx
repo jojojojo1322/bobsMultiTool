@@ -313,6 +313,16 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
         recordText: "기록은 숫자 결과보다 검수 전표에 가깝습니다. 도장을 잘못 찍었다면 다음 문장에서 무엇을 먼저 열어볼지 다시 봅니다.",
       };
     }
+    if (content.slug === "indexing-waiting-room") {
+      return {
+        kicker: "첫 5초 안내",
+        title: "지금 확인할 색인 대기표와 기다릴 행동을 나누는 체크판",
+        firstLook: "색인 대기표, 확인 도장, 대기 도장, sitemap/canonical 체크줄을 먼저 봅니다.",
+        firstMove: "첫 움직임은 도장입니다. 라이브 200, sitemap 읽힘, canonical, URL 검사는 확인하고 새로고침이나 재제출 충동은 대기로 넘깁니다.",
+        pacingText: `${content.durationLabel} 동안 제출 보장 같은 환상을 걷어내고 지금 확인 가능한 운영 신호만 고릅니다.`,
+        recordText: "기록은 검색 순위 상상이 아니라 어떤 대기표를 확인했는지 남기는 운영 메모입니다.",
+      };
+    }
 
     return {
       kicker: "첫 5초 안내",
