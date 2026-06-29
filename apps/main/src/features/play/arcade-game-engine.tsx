@@ -4107,10 +4107,10 @@ const arcadeVariantCopy = {
     liveDetail: "공이 내려올 자리와 패치 패들 위치를 다시 봅니다.",
   },
   snake: {
-    finalKicker: "경로 결과",
-    liveTitle: "길 기록",
+    finalKicker: "스네이크 결과",
+    liveTitle: "골목 기록",
     scoreLabel: "먹은 사과",
-    liveDetail: "다음 칸, 열린 방향, 꼬리와의 거리를 같이 봅니다.",
+    liveDetail: "다음 칸, 열린 방향, 몸통과의 거리를 같이 봅니다.",
   },
   password: {
     finalKicker: "추론 결과",
