@@ -2661,10 +2661,10 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "#f8fafc";
   ctx.font = "850 17px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(state.memoryShowing ? "불빛을 따라봅니다" : hasMemoryInput ? "입력 흐름 유지" : "이제 그대로 누르기", panelX + 18, 118);
+  ctx.fillText(state.memoryShowing ? "배포 램프 보기" : hasMemoryInput ? "입력 흐름 유지" : "이제 그대로 누르기", panelX + 18, 118);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(state.memoryShowing ? "빛난 칸을 눈으로 따라갑니다." : "처음 기억한 칸부터 이어 누릅니다.", panelX + 18, 146);
+  ctx.fillText(state.memoryShowing ? "켜진 램프 순서를 눈으로 따라갑니다." : "처음 기억한 램프부터 이어 누릅니다.", panelX + 18, 146);
 
   const dotY = 184;
   for (let index = 0; index < state.memorySequence.length; index += 1) {
@@ -2679,20 +2679,20 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(state.memoryShowing ? "패턴 점이 지나가고 있습니다." : hasMemoryInput ? "초록 점까지 맞았습니다." : "첫 칸을 고를 차례입니다.", panelX + 18, 224);
-  ctx.fillText("맞은 칸은 선과 초록 표시로 남습니다.", panelX + 18, 252);
+  ctx.fillText(state.memoryShowing ? "순서 램프가 지나가고 있습니다." : hasMemoryInput ? "확인 램프까지 맞았습니다." : "첫 램프를 고를 차례입니다.", panelX + 18, 224);
+  ctx.fillText("맞은 램프는 연결선과 확인 표시로 남습니다.", panelX + 18, 252);
   ctx.fillText("헷갈리면 R이나 다시 보기.", panelX + 18, 276);
 
   if (hasMemoryInput) {
     ctx.fillStyle = "rgba(190,242,100,0.9)";
     ctx.font = "850 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`방금 ${lastMemoryLabel.slice(0, 4)} 칸`, panelX + 18, 304);
+    ctx.fillText(`방금 ${lastMemoryLabel.slice(0, 4)} 램프`, panelX + 18, 304);
   }
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스/방향키/숫자 1~9로 입력합니다. 맞게 누른 순서는 선으로 남고, 헷갈리면 R로 다시 봅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스/방향키/숫자 1~9로 입력합니다. 맞은 배포 순서는 선으로 남고, 헷갈리면 R로 다시 봅니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -2702,7 +2702,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("빛난 칸 순서를 기억해서 같은 순서로 누릅니다.", canvasWidth / 2, 202);
+    ctx.fillText("켜진 배포 램프 순서를 기억해서 같은 순서로 누릅니다.", canvasWidth / 2, 202);
     ctx.fillText("헷갈리면 R로 다시 보고, 숫자 1~9로 바로 누를 수 있습니다.", canvasWidth / 2, 228);
   }
 }
@@ -4220,7 +4220,7 @@ const arcadeVariantCopy = {
     finalKicker: "기억 결과",
     liveTitle: "순서 기록",
     scoreLabel: "기억 길이",
-    liveDetail: "빛난 순서와 첫 실수 위치를 같이 봅니다.",
+    liveDetail: "배포 램프 순서와 첫 실수 위치를 같이 봅니다.",
   },
   flight: {
     finalKicker: "통풍구 비행 결과",
