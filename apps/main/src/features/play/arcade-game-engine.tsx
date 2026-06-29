@@ -831,6 +831,16 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
           waitingTitle: "미사일 대기",
           waitingDetail: "방어선 가까운 미사일이 내려올 때 쏘기",
         }
+      : mode === "bubble"
+        ? {
+            noisyCloseTitle: "소문 버블 가까움",
+            noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
+            readyTitle: "버그 단서",
+            readyDetail: (label: string) => `${label} 정렬됨`,
+            trackingTitle: "단서 버블 따라가기",
+            waitingTitle: "단서 대기",
+            waitingDetail: "재현/증거 버블이 내려올 때 쏘기",
+          }
       : mode === "invader"
       ? {
           noisyCloseTitle: "미끼 가까움",
@@ -1799,11 +1809,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         }
       : mode === "bubble"
         ? {
-            header: "단서 버블만 터뜨리기",
-            footer: "마우스/터치로 조준선을 끌어 단서 버블에 발사합니다. A/D와 Space도 됩니다.",
-            focusWarning: "소음 버블까지 터뜨리면 판이 흐려집니다. 단서 버블만 고르세요.",
+            header: "버그 단서 버블만 터뜨리기",
+            footer: "마우스/터치로 조준선을 끌어 재현·증거 버블에 발사합니다. A/D와 Space도 됩니다.",
+            focusWarning: "소문 버블까지 터뜨리면 판이 흐려집니다. 버그 단서 버블만 고르세요.",
             startLine1: "누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.",
-            startLine2: "표적 표시가 붙은 단서 버블만 터뜨립니다.",
+            startLine2: "재현, 증거, 로그 표식이 붙은 버그 버블만 터뜨립니다.",
           }
         : mode === "invader"
           ? {
@@ -2041,6 +2051,25 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
     ctx.strokeStyle = "rgba(255,255,255,0.64)";
     ctx.lineWidth = 3;
     ctx.stroke();
+    if (sprite.good) {
+      ctx.fillStyle = "rgba(15,23,42,0.78)";
+      ctx.beginPath();
+      ctx.roundRect(-sprite.radius * 0.74, -sprite.radius * 0.22, sprite.radius * 1.48, 13, 4);
+      ctx.fill();
+      ctx.fillStyle = "rgba(190,242,100,0.95)";
+      ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("BUG", 0, -sprite.radius * 0.22 + 9);
+    } else {
+      ctx.strokeStyle = "rgba(15,23,42,0.62)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-sprite.radius * 0.62, -sprite.radius * 0.12);
+      ctx.lineTo(sprite.radius * 0.58, sprite.radius * 0.12);
+      ctx.moveTo(-sprite.radius * 0.46, sprite.radius * 0.34);
+      ctx.lineTo(sprite.radius * 0.46, sprite.radius * 0.48);
+      ctx.stroke();
+    }
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     ctx.beginPath();
     ctx.arc(-sprite.radius * 0.32, -sprite.radius * 0.38, 5, 0, Math.PI * 2);
@@ -4248,6 +4277,12 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveTitle: "단서 방패 기록",
     scoreLabel: "막은 단서",
     liveDetail: "재현 단서를 막은 순간과 소문에 흔들린 순간을 같이 봅니다.",
+  },
+  "bug-bubble-shooter": {
+    finalKicker: "버그 버블 결과",
+    liveTitle: "단서 버블 기록",
+    scoreLabel: "터뜨린 단서",
+    liveDetail: "터뜨린 버그 단서와 소문 버블에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-10-box": {
     finalKicker: "마감 상자 결과",
