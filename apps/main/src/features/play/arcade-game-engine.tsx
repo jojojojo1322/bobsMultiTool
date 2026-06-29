@@ -3485,14 +3485,14 @@ function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
 
   if (content.slug === "deploy-10-box") {
     return {
-      hintReadyText: "노란 마감표를 그대로 쓸면 바로 10",
-      idleActionText: "마감표 위로 지나가기",
-      idleBoardText: "마감표 쓸어 닫기",
-      backtrackText: "지나온 마감표 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
-      footerText: "연속 10은 마감표 묶음이 닫힙니다. 넘치거나 모자라면 흐름이 끊깁니다.",
-      startLine1: "마우스로 마감표를 쓸어 닫습니다. 노란 힌트는 한 묶음만 보여줍니다.",
-      startLine2: "합 10을 이어가면 마감 상자가 차분히 비워집니다.",
-      ticketStamp: "마감",
+      hintReadyText: "노란 전표를 그대로 쓸면 바로 10",
+      idleActionText: "전표 위로 지나가기",
+      idleBoardText: "진행중 전표 10묶음 찾기",
+      backtrackText: "지나온 전표 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
+      footerText: "딱 10인 전표 묶음은 진행중 상자에서 닫힙니다. 넘치거나 모자라면 흐름이 끊깁니다.",
+      startLine1: "마우스로 진행중 마감표를 쓸어 닫습니다. 노란 힌트는 한 묶음만 보여줍니다.",
+      startLine2: "합 10을 이어가면 진행중 상자가 차분히 비워집니다.",
+      ticketStamp: "전표",
       shape: "ticket",
     };
   }
@@ -3519,6 +3519,7 @@ function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
 function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const surface = sumBoxSurfaceFor(content);
+  const deployBox = content.slug === "deploy-10-box";
   const dragging = state.sumDragStart !== null && state.sumDragCurrent !== null;
   const dragTiles = dragging ? sumDragTiles(state) : [];
   const dragTileIds = new Set(dragTiles.map((tile) => tile.id));
@@ -3571,16 +3572,16 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   const glow = ctx.createRadialGradient(canvasWidth / 2, 212, 30, canvasWidth / 2, 212, 360);
-  glow.addColorStop(0, "rgba(255,255,255,0.12)");
+  glow.addColorStop(0, deployBox ? "rgba(120,166,163,0.1)" : "rgba(255,255,255,0.12)");
   glow.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.fillStyle = deployBox ? "rgba(111,78,45,0.18)" : "rgba(255,255,255,0.06)";
   ctx.beginPath();
-  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, 22);
+  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, deployBox ? 8 : 22);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.13)";
+  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.24)" : "rgba(255,255,255,0.13)";
   ctx.lineWidth = 1;
   ctx.stroke();
   for (let row = 0; row < sumBoxRows; row += 1) {
@@ -3597,11 +3598,11 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.stroke();
   }
 
-  ctx.fillStyle = "rgba(15,23,42,0.36)";
+  ctx.fillStyle = deployBox ? "rgba(47,43,33,0.72)" : "rgba(15,23,42,0.36)";
   ctx.beginPath();
-  ctx.roundRect(24, 18, canvasWidth - 48, 48, 16);
+  ctx.roundRect(24, 18, canvasWidth - 48, 48, deployBox ? 6 : 16);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.22)" : "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.12)";
@@ -3613,14 +3614,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.roundRect(canvasWidth - 176, 52, 132 * timeRatio, 6, 3);
   ctx.fill();
 
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fillStyle = deployBox ? "#f0ead6" : "rgba(255,255,255,0.9)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(topSumLabel, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillStyle = "rgba(255,255,255,0.66)";
+  ctx.fillStyle = deployBox ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)";
   ctx.fillText(`점수 ${state.score} · ${flowLabel}`, 190, 48);
-  ctx.fillStyle = comboHint.length ? "rgba(255,255,255,0.66)" : "rgba(251,113,133,0.88)";
+  ctx.fillStyle = comboHint.length ? (deployBox ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)") : "rgba(251,113,133,0.88)";
   ctx.fillText(hintLabel, 330, 48);
   ctx.strokeStyle = "rgba(255,255,255,0.18)";
   ctx.lineWidth = 5;
@@ -3842,21 +3843,30 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     if (surface.shape === "ticket") {
       const ticketGradient = ctx.createLinearGradient(tile.x, tile.y, tile.x, tile.y + tile.height);
       if (isActive) {
-        ticketGradient.addColorStop(0, "#fef3c7");
-        ticketGradient.addColorStop(1, "#f59e0b");
+        ticketGradient.addColorStop(0, deployBox ? "#f0ead6" : "#fef3c7");
+        ticketGradient.addColorStop(1, deployBox ? "#b8a56a" : "#f59e0b");
       } else {
-        ticketGradient.addColorStop(0, "#fff7ed");
-        ticketGradient.addColorStop(1, "#b45309");
+        ticketGradient.addColorStop(0, deployBox ? "#e8dcc1" : "#fff7ed");
+        ticketGradient.addColorStop(1, deployBox ? "#7d6841" : "#b45309");
       }
       ctx.fillStyle = ticketGradient;
       ctx.beginPath();
-      ctx.roundRect(tile.x + 8, tile.y + 8, tile.width - 16, tile.height - 16, 8);
+      ctx.roundRect(tile.x + 8, tile.y + 8, tile.width - 16, tile.height - 16, deployBox ? 3 : 8);
       ctx.fill();
       ctx.strokeStyle = isActive ? "rgba(17,24,39,0.55)" : "rgba(255,255,255,0.34)";
       ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.fillStyle = isActive ? "rgba(17,24,39,0.22)" : "rgba(120,53,15,0.32)";
       ctx.fillRect(tile.x + 14, tileCenterY - 1, tile.width - 28, 2);
+      if (deployBox) {
+        ctx.fillStyle = isActive ? "rgba(47,43,33,0.25)" : "rgba(240,234,214,0.26)";
+        ctx.beginPath();
+        ctx.moveTo(tile.x + tile.width - 22, tile.y + 8);
+        ctx.lineTo(tile.x + tile.width - 8, tile.y + 8);
+        ctx.lineTo(tile.x + tile.width - 8, tile.y + 22);
+        ctx.closePath();
+        ctx.fill();
+      }
       ctx.fillStyle = isActive ? "rgba(17,24,39,0.72)" : "rgba(255,251,235,0.72)";
       ctx.font = "900 8px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
@@ -4404,10 +4414,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "터뜨린 버그 단서와 소문 버블에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-10-box": {
-    finalKicker: "마감 상자 결과",
-    liveTitle: "마감표 기록",
-    scoreLabel: "닫은 묶음",
-    liveDetail: "합 10으로 닫은 마감표와 넘친 새 일을 같이 봅니다.",
+    finalKicker: "마감 전표 결과",
+    liveTitle: "진행중 상자 기록",
+    scoreLabel: "닫은 전표",
+    liveDetail: "합 10으로 닫은 전표 묶음과 넘친 새 일을 같이 봅니다.",
   },
   "deploy-invaders": {
     finalKicker: "릴리스 게이트 결과",
