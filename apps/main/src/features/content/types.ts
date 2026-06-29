@@ -147,7 +147,8 @@ export type ArcadeGameVariant =
   | "crossing"
   | "minesweeper"
   | "mole"
-  | "stacker";
+  | "stacker"
+  | "growth";
 
 export type ArcadeGamePalette = {
   background: string;

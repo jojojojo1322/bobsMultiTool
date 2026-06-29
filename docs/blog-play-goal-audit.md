@@ -30,7 +30,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Play Evidence
 
 - Play source: `content/play/*.json`
-- Current count: `24` Play entries.
+- Current count: `25` Play entries.
 - Required first-pass entries are present:
   - `office-survival`
   - `prompt-cleanup`

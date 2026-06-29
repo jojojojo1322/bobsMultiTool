@@ -85,7 +85,7 @@ const currentFeedItemCount = backtickNumber(discoveryRegistration, "Current feed
 const currentRegisteredBlogCount = backtickNumber(discoveryRegistration, "Current Blog count");
 
 if (blogEntries.length < 39) failures.push(`audit expects at least 39 Blog posts, found ${blogEntries.length}`);
-if (playEntries.length !== 24) failures.push(`audit expects 24 Play entries, found ${playEntries.length}`);
+if (playEntries.length < 24) failures.push(`audit expects at least 24 Play entries, found ${playEntries.length}`);
 if (standaloneBlogCount < 13) failures.push(`audit expects at least 13 standalone Blog posts, found ${standaloneBlogCount}`);
 if (blogDates[0] !== "2026-01-05") {
   failures.push(`audit expects Blog date range to start 2026-01-05, found ${blogDates[0]}`);
@@ -116,7 +116,7 @@ for (const fragment of [
   `Date range: \`${blogDates[0]}\` through \`${blogDates[blogDates.length - 1]}\``,
   `Date-sensitive information lane: \`${informationCategoryCount}\` posts live under \`정보\``,
   `Standalone Blog lane: \`${standaloneBlogCount}\` posts have no forced \`relatedPlay\``,
-  "Current count: `24` Play entries.",
+  `Current count: \`${playEntries.length}\` Play entries.`,
   "`arcade-game`",
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,

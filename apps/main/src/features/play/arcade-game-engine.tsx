@@ -81,6 +81,25 @@ import {
   type GemTile,
 } from "@/features/play/arcade-match-three";
 import {
+  buyGrowthUpgrade,
+  cycleGrowthBuild,
+  drawGrowthWorkshop,
+  growthActionAt,
+  growthAutoIncome,
+  growthBottleneckLabel,
+  growthBuildLabel,
+  growthCurrentOrderTarget,
+  growthHeatCap,
+  growthOutput,
+  growthScore,
+  growthUpgradeKeys,
+  makeGrowthWorkshop,
+  performGrowthMainAction,
+  updateGrowthWorkshop,
+  type GrowthUpgradeKey,
+  type GrowthWorkshopState,
+} from "@/features/play/arcade-growth";
+import {
   activeMemoryFlashCell,
   chooseMemoryCell,
   makeMemorySequence,
@@ -333,6 +352,7 @@ type GameState = {
   memoryShowing: boolean;
   memoryFlashIndex: number;
   memoryFlashTimer: number;
+  growth: GrowthWorkshopState;
   brickBallX: number;
   brickBallY: number;
   brickBallVx: number;
@@ -366,6 +386,16 @@ type ViewState = Pick<
   sumClearedCount: number;
   lotteryRevealedCount: number;
   lotteryTicketDone: boolean;
+  growthScrap: number;
+  growthOutput: number;
+  growthAutoIncome: number;
+  growthHeat: number;
+  growthHeatCap: number;
+  growthOrder: number;
+  growthOrderTarget: number;
+  growthOrderProgress: number;
+  growthBuildLabel: string;
+  growthBottleneck: string;
 };
 
 function makeInitialState(content: ArcadeGameContent): GameState {
@@ -448,6 +478,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     memoryShowing: true,
     memoryFlashIndex: 0,
     memoryFlashTimer: 0,
+    growth: makeGrowthWorkshop(),
     brickBallX: canvasWidth / 2,
     brickBallY: canvasHeight - 96,
     brickBallVx: 180,
@@ -507,12 +538,30 @@ function snapshot(state: GameState): ViewState {
     lotteryTotalPrize: state.lotteryTotalPrize,
     lotteryRevealedCount: lotteryRevealedCount(state),
     lotteryTicketDone: lotteryTicketComplete(state),
+    growthScrap: Math.round(state.growth.scrap),
+    growthOutput: growthOutput(state.growth),
+    growthAutoIncome: growthAutoIncome(state.growth),
+    growthHeat: Math.round(state.growth.heat),
+    growthHeatCap: growthHeatCap(state.growth),
+    growthOrder: state.growth.order,
+    growthOrderTarget: growthCurrentOrderTarget(state.growth),
+    growthOrderProgress: Math.round(state.growth.orderProgress),
+    growthBuildLabel: growthBuildLabel(state.growth),
+    growthBottleneck: growthBottleneckLabel(state.growth),
     history: state.history,
   };
 }
 
 function addHistory(state: GameState, item: HistoryItem) {
   state.history = [item, ...state.history].slice(0, 8);
+}
+
+function syncGrowthState(state: GameState) {
+  state.score = growthScore(state.growth);
+  state.focus = clamp(100 - (state.growth.heat / Math.max(1, growthHeatCap(state.growth))) * 100, 0, 100);
+  state.playTick = state.growth.tick;
+  state.history = state.growth.history;
+  if (state.growth.finished) state.finished = true;
 }
 
 function arcadeTimeLimitSeconds(content: ArcadeGameContent) {
@@ -676,6 +725,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "stacker") return "쌓기";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
+  if (content.arcade.variant === "growth") return "부품 만들기";
   return "발사";
 }
 
@@ -866,6 +916,13 @@ function updateGame(content: ArcadeGameContent, state: GameState, keys: Set<stri
 
   if (content.arcade.variant === "memory") {
     updateMemory(content, state, dt);
+    return;
+  }
+
+  if (content.arcade.variant === "growth") {
+    state.elapsed += dt;
+    updateGrowthWorkshop(content, state.growth, dt);
+    syncGrowthState(state);
     return;
   }
 
@@ -1206,6 +1263,11 @@ function drawGame(content: ArcadeGameContent, state: GameState, canvas: HTMLCanv
 
   if (content.arcade.variant === "memory") {
     drawMemory(content, state, ctx);
+    return;
+  }
+
+  if (content.arcade.variant === "growth") {
+    drawGrowthWorkshop(content, state.growth, ctx, state.started);
     return;
   }
 
@@ -3925,6 +3987,12 @@ const arcadeVariantCopy = {
     scoreLabel: "쌓은 배포층",
     liveDetail: "손 위치선, 정렬권, 잘린 폭과 롤백 위험을 같이 봅니다.",
   },
+  growth: {
+    finalKicker: "작업장 기록",
+    liveTitle: "현재 기록",
+    scoreLabel: "납품",
+    liveDetail: "제작대, 납품 상자, 설비 장부, 열 상태를 같이 봅니다.",
+  },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
 function arcadeCopyFor(content: ArcadeGameContent) {
@@ -3934,6 +4002,9 @@ function arcadeCopyFor(content: ArcadeGameContent) {
 function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
   if (content.arcade.variant === "lottery") {
     return `복권 단계: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
+  }
+  if (content.arcade.variant === "growth") {
+    return `납품 ${view.growthOrder}건 · 부품 ${view.growthScrap}`;
   }
   return `${arcadeCopyFor(content).scoreLabel}: ${view.score}`;
 }
@@ -3949,6 +4020,9 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
       return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 공개. 같은 그림 한 줄과 즉석 보너스를 확인합니다.`;
     }
     return "아직 긁지 않았습니다. 9칸을 문질러 결과 장부를 채웁니다.";
+  }
+  if (content.arcade.variant === "growth") {
+    return `부품 ${view.growthScrap}. 다음 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
   }
 
   const copy = arcadeCopyFor(content);
@@ -3977,6 +4051,7 @@ export function ArcadeGameEngine({
   const keysRef = React.useRef<Set<string>>(new Set());
   const [view, setView] = React.useState<ViewState>(() => snapshot(stateRef.current));
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
+  const isGrowthGame = content.arcade.variant === "growth";
   const ending = endingFor(content, view.score);
   const timeLeft = Math.max(0, Math.ceil(arcadeTimeLimitSeconds(content) - view.elapsed));
   const lotteryStage = lotteryStageAt(view.lotteryStage);
@@ -3993,6 +4068,13 @@ export function ArcadeGameEngine({
           { label: "공개 칸", value: `${view.lotteryRevealedCount}/9` },
           { label: "방식", value: "끝 없음" },
         ]
+      : isGrowthGame
+        ? [
+            { label: "납품", value: `${view.growthOrder}건` },
+            { label: "상자", value: `${view.growthOrderProgress}/${view.growthOrderTarget}` },
+            { label: "부품", value: view.growthScrap },
+            { label: "열", value: `${view.growthHeat}/${view.growthHeatCap}` },
+          ]
       : content.arcade.variant === "sum-box"
         ? [
             { label: copy.scoreLabel, value: view.score },
@@ -4006,6 +4088,9 @@ export function ArcadeGameEngine({
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "상태", value: view.started ? "진행" : "대기" },
           ];
+  const playBodyClassName = isGrowthGame
+    ? "grid gap-4 p-2 sm:p-3"
+    : "grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]";
 
   const syncView = React.useCallback(() => {
     setView(snapshot(stateRef.current));
@@ -4025,6 +4110,17 @@ export function ArcadeGameEngine({
       const wasStarted = state.started;
       state.started = true;
       state.lastFrame = performance.now();
+      if (content.arcade.variant === "growth") {
+        if (action === "left") buyGrowthUpgrade(content, state.growth, "cooling");
+        if (action === "right") buyGrowthUpgrade(content, state.growth, "auto");
+        if (action === "up") buyGrowthUpgrade(content, state.growth, "force");
+        if (action === "down") cycleGrowthBuild(state.growth);
+        if (action === "main") performGrowthMainAction(content, state.growth);
+        syncGrowthState(state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
       if (content.arcade.variant === "sum-box") {
         if (action === "left") moveSumCursor(state, -1);
         if (action === "right") moveSumCursor(state, 1);
@@ -4161,6 +4257,9 @@ export function ArcadeGameEngine({
       const mineFlagKey = content.arcade.variant === "minesweeper" && event.code === "KeyF";
       const memoryDigitKey = content.arcade.variant === "memory" ? memoryDigitFromKeyboardCode(event.code) : -1;
       const memoryReplayKey = content.arcade.variant === "memory" && event.code === "KeyR";
+      const growthDigitKey =
+        content.arcade.variant === "growth" && /^Digit[1-4]$/.test(event.code) ? Number(event.code.replace("Digit", "")) - 1 : -1;
+      const growthBuildKey = content.arcade.variant === "growth" && event.code === "KeyB";
       if (
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Enter", "KeyA", "KeyD", "KeyW", "KeyS"].includes(event.code) ||
         passwordDigitKey !== null ||
@@ -4168,9 +4267,31 @@ export function ArcadeGameEngine({
         passwordSuggestionKey ||
         mineFlagKey ||
         memoryDigitKey >= 0 ||
-        memoryReplayKey
+        memoryReplayKey ||
+        growthDigitKey >= 0 ||
+        growthBuildKey
       ) {
         event.preventDefault();
+        if (content.arcade.variant === "growth") {
+          if (event.repeat) return;
+          const state = stateRef.current;
+          state.started = true;
+          state.lastFrame = performance.now();
+          if (growthDigitKey >= 0) {
+            const key = growthUpgradeKeys()[growthDigitKey] as GrowthUpgradeKey | undefined;
+            if (key) buyGrowthUpgrade(content, state.growth, key);
+          }
+          if (growthBuildKey) cycleGrowthBuild(state.growth);
+          if (event.code === "ArrowLeft" || event.code === "KeyA") buyGrowthUpgrade(content, state.growth, "cooling");
+          if (event.code === "ArrowRight" || event.code === "KeyD") buyGrowthUpgrade(content, state.growth, "auto");
+          if (event.code === "ArrowUp" || event.code === "KeyW") buyGrowthUpgrade(content, state.growth, "force");
+          if (event.code === "ArrowDown" || event.code === "KeyS") cycleGrowthBuild(state.growth);
+          if (event.code === "Space" || event.code === "Enter") performGrowthMainAction(content, state.growth);
+          syncGrowthState(state);
+          setShareState("idle");
+          syncView();
+          return;
+        }
         if (content.arcade.variant === "crossing") {
           if (event.repeat) return;
           if (event.code === "ArrowLeft" || event.code === "KeyA") performAction("left");
@@ -4368,6 +4489,20 @@ export function ArcadeGameEngine({
       const point = canvasPointFromEvent(canvas, event);
       const state = stateRef.current;
       if (state.finished) return;
+
+      if (content.arcade.variant === "growth") {
+        event.preventDefault();
+        state.started = true;
+        state.lastFrame = performance.now();
+        const growthAction = growthActionAt(point);
+        if (growthAction === "work") performGrowthMainAction(content, state.growth);
+        else if (growthAction === "build") cycleGrowthBuild(state.growth);
+        else buyGrowthUpgrade(content, state.growth, growthAction);
+        syncGrowthState(state);
+        setShareState("idle");
+        syncView();
+        return;
+      }
 
       if (content.arcade.variant === "sum-box" || content.arcade.variant === "match-three") {
         return;
@@ -4955,7 +5090,7 @@ export function ArcadeGameEngine({
       </div>
 
       {view.finished ? (
-        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-result>
+        <div className={playBodyClassName} data-play-result>
           <div>
             <p className="text-xs font-medium text-muted-foreground">{copy.finalKicker}</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
@@ -4975,7 +5110,7 @@ export function ArcadeGameEngine({
           <HistoryPanel history={view.history} />
         </div>
       ) : (
-        <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_280px]" data-play-state={arcadeStateKey(view.playTick)}>
+        <div className={playBodyClassName} data-play-state={arcadeStateKey(view.playTick)}>
           <div>
             <div className="overflow-hidden rounded-lg border bg-background">
               <canvas
@@ -4988,6 +5123,7 @@ export function ArcadeGameEngine({
                 onPointerCancel={handleCanvasPointerCancel}
                 onContextMenu={handleCanvasContextMenu}
                 aria-label={`${content.title} 게임 화면`}
+                data-play-action={isGrowthGame ? "arcade-main" : undefined}
                 className={`block aspect-[18/13] w-full select-none outline-none ${
                   content.arcade.variant === "sum-box" ||
                   content.arcade.variant === "lottery" ||
@@ -5001,18 +5137,21 @@ export function ArcadeGameEngine({
                   content.arcade.variant === "brick-breaker" ||
                   content.arcade.variant === "mole" ||
                   content.arcade.variant === "memory" ||
-                  content.arcade.variant === "crossing"
+                  content.arcade.variant === "crossing" ||
+                  content.arcade.variant === "growth"
                     ? "cursor-pointer touch-none"
                     : ""
                 }`}
                 style={{ background: content.arcade.palette.background }}
               />
             </div>
-            <div className="mt-3 rounded-md border bg-muted/20 p-3">
-              <p className="text-sm font-semibold">{content.arcade.goal}</p>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
-            </div>
-            {content.arcade.variant === "snake" ||
+            {!isGrowthGame ? (
+              <div className="mt-3 rounded-md border bg-muted/20 p-3">
+                <p className="text-sm font-semibold">{content.arcade.goal}</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">{content.arcade.controls}</p>
+              </div>
+            ) : null}
+            {!isGrowthGame && (content.arcade.variant === "snake" ||
             content.arcade.variant === "sum-box" ||
             content.arcade.variant === "lottery" ||
             content.arcade.variant === "password" ||
@@ -5020,7 +5159,7 @@ export function ArcadeGameEngine({
             content.arcade.variant === "match-three" ||
             content.arcade.variant === "mole" ||
             content.arcade.variant === "memory" ||
-            content.arcade.variant === "crossing" ? (
+            content.arcade.variant === "crossing") ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <span aria-hidden />
                 <Button variant="outline" className="h-12" onClick={() => performAction("up")} data-play-action="arcade-up" aria-label="위">
@@ -5060,7 +5199,7 @@ export function ArcadeGameEngine({
                   </Button>
                 ) : null}
               </div>
-            ) : (
+            ) : !isGrowthGame ? (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <Button variant="outline" className="h-12" onClick={() => performAction("left")} data-play-action="arcade-left">
                   왼쪽
@@ -5072,7 +5211,7 @@ export function ArcadeGameEngine({
                   오른쪽
                 </Button>
               </div>
-            )}
+            ) : null}
           </div>
           <LiveArcadeResultPanel
             content={content}
@@ -5149,7 +5288,7 @@ function LiveArcadeResultPanel({
   const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
   const title = isLottery ? "복권 장부" : copy.liveTitle;
-  const headline = isLottery ? stage.title : ending.title;
+  const headline = isLottery ? stage.title : content.arcade.variant === "growth" ? `납품 ${view.growthOrder}건` : ending.title;
   const detail = arcadeLiveDetail(content, view);
 
   return (
