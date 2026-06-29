@@ -236,6 +236,13 @@ const arcadeContextGuides = {
 function playContextGuide(content: PlayContent): PlayContextGuide {
   if (content.type === "arcade-game") {
     const arcadeContextGuideOverrides: Partial<Record<string, Omit<PlayContextGuide, "kicker">>> = {
+      "bug-clicker": {
+        title: "버그 단서와 소문을 나누는 방패 판",
+        firstLook: "위에서 내려오는 버그 신호 카드, 표식이 붙은 단서, 하단 방패선, 소문 라벨을 먼저 봅니다.",
+        firstMove: "첫 움직임은 하단 방패선 조준입니다. 눈에 띄는 소문까지 다 막지 말고 재현 단서에만 선을 맞춥니다.",
+        pacingText: "한 판은 1분 버그 단서 방패막기입니다. 결과는 많이 쏜 수보다 단서와 소문을 나눈 흐름으로 남습니다.",
+        recordText: "기록은 공격력 표가 아니라 트리아지 메모입니다. 소문에 흔들렸다면 다음 판에서는 방패를 더 늦게 움직입니다.",
+      },
       "deploy-invaders": {
         title: "표식 침입자와 미끼 경고를 나누는 방어 판",
         firstLook: "위에서 내려오는 침입자 줄, 표식이 붙은 목표, 하단 방어포, 방어선까지 남은 거리를 먼저 봅니다.",

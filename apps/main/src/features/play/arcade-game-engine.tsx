@@ -703,6 +703,16 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
           waitingTitle: "표식 기다림",
           waitingDetail: "표식 침입자가 내려올 때 쏘기",
         }
+      : mode === "signal"
+        ? {
+            noisyCloseTitle: "소문 가까움",
+            noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
+            readyTitle: "버그 단서",
+            readyDetail: (label: string) => `${label} 정렬됨`,
+            trackingTitle: "단서 따라가기",
+            waitingTitle: "단서 기다림",
+            waitingDetail: "재현 단서가 내려올 때 막기",
+          }
       : {
           noisyCloseTitle: "소음 가까움",
           noisyCloseDetail: (label: string) => `${label} 지나가게 두기`,
@@ -1644,11 +1654,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
               startLine2: "표식 침입자만 격추하고 미끼 경고는 흘려보냅니다.",
             }
           : {
-              header: "진짜 신호만 쏘기",
-              footer: "마우스/터치로 누른 채 드래그하면 조준선이 따라가며 발사합니다. A/D와 Space도 됩니다.",
-              focusWarning: "눈에 띄는 걸 다 쏘면 먼저 지칩니다. 좋은 신호만 고르세요.",
-              startLine1: "누른 채 조준선을 끌거나 A/D로 움직여 Space로 쏩니다.",
-              startLine2: "좋은 신호만 맞히면 오래 버팁니다.",
+              header: "버그 단서만 막기",
+              footer: "하단 방패선을 마우스/터치로 끌어 표식 단서에만 방패탄을 쏩니다. A/D와 Space도 됩니다.",
+              focusWarning: "소문까지 다 막으면 방패선이 먼저 밀립니다. 버그 단서만 고르세요.",
+              startLine1: "하단 방패선을 끌거나 A/D로 움직여 Space로 쏩니다.",
+              startLine2: "재현 단서와 증거만 막고 소문은 흘려보냅니다.",
             };
   const dangerLineY = canvasHeight - 96;
   const aimRead = shooterAimRead(state, mode);
@@ -3980,6 +3990,12 @@ const arcadeVariantCopy = {
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
 const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
+  "bug-clicker": {
+    finalKicker: "버그 방패 결과",
+    liveTitle: "단서 방패 기록",
+    scoreLabel: "막은 단서",
+    liveDetail: "재현 단서를 막은 순간과 소문에 흔들린 순간을 같이 봅니다.",
+  },
   "deploy-invaders": {
     finalKicker: "배포 방어 결과",
     liveTitle: "침입자 방어 기록",
