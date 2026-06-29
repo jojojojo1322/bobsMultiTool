@@ -1,11 +1,11 @@
 {
   "slug": "office-survival",
   "title": "정시 퇴근까지 버티기",
-  "description": "10개의 직장 상황에서 선택지를 골라 체력, 멘탈, 업무량, 평판을 조절하는 3-5분 선택형 시뮬레이션입니다. 업무량은 낮추고 체력과 멘탈을 지켜 정시 퇴근 엔딩을 노립니다.",
+  "description": "10개의 직장 상황에서 선택지를 골라 체력, 멘탈, 업무량, 평판을 조절하는 3-5분 자원관리 게임입니다. 하루 진행과 위험 자원을 보며 업무량은 낮추고 체력과 멘탈을 지켜 정시 퇴근 엔딩을 노립니다.",
   "type": "micro-sim",
   "durationLabel": "3-5분",
   "updatedAt": "2026-06-29",
-  "shareText": "정시 퇴근까지 버티기를 해봤다. 체력, 멘탈, 업무량, 평판이 동시에 흔들렸다.",
+  "shareText": "정시 퇴근까지 버티기를 해봤다. 상황마다 체력, 멘탈, 업무량, 평판의 대가가 달랐다.",
   "order": 1,
   "relatedBlogSlugs": [
     "office-survival-workday",
@@ -628,6 +628,9 @@
       "webSearchSeeds": [
         "resource management micro simulation game design",
         "meaningful choices game design consequences feedback",
+        "game UX meaningful choices player consequences feedback",
+        "Nielsen Norman Group visibility of system status feedback",
+        "resource management game UI status indicators",
         "choice based game UI immediate stat feedback",
         "workplace survival game stats choices endings",
         "resource management game tradeoffs feedback loops"
@@ -636,6 +639,8 @@
         "짧은 선택형 시뮬레이션의 스탯 피드백",
         "자원 관리 게임의 회복/소모 균형",
         "의미 있는 선택과 결과 피드백을 설명한 게임 디자인 글",
+        "하루 진행 상태와 가장 위험한 자원을 먼저 보여주는 상태 표시",
+        "사용자 행동 직후 시스템 상태 변화를 보여주는 UX 원칙",
         "엔딩 조건을 보여주는 결과 화면",
         "업무/시간관리 보드에서 비용과 효과를 함께 보여주는 화면"
       ],
@@ -648,6 +653,8 @@
     },
     "systemQuestions": [
       "첫 5초 안에 '정시 퇴근을 위해 네 자원을 조절한다'가 읽히는가?",
+      "현재 사건이 하루 흐름에서 어디쯤인지 보이는가?",
+      "가장 위험한 자원이 체력, 멘탈, 업무량, 평판 중 무엇인지 바로 보이는가?",
       "선택마다 무엇을 얻고 무엇을 잃는지 명확한가?",
       "업무량은 낮을수록 좋고 체력/멘탈/평판은 높을수록 좋다는 방향이 화면에 보이는가?",
       "회복 선택은 쉬운 정답이 아니라 기회비용을 갖는가?",
@@ -658,6 +665,7 @@
     ],
     "visualQuestions": [
       "사무실 운영판처럼 스탯과 사건이 분리되어 보이는가?",
+      "상단 상태줄이 점수판이 아니라 하루 진행과 위험 자원으로 읽히는가?",
       "선택지는 문장보다 비용/효과가 먼저 읽히는가?",
       "업무량 증가와 감소가 같은 숫자처럼 보이지 않고 부담/완화로 구분되는가?",
       "엔딩은 보고서처럼 짧고 투박하게 남는가?",

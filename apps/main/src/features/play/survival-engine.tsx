@@ -47,6 +47,21 @@ function formatEffect(value: number) {
   return String(value);
 }
 
+function statGoal(key: PlayStatKey) {
+  return key === "workload" ? "낮을수록 좋음" : "높을수록 좋음";
+}
+
+function statRiskScore(key: PlayStatKey, value: number) {
+  return key === "workload" ? value : 100 - value;
+}
+
+function statRiskLabel(key: PlayStatKey, value: number) {
+  const risk = statRiskScore(key, value);
+  if (risk >= 72) return "위험";
+  if (risk >= 52) return "주의";
+  return key === "workload" ? "관리됨" : "버팀";
+}
+
 function effectMeaning(key: PlayStatKey, value: number) {
   if (key === "workload") return value > 0 ? "증가" : "감소";
   return value > 0 ? "상승" : "하락";
@@ -86,6 +101,10 @@ export function SurvivalPlayEngine({
   const isFinished = turnIndex >= content.turns.length;
   const ending = isFinished ? pickEnding(content, stats) : null;
   const currentTurn = content.turns[turnIndex];
+  const totalTurns = content.turns.length;
+  const progressLabel = isFinished ? `${totalTurns}/${totalTurns}` : `${turnIndex + 1}/${totalTurns}`;
+  const mostPressingStat = [...content.stats].sort((a, b) => statRiskScore(b.key, stats[b.key]) - statRiskScore(a.key, stats[a.key]))[0];
+  const riskLabel = mostPressingStat ? `${mostPressingStat.label} ${statRiskLabel(mostPressingStat.key, stats[mostPressingStat.key])}` : "대기";
 
   function choose(choiceIndex: number) {
     if (!currentTurn) return;
@@ -135,13 +154,19 @@ export function SurvivalPlayEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">선택 시뮬레이션</p>
+            <p className="text-xs font-medium text-muted-foreground">퇴근 운영판</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
-          <div className="rounded-md border bg-background px-3 py-2 text-right">
-            <p className="text-xs text-muted-foreground">상태</p>
-            <p className="text-sm font-semibold">{isFinished ? "완료" : "선택 중"}</p>
+          <div className="grid grid-cols-2 gap-2 text-right">
+            <div className="rounded-md border bg-background px-3 py-2">
+              <p className="text-xs text-muted-foreground">하루 진행</p>
+              <p className="text-sm font-semibold tabular-nums">{progressLabel}</p>
+            </div>
+            <div className="rounded-md border bg-background px-3 py-2">
+              <p className="text-xs text-muted-foreground">위험 자원</p>
+              <p className="text-sm font-semibold">{isFinished ? "정산 완료" : riskLabel}</p>
+            </div>
           </div>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-play-stats>
@@ -150,6 +175,10 @@ export function SurvivalPlayEngine({
               <div className="flex items-center justify-between gap-2 text-xs">
                 <span className="font-medium">{stat.label}</span>
                 <span className="tabular-nums text-muted-foreground">{stats[stat.key]}</span>
+              </div>
+              <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+                <span>{statGoal(stat.key)}</span>
+                <span>{statRiskLabel(stat.key, stats[stat.key])}</span>
               </div>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                 <div className={statTone(stat.key, stats[stat.key])} style={{ width: `${stats[stat.key]}%`, height: "100%" }} />
@@ -188,7 +217,7 @@ export function SurvivalPlayEngine({
       ) : currentTurn ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-state={currentTurn.id}>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">상황 선택</p>
+            <p className="text-xs font-medium text-muted-foreground">현재 사건</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{currentTurn.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{currentTurn.situation}</p>
             <div className="mt-5 grid gap-3">
@@ -204,6 +233,7 @@ export function SurvivalPlayEngine({
                   <span className="block text-sm font-semibold">{choice.label}</span>
                   <span className="mt-1 block text-sm leading-6 text-muted-foreground">{choice.detail}</span>
                   <span className="mt-3 flex flex-wrap gap-1.5">
+                    <span className="rounded-sm border bg-muted/40 px-2 py-1 text-xs text-muted-foreground">선택 후 변화</span>
                     {content.stats.map((stat) => {
                       const effect = choice.effects[stat.key] ?? 0;
                       if (!effect) return null;
