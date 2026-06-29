@@ -1,0 +1,138 @@
+{
+  "slug": "lottery-ledger",
+  "title": "복권 장부",
+  "description": "지갑과 빚을 보며 10금화, 25금화, 55금화 복권 중 하나를 고릅니다. 산 복권지는 마우스로 충분히 긁어야 열리고, 손실이 이어지면 낮은 복권으로 돌아가거나 장부를 덮습니다.",
+  "type": "arcade-game",
+  "durationLabel": "계속",
+  "updatedAt": "2026-06-29",
+  "shareText": "복권 장부를 해봤다. 당첨보다 지갑, 빚, 멈춤 선택이 더 크게 남았다.",
+  "order": 12.6,
+  "relatedBlogSlugs": [
+    "lottery-endless-stage-loop-note",
+    "lottery-scratch-stage-note",
+    "small-web-games-retention"
+  ],
+  "relatedPlaySlugs": [
+    "lucky-scratch",
+    "password-lock",
+    "ten-box-rush"
+  ],
+  "arcade": {
+    "variant": "lottery-economy",
+    "goal": "10금화, 25금화, 55금화 복권 중 하나를 사고 은박을 긁습니다. 지갑, 빚, 손실률을 보고 더 살지 멈출지 고릅니다.",
+    "controls": "화면 안 복권값, 사기, 멈춤, 재기 버튼을 누릅니다. 복권지는 마우스나 터치로 충분히 긁어야 열립니다. 키보드는 ←/→ 값 선택, Space/Enter 사기, ↑ 멈춤입니다.",
+    "playerLabel": "지갑",
+    "goodLabels": [
+      "금화",
+      "상환",
+      "본전",
+      "이익",
+      "멈춤"
+    ],
+    "badLabels": [
+      "꽝",
+      "빚",
+      "추격",
+      "파산선",
+      "큰손실"
+    ],
+    "palette": {
+      "background": "#e8ddc7",
+      "primary": "#2f7d4f",
+      "accent": "#9d5a2e",
+      "danger": "#b13f35"
+    }
+  },
+  "endings": [
+    {
+      "id": "ahead",
+      "title": "장부가 남음",
+      "description": "지갑이 시작보다 늘었거나 빚 없이 멈췄습니다. 더 큰 복권보다 멈춘 기록이 핵심입니다.",
+      "minScore": 1
+    },
+    {
+      "id": "flat",
+      "title": "거의 본전",
+      "description": "큰 이익은 아니지만 빚과 손실 추격을 키우지 않고 장부를 덮었습니다.",
+      "minScore": -20
+    },
+    {
+      "id": "debt",
+      "title": "빚 기록",
+      "description": "재기 자금이나 큰 손실이 장부에 남았습니다. 다음 판은 낮은 복권과 멈춤 선택을 먼저 봐야 합니다.",
+      "minScore": -999
+    }
+  ],
+  "planningBrief": {
+    "gameMode": "복권 확률 경제와 파산/재기 선택을 다루는 장부형 아케이드",
+    "planningIntent": "복권 장부는 당첨 연출보다 가격, 확률, 기대값, 파산선, 재기 자금, 멈춤 판단을 먼저 읽게 만드는 실험이다. 1레벨 복권과 다음 단계 복권의 차이를 손실률과 지갑 압박으로 보여주고, 손실 직후 상위 단계로 추격하지 못하게 막는다.",
+    "researchPlan": {
+      "webSearchSeeds": [
+        "lottery expected value scratch ticket bankroll risk of ruin",
+        "loot box probability disclosure odds UX loss chasing",
+        "gambler's ruin finite bankroll probability game design",
+        "responsible gambling loans debt chasing losses stop choice",
+        "Korea randomized item probability disclosure game regulation"
+      ],
+      "referenceTypes": [
+        "스크래치 복권의 가격, 지급표, 당첨확률 공개 방식",
+        "loot box 확률 공개 UX와 소비자 보호 가이드",
+        "기대값, 분산, gambler's ruin, risk of ruin 설명 자료",
+        "손실 추격과 문제도박 경고 신호를 설명하는 책임 게임 자료",
+        "대출, 재기 자금, 파산선이 있는 보드게임/경제 게임 사례",
+        "복권지, 장부, 전표, 지갑, 빚 기록 같은 투박한 시각 자료"
+      ],
+      "dataOrSimulationNeeds": [
+        "10금화/25금화/55금화 복권의 손실확률과 기대손익 계산",
+        "초기 지갑 120금화에서 단계별 파산 빈도 비교",
+        "손실 2회 뒤 상위 복권을 막았을 때 손실 추격이 줄어드는지 비교",
+        "재기 자금 35금화와 빚 42금화가 회복 선택인지 추격 유도인지 점검",
+        "확률표를 화면 오른쪽 장부에 항상 노출했을 때 선택이 이해되는지 확인"
+      ]
+    },
+    "systemQuestions": [
+      "1레벨 복권은 첫 판부터 의미 있게 당첨과 본전이 보이는가?",
+      "다음 단계 복권은 더 큰 보상만이 아니라 더 높은 손실률로 읽히는가?",
+      "각 단계의 손실률, 비용, 기대손익이 구매 전에 보이는가?",
+      "금화가 부족해졌을 때 재기 자금은 한 번만 열리고 빚 기록으로 남는가?",
+      "손실이 이어질 때 상위 복권을 막아 손실 추격을 끊는가?",
+      "복권 한 장이 끝난 뒤 바로 다음 구매보다 멈춤 선택이 같은 화면 안에 보이는가?",
+      "파산은 운 나쁨으로만 보이지 않고 지갑, 빚, 선택 기록으로 복기되는가?",
+      "확률 공개 문구가 장식이 아니라 실제 선택 전에 읽히는가?"
+    ],
+    "visualQuestions": [
+      "화면이 일반 게임 카드보다 복권지, 장부, 전표, 지갑 기록처럼 보이는가?",
+      "10/25/55금화 복권 선택이 첫눈에 보이고 겹치지 않는가?",
+      "복권지는 여러 장 더미가 아니라 지금 산 한 장으로 읽히는가?",
+      "빚과 재기 버튼이 보상 버튼이 아니라 기록/조건처럼 보이는가?",
+      "확률표가 너무 많은 정보를 뿌리지 않고 비용, 손실, 기대손익만 먼저 보여주는가?",
+      "마우스로 긁는 영역이 충분히 크고 화면 안에서만 조작되는가?"
+    ],
+    "riskAndSafetyNotes": [
+      "실제 돈, 결제, 현금화, 계정 저장, 서버 저장을 붙이지 않는다.",
+      "손실 추격, 손실 만회, 거의 터짐, 곧 당첨 같은 추격 문구를 쓰지 않는다.",
+      "재기 자금은 한 번만 제공하고 빚을 기록하며 상위 복권 구매를 제한한다.",
+      "상위 복권은 당첨확률보다 손실률 증가가 먼저 보이게 한다.",
+      "복권은 무한 점수판이나 랭킹이 아니라 멈춤 가능한 장부로 다룬다.",
+      "확률표와 기대손익은 숨기지 않고 구매 전 위치에 둔다."
+    ],
+    "mechanicProfile": {
+      "primaryResource": "금화, 빚, 복권 가격, 손실률, 재기 횟수",
+      "progressionQuestion": "10금화에서 25금화, 55금화로 올라갈수록 보상 폭뿐 아니라 손실률과 파산 압박도 커지는가?",
+      "failureQuestion": "파산이 단순 꽝이 아니라 손실 추격, 빚, 멈춤 실패의 결과로 읽히는가?",
+      "recoveryQuestion": "재기 자금은 10금화 복권으로 돌아가 다시 계획하게 만드는가, 더 큰 복권으로 바로 달리게 만드는가?"
+    },
+    "initialVisualDirection": {
+      "metaphor": "낡은 복권 판매대 위 손익 장부",
+      "primarySurface": "복권지 한 장, 복권값 전표, 지갑 도장, 빚 도장, 확률표가 붙은 종이 장부",
+      "roughnessTarget": "반짝이는 잭팟 화면보다 거친 종이, 도장, 영수증, 연필 숫자가 먼저 보이는 투박함",
+      "differenceFromGenericPlay": "복권값 전표, 은박 복권지, 빚 도장이 같은 종이 장부 위에 놓이고 실제 조작도 그 장부 안 hit target에서 끝난다.",
+      "mustAvoid": [
+        "카지노풍 광택과 과한 폭죽 연출",
+        "재도전을 압박하는 단일 큰 버튼",
+        "묶음, 고액, 낱장처럼 의미가 흐린 단계명",
+        "화면 밖 별도 컨트롤 패널"
+      ]
+    }
+  }
+}
