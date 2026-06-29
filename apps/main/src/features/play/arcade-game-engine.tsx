@@ -4220,10 +4220,10 @@ const arcadeVariantCopy = {
     liveDetail: "합 10 후보와 연속 흐름을 보고 다음 묶음을 찾습니다.",
   },
   lottery: {
-    finalKicker: "복권 장부",
-    liveTitle: "복권 장부",
-    scoreLabel: "복권 단계",
-    liveDetail: "이번 장 로그와 다음 단계 복권을 같이 봅니다.",
+    finalKicker: "복권 전표",
+    liveTitle: "결과 전표",
+    scoreLabel: "복권 장",
+    liveDetail: "이번 장 로그와 다음 복권지를 같이 봅니다.",
   },
   "lottery-economy": {
     finalKicker: "장부 결과",
@@ -4347,7 +4347,7 @@ function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
     return `장부: 금화 ${view.lotteryLedgerGold} / 빚 ${view.lotteryLedgerDebt}`;
   }
   if (content.arcade.variant === "lottery") {
-    return `복권 단계: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
+    return `복권 장: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
   }
   if (content.arcade.variant === "growth") {
     return `납품 ${view.growthOrder}건 · 부품 ${view.growthScrap}`;
@@ -4373,12 +4373,12 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     const stage = lotteryStageAt(view.lotteryStage);
     const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
     if (view.lotteryTicketDone) {
-      return `이번 장 ${view.lotteryLastPrize > 0 ? "당첨" : "꽝"}. 결과 로그를 보고 다음은 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
+      return `이번 장 ${view.lotteryLastPrize > 0 ? "표식 있음" : "꽝"}. 결과 전표를 보고 다음은 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
     }
     if (view.lotteryRevealedCount > 0) {
-      return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 공개. 같은 그림 한 줄과 즉석 보너스를 확인합니다.`;
+      return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 열림. 같은 그림 한 줄과 즉석 표식을 확인합니다.`;
     }
-    return "아직 긁지 않았습니다. 9칸을 문질러 결과 장부를 채웁니다.";
+    return "아직 긁지 않았습니다. 9칸을 문질러 결과 전표를 채웁니다.";
   }
   if (content.arcade.variant === "growth") {
     return `부품 ${view.growthScrap}. 다음 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
@@ -4422,7 +4422,7 @@ export function ArcadeGameEngine({
     isLotteryLedgerPlay
       ? lotteryLedgerMainActionLabel(view)
       : content.arcade.variant === "lottery" && view.lotteryTicketDone
-        ? "다음 복권"
+        ? "다음 장"
         : view.started
           ? mainActionLabel(content)
           : "시작";
@@ -4437,9 +4437,9 @@ export function ArcadeGameEngine({
         ]
       : content.arcade.variant === "lottery"
       ? [
-          { label: "현재 단계", value: lotteryShortStageTitle(lotteryStage.title) },
-          { label: "다음 단계", value: lotteryShortStageTitle(lotteryNextStage.title) },
-          { label: "공개 칸", value: `${view.lotteryRevealedCount}/9` },
+          { label: "현재 장", value: lotteryShortStageTitle(lotteryStage.title) },
+          { label: "다음 장", value: lotteryShortStageTitle(lotteryNextStage.title) },
+          { label: "열린 칸", value: `${view.lotteryRevealedCount}/9` },
           { label: "방식", value: "끝 없음" },
         ]
       : isGrowthGame
@@ -5942,7 +5942,7 @@ function LiveArcadeResultPanel({
   const isLotteryLedger = content.arcade.variant === "lottery-economy";
   const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
-  const title = isLottery || isLotteryLedger ? "복권 장부" : copy.liveTitle;
+  const title = isLotteryLedger ? "복권 장부" : isLottery ? "결과 전표" : copy.liveTitle;
   const headline = isLottery
     ? stage.title
     : isLotteryLedger
@@ -5978,7 +5978,7 @@ function LiveArcadeResultPanel({
           {isLotteryLedger
             ? "산 복권, 당첨, 멈춤 기록이 여기에 남습니다."
             : isLottery
-              ? "긁은 결과와 다음 단계가 여기에 이어집니다."
+              ? "긁은 결과와 다음 장 전표가 여기에 이어집니다."
               : "시작하면 판의 흐름이 여기에 보입니다."}
         </p>
       )}

@@ -45,7 +45,7 @@ export const lotteryStages: LotteryStage[] = [
   {
     id: "paper",
     title: "1단계 종이 복권",
-    detail: "낮은 보상 줄과 별 즉석 보너스를 확인",
+    detail: "얇은 종이표에서 별 즉석 표식을 확인",
     symbols: ["별", "달", "잎", "종"],
     instantSymbol: "별",
     instantPrize: 1,
@@ -53,8 +53,8 @@ export const lotteryStages: LotteryStage[] = [
   },
   {
     id: "silver",
-    title: "2단계 은색 칸",
-    detail: "줄 보상과 7 즉석 보너스를 같이 본다",
+    title: "2단계 은박 칸",
+    detail: "은박 칸에서 7 표식과 같은 그림 줄을 확인",
     symbols: ["별", "왕관", "열쇠", "7"],
     instantSymbol: "7",
     instantPrize: 3,
@@ -62,28 +62,28 @@ export const lotteryStages: LotteryStage[] = [
   },
   {
     id: "gold",
-    title: "3단계 금색 카드",
-    detail: "보석 즉석 보너스와 큰 줄 보상을 본다",
-    symbols: ["왕관", "보석", "7", "종"],
-    instantSymbol: "보석",
+    title: "3단계 금박 전표",
+    detail: "금박 전표에서 도장 표식과 줄 로그를 확인",
+    symbols: ["왕관", "도장", "7", "종"],
+    instantSymbol: "도장",
     instantPrize: 5,
     linePrize: 14,
   },
   {
-    id: "neon",
-    title: "4단계 네온 찬스",
-    detail: "번개 보너스와 다음 장 흐름을 본다",
-    symbols: ["보석", "번개", "7", "별"],
-    instantSymbol: "번개",
+    id: "stamp",
+    title: "4단계 붉은 도장표",
+    detail: "붉은 도장표에서 접힌 줄과 즉석 표식을 본다",
+    symbols: ["도장", "열쇠", "7", "별"],
+    instantSymbol: "도장",
     instantPrize: 7,
     linePrize: 20,
   },
   {
-    id: "jackpot",
-    title: "5단계 잭팟 줄",
-    detail: "잭팟 그림 한 줄이면 가장 큰 로그가 남는다",
-    symbols: ["잭팟", "보석", "왕관", "7"],
-    instantSymbol: "잭팟",
+    id: "ledger-slip",
+    title: "5단계 두꺼운 전표",
+    detail: "두꺼운 전표에서 같은 그림 줄을 조용히 확인",
+    symbols: ["금도장", "도장", "왕관", "7"],
+    instantSymbol: "금도장",
     instantPrize: 10,
     linePrize: 35,
   },
@@ -209,7 +209,7 @@ export function revealLotteryCell(
     state.lotteryTotalPrize += stage.instantPrize;
     rememberLotteryHistory(state, {
       label: `${cell.symbol} 즉석`,
-      detail: `${stage.title} 즉석 당첨`,
+      detail: `${stage.title} 즉석 표식`,
       score: stage.instantPrize,
     });
   }
@@ -270,23 +270,24 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const revealedCount = lotteryRevealedCount(state);
   const progressHint =
     winningLines.length > 0
-      ? `${winningLines.length}줄 보임 · 결과 보고 다음은 ${nextStageShortTitle}`
-      : `${stageShortTitle} 긁는 중 · 다 보면 결과 장부`;
+      ? `${winningLines.length}줄 보임 · 전표 보고 다음은 ${nextStageShortTitle}`
+      : `${stageShortTitle} 긁는 중 · 다 보면 결과 전표`;
   const completeLabel =
-    winningLines.length > 0 ? `${winningLines.length}줄 완성` : state.lotteryLastPrize > 0 ? "이번 장 즉석 당첨" : "이번 장 꽝";
+    winningLines.length > 0 ? `${winningLines.length}줄 확인` : state.lotteryLastPrize > 0 ? "이번 장 즉석 표식" : "이번 장 꽝";
   const newestScratch = state.lotteryDragTrail[0] ?? null;
   const activeScratchIndex = newestScratch ? lotteryCellIndexAt(state, newestScratch) : -1;
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, lotteryCanvasWidth, 520);
 
-  const glow = ctx.createRadialGradient(lotteryCanvasWidth / 2, 230, 40, lotteryCanvasWidth / 2, 230, 380);
-  glow.addColorStop(0, "rgba(255,255,255,0.12)");
-  glow.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = glow;
+  const paperTone = ctx.createRadialGradient(lotteryCanvasWidth / 2, 230, 40, lotteryCanvasWidth / 2, 230, 420);
+  paperTone.addColorStop(0, "rgba(216,180,106,0.12)");
+  paperTone.addColorStop(0.62, "rgba(106,160,168,0.06)");
+  paperTone.addColorStop(1, "rgba(0,0,0,0.16)");
+  ctx.fillStyle = paperTone;
   ctx.fillRect(0, 0, lotteryCanvasWidth, 520);
 
-  ctx.fillStyle = "rgba(15,23,42,0.42)";
+  ctx.fillStyle = "rgba(42,36,27,0.78)";
   ctx.beginPath();
   ctx.roundRect(34, 22, lotteryCanvasWidth - 68, 74, 20);
   ctx.fill();
@@ -325,7 +326,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.fillStyle = "rgba(248,250,252,0.76)";
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`현재 ${stageIndexLabel} · 결과 장부 · 다음 ${nextStageShortTitle}`, 264, 97, 254);
+  ctx.fillText(`현재 ${stageIndexLabel} · 결과 전표 · 다음 ${nextStageShortTitle}`, 264, 97, 254);
 
   ctx.textAlign = "right";
   ctx.fillStyle = accent;
@@ -333,7 +334,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.fillText(`${revealedCount}/9`, lotteryCanvasWidth - 58, 55);
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(248,250,252,0.62)";
-  ctx.fillText("공개 칸", lotteryCanvasWidth - 58, 77);
+  ctx.fillText("열린 칸", lotteryCanvasWidth - 58, 77);
 
   ctx.fillStyle = "rgba(248,250,252,0.72)";
   ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -359,11 +360,11 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     const cardGradient = ctx.createLinearGradient(cell.x, cell.y, cell.x, cell.y + lotteryCellSize);
     if (cell.revealed) {
       cardGradient.addColorStop(0, "rgba(254,243,199,0.96)");
-      cardGradient.addColorStop(1, "rgba(251,191,36,0.62)");
+      cardGradient.addColorStop(1, "rgba(216,180,106,0.62)");
     } else {
-      cardGradient.addColorStop(0, "rgba(226,232,240,0.9)");
-      cardGradient.addColorStop(0.52, "rgba(148,163,184,0.72)");
-      cardGradient.addColorStop(1, "rgba(71,85,105,0.82)");
+      cardGradient.addColorStop(0, "rgba(235,229,213,0.94)");
+      cardGradient.addColorStop(0.52, "rgba(174,166,150,0.78)");
+      cardGradient.addColorStop(1, "rgba(92,84,72,0.82)");
     }
     ctx.fillStyle = cardGradient;
     ctx.beginPath();
@@ -401,7 +402,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
       ctx.fillText(cell.symbol.slice(0, 3), cell.x + lotteryCellSize / 2, cell.y + 58);
       ctx.fillStyle = cell.symbol === stage.instantSymbol ? danger : "rgba(17,24,39,0.58)";
       ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-      ctx.fillText(isWinningCell ? "줄 완성" : cell.symbol === stage.instantSymbol ? "즉석 당첨" : "공개", cell.x + lotteryCellSize / 2, cell.y + 82);
+      ctx.fillText(isWinningCell ? "줄 확인" : cell.symbol === stage.instantSymbol ? "즉석 표식" : "열림", cell.x + lotteryCellSize / 2, cell.y + 82);
     } else {
       ctx.strokeStyle = "rgba(255,255,255,0.2)";
       ctx.lineWidth = 2;
@@ -466,8 +467,8 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.save();
     ctx.shadowColor = "rgba(250,204,21,0.8)";
     ctx.shadowBlur = 12;
-    ctx.strokeStyle = "rgba(250,204,21,0.9)";
-    ctx.lineWidth = 9;
+    ctx.strokeStyle = "rgba(216,180,106,0.88)";
+    ctx.lineWidth = 7;
     ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(first.x + lotteryCellSize / 2, first.y + lotteryCellSize / 2);
@@ -479,10 +480,10 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.beginPath();
     ctx.roundRect(midX - 36, midY - 14, 72, 28, 14);
     ctx.fill();
-    ctx.fillStyle = "#facc15";
+    ctx.fillStyle = primary;
     ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("줄 완성", midX, midY + 4);
+    ctx.fillText("줄 확인", midX, midY + 4);
     ctx.restore();
   }
 
@@ -503,7 +504,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.fillText(completeLabel, lotteryCanvasWidth / 2, bannerY + 30);
     ctx.fillStyle = "rgba(248,250,252,0.72)";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`결과를 보고 다음은 ${nextStageShortTitle}`, lotteryCanvasWidth / 2, bannerY + 52);
+    ctx.fillText(`전표를 보고 다음은 ${nextStageShortTitle}`, lotteryCanvasWidth / 2, bannerY + 52);
   }
 
   ctx.fillStyle = "rgba(15,23,42,0.56)";
@@ -516,8 +517,8 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const status = complete
     ? `${completeLabel} · 다음은 ${nextStageShortTitle}`
     : winningLines.length > 0
-      ? `${winningLines.length}줄 보임 · 결과 보고 다음은 ${nextStageShortTitle}`
-      : `${stageShortTitle} 긁는 중 · 다 보면 결과 장부`;
+      ? `${winningLines.length}줄 보임 · 전표 보고 다음은 ${nextStageShortTitle}`
+      : `${stageShortTitle} 긁는 중 · 다 보면 결과 전표`;
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
 
@@ -529,15 +530,15 @@ function settleLotteryTicket(state: LotteryPlayState) {
     state.lotteryLastPrize += linePrize;
     state.lotteryTotalPrize += linePrize;
     rememberLotteryHistory(state, {
-      label: `${winningLines.length}줄 당첨`,
-      detail: `${stage.title} 줄 완성`,
+      label: `${winningLines.length}줄 확인`,
+      detail: `${stage.title} 줄 전표`,
       score: linePrize,
     });
     return;
   }
 
   rememberLotteryHistory(state, {
-    label: state.lotteryLastPrize > 0 ? "즉석 당첨" : "꽝",
+    label: state.lotteryLastPrize > 0 ? "즉석 표식" : "꽝",
     detail: state.lotteryLastPrize > 0 ? "줄은 없고 즉석만" : "다음 장으로",
     score: 0,
   });

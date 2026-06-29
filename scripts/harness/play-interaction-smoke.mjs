@@ -133,7 +133,7 @@ async function verifyPlay(browser, content, viewport) {
       if (lotteryRenderedLimitScorePattern.test(engineText)) {
         failures.push(`${content.slug} ${viewport.width}x${viewport.height} should render as endless lottery play without scoreboards, timers, or move limits`);
       }
-      for (const requiredText of ["현재 단계", "다음 단계", "끝 없음"]) {
+      for (const requiredText of ["현재 장", "다음 장", "끝 없음"]) {
         if (!engineText.includes(requiredText)) {
           failures.push(`${content.slug} ${viewport.width}x${viewport.height} should show staged endless lottery flow: ${requiredText}`);
         }

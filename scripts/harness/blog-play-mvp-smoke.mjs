@@ -41,7 +41,7 @@ const publicActionLimitPattern =
   /조작\s*횟수|행동\s*횟수|발사\s*횟수|횟수\s*제한|조작\s*제한|남은\s*조작|남은\s*횟수|\d+\s*턴\s*짜리|제한\s*없는\s*루프|action[-\s]*count|move[-\s]*count|action\s*limit|move\s*limit|actions?\s+left|moves?\s+left/i;
 const publicPlayCountTonePattern = /몇\s*번\s*(?:흔들|헛발|멈칫|스쳤|꼬임|건드렸)/i;
 const lotteryLimitScorePattern = /점수판|점수표|스코어|남은\s*시간|타이머|조작\s*횟수|횟수\s*제한|조작\s*제한/i;
-const lotteryStagePattern = /종이[\s\S]*은색[\s\S]*금색[\s\S]*네온[\s\S]*잭팟/;
+const lotteryStagePattern = /종이[\s\S]*은박[\s\S]*금박[\s\S]*도장[\s\S]*전표/;
 const playEngineCountTonePattern =
   /남은\s*후보|후보\s+\$\{|건넌\s*기록|방금\s*지나간\s*선택|오늘의\s*선택\s*로그|판단\s*로그|분류\s*로그|터치하거나\s*넘기면\s*판단\s*로그/i;
 const infoReaderIntentPatterns = [
@@ -311,7 +311,7 @@ for (const entry of playEntries) {
       failures.push("lucky-scratch public copy should avoid scoreboards, timers, or move-limit wording");
     }
     if (!lotteryStagePattern.test(publicPlayCopy)) {
-      failures.push("lucky-scratch public copy should explain the staged lottery loop from paper through jackpot");
+      failures.push("lucky-scratch public copy should explain the staged lottery loop from paper through foil, stamp, and slip surfaces");
     }
   }
   if (entry.slug === "password-lock" && !/추천\s*번호로\s*바꿔\s*확인/.test(publicPlayCopy)) {
