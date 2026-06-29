@@ -1,11 +1,11 @@
 {
   "slug": "prompt-cleanup",
-  "title": "프롬프트 재료 나누기",
-  "description": "AI에게 줄 문장을 목적, 맥락, 제약으로 나누는 1-2분 분류 게임입니다. 좋은 답을 기대하기 전에 질문 재료를 세 칸으로 먼저 나눕니다.",
+  "title": "프롬프트 재료 작업대",
+  "description": "AI에게 줄 요청을 할 일, 배경, 예시, 출력 형식, 금지·제약으로 찢어 붙이는 1-2분 분류 게임입니다. 답을 고치기 전에 질문 재료가 어느 칸에 들어가야 하는지 먼저 봅니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
   "updatedAt": "2026-06-29",
-  "shareText": "프롬프트 재료 나누기를 해봤다. 목적, 맥락, 제약을 나누니 질문이 덜 뭉쳤다.",
+  "shareText": "프롬프트 재료 작업대를 해봤다. 할 일, 배경, 예시, 출력 형식, 제약을 나누니 질문이 덜 뭉쳤다.",
   "order": 2,
   "relatedBlogSlugs": [
     "ai-answer-review-habit",
@@ -14,43 +14,54 @@
     "human-decisions-in-ai-coding"
   ],
   "relatedPlaySlugs": [
-    "priority-sorter",
-    "bug-clicker"
+    "prompt-sum-box",
+    "prompt-gem-swap",
+    "priority-sorter"
   ],
   "categories": [
     {
-      "id": "goal",
-      "label": "목적",
-      "description": "AI가 무엇을 끝내야 하는지"
+      "id": "task",
+      "label": "할 일",
+      "description": "AI가 지금 끝내야 하는 작업"
     },
     {
       "id": "context",
-      "label": "맥락",
-      "description": "상황, 대상, 기존 조건"
+      "label": "배경",
+      "description": "상황, 대상, 기존 코드나 조건"
+    },
+    {
+      "id": "example",
+      "label": "예시",
+      "description": "닮았으면 하는 답이나 피할 답"
+    },
+    {
+      "id": "format",
+      "label": "출력 형식",
+      "description": "표, 목록, JSON, 길이, 순서"
     },
     {
       "id": "constraint",
-      "label": "제약",
-      "description": "형식, 금지, 기준, 범위"
+      "label": "금지·제약",
+      "description": "하지 말 것, 기준, 범위"
     }
   ],
   "items": [
     {
       "id": "landing",
-      "label": "랜딩 페이지 초안을 만들어줘",
-      "detail": "완료해야 할 작업 자체를 말한다.",
-      "categoryId": "goal"
+      "label": "랜딩 페이지 첫 화면을 다시 구성해줘",
+      "detail": "AI가 지금 끝내야 할 작업 자체다.",
+      "categoryId": "task"
     },
     {
       "id": "ko-user",
       "label": "대상은 한국어 모바일 사용자야",
-      "detail": "누구를 위한 결과인지 정한다.",
+      "detail": "누구를 위한 결과인지 알려주는 배경이다.",
       "categoryId": "context"
     },
     {
       "id": "no-hero",
       "label": "마케팅식 hero 말고 바로 쓰는 화면으로",
-      "detail": "결과의 방향을 제한한다.",
+      "detail": "원하지 않는 방향을 막는 제약이다.",
       "categoryId": "constraint"
     },
     {
@@ -62,14 +73,14 @@
     {
       "id": "five-bullets",
       "label": "결과는 다섯 개 bullet 안으로",
-      "detail": "출력 형식을 좁힌다.",
-      "categoryId": "constraint"
+      "detail": "답의 길이와 모양을 정하는 출력 형식이다.",
+      "categoryId": "format"
     },
     {
       "id": "bug-fix",
       "label": "이 에러가 나는 원인을 찾아줘",
       "detail": "AI가 수행해야 하는 작업이다.",
-      "categoryId": "goal"
+      "categoryId": "task"
     },
     {
       "id": "do-not-touch",
@@ -86,80 +97,117 @@
     {
       "id": "compare",
       "label": "두 접근의 장단점을 비교해줘",
-      "detail": "원하는 산출물의 목적이다.",
-      "categoryId": "goal"
+      "detail": "AI가 해야 하는 판단 작업이다.",
+      "categoryId": "task"
+    },
+    {
+      "id": "table-output",
+      "label": "비교 결과는 표로 먼저 보여줘",
+      "detail": "답을 어떤 형태로 받을지 정한다.",
+      "categoryId": "format"
+    },
+    {
+      "id": "good-example",
+      "label": "이전 글의 짧고 건조한 문체를 따라가",
+      "detail": "원하는 결과의 샘플을 주는 예시다.",
+      "categoryId": "example"
+    },
+    {
+      "id": "bad-example",
+      "label": "예전 답처럼 긴 면책 문단은 피하고 싶어",
+      "detail": "피해야 할 답의 샘플을 주는 예시다.",
+      "categoryId": "example"
+    },
+    {
+      "id": "json-output",
+      "label": "최종 답은 title, summary, steps JSON으로",
+      "detail": "필드 이름까지 정한 출력 형식이다.",
+      "categoryId": "format"
     }
   ],
   "endings": [
     {
       "id": "architect",
-      "title": "프롬프트 설계자",
-      "description": "목적, 맥락, 제약을 분리해서 AI가 헛돌 가능성을 크게 줄였다.",
-      "minScore": 8
+      "title": "프롬프트 작업대가 정리됐다",
+      "description": "할 일, 배경, 예시, 출력 형식, 금지·제약을 분리해서 AI가 헛돌 가능성을 크게 줄였다.",
+      "minScore": 11
     },
     {
       "id": "operator",
-      "title": "실무형 정리러",
-      "description": "대부분의 문장을 제대로 정리했다. 이제 결과물 검토 기준만 조금 더 선명하면 된다.",
-      "minScore": 6
+      "title": "실무 요청서가 됐다",
+      "description": "대부분의 재료를 제대로 붙였다. 이제 예시와 출력 형식을 조금 더 선명하게 붙이면 된다.",
+      "minScore": 8
     },
     {
       "id": "messy",
-      "title": "질문부터 리팩터링 필요",
-      "description": "AI가 나쁜 답을 하는 게 아니라 질문이 아직 한 덩어리일 수 있다.",
+      "title": "요청서가 아직 한 덩어리다",
+      "description": "AI가 나쁜 답을 하는 게 아니라 할 일, 배경, 예시, 형식, 금지가 한 문장에 뭉쳐 있을 수 있다.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "프롬프트 구성요소 분류 게임",
-    "planningIntent": "프롬프트 재료 나누기는 정답 맞히기보다 AI에게 줄 문장을 목적, 맥락, 제약으로 나누며 질문이 왜 흔들리는지 손으로 확인하는 분류 훈련으로 검토해야 한다.",
+    "gameMode": "프롬프트 요청서 재료 분류 게임",
+    "planningIntent": "프롬프트 재료 작업대는 AI 답변 품질을 점수로만 보지 않고, 요청을 할 일, 배경, 예시, 출력 형식, 금지·제약으로 나눠 붙이는 훈련으로 봐야 한다. OpenAI, Anthropic, Google의 prompting 문서는 구체적 지시, 충분한 맥락, 예시, 원하는 출력 형식, 반복 개선을 공통적으로 강조하므로, 이 게임도 세 칸 암기가 아니라 요청서 재료를 분해하는 작업대로 설계한다.",
     "researchPlan": {
       "webSearchSeeds": [
-        "prompt engineering goal context constraints examples",
+        "OpenAI prompt engineering instructions context output format examples",
+        "Anthropic prompt engineering be clear direct examples XML output format",
+        "Google Gemini prompt design examples output format context",
         "card sorting UX category labels feedback",
         "classification game visual hierarchy mobile"
       ],
       "referenceTypes": [
-        "프롬프트 구성요소를 목적/맥락/제약으로 나누는 사례",
+        "공식 prompting 가이드의 지시, 맥락, 예시, 출력 형식, 제약 분리 방식",
         "카드 분류 게임의 카테고리 라벨과 오분류 피드백",
-        "세 칸 분류 보드가 모바일에서 읽히는 UI"
+        "작업대나 문서 보드처럼 종이 메모를 칸에 붙이는 UI",
+        "모바일에서 5개 분류 칸이 한 화면에 과하게 붐비지 않는 배치"
       ],
       "dataOrSimulationNeeds": [
-        "목적/맥락/제약 항목별 오분류 가능성",
-        "카테고리 설명 길이가 모바일 완료율과 오탭에 미치는 영향"
+        "할 일/배경/예시/출력 형식/금지·제약 항목별 오분류 가능성",
+        "예시와 출력 형식을 별도 칸으로 뺐을 때 첫 5초 이해도가 좋아지는지 확인",
+        "카테고리 설명 길이가 모바일 완료율과 오탭에 미치는 영향",
+        "틀린 선택 후 기록 문구가 다음 요청서 작성 기준으로 남는지 확인"
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '문장을 세 재료로 나눈다'가 읽히는가?",
-      "목적, 맥락, 제약의 차이가 카테고리 설명만 보고도 이해되는가?",
+      "첫 5초 안에 '요청서를 재료별 칸에 붙인다'가 읽히는가?",
+      "할 일과 배경이 섞인 문장을 사용자가 자연스럽게 구분할 수 있는가?",
+      "출력 형식은 금지·제약과 별도 칸으로 보여야 하는가, 아니면 한 칸으로 합쳐도 되는가?",
+      "예시는 원하는 답과 피할 답을 모두 담을 수 있는 칸으로 보이는가?",
       "오분류는 왜 틀렸는지 프롬프트 개선 기준으로 알려주는가?",
       "애매한 문장은 게임의 학습 지점이지 억지 함정이 아닌가?",
-      "다음 항목에서 바로 다른 기준을 적용할 수 있는가?"
+      "다음 항목에서 바로 다른 프롬프트 구성 기준을 적용할 수 있는가?",
+      "결과 공유 문구가 점수 자랑보다 요청서가 얼마나 덜 뭉쳤는지를 말하는가?"
     ],
     "visualQuestions": [
-      "목적, 맥락, 제약 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
-      "현재 문장 카드는 짧지만 분류 기준이 먼저 읽히는가?",
+      "할 일, 배경, 예시, 출력 형식, 금지·제약 다섯 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
+      "현재 문장 카드는 종이 메모처럼 보이고, 분류 칸은 트레이나 서류함처럼 보이는가?",
       "맞고 틀림보다 질문 재료를 나누는 기준 설명이 더 오래 남는가?",
-      "전체 화면이 마케팅 카드 그리드가 아니라 문서 작업대처럼 보이는가?"
+      "전체 화면이 마케팅 카드 그리드가 아니라 연필선, 서류함, 메모지에 가까운 문서 작업대처럼 보이는가?",
+      "모바일에서 다섯 칸이 길게 흩어져도 현재 메모와 기록이 서로 겹치지 않는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
-      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
+      "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다.",
+      "AI가 항상 정답을 낸다는 식의 과장이나 자동화 환상을 만들지 않는다.",
+      "프롬프트만 좋으면 검토가 필요 없다는 식의 문구를 피한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "문장 조각, 목적/맥락/제약 기준, 오분류 피드백, 질문 선명도",
-      "progressionQuestion": "성장은 정답 암기가 아니라 질문 재료를 더 빨리 분리하는 능력인가?",
+      "primaryResource": "문장 조각, 할 일/배경/예시/출력 형식/금지·제약 기준, 오분류 피드백, 요청서 선명도",
+      "progressionQuestion": "성장은 정답 암기가 아니라 요청서 재료를 더 빨리 분리하는 능력인가?",
       "failureQuestion": "틀린 항목이 카테고리 기준 오해 때문인지 문장이 너무 뭉쳐 있기 때문인지 알려주는가?",
       "recoveryQuestion": "다음 항목에서 곧장 다른 프롬프트 구성 기준을 적용할 수 있는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "초안 종이를 세 칸으로 찢어 넣는 문서 작업대",
-      "primarySurface": "목적/맥락/제약 세 분류 칸과 현재 문장 메모",
-      "roughnessTarget": "반짝이는 AI 화면보다 종이 조각, 분류함, 연필선 같은 낮은 장식",
-      "differenceFromGenericPlay": "게임판보다 프롬프트 재료와 세 분류 기준이 화면의 성격을 만든다.",
+      "metaphor": "초안 종이를 다섯 서류함으로 찢어 붙이는 프롬프트 작업대",
+      "primarySurface": "현재 문장 메모, 할 일/배경/예시/출력 형식/금지·제약 분류 트레이, 오른쪽 요청서 기록",
+      "roughnessTarget": "반짝이는 AI 화면보다 종이 조각, 서류함, 연필선, 낮은 대비 스탬프 같은 투박한 작업판",
+      "differenceFromGenericPlay": "평평한 정답 퀴즈가 아니라 프롬프트 요청서 재료를 실제로 분해해 작업대 서류함에 붙이는 화면이다.",
       "mustAvoid": [
         "게임 장르와 무관한 화려한 뱃지",
-        "모든 카테고리가 같은 색으로 보이는 배치"
+        "모든 카테고리가 같은 색으로 보이는 배치",
+        "AI가 알아서 해결한다는 마법 같은 표현",
+        "정답/오답만 남고 요청서 재료 기준이 사라지는 기록"
       ]
     }
   }

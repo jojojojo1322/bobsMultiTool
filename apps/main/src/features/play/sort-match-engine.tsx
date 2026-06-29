@@ -30,8 +30,17 @@ export function SortMatchEngine({
   const isFinished = index >= content.items.length;
   const totalItems = content.items.length;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
+  const isPromptWorkbench = content.slug === "prompt-cleanup";
   const engineCopy =
-    content.slug === "priority-sorter"
+    isPromptWorkbench
+      ? {
+          boardLabel: "프롬프트 작업대",
+          scoreLabel: "붙인 재료",
+          currentLabel: "현재 메모",
+          historyTitle: "요청서 붙임 기록",
+          emptyHistory: "메모를 한 장 붙이면 어떤 요청서 재료였는지 여기에 남습니다.",
+        }
+      : content.slug === "priority-sorter"
       ? {
           boardLabel: "WIP 병목판",
           scoreLabel: "정리한 카드",
@@ -80,7 +89,10 @@ export function SortMatchEngine({
   }
 
   return (
-    <section className="rounded-lg border bg-card shadow-sm" data-play-engine={content.slug}>
+    <section
+      className={`rounded-lg border shadow-sm ${isPromptWorkbench ? "bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--muted)/0.22))]" : "bg-card"}`}
+      data-play-engine={content.slug}
+    >
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -120,19 +132,25 @@ export function SortMatchEngine({
       ) : current ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-state={current.id}>
           <div>
-            <div className="rounded-lg border bg-background p-5">
+            <div
+              className={`rounded-lg border p-5 ${
+                isPromptWorkbench
+                  ? "border-dashed bg-background shadow-[inset_0_0_0_1px_hsl(var(--muted))]"
+                  : "bg-background"
+              }`}
+            >
               <p className="text-xs font-medium text-muted-foreground">{engineCopy.currentLabel}</p>
               <h3 className="mt-2 text-2xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className={`mt-4 grid gap-3 ${isPromptWorkbench ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-3"}`}>
               {content.categories.map((category) => (
                 <button
                   key={category.id}
                   type="button"
                   data-play-action="category"
                   data-play-category-id={category.id}
-                  className={`rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${priorityCategoryClassName(content.slug, category.id)}`}
+                  className={`rounded-md border bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${categoryClassName(content.slug, category.id)}`}
                   onClick={() => choose(category.id)}
                 >
                   <span className="block text-sm font-semibold">{category.label}</span>
@@ -186,7 +204,14 @@ function SortHistory({
   );
 }
 
-function priorityCategoryClassName(slug: string, categoryId: string) {
+function categoryClassName(slug: string, categoryId: string) {
+  if (slug === "prompt-cleanup") {
+    if (categoryId === "task") return "border-slate-300/80 bg-slate-50/80 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900/40";
+    if (categoryId === "context") return "border-sky-300/80 bg-sky-50/70 hover:bg-sky-50 dark:border-sky-900/70 dark:bg-sky-950/20";
+    if (categoryId === "example") return "border-emerald-300/80 bg-emerald-50/70 hover:bg-emerald-50 dark:border-emerald-900/70 dark:bg-emerald-950/20";
+    if (categoryId === "format") return "border-indigo-300/80 bg-indigo-50/70 hover:bg-indigo-50 dark:border-indigo-900/70 dark:bg-indigo-950/20";
+    if (categoryId === "constraint") return "border-rose-300/80 bg-rose-50/70 hover:bg-rose-50 dark:border-rose-900/70 dark:bg-rose-950/20";
+  }
   if (slug !== "priority-sorter") return "";
   if (categoryId === "now") return "border-red-300/70 bg-red-50/70 hover:bg-red-50 dark:border-red-900/60 dark:bg-red-950/20";
   if (categoryId === "schedule") return "border-amber-300/70 bg-amber-50/70 hover:bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20";
