@@ -792,6 +792,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (shouldUseSideScroller(content)) return "점프";
   if (content.arcade.variant === "crossing") return "건너기";
   if (content.arcade.variant === "brick-breaker") return "치기";
+  if (content.slug === "deploy-10-box") return "묶기";
   if (content.arcade.variant === "sum-box") return "고르기";
   if (content.arcade.variant === "lottery-economy") return "사기";
   if (content.arcade.variant === "lottery") return "긁기";
@@ -3327,8 +3328,55 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   }
 }
 
+type SumBoxSurface = {
+  hintReadyText: string;
+  idleActionText: string;
+  idleBoardText: string;
+  backtrackText: string;
+  footerText: string;
+  startLine1: string;
+  startLine2: string;
+  ticketStamp: string;
+  shape: "apple" | "ticket";
+};
+
+function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
+  if (content.slug === "deploy-10-box") {
+    return {
+      hintReadyText: "노란 마감표를 그대로 쓸면 바로 10",
+      idleActionText: "마감표 위로 지나가기",
+      idleBoardText: "마감표 쓸어 닫기",
+      backtrackText: "지나온 마감표 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
+      footerText: "연속 10은 마감표 묶음이 닫힙니다. 넘치거나 모자라면 흐름이 끊깁니다.",
+      startLine1: "마우스로 마감표를 쓸어 닫습니다. 노란 힌트는 한 묶음만 보여줍니다.",
+      startLine2: "합 10을 이어가면 마감 상자가 차분히 비워집니다.",
+      ticketStamp: "마감",
+      shape: "ticket",
+    };
+  }
+
+  return {
+    hintReadyText: content.slug === "prompt-sum-box" ? "노란 질문 조각을 그대로 쓸면 바로 10" : "노란 힌트 사과를 그대로 쓸면 바로 10",
+    idleActionText: content.slug === "prompt-sum-box" ? "질문 조각 위로 지나가기" : "사과 위로 지나가기",
+    idleBoardText: "마우스로 쓸어 담기",
+    backtrackText:
+      content.slug === "prompt-sum-box"
+        ? "지나온 질문 조각 쪽으로 되돌아가면 마지막 선택이 빠집니다."
+        : "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
+    footerText: "연속 10은 보너스가 붙습니다. 넘치거나 모자라면 연속이 끊깁니다.",
+    startLine1:
+      content.slug === "prompt-sum-box"
+        ? "마우스로 질문 조각을 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다."
+        : "마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.",
+    startLine2: "합 10을 이어가면 연속 보너스가 붙습니다.",
+    ticketStamp: "",
+    shape: "apple",
+  };
+}
+
 function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
+  const surface = sumBoxSurfaceFor(content);
   const dragging = state.sumDragStart !== null && state.sumDragCurrent !== null;
   const dragTiles = dragging ? sumDragTiles(state) : [];
   const dragTileIds = new Set(dragTiles.map((tile) => tile.id));
@@ -3353,7 +3401,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ? `놓으면 +${clearScore}`
       : shownSum > 0
         ? `${selectionSummary.neededValue} 더 필요`
-        : "사과 위로 지나가기";
+        : surface.idleActionText;
   const releaseLabel = blockedTile
     ? `${blockedSum} · 되돌리면 ${shownSum}`
     : shownSum === 10
@@ -3455,10 +3503,10 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         : shownTiles.length
         ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}${shownSum === 10 ? ` · ${clearScoreLabel}` : ""}`
         : hintTiles.length
-          ? "노란 힌트 사과를 그대로 쓸면 바로 10"
+          ? surface.hintReadyText
           : state.sumStreak > 0
             ? "흐름이 살아 있습니다. 다음 10을 이어보세요."
-            : "마우스로 쓸어 담기",
+            : surface.idleBoardText,
     42,
     68,
   );
@@ -3649,36 +3697,60 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.fillText(`빼면 ${shownSum}`, tile.x + tile.width - 29.5, tile.y + tile.height - 12);
     }
 
-    const appleGradient = ctx.createRadialGradient(tileCenterX - 9, tileCenterY - 10, 5, tileCenterX, tileCenterY, 29);
-    if (isActive) {
-      appleGradient.addColorStop(0, "#fff7ed");
-      appleGradient.addColorStop(0.42, "#fb923c");
-      appleGradient.addColorStop(1, "#ea580c");
+    if (surface.shape === "ticket") {
+      const ticketGradient = ctx.createLinearGradient(tile.x, tile.y, tile.x, tile.y + tile.height);
+      if (isActive) {
+        ticketGradient.addColorStop(0, "#fef3c7");
+        ticketGradient.addColorStop(1, "#f59e0b");
+      } else {
+        ticketGradient.addColorStop(0, "#fff7ed");
+        ticketGradient.addColorStop(1, "#b45309");
+      }
+      ctx.fillStyle = ticketGradient;
+      ctx.beginPath();
+      ctx.roundRect(tile.x + 8, tile.y + 8, tile.width - 16, tile.height - 16, 8);
+      ctx.fill();
+      ctx.strokeStyle = isActive ? "rgba(17,24,39,0.55)" : "rgba(255,255,255,0.34)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = isActive ? "rgba(17,24,39,0.22)" : "rgba(120,53,15,0.32)";
+      ctx.fillRect(tile.x + 14, tileCenterY - 1, tile.width - 28, 2);
+      ctx.fillStyle = isActive ? "rgba(17,24,39,0.72)" : "rgba(255,251,235,0.72)";
+      ctx.font = "900 8px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(surface.ticketStamp, tileCenterX, tile.y + 18);
     } else {
-      appleGradient.addColorStop(0, "#fecaca");
-      appleGradient.addColorStop(0.48, "#fb7185");
-      appleGradient.addColorStop(1, "#be123c");
+      const appleGradient = ctx.createRadialGradient(tileCenterX - 9, tileCenterY - 10, 5, tileCenterX, tileCenterY, 29);
+      if (isActive) {
+        appleGradient.addColorStop(0, "#fff7ed");
+        appleGradient.addColorStop(0.42, "#fb923c");
+        appleGradient.addColorStop(1, "#ea580c");
+      } else {
+        appleGradient.addColorStop(0, "#fecaca");
+        appleGradient.addColorStop(0.48, "#fb7185");
+        appleGradient.addColorStop(1, "#be123c");
+      }
+      ctx.fillStyle = appleGradient;
+      ctx.beginPath();
+      ctx.ellipse(tileCenterX - 8, tileCenterY + 2, 22, 24, -0.18, 0, Math.PI * 2);
+      ctx.ellipse(tileCenterX + 8, tileCenterY + 2, 22, 24, 0.18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(127,29,29,0.28)";
+      ctx.beginPath();
+      ctx.ellipse(tileCenterX, tileCenterY - 18, 7, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.save();
+      ctx.translate(tileCenterX + 10, tileCenterY - 24);
+      ctx.rotate(-0.42);
+      ctx.fillStyle = isActive ? "#22c55e" : "#65a30d";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 11, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
-    ctx.fillStyle = appleGradient;
-    ctx.beginPath();
-    ctx.ellipse(tileCenterX - 8, tileCenterY + 2, 22, 24, -0.18, 0, Math.PI * 2);
-    ctx.ellipse(tileCenterX + 8, tileCenterY + 2, 22, 24, 0.18, 0, Math.PI * 2);
-    ctx.fill();
 
-    ctx.fillStyle = "rgba(127,29,29,0.28)";
-    ctx.beginPath();
-    ctx.ellipse(tileCenterX, tileCenterY - 18, 7, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.save();
-    ctx.translate(tileCenterX + 10, tileCenterY - 24);
-    ctx.rotate(-0.42);
-    ctx.fillStyle = isActive ? "#22c55e" : "#65a30d";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 11, 5, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    ctx.fillStyle = "#fffaf0";
+    ctx.fillStyle = surface.shape === "ticket" ? (isActive ? "#111827" : "#fff7ed") : "#fffaf0";
     ctx.font = "900 27px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillText(`${tile.value}`, tileCenterX, tileCenterY + 12);
@@ -3813,8 +3885,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillText(
     dragging
-      ? "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다."
-      : "연속 10은 보너스가 붙습니다. 넘치거나 모자라면 연속이 끊깁니다.",
+      ? surface.backtrackText
+      : surface.footerText,
     34,
     canvasHeight - 20,
   );
@@ -3827,8 +3899,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("마우스로 사과를 쓸어 담습니다. 노란 힌트는 한 조합만 보여줍니다.", canvasWidth / 2, 202);
-    ctx.fillText("합 10을 이어가면 연속 보너스가 붙습니다.", canvasWidth / 2, 228);
+    ctx.fillText(surface.startLine1, canvasWidth / 2, 202);
+    ctx.fillText(surface.startLine2, canvasWidth / 2, 228);
   }
 }
 
@@ -4176,6 +4248,12 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveTitle: "단서 방패 기록",
     scoreLabel: "막은 단서",
     liveDetail: "재현 단서를 막은 순간과 소문에 흔들린 순간을 같이 봅니다.",
+  },
+  "deploy-10-box": {
+    finalKicker: "마감 상자 결과",
+    liveTitle: "마감표 기록",
+    scoreLabel: "닫은 묶음",
+    liveDetail: "합 10으로 닫은 마감표와 넘친 새 일을 같이 봅니다.",
   },
   "deploy-invaders": {
     finalKicker: "게이트 방어 결과",

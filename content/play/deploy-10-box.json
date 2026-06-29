@@ -1,17 +1,17 @@
 {
   "slug": "deploy-10-box",
-  "title": "마감 상자 10 맞추기",
-  "description": "마감 전에 들어온 숫자 사과를 드래그해 합 10으로 묶고 상자를 비우는 1분 퍼즐입니다. 새 일 욕심을 덜고, 지금 닫을 수 있는 묶음부터 처리합니다.",
+  "title": "마감 상자 10 닫기",
+  "description": "마감 상자에 쌓인 숫자 마감표를 드래그해 합 10으로 묶고 닫는 1분 퍼즐입니다. 새 일을 더 담기보다 지금 닫을 수 있는 마감표 묶음부터 처리합니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-29",
-  "shareText": "마감 상자 10 맞추기를 해봤다. 새 일을 더 넣기보다 닫을 묶음부터 보는 게 나았다.",
+  "shareText": "마감 상자 10 닫기를 해봤다. 새 일을 더 넣기보다 닫을 마감표 묶음부터 보는 게 나았다.",
   "order": 11,
   "relatedBlogSlugs": [
-    "sum-box-counter-panel-note",
-    "sum-box-clear-pop-note",
-    "sum-box-backtrack-drag-note",
     "sum-box-release-preview-note",
+    "drag-feedback-small-game-note",
+    "sum-box-backtrack-drag-note",
+    "sum-box-clear-pop-note",
     "commit-small-visible-slice",
     "vercel-sitemap-canonical-log"
   ],
@@ -21,13 +21,13 @@
   ],
   "arcade": {
     "variant": "sum-box",
-    "goal": "1분 동안 마감 상자 안의 사과를 묶어 합 10을 만들고, 닫을 수 있는 칸부터 비웁니다.",
-    "controls": "마우스나 터치로 사과를 드래그해 묶습니다. 현재 합 배지와 노란 10 힌트를 보고 지금 닫을 묶음을 고릅니다.",
-    "playerLabel": "상자",
+    "goal": "1분 동안 마감 상자 안의 숫자 마감표를 묶어 합 10을 만들고, 닫을 수 있는 칸부터 비웁니다.",
+    "controls": "마우스나 터치로 마감표를 드래그해 묶습니다. 현재 합 배지와 노란 10 힌트를 보고 지금 닫을 묶음을 고릅니다.",
+    "playerLabel": "마감표",
     "goodLabels": [
       "확인",
       "저장",
-      "보기",
+      "검수",
       "한줄",
       "마감"
     ],
@@ -48,14 +48,14 @@
   "endings": [
     {
       "id": "packed",
-      "title": "딱 닫힘",
-      "description": "마감 전에 필요한 것만 담았다.",
+      "title": "마감표가 닫힘",
+      "description": "마감 전에 필요한 묶음만 닫았다.",
       "minScore": 20
     },
     {
       "id": "tight",
       "title": "조금 빡빡함",
-      "description": "상자가 꽉 찼지만 아직 닫힌다.",
+      "description": "상자가 꽉 찼지만 닫을 묶음은 아직 보인다.",
       "minScore": 10
     },
     {
@@ -66,55 +66,66 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "마감 상자 정리와 합 10 압축 퍼즐",
-    "planningIntent": "마감 상자 10 맞추기는 합 10 규칙을 마감 전 정리 감각으로 바꿔, 새 일을 더 넣는 욕심보다 닫을 수 있는 묶음을 먼저 보는 판단을 검토해야 한다.",
+    "gameMode": "마감표를 합 10으로 묶어 상자를 닫는 시간제 정리 퍼즐",
+    "planningIntent": "마감 상자 10 닫기는 Fruit Box류의 드래그 합 10 규칙을 마감 전 작업 정리 감각으로 바꾼다. 핵심은 새 일을 더 담는 욕심보다 지금 합 10으로 닫을 수 있는 마감표 묶음을 먼저 보고, 넘친 선택은 WIP가 다시 벌어지는 느낌으로 읽히게 하는 것이다.",
     "researchPlan": {
       "webSearchSeeds": [
-        "make 10 puzzle board clear pacing",
+        "Fruit Box game drag apples sum 10 rules",
+        "Make 10 number puzzle board clear strategy",
+        "number bonds to 10 game visual feedback",
         "time pressure puzzle game visual priority",
         "mobile drag number puzzle current sum feedback"
       ],
       "referenceTypes": [
-        "합 10 퍼즐의 현재 합계와 넘침 피드백",
+        "Fruit Box처럼 드래그로 숫자 묶음을 만들고 합 10이면 지우는 보드 피드백",
+        "Number bonds to 10 학습 게임의 빠른 조합 인지와 부족한 수 표시",
         "짧은 시간제 퍼즐의 마감 압박 표현",
-        "모바일 드래그 보드의 닫을 수 있는 후보 표시"
+        "모바일 드래그 보드의 닫을 수 있는 후보 표시",
+        "마감표, 체크 도장, WIP 상자처럼 새 일이 아니라 닫을 묶음이 먼저 보이는 작업판"
       ],
       "dataOrSimulationNeeds": [
-        "무작위 보드에서 즉시 닫을 수 있는 합 10 후보 수",
-        "1분 런에서 마감 직전 넘침 빈도와 되돌림 사용률"
+        "무작위 보드에서 즉시 닫을 수 있는 합 10 후보 수와 세 개 이상 묶음 후보 수",
+        "1분 런에서 마감 직전 넘침 빈도와 되돌림 사용률",
+        "마감표 라벨이 숫자보다 커졌을 때 합 10 인지가 늦어지는지 확인",
+        "관련 글 카드가 사과 게임으로만 읽혀 마감표 정체성을 흐리는지 확인"
       ]
     },
     "systemQuestions": [
-      "유저는 많이 긁는가, 지금 닫을 수 있는 묶음을 먼저 보는가?",
+      "첫 5초 안에 '숫자 마감표를 합 10으로 묶어 닫는다'가 읽히는가?",
+      "유저는 많이 긁는가, 지금 닫을 수 있는 마감표 묶음을 먼저 보는가?",
       "새 일, 딴길, 급함 라벨은 합이 넘치는 선택과 자연스럽게 이어지는가?",
       "마감 압박은 시간 숫자보다 상자가 비워지는 장면으로 읽히는가?",
       "연속 성공은 기록보다 상자를 닫아간다는 안정감을 주는가?",
-      "실패 후 다음 판에서 욕심낸 선택을 줄여볼 이유가 분명한가?"
+      "실패 후 다음 판에서 욕심낸 선택을 줄여볼 이유가 분명한가?",
+      "Fruit Box식 손맛은 남기되, 사과 게임의 스킨처럼 보이지 않게 분리되는가?"
     ],
     "visualQuestions": [
-      "상자와 사과가 마감 전 정리판처럼 단순하게 보이는가?",
+      "상자와 종이 마감표가 마감 전 정리판처럼 단순하게 보이는가?",
       "현재 합계, 닫을 수 있는 후보, 넘침 경고 중 무엇이 첫 시선이어야 하는가?",
       "성공 피드백은 폭죽보다 상자 칸이 비는 느낌으로 충분한가?",
-      "결과 화면은 점수보다 새 일을 덜 넣고 닫은 묶음을 남기는가?"
+      "결과 화면은 점수보다 새 일을 덜 넣고 닫은 묶음을 남기는가?",
+      "마감표는 사과나 보석처럼 둥글게 빛나지 않고, 낡은 종이표/검수표처럼 보이는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "마감 상자 칸, 현재 선택 합계, 닫을 수 있는 10 후보, 넘침 경고",
-      "progressionQuestion": "실력이 늘수록 많은 사과를 긁기보다 닫을 묶음을 먼저 고르는가?",
+      "primaryResource": "마감표 칸, 현재 선택 합계, 닫을 수 있는 10 후보, 넘침 경고",
+      "progressionQuestion": "실력이 늘수록 많은 마감표를 긁기보다 닫을 묶음을 먼저 고르는가?",
       "failureQuestion": "실패는 운 나쁜 보드인가, 새 일을 더 넣으려다 넘친 선택인가?",
       "recoveryQuestion": "힌트와 되돌림이 답을 대신 주지 않고 마감 전에 다시 닫을 묶음을 보게 하는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "퇴근 전 책상 위 마감 상자와 닫아야 할 숫자 사과",
-      "primarySurface": "마감 상자 격자, 현재 합계 배지, 닫을 수 있는 10 후보 표시",
-      "roughnessTarget": "광택 보드보다 종이 상자, 굵은 라벨, 마감 체크 표시",
-      "differenceFromGenericPlay": "같은 합 10 엔진이라도 새 일을 덜고 상자를 닫는 마감 정리판처럼 보여야 한다.",
+      "metaphor": "퇴근 전 책상 위 마감 상자와 닫아야 할 숫자 마감표",
+      "primarySurface": "마감표 격자, 현재 합계 배지, 닫을 수 있는 10 후보 표시, 넘친 새 일 경고",
+      "roughnessTarget": "광택 보드보다 종이 상자, 굵은 검수 라벨, 마감 체크 도장",
+      "differenceFromGenericPlay": "같은 합 10 엔진이라도 사과가 아니라 종이 마감표와 상자 닫기 표면이 화면의 성격을 만든다.",
       "mustAvoid": [
         "화려한 보석류 스킨",
-        "작은 숫자를 여러 패널에 흩트리는 배치"
+        "과일 사과처럼 보이는 둥근 타일",
+        "작은 숫자를 여러 패널에 흩트리는 배치",
+        "마감보다 점수 경쟁처럼 보이는 큰 랭킹 표현"
       ]
     }
   }
