@@ -122,7 +122,7 @@ export function stackerPlacementPreview(state: StackerActiveState): StackerPlace
       quality: "miss",
       scoreDelta: -2,
       focusDelta: -18,
-      status: "릴리스 끊김",
+      status: "적재 끊김",
       detail: "겹친 면이 거의 없음",
     };
   }
@@ -149,7 +149,7 @@ export function stackerPlacementPreview(state: StackerActiveState): StackerPlace
     quality,
     scoreDelta,
     focusDelta,
-    status: nearPerfect ? "정렬 통과" : quality === "solid" ? "배포 안정" : "롤백 경고",
-    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "안정 겹침" : "폭이 얇아짐",
+    status: nearPerfect ? "정렬 성공" : quality === "solid" ? "층 안정" : "절단 경고",
+    detail: nearPerfect ? "거의 가운데" : quality === "solid" ? "겹침 안정" : "남은 폭이 얇아짐",
   };
 }

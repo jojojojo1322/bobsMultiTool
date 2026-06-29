@@ -800,7 +800,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "password") return "확인";
   if (content.arcade.variant === "minesweeper") return "열기";
   if (content.arcade.variant === "match-three") return "고르기";
-  if (content.arcade.variant === "stacker") return "쌓기";
+  if (content.arcade.variant === "stacker") return "적재";
   if (content.arcade.variant === "mole") return "잡기";
   if (content.arcade.variant === "memory") return "입력";
   if (content.arcade.variant === "growth") return "부품 만들기";
@@ -2305,7 +2305,7 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     y: state.stackerActiveY,
     width: state.stackerActiveWidth,
     height: stackerBlockHeight,
-    label: "배포",
+    label: "층",
     quality: preview?.quality === "miss" ? "thin" : (preview?.quality ?? (centerGap <= 7 ? "perfect" : overlap >= state.stackerActiveWidth * 0.72 ? "solid" : "thin")),
   };
   drawStackerBlock(ctx, activeBlock, preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : statusFill, "#111827");
@@ -2328,11 +2328,11 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`릴리스 ${state.stackerLayer}`, 34, 36);
+  ctx.fillText(`적재층 ${state.stackerLayer}`, 34, 36);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    `현재폭 ${Math.round(state.stackerActiveWidth)} · 남을폭 ${Math.round(preview?.placedWidth ?? 0)} · 잘림 ${Math.round(cutTotal)}`,
+    `층폭 ${Math.round(state.stackerActiveWidth)} · 남을폭 ${Math.round(preview?.placedWidth ?? 0)} · 절단 ${Math.round(cutTotal)}`,
     94,
     36,
   );
@@ -2352,12 +2352,12 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fill();
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(preview?.quality === "miss" ? "겹침 부족" : centerGap <= 7 ? "배포 가능" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
+  ctx.fillText(preview?.quality === "miss" ? "겹침 부족" : centerGap <= 7 ? "적재 가능" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    isDraggingStacker ? "드래그로 배포 블록을 맞추고 떼면 올립니다. Space/Enter도 됩니다." : "마우스로 끌어 맞추고 떼면 올립니다. A/D는 살짝 보정합니다.",
+    isDraggingStacker ? "드래그로 릴리스 층을 맞추고 떼면 적재합니다. Space/Enter도 됩니다." : "마우스로 끌어 맞추고 떼면 적재합니다. A/D는 살짝 보정합니다.",
     34,
     canvasHeight - 20,
   );
@@ -2370,8 +2370,8 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("움직이는 배포 블록을 아래 릴리스 층 위에 맞춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스/터치로 끌어 맞추고 떼거나, Space/Enter로 올립니다.", canvasWidth / 2, 228);
+    ctx.fillText("움직이는 릴리스 층을 아래 기준층 위에 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("어긋난 폭은 잘리고 다음 층이 좁아집니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4265,10 +4265,10 @@ const arcadeVariantCopy = {
     liveDetail: "지금 볼 긴급 알림과 그냥 보낼 소음 알림을 나눠 봅니다.",
   },
   stacker: {
-    finalKicker: "배포 정렬 결과",
-    liveTitle: "배포층 기록",
-    scoreLabel: "쌓은 배포층",
-    liveDetail: "손 위치선, 정렬권, 잘린 폭과 롤백 위험을 같이 봅니다.",
+    finalKicker: "적재탑 결과",
+    liveTitle: "릴리스 적재 기록",
+    scoreLabel: "살린 적재층",
+    liveDetail: "손 위치선, 정렬권, 잘린 폭과 다음 층 폭을 같이 봅니다.",
   },
   growth: {
     finalKicker: "작업장 기록",
