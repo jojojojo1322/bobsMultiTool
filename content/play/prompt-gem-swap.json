@@ -1,11 +1,11 @@
 {
   "slug": "prompt-gem-swap",
-  "title": "색돌 셋 맞추기",
-  "description": "색돌을 옆 칸으로 끌어 같은 색 셋을 맞춥니다. 막히면 보드 위 점선 한 수를 보고 바로 이어갈 수 있습니다.",
+  "title": "프롬프트 조각 맞추기",
+  "description": "목적, 맥락, 제약 같은 문장 조각을 옆 칸으로 끌어 같은 역할 셋을 맞추는 1분 퍼즐입니다. 막히면 보드 위 점선 한 수를 보고 바로 이어갑니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-27",
-  "shareText": "색돌 셋 맞추기를 해봤다. 셋만 맞추면 되는데 자꾸 한 칸이 아쉽다.",
+  "shareText": "프롬프트 조각 맞추기를 해봤다. 좋은 질문은 조각 위치부터 다르게 보인다.",
   "order": 6,
   "relatedBlogSlugs": [
     "gem-swap-hint-note",
@@ -18,22 +18,20 @@
   ],
   "arcade": {
     "variant": "match-three",
-    "goal": "색돌을 옆 칸과 바꿔 같은 색 셋을 맞춥니다.",
-    "controls": "마우스로 색돌을 옆 칸으로 드래그합니다. 클릭 두 번이나 방향키/WASD + Space/Enter도 되고, 점선은 한 번 가능한 교환입니다.",
-    "playerLabel": "손",
+    "goal": "문장 조각을 옆 칸과 바꿔 목적, 맥락, 제약처럼 같은 역할 셋을 맞춥니다.",
+    "controls": "마우스로 조각을 옆 칸으로 드래그합니다. 클릭 두 번이나 방향키/WASD + Space/Enter도 되고, 점선은 가능한 교환입니다.",
+    "playerLabel": "초안",
     "goodLabels": [
-      "맑음",
-      "반짝",
-      "초록",
-      "노랑",
-      "파랑"
+      "목적",
+      "맥락",
+      "제약",
+      "검증"
     ],
     "badLabels": [
-      "흐림",
-      "금간",
-      "먼지",
-      "검정",
-      "삐끗"
+      "장황",
+      "중복",
+      "모호",
+      "군더더"
     ],
     "palette": {
       "background": "#1e1b2e",
@@ -45,70 +43,74 @@
   "endings": [
     {
       "id": "match",
-      "title": "손에 감김",
-      "description": "색이 잘 보였다. 생각보다 금방 이어진다.",
+      "title": "초안이 정리됨",
+      "description": "목적, 맥락, 제약이 보드 위에서 갈라졌다. 질문이 붐비기 전에 손이 먼저 정리했다.",
       "minScore": 20
     },
     {
       "id": "loose",
-      "title": "몇 개 섞임",
-      "description": "맞춘 것도 있고, 괜히 건드린 돌도 조금 있다.",
+      "title": "조금 섞임",
+      "description": "필요한 조각은 맞췄지만 장황한 조각도 조금 따라왔다. 다음 판은 역할을 먼저 보자.",
       "minScore": 10
     },
     {
       "id": "scatter",
-      "title": "돌 흩어짐",
-      "description": "눈에 띄는 걸 다 움직였다. 다음에는 한 박자 늦게 보자.",
+      "title": "초안이 흐림",
+      "description": "눈에 띄는 조각을 다 움직였다. 다음에는 같은 역할 셋이 보일 때만 바꾸자.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "보드 정리와 욕심 조절 퍼즐",
-    "planningIntent": "색돌 셋 맞추기는 색 맞추기를 단순 스왑으로 끝내지 말고 안정형 선택과 큰 콤보 욕심 사이의 갈등을 검토해야 한다.",
+    "gameMode": "프롬프트 역할 조각을 맞추는 보드 정리 퍼즐",
+    "planningIntent": "프롬프트 조각 맞추기는 색 맞추기를 단순 스왑으로 끝내지 말고, 목적/맥락/제약 같은 역할 조각을 빠르게 읽고 장황한 조각을 덜 건드리는 보드 정리 판단으로 검토해야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "match three board game strategy risk reward design",
         "match 3 hint UX combo feedback",
-        "tile swap puzzle visual clarity mobile"
+        "tile swap puzzle visual clarity mobile",
+        "prompt engineering context constraints examples"
       ],
       "referenceTypes": [
-        "매치3 보드의 후보 힌트 표시",
-        "콤보 피드백과 보드 재배치 사례",
-        "모바일 드래그 스왑 입력 사례"
+        "매치3 보드의 인접 교환과 후보 힌트 표시",
+        "연쇄 피드백과 보드 재배치 사례",
+        "모바일 드래그 스왑 입력 사례",
+        "좋은 프롬프트를 목적, 맥락, 제약, 검증 기준으로 나누는 작성 사례"
       ],
       "dataOrSimulationNeeds": [
         "초기 보드의 유효 스왑 수와 막힘 확률",
-        "큰 콤보 후보와 안전한 매치 후보 비율"
+        "역할 조각 셋이 첫 5초 안에 읽히는 라벨 길이 비교",
+        "장황/중복 조각을 섞었을 때 초안이 흐려지는 체감 비교"
       ]
     },
     "systemQuestions": [
-      "유저가 지금 안전하게 지울지, 다음 큰 콤보를 준비할지 고민하는가?",
+      "첫 5초 안에 '일반 색 맞추기'가 아니라 '질문 조각을 역할별로 정리한다'가 읽히는가?",
+      "유저가 지금 안전하게 맞출 역할 조각과 다음 큰 흐름을 구분하는가?",
       "힌트는 답안지가 아니라 시야 회복 장치인가?",
       "보드가 섞일 때 유저가 납득할 이유가 있는가?",
-      "실패 후 다음 판에서 욕심 조절을 바꿔볼 수 있는가?",
-      "색 구분은 접근성까지 고려했는가?"
+      "실패 후 다음 판에서 장황한 조각을 덜 건드리게 되는가?",
+      "색 구분 없이도 목적, 맥락, 제약 라벨로 역할이 읽히는가?"
     ],
     "visualQuestions": [
-      "색돌은 장난감처럼 보일지, 작업대의 칩처럼 보일지 정해야 한다.",
-      "콤보 피드백은 화면을 덮지 않고 보드 위에서 끝나는가?",
+      "조각은 보석보다 초안 포스트잇이나 문장 칩처럼 보이는가?",
+      "역할이 맞은 피드백은 화면을 덮지 않고 보드 위에서 끝나는가?",
       "힌트선이 보드 읽기를 돕고 시선을 뺏지 않는가?",
-      "결과 화면은 성향을 남길 수 있는가?"
+      "결과 화면은 어떤 질문 조각을 자꾸 건드렸는지 남기는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "색돌 배치, 유효 스왑, 콤보 후보, 힌트 상태",
-      "progressionQuestion": "유저가 더 센 아이템 없이도 보드 읽기와 선행 배치로 성장하는가?",
+      "primaryResource": "문장 조각 배치, 역할 라벨, 유효 스왑, 힌트 상태",
+      "progressionQuestion": "유저가 더 센 아이템 없이도 목적/맥락/제약 조각을 더 빨리 읽는 쪽으로 성장하는가?",
       "failureQuestion": "막힘은 완전 랜덤인가, 이전 스왑의 결과로 읽을 수 있는가?",
       "recoveryQuestion": "힌트와 셔플은 숙련을 무효화하지 않고 다음 판단을 열어주는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "작은 공방의 색 칩 정리판",
-      "primarySurface": "테두리 강한 보드와 최소한의 콤보 표시",
-      "roughnessTarget": "반짝임보다 손으로 끌어 맞추는 물성",
-      "differenceFromGenericPlay": "색상 장식보다 스왑 가능한 칸과 보드 상태가 먼저 읽힌다.",
+      "metaphor": "초안 조각을 손으로 밀어 맞추는 작은 문서 작업대",
+      "primarySurface": "목적/맥락/제약 조각 보드, 얇은 힌트선, 작은 흐름 표시",
+      "roughnessTarget": "반짝임보다 포스트잇과 문장 칩을 손으로 끌어 맞추는 투박함",
+      "differenceFromGenericPlay": "보석 색상 장식보다 질문 조각의 역할 라벨과 가능한 교환이 먼저 읽힌다.",
       "mustAvoid": [
         "전체 화면 파티클",
         "과한 보상 배지와 긴 결과 문구"

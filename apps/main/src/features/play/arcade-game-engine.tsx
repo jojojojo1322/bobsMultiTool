@@ -2956,11 +2956,11 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.78)";
   ctx.font = "800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("색돌 보드", 36, 64);
+  ctx.fillText("조각 정리판", 36, 64);
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(hint ? "보이는 한 수 있음" : "콤보 만들기", 36, 88);
-  ctx.fillText(`콤보 ${state.gemCombo}`, 36, 110);
+  ctx.fillText(hint ? "보이는 한 수 있음" : "역할 셋 찾기", 36, 88);
+  ctx.fillText(state.gemCombo > 0 ? "흐름 이어짐" : "흐름 준비", 36, 110);
 
   const selectedIndex = state.gemDragStartIndex ?? state.gemSelected;
   const selectedTile = selectedIndex !== null ? state.gemTiles[selectedIndex] : null;
@@ -2971,7 +2971,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fill();
     ctx.fillStyle = "#f8fafc";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(state.gemDragStartIndex !== null ? "잡은 돌" : "고른 돌", 48, 156);
+    ctx.fillText(state.gemDragStartIndex !== null ? "잡은 조각" : "고른 조각", 48, 156);
     ctx.fillStyle = gemColor(content, selectedTile);
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(selectedTile.label.slice(0, 6), 48, 184);
@@ -3076,11 +3076,11 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("마우스로 옆 칸에 끌어 놓습니다. 점선은 한 번 가능한 교환입니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 옆 칸에 끌어 놓습니다. 점선은 가능한 교환입니다.", 34, canvasHeight - 20);
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("헛손이 많아졌습니다. 가까운 둘만 바꿔서 셋을 맞추세요.", 34, canvasHeight - 44);
+    ctx.fillText("초안이 흐려졌습니다. 가까운 조각만 바꿔 역할 셋을 맞추세요.", 34, canvasHeight - 44);
   }
 
   if (!state.started) {
@@ -3091,7 +3091,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("색돌을 옆 칸으로 끌어 셋을 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("문장 조각을 옆 칸으로 끌어 같은 역할 셋을 맞춥니다.", canvasWidth / 2, 202);
     ctx.fillText("마우스로 드래그하거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
   }
 }
@@ -3866,10 +3866,10 @@ const arcadeVariantCopy = {
     liveDetail: "이번 장 로그와 다음 단계 복권을 같이 봅니다.",
   },
   "match-three": {
-    finalKicker: "색돌 결과",
-    liveTitle: "한 수 기록",
-    scoreLabel: "맞춘 줄",
-    liveDetail: "움직인 돌과 이어진 줄이 다음 한 수의 단서로 남습니다.",
+    finalKicker: "조각 결과",
+    liveTitle: "초안 기록",
+    scoreLabel: "맞춘 조각",
+    liveDetail: "움직인 문장 조각과 이어진 역할이 다음 한 수의 단서로 남습니다.",
   },
   memory: {
     finalKicker: "기억 결과",

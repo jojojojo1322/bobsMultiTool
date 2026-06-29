@@ -332,8 +332,8 @@ function resolveGemMatches(content: ArcadeGameContent, state: GemPlayState, swap
       state.focus = clamp(state.focus - 8, 0, 100);
       state.gemCombo = 0;
       rememberGemHistory(state, {
-        label: "헛손",
-        detail: "셋이 안 맞음",
+        label: "역할 불일치",
+        detail: "같은 역할 셋이 안 맞음",
         score: -1,
       });
     }
@@ -348,8 +348,8 @@ function resolveGemMatches(content: ArcadeGameContent, state: GemPlayState, swap
   state.focus = clamp(state.focus + Math.max(1, goodCount - badCount), 0, 100);
   state.gemCombo += 1;
   rememberGemHistory(state, {
-    label: `${matches.size}개`,
-    detail: badCount ? "잡말도 섞임" : "깔끔하게 맞음",
+    label: badCount ? "초안 섞임" : "역할 정리",
+    detail: badCount ? "장황한 조각도 따라옴" : "같은 역할이 맞음",
     score: delta,
   });
   collapseGemBoard(content, state, matches);
