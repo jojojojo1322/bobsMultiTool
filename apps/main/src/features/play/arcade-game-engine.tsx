@@ -843,13 +843,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
           }
       : mode === "invader"
       ? {
-          noisyCloseTitle: "미끼 가까움",
+          noisyCloseTitle: "미끼 경고 정렬",
           noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
-          readyTitle: "표식 침입자",
+          readyTitle: "쏠 표식 침입자",
           readyDetail: (label: string) => `${label} 정렬됨`,
-          trackingTitle: "침입자 따라가기",
-          waitingTitle: "표식 기다림",
-          waitingDetail: "표식 침입자가 내려올 때 쏘기",
+          trackingTitle: "방어포 정렬",
+          waitingTitle: "침입자 대기",
+          waitingDetail: "표식 침입자가 방어선 쪽으로 내려올 때 쏘기",
         }
       : mode === "signal"
         ? {
@@ -1817,11 +1817,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
           }
         : mode === "invader"
           ? {
-              header: "표식 침입자만 차단",
+              header: "표식 침입자 방어포",
               footer: "하단 방어포를 마우스/터치로 끌어 표식 침입자에만 방어탄을 쏩니다. A/D와 Space도 됩니다.",
-              focusWarning: "미끼 경고까지 쏘면 방어선이 먼저 밀립니다. 표식 침입자만 보세요.",
+              focusWarning: "미끼 경고까지 쏘면 방어선이 먼저 밀립니다. 방어선 가까운 표식부터 보세요.",
               startLine1: "하단 방어포를 끌거나 A/D로 움직여 Space로 쏩니다.",
-              startLine2: "표식 침입자만 차단하고 미끼 경고는 흘려보냅니다.",
+              startLine2: "표식 침입자만 쏘고 주황 미끼 경고는 흘려보냅니다.",
             }
           : {
               header: "버그 단서만 막기",
@@ -4298,10 +4298,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "합 10으로 닫은 마감표와 넘친 새 일을 같이 봅니다.",
   },
   "deploy-invaders": {
-    finalKicker: "게이트 방어 결과",
-    liveTitle: "배포 게이트 기록",
+    finalKicker: "침입자 방어 결과",
+    liveTitle: "방어포 기록",
     scoreLabel: "차단한 침입자",
-    liveDetail: "차단한 표식 침입자와 미끼 경고에 흔들린 순간을 같이 봅니다.",
+    liveDetail: "차단한 표식 침입자, 놓친 방어선, 미끼 경고에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
     finalKicker: "옥상 요격 결과",

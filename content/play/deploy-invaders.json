@@ -1,11 +1,11 @@
 {
   "slug": "deploy-invaders",
-  "title": "배포 게이트 지키기",
-  "description": "위에서 줄지어 내려오는 침입자 중 표식이 붙은 것만 하단 방어포로 차단하는 1분 게이트 방어 게임입니다. 미끼 경고는 흘려보내고, 방어선 가까운 표식 침입자부터 조준합니다.",
+  "title": "표식 침입자 방어포",
+  "description": "위에서 줄지어 내려오는 침입자 중 표식이 붙은 것만 하단 방어포로 차단하는 1분 고정포 슈팅입니다. 미끼 경고는 흘려보내고, 방어선 가까운 표식 침입자부터 조준합니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-29",
-  "shareText": "배포 게이트 지키기를 해봤다. 미끼 경고보다 방어선 가까운 표식 침입자를 먼저 봐야 했다.",
+  "shareText": "표식 침입자 방어포를 해봤다. 미끼 경고보다 방어선 가까운 표식 침입자를 먼저 봐야 했다.",
   "order": 4,
   "relatedBlogSlugs": [
     "shooter-target-cue-note",
@@ -19,13 +19,13 @@
   ],
   "arcade": {
     "variant": "shooter",
-    "goal": "위에서 내려오는 침입자 줄에서 표식이 붙은 것만 차단합니다. 미끼 경고는 피하고 방어선이 밀리기 전에 하단 방어포로 천천히 골라 쏩니다.",
-    "controls": "마우스/터치로 누른 채 조준선을 끌면 방어탄을 발사합니다. 키보드는 A/D 또는 방향키로 방어포 이동, Space/Enter로 발사입니다. 미끼 가까움이 뜨면 쏘기보다 비켜 봅니다.",
+    "goal": "위에서 내려오는 침입자 줄에서 표식이 붙은 것만 차단합니다. 미끼 경고는 피하고 방어선이 밀리기 전에 하단 방어포로 골라 쏩니다.",
+    "controls": "마우스/터치로 누른 채 조준선을 끌면 방어탄을 발사합니다. 키보드는 A/D 또는 방향키로 방어포 이동, Space/Enter로 발사입니다. 미끼 경고가 조준선에 걸리면 쏘기보다 비켜 봅니다.",
     "playerLabel": "방어포",
     "goodLabels": [
-      "침입",
       "표식",
-      "게이트",
+      "침입",
+      "방어선",
       "차단",
       "검문"
     ],
@@ -46,14 +46,14 @@
   "endings": [
     {
       "id": "clear",
-      "title": "게이트 유지",
+      "title": "방어선 유지",
       "description": "표식 침입자만 차분히 골라냈다. 화면은 시끄러웠지만 방어포는 덜 흔들렸다.",
       "minScore": 20
     },
     {
       "id": "half",
-      "title": "게이트 균열",
-      "description": "헛발이 섞였지만 배포 방어선은 아직 무너지지 않았다.",
+      "title": "방어선 균열",
+      "description": "헛발이 섞였지만 하단 방어선은 아직 무너지지 않았다.",
       "minScore": 10
     },
     {
@@ -64,19 +64,20 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "하단 방어포로 표식 침입자를 차단하는 게이트 방어 슈팅",
-    "planningIntent": "배포 게이트 지키기는 빨간 물체를 무작정 쏘는 게임이 아니라, Space Invaders식 하단 방어포 구조 안에서 표식 침입자와 미끼 경고를 구분하고 방어선 가까운 표식부터 차단하는 판별 슈팅으로 검토해야 한다.",
+    "gameMode": "하단 방어포로 표식 침입자를 차단하는 고정포 방어 슈팅",
+    "planningIntent": "표식 침입자 방어포는 빨간 물체를 무작정 쏘는 게임이 아니라, Space Invaders식 하단 방어포 구조 안에서 표식 침입자와 미끼 경고를 구분하고 방어선 가까운 표식부터 차단하는 판별 슈팅으로 검토해야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Space Invaders player laser cannon aliens descend gameplay",
         "Space Invaders instructions defend bases descending invaders",
+        "fixed shooter bottom cannon descending enemies game design",
         "shooting gallery target decoy design",
         "arcade shooter target priority feedback",
-        "game UX warning signal readability",
-        "progressive disclosure game onboarding first screen"
+        "game UX warning signal readability"
       ],
       "referenceTypes": [
         "Space Invaders류 하단 방어포와 하강 침입자 구조",
+        "fixed shooter에서 플레이어 이동폭과 발사 타이밍이 긴장을 만드는 방식",
         "고정포 슈팅에서 하단 기지/방어선까지 남은 거리가 긴장을 만드는 방식",
         "슈팅 갤러리의 표적과 미끼 구분 사례",
         "하강형 아케이드 게임의 위험 거리 표시",
@@ -91,18 +92,18 @@
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '표식 침입자만 차단하고 미끼는 흘려보낸다'가 읽히는가?",
+      "첫 5초 안에 '표식 침입자만 쏘고 미끼 경고는 흘려보낸다'가 읽히는가?",
       "미끼 경고와 표식 침입자는 색상 외 형태와 움직임으로도 구분되는가?",
       "방어선에 가까운 침입자가 언제부터 우선순위로 느껴지는가?",
       "실패가 미끼 오발인지 늦은 조준인지 놓친 침입자인지 분명한가?",
       "다음 판에서 더 늦게 보고 쏘는 전략을 시도하게 되는가?"
     ],
     "visualQuestions": [
-      "하강하는 침입자 줄과 하단 방어선이 먼저 보이는가?",
+      "하강하는 침입자 줄과 하단 방어포, 방어선이 먼저 보이는가?",
       "표식과 위험 거리만 강하게 읽히고 배경 장식은 물러나는가?",
       "하단 방어포와 조준선은 투박하지만 입력 위치와 발사 방향을 확실히 알려주는가?",
       "결과는 발사량보다 표식 판별과 미끼 오발 여부를 남기는가?",
-      "배포 게이트는 추상 점수판이 아니라 침입자가 밀고 내려오는 하단 방어선처럼 보이는가?"
+      "릴리스 게이트는 추상 점수판이 아니라 침입자가 밀고 내려오는 하단 방어선처럼 보이는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
@@ -115,8 +116,8 @@
       "recoveryQuestion": "짧은 재시작과 표식 표시가 다음 조준 순서를 바꾸게 하는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "낡은 배포 게이트 앞 하단 방어포와 네모난 침입자 열",
-      "primarySurface": "세로로 내려오는 표식 침입자 줄, 하단 배포 게이트 방어선, 작은 미끼 오발 기록",
+      "metaphor": "낡은 릴리스 게이트 앞 하단 방어포와 네모난 침입자 열",
+      "primarySurface": "세로로 내려오는 표식 침입자 줄, 하단 릴리스 게이트 방어선, 작은 미끼 오발 기록",
       "roughnessTarget": "깨끗한 대시보드보다 네모난 침입자, 굵은 방어선, 직선 조준선의 거친 대비",
       "differenceFromGenericPlay": "설명 카드보다 내려오는 침입자 줄과 방어선까지의 거리가 화면을 지배한다.",
       "mustAvoid": [
