@@ -3745,7 +3745,7 @@ function drawBrickLandingGuide(state: GameState, ctx: CanvasRenderingContext2D, 
   ctx.fillStyle = "#f8fafc";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(catchable ? "받을 자리" : "패들 이동", labelX, paddleY - 28);
+  ctx.fillText(catchable ? "패치 자리" : "패들 이동", labelX, paddleY - 28);
   ctx.restore();
 }
 
@@ -3797,7 +3797,7 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
   ctx.textAlign = "left";
   ctx.fillText(`${state.bricks.filter((brick) => brick.alive).length}개 남음`, 24, canvasHeight - 22);
   ctx.textAlign = "right";
-  ctx.fillText("착지선을 보고 마우스/터치로 패들을 맞춥니다.", canvasWidth - 24, canvasHeight - 22);
+  ctx.fillText("착지선을 보고 마우스/터치로 패치 패들을 맞춥니다.", canvasWidth - 24, canvasHeight - 22);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.68)";
@@ -3807,8 +3807,8 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 172);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("패들을 움직일 곳을 누르면 바로 공을 보냅니다.", canvasWidth / 2, 208);
-    ctx.fillText("벽돌을 다급하게 쫓지 말고, 공이 돌아올 자리를 먼저 잡으세요.", canvasWidth / 2, 234);
+    ctx.fillText("패치 패들을 움직일 곳을 누르면 바로 공을 보냅니다.", canvasWidth / 2, 208);
+    ctx.fillText("버그 벽돌을 다급하게 쫓지 말고, 공이 돌아올 자리를 먼저 잡으세요.", canvasWidth / 2, 234);
   } else if (!state.brickLaunched) {
     ctx.fillStyle = "rgba(15,23,42,0.5)";
     ctx.fillRect(0, canvasHeight - 116, canvasWidth, 42);
@@ -3884,10 +3884,10 @@ const arcadeVariantCopy = {
     liveDetail: "눌렀다 뗀 리듬과 다음 통풍구 높이선을 같이 봅니다.",
   },
   "brick-breaker": {
-    finalKicker: "벽돌 결과",
-    liveTitle: "착지 기록",
-    scoreLabel: "깬 벽돌",
-    liveDetail: "공이 내려올 자리와 패들 위치를 다시 봅니다.",
+    finalKicker: "버그 벽돌 결과",
+    liveTitle: "패치 착지 기록",
+    scoreLabel: "정리한 버그",
+    liveDetail: "공이 내려올 자리와 패치 패들 위치를 다시 봅니다.",
   },
   snake: {
     finalKicker: "경로 결과",
