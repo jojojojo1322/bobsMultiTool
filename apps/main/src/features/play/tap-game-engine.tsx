@@ -6,6 +6,14 @@ import { Button } from "@/components/ui/button";
 import type { TapGameContent } from "@/features/content/types";
 import { PlayResultLinks, type PlayResultLink } from "@/features/play/result-links";
 
+type TapHistoryItem = {
+  label: string;
+  correct: boolean;
+  points: number;
+  action: "tap" | "skip";
+  expectedAction: "tap" | "skip";
+};
+
 export function TapGameEngine({
   content,
   relatedBlogLinks,
@@ -18,20 +26,22 @@ export function TapGameEngine({
   const [index, setIndex] = React.useState(0);
   const [score, setScore] = React.useState(0);
   const [streak, setStreak] = React.useState(0);
-  const [history, setHistory] = React.useState<Array<{ label: string; correct: boolean; points: number }>>([]);
+  const [history, setHistory] = React.useState<TapHistoryItem[]>([]);
   const [shareState, setShareState] = React.useState<"idle" | "copied" | "shared">("idle");
   const current = content.targets[index];
   const isFinished = index >= content.targets.length;
+  const totalItems = content.targets.length;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
 
   function answer(action: "tap" | "skip") {
     if (!current) return;
     const shouldTap = current.kind === "target";
+    const expectedAction = shouldTap ? "tap" : "skip";
     const correct = action === "tap" ? shouldTap : !shouldTap;
     const points = correct ? current.points + Math.min(streak, 4) : -2;
     setScore((value) => Math.max(0, value + points));
     setStreak((value) => (correct ? value + 1 : 0));
-    setHistory((items) => [...items, { label: current.label, correct, points }]);
+    setHistory((items) => [...items, { label: current.label, correct, points, action, expectedAction }]);
     setIndex((value) => value + 1);
     setShareState("idle");
   }
@@ -46,7 +56,7 @@ export function TapGameEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n점수: ${score}`;
+    const text = `${content.shareText}\n판정 점수: ${score}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -65,18 +75,20 @@ export function TapGameEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Tap Game</p>
+            <p className="text-xs font-medium text-muted-foreground">탭 판정</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-right">
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">점수</p>
+              <p className="text-xs text-muted-foreground">판정 점수</p>
               <p className="text-sm font-semibold tabular-nums">{score}</p>
             </div>
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">상태</p>
-              <p className="text-sm font-semibold">{isFinished ? "완료" : current ? "판단 중" : "대기"}</p>
+              <p className="text-xs text-muted-foreground">진행</p>
+              <p className="text-sm font-semibold tabular-nums">
+                {isFinished ? `${totalItems}/${totalItems}` : `${index + 1}/${totalItems}`}
+              </p>
             </div>
           </div>
         </div>
@@ -85,7 +97,7 @@ export function TapGameEngine({
       {isFinished ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-result>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Result</p>
+            <p className="text-xs font-medium text-muted-foreground">결과</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{ending.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -100,16 +112,19 @@ export function TapGameEngine({
             </div>
             <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
           </div>
-          <TapHistory history={history} />
+          <TapHistory content={content} history={history} />
         </div>
       ) : current ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-state={current.id}>
           <div>
             <div className="rounded-lg border bg-background p-6 text-center">
               <Target className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">지금 판단할 항목</p>
+              <p className="mt-4 text-xs font-medium text-muted-foreground">현재 신호</p>
               <h3 className="mt-2 text-3xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted-foreground">{current.detail}</p>
+              <p className="mt-4 text-xs text-muted-foreground">
+                기준: {content.targetLabel} / {content.decoyLabel}
+              </p>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <Button className="h-14 text-base" onClick={() => answer("tap")} data-play-action="tap">
@@ -120,30 +135,36 @@ export function TapGameEngine({
               </Button>
             </div>
           </div>
-          <TapHistory history={history} />
+          <TapHistory content={content} history={history} />
         </div>
       ) : null}
     </section>
   );
 }
 
-function TapHistory({ history }: { history: Array<{ label: string; correct: boolean; points: number }> }) {
+function TapHistory({ content, history }: { content: TapGameContent; history: TapHistoryItem[] }) {
+  function labelForAction(action: "tap" | "skip") {
+    return action === "tap" ? content.targetLabel : content.decoyLabel;
+  }
+
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
-      <p className="text-sm font-semibold">판단 흐름</p>
+      <p className="text-sm font-semibold">선택 기준</p>
       {history.length ? (
         <ol className="mt-3 space-y-2">
           {history.slice(-8).map((item, index) => (
             <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
               <p className="text-sm font-medium">{item.label}</p>
               <p className={item.correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
-                {item.correct ? "정답" : "오답"} / {item.points > 0 ? `+${item.points}` : item.points}
+                {item.correct
+                  ? `선택: ${labelForAction(item.action)} / 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
+                  : `선택: ${labelForAction(item.action)} / 기준: ${labelForAction(item.expectedAction)}`}
               </p>
             </li>
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">판단하면 결과 흐름이 바로 보입니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">하나를 누르면 선택한 기준이 바로 남습니다.</p>
       )}
     </aside>
   );
