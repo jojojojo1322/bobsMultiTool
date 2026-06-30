@@ -344,11 +344,11 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
     if (content.slug === "indexing-waiting-room") {
       return {
         kicker: "첫 5초 안내",
-        title: "지금 확인할 색인 대기표와 기다릴 행동을 나누는 체크판",
-        firstLook: "색인 대기표, 확인 도장, 대기 도장, sitemap/canonical 체크줄을 먼저 봅니다.",
-        firstMove: "첫 움직임은 도장입니다. 라이브 200, sitemap 읽힘, canonical, URL 검사는 확인하고 새로고침이나 재제출 충동은 대기로 넘깁니다.",
-        pacingText: `${content.durationLabel} 동안 제출 보장 같은 환상을 걷어내고 지금 확인 가능한 운영 신호만 고릅니다.`,
-        recordText: "기록은 검색 순위 상상이 아니라 어떤 대기표를 확인했는지 남기는 운영 메모입니다.",
+        title: "검색 색인 대기표에 확인 완료와 기다림 도장을 나누는 판",
+        firstLook: "색인 대기표, 확인 완료 도장, 기다림 도장, 200/sitemap/canonical/URL 검사 체크줄을 먼저 봅니다.",
+        firstMove: "첫 움직임은 도장입니다. 라이브 200, sitemap 발견 힌트, canonical, URL 검사는 확인 완료로 찍고 새로고침이나 재제출 충동은 기다림으로 넘깁니다.",
+        pacingText: `${content.durationLabel} 동안 제출 보장 같은 환상을 걷어내고 지금 확인 가능한 운영 신호와 기다릴 행동을 나눕니다.`,
+        recordText: "기록은 검색 순위 상상이 아니라 오늘 어떤 대기표를 확인했고 무엇을 기다릴지 남기는 운영 메모입니다.",
       };
     }
     if (content.slug === "meeting-escape") {
