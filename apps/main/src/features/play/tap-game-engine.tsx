@@ -36,9 +36,9 @@ export function TapGameEngine({
   const isMeetingExitBoard = content.slug === "meeting-escape";
   const usesTicketSurface = isAiReviewStampboard || isIndexingWaitingRoom || isMeetingExitBoard;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
-  const scoreLabel = isAiReviewStampboard ? "검수 점수" : isIndexingWaitingRoom ? "운영 점수" : isMeetingExitBoard ? "결정 점수" : "판정 점수";
+  const scoreLabel = isAiReviewStampboard ? "검수 점수" : isIndexingWaitingRoom ? "운영 점수" : isMeetingExitBoard ? "종료 점수" : "판정 점수";
   const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "대기표" : isMeetingExitBoard ? "전표" : "진행";
-  const frameKicker = isAiReviewStampboard ? "AI 근거 전표 도장대" : isIndexingWaitingRoom ? "검색 색인 대기표 도장판" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
+  const frameKicker = isAiReviewStampboard ? "AI 근거 전표 도장대" : isIndexingWaitingRoom ? "검색 색인 대기표 도장판" : isMeetingExitBoard ? "회의록 끝내기 도장판" : "탭 판정";
   const aiReviewChecklist = ["파일 경로", "실행 명령", "원출처", "한계/비밀"];
   const indexingTicketChecklist = ["200 열림", "Sitemap", "Canonical", "URL 검사"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
@@ -192,9 +192,9 @@ export function TapGameEngine({
               </div>
             ) : isMeetingExitBoard ? (
               <div className="rounded-lg border bg-stone-50 p-4 text-left shadow-inner dark:bg-stone-950/30">
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
-                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-300">회의 전표</p>
-                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">결정 / 대기</span>
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-zinc-300 pb-3 dark:border-zinc-700">
+                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-300">회의록 한 줄</p>
+                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">끝내기 / 대기칸</span>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
                   {meetingCloseChecklist.map((item) => (
@@ -203,19 +203,19 @@ export function TapGameEngine({
                     </span>
                   ))}
                 </div>
-                <div className="mt-4 border-l-4 border-stone-700 bg-background p-4">
-                  <p className="text-xs font-medium text-muted-foreground">현재 발언</p>
+                <div className="mt-4 border-l-4 border-zinc-800 bg-background p-4 shadow-sm dark:border-zinc-300">
+                  <p className="text-xs font-medium text-muted-foreground">지금 회의록에 남을 발언</p>
                   <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-normal">{current.label}</h3>
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
                 </div>
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
-                  <div className="rounded-sm border bg-background px-3 py-2">
-                    <p className="font-semibold text-foreground">결정 칸: {content.targetLabel}</p>
-                    <p className="mt-1 leading-5">담당자, 기한, 다음 행동, 범위 축소가 있으면 닫습니다.</p>
+                  <div className="rounded-sm border bg-background px-3 py-2 shadow-[inset_0_0_0_1px_rgba(39,39,42,0.04)]">
+                    <p className="font-semibold text-foreground">닫힌 칸: {content.targetLabel}</p>
+                    <p className="mt-1 leading-5">담당자, 기한, 다음 행동, 범위 축소가 있으면 회의록에 남기고 닫습니다.</p>
                   </div>
-                  <div className="rounded-sm border bg-background px-3 py-2">
-                    <p className="font-semibold text-foreground">대기 칸: {content.decoyLabel}</p>
-                    <p className="mt-1 leading-5">더 맞춰보기, 느낌 공유, 다음 회의, 한마디 더는 대기합니다.</p>
+                  <div className="rounded-sm border border-dashed bg-background px-3 py-2">
+                    <p className="font-semibold text-foreground">주차 칸: {content.decoyLabel}</p>
+                    <p className="mt-1 leading-5">더 맞춰보기, 느낌 공유, 다음 회의, 한마디 더는 아직 주차합니다.</p>
                   </div>
                 </div>
               </div>
@@ -291,7 +291,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
             : isIndexingWaitingRoom
               ? "도장을 찍으면 확인한 대기표와 기준이 여기에 남습니다."
               : isMeetingExitBoard
-                ? "도장을 찍으면 발언과 결정/대기 칸이 여기에 남습니다."
+                ? "도장을 찍으면 발언과 끝내기/대기칸 기준이 여기에 남습니다."
               : "하나를 누르면 선택한 기준이 바로 남습니다."}
         </p>
       )}

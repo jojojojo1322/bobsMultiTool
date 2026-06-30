@@ -52,10 +52,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current live discovery snapshot:
-  - Sitemap URLs: `149`
-  - Feed items: `138`
+  - Sitemap URLs: `151`
+  - Feed items: `140`
   - Blog posts: `114`
-  - Play entries: `24`
+  - Play entries: `26`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
@@ -69,9 +69,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
   - Representative URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
-  - Latest submitted URL count: `149`
+  - Latest submitted URL count: `151`
   - Latest response status: `200`
-  - The 149-URL live sitemap set was submitted after the Play canvas upgrade, information-content expansion, arcade count wording cleanup, latest Play cue updates, and the prior development Blog date distribution update.
+  - The 151-URL live sitemap set was submitted after the Play canvas upgrade, information-content expansion, arcade count wording cleanup, latest Play cue updates, Naver verification confirmation, indexing waiting room update, and workshop growth ledger update.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -81,7 +81,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest feed item counts: `138`, `138`
+  - Latest feed item counts: `140`, `140`
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -91,7 +91,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Search Console has started showing impressions (`3`) in the `3개월` performance report, but clicks remain `0`.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`149`), and indexing is still unresolved.
+- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`151`), and indexing is still unresolved.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Naver Search Advisor collection/indexing state still needs a signed-in follow-up pass after deployment and submission propagation.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
