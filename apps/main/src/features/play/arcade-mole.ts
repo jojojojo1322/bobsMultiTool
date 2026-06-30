@@ -134,10 +134,10 @@ export function moleAvoidTarget(state: MoleTargetState) {
 export function moleWhackOutcome(target: MoleTarget): MoleWhackOutcome {
   const timing = moleTargetTiming(target);
   if (target.good) {
-    if (timing.remaining >= 0.48) return { score: 4, focus: 4, detail: "핵심 알림 빠르게 처리" };
-    if (timing.remaining <= 0.2) return { score: 2, focus: 1, detail: "늦게라도 핵심 잡음" };
-    return { score: 3, focus: 3, detail: "지금 볼 것만 잡음" };
+    if (timing.remaining >= 0.48) return { score: 4, focus: 4, detail: "긴급 카드 빠르게 확인" };
+    if (timing.remaining <= 0.2) return { score: 2, focus: 1, detail: "늦게라도 긴급 확인" };
+    return { score: 3, focus: 3, detail: "지금 볼 카드만 확인" };
   }
-  if (timing.urgency > 0.72) return { score: -5, focus: -13, detail: "사라질 소음에 손이 감" };
-  return { score: -4, focus: -11, detail: "굳이 잡았음" };
+  if (timing.urgency > 0.72) return { score: -5, focus: -13, detail: "꺼둘 소음에 손이 감" };
+  return { score: -4, focus: -11, detail: "소음 카드를 굳이 누름" };
 }

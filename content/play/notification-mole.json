@@ -1,11 +1,11 @@
 {
   "slug": "notification-mole",
-  "title": "긴급 알림 선별판",
-  "description": "알림판에서 튀어나오는 업무 알림 중 지금 볼 긴급 알림만 잡고, 광고·잡담·중복 같은 소음 알림은 그냥 지나가게 두는 1분 캔버스 게임입니다. 잡기/두기 배지와 남은 시간 링을 보고 급한 알림부터 고릅니다.",
+  "title": "긴급 알림 스위치보드",
+  "description": "낡은 알림 스위치보드에서 올라오는 업무 알림 중 지금 확인할 긴급 카드만 누르고, 광고·잡담·중복 같은 소음 카드는 꺼진 채 지나가게 두는 1분 캔버스 게임입니다. NOW 배지와 남은 시간 링을 보고 곧 사라질 긴급 카드부터 확인합니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-30",
-  "shareText": "긴급 알림 선별판을 해봤다. 손이 급할수록 소음 알림을 그냥 보내는 게 어려웠다.",
+  "shareText": "긴급 알림 스위치보드를 해봤다. 손이 급할수록 소음 카드를 그냥 보내는 게 어려웠다.",
   "order": 16,
   "relatedBlogSlugs": [
     "game-feedback-before-score-note",
@@ -20,107 +20,109 @@
   ],
   "arcade": {
     "variant": "mole",
-    "goal": "긴급 알림은 남은 시간 링이 줄기 전에 잡고, 소음 알림은 지나가게 둡니다. 보드의 잡기/두기 배지가 다음 판단을 알려줍니다.",
-    "controls": "마우스로 알림을 누르거나 방향키/WASD로 칸을 옮겨 Space/Enter로 잡습니다. 빈칸에서 Space를 누르면 우선 잡을 긴급 알림으로 이동합니다. 소음 알림은 누르지 않는 편이 낫습니다.",
-    "playerLabel": "커서",
+    "goal": "긴급 알림은 남은 시간 링이 줄기 전에 확인하고, 소음 알림은 꺼진 채 지나가게 둡니다. 보드의 NOW/MUTE 배지가 다음 판단을 알려줍니다.",
+    "controls": "마우스로 긴급 카드를 누르거나 방향키/WASD로 슬롯을 옮겨 Space/Enter로 확인합니다. 빈칸에서 Space를 누르면 우선 확인할 긴급 카드로 이동합니다. 소음 카드는 누르지 않는 편이 낫습니다.",
+    "playerLabel": "선별 커서",
     "goodLabels": [
-      "지금",
-      "확인",
-      "답장",
-      "결정",
-      "짧게"
+      "장애",
+      "결제",
+      "배포",
+      "보안",
+      "고객"
     ],
     "badLabels": [
       "광고",
       "잡담",
       "중복",
-      "급한척",
-      "핑"
+      "홍보",
+      "봇핑"
     ],
     "palette": {
-      "background": "#16181f",
-      "primary": "#f59e0b",
-      "accent": "#86efac",
-      "danger": "#fb7185"
+      "background": "#1f2118",
+      "primary": "#d6a13a",
+      "accent": "#9bcf7a",
+      "danger": "#d1665f"
     }
   },
   "endings": [
     {
       "id": "quiet",
-      "title": "알림 조용함",
-      "description": "지금 볼 것만 잡았다. 손이 바빠도 머리는 덜 시끄럽다.",
+      "title": "조용한 스위치보드",
+      "description": "지금 볼 카드만 확인했다. 손이 바빠도 머리는 덜 시끄럽다.",
       "minScore": 20
     },
     {
       "id": "buzz",
-      "title": "조금 시끄러움",
-      "description": "핵심은 잡았지만 알림 몇 개에 끌려갔다.",
+      "title": "몇 칸은 켜진 채 남음",
+      "description": "핵심은 확인했지만 소음 카드 몇 개에 손이 끌려갔다.",
       "minScore": 10
     },
     {
       "id": "flood",
-      "title": "알림 홍수",
-      "description": "전부 치려다 집중이 먼저 닳았다.",
+      "title": "스위치보드 과열",
+      "description": "전부 누르려다 집중이 먼저 닳았다.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "긴급 알림과 소음 알림을 나누는 우선순위 선별 게임",
-    "planningIntent": "긴급 알림 선별판은 튀어나온 것을 많이 치는 게임이 아니라, 팝업 표적 반응 구조 안에서 지금 처리할 알림과 소음 알림을 나누는 우선순위 판별 게임으로 검토해야 한다. Carbon 알림 패턴처럼 알림은 관련성, 시의성, 다음 행동이 분명해야 하고, alert fatigue 자료처럼 낮은 가치의 알림이 많을수록 중요한 알림을 놓치기 쉬우므로, 이 게임은 빠른 손보다 소음 알림을 참는 판단을 먼저 보여줘야 한다.",
+    "gameMode": "긴급 카드와 소음 카드를 나누는 알림 스위치보드 선별 게임",
+    "planningIntent": "긴급 알림 스위치보드는 튀어나온 것을 많이 누르는 게임이 아니라, 팝업 표적 반응 구조 안에서 지금 확인할 알림과 꺼둘 알림을 나누는 우선순위 판별 게임으로 검토해야 한다. Carbon 알림 패턴처럼 알림은 관련성, 시의성, 정보성, 다음 행동이 분명해야 하고, AHRQ alert fatigue 자료처럼 낮은 가치의 알림이 많을수록 중요한 알림을 놓치기 쉬우므로, 이 게임은 빠른 손보다 소음 카드를 누르지 않고 긴급 카드를 먼저 확인하는 판단을 먼저 보여줘야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Whac-A-Mole arcade game pop up target reaction time rules",
+        "IBM Carbon notification pattern relevant timely actionable informative",
         "notification priority design urgency visual hierarchy",
         "alert fatigue notification overload actionable alerts",
+        "AHRQ alert fatigue low value alerts important alerts",
         "target distractor reaction game visual feedback",
         "signal detection target distractor UX"
       ],
       "referenceTypes": [
         "팝업 표적, 제한 시간, 누르지 말아야 할 방해 표식이 함께 나오는 반응 게임 구조",
-        "Carbon notification pattern의 관련성, 시의성, 정보성 기준",
+        "Carbon notification pattern의 관련성, 시의성, 정보성, 실행 가능성 기준",
         "AHRQ alert fatigue 자료의 low-value alert와 중요한 alert 구분 문제",
         "긴급/보통/소음 알림의 우선순위와 시각적 방해도 차이",
         "표적/비표적을 동시에 보여주는 신호-소음 판별 UI",
         "마우스/터치 조준과 시간 링 피드백 사례",
-        "알림 피로에서 실행 가능한 알림과 무시해야 할 알림을 나누는 기준"
+        "알림 피로에서 실행 가능한 알림과 꺼둬야 할 알림을 나누는 기준"
       ],
       "dataOrSimulationNeeds": [
         "긴급 알림 체류 시간별 명중 가능성",
-        "소음 알림을 눌렀을 때 페널티가 과도하지 않은지 비교",
-        "잡기/두기 배지 없이도 라벨과 형태만으로 긴급/소음 구분이 되는지 확인",
+        "소음 카드를 눌렀을 때 페널티가 과도하지 않은지 비교",
+        "NOW/MUTE 배지 없이도 라벨과 형태만으로 긴급/소음 구분이 되는지 확인",
         "여러 알림이 동시에 튀어나올 때 남은 시간 링이 우선순위를 충분히 알려주는지 비교"
       ]
     },
     "systemQuestions": [
-      "유저가 빠르게 누르는 속도보다 소음 알림을 참는 판단을 배우는가?",
-      "긴급 알림과 소음 알림은 색상 외 라벨, NOW/MUTE 스탬프, 잡기/두기 배지로도 구분되는가?",
-      "남은 시간 링은 어느 긴급 알림을 먼저 잡아야 하는 압박으로 읽히는가?",
-      "실패가 조준 실수인지, 소음 알림을 누른 판별 실패인지 분명한가?",
-      "여러 긴급 알림이 동시에 뜰 때 가까운 것보다 곧 사라질 것을 먼저 보게 되는가?",
+      "유저가 빠르게 누르는 속도보다 소음 카드를 참는 판단을 배우는가?",
+      "긴급 카드와 소음 카드는 색상 외 라벨, NOW/MUTE 스탬프, 확인/꺼두기 배지로도 구분되는가?",
+      "남은 시간 링은 어느 긴급 카드를 먼저 확인해야 하는 압박으로 읽히는가?",
+      "실패가 조준 실수인지, 소음 카드를 누른 판별 실패인지 분명한가?",
+      "여러 긴급 카드가 동시에 뜰 때 가까운 것보다 곧 사라질 것을 먼저 보게 되는가?",
       "다음 판에서 긴급 알림 우선순위를 바꿔볼 수 있는가?"
     ],
     "visualQuestions": [
-      "알림판은 중앙에 두고 기록과 설명은 가장자리로 물러나는가?",
-      "잡기/두기 표시와 시간 링만 강하게 읽히는가?",
-      "조준선은 투박하지만 입력 위치와 우선 표적을 확실히 알려주는가?",
-      "결과는 무작정 누른 수보다 긴급 선택과 소음 억제를 남기는가?",
-      "알림판 구멍, NOW/MUTE 스탬프, 선별 커서가 같은 캔버스 안에서도 긴급 알림 선별 성격을 먼저 보여주는가?"
+      "알림 스위치보드는 중앙에 두고 기록과 설명은 가장자리로 물러나는가?",
+      "NOW/MUTE 표시와 시간 링만 강하게 읽히는가?",
+      "선별 커서는 투박하지만 입력 위치와 우선 카드를 확실히 알려주는가?",
+      "결과는 무작정 누른 수보다 긴급 확인과 소음 억제를 남기는가?",
+      "알림 슬롯, NOW/MUTE 스탬프, 선별 커서가 같은 캔버스 안에서도 긴급 알림 선별 성격을 먼저 보여주는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "긴급 알림 우선순위, 소음 알림 억제, 남은 시간 링, 조준 위치",
-      "progressionQuestion": "성장은 공격력보다 긴급 알림을 먼저 읽고 소음 알림을 참는 판단으로 느껴지는가?",
-      "failureQuestion": "놓침, 오발, 소음 알림 터치가 서로 다른 피드백으로 남는가?",
-      "recoveryQuestion": "짧은 재시작과 우선 표적 힌트가 다음 조준 전략을 바꾸게 하는가?"
+      "primaryResource": "긴급 알림 우선순위, 소음 카드 억제, 남은 시간 링, 선별 커서 위치",
+      "progressionQuestion": "성장은 공격력보다 긴급 카드를 먼저 읽고 소음 카드를 참는 판단으로 느껴지는가?",
+      "failureQuestion": "놓침, 오발, 소음 카드 터치가 서로 다른 피드백으로 남는가?",
+      "recoveryQuestion": "짧은 재시작과 우선 카드 힌트가 다음 선별 전략을 바꾸게 하는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "낡은 알림판 구멍에서 튀어나오는 긴급 알림과 소음 알림",
-      "primarySurface": "큰 알림 구멍 보드, 잡기/두기 배지, NOW/MUTE 스탬프, 가장자리의 작은 선택 기록",
-      "roughnessTarget": "깨끗한 대시보드보다 표적 구멍, 굵은 라벨, 투박한 선별 커서, 거친 시간 링",
-      "differenceFromGenericPlay": "설명 카드보다 튀어나오는 긴급 알림, 소음 알림, 남은 시간 링이 화면을 지배한다.",
+      "metaphor": "낡은 알림 스위치보드에서 올라오는 긴급 카드와 꺼둘 소음 카드",
+      "primarySurface": "큰 9칸 알림 슬롯 보드, 확인/꺼두기 배지, NOW/MUTE 스탬프, 가장자리의 작은 선택 기록",
+      "roughnessTarget": "깨끗한 대시보드보다 낡은 슬롯, 굵은 카드 라벨, 투박한 선별 커서, 거친 시간 링",
+      "differenceFromGenericPlay": "설명 카드보다 올라오는 긴급 카드, 꺼둘 소음 카드, 남은 시간 링이 화면을 지배한다.",
       "mustAvoid": [
         "버튼만 누르는 퀴즈형 슈팅",
         "표적을 가리는 배경 장식",

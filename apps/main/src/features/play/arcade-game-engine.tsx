@@ -804,7 +804,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "minesweeper") return "열기";
   if (content.arcade.variant === "match-three") return "고르기";
   if (content.arcade.variant === "stacker") return "적재";
-  if (content.arcade.variant === "mole") return "잡기";
+  if (content.arcade.variant === "mole") return "확인";
   if (content.arcade.variant === "memory") return "입력";
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
@@ -2664,8 +2664,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   const glow = ctx.createRadialGradient(moleBoardX + moleBoardWidth / 2, 210, 30, moleBoardX + moleBoardWidth / 2, 210, 330);
-  glow.addColorStop(0, "rgba(245,158,11,0.18)");
-  glow.addColorStop(1, "rgba(245,158,11,0)");
+  glow.addColorStop(0, "rgba(214,161,58,0.16)");
+  glow.addColorStop(1, "rgba(214,161,58,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -2682,34 +2682,34 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     const priorityCenter = moleHoleCenter(priorityMole.hole);
     ctx.save();
     ctx.setLineDash([8, 8]);
-    ctx.strokeStyle = "rgba(134,239,172,0.68)";
+    ctx.strokeStyle = "rgba(155,207,122,0.68)";
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(cursorCenter.x, cursorCenter.y + 16);
     ctx.lineTo(priorityCenter.x, priorityCenter.y - 34);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = "rgba(134,239,172,0.95)";
+    ctx.fillStyle = "rgba(155,207,122,0.95)";
     ctx.beginPath();
     ctx.roundRect(priorityCenter.x - 35, priorityCenter.y - 98, 70, 22, 11);
     ctx.fill();
     ctx.fillStyle = "#052e16";
     ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("우선 잡기", priorityCenter.x, priorityCenter.y - 83);
+    ctx.fillText("우선 확인", priorityCenter.x, priorityCenter.y - 83);
     ctx.restore();
   }
 
   for (let hole = 0; hole < moleColumns * moleRows; hole += 1) {
     const center = moleHoleCenter(hole);
     const hasCursor = state.moleCursor === hole;
-    ctx.fillStyle = "rgba(0,0,0,0.34)";
+    ctx.fillStyle = "rgba(0,0,0,0.32)";
     ctx.beginPath();
-    ctx.ellipse(center.x, center.y + 18, moleHoleSize / 2, 18, 0, 0, Math.PI * 2);
+    ctx.roundRect(center.x - moleHoleSize / 2, center.y + 2, moleHoleSize, 34, 8);
     ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.07)";
+    ctx.fillStyle = "rgba(255,255,255,0.065)";
     ctx.beginPath();
-    ctx.ellipse(center.x, center.y + 16, moleHoleSize / 2 - 6, 12, 0, 0, Math.PI * 2);
+    ctx.roundRect(center.x - moleHoleSize / 2 + 7, center.y + 8, moleHoleSize - 14, 21, 5);
     ctx.fill();
 
     const target = activeMoleAt(state, hole);
@@ -2719,7 +2719,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       const isPriority = priorityMole?.id === target.id;
       const isAvoid = avoidMole?.id === target.id;
       const urgencyAlpha = (0.36 + timing.urgency * 0.44).toFixed(2);
-      ctx.strokeStyle = target.good ? `rgba(134,239,172,${urgencyAlpha})` : `rgba(251,113,133,${urgencyAlpha})`;
+      ctx.strokeStyle = target.good ? `rgba(155,207,122,${urgencyAlpha})` : `rgba(209,102,95,${urgencyAlpha})`;
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.arc(center.x, center.y + 10, moleHoleSize / 2 + 8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * timing.remaining);
@@ -2727,7 +2727,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.lineWidth = 1;
 
       if (isPriority || isAvoid) {
-        ctx.strokeStyle = isPriority ? "rgba(134,239,172,0.92)" : "rgba(251,113,133,0.86)";
+        ctx.strokeStyle = isPriority ? "rgba(155,207,122,0.92)" : "rgba(209,102,95,0.86)";
         ctx.lineWidth = isPriority ? 4 : 3;
         ctx.setLineDash(isPriority ? [] : [7, 7]);
         ctx.beginPath();
@@ -2740,7 +2740,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       const moleHeight = 42 * timing.pop;
       ctx.fillStyle = target.good ? accent : danger;
       ctx.beginPath();
-      ctx.roundRect(center.x - 28, center.y + 12 - moleHeight, 56, 44, 18);
+      ctx.roundRect(center.x - 31, center.y + 12 - moleHeight, 62, 44, 7);
       ctx.fill();
       ctx.strokeStyle = "rgba(255,255,255,0.38)";
       ctx.stroke();
@@ -2760,13 +2760,13 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.fillText(`${outcome.score > 0 ? "+" : ""}${outcome.score}`, center.x, center.y - 38);
 
       if (isPriority || isAvoid) {
-        ctx.fillStyle = isPriority ? "rgba(134,239,172,0.96)" : "rgba(251,113,133,0.94)";
+        ctx.fillStyle = isPriority ? "rgba(155,207,122,0.96)" : "rgba(209,102,95,0.94)";
         ctx.beginPath();
-        ctx.roundRect(center.x - 25, center.y - 70, 50, 18, 9);
+        ctx.roundRect(center.x - 31, center.y - 70, 62, 18, 7);
         ctx.fill();
         ctx.fillStyle = isPriority ? "#052e16" : "#fff7ed";
         ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-        ctx.fillText(isPriority ? "잡기" : "두기", center.x, center.y - 57);
+        ctx.fillText(isPriority ? "확인" : "꺼두기", center.x, center.y - 57);
       }
     }
 
@@ -2793,23 +2793,23 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("지금 뜬 알림", panelX + 18, 112);
+  ctx.fillText("열린 알림 카드", panelX + 18, 112);
   ctx.font = "900 28px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
   ctx.fillStyle = accent;
   ctx.fillText(`${goodMoles}`, panelX + 18, 152);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`소음 ${noiseMoles}`, panelX + 66, 149);
+  ctx.fillText(`꺼둘 카드 ${noiseMoles}`, panelX + 66, 149);
   ctx.fillText(`곧 사라질 긴급 ${urgentGoodMoles}`, panelX + 18, 174);
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
-  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label}` : "긴급 알림 기다리기", panelX + 18, 222);
-  ctx.fillText(priorityMole ? "빈칸 Space는 긴급 알림으로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
-  ctx.fillText(avoidMole ? `${avoidMole.label}은 두기` : "소음은 지나가게 두기", panelX + 18, 270);
+  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label} 확인` : "긴급 카드 기다리기", panelX + 18, 222);
+  ctx.fillText(priorityMole ? "빈칸 Space는 긴급 카드로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
+  ctx.fillText(avoidMole ? `${avoidMole.label}은 꺼두기` : "소음 카드는 꺼진 채 두기", panelX + 18, 270);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스로 알림을 누르거나 방향키/WASD로 칸을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 긴급 카드를 누르거나 방향키/WASD로 슬롯을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -2819,8 +2819,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("긴급 알림만 잡고, 소음 알림은 지나가게 둡니다.", canvasWidth / 2, 202);
-    ctx.fillText("마우스로 누르거나 방향키와 Space로 잡으면 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText("NOW 긴급 카드만 확인하고, MUTE 소음 카드는 꺼둔 채 둡니다.", canvasWidth / 2, 202);
+    ctx.fillText("곧 사라질 카드부터 마우스나 방향키와 Space로 확인합니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4857,10 +4857,10 @@ const arcadeVariantCopy = {
     liveDetail: "숫자 주변의 깃발 수와 열린 칸을 같이 봅니다.",
   },
   mole: {
-    finalKicker: "알림 결과",
-    liveTitle: "알림 기록",
-    scoreLabel: "잡은 긴급 알림",
-    liveDetail: "지금 볼 긴급 알림과 그냥 보낼 소음 알림을 나눠 봅니다.",
+    finalKicker: "스위치보드 결과",
+    liveTitle: "알림 선별 기록",
+    scoreLabel: "확인한 긴급 카드",
+    liveDetail: "지금 볼 긴급 카드와 꺼둘 소음 카드를 나눠 봅니다.",
   },
   stacker: {
     finalKicker: "적재탑 결과",
