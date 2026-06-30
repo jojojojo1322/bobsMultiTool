@@ -4800,9 +4800,9 @@ const arcadeVariantCopy = {
   },
   password: {
     finalKicker: "추론 결과",
-    liveTitle: "힌트 기록",
+    liveTitle: "증거 기록",
     scoreLabel: "좁힌 번호",
-    liveDetail: "지난 힌트와 살아 있는 숫자를 같이 봅니다.",
+    liveDetail: "지난 증거 꼬리표와 살아 있는 숫자를 같이 봅니다.",
   },
   crossing: {
     finalKicker: "빈틈 차선 결과",

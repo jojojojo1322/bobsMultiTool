@@ -532,7 +532,7 @@ export function passwordHint(secret: number[], guess: number[], exact: number, n
   const secretSum = secret.reduce((sum, digit) => sum + digit, 0);
   if (guessSum < secretSum) return "합이 조금 낮습니다";
   if (guessSum > secretSum) return "합이 조금 높습니다";
-  return "방향은 나쁘지 않습니다";
+  return "증거 꼬리표를 더 모읍니다";
 }
 
 function candidateMatchesAttempts(candidate: number[], attempts: PasswordAttempt[]) {

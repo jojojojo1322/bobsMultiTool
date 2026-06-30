@@ -81,7 +81,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   const outcomeBuckets = passwordGuessOutcomeBuckets(state.passwordAttempts, state.passwordGuess);
   const splitRatio = passwordGuessSplitRatio(guessPreview);
   const splitLabel = passwordGuessSplitLabel(guessPreview);
-  const splitOutcomeText = guessPreview.issue ? "확인 전 수정" : guessPreview.candidatesBefore ? "힌트가 갈림" : "후보 막힘";
+  const splitOutcomeText = guessPreview.issue ? "확인 전 수정" : guessPreview.candidatesBefore ? "증거 갈림" : "후보 막힘";
   const guessPreviewText = duplicateCurrent
     ? "중복은 무효"
     : repeatedCurrent
@@ -137,7 +137,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("후보 장부", 48, 96);
+  ctx.fillText("후보 수사판", 48, 96);
   ctx.fillStyle = candidates.length <= 12 ? accent : "#f8fafc";
   ctx.font = "900 22px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(passwordCandidateMood(candidates.length), 48, 124);
@@ -155,7 +155,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.58)";
   ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("R 다음 후보", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
+  ctx.fillText("R 다음 실험", passwordSuggestionRect.x + 12, passwordSuggestionRect.y + 13);
   candidateOptions.forEach((candidate, index) => {
     const rect = passwordCandidateOptionRect(index);
     const selected = candidate === currentGuess;
@@ -194,7 +194,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.64)";
   ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("자리별 후보", 48, 248);
+  ctx.fillText("자리 메모", 48, 248);
   positionOptions.forEach((digits, index) => {
     const y = 272 + index * 18;
     ctx.fillStyle = index === state.passwordCursor ? accent : "rgba(255,255,255,0.52)";
@@ -324,7 +324,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.textAlign = "left";
   ctx.fillStyle = duplicateCurrent || repeatedCurrent || impossibleCurrent ? danger : "rgba(255,255,255,0.72)";
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`후보 가름 ${splitLabel} · ${splitOutcomeText}`, splitX, splitY - 4);
+  ctx.fillText(`증거 가름 ${splitLabel} · ${splitOutcomeText}`, splitX, splitY - 4);
   ctx.fillStyle = "rgba(255,255,255,0.12)";
   ctx.beginPath();
   ctx.roundRect(splitX, splitY + 4, splitWidth, 8, 4);
@@ -406,7 +406,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
     ctx.fill();
     ctx.fillStyle = "rgba(255,255,255,0.7)";
     ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("아직 실험 번호 없음", historyX + 14, historyY + 22);
+    ctx.fillText("아직 증거 꼬리표 없음", historyX + 14, historyY + 22);
   }
 
   attempts.forEach((attempt, index) => {
@@ -440,7 +440,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(255,255,255,0.8)";
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("예상 증거", historyX, outcomeY - 10);
+  ctx.fillText("예상 꼬리표", historyX, outcomeY - 10);
   if (!outcomeBuckets.length) {
     ctx.fillStyle = "rgba(255,255,255,0.12)";
     ctx.beginPath();
@@ -448,7 +448,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
     ctx.fill();
     ctx.fillStyle = "rgba(255,255,255,0.62)";
     ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("번호를 고르면 힌트 분포가 나옵니다", historyX + 12, outcomeY + 20);
+    ctx.fillText("번호를 고르면 증거 분포가 나옵니다", historyX + 12, outcomeY + 20);
   } else {
     outcomeBuckets.forEach((bucket, index) => {
       const y = outcomeY + index * 24;
@@ -475,7 +475,7 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    state.passwordAttempts.length ? "숫자키·칸 클릭 후보 순환·후보칩·Enter / 막대=현재 칸 후보" : "숫자키·칸 클릭 숫자 변경·후보칩·Enter / 막대=후보 흐름",
+    state.passwordAttempts.length ? "숫자키·칸 클릭 후보 순환·후보칩·Enter / 막대=현재 칸 증거" : "숫자키·칸 클릭 숫자 변경·후보칩·Enter / 막대=후보 흐름",
     34,
     passwordKeypadY - 4,
   );
@@ -494,8 +494,8 @@ export function drawPassword(content: ArcadeGameContent, state: PasswordRenderSt
     ctx.textAlign = "center";
     ctx.fillText(content.title, centerX, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("세 자리 숫자를 찍지 말고, 힌트로 후보를 지웁니다.", centerX, 204);
-    ctx.fillText("현재 번호가 힌트를 어떻게 나눌지도 보고 눌러봅니다.", centerX, 230);
+    ctx.fillText("세 자리 숫자를 찍지 말고, 증거 꼬리표로 후보를 지웁니다.", centerX, 204);
+    ctx.fillText("현재 번호가 후보를 어떻게 나눌지도 보고 눌러봅니다.", centerX, 230);
   }
 }
 
