@@ -354,11 +354,11 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
     if (content.slug === "meeting-escape") {
       return {
         kicker: "첫 5초 안내",
-        title: "회의 발언을 결정 도장과 넘김 도장으로 닫는 화이트보드",
-        firstLook: "회의 발언 전표, 결정 도장, 넘김 도장, owner/deadline/next action 체크줄을 먼저 봅니다.",
-        firstMove: "첫 움직임은 도장입니다. 담당자·마감·다음 행동·범위 축소가 보이면 결정, 싱크·느낌·다음 회의는 넘김입니다.",
-        pacingText: `${content.durationLabel} 동안 회의를 빨리 끊는 것이 아니라 실행으로 넘어갈 발언만 골라 닫습니다.`,
-        recordText: "기록은 숫자 결과보다 어떤 발언을 닫았는지 남기는 회의 화이트보드 메모입니다.",
+        title: "회의 발언을 결정 칸과 대기 칸으로 나누는 전표판",
+        firstLook: "회의 발언 전표, 결정 도장, 대기 도장, 담당자/기한/다음 행동 체크줄을 먼저 봅니다.",
+        firstMove: "첫 움직임은 도장입니다. 담당자·기한·다음 행동·범위 축소가 보이면 결정, 더 맞춰보기·느낌 공유·다음 회의는 대기입니다.",
+        pacingText: `${content.durationLabel} 동안 회의를 빨리 끊는 것이 아니라 실행으로 넘어갈 발언과 아직 결정 아닌 발언을 가릅니다.`,
+        recordText: "기록은 숫자 결과보다 어떤 발언을 결정 칸이나 대기 칸에 뒀는지 남기는 회의 전표입니다.",
       };
     }
 
