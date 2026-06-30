@@ -55,7 +55,7 @@ const scenarios = [
     name: "prompt-cleanup-mobile",
     path: "/play/prompt-cleanup",
     viewport: { width: 390, height: 844 },
-    expectedText: ["프롬프트 요청서 분류함", "요청서 기록철"],
+    expectedText: ["AI 요청서 분류대", "요청서 붙인 기록"],
   },
   {
     name: "meeting-escape-desktop",

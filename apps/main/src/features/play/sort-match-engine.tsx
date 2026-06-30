@@ -35,10 +35,10 @@ export function SortMatchEngine({
   const engineCopy =
     isPromptWorkbench
       ? {
-          boardLabel: "요청서 분류함",
-          scoreLabel: "분류한 메모",
-          currentLabel: "분류할 문장 메모",
-          historyTitle: "요청서 기록철",
+          boardLabel: "AI 요청서 분류대",
+          scoreLabel: "붙인 메모",
+          currentLabel: "분류할 요청 메모",
+          historyTitle: "요청서 붙인 기록",
           emptyHistory: "메모를 한 장 붙이면 어느 요청서 칸으로 보냈는지 여기에 남습니다.",
         }
       : isPrioritySorter
@@ -181,16 +181,16 @@ function PromptRequestDeskNote() {
   return (
     <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
       <div>
-        <span className="block font-semibold text-slate-800 dark:text-slate-100">맨 앞 칸</span>
-        <span className="mt-1 block leading-5">해야 할 일을 먼저 붙입니다. 답이 끝내야 할 일이 무엇인지 보는 칸입니다.</span>
+        <span className="block font-semibold text-slate-800 dark:text-slate-100">해야 할 일</span>
+        <span className="mt-1 block leading-5">AI가 실제로 끝내야 할 동작을 붙입니다. 요청서의 첫 줄을 세우는 칸입니다.</span>
       </div>
       <div>
-        <span className="block font-semibold text-sky-700 dark:text-sky-300">가운데 칸</span>
-        <span className="mt-1 block leading-5">상황과 예시는 요청서가 헛돌지 않게 붙이는 참고 메모입니다.</span>
+        <span className="block font-semibold text-sky-700 dark:text-sky-300">상황·예시</span>
+        <span className="mt-1 block leading-5">대상, 현재 상태, 따라 할 샘플을 붙입니다. 답이 허공에서 나오지 않게 잡는 칸입니다.</span>
       </div>
       <div>
-        <span className="block font-semibold text-rose-700 dark:text-rose-300">마지막 칸</span>
-        <span className="mt-1 block leading-5">답 모양과 금지선은 결과물의 모양과 건드리지 말 범위를 닫습니다.</span>
+        <span className="block font-semibold text-rose-700 dark:text-rose-300">답 모양·지킬 선</span>
+        <span className="mt-1 block leading-5">표, JSON, 길이, 제외 범위, 성공 기준을 붙입니다. 결과물의 모양과 경계를 닫는 칸입니다.</span>
       </div>
     </div>
   );
@@ -234,7 +234,7 @@ function SortHistory({
           {history.slice(-8).map((item, index) => {
             const selectedCategory = content.categories.find((entry) => entry.id === item.category);
             const correctCategory = content.categories.find((entry) => entry.id === item.correctCategory);
-            const actionLabel = content.slug === "priority-sorter" ? "보냄" : "선택";
+            const actionLabel = content.slug === "priority-sorter" ? "보냄" : content.slug === "prompt-cleanup" ? "붙임" : "선택";
             return (
               <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
                 <p className="text-sm font-medium">{item.label}</p>

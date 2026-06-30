@@ -1,11 +1,11 @@
 {
   "slug": "prompt-cleanup",
-  "title": "프롬프트 요청서 분류함",
-  "description": "AI에게 던질 문장 메모를 해야 할 일, 상황/배경, 예시, 답 모양, 금지선으로 나눠 서류함에 붙이는 1-2분 분류 게임입니다. 좋은 답을 바라기 전에 요청서의 어느 칸이 비었는지 먼저 봅니다.",
+  "title": "AI 요청서 분류대",
+  "description": "AI에게 줄 요청 메모를 해야 할 일, 상황/대상, 예시, 답 모양, 지킬 선으로 나눠 서류함에 붙이는 1-2분 분류 게임입니다. 좋은 답을 바라기 전에 요청서의 어느 칸이 비었는지 먼저 봅니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
   "updatedAt": "2026-06-30",
-  "shareText": "프롬프트 요청서 분류함을 해봤다. 해야 할 일, 상황, 예시, 답 모양, 금지선을 나누니 질문이 덜 뭉쳤다.",
+  "shareText": "AI 요청서 분류대를 해봤다. 해야 할 일, 상황, 예시, 답 모양, 지킬 선을 나누니 질문이 덜 뭉쳤다.",
   "order": 2,
   "relatedBlogSlugs": [
     "ai-answer-review-habit",
@@ -26,54 +26,54 @@
     },
     {
       "id": "context",
-      "label": "상황/배경",
-      "description": "대상, 현재 상태, 기존 조건"
+      "label": "상황/대상",
+      "description": "누구에게, 어디서, 어떤 현재 상태인지"
     },
     {
       "id": "example",
       "label": "예시",
-      "description": "따를 샘플이나 피할 샘플"
+      "description": "따라 할 샘플이나 피할 샘플"
     },
     {
       "id": "format",
       "label": "답 모양",
-      "description": "표, 목록, JSON, 길이, 순서"
+      "description": "표, 목록, JSON, 길이, 먼저 보일 순서"
     },
     {
       "id": "constraint",
-      "label": "금지선",
-      "description": "건드리지 말 것, 기준, 범위"
+      "label": "지킬 선",
+      "description": "건드리지 말 것, 반드시 지킬 기준, 제외할 범위"
     }
   ],
   "items": [
     {
       "id": "landing",
-      "label": "첫 화면을 바로 쓰는 구조로 다시 잡아줘",
+      "label": "첫 화면을 바로 쓸 수 있게 다시 잡아줘",
       "detail": "요청서의 맨 앞에 놓을 해야 할 일이다.",
       "categoryId": "task"
     },
     {
       "id": "ko-user",
       "label": "대상은 한국어 모바일 사용자야",
-      "detail": "누구를 위한 결과인지 알려주는 배경이다.",
+      "detail": "누구를 위한 답인지 알려주는 상황/대상 메모다.",
       "categoryId": "context"
     },
     {
       "id": "no-hero",
       "label": "광고문 같은 첫 화면은 빼고 바로 조작하게 해줘",
-      "detail": "하지 말아야 할 방향을 긋는 금지선이다.",
+      "detail": "하지 말아야 할 방향을 긋는 지킬 선이다.",
       "categoryId": "constraint"
     },
     {
       "id": "existing-css",
       "label": "이미 쓰는 버튼과 입력창 모양은 유지해야 해",
-      "detail": "지켜야 할 현재 상태를 알려주는 상황/배경이다.",
+      "detail": "지켜야 할 현재 상태를 알려주는 상황/대상 메모다.",
       "categoryId": "context"
     },
     {
       "id": "five-bullets",
       "label": "결과는 다섯 개 항목 안으로",
-      "detail": "답의 길이와 순서를 정하는 답 모양이다.",
+      "detail": "답의 길이와 순서를 정하는 답 모양 메모다.",
       "categoryId": "format"
     },
     {
@@ -85,31 +85,31 @@
     {
       "id": "do-not-touch",
       "label": "인증 코드는 건드리지 마",
-      "detail": "변경 범위를 막는 금지선이다.",
+      "detail": "변경 범위를 막는 지킬 선이다.",
       "categoryId": "constraint"
     },
     {
       "id": "prod-issue",
       "label": "프로덕션에서만 발생해",
-      "detail": "문제 상황을 설명하는 상황/배경이다.",
+      "detail": "문제 상황을 설명하는 상황/대상 메모다.",
       "categoryId": "context"
     },
     {
       "id": "compare",
       "label": "두 접근의 장단점을 비교해줘",
-      "detail": "요청서의 해야 할 일에 들어가는 판단 작업이다.",
+      "detail": "AI가 처리해야 할 판단 작업이다.",
       "categoryId": "task"
     },
     {
       "id": "table-output",
       "label": "비교 결과는 표로 먼저 보여줘",
-      "detail": "답을 어떤 모양으로 받을지 정한다.",
+      "detail": "답을 어떤 모양으로 받을지 정하는 메모다.",
       "categoryId": "format"
     },
     {
       "id": "good-example",
       "label": "이전 글의 짧고 건조한 문체를 따라가",
-      "detail": "원하는 결과의 샘플을 주는 예시다.",
+      "detail": "원하는 답의 샘플을 주는 예시다.",
       "categoryId": "example"
     },
     {
@@ -121,72 +121,84 @@
     {
       "id": "json-output",
       "label": "최종 답은 title, summary, steps JSON으로",
-      "detail": "필드 이름까지 정한 답 모양이다.",
+      "detail": "필드 이름까지 정한 답 모양 메모다.",
       "categoryId": "format"
+    },
+    {
+      "id": "success-check",
+      "label": "첫 5초 안에 사용자가 무엇을 눌러야 하는지 보여야 해",
+      "detail": "결과가 지켜야 할 성공 기준을 적은 지킬 선이다.",
+      "categoryId": "constraint"
     }
   ],
   "endings": [
     {
       "id": "architect",
-      "title": "요청서 분류함이 정리됐다",
-      "description": "해야 할 일, 상황, 예시, 답 모양, 금지선을 분리해서 AI가 헛돌 가능성을 줄였다.",
-      "minScore": 11
+      "title": "AI 요청서 칸이 또렷해졌다",
+      "description": "해야 할 일, 상황, 예시, 답 모양, 지킬 선을 분리해서 AI가 헛돌 가능성을 줄였다.",
+      "minScore": 12
     },
     {
       "id": "operator",
       "title": "실무 요청서가 됐다",
       "description": "대부분의 메모를 맞는 칸에 붙였다. 이제 예시와 답 모양을 조금 더 선명하게 쓰면 된다.",
-      "minScore": 8
+      "minScore": 9
     },
     {
       "id": "messy",
       "title": "요청서가 아직 한 덩어리다",
-      "description": "AI가 나쁜 답을 하는 게 아니라 해야 할 일, 상황, 예시, 답 모양, 금지선이 한 문장에 뭉쳐 있을 수 있다.",
+      "description": "AI가 나쁜 답을 하는 게 아니라 해야 할 일, 상황, 예시, 답 모양, 지킬 선이 한 문장에 뭉쳐 있을 수 있다.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "프롬프트 요청서 칸 분류 게임",
-    "planningIntent": "프롬프트 요청서 분류함은 AI 답변 품질을 점수로만 보지 않고, 요청 문장을 해야 할 일, 상황/배경, 예시, 답 모양, 금지선으로 나눠 붙이는 훈련으로 봐야 한다. OpenAI 문서는 지시와 예시를 별도 instructions로 둘 수 있음을 보여주고, Anthropic의 prompting best practices는 명확하고 직접적인 지시, 원하는 출력 형식과 제약, 예시, XML 같은 구조화를 강조한다. Google Gemini prompt design도 예시, 제약, 응답 형식, instructions/context/task 구분을 다루므로, 이 게임은 'AI 재료'를 맞히는 카드 퀴즈가 아니라 요청서를 서류함에 분리해 넣는 분류 게임으로 잡는다.",
+    "gameMode": "AI 요청 메모 칸 분류 게임",
+    "planningIntent": "AI 요청서 분류대는 AI 답변 품질을 점수로만 보지 않고, 요청 메모를 해야 할 일, 상황/대상, 예시, 답 모양, 지킬 선으로 나눠 붙이는 훈련으로 봐야 한다. OpenAI 프롬프트 엔지니어링 가이드는 명확한 지시, 맥락, 예시, 출력 형식 같은 요청 재료를 분리해 다루는 방향을 제시하고, Anthropic 공식 문서는 성공 기준을 먼저 정하고 예시와 구조화된 형식을 써서 평가 가능한 요청을 만들라고 강조한다. Google Gemini prompting strategies도 구체적인 지시, 관련 맥락, few-shot 예시, 출력 형식을 나눠 쓰는 흐름을 권한다. 그래서 이 게임은 '프롬프트 단어 맞히기'가 아니라 AI에게 줄 요청서를 종이 메모 단위로 찢어 실제 서류함에 붙이는 분류 게임으로 잡는다.",
     "researchPlan": {
       "webSearchSeeds": [
-        "OpenAI prompt engineering instructions examples desired output",
-        "Anthropic prompt engineering clear direct output format constraints examples XML",
-        "Google Gemini prompt design response format constraints instructions context task examples",
+        "OpenAI official prompt engineering clear instructions examples output format",
+        "Anthropic official prompt engineering success criteria examples XML constraints",
+        "Google Gemini official prompting strategies examples context output format constraints",
         "card sorting UX category labels feedback",
-        "classification game visual hierarchy mobile"
+        "classification game visual hierarchy mobile",
+        "paper sorting tray UI mobile card sorting game"
       ],
       "referenceTypes": [
-        "OpenAI 공식 문서의 instructions, goals, examples 분리 방식",
-        "Anthropic 공식 문서의 clear/direct, output format, constraints, examples, XML structuring 기준",
-        "Google Gemini 공식 문서의 examples, constraints, response format, structured prompting examples",
+        "OpenAI 공식 문서의 명확한 instructions, context, examples, desired output 분리 방식",
+        "Anthropic 공식 문서의 success criteria, clear/direct instruction, output format, constraints, examples, XML structuring 기준",
+        "Google Gemini 공식 문서의 task/context/examples/output format를 나눠 쓰는 prompting strategies",
         "카드 분류 게임의 카테고리 라벨과 오분류 피드백",
         "서류함이나 문서 분류대처럼 종이 메모를 칸에 붙이는 UI",
         "모바일에서 5개 분류 칸이 한 화면에 과하게 붐비지 않는 배치"
       ],
       "dataOrSimulationNeeds": [
-        "해야 할 일/상황/예시/답 모양/금지선 항목별 오분류 가능성",
+        "해야 할 일/상황/대상/예시/답 모양/지킬 선 항목별 오분류 가능성",
         "예시와 답 모양을 별도 칸으로 뺐을 때 첫 5초 이해도가 좋아지는지 확인",
+        "지킬 선이 단순 금지가 아니라 성공 기준과 제외 범위까지 담는지 확인",
         "카테고리 설명 길이가 모바일 완료율과 오탭에 미치는 영향",
-        "틀린 선택 후 기록 문구가 다음 요청서 작성 기준으로 남는지 확인"
+        "틀린 선택 후 기록 문구가 다음 요청서 작성 기준으로 남는지 확인",
+        "같은 요청 메모가 실제 AI 답변 품질을 어떻게 흔드는지 샘플 응답 비교가 필요한지 확인"
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '문장 메모를 요청서 서류함에 붙인다'가 읽히는가?",
-      "해야 할 일과 상황/배경이 섞인 문장을 사용자가 자연스럽게 구분할 수 있는가?",
-      "답 모양은 금지선과 별도 칸으로 보여야 하는가, 아니면 한 칸으로 합쳐도 되는가?",
+      "첫 5초 안에 'AI 요청 메모를 요청서 서류함에 붙인다'가 읽히는가?",
+      "해야 할 일과 상황/대상이 섞인 문장을 사용자가 자연스럽게 구분할 수 있는가?",
+      "답 모양은 지킬 선과 별도 칸으로 보여야 하는가, 아니면 한 칸으로 합쳐도 되는가?",
       "예시는 원하는 답과 피할 답을 모두 담을 수 있는 칸으로 보이는가?",
       "오분류는 왜 틀렸는지 요청서 작성 기준으로 알려주는가?",
       "애매한 문장은 게임의 학습 지점이지 억지 함정이 아닌가?",
       "다음 항목에서 바로 다른 프롬프트 구성 기준을 적용할 수 있는가?",
-      "결과 공유 문구가 점수 자랑보다 요청서가 얼마나 덜 뭉쳤는지를 말하는가?"
+      "결과 공유 문구가 점수 자랑보다 요청서가 얼마나 덜 뭉쳤는지를 말하는가?",
+      "성공 기준 메모를 지킬 선으로 넣어도 사용자가 금지 문구와 구분할 수 있는가?",
+      "공식 문서의 prompting 요소를 학습시키되 화면 문구는 실무 요청서처럼 투박하게 남는가?"
     ],
     "visualQuestions": [
-      "해야 할 일, 상황/배경, 예시, 답 모양, 금지선 다섯 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
+      "해야 할 일, 상황/대상, 예시, 답 모양, 지킬 선 다섯 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
       "현재 문장 카드는 종이 메모처럼 보이고, 분류 칸은 트레이나 서류함처럼 보이는가?",
       "맞고 틀림보다 요청서 칸을 나누는 기준 설명이 더 오래 남는가?",
       "전체 화면이 마케팅 카드 그리드가 아니라 연필선, 서류함, 메모지에 가까운 문서 분류대처럼 보이는가?",
-      "모바일에서 다섯 칸이 길게 흩어져도 현재 메모와 기록이 서로 겹치지 않는가?"
+      "모바일에서 다섯 칸이 길게 흩어져도 현재 메모와 기록이 서로 겹치지 않는가?",
+      "지킬 선 칸은 위험 경고처럼 과장되지 않고 '제외 범위와 성공 기준'을 닫는 트레이로 보이는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
@@ -195,16 +207,16 @@
       "프롬프트만 좋으면 검토가 필요 없다는 식의 문구를 피한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "문장 메모, 해야 할 일/상황/예시/답 모양/금지선 기준, 오분류 피드백, 요청서 선명도",
+      "primaryResource": "요청 메모, 해야 할 일/상황/대상/예시/답 모양/지킬 선 기준, 오분류 피드백, 요청서 선명도",
       "progressionQuestion": "성장은 정답 암기가 아니라 요청서 칸을 더 빨리 분리하는 능력인가?",
       "failureQuestion": "틀린 항목이 카테고리 기준 오해 때문인지 문장이 너무 뭉쳐 있기 때문인지 알려주는가?",
       "recoveryQuestion": "다음 항목에서 곧장 다른 프롬프트 구성 기준을 적용할 수 있는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "초안 종이를 다섯 서류함으로 찢어 붙이는 요청서 분류대",
-      "primarySurface": "현재 문장 메모, 해야 할 일/상황/예시/답 모양/금지선 분류 트레이, 오른쪽 요청서 기록철",
+      "metaphor": "AI 요청 메모를 다섯 서류함으로 찢어 붙이는 요청서 분류대",
+      "primarySurface": "현재 요청 메모, 해야 할 일/상황·대상/예시/답 모양/지킬 선 분류 트레이, 오른쪽 붙인 기록철",
       "roughnessTarget": "반짝이는 AI 화면보다 종이 조각, 서류함, 연필선, 낮은 대비 스탬프 같은 투박한 문서 분류판",
-      "differenceFromGenericPlay": "평평한 정답 퀴즈가 아니라 프롬프트 요청서 칸을 실제로 분해해 서류함에 붙이는 화면이다.",
+      "differenceFromGenericPlay": "평평한 정답 퀴즈가 아니라 AI 요청서 칸을 실제로 분해해 서류함에 붙이는 화면이다.",
       "mustAvoid": [
         "게임 장르와 무관한 화려한 뱃지",
         "모든 카테고리가 같은 색으로 보이는 배치",
