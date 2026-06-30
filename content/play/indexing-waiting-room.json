@@ -1,11 +1,11 @@
 {
   "slug": "indexing-waiting-room",
-  "title": "색인 대기표 체크판",
-  "description": "Search Console 숫자가 조용할 때 라이브 200, sitemap 읽힘, canonical, URL 검사는 확인 도장을 찍고 새로고침, 제목 재변경, 무리한 제출은 대기 도장으로 넘기는 30-60초 운영 게임입니다.",
+  "title": "색인 접수표 도장대",
+  "description": "URL 접수표가 들어오면 지금 확인할 수 있는 라이브 200, sitemap 읽힘, canonical, URL 검사는 확인 도장을 찍고, 숫자 새로고침이나 재제출 충동은 대기 도장으로 넘기는 30-60초 운영 게임입니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
-  "updatedAt": "2026-06-29",
-  "shareText": "색인 대기표 체크판을 해봤다. 제출 버튼보다 라이브 접근, sitemap, canonical, URL 검사 순서가 먼저 보였다.",
+  "updatedAt": "2026-06-30",
+  "shareText": "색인 접수표 도장대를 해봤다. 제출 버튼보다 라이브 접근, sitemap, canonical, URL 검사 순서가 먼저 보였다.",
   "order": 19,
   "relatedBlogSlugs": [
     "search-console-waiting-diary",
@@ -17,8 +17,8 @@
     "priority-sorter",
     "meeting-escape"
   ],
-  "targetLabel": "확인 도장",
-  "decoyLabel": "대기 도장",
+  "targetLabel": "확인 도장 찍기",
+  "decoyLabel": "대기 도장 찍기",
   "targets": [
     {
       "id": "live-200",
@@ -94,58 +94,63 @@
   "endings": [
     {
       "id": "operator",
-      "title": "대기표 정리가 됨",
-      "description": "라이브 200, sitemap, canonical, URL 검사를 먼저 보고 괜한 수정으로 원인을 흐리지 않았다.",
+      "title": "접수표 정리가 됨",
+      "description": "라이브 200, sitemap, canonical, URL 검사를 먼저 보고 괜한 수정이나 제출 반복으로 원인을 흐리지 않았다.",
       "minScore": 18
     },
     {
       "id": "watcher",
       "title": "대체로 차분함",
-      "description": "필요한 확인 도장은 찍었다. 이제 숫자가 움직일 때까지 날짜와 상태를 남기면 된다.",
+      "description": "필요한 확인 도장은 찍었다. 이제 색인 숫자가 움직일 때까지 날짜와 상태를 접수표에 남기면 된다.",
       "minScore": 12
     },
     {
       "id": "panic",
       "title": "새로고침에 끌림",
-      "description": "불안 행동에 많이 눌렸다. 다음 판에서는 200, sitemap, canonical, URL 검사 순서로 본다.",
+      "description": "불안 행동에 많이 눌렸다. 다음 판에서는 200, sitemap, canonical, URL 검사 접수표부터 본다.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "검색 색인 대기표 운영 체크 게임",
-    "planningIntent": "색인 대기표 체크판은 빠르게 누르는 반응 게임이 아니라, Search Console 숫자가 조용할 때 확인할 수 있는 기술 대기표와 불안해서 누르는 행동을 나누는 운영 루틴이다. Google 문서처럼 sitemap은 발견을 돕지만 색인을 보장하지 않고, URL Inspection의 라이브 테스트도 접근 가능성 확인이지 색인 보장이 아니며, canonical은 Google이 다른 URL을 선택할 수 있다는 전제를 게임 규칙에 넣는다.",
+    "gameMode": "검색 색인 접수표 분류 게임",
+    "planningIntent": "색인 접수표 도장대는 빠르게 누르는 반응 게임이 아니라, Search Console 숫자가 조용할 때 '지금 확인 가능한 접수표'와 '기다려야 할 불안 행동'을 분리하는 운영 루틴이다. Google 문서처럼 sitemap은 URL 발견을 돕지만 색인을 보장하지 않고, URL Inspection의 라이브 테스트도 접근 가능성 확인이지 색인 보장이 아니며, canonical은 Google이 다른 URL을 선택할 수 있다는 전제를 게임 규칙에 넣는다. 대기열 게임으로 보면 모든 티켓을 즉시 처리하는 것이 목표가 아니라 처리 가능한 티켓, 보류할 티켓, 다시 볼 근거를 차분히 나누는 것이 핵심이다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Google Search Central sitemap does not guarantee indexing",
         "Search Console URL Inspection live test does not guarantee indexing",
         "Google canonicalization hint not rule canonical URL",
-        "operations dashboard signal noise waiting state UX"
+        "operations dashboard signal noise waiting state UX",
+        "queue management ticket counter triage waiting state UX"
       ],
       "referenceTypes": [
         "Google Search Central sitemap 문서의 발견 힌트와 색인 보장 아님 설명",
         "Search Console URL Inspection Help의 라이브 테스트, indexed result, request indexing 차이",
         "Google canonicalization 문서의 canonical hint와 Google-selected canonical 개념",
-        "운영 대시보드에서 지금 확인할 신호와 기다릴 신호를 나누는 대기 상태 UX"
+        "운영 대시보드에서 지금 확인할 신호와 기다릴 신호를 나누는 대기 상태 UX",
+        "번호표 창구, 지원 티켓 큐, 병원/공항 대기열처럼 처리 가능/보류/다시 확인 티켓을 나누는 큐 관리 참고"
       ],
       "dataOrSimulationNeeds": [
         "확인 도장과 대기 도장을 5:5로 섞어 사용자가 모든 항목을 확인하거나 모든 항목을 기다리는 편향을 줄인다.",
-        "기술 용어는 라이브 200, sitemap, canonical, URL 검사 네 축으로 제한해 모바일에서 첫 5초 안에 읽히는지 본다.",
-        "오답 후에는 어떤 제출 버튼을 더 누를지가 아니라 어떤 대기표를 먼저 확인할지 기록으로 남기는지 확인한다."
+        "기술 용어는 라이브 200, sitemap, canonical, URL 검사 네 접수 칸으로 제한해 모바일에서 첫 5초 안에 읽히는지 본다.",
+        "오답 후에는 어떤 제출 버튼을 더 누를지가 아니라 어떤 접수표를 먼저 확인할지 기록으로 남기는지 확인한다.",
+        "각 항목을 URL 접수표 한 장처럼 보여 사용자가 색인 대시보드 그래프가 아니라 창구 분류 게임으로 받아들이는지 본다."
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '지금 확인할 대기표와 기다릴 행동'이 읽히는가?",
+      "첫 5초 안에 '지금 확인할 접수표와 기다릴 행동'이 읽히는가?",
       "확인 도장은 라이브 200, sitemap 읽힘, canonical, URL 검사처럼 사용자가 실제로 확인 가능한 신호인가?",
       "대기 도장은 함정이 아니라 운영자가 숫자 0에 흔들릴 때 실제로 하는 과잉 행동으로 보이는가?",
       "sitemap 제출, URL 검사, canonical 확인이 서로 다른 단계로 읽히는가?",
       "오답 기록은 새 제출을 부추기지 않고 다음 확인 순서를 차분히 남기는가?",
-      "모바일에서 두 도장 버튼과 긴 Search Console 문장이 겹치지 않는가?"
+      "모바일에서 두 도장 버튼, 접수표 칸, 긴 Search Console 문장이 겹치지 않는가?",
+      "번호표/지원 티켓처럼 처리 가능 항목과 보류 항목이 같은 무게로 보여 대기가 실패처럼 느껴지지 않는가?"
     ],
     "visualQuestions": [
-      "Search Console 그래프보다 대기표, 도장 칸, 체크줄이 먼저 보여 일반 탭게임과 달라 보이는가?",
+      "Search Console 그래프보다 접수표, 도장 칸, 체크줄이 먼저 보여 일반 탭게임과 달라 보이는가?",
       "확인 도장과 대기 도장이 같은 무게로 보여 기다림이 실패처럼 보이지 않는가?",
       "불안 행동은 빨간 경고로 과장되지 않고 조용히 넘길 카드로 보이는가?",
-      "운영 기록은 숫자 결과보다 지금 확인한 대기표와 다음 관찰 날짜를 남기는 종이표처럼 보이는가?"
+      "운영 기록은 숫자 결과보다 지금 확인한 접수표와 다음 관찰 날짜를 남기는 종이표처럼 보이는가?",
+      "상단에 200, sitemap, canonical, URL 검사 네 칸이 있어 현재 문장이 어느 창구 기준인지 바로 추측할 수 있는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 Search Console 계정 연결, 서버 저장, 자동 제출, 제출 플러그인 설치는 넣지 않는다.",
@@ -153,16 +158,16 @@
       "제출이나 라이브 테스트가 검색 노출 보장처럼 읽히지 않도록 보장 문구를 피한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "확인 도장, 대기 도장, 색인 대기표, 운영 기록",
+      "primaryResource": "확인 도장, 대기 도장, 색인 접수표, 운영 기록",
       "progressionQuestion": "성장은 더 빨리 누르는 것보다 Search Console 숫자 0 앞에서 확인할 신호와 기다릴 행동을 분리하는 감각인가?",
       "failureQuestion": "오답은 손 실수인지, 노출 0에 흔들려 새로고침과 재제출을 누른 것인지 구분되는가?",
       "recoveryQuestion": "다음 문장에서 바로 라이브 200, sitemap 읽힘, canonical, URL 검사 기준을 다시 시험할 수 있는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "검색 색인 대기표에 확인/대기 도장을 찍는 운영 창구",
-      "primarySurface": "색인 대기표 문장, 확인 도장 버튼, 대기 도장 버튼, 작은 sitemap/canonical 체크줄과 운영 기록",
-      "roughnessTarget": "화려한 검색 대시보드보다 회색 접수표, 도장, 체크칸, 얇은 상태 줄이 있는 조용한 운영 창구",
-      "differenceFromGenericPlay": "정답 카드가 아니라 제출 후 기다리는 운영 대기표와 확인 도장 흐름이 화면의 성격을 만든다.",
+      "metaphor": "검색 색인 접수표에 확인/대기 도장을 찍는 작은 창구",
+      "primarySurface": "색인 접수표 문장, 확인 도장 버튼, 대기 도장 버튼, 200/sitemap/canonical/URL 검사 체크줄과 운영 기록",
+      "roughnessTarget": "화려한 검색 대시보드보다 회색 접수표, 고무도장, 체크칸, 얇은 상태 줄이 있는 조용한 운영 창구",
+      "differenceFromGenericPlay": "정답 카드가 아니라 제출 후 기다리는 운영 접수표와 확인 도장 흐름이 화면의 성격을 만든다.",
       "mustAvoid": [
         "Search Console 그래프를 장식처럼 크게 흉내내는 화면",
         "대기 행동을 실패나 손실처럼 겁주는 화면"

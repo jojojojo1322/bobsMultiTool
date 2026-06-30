@@ -37,9 +37,10 @@ export function TapGameEngine({
   const usesTicketSurface = isAiReviewStampboard || isIndexingWaitingRoom || isMeetingExitBoard;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
   const scoreLabel = isAiReviewStampboard ? "검수 점수" : isIndexingWaitingRoom ? "운영 점수" : isMeetingExitBoard ? "결정 점수" : "판정 점수";
-  const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "대기표" : isMeetingExitBoard ? "전표" : "진행";
-  const frameKicker = isAiReviewStampboard ? "근거 도장판" : isIndexingWaitingRoom ? "색인 대기표" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
+  const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "접수표" : isMeetingExitBoard ? "전표" : "진행";
+  const frameKicker = isAiReviewStampboard ? "근거 도장판" : isIndexingWaitingRoom ? "색인 접수표 도장대" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
   const aiReviewChecklist = ["파일", "명령", "출처", "비밀값"];
+  const indexingTicketChecklist = ["200 열림", "Sitemap", "Canonical", "URL 검사"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
   const playBodyClassName = usesTicketSurface
     ? "grid gap-4 p-3 sm:p-4 lg:grid-cols-[minmax(0,1fr)_270px]"
@@ -161,22 +162,29 @@ export function TapGameEngine({
             ) : isIndexingWaitingRoom ? (
               <div className="rounded-lg border bg-stone-50 p-4 text-left shadow-inner dark:bg-stone-950/30">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
-                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-300">색인 대기표</p>
-                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">보장 아님</span>
+                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-300">색인 접수표</p>
+                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">제출 보장 아님</span>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
+                  {indexingTicketChecklist.map((item) => (
+                    <span key={item} className="rounded-sm border bg-background px-2 py-1">
+                      [ ] {item}
+                    </span>
+                  ))}
                 </div>
                 <div className="mt-4 border-l-4 border-stone-500 bg-background p-4">
-                  <p className="text-xs font-medium text-muted-foreground">운영 항목</p>
+                  <p className="text-xs font-medium text-muted-foreground">접수표 항목</p>
                   <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-normal">{current.label}</h3>
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
                 </div>
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.targetLabel}</p>
-                    <p className="mt-1 leading-5">라이브 200, sitemap, canonical, URL 검사를 확인합니다.</p>
+                    <p className="mt-1 leading-5">라이브 200, sitemap, canonical, URL 검사처럼 직접 볼 수 있는 접수표입니다.</p>
                   </div>
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.decoyLabel}</p>
-                    <p className="mt-1 leading-5">새로고침, 재제출, 제목 변경은 잠깐 멈춥니다.</p>
+                    <p className="mt-1 leading-5">새로고침, 재제출, 제목 변경은 지금 처리하지 않고 접수대에 보류합니다.</p>
                   </div>
                 </div>
               </div>
@@ -240,7 +248,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
   const isAiReviewStampboard = content.slug === "ai-review-tap";
   const isIndexingWaitingRoom = content.slug === "indexing-waiting-room";
   const isMeetingExitBoard = content.slug === "meeting-escape";
-  const title = isAiReviewStampboard ? "검수 기록" : isIndexingWaitingRoom ? "운영 기록" : isMeetingExitBoard ? "회의 전표 기록" : "선택 기준";
+  const title = isAiReviewStampboard ? "검수 기록" : isIndexingWaitingRoom ? "접수 기록" : isMeetingExitBoard ? "회의 전표 기록" : "선택 기준";
 
   function labelForAction(action: "tap" | "skip") {
     return action === "tap" ? content.targetLabel : content.decoyLabel;
@@ -262,7 +270,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
                   : isIndexingWaitingRoom
                     ? item.correct
                       ? `도장: ${labelForAction(item.action)} / 순서 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
-                      : `도장: ${labelForAction(item.action)} / 다시 볼 대기표: ${labelForAction(item.expectedAction)}`
+                      : `도장: ${labelForAction(item.action)} / 다시 볼 접수표: ${labelForAction(item.expectedAction)}`
                     : isMeetingExitBoard
                       ? item.correct
                         ? `도장: ${labelForAction(item.action)} / 전표 칸 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
@@ -279,7 +287,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
           {isAiReviewStampboard
             ? "도장을 찍으면 전표와 기준이 여기에 남습니다."
             : isIndexingWaitingRoom
-              ? "도장을 찍으면 확인한 대기표와 기준이 여기에 남습니다."
+              ? "도장을 찍으면 확인한 접수표와 기준이 여기에 남습니다."
               : isMeetingExitBoard
                 ? "도장을 찍으면 발언과 결정/대기 칸이 여기에 남습니다."
               : "하나를 누르면 선택한 기준이 바로 남습니다."}
