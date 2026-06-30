@@ -2360,6 +2360,16 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   const targetCenter = clamp(state.stackerDragX ?? activeCenter, stackerBoardX, stackerBoardX + stackerBoardWidth);
   const targetGap = Math.abs(targetCenter - topCenter);
   const isDraggingStacker = state.stackerDragX !== null;
+  const savedWidth = Math.round(preview?.placedWidth ?? 0);
+  const cutWidth = Math.round(cutTotal);
+  const landingCue =
+    preview?.quality === "miss"
+      ? "겹침 끊김"
+      : preview?.quality === "perfect"
+        ? "착지권 안"
+        : preview?.quality === "solid"
+          ? "살릴 폭 충분"
+          : "잘림 큼";
 
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -2396,6 +2406,25 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
 
   if (top) {
     const zoneX = top.x + top.width / 2 - 8;
+    const landingY = state.stackerActiveY + stackerBlockHeight + 4;
+    ctx.fillStyle = "rgba(167,243,208,0.1)";
+    ctx.beginPath();
+    ctx.roundRect(top.x, state.stackerActiveY - 8, top.width, stackerBlockHeight + 16, 10);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(167,243,208,0.48)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(top.x, state.stackerActiveY - 8, top.width, stackerBlockHeight + 16, 10);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(167,243,208,0.92)";
+    ctx.beginPath();
+    ctx.roundRect(top.x, landingY, top.width, 5, 999);
+    ctx.fill();
+    ctx.fillStyle = "#d1fae5";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("착지 레일", clamp(top.x + top.width / 2, stackerBoardX + 38, stackerBoardX + stackerBoardWidth - 38), landingY + 18);
+
     ctx.fillStyle = "rgba(167,243,208,0.13)";
     ctx.strokeStyle = "rgba(167,243,208,0.44)";
     ctx.beginPath();
@@ -2471,34 +2500,71 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   };
   drawStackerBlock(ctx, activeBlock, preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : statusFill, "#111827");
 
+  if (top) {
+    ctx.fillStyle = "rgba(167,243,208,0.95)";
+    ctx.beginPath();
+    ctx.roundRect(top.x, top.y + 2, top.width, 4, 999);
+    ctx.fill();
+    ctx.fillStyle = "#d1fae5";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("착지 레일", clamp(top.x + top.width / 2, stackerBoardX + 38, stackerBoardX + stackerBoardWidth - 38), top.y + 18);
+  }
+
   if (top && preview && cutTotal > 0) {
-    ctx.fillStyle = "rgba(251,113,133,0.42)";
+    ctx.fillStyle = "rgba(251,113,133,0.5)";
     if (preview.cutLeft > 0) {
-      ctx.fillRect(preview.activeLeft, state.stackerActiveY, preview.cutLeft, stackerBlockHeight);
+      ctx.beginPath();
+      ctx.roundRect(preview.activeLeft, state.stackerActiveY + 2, preview.cutLeft, stackerBlockHeight - 4, 6);
+      ctx.fill();
     }
     if (preview.cutRight > 0) {
-      ctx.fillRect(preview.activeRight - preview.cutRight, state.stackerActiveY, preview.cutRight, stackerBlockHeight);
+      ctx.beginPath();
+      ctx.roundRect(preview.activeRight - preview.cutRight, state.stackerActiveY + 2, preview.cutRight, stackerBlockHeight - 4, 6);
+      ctx.fill();
     }
-    ctx.strokeStyle = "rgba(251,113,133,0.62)";
-    ctx.beginPath();
-    ctx.moveTo(preview.activeLeft, state.stackerActiveY - 8);
-    ctx.lineTo(preview.activeRight, state.stackerActiveY - 8);
-    ctx.stroke();
+    ctx.strokeStyle = "rgba(251,113,133,0.82)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 5]);
+    if (preview.cutLeft > 0) {
+      ctx.beginPath();
+      ctx.moveTo(preview.overlapLeft, state.stackerActiveY - 7);
+      ctx.lineTo(preview.overlapLeft, state.stackerActiveY + stackerBlockHeight + 7);
+      ctx.stroke();
+    }
+    if (preview.cutRight > 0) {
+      ctx.beginPath();
+      ctx.moveTo(preview.overlapRight, state.stackerActiveY - 7);
+      ctx.lineTo(preview.overlapRight, state.stackerActiveY + stackerBlockHeight + 7);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "rgba(251,113,133,0.95)";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    const labelX =
+      preview.cutLeft >= preview.cutRight && preview.cutLeft > 0
+        ? preview.activeLeft + preview.cutLeft / 2
+        : preview.cutRight > 0
+          ? preview.activeRight - preview.cutRight / 2
+          : activeCenter;
+    ctx.fillText("잘림", clamp(labelX, stackerBoardX + 20, stackerBoardX + stackerBoardWidth - 20), state.stackerActiveY - 12);
   }
 
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`적재층 ${state.stackerLayer}`, 34, 36);
+  ctx.fillText("착지 판단", 34, 36);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    `층폭 ${Math.round(state.stackerActiveWidth)} · 남을폭 ${Math.round(preview?.placedWidth ?? 0)} · 절단 ${Math.round(cutTotal)}`,
+    `남을폭 ${savedWidth} · 잘림 ${cutWidth} · 현재폭 ${Math.round(state.stackerActiveWidth)}`,
     94,
     36,
   );
   ctx.fillStyle = preview?.quality === "miss" ? "rgba(248,113,113,0.9)" : preview?.quality === "perfect" ? "rgba(167,243,208,0.9)" : "rgba(255,255,255,0.68)";
-  ctx.fillText(preview ? `${preview.status} · 중앙차 ${Math.round(centerGap)}` : `중앙차 ${Math.round(centerGap)}`, 94, 56);
+  ctx.fillText(preview ? `${landingCue} · 중앙차 ${Math.round(centerGap)}` : `중앙차 ${Math.round(centerGap)}`, 94, 56);
 
   const meterX = 34;
   const meterY = 66;
@@ -2513,12 +2579,12 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fill();
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(preview?.quality === "miss" ? "겹침 부족" : centerGap <= 7 ? "적재 가능" : centerGap <= 26 ? "조금 더" : "아직 멀어요", meterX, meterY + 30);
+  ctx.fillText(preview?.quality === "miss" ? "착지 끊김" : centerGap <= 7 ? "착지권" : centerGap <= 26 ? "잘림 작음" : "붉은 폭 큼", meterX, meterY + 30);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    isDraggingStacker ? "드래그로 릴리스 층을 맞추고 떼면 적재합니다. Space/Enter도 됩니다." : "마우스로 끌어 맞추고 떼면 적재합니다. A/D는 살짝 보정합니다.",
+    isDraggingStacker ? "초록 겹침을 착지 레일에 맞추고 떼면 적재합니다. Space/Enter도 됩니다." : "붉은 바깥 폭을 줄인 뒤 멈춥니다. A/D는 살짝 보정합니다.",
     34,
     canvasHeight - 20,
   );
@@ -2531,8 +2597,8 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("움직이는 릴리스 층을 아래 기준층 위에 맞춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("어긋난 폭은 잘리고 다음 층이 좁아집니다.", canvasWidth / 2, 228);
+    ctx.fillText("움직이는 릴리스 층을 착지 레일 위에 멈춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("초록 겹침은 살고 붉은 바깥 폭은 잘려 다음 층이 좁아집니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4705,7 +4771,7 @@ const arcadeVariantCopy = {
     finalKicker: "적재탑 결과",
     liveTitle: "릴리스 적재 기록",
     scoreLabel: "살린 적재층",
-    liveDetail: "손 위치선, 정렬권, 잘린 폭과 다음 층 폭을 같이 봅니다.",
+    liveDetail: "착지 레일, 남은 폭, 잘린 폭과 다음 층 폭을 같이 봅니다.",
   },
   growth: {
     finalKicker: "작업장 기록",
