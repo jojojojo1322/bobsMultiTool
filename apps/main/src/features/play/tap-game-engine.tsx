@@ -38,8 +38,8 @@ export function TapGameEngine({
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
   const scoreLabel = isAiReviewStampboard ? "검수 점수" : isIndexingWaitingRoom ? "운영 점수" : isMeetingExitBoard ? "결정 점수" : "판정 점수";
   const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "접수표" : isMeetingExitBoard ? "전표" : "진행";
-  const frameKicker = isAiReviewStampboard ? "근거 도장판" : isIndexingWaitingRoom ? "색인 접수표 도장대" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
-  const aiReviewChecklist = ["파일", "명령", "출처", "비밀값"];
+  const frameKicker = isAiReviewStampboard ? "AI 근거 전표 도장대" : isIndexingWaitingRoom ? "색인 접수표 도장대" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
+  const aiReviewChecklist = ["파일 경로", "실행 명령", "원출처", "한계/비밀"];
   const indexingTicketChecklist = ["200 열림", "Sitemap", "Canonical", "URL 검사"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
   const playBodyClassName = usesTicketSurface
@@ -131,10 +131,12 @@ export function TapGameEngine({
         <div className={playBodyClassName} data-play-state={current.id}>
           <div>
             {isAiReviewStampboard ? (
-              <div className="rounded-lg border bg-zinc-50 p-4 text-left shadow-inner dark:bg-zinc-950/40">
+              <div className="rounded-lg border bg-zinc-50 p-4 text-left shadow-inner ring-1 ring-inset ring-zinc-200/70 dark:bg-zinc-950/40 dark:ring-zinc-800/80">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
-                  <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">AI 답변 전표</p>
-                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">멈춤 후 확인</span>
+                  <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">AI 답변 검수 전표</p>
+                  <span className="rounded-sm border bg-background px-2 py-1 font-mono text-[11px] font-medium text-muted-foreground">
+                    SLIP-{String(index + 1).padStart(2, "0")}
+                  </span>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
                   {aiReviewChecklist.map((item) => (
@@ -143,19 +145,19 @@ export function TapGameEngine({
                     </span>
                   ))}
                 </div>
-                <div className="mt-4 border-l-4 border-zinc-500 bg-background p-4">
-                  <p className="text-xs font-medium text-muted-foreground">검수 문장</p>
+                <div className="mt-4 border-l-4 border-zinc-500 bg-background p-4 shadow-sm">
+                  <p className="text-xs font-medium text-muted-foreground">도장 찍을 문장</p>
                   <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-normal">{current.label}</h3>
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
                 </div>
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.targetLabel}</p>
-                    <p className="mt-1 leading-5">파일, 명령, 출처, 의존성 근거가 비면 멈춥니다.</p>
+                    <p className="mt-1 leading-5">파일 경로, 실행 명령, 원출처, 한계 표시가 비면 멈춥니다.</p>
                   </div>
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.decoyLabel}</p>
-                    <p className="mt-1 leading-5">실제 경로, 결과, 한계 표시가 있으면 넘깁니다.</p>
+                    <p className="mt-1 leading-5">실제 확인 흔적과 한계 표시가 있으면 넘깁니다.</p>
                   </div>
                 </div>
               </div>

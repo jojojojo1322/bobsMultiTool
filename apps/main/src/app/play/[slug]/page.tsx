@@ -334,9 +334,9 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
     if (content.slug === "ai-review-tap") {
       return {
         kicker: "첫 5초 안내",
-        title: "AI 문장 전표에 근거 있음/없음 도장을 찍는 검수판",
-        firstLook: "AI 답변 전표, 파일·명령·출처·비밀값 체크줄, 근거 없음 도장, 근거 있음 도장을 먼저 봅니다.",
-        firstMove: "첫 움직임은 도장입니다. 파일·명령·출처·의존성 근거가 비면 근거 없음, 실제 확인 흔적이 있으면 근거 있음을 찍습니다.",
+        title: "AI 답변 전표에 근거 있음/없음 도장을 찍는 검수판",
+        firstLook: "AI 답변 전표, 파일 경로·실행 명령·원출처·한계 표시 체크줄, 근거 없음 도장, 근거 있음 도장을 먼저 봅니다.",
+        firstMove: "첫 움직임은 도장입니다. 파일 경로·실행 명령·원출처·한계 표시가 비면 근거 없음, 실제 확인 흔적이 있으면 근거 있음을 찍습니다.",
         pacingText: `${content.durationLabel} 동안 빠르게 맞히기보다 확인 흔적이 있는 말과 매끈한 단정을 나눕니다.`,
         recordText: "기록은 숫자 결과보다 검수 전표에 가깝습니다. 도장을 잘못 찍었다면 다음 문장에서 무엇을 먼저 열어볼지 다시 봅니다.",
       };
