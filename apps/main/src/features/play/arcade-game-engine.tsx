@@ -45,6 +45,7 @@ import {
   lotteryLedgerStopRect,
   lotteryLedgerTicketRect,
   lotteryLedgerTierAt,
+  lotteryLedgerTierGateReason,
   lotteryLedgerTierIndexAt,
   lotteryLedgerTierRectAt,
   lotteryLedgerTiers,
@@ -502,7 +503,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     lotteryLedgerLossStreak: 0,
     lotteryLedgerLoans: 0,
     lotteryLedgerLastNet: 0,
-    lotteryLedgerMessage: "10금화 복권부터 시작합니다.",
+    lotteryLedgerMessage: "1단계 10금화부터 시작합니다. 지갑이 늘면 2단계와 3단계가 열립니다.",
     lotteryLedgerDragging: false,
     snake,
     snakeDirection: "right",
@@ -6414,7 +6415,12 @@ function LotteryLedgerScreenControls({
           style={canvasRectStyle(lotteryLedgerTierRectAt(index))}
           onClick={() => onTierSelect(index)}
           data-play-action={`lottery-tier-${index}`}
-          aria-label={`${shortLotteryLedgerTierTitle(tier)} 선택`}
+          aria-label={
+            lotteryLedgerTierGateReason(view, index)
+              ? `${shortLotteryLedgerTierTitle(tier)} 잠김, ${lotteryLedgerTierGateReason(view, index)}`
+              : `${shortLotteryLedgerTierTitle(tier)} 선택`
+          }
+          aria-disabled={Boolean(lotteryLedgerTierGateReason(view, index))}
           aria-pressed={view.lotteryLedgerSelectedTier === index}
         >
           {tier.cost}금
