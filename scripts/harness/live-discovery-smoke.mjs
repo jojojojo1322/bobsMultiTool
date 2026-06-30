@@ -257,7 +257,7 @@ if (llmsResponse) {
     "## Blog Categories",
     "## Discovery",
     `[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](${baseUrl}/blog/ai-side-project-realistic-order)`,
-    `[퇴근 생존기](${baseUrl}/play/office-survival)`,
+    `[퇴근 전 일감 조절판](${baseUrl}/play/office-survival)`,
     `[Sitemap index](${baseUrl}/sitemap.xml)`,
     `[OpenSearch descriptor](${baseUrl}/opensearch.xml)`,
   ]);

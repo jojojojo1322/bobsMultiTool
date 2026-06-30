@@ -1083,6 +1083,23 @@ This file records manual external checks for the Blog + Play migration. Keep pri
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI deployment slice.
   - Search Console discovered pages remain at the latest recorded `68` against the current live `149` URL sitemap until the next signed-in Search Console follow-up.
   - Interpretation: discovery submission is refreshed for the password Play freshness update, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `149` still needs the scheduled signed-in observation.
+- Post-Naver ownership verification confirmation:
+  - Commit: `e716746` added the Naver ownership verification meta tag through the Next metadata API.
+  - Live head check: `curl -Ls https://www.bobob.app/` shows `<meta name="naver-site-verification" content="f15442a32b31aaee5a69ce6d567c1f0ef7645207"/>`.
+  - Apex redirect check: `https://bobob.app/` returns a permanent redirect to `https://www.bobob.app/`.
+  - Live discovery surface currently exposes sitemap URLs `151`, feed items `140`, Blog posts `114`, Play entries `26`.
+  - Live `/sitemaps/en` URL count: `151`
+  - IndexNow command: built the current sitemap payload and submitted it with `curl --max-time 30` to `https://api.indexnow.org/indexnow`.
+  - IndexNow submitted URL count: `151`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `140`, `140`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this CLI slice.
+  - Naver Search Advisor action: the homepage verification meta is live, but the signed-in Search Advisor ownership/sitemap/robots/page collection pass still needs to be performed in a browser session.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `151` URL sitemap until the next signed-in Search Console follow-up.
+  - Interpretation: Naver ownership verification can now be attempted from Search Advisor, but indexing is not complete. The gap between Search Console discovered pages `68` and live sitemap URLs `151` still needs the scheduled signed-in observation.
 
 Decision:
 
@@ -1101,7 +1118,7 @@ Next observation windows:
   - Use the `bobob935` Google account.
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `149` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, sum-box clear-feedback, password suggestion-cycle, Play action-limit wording cleanup, memory input-trail, Play count-limit label cleanup, brick-breaker landing guide, flight hold-release cue, snake next-cell preview, minesweeper chord-ready cue, shooter target-cue, mole priority-cue, Play state-hook cleanup, password slot-keypad, stacker drag-alignment, memory flow-cue, sum-box counter-cue, Play count-toned panel cleanup, snake open-turn cue, development Blog date distribution, play feedback development note, sum-box drag guide, and password slot candidate cue upgrades.
+  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `151` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, sum-box clear-feedback, password suggestion-cycle, Play action-limit wording cleanup, memory input-trail, Play count-limit label cleanup, brick-breaker landing guide, flight hold-release cue, snake next-cell preview, minesweeper chord-ready cue, shooter target-cue, mole priority-cue, Play state-hook cleanup, password slot-keypad, stacker drag-alignment, memory flow-cue, sum-box counter-cue, Play count-toned panel cleanup, snake open-turn cue, development Blog date distribution, play feedback development note, sum-box drag guide, password slot candidate cue, Naver verification confirmation, indexing waiting room, and workshop growth ledger updates.
   - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
   - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
   - Naver Search Advisor still needs a signed-in pass. Check the canonical host, sitemap state, robots.txt state, and representative page collection/request status without treating a collection request as indexing proof.
