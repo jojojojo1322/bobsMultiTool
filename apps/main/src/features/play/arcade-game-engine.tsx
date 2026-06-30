@@ -2754,7 +2754,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
       ctx.fill();
       ctx.fillStyle = target.good ? "rgba(220,252,231,0.96)" : "rgba(255,228,230,0.96)";
       ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-      ctx.fillText(target.good ? "NOW" : "MUTE", center.x, center.y + 27 - moleHeight);
+      ctx.fillText(target.good ? "보기" : "꺼둠", center.x, center.y + 27 - moleHeight);
       ctx.fillStyle = target.good ? "rgba(220,252,231,0.92)" : "rgba(255,228,230,0.92)";
       ctx.font = "800 10px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
       ctx.fillText(`${outcome.score > 0 ? "+" : ""}${outcome.score}`, center.x, center.y - 38);
@@ -2793,23 +2793,23 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillStyle = "#f8fafc";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("열린 알림 카드", panelX + 18, 112);
+  ctx.fillText("지금 열린 알림", panelX + 18, 112);
   ctx.font = "900 28px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
   ctx.fillStyle = accent;
   ctx.fillText(`${goodMoles}`, panelX + 18, 152);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`꺼둘 카드 ${noiseMoles}`, panelX + 66, 149);
-  ctx.fillText(`곧 사라질 긴급 ${urgentGoodMoles}`, panelX + 18, 174);
+  ctx.fillText(`꺼둘 알림 ${noiseMoles}`, panelX + 66, 149);
+  ctx.fillText(`곧 닫힐 알림 ${urgentGoodMoles}`, panelX + 18, 174);
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
-  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label} 확인` : "긴급 카드 기다리기", panelX + 18, 222);
-  ctx.fillText(priorityMole ? "빈칸 Space는 긴급 카드로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
-  ctx.fillText(avoidMole ? `${avoidMole.label}은 꺼두기` : "소음 카드는 꺼진 채 두기", panelX + 18, 270);
+  ctx.fillText(priorityMole ? `먼저 ${priorityMole.label} 보기` : "볼 알림 기다리기", panelX + 18, 222);
+  ctx.fillText(priorityMole ? "빈칸 Space는 볼 알림으로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
+  ctx.fillText(avoidMole ? `${avoidMole.label}은 꺼둠` : "꺼둘 알림은 그대로 두기", panelX + 18, 270);
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스로 긴급 카드를 누르거나 방향키/WASD로 슬롯을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 볼 알림을 누르거나 방향키/WASD로 슬롯을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -2819,8 +2819,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("NOW 긴급 카드만 확인하고, MUTE 소음 카드는 꺼둔 채 둡니다.", canvasWidth / 2, 202);
-    ctx.fillText("곧 사라질 카드부터 마우스나 방향키와 Space로 확인합니다.", canvasWidth / 2, 228);
+    ctx.fillText("볼 알림만 확인하고, 꺼둘 알림은 건드리지 않습니다.", canvasWidth / 2, 202);
+    ctx.fillText("곧 닫힐 알림부터 마우스나 방향키와 Space로 확인합니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4857,10 +4857,10 @@ const arcadeVariantCopy = {
     liveDetail: "숫자 주변의 깃발 수와 열린 칸을 같이 봅니다.",
   },
   mole: {
-    finalKicker: "스위치보드 결과",
+    finalKicker: "알림 선별 결과",
     liveTitle: "알림 선별 기록",
-    scoreLabel: "확인한 긴급 카드",
-    liveDetail: "지금 볼 긴급 카드와 꺼둘 소음 카드를 나눠 봅니다.",
+    scoreLabel: "확인한 알림",
+    liveDetail: "지금 볼 알림과 꺼둘 알림을 나눠 봅니다.",
   },
   stacker: {
     finalKicker: "적재탑 결과",
