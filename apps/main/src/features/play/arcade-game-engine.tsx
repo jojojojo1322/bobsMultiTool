@@ -830,11 +830,11 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
       ? {
           noisyCloseTitle: "미끼 정렬됨",
           noisyCloseDetail: (label: string) => `${label} 넘기기`,
-          readyTitle: "쏠 미사일",
+          readyTitle: "요격 충돌점",
           readyDetail: (label: string) => `${label} 먼저 막기`,
-          trackingTitle: "도시선까지 거리",
-          waitingTitle: "미사일 대기",
-          waitingDetail: "아래 도시선에 가까운 미사일 기다리기",
+          trackingTitle: "릴리스 도시선 거리",
+          waitingTitle: "요격 대기",
+          waitingDetail: "도시선 가까운 경고 궤적 기다리기",
         }
       : mode === "bubble"
         ? {
@@ -1813,11 +1813,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   const drawCopy =
     mode === "missile"
       ? {
-          header: "도시선 요격포",
-          footer: "아래 도시선에 먼저 닿을 미사일에 조준점을 놓고 요격탄을 쏩니다. A/D와 Space도 됩니다.",
-          focusWarning: "화면 위 미사일보다 아래 도시선에 닿기 직전인 것을 먼저 보세요.",
-          startLine1: "하단 요격포를 움직여 먼저 닿을 미사일에 조준점을 놓습니다.",
-          startLine2: "미끼는 넘기고 아래 도시선 가까운 미사일부터 한 발씩 막습니다.",
+          header: "릴리스 도시선 요격포",
+          footer: "아래 릴리스 도시선에 먼저 닿을 충돌점에 조준점을 놓고 요격탄을 쏩니다. A/D와 Space도 됩니다.",
+          focusWarning: "화면 위의 먼 궤적보다 아래 도시선에 닿기 직전인 경고 궤적을 먼저 보세요.",
+          startLine1: "하단 요격포를 움직여 먼저 닿을 충돌점에 조준점을 놓습니다.",
+          startLine2: "미끼는 넘기고 아래 도시선 가까운 경고 궤적부터 한 발씩 막습니다.",
         }
       : mode === "bubble"
         ? {
@@ -2001,9 +2001,9 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fillStyle = "rgba(226,232,240,0.72)";
     ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("아래 도시선", 44, dangerLineY + 37);
+    ctx.fillText("릴리스 도시선", 44, dangerLineY + 37);
     ctx.textAlign = "right";
-    ctx.fillText("먼 것보다 먼저 닿을 것", canvasWidth - 44, dangerLineY + 37);
+    ctx.fillText("먼 궤적보다 먼저 닿을 충돌점", canvasWidth - 44, dangerLineY + 37);
   }
 
   for (const sprite of state.sprites) {
@@ -4926,10 +4926,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "차단한 확인 표식, 놓친 게이트선, 주황 미끼에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
-    finalKicker: "도시선 방어 결과",
-    liveTitle: "도시선 요격 기록",
+    finalKicker: "릴리스 도시선 방어 결과",
+    liveTitle: "릴리스 도시선 요격 기록",
     scoreLabel: "요격한 미사일",
-    liveDetail: "요격한 미사일, 놓친 도시선 위협, 미끼에 흔들린 순간을 같이 봅니다.",
+    liveDetail: "요격한 경고 궤적, 놓친 도시선 위협, 미끼에 흔들린 순간을 같이 봅니다.",
   },
 };
 
