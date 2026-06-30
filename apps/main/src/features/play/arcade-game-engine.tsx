@@ -798,7 +798,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "sum-box") return "고르기";
   if (content.arcade.variant === "lottery-economy") return "사기";
   if (content.arcade.variant === "lottery") return "긁기";
-  if (content.arcade.variant === "snake") return "한 칸";
+  if (content.arcade.variant === "snake") return "길 찾기";
   if (content.arcade.variant === "password") return "확인";
   if (content.arcade.variant === "minesweeper") return "열기";
   if (content.arcade.variant === "match-three") return "고르기";
@@ -3138,21 +3138,21 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   const safeCloser = directionOptions.find((option) => option.safe && option.closer);
   const safeFallback = directionOptions.find((option) => option.safe);
   const suggestedTurn = directEat ?? safeCloser ?? safeFallback ?? null;
-  const suggestedTurnCue = suggestedTurn ? `${snakeDirectionLabel(suggestedTurn.direction)} · ${snakeOptionLabel(suggestedTurn, state.snakeFood.good)}` : "열린 길 없음";
-  const foodCue = state.snakeFood.good ? (movingCloser ? "조각 쪽" : "길 찾기") : previewDanger ? "건드리지 말기" : "비켜가기";
+  const suggestedTurnCue = suggestedTurn ? `${snakeDirectionLabel(suggestedTurn.direction)} · ${snakeOptionLabel(suggestedTurn, state.snakeFood.good)}` : "빈칸 없음";
+  const foodCue = state.snakeFood.good ? (movingCloser ? "조각 쪽" : "빈칸 찾기") : previewDanger ? "건드리지 말기" : "비켜가기";
   const nextCue = preview.hitWall
-    ? "다음 칸 벽"
+    ? "앞 칸 벽"
     : preview.hitSelf
-      ? "다음 칸 꼬리"
+      ? "앞 칸 꼬리"
       : preview.willEat
         ? state.snakeFood.good
-          ? "다음 칸 조각"
-          : "다음 칸 피하기"
+          ? "앞 칸 조각"
+          : "앞 칸 피하기"
         : movingCloser
           ? `${snakeDirectionLabel(preview.direction)} · 가까워짐`
           : `${snakeDirectionLabel(preview.direction)} · 돌아가기`;
   const dangerBadge = preview.hitWall ? "벽" : preview.hitSelf ? "꼬리" : "피하기";
-  const turnCue = previewDanger && suggestedTurn ? `꺾기 ${suggestedTurnCue}` : `다음 길 ${suggestedTurnCue}`;
+  const turnCue = previewDanger && suggestedTurn ? `꺾기 ${suggestedTurnCue}` : `빈칸 ${suggestedTurnCue}`;
   const headCenter = head ? snakeCellCenter(head) : null;
   const foodCenter = snakeCellCenter(state.snakeFood);
   const previewCenter = snakeCellCenter({
@@ -3170,6 +3170,12 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.strokeStyle = "rgba(255,255,255,0.1)";
   ctx.lineWidth = 1;
   ctx.stroke();
+  ctx.fillStyle = "rgba(226,232,240,0.74)";
+  ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("배포 레인", snakeBoardX - 4, snakeBoardY - 20);
+  ctx.textAlign = "right";
+  ctx.fillText("머리 앞 한 칸 먼저", snakeBoardX + boardWidth + 4, snakeBoardY - 20);
 
   ctx.fillStyle = "rgba(209,250,229,0.07)";
   ctx.beginPath();
@@ -3306,7 +3312,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, 34, 36, 128);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.64)";
-  ctx.fillText(`조각 ${state.snakeFood.label} · ${foodCue}`, 172, 36, 210);
+  ctx.fillText(`배포 조각 ${state.snakeFood.label} · ${foodCue}`, 172, 36, 230);
   ctx.textAlign = "right";
   ctx.fillStyle = previewDanger ? danger : preview.willEat || movingCloser ? accent : "rgba(255,255,255,0.72)";
   ctx.fillText(previewDanger ? `${nextCue} · ${turnCue}` : turnCue, canvasWidth - 34, 36, 310);
@@ -3314,7 +3320,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("예고 칸과 조각 방향선을 보며 방향키/WASD 또는 캔버스 드래그로 큐를 꺾습니다.", 34, canvasHeight - 20);
+  ctx.fillText("머리 앞 예고 칸과 조각 방향선을 보며 방향키/WASD 또는 캔버스 드래그로 배포줄을 꺾습니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -3324,8 +3330,8 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("예고 칸을 보며 방향키/WASD나 캔버스 드래그로 큐를 꺾습니다.", canvasWidth / 2, 204);
-    ctx.fillText("조각 방향선만 따라가도 되지만, 꼬리 앞에서는 한 박자 먼저 꺾어야 합니다.", canvasWidth / 2, 230);
+    ctx.fillText("머리 앞 예고 칸을 보며 방향키/WASD나 드래그로 배포줄을 꺾습니다.", canvasWidth / 2, 204);
+    ctx.fillText("노란 조각보다 꼬리 출구와 빈칸을 먼저 남깁니다.", canvasWidth / 2, 230);
   }
 }
 
@@ -4815,10 +4821,10 @@ const arcadeVariantCopy = {
     liveDetail: "공이 내려올 자리와 패치 패들 위치를 다시 봅니다.",
   },
   snake: {
-    finalKicker: "릴리스 큐 결과",
-    liveTitle: "큐 경로 기록",
+    finalKicker: "배포줄 결과",
+    liveTitle: "배포줄 경로 기록",
     scoreLabel: "붙인 조각",
-    liveDetail: "다음 칸, 열린 방향, 꼬리와의 거리를 같이 봅니다.",
+    liveDetail: "머리 앞 한 칸, 열린 방향, 꼬리 출구를 같이 봅니다.",
   },
   password: {
     finalKicker: "추론 결과",
