@@ -4858,10 +4858,10 @@ const arcadeVariantCopy = {
     liveDetail: "착지 레일, 남은 폭, 잘린 폭과 다음 층 폭을 같이 봅니다.",
   },
   growth: {
-    finalKicker: "작업장 기록",
-    liveTitle: "현재 기록",
+    finalKicker: "공방 기록",
+    liveTitle: "부품 공방 기록",
     scoreLabel: "납품",
-    liveDetail: "제작대, 납품 상자, 설비 장부, 열 상태를 같이 봅니다.",
+    liveDetail: "제작대, 납품 상자, 설비 장부, 과열과 현재 병목을 같이 봅니다.",
   },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
@@ -4965,7 +4965,7 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     return "아직 긁지 않았습니다. 9칸을 문질러 결과 전표를 채웁니다.";
   }
   if (content.arcade.variant === "growth") {
-    return `부품 ${view.growthScrap}. 다음 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
+    return `부품 ${view.growthScrap}. 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 현재 병목은 ${view.growthBottleneck}입니다. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
   }
 
   const copy = arcadeCopyFor(content);
@@ -5028,10 +5028,10 @@ export function ArcadeGameEngine({
         ]
       : isGrowthGame
         ? [
-            { label: "납품", value: `${view.growthOrder}건` },
-            { label: "상자", value: `${view.growthOrderProgress}/${view.growthOrderTarget}` },
+            { label: "출고", value: `${view.growthOrder}건` },
+            { label: "납품상자", value: `${view.growthOrderProgress}/${view.growthOrderTarget}` },
             { label: "부품", value: view.growthScrap },
-            { label: "열", value: `${view.growthHeat}/${view.growthHeatCap}` },
+            { label: "병목", value: view.growthBottleneck },
           ]
       : content.arcade.variant === "sum-box"
         ? [

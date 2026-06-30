@@ -57,10 +57,10 @@ const ledgerWidth = 314;
 const ledgerRowHeight = 56;
 
 const upgradeDefinitions: GrowthUpgradeDefinition[] = [
-  { key: "force", label: "힘", shortLabel: "힘", ledger: "제작대 한 번의 부품량 증가", baseCost: 10, scale: 1.55, unlockOrder: 0 },
-  { key: "cooling", label: "냉각", shortLabel: "냉각", ledger: "과열 전까지 더 오래 제작", baseCost: 14, scale: 1.58, unlockOrder: 0 },
-  { key: "auto", label: "자동", shortLabel: "자동", ledger: "손을 떼도 납품 상자 채우기", baseCost: 26, scale: 1.72, unlockOrder: 1 },
-  { key: "gear", label: "장비", shortLabel: "장비", ledger: "납품 목표량을 조금 낮추기", baseCost: 54, scale: 1.86, unlockOrder: 2 },
+  { key: "force", label: "제작 힘", shortLabel: "힘", ledger: "제작대 한 번의 부품량 증가", baseCost: 10, scale: 1.55, unlockOrder: 0 },
+  { key: "cooling", label: "냉각팬", shortLabel: "냉각", ledger: "과열 전까지 더 오래 제작", baseCost: 14, scale: 1.58, unlockOrder: 0 },
+  { key: "auto", label: "자동벨트", shortLabel: "자동", ledger: "손을 떼도 납품 상자 채우기", baseCost: 26, scale: 1.72, unlockOrder: 1 },
+  { key: "gear", label: "장비지그", shortLabel: "장비", ledger: "납품 목표량을 조금 낮추기", baseCost: 54, scale: 1.86, unlockOrder: 2 },
 ];
 
 const buildDefinitions: Record<
@@ -443,6 +443,8 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
   const output = growthOutput(state);
   const autoIncome = growthAutoIncome(state);
   const bottleneck = growthBottleneckLabel(state);
+  const bottleneckShort =
+    bottleneck === "열 식히기" ? "냉각" : bottleneck === "부품 모으기" ? "부품" : bottleneck.replace(" 설비", "");
   const animationTime = typeof performance !== "undefined" ? performance.now() / 1000 : state.tick;
   const pistonOffset = Math.sin(animationTime * 5 + state.tick * 0.7) * 5;
   const beltPhase = (animationTime * (28 + state.autoLevel * 4) + state.tick * 11 + state.orderProgress * 0.18) % 86;
@@ -475,16 +477,16 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
   ctx.fillStyle = "rgba(248,250,252,0.82)";
   ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("부품 작업장", 44, 54);
+  ctx.fillText("부품 공방 성장판", 44, 54);
   ctx.fillStyle = primary;
   ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("제작대에서 부품을 만들고 납품 상자를 채웁니다", 44, 78, 250);
+  ctx.fillText("제작대 -> 부품 -> 설비 -> 납품 상자", 44, 78, 260);
 
   const statusItems = [
-    { label: "납품", value: `${state.order}건` },
+    { label: "출고", value: `${state.order}건` },
     { label: "부품", value: `${Math.round(state.scrap)}` },
-    { label: "열", value: `${Math.round(state.heat)}/${heatCap}` },
-    { label: "방향", value: build.label.replace(" 위주", "") },
+    { label: "과열", value: `${Math.round(state.heat)}/${heatCap}` },
+    { label: "병목", value: bottleneckShort },
   ];
   statusItems.forEach((item, index) => {
     const x = 318 + index * 90;
@@ -495,8 +497,8 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
     ctx.fillStyle = "rgba(255,255,255,0.56)";
     ctx.font = "750 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(item.label, x + 12, 55);
-    ctx.fillStyle = item.label === "열" && heatRatio > 0.82 ? danger : "#f8fafc";
-    ctx.font = item.label === "방향" ? "900 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif" : "900 15px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    ctx.fillStyle = item.label === "과열" && heatRatio > 0.82 ? danger : "#f8fafc";
+    ctx.font = item.label === "병목" ? "900 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif" : "900 15px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
     ctx.fillText(item.value, x + 12, 73, 58);
   });
 
@@ -519,7 +521,7 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
   ctx.fillText("제작대", workbenchRect.x + 22, workbenchRect.y + 28);
   ctx.fillStyle = heatRatio > 0.82 ? danger : "rgba(255,255,255,0.58)";
   ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`막힘: ${bottleneck}`, workbenchRect.x + 178, workbenchRect.y + 28, 130);
+  ctx.fillText(`병목: ${bottleneck}`, workbenchRect.x + 178, workbenchRect.y + 28, 130);
 
   ctx.fillStyle = "rgba(0,0,0,0.22)";
   ctx.beginPath();
@@ -565,7 +567,7 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
   ctx.fillText(`상자 +${Math.round(state.orderProgress)}/${deliveryTarget}`, 176, 346);
 
   drawGauge(ctx, 66, 118, 242, deliveryRatio, primary, "납품 상자");
-  drawGauge(ctx, 66, 360, 242, heatRatio, heatRatio > 0.78 ? danger : accent, "열");
+  drawGauge(ctx, 66, 360, 242, heatRatio, heatRatio > 0.78 ? danger : accent, "과열");
 
   ctx.fillStyle = "rgba(0,0,0,0.24)";
   ctx.beginPath();
@@ -707,5 +709,9 @@ export function drawGrowthWorkshop(content: ArcadeGameContent, state: GrowthWork
     ctx.roundRect(84, 190, 206, 52, 16);
     ctx.stroke();
     ctx.lineWidth = 1;
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("먼저 제작대 누르기", 187, 254);
   }
 }
