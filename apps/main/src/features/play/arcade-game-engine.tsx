@@ -4957,12 +4957,12 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     const stage = lotteryStageAt(view.lotteryStage);
     const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
     if (view.lotteryTicketDone) {
-      return `이번 장 ${view.lotteryLastPrize > 0 ? "표식 있음" : "꽝"}. 결과 전표를 보고 다음은 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
+      return `이번 장 ${view.lotteryLastPrize > 0 ? "표식 있음" : "꽝"}. 표식표와 결과 전표를 먼저 읽고, 원하면 다음은 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
     }
     if (view.lotteryRevealedCount > 0) {
-      return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 열림. 같은 그림 한 줄과 즉석 표식을 확인합니다.`;
+      return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 열림. 표식표: ${stage.instantSymbol}. 같은 그림 한 줄을 확인합니다.`;
     }
-    return "아직 긁지 않았습니다. 9칸을 문질러 결과 전표를 채웁니다.";
+    return `아직 긁지 않았습니다. 9칸을 문질러 표식표의 ${stage.instantSymbol} 표식과 결과 전표를 확인합니다.`;
   }
   if (content.arcade.variant === "growth") {
     return `부품 ${view.growthScrap}. 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 현재 병목은 ${view.growthBottleneck}입니다. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
@@ -5006,7 +5006,7 @@ export function ArcadeGameEngine({
     isLotteryLedgerPlay
       ? lotteryLedgerMainActionLabel(view)
       : content.arcade.variant === "lottery" && view.lotteryTicketDone
-        ? "다음 장"
+        ? "전표 보고 다음 장"
         : view.started
           ? mainActionLabel(content)
           : "시작";
@@ -5024,7 +5024,7 @@ export function ArcadeGameEngine({
           { label: "현재 장", value: lotteryShortStageTitle(lotteryStage.title) },
           { label: "다음 장", value: lotteryShortStageTitle(lotteryNextStage.title) },
           { label: "열린 칸", value: `${view.lotteryRevealedCount}/9` },
-          { label: "방식", value: "끝 없음" },
+          { label: "표식표", value: `${lotteryStage.instantSymbol} · 끝 없음` },
         ]
       : isGrowthGame
         ? [
@@ -6567,7 +6567,7 @@ function LiveArcadeResultPanel({
           {isLotteryLedger
             ? "산 복권, 당첨, 멈춤 기록이 여기에 남습니다."
             : isLottery
-              ? "긁은 결과와 다음 장 전표가 여기에 이어집니다."
+              ? "긁은 칸, 표식표, 이번 장 전표가 여기에 이어집니다."
               : "시작하면 판의 흐름이 여기에 보입니다."}
         </p>
       )}
