@@ -46,7 +46,7 @@ function formatEffect(value: number) {
 }
 
 function statGoal(key: PlayStatKey) {
-  return key === "workload" ? "낮을수록 퇴근선 가까움" : "높을수록 버팀";
+  return key === "workload" ? "낮을수록 오늘 닫힘" : "높을수록 여유";
 }
 
 function statRiskScore(key: PlayStatKey, value: number) {
@@ -62,7 +62,7 @@ function statRiskLabel(key: PlayStatKey, value: number) {
 
 function effectMeaning(key: PlayStatKey, value: number) {
   if (key === "workload") return value > 0 ? "부담 증가" : "부담 감소";
-  if (key === "reputation") return value > 0 ? "신뢰 증가" : "신뢰 손상";
+  if (key === "reputation") return value > 0 ? "신뢰 잔고 증가" : "신뢰 잔고 손상";
   return value > 0 ? "회복" : "소모";
 }
 
@@ -154,7 +154,7 @@ export function SurvivalPlayEngine({
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium text-muted-foreground">퇴근 조절판</p>
+            <p className="text-xs font-medium text-muted-foreground">퇴근 전표판</p>
             <h2 className="mt-1 text-xl font-semibold tracking-normal">{content.title}</h2>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
@@ -164,7 +164,7 @@ export function SurvivalPlayEngine({
               <p className="text-sm font-semibold tabular-nums">{timeLabel}</p>
             </div>
             <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">흔들리는 자원</p>
+              <p className="text-xs text-muted-foreground">마감 위험</p>
               <p className="text-sm font-semibold">{isFinished ? "정산 완료" : riskLabel}</p>
             </div>
           </div>
@@ -186,8 +186,9 @@ export function SurvivalPlayEngine({
             </div>
           ))}
         </div>
+        <ResourceLedgerNote />
         <p className="mt-3 text-xs leading-5 text-muted-foreground">
-          업무량은 낮을수록 퇴근선이 가까워지고, 체력·멘탈·신뢰는 높을수록 하루를 버틸 여지가 남습니다. 사건 흐름 {progressLabel}
+          일더미는 낮을수록 퇴근선이 가까워지고, 몸 배터리·마음 여유·신뢰 잔고는 높을수록 하루를 버틸 여지가 남습니다. 사건 흐름 {progressLabel}
         </p>
       </div>
 
@@ -214,7 +215,7 @@ export function SurvivalPlayEngine({
       ) : currentTurn ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-state={currentTurn.id}>
           <div>
-            <p className="text-xs font-medium text-muted-foreground">현재 전표</p>
+            <p className="text-xs font-medium text-muted-foreground">지금 온 전표</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{currentTurn.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{currentTurn.situation}</p>
             <div className="mt-5 grid gap-3">
@@ -230,7 +231,7 @@ export function SurvivalPlayEngine({
                   <span className="block text-sm font-semibold">{choice.label}</span>
                   <span className="mt-1 block text-sm leading-6 text-muted-foreground">{choice.detail}</span>
                   <span className="mt-3 flex flex-wrap gap-1.5">
-                    <span className="rounded-sm border bg-muted/40 px-2 py-1 text-xs text-muted-foreground">비용 도장</span>
+                    <span className="rounded-sm border bg-muted/40 px-2 py-1 text-xs text-muted-foreground">손익 도장</span>
                     {content.stats.map((stat) => {
                       const effect = choice.effects[stat.key] ?? 0;
                       if (!effect) return null;
@@ -249,6 +250,25 @@ export function SurvivalPlayEngine({
         </div>
       ) : null}
     </section>
+  );
+}
+
+function ResourceLedgerNote() {
+  return (
+    <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
+      <div>
+        <span className="block font-semibold text-red-700 dark:text-red-300">줄일 것</span>
+        <span className="mt-1 block leading-5">요구가 커질수록 일더미가 붙습니다. 범위 확인과 비동기로 낮춥니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-emerald-700 dark:text-emerald-300">지킬 것</span>
+        <span className="mt-1 block leading-5">몸 배터리와 마음 여유가 바닥나면 좋은 신뢰 잔고도 오래 못 갑니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-sky-700 dark:text-sky-300">빌릴 것</span>
+        <span className="mt-1 block leading-5">혼자 버티기보다 도움 요청, 기록, 담당 확인으로 신뢰 잔고를 씁니다.</span>
+      </div>
+    </div>
   );
 }
 
@@ -277,7 +297,7 @@ function HistoryPanel({ content, history }: { content: MicroSimPlayContent; hist
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">첫 전표를 처리하면 오늘의 요구, 통제, 지원 판단이 여기에 남습니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">첫 전표를 처리하면 줄인 요구, 되찾은 통제, 빌린 지원 판단이 여기에 남습니다.</p>
       )}
     </aside>
   );
