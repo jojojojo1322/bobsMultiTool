@@ -3830,10 +3830,10 @@ function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
     return {
       hintReadyText: "노란 질문 종이를 그대로 쓸면 바로 10",
       idleActionText: "질문 종이 위로 지나가기",
-      idleBoardText: "질문 종이 10길 찾기",
+      idleBoardText: "질문 종이 합 10 찾기",
       backtrackText: "지나온 질문 종이 쪽으로 되돌아가면 마지막 조각이 빠집니다.",
-      footerText: "딱 10인 질문 종이 길은 초안판에서 지워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
-      startLine1: "마우스로 질문 종이 조각을 쓸어 지웁니다. 노란 힌트는 한 10길만 보여줍니다.",
+      footerText: "딱 10인 질문 종이 묶음은 초안판에서 지워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
+      startLine1: "마우스로 질문 종이 조각을 이어 훑어 지웁니다. 노란 힌트는 합 10 후보 하나만 보여줍니다.",
       startLine2: "목적·맥락·제약 조각을 작게 묶고, 장황한 조각은 되돌려 뺍니다.",
       ticketStamp: "초안",
       shape: "paper",
@@ -3897,6 +3897,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
           ? "사과 10길 찾기"
           : deployBox
           ? "전표 10묶음 닫기"
+          : promptPaper
+          ? "질문 종이 합 10 찾기"
           : "합 10 만들기";
   const comboHintLabel = comboHint.length
     ? comboHint
@@ -3921,6 +3923,8 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         ? "사과 10길 찾기"
         : deployBox
         ? "전표 10묶음 닫기"
+        : promptPaper
+        ? "질문 종이 합 10 찾기"
         : "합 10 만들기";
   const hintLabel = comboHint.length ? `힌트 ${comboHintLabel}` : "새 판 준비";
   const timeLimit = arcadeTimeLimitSeconds(content);
@@ -4909,9 +4913,9 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
   },
   "prompt-sum-box": {
     finalKicker: "질문 종이 결과",
-    liveTitle: "초안 10길 기록",
+    liveTitle: "초안 합 10 기록",
     scoreLabel: "지운 질문 종이",
-    liveDetail: "쓸어 지운 10길, 되돌린 조각, 넘친 질문 종이를 같이 봅니다.",
+    liveDetail: "합 10으로 지운 묶음, 되돌린 조각, 넘친 질문 종이를 같이 봅니다.",
   },
   "prompt-gem-swap": {
     finalKicker: "질문칩 결과",

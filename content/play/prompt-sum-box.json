@@ -1,11 +1,11 @@
 {
   "slug": "prompt-sum-box",
-  "title": "질문 종이 10길 지우기",
-  "description": "AI에게 줄 초안 종이 조각을 손으로 쓸어 합 10길을 만들면 지우는 1분 드래그 퍼즐입니다. 목적·맥락·제약·예시 조각을 묶고, 장황·중복 조각이 섞이면 되돌려 질문을 덜어냅니다.",
+  "title": "AI 질문 종이 합 10 지우기",
+  "description": "AI에게 줄 초안 종이 조각을 손으로 이어 훑어 합이 정확히 10이면 지우는 1분 드래그 퍼즐입니다. 목적·맥락·제약·예시 조각을 작게 묶고, 장황·중복 조각이 섞이면 되돌려 질문을 덜어냅니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-30",
-  "shareText": "질문 종이 10길 지우기를 해봤다. 질문 조각도 숫자도 한 덩어리로 밀면 금방 넘쳤다.",
+  "shareText": "AI 질문 종이 합 10 지우기를 해봤다. 질문 조각도 숫자도 한 덩어리로 밀면 금방 넘쳤다.",
   "order": 3,
   "relatedBlogSlugs": [
     "drag-feedback-small-game-note",
@@ -23,7 +23,7 @@
   ],
   "arcade": {
     "variant": "sum-box",
-    "goal": "1분 동안 초안 종이 조각을 손으로 쓸고, 합 10이 되는 길을 만들면 선택한 조각을 지웁니다. 목적·맥락·제약 조각을 먼저 보고 장황한 조각은 넘치기 전에 되돌립니다.",
+    "goal": "1분 동안 초안 종이 조각을 손으로 이어 훑고, 합이 정확히 10이 되면 선택한 조각을 지웁니다. 목적·맥락·제약 조각을 먼저 보고 장황한 조각은 넘치기 전에 되돌립니다.",
     "controls": "마우스나 터치로 질문 종이 조각 위를 쓸어 지나갑니다. 지나온 칸으로 되돌아가면 마지막 조각이 빠지고, 키보드는 방향키/WASD로 이동, Space/Enter로 고릅니다.",
     "playerLabel": "조각",
     "goodLabels": [
@@ -68,21 +68,23 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "질문 종이 조각을 드래그해 합 10길로 지우는 퍼즐",
-    "planningIntent": "질문 종이 10길 지우기는 Fruit Box/Apple Game 계열의 '드래그로 숫자 묶음을 잡아 합 10이면 사라지는' 루프를 프롬프트 초안 정리 감각으로 바꾼다. 유저가 숫자만 계산하지 않고 목적·맥락·제약·예시 같은 질문 재료를 작은 길로 묶어 지우며, 장황·중복·흐림 조각은 넘침과 되돌림으로 느껴야 한다.",
+    "gameMode": "AI 질문 종이 조각을 이어 훑어 합 10으로 지우는 퍼즐",
+    "planningIntent": "AI 질문 종이 합 10 지우기는 Fruit Box/Apple Game 계열의 '드래그로 인접 숫자 묶음을 잡아 합 10이면 사라지는' 루프를 프롬프트 초안 정리 감각으로 바꾼다. 유저가 숫자만 계산하지 않고 목적·맥락·제약·예시 같은 질문 재료를 작은 묶음으로 지우며, 장황·중복·흐림 조각은 넘침과 되돌림으로 느껴야 한다. OpenAI, Microsoft, Google Cloud의 prompt design 참고처럼 좋은 질문은 해야 할 일, 맥락, 제약, 예시, 원하는 답 모양을 나눠 쓰는 쪽이 명확하므로, 이 게임은 그 재료를 한 번에 크게 뭉개지 않고 작은 합 10 후보로 정리하는 손맛을 먼저 보여줘야 한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Fruit Box game drag apples total 10 rule",
         "Apple Game puzzle drag numbers make 10",
         "make 10 puzzle drag numbers feedback",
-        "prompt engineering context constraint examples",
+        "OpenAI prompt engineering clear instructions context examples output format",
+        "Microsoft prompt engineering be specific give context examples output format",
+        "Google Cloud Gemini prompt design objective context examples response format",
         "mobile puzzle backtrack drag interaction",
         "prompt cleanup concise context constraints examples"
       ],
       "referenceTypes": [
         "Fruit Box식 숫자 조각을 드래그로 감싸고 합 10이면 지우는 루프",
         "합 10 퍼즐의 선택 합계, 넘침, 놓는 순간 지워지는 피드백",
-        "프롬프트를 목적/맥락/제약/예시로 나누는 사례",
+        "프롬프트를 해야 할 일/맥락/제약/예시/답 모양으로 나누는 사례",
         "모바일 드래그 중 지나온 칸으로 되돌려 마지막 선택을 빼는 입력 사례",
         "종이 조각, 연필선, 합계 배지로 숫자판을 덜 추상적으로 보이게 하는 사례"
       ],
@@ -90,11 +92,12 @@
         "무작위 보드에서 쉬운 10 후보가 첫 5초 안에 하나 이상 보이는지 확인한다.",
         "목적·맥락·제약·예시 라벨과 장황·중복·흐림 라벨 분포가 숫자 계산을 가리지 않는지 본다.",
         "1분 런에서 되돌림 사용률과 넘침 빈도를 보고, 넘침이 좌절보다 수정 감각으로 남는지 확인한다.",
-        "모바일에서 손가락이 합계 배지와 현재 10길을 가리지 않는지 확인한다."
+        "모바일에서 손가락이 합계 배지와 현재 합 10 후보를 가리지 않는지 확인한다.",
+        "첫 5초 안에 '10길' 같은 별칭 없이도 조각을 이어 훑어 합 10이면 지운다는 규칙이 읽히는지 확인한다."
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 마우스/터치로 조각 위를 쓸어 합 10길을 만든다는 규칙이 보이는가?",
+      "첫 5초 안에 마우스/터치로 질문 종이 조각을 이어 훑어 합 10이면 지운다는 규칙이 보이는가?",
       "유저는 숫자를 맞추는 동시에 질문 조각을 목적/맥락/제약 단위로 줄이는가?",
       "장황, 중복, 흐림 같은 조각은 넘침 피드백으로 바로 읽히는가?",
       "되돌림은 잘못 고른 조각을 빼는 프롬프트 수정 감각과 연결되는가?",
@@ -104,7 +107,7 @@
     "visualQuestions": [
       "숫자 보드가 과일상자나 보석판이 아니라 초안 종이 조각처럼 보이는가?",
       "현재 합계와 조각 라벨 중 첫 시선은 합계 배지, 두 번째 시선은 목적/맥락 라벨로 흐르는가?",
-      "드래그한 길은 연필선처럼 보이고, 합 10 후보는 노란 형광펜처럼 보이는가?",
+      "드래그한 묶음은 연필선처럼 보이고, 합 10 후보는 노란 형광펜처럼 보이는가?",
       "넘침은 숫자 실패이면서 장황한 질문의 느낌으로도 읽히는가?",
       "결과 화면은 기록보다 어떤 질문 재료를 덜어냈는지 남기는가?"
     ],
@@ -119,9 +122,9 @@
       "recoveryQuestion": "되돌림이 마지막 조각을 빼며 질문을 다시 정리하는 감각을 주는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "AI에게 던질 초안 종이를 잘라 놓은 합 10 조각판",
-      "primarySurface": "찢은 질문 종이 격자, 굵은 현재 합계 배지, 노란 10길 힌트, 연필 되돌림 흔적",
-      "roughnessTarget": "반짝이는 AI 화면보다 찢은 종이, 연필선, 형광펜 10길, 낮은 대비의 책상판",
+      "metaphor": "AI에게 던질 초안 종이를 잘라 놓은 합 10 정리판",
+      "primarySurface": "찢은 질문 종이 격자, 굵은 현재 합계 배지, 노란 합 10 힌트, 연필 되돌림 흔적",
+      "roughnessTarget": "반짝이는 AI 화면보다 찢은 종이, 연필선, 형광펜 합 10 후보, 낮은 대비의 책상판",
       "differenceFromGenericPlay": "같은 합 10 엔진이라도 사과나 전표가 아니라 질문 종이 조각과 되돌림 흔적이 화면의 성격을 만든다.",
       "mustAvoid": [
         "화려한 보석류 스킨",
