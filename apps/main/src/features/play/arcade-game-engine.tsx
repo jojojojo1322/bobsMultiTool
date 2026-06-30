@@ -3787,11 +3787,11 @@ function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
     return {
       hintReadyText: "노란 전표를 그대로 쓸면 바로 10",
       idleActionText: "전표 위로 지나가기",
-      idleBoardText: "진행중 전표 10묶음 찾기",
+      idleBoardText: "닫을 전표 10묶음 찾기",
       backtrackText: "지나온 전표 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
-      footerText: "딱 10인 전표 묶음은 진행중 상자에서 닫힙니다. 넘치거나 모자라면 흐름이 끊깁니다.",
-      startLine1: "마우스로 진행중 마감표를 쓸어 닫습니다. 노란 힌트는 한 묶음만 보여줍니다.",
-      startLine2: "합 10을 이어가면 진행중 상자가 차분히 비워집니다.",
+      footerText: "딱 10인 전표 묶음은 전표 상자에서 닫힙니다. 넘치거나 모자라면 흐름이 끊깁니다.",
+      startLine1: "마우스로 숫자 전표를 쓸어 닫습니다. 노란 힌트는 한 묶음만 보여줍니다.",
+      startLine2: "합 10을 이어가면 전표 상자가 차분히 비워집니다.",
       ticketStamp: "전표",
       shape: "ticket",
     };
@@ -3845,13 +3845,13 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const nextStreak = shownSum === 10 ? state.sumStreak + 1 : state.sumStreak;
   const clearStreakBonus = shownSum === 10 ? sumBoxStreakBonus(nextStreak) : 0;
   const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) + clearStreakBonus : 0;
-  const clearScoreUnit = promptPaper ? "장" : "점";
+  const clearScoreUnit = deployBox || promptPaper ? "장" : "점";
   const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}${clearScoreUnit}(연속 +${clearStreakBonus})` : `+${clearScore}${clearScoreUnit}`;
   const dragPrimaryLabel = blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? "합 10" : shownSum > 0 ? `합 ${shownSum}` : "쓸기 시작";
   const dragSecondaryLabel = blockedTile
     ? `되돌리면 합 ${shownSum}`
     : shownSum === 10
-      ? `놓으면 +${clearScore}`
+      ? `놓으면 +${clearScore}${clearScoreUnit}`
       : shownSum > 0
         ? `${selectionSummary.neededValue} 더 필요`
         : surface.idleActionText;
@@ -3863,7 +3863,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         : `Space ${clearScoreLabel}`
       : shownSum > 0
         ? selectionSummary.status
-        : "합 10 만들기";
+        : deployBox
+          ? "전표 10묶음 닫기"
+          : "합 10 만들기";
   const comboHintLabel = comboHint.length
     ? comboHint
         .map((tile) => tile.value)
@@ -3871,7 +3873,17 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         .join(" + ") + (comboHint.length > 5 ? " + ..." : "")
     : "없음";
   const flowLabel = state.sumStreak > 0 ? "흐름 유지" : "새 흐름";
-  const topSumLabel = dragging ? `손길 ${shownSum} / 10` : shownSum > 0 ? `합 ${shownSum} / 10` : "합 10 만들기";
+  const topSumLabel = dragging
+    ? deployBox
+      ? `전표 합 ${shownSum} / 10`
+      : `손길 ${shownSum} / 10`
+    : shownSum > 0
+      ? deployBox
+        ? `전표 합 ${shownSum} / 10`
+        : `합 ${shownSum} / 10`
+      : deployBox
+        ? "전표 10묶음 닫기"
+        : "합 10 만들기";
   const hintLabel = comboHint.length ? `힌트 ${comboHintLabel}` : "새 판 준비";
   const timeLimit = arcadeTimeLimitSeconds(content);
   const timeLeft = Math.max(0, Math.ceil(timeLimit - state.elapsed));
@@ -3930,7 +3942,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillText(topSumLabel, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = deployBox || promptPaper ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)";
-  ctx.fillText(`${promptPaper ? "지운 종이" : "점수"} ${state.score} · ${flowLabel}`, 190, 48);
+  ctx.fillText(`${deployBox ? "닫은 전표" : promptPaper ? "지운 종이" : "점수"} ${state.score} · ${flowLabel}`, 190, 48);
   ctx.fillStyle = comboHint.length ? (deployBox || promptPaper ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)") : "rgba(251,113,133,0.88)";
   ctx.fillText(hintLabel, 330, 48);
   ctx.strokeStyle = "rgba(255,255,255,0.18)";
@@ -4259,7 +4271,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.fill();
       ctx.fillStyle = shownSum === 10 ? "#111827" : "#f8fafc";
       ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-      ctx.fillText("담음", tile.x + 24, tile.y + 19);
+      ctx.fillText(deployBox ? "묶음" : "담음", tile.x + 24, tile.y + 19);
     }
     if (tile.label !== `${tile.value}`) {
       ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -4851,7 +4863,7 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
   },
   "deploy-10-box": {
     finalKicker: "마감 전표 결과",
-    liveTitle: "진행중 상자 기록",
+    liveTitle: "전표 상자 기록",
     scoreLabel: "닫은 전표",
     liveDetail: "합 10으로 닫은 전표 묶음과 넘친 새 일을 같이 봅니다.",
   },
