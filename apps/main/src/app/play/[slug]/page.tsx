@@ -316,11 +316,11 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
         recordText: "기록은 공격력 표가 아니라 게이트선 메모입니다. 미끼에 흔들렸다면 다음 판에서는 방어포를 더 늦게 움직입니다.",
       },
       "deploy-missile-defense": {
-        title: "충돌점이 가까운 미사일부터 막는 도시 방어판",
-        firstLook: "위에서 내려오는 미사일 궤적, 하단 도시 방어선, 조준점, 방어선까지 남은 거리를 먼저 봅니다.",
-        firstMove: "첫 움직임은 하단 요격포 조준입니다. 화면 위의 먼 미사일보다 방어선 가까운 충돌점에 선을 맞춥니다.",
-        pacingText: "한 판은 1분 도시 방어선 요격입니다. 결과는 발사량보다 도시 방어선에 닿을 표적을 먼저 지운 흐름으로 남습니다.",
-        recordText: "기록은 공격력 표가 아니라 방어선 메모입니다. 미끼에 흔들렸다면 다음 판에서는 하단 충돌점부터 훑습니다.",
+        title: "아래 도시선에 먼저 닿을 미사일부터 막는 요격판",
+        firstLook: "위에서 내려오는 미사일 궤적, 아래 도시선, 조준점, 닿기까지 남은 거리를 먼저 봅니다.",
+        firstMove: "첫 움직임은 하단 요격포 조준입니다. 화면 위의 먼 미사일보다 아래 도시선에 먼저 닿을 미사일에 선을 맞춥니다.",
+        pacingText: "한 판은 1분 도시선 방어입니다. 결과는 발사량보다 도시선에 닿을 표적을 먼저 지운 흐름으로 남습니다.",
+        recordText: "기록은 공격력 표가 아니라 도시선 메모입니다. 미끼에 흔들렸다면 다음 판에서는 아래쪽부터 훑습니다.",
       },
     };
     const guide = arcadeContextGuideOverrides[content.slug] ?? arcadeContextGuides[content.arcade.variant];
