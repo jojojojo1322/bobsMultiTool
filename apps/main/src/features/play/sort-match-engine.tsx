@@ -34,11 +34,11 @@ export function SortMatchEngine({
   const engineCopy =
     isPromptWorkbench
       ? {
-          boardLabel: "프롬프트 작업대",
-          scoreLabel: "붙인 재료",
-          currentLabel: "현재 메모",
-          historyTitle: "요청서 붙임 기록",
-          emptyHistory: "메모를 한 장 붙이면 어떤 요청서 재료였는지 여기에 남습니다.",
+          boardLabel: "요청서 분류함",
+          scoreLabel: "분류한 메모",
+          currentLabel: "분류할 문장 메모",
+          historyTitle: "요청서 기록철",
+          emptyHistory: "메모를 한 장 붙이면 어느 요청서 칸으로 보냈는지 여기에 남습니다.",
         }
       : content.slug === "priority-sorter"
       ? {
@@ -143,6 +143,7 @@ export function SortMatchEngine({
               <h3 className="mt-2 text-2xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
+            {isPromptWorkbench ? <PromptRequestDeskNote /> : null}
             {content.slug === "priority-sorter" ? <PrioritySorterBoardNote /> : null}
             <div className={`mt-4 grid gap-3 ${isPromptWorkbench ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-3"}`}>
               {content.categories.map((category) => (
@@ -164,6 +165,25 @@ export function SortMatchEngine({
         </div>
       ) : null}
     </section>
+  );
+}
+
+function PromptRequestDeskNote() {
+  return (
+    <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
+      <div>
+        <span className="block font-semibold text-slate-800 dark:text-slate-100">맨 앞 칸</span>
+        <span className="mt-1 block leading-5">해야 할 일을 먼저 붙입니다. 답이 끝내야 할 일이 무엇인지 보는 칸입니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-sky-700 dark:text-sky-300">가운데 칸</span>
+        <span className="mt-1 block leading-5">상황과 예시는 요청서가 헛돌지 않게 붙이는 참고 메모입니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-rose-700 dark:text-rose-300">마지막 칸</span>
+        <span className="mt-1 block leading-5">답 모양과 금지선은 결과물의 모양과 건드리지 말 범위를 닫습니다.</span>
+      </div>
+    </div>
   );
 }
 
@@ -229,7 +249,7 @@ function categoryClassName(slug: string, categoryId: string) {
     if (categoryId === "task") return "border-slate-300/80 bg-slate-50/80 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900/40";
     if (categoryId === "context") return "border-sky-300/80 bg-sky-50/70 hover:bg-sky-50 dark:border-sky-900/70 dark:bg-sky-950/20";
     if (categoryId === "example") return "border-emerald-300/80 bg-emerald-50/70 hover:bg-emerald-50 dark:border-emerald-900/70 dark:bg-emerald-950/20";
-    if (categoryId === "format") return "border-indigo-300/80 bg-indigo-50/70 hover:bg-indigo-50 dark:border-indigo-900/70 dark:bg-indigo-950/20";
+    if (categoryId === "format") return "border-amber-300/80 bg-amber-50/70 hover:bg-amber-50 dark:border-amber-900/70 dark:bg-amber-950/20";
     if (categoryId === "constraint") return "border-rose-300/80 bg-rose-50/70 hover:bg-rose-50 dark:border-rose-900/70 dark:bg-rose-950/20";
   }
   if (slug !== "priority-sorter") return "";

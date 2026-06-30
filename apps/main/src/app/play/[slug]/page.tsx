@@ -376,11 +376,11 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
     if (content.slug === "prompt-cleanup") {
       return {
         kicker: "첫 5초 안내",
-        title: "AI 요청서를 다섯 재료 칸으로 찢어 붙이는 작업대",
-        firstLook: "현재 메모, 할 일/배경/예시/출력 형식/금지·제약 칸, 오른쪽 요청서 붙임 기록을 먼저 봅니다.",
-        firstMove: "첫 움직임은 메모 붙이기입니다. 문장이 AI가 할 일인지, 배경인지, 예시인지, 답의 형식인지, 하지 말라는 제약인지 고릅니다.",
-        pacingText: `${content.durationLabel} 동안 빠르게 맞히기보다 요청이 어디서 뭉쳤는지 분리합니다. 예시와 출력 형식은 금지 문구와 따로 봅니다.`,
-        recordText: "기록은 결과 자랑판이 아니라 다음 프롬프트를 쓰기 위한 요청서 메모입니다. 헷갈린 문장은 한 문장에 역할이 둘 이상 섞였는지 다시 봅니다.",
+        title: "AI 요청서를 다섯 서류함으로 나눠 붙이는 분류대",
+        firstLook: "분류할 문장 메모, 해야 할 일/상황/예시/답 모양/금지선 칸, 오른쪽 요청서 기록철을 먼저 봅니다.",
+        firstMove: "첫 움직임은 메모 붙이기입니다. 문장이 AI가 처리할 일인지, 상황 설명인지, 샘플인지, 답의 모양인지, 건드리지 말 금지선인지 고릅니다.",
+        pacingText: `${content.durationLabel} 동안 빠르게 맞히기보다 요청이 어디서 뭉쳤는지 분리합니다. 예시와 답 모양은 금지선 문구와 따로 봅니다.`,
+        recordText: "기록은 결과 자랑판이 아니라 다음 프롬프트를 쓰기 위한 요청서 기록철입니다. 헷갈린 문장은 한 문장에 역할이 둘 이상 섞였는지 다시 봅니다.",
       };
     }
     if (content.slug === "priority-sorter") {
