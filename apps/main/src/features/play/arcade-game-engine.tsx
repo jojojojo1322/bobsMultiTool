@@ -4516,7 +4516,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.textAlign = "right";
   ctx.fillStyle = "rgba(232,221,174,0.62)";
   ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("초록이면 한 칸, 노랑/빨강이면 대기", canvasWidth - 22, 29);
+  ctx.fillText("초록칸은 한 칸, 노랑/빨강은 대기", canvasWidth - 22, 29);
 
   ctx.fillStyle =
     nextDanger.level === "danger" ? "rgba(200,95,89,0.2)" : nextDanger.level === "watch" ? "rgba(216,185,79,0.18)" : "rgba(134,200,143,0.16)";
@@ -4584,7 +4584,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "#e8ddae";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("앞 칸 표시", 518, 98);
+  ctx.fillText("다음 칸 신호", 518, 98);
   ctx.fillStyle = nextColor;
   ctx.font = "900 24px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(crossingDangerLabel(nextDanger), 518, 132);
@@ -4600,7 +4600,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(232,221,174,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("초록 빈틈이면 한 칸 전진하고, 노랑/빨강 차선이면 대기선에서 기다립니다.", 24, canvasHeight - 18);
+  ctx.fillText("초록칸이면 한 칸 전진하고, 노랑/빨강 차선이면 대기선에서 기다립니다.", 24, canvasHeight - 18);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(23,26,21,0.78)";
@@ -4610,7 +4610,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 168);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("앞 칸이 초록이면 건너고, 노랑이나 빨강이면 대기선에서 기다립니다.", canvasWidth / 2, 204);
+    ctx.fillText("앞 칸이 초록이면 한 칸 건너고, 노랑이나 빨강이면 대기선에서 기다립니다.", canvasWidth / 2, 204);
     ctx.fillText("방향키/WASD 또는 마우스/터치로 차선을 한 칸씩 건넙니다.", canvasWidth / 2, 230);
   }
 }
@@ -4849,10 +4849,10 @@ const arcadeVariantCopy = {
     liveDetail: "지난 자리맞음·숫자있음 꼬리표와 살아 있는 숫자를 같이 봅니다.",
   },
   crossing: {
-    finalKicker: "빈틈 차선 결과",
-    liveTitle: "앞 칸 판단 기록",
+    finalKicker: "릴리스 차선 결과",
+    liveTitle: "다음 칸 신호 기록",
     scoreLabel: "도착 슬롯",
-    liveDetail: "앞 칸 색, 대기선에서 기다린 타이밍, 충돌한 위험차를 같이 봅니다.",
+    liveDetail: "다음 칸 신호, 대기선에서 기다린 타이밍, 충돌한 위험차를 같이 봅니다.",
   },
   minesweeper: {
     finalKicker: "지뢰 지도 결과",
