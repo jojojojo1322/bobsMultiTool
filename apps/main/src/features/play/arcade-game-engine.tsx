@@ -3629,11 +3629,11 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "left";
   ctx.fillStyle = roleChipBoard ? "#eee4c9" : "rgba(255,255,255,0.78)";
   ctx.font = "800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(roleChipBoard ? "질문 역할판" : "조각 정리판", 36, 64);
+  ctx.fillText(roleChipBoard ? "AI 질문 칩판" : "조각 정리판", 36, 64);
   ctx.fillStyle = roleChipBoard ? "rgba(238,228,201,0.7)" : "rgba(255,255,255,0.58)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(hint ? (roleChipBoard ? "점선 한 수 있음" : "보이는 한 수 있음") : "역할 셋 찾기", 36, 88);
-  ctx.fillText(state.gemCombo > 0 ? (roleChipBoard ? "초안 정리중" : "흐름 이어짐") : "흐름 준비", 36, 110);
+  ctx.fillText(hint ? (roleChipBoard ? "점선 한 수 있음" : "보이는 한 수 있음") : roleChipBoard ? "질문칩 3칸 찾기" : "역할 셋 찾기", 36, 88);
+  ctx.fillText(state.gemCombo > 0 ? (roleChipBoard ? "질문 정리중" : "흐름 이어짐") : "흐름 준비", 36, 110);
 
   const selectedIndex = state.gemDragStartIndex ?? state.gemSelected;
   const selectedTile = selectedIndex !== null ? state.gemTiles[selectedIndex] : null;
@@ -3644,7 +3644,7 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fill();
     ctx.fillStyle = roleChipBoard ? "#f3ead3" : "#f8fafc";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(state.gemDragStartIndex !== null ? (roleChipBoard ? "잡은 칩" : "잡은 조각") : roleChipBoard ? "고른 칩" : "고른 조각", 48, 156);
+    ctx.fillText(state.gemDragStartIndex !== null ? (roleChipBoard ? "잡은 질문칩" : "잡은 조각") : roleChipBoard ? "고른 질문칩" : "고른 조각", 48, 156);
     ctx.fillStyle = gemColor(content, selectedTile);
     ctx.font = "900 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText(selectedTile.label.slice(0, 6), 48, 184);
@@ -3762,14 +3762,14 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = roleChipBoard ? "rgba(238,228,201,0.76)" : "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    roleChipBoard ? "옆 칸으로 끌어 역할 칩 셋을 맞춥니다. 점선은 지금 가능한 한 수입니다." : "마우스로 옆 칸에 끌어 놓습니다. 점선은 가능한 교환입니다.",
+    roleChipBoard ? "옆 칸으로 끌어 같은 질문칩 3칸을 맞춥니다. 점선은 지금 가능한 한 수입니다." : "마우스로 옆 칸에 끌어 놓습니다. 점선은 가능한 교환입니다.",
     34,
     canvasHeight - 20,
   );
   if (state.focus < 35) {
     ctx.fillStyle = danger;
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(roleChipBoard ? "초안이 장황해졌습니다. 색보다 역할 라벨을 먼저 보세요." : "초안이 흐려졌습니다. 가까운 조각만 바꿔 역할 셋을 맞추세요.", 34, canvasHeight - 44);
+    ctx.fillText(roleChipBoard ? "초안이 장황해졌습니다. 색보다 질문칩 라벨을 먼저 보세요." : "초안이 흐려졌습니다. 가까운 조각만 바꿔 역할 셋을 맞추세요.", 34, canvasHeight - 44);
   }
 
   if (!state.started) {
@@ -3780,8 +3780,8 @@ function drawGemSwap(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(roleChipBoard ? "종이 역할 칩을 옆 칸으로 끌어 같은 역할 3칸을 맞춥니다." : "문장 조각을 옆 칸으로 끌어 같은 역할 셋을 맞춥니다.", canvasWidth / 2, 202);
-    ctx.fillText(roleChipBoard ? "색보다 목적, 맥락, 예시, 형식 라벨을 먼저 봅니다." : "마우스로 드래그하거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
+    ctx.fillText(roleChipBoard ? "종이 질문칩을 옆 칸으로 끌어 같은 칩 3칸을 맞춥니다." : "문장 조각을 옆 칸으로 끌어 같은 역할 셋을 맞춥니다.", canvasWidth / 2, 202);
+    ctx.fillText(roleChipBoard ? "색보다 목적, 맥락, 예시, 답모양 라벨을 먼저 봅니다." : "마우스로 드래그하거나 방향키와 Space로 고르면 됩니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4914,10 +4914,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "쓸어 지운 10길, 되돌린 조각, 넘친 질문 종이를 같이 봅니다.",
   },
   "prompt-gem-swap": {
-    finalKicker: "역할칩 결과",
-    liveTitle: "초안 역할 기록",
-    scoreLabel: "맞춘 역할",
-    liveDetail: "옆 칸으로 민 역할칩과 이어진 셋맞춤이 다음 한 수의 단서로 남습니다.",
+    finalKicker: "질문칩 결과",
+    liveTitle: "AI 질문칩 기록",
+    scoreLabel: "맞춘 질문칩",
+    liveDetail: "옆 칸으로 민 질문칩과 이어진 3칸 맞춤이 다음 한 수의 단서로 남습니다.",
   },
   "deploy-invaders": {
     finalKicker: "릴리스 게이트 결과",

@@ -1,11 +1,11 @@
 {
   "slug": "prompt-gem-swap",
-  "title": "질문 역할 칩 셋맞추기",
-  "description": "AI에게 줄 질문 초안을 목적, 맥락, 예시, 형식 역할 칩으로 나눠 옆 칸과 바꾸고, 같은 역할 3칸을 맞추는 1분 퍼즐입니다. 빛나는 보석보다 종이 칩 라벨과 점선 한 수를 먼저 봅니다.",
+  "title": "AI 질문 칩 맞추기",
+  "description": "AI에게 줄 질문 초안을 목적, 맥락, 예시, 답 모양 칩으로 나눠 옆 칸과 바꾸고, 같은 칩 3칸을 맞추는 1분 퍼즐입니다. 반짝이는 보석보다 종이 칩 라벨과 점선 한 수를 먼저 봅니다.",
   "type": "arcade-game",
   "durationLabel": "1분",
   "updatedAt": "2026-06-30",
-  "shareText": "질문 역할 칩 셋맞추기를 해봤다. 좋은 질문은 역할 칩 위치부터 다르게 보인다.",
+  "shareText": "AI 질문 칩 맞추기를 해봤다. 좋은 질문은 목적, 맥락, 예시, 답 모양 칩 위치부터 다르게 보인다.",
   "order": 6,
   "relatedBlogSlugs": [
     "gem-swap-hint-note",
@@ -18,14 +18,14 @@
   ],
   "arcade": {
     "variant": "match-three",
-    "goal": "질문 초안 보드의 역할 칩을 옆 칸과 바꿔 목적, 맥락, 예시, 형식 같은 역할 3칸을 맞춥니다.",
-    "controls": "마우스나 터치로 종이 칩을 옆 칸에 끌어 놓습니다. 클릭 두 번이나 방향키/WASD + Space/Enter도 되고, 점선은 지금 가능한 한 수입니다.",
-    "playerLabel": "역할칩",
+    "goal": "질문 초안 보드의 종이 칩을 옆 칸과 바꿔 목적, 맥락, 예시, 답 모양 같은 질문 재료 3칸을 맞춥니다.",
+    "controls": "마우스나 터치로 종이 칩을 옆 칸에 끌어 놓습니다. 클릭 두 번이나 방향키/WASD + Space/Enter도 되고, 점선은 지금 가능한 한 수입니다. 맞춤이 안 생기는 교환은 되돌아갑니다.",
+    "playerLabel": "질문칩",
     "goodLabels": [
       "목적",
       "맥락",
       "예시",
-      "형식"
+      "답모양"
     ],
     "badLabels": [
       "장황",
@@ -43,14 +43,14 @@
   "endings": [
     {
       "id": "match",
-      "title": "역할 칩이 정리됨",
-      "description": "목적, 맥락, 예시, 형식 칩이 보드 위에서 갈라졌다. 질문이 붐비기 전에 손이 먼저 역할을 나눴다.",
+      "title": "질문 칩이 정리됨",
+      "description": "목적, 맥락, 예시, 답 모양 칩이 보드 위에서 갈라졌다. 질문이 붐비기 전에 손이 먼저 재료를 나눴다.",
       "minScore": 20
     },
     {
       "id": "loose",
       "title": "조금 섞임",
-      "description": "필요한 역할은 맞췄지만 장황한 칩도 조금 따라왔다. 다음 판은 색보다 라벨을 먼저 보자.",
+      "description": "필요한 질문 재료는 맞췄지만 장황한 칩도 조금 따라왔다. 다음 판은 색보다 라벨을 먼저 보자.",
       "minScore": 10
     },
     {
@@ -61,61 +61,68 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "질문 역할 칩을 인접 교환으로 맞추는 match-three 초안 정리 퍼즐",
-    "planningIntent": "질문 역할 칩 셋맞추기는 일반 보석 맞추기처럼 색만 보는 게임이 아니라, AI에게 줄 질문을 목적, 맥락, 예시, 출력 형식 같은 역할로 나눠 읽는 게임이어야 한다. match-three 참고에서는 인접 타일 교환, 셋 이상 맞춤, 제거 후 낙하/연쇄가 즉시 읽히는지 보고, OpenAI prompt engineering 참고에서는 지시, 예시, 맥락, 구조화된 경계가 프롬프트 품질을 높이는 역할 단서인지 확인한 뒤 종이 역할칩 보드로 설계한다.",
+    "gameMode": "AI 질문 칩을 인접 교환으로 3칸 맞추는 초안 정리 퍼즐",
+    "planningIntent": "AI 질문 칩 맞추기는 일반 보석 맞추기처럼 색만 보는 게임이 아니라, AI에게 줄 질문을 목적, 맥락, 예시, 답 모양 같은 재료로 나눠 읽는 게임이어야 한다. match-three 참고에서는 인접 타일 교환, 3칸 이상 맞춤, 맞춤이 없으면 되돌리는 규칙, 제거 후 낙하/연쇄가 즉시 읽히는지 본다. OpenAI와 Microsoft의 prompt engineering 참고에서는 명확한 지시, 충분한 맥락, 예시, 원하는 출력 형식이 응답 품질을 좁히는 단서인지 확인한 뒤, 반짝이는 보석이 아니라 라벨이 먼저 읽히는 종이 질문칩 보드로 설계한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "match-three adjacent tile swap three in a row board readability",
         "tile matching game manipulation matching scoring combo",
         "match 3 hint UX combo feedback mobile drag",
-        "OpenAI prompt engineering identity instructions examples context",
+        "OpenAI prompt engineering clear instructions context examples output format",
+        "Microsoft prompt engineering be specific give context examples output format",
+        "Google Cloud Gemini prompt design objective context examples response format",
         "prompt engineering markdown XML logical boundaries examples context"
       ],
       "referenceTypes": [
         "같은 종류 타일 셋 이상을 맞춰 제거하고 위 칸이 내려오는 match-three 기본 루프",
         "인접한 두 타일을 바꾸고, 맞춤이 생기지 않으면 되돌리는 교환형 퍼즐",
         "초보자가 막혔을 때 답 전체가 아니라 한 수 방향만 보여주는 힌트 UX",
-        "프롬프트를 identity, instructions, examples, context처럼 논리 섹션으로 나누는 작성 사례",
-        "추가 맥락과 출력 형식을 분리해 모델 응답을 좁히는 prompt engineering 사례"
+        "OpenAI prompt engineering의 명확한 지시, 맥락, 예시, 출력 형식 분리",
+        "Microsoft prompt engineering의 구체성, 참고 자료, 예시, 원하는 형식 지정",
+        "Google Cloud Gemini prompt design의 목표, 지시, 맥락, few-shot 예시, 응답 형식 렌즈",
+        "추가 맥락과 답 모양을 분리해 모델 응답을 좁히는 prompt engineering 사례"
       ],
       "dataOrSimulationNeeds": [
-        "초기 보드의 유효 스왑 수와 막힘 확률을 유지하되 첫 화면에 최소 한 개의 좋은 역할칩 셋 후보가 보이는지 확인한다.",
-        "목적/맥락/예시/형식 라벨이 54px 칩 안에서 잘리고도 읽히는지, 장황/중복 칩과 색만으로 구분되지 않는지 확인한다.",
-        "좋은 역할칩 셋과 군더더 칩 셋의 점수 차이가 첫 30초 안에 체감되는지 확인한다.",
-        "점선 힌트가 가능한 교환을 보여주되 보드 전체를 대신 풀어주지 않는지 확인한다."
+        "초기 보드의 유효 스왑 수와 막힘 확률을 유지하되 첫 화면에 최소 한 개의 좋은 질문칩 3칸 후보가 보이는지 확인한다.",
+        "목적/맥락/예시/답모양 라벨이 54px 칩 안에서 잘리고도 읽히는지, 장황/중복 칩과 색만으로 구분되지 않는지 확인한다.",
+        "좋은 질문칩 3칸과 군더더 칩 3칸의 점수 차이가 첫 30초 안에 체감되는지 확인한다.",
+        "점선 힌트가 가능한 교환을 보여주되 보드 전체를 대신 풀어주지 않는지 확인한다.",
+        "첫 5초 안에 '프롬프트'라는 추상어보다 'AI 질문 초안'과 '종이 칩 3칸'이 먼저 읽히는지 확인한다."
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '일반 보석 맞추기'가 아니라 '질문 초안을 역할별로 정리한다'가 읽히는가?",
-      "유저가 색보다 목적/맥락/예시/형식 라벨을 먼저 보고 지금 안전하게 맞출 역할칩을 고르는가?",
+      "첫 5초 안에 '일반 보석 맞추기'가 아니라 'AI 질문 초안을 칩으로 정리한다'가 읽히는가?",
+      "유저가 색보다 목적/맥락/예시/답모양 라벨을 먼저 보고 지금 안전하게 맞출 질문칩을 고르는가?",
       "힌트는 답안지가 아니라 시야 회복 장치인가?",
       "보드가 섞일 때 유저가 납득할 이유가 있는가?",
       "실패 후 다음 판에서 장황/중복 칩을 덜 건드리게 되는가?",
-      "색 구분 없이도 목적, 맥락, 예시, 형식 라벨로 역할이 읽히는가?",
-      "인접 교환이 맞춤을 만들지 못하면 되돌아가므로, 무작위 끌기보다 목적 칩과 형식 칩의 이웃 관계를 먼저 읽는 플레이가 드러나는가?"
+      "색 구분 없이도 목적, 맥락, 예시, 답모양 라벨로 질문 재료가 읽히는가?",
+      "인접 교환이 맞춤을 만들지 못하면 되돌아가므로, 무작위 끌기보다 목적 칩과 답모양 칩의 이웃 관계를 먼저 읽는 플레이가 드러나는가?",
+      "점선 한 수가 튜토리얼 설명보다 빠르게 첫 교환을 유도하는가?"
     ],
     "visualQuestions": [
-      "조각은 보석보다 초안 종이칩, 인덱스 카드, 작은 문서 라벨처럼 보이는가?",
-      "역할이 맞은 피드백은 화면을 덮지 않고 칩 주변의 얇은 선과 기록 패널에서 끝나는가?",
+      "조각은 보석보다 AI 질문 초안 종이칩, 인덱스 카드, 작은 문서 라벨처럼 보이는가?",
+      "3칸 맞춤 피드백은 화면을 덮지 않고 칩 주변의 얇은 선과 기록 패널에서 끝나는가?",
       "힌트선이 보드 읽기를 돕고 시선을 뺏지 않는가?",
       "결과 화면은 어떤 질문 역할을 자꾸 건드렸는지 남기는가?",
-      "prompt-sum-box의 합 10 숫자 조각과 다르게, 이 판은 숫자보다 역할 라벨과 인접 교환이 먼저 보이는가?"
+      "prompt-sum-box의 합 10 숫자 조각과 다르게, 이 판은 숫자보다 질문 재료 라벨과 인접 교환이 먼저 보이는가?",
+      "보드 옆 작은 메모가 목적/맥락/예시/답모양을 질문 작성의 실제 재료로 보이게 하는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "질문 역할칩 배치, 역할 라벨, 유효 인접 스왑, 힌트 상태, 초안 집중도",
-      "progressionQuestion": "유저가 더 센 아이템 없이도 목적/맥락/예시/형식 칩을 더 빨리 읽는 쪽으로 성장하는가?",
+      "primaryResource": "질문칩 배치, 목적/맥락/예시/답모양 라벨, 유효 인접 스왑, 힌트 상태, 초안 집중도",
+      "progressionQuestion": "유저가 더 센 아이템 없이도 목적/맥락/예시/답모양 칩을 더 빨리 읽는 쪽으로 성장하는가?",
       "failureQuestion": "막힘은 완전 랜덤인가, 이전 스왑의 결과로 읽을 수 있는가?",
       "recoveryQuestion": "힌트와 셔플은 숙련을 무효화하지 않고 다음 판단을 열어주는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "AI 질문 초안을 잘라 붙이는 종이 역할칩 보드",
-      "primarySurface": "목적/맥락/예시/형식 역할칩 격자, 얇은 점선 한 수, 왼쪽 초안 메모 패널",
+      "metaphor": "AI 질문 초안을 잘라 붙이는 종이 질문칩 보드",
+      "primarySurface": "목적/맥락/예시/답모양 질문칩 격자, 얇은 점선 한 수, 왼쪽 초안 메모 패널",
       "roughnessTarget": "반짝이는 보석보다 잘린 종이 카드, 연필 선, 작은 문서 라벨을 손으로 옆 칸에 미는 투박함",
-      "differenceFromGenericPlay": "보석 색상 장식보다 질문 역할 라벨, 인접 교환, 가능한 한 수 점선이 먼저 읽힌다.",
+      "differenceFromGenericPlay": "보석 색상 장식보다 질문 재료 라벨, 인접 교환, 가능한 한 수 점선이 먼저 읽힌다.",
       "mustAvoid": [
         "전체 화면 파티클",
         "과한 보상 배지와 긴 결과 문구",
