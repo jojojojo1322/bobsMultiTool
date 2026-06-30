@@ -3800,13 +3800,13 @@ type SumBoxSurface = {
 function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
   if (content.slug === "ten-box-rush") {
     return {
-      hintReadyText: "노란 사과길을 그대로 훑으면 바로 10",
+      hintReadyText: "노란 합 10 후보를 그대로 훑으면 지워집니다",
       idleActionText: "숫자 사과 위로 훑기",
-      idleBoardText: "사과상자 10길 찾기",
+      idleBoardText: "사과 합 10 후보 찾기",
       backtrackText: "지나온 사과 쪽으로 되돌아가면 마지막 사과가 빠집니다.",
-      footerText: "딱 10인 사과길은 상자에서 비워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
-      startLine1: "마우스로 숫자 사과를 훑습니다. 노란 힌트는 한 사과길만 보여줍니다.",
-      startLine2: "1+9 짝만 보지 말고 상자 안의 2+3+5 같은 긴 10길도 찾습니다.",
+      footerText: "합이 딱 10인 사과 묶음은 상자에서 지워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
+      startLine1: "마우스로 숫자 사과를 이어 훑습니다. 노란 힌트는 합 10 후보 하나만 보여줍니다.",
+      startLine2: "1+9 짝만 보지 말고 상자 안의 2+3+5 같은 긴 묶음도 찾습니다.",
       ticketStamp: "",
       shape: "apple",
     };
@@ -3894,7 +3894,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       : shownSum > 0
         ? selectionSummary.status
         : appleCrate
-          ? "사과 10길 찾기"
+          ? "사과 합 10 찾기"
           : deployBox
           ? "전표 10묶음 닫기"
           : promptPaper
@@ -3920,7 +3920,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         ? `전표 합 ${shownSum} / 10`
         : `합 ${shownSum} / 10`
       : appleCrate
-        ? "사과 10길 찾기"
+        ? "사과 합 10 찾기"
         : deployBox
         ? "전표 10묶음 닫기"
         : promptPaper
@@ -4011,9 +4011,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         ? `${shownTiles.map((tile) => tile.value).join(" + ")} · ${selectionSummary.status}${shownSum === 10 ? ` · ${clearScoreLabel}` : ""}`
         : hintTiles.length
           ? surface.hintReadyText
-          : state.sumStreak > 0
+            : state.sumStreak > 0
             ? appleCrate
-              ? "손길이 살아 있습니다. 다음 사과 10길을 이어보세요."
+              ? "손길이 살아 있습니다. 다음 합 10 후보를 이어보세요."
               : "흐름이 살아 있습니다. 다음 10을 이어보세요."
             : surface.idleBoardText,
     42,
@@ -4883,9 +4883,9 @@ const arcadeVariantCopy = {
 const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
   "ten-box-rush": {
     finalKicker: "사과상자 결과",
-    liveTitle: "사과길 기록",
-    scoreLabel: "비운 사과길",
-    liveDetail: "짧은 짝과 긴 사과길, 넘친 손길을 같이 봅니다.",
+    liveTitle: "합 10 묶음 기록",
+    scoreLabel: "지운 사과 묶음",
+    liveDetail: "짧은 짝과 긴 합 10 묶음, 넘친 손길을 같이 봅니다.",
   },
   "bug-clicker": {
     finalKicker: "버그 접수 결과",
