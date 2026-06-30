@@ -528,10 +528,8 @@ export function passwordHint(secret: number[], guess: number[], exact: number, n
   if (exact === 0 && near === 0) return "숫자부터 다시 보는 게 낫습니다";
   if (exact === 2) return "한 자리만 더 맞추면 됩니다";
   if (near >= 2) return "숫자는 좋은데 자리가 어긋났습니다";
-  const guessSum = guess.reduce((sum, digit) => sum + digit, 0);
-  const secretSum = secret.reduce((sum, digit) => sum + digit, 0);
-  if (guessSum < secretSum) return "합이 조금 낮습니다";
-  if (guessSum > secretSum) return "합이 조금 높습니다";
+  if (exact === 1) return "맞은 자리 하나를 기준으로 좁힙니다";
+  if (near === 1) return "들어 있는 숫자 하나를 다른 자리에 둡니다";
   return "증거 꼬리표를 더 모읍니다";
 }
 

@@ -800,7 +800,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "lottery-economy") return "사기";
   if (content.arcade.variant === "lottery") return "긁기";
   if (content.arcade.variant === "snake") return "길 찾기";
-  if (content.arcade.variant === "password") return "확인";
+  if (content.arcade.variant === "password") return "증거 확인";
   if (content.arcade.variant === "minesweeper") return "열기";
   if (content.arcade.variant === "match-three") return "고르기";
   if (content.arcade.variant === "stacker") return "적재";
@@ -4839,10 +4839,10 @@ const arcadeVariantCopy = {
     liveDetail: "머리 앞 한 칸, 열린 방향, 꼬리 출구를 같이 봅니다.",
   },
   password: {
-    finalKicker: "추론 결과",
-    liveTitle: "증거 기록",
-    scoreLabel: "좁힌 번호",
-    liveDetail: "지난 증거 꼬리표와 살아 있는 숫자를 같이 봅니다.",
+    finalKicker: "비밀번호 추론 결과",
+    liveTitle: "비밀번호 증거 기록",
+    scoreLabel: "좁힌 비밀번호",
+    liveDetail: "지난 자리맞음·숫자있음 꼬리표와 살아 있는 숫자를 같이 봅니다.",
   },
   crossing: {
     finalKicker: "빈틈 차선 결과",
