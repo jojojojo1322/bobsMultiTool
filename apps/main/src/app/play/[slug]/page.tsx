@@ -407,9 +407,9 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
   if (content.slug === "office-survival") {
     return {
       kicker: "첫 5초 안내",
-      title: "요구를 낮추고 자원을 지키는 퇴근 관제판",
+      title: "요구를 낮추고 자원을 지키는 퇴근 전 일감 조절판",
       firstLook: "근무 시각, 흔들리는 자원, 체력·멘탈·업무량·신뢰 막대, 현재 전표를 먼저 봅니다.",
-      firstMove: "첫 움직임은 가장 좋아 보이는 답을 고르는 것이 아니라, 요구를 낮출지 통제를 되찾을지 지원을 요청할지 판단하는 것입니다.",
+      firstMove: "첫 움직임은 좋아 보이는 답을 고르는 것이 아니라, 요구를 낮출지 통제를 되찾을지 지원을 요청할지 판단하는 것입니다.",
       pacingText: `${content.durationLabel} 동안 하루 전표를 처리합니다. 결과는 빠른 탈출보다 어떤 자원을 방치했고 어떤 요구를 줄였는지로 남습니다.`,
       recordText: "기록은 결과 자랑판이 아니라 퇴근 기록지입니다. 업무량만 낮추려다 체력, 멘탈, 신뢰 중 무엇을 태웠는지 다음 판에서 다시 봅니다.",
     };
