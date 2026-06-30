@@ -4869,10 +4869,10 @@ const arcadeVariantCopy = {
     liveDetail: "착지 레일, 남은 폭, 잘린 폭과 다음 층 폭을 같이 봅니다.",
   },
   growth: {
-    finalKicker: "공방 기록",
-    liveTitle: "부품 공방 기록",
-    scoreLabel: "납품",
-    liveDetail: "제작대, 납품 상자, 설비 장부, 과열과 현재 병목을 같이 봅니다.",
+    finalKicker: "설비 장부 기록",
+    liveTitle: "공방 설비 기록",
+    scoreLabel: "납품 상자",
+    liveDetail: "제작대, 납품 상자 레일, 설비 줄 장부, 과열과 현재 병목표를 같이 봅니다.",
   },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
@@ -4945,7 +4945,7 @@ function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
     return `복권 장: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
   }
   if (content.arcade.variant === "growth") {
-    return `납품 ${view.growthOrder}건 · 부품 ${view.growthScrap}`;
+    return `납품 ${view.growthOrder}건 · 병목표 ${view.growthBottleneck} · 부품 ${view.growthScrap}`;
   }
   return `${arcadeCopyFor(content).scoreLabel}: ${view.score}`;
 }
@@ -4976,7 +4976,7 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     return `아직 긁지 않았습니다. 9칸을 문질러 표식표의 ${stage.instantSymbol} 표식과 결과 전표를 확인합니다.`;
   }
   if (content.arcade.variant === "growth") {
-    return `부품 ${view.growthScrap}. 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 현재 병목은 ${view.growthBottleneck}입니다. 제작대, 설비 장부, 작업 방향은 모두 캔버스 안에서만 조작합니다.`;
+    return `부품 ${view.growthScrap}. 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 현재 병목표는 ${view.growthBottleneck}입니다. 제작대, 설비 줄 장부, 작업 배분은 모두 캔버스 안에서만 조작합니다.`;
   }
 
   const copy = arcadeCopyFor(content);
@@ -5042,7 +5042,7 @@ export function ArcadeGameEngine({
             { label: "출고", value: `${view.growthOrder}건` },
             { label: "납품상자", value: `${view.growthOrderProgress}/${view.growthOrderTarget}` },
             { label: "부품", value: view.growthScrap },
-            { label: "병목", value: view.growthBottleneck },
+            { label: "병목표", value: view.growthBottleneck },
           ]
       : content.arcade.variant === "sum-box"
         ? [
