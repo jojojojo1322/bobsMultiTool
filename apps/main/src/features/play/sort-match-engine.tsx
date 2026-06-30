@@ -31,6 +31,7 @@ export function SortMatchEngine({
   const totalItems = content.items.length;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
   const isPromptWorkbench = content.slug === "prompt-cleanup";
+  const isPrioritySorter = content.slug === "priority-sorter";
   const engineCopy =
     isPromptWorkbench
       ? {
@@ -40,13 +41,13 @@ export function SortMatchEngine({
           historyTitle: "요청서 기록철",
           emptyHistory: "메모를 한 장 붙이면 어느 요청서 칸으로 보냈는지 여기에 남습니다.",
         }
-      : content.slug === "priority-sorter"
+      : isPrioritySorter
       ? {
-          boardLabel: "오늘 보드",
-          scoreLabel: "정리한 카드",
-          currentLabel: "오늘 들어온 카드",
-          historyTitle: "오늘 보드 기록",
-          emptyHistory: "카드를 한 장 보내면 막힌 일, 시간 잡기, 오늘 판 밖 중 어디로 보냈는지 여기에 남습니다.",
+          boardLabel: "오늘 일감 분류대",
+          scoreLabel: "보낸 카드",
+          currentLabel: "분류할 일감 카드",
+          historyTitle: "카드 이동 기록",
+          emptyHistory: "카드를 한 장 보내면 지금 막힘, 시간 잡기, 오늘은 안 함 중 어디로 보냈는지 여기에 남습니다.",
         }
       : {
           boardLabel: "분류 보드",
@@ -90,7 +91,13 @@ export function SortMatchEngine({
 
   return (
     <section
-      className={`rounded-lg border shadow-sm ${isPromptWorkbench ? "bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--muted)/0.22))]" : "bg-card"}`}
+      className={`rounded-lg border shadow-sm ${
+        isPromptWorkbench
+          ? "bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--muted)/0.22))]"
+          : isPrioritySorter
+          ? "bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--muted)/0.18))]"
+          : "bg-card"
+      }`}
       data-play-engine={content.slug}
     >
       <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
@@ -136,6 +143,8 @@ export function SortMatchEngine({
               className={`rounded-lg border p-5 ${
                 isPromptWorkbench
                   ? "border-dashed bg-background shadow-[inset_0_0_0_1px_hsl(var(--muted))]"
+                  : isPrioritySorter
+                  ? "border-zinc-300/90 bg-zinc-50/80 shadow-[inset_0_0_0_1px_hsl(var(--background))] dark:border-zinc-700 dark:bg-zinc-950/30"
                   : "bg-background"
               }`}
             >
@@ -144,7 +153,7 @@ export function SortMatchEngine({
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
             {isPromptWorkbench ? <PromptRequestDeskNote /> : null}
-            {content.slug === "priority-sorter" ? <PrioritySorterBoardNote /> : null}
+            {isPrioritySorter ? <PrioritySorterBoardNote /> : null}
             <div className={`mt-4 grid gap-3 ${isPromptWorkbench ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-3"}`}>
               {content.categories.map((category) => (
                 <button
@@ -191,16 +200,16 @@ function PrioritySorterBoardNote() {
   return (
     <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
       <div>
-        <span className="block font-semibold text-red-700 dark:text-red-300">막힘 먼저</span>
-        <span className="mt-1 block leading-5">남의 일까지 멈추면 오늘 칸에 둡니다.</span>
+        <span className="block font-semibold text-red-700 dark:text-red-300">차단 신호</span>
+        <span className="mt-1 block leading-5">결제, 깨진 링크, 배포 키처럼 다른 카드까지 멈추면 지금 막힘입니다.</span>
       </div>
       <div>
-        <span className="block font-semibold text-amber-700 dark:text-amber-300">시간 잡기</span>
-        <span className="mt-1 block leading-5">중요하지만 지금 끼우지 않을 카드는 시간을 잡습니다.</span>
+        <span className="block font-semibold text-amber-700 dark:text-amber-300">예약 신호</span>
+        <span className="mt-1 block leading-5">중요하지만 지금 끼우면 흐름이 깨지는 카드는 시간을 잡습니다.</span>
       </div>
       <div>
-        <span className="block font-semibold text-zinc-800 dark:text-zinc-200">오늘 판 밖</span>
-        <span className="mt-1 block leading-5">좋아 보여도 흐름을 안 막으면 밖으로 뺍니다.</span>
+        <span className="block font-semibold text-zinc-800 dark:text-zinc-200">바깥 신호</span>
+        <span className="mt-1 block leading-5">좋아 보여도 오늘 흐름을 안 막으면 오늘은 안 함으로 뺍니다.</span>
       </div>
     </div>
   );
@@ -225,13 +234,14 @@ function SortHistory({
           {history.slice(-8).map((item, index) => {
             const selectedCategory = content.categories.find((entry) => entry.id === item.category);
             const correctCategory = content.categories.find((entry) => entry.id === item.correctCategory);
+            const actionLabel = content.slug === "priority-sorter" ? "보냄" : "선택";
             return (
               <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
                 <p className="text-sm font-medium">{item.label}</p>
                 <p className={item.correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
                   {item.correct
-                    ? `선택: ${selectedCategory?.label ?? item.category} / 맞음`
-                    : `선택: ${selectedCategory?.label ?? item.category} / 기준: ${correctCategory?.label ?? item.correctCategory}`}
+                    ? `${actionLabel}: ${selectedCategory?.label ?? item.category} / 기준 맞음`
+                    : `${actionLabel}: ${selectedCategory?.label ?? item.category} / 기준: ${correctCategory?.label ?? item.correctCategory}`}
                 </p>
               </li>
             );
