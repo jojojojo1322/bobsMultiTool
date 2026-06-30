@@ -1,11 +1,11 @@
 {
   "slug": "priority-sorter",
-  "title": "오늘 일감 병목판",
-  "description": "오늘 들어온 업무 카드를 지금 막는 일, 시간 잡기, WIP 밖으로 나눕니다. 바쁜 느낌보다 흐름을 멈추는 병목과 오늘 판에서 빼야 할 일을 가르는 1-2분 분류 게임입니다.",
+  "title": "오늘 일감 세 칸 보드",
+  "description": "오늘 들어온 업무 카드를 막힌 일, 시간 잡을 일, 오늘 판 밖으로 나눕니다. 바쁜 느낌보다 실제로 흐름을 멈추는 카드와 오늘 하지 않아도 되는 카드를 가르는 1-2분 분류 게임입니다.",
   "type": "sort-match-game",
   "durationLabel": "1-2분",
-  "updatedAt": "2026-06-29",
-  "shareText": "오늘 일감 병목판을 해봤다. 바쁜 일과 병목, 오늘 판에서 뺄 일을 나누니 WIP가 가벼워졌다.",
+  "updatedAt": "2026-06-30",
+  "shareText": "오늘 일감 세 칸 보드를 해봤다. 막힌 일과 시간 잡을 일, 오늘 판 밖으로 뺄 일을 나누니 보드가 가벼워졌다.",
   "order": 18,
   "relatedBlogSlugs": [
     "static-first-before-server",
@@ -21,18 +21,18 @@
   "categories": [
     {
       "id": "now",
-      "label": "지금 막는 일",
-      "description": "장애·차단처럼 오늘 흐름을 멈추는 카드"
+      "label": "막힌 일",
+      "description": "장애·차단처럼 지금 흐름을 멈추는 카드"
     },
     {
       "id": "schedule",
       "label": "시간 잡기",
-      "description": "중요하지만 집중 슬롯을 박아 처리할 카드"
+      "description": "중요하지만 따로 시간을 잡아 처리할 카드"
     },
     {
       "id": "drop",
-      "label": "WIP 밖으로",
-      "description": "오늘 판에서 빼야 끝나는 장식·후보 카드"
+      "label": "오늘 판 밖",
+      "description": "오늘 보드에서 빼야 가벼워지는 장식·후보 카드"
     }
   ],
   "items": [
@@ -57,7 +57,7 @@
     {
       "id": "blocked-colleague",
       "label": "동료가 막힌 배포 키",
-      "detail": "내 일이 아니어도 팀 WIP가 멈춰 있으니 먼저 풀어야 한다.",
+      "detail": "내 일이 아니어도 팀 보드가 멈춰 있으니 먼저 풀어야 한다.",
       "categoryId": "now"
     },
     {
@@ -81,7 +81,7 @@
     {
       "id": "theme-polish",
       "label": "카드 그림자 조금 바꾸기",
-      "detail": "지금 흐름을 막지 않는다. 장식성 polish는 오늘 WIP 밖으로 뺀다.",
+      "detail": "지금 흐름을 막지 않는다. 장식성 다듬기는 오늘 판 밖으로 뺀다.",
       "categoryId": "drop"
     },
     {
@@ -95,7 +95,7 @@
     {
       "id": "clear",
       "title": "오늘 판이 가벼워졌다",
-      "description": "지금 막는 카드와 WIP 밖으로 뺄 카드를 분리했다. 오늘의 흐름을 낭비하지 않는다.",
+      "description": "막힌 카드와 오늘 판 밖으로 뺄 카드를 분리했다. 오늘의 흐름을 낭비하지 않는다.",
       "minScore": 8
     },
     {
@@ -106,14 +106,14 @@
     },
     {
       "id": "busy",
-      "title": "WIP 과부하 경보",
-      "description": "모든 카드를 오늘 판에 올리면 결국 아무 일도 끝나지 않는다.",
+      "title": "오늘 판 과부하 경보",
+      "description": "모든 카드를 오늘 보드에 올리면 결국 아무 일도 끝나지 않는다.",
       "minScore": 0
     }
   ],
   "planningBrief": {
-    "gameMode": "오늘 일감의 병목, 일정, WIP 제외를 가르는 칸반형 분류 게임",
-    "planningIntent": "오늘 일감 병목판은 정답 맞히기보다 들어오는 일을 지금 막는 일, 시간 잡기, WIP 밖으로 나누며 바쁨과 실제 병목을 구분하는 업무 판단 게임으로 검토해야 한다. Eisenhower Matrix의 긴급/중요 구분과 Kanban WIP limit의 진행 중인 일 제한을 참고하되, 이 버전은 네 사분면 표가 아니라 오늘 판에 들어온 카드 세 칸을 빠르게 가르는 구조로 잡는다.",
+    "gameMode": "오늘 일감의 막힘, 예약, 오늘 판 밖을 가르는 칸반형 분류 게임",
+    "planningIntent": "오늘 일감 세 칸 보드는 정답 맞히기보다 들어오는 일을 막힌 일, 시간 잡기, 오늘 판 밖으로 나누며 바쁨과 실제 병목을 구분하는 업무 판단 게임으로 검토해야 한다. Eisenhower Matrix의 긴급/중요 구분과 Kanban WIP limit의 진행 중인 일 제한을 참고하되, 공개 화면에서는 WIP 같은 약어보다 '오늘 판'과 '보드가 가벼워짐'을 먼저 읽히게 한다. 이 버전은 네 사분면 표가 아니라 오늘 보드에 들어온 카드 세 칸을 빠르게 가르는 구조로 잡는다.",
     "researchPlan": {
       "webSearchSeeds": [
         "Eisenhower matrix urgent important decision matrix task prioritization",
@@ -122,52 +122,54 @@
         "kanban triage board visual hierarchy",
         "kanban WIP limits task prioritization",
         "Kanban work in progress limit focus flow",
+        "Kanban board limit work in progress finish before starting",
+        "simple three column task board blocked scheduled not today",
         "sorting game decision criteria feedback"
       ],
       "referenceTypes": [
         "Eisenhower Matrix의 긴급/중요 업무 판단과 병목 제거 기준",
         "카드 정렬 UX에서 카테고리 라벨이 사용자의 멘탈 모델을 드러내는 방식",
-        "칸반/트리아지 보드의 지금 처리/시간 잡기/버리기 분리",
+        "칸반/트리아지 보드의 막힌 일/시간 잡기/오늘 판 밖 분리",
         "Kanban WIP limit처럼 진행 중인 일을 제한해 집중 흐름을 보호하는 기준",
         "카드 분류 게임의 기준 피드백"
       ],
       "dataOrSimulationNeeds": [
         "긴급해 보이는 항목과 실제 병목 항목의 오분류 가능성",
-        "WIP 밖으로 빼는 선택을 실패가 아니라 집중 보호로 읽는지 확인",
+        "오늘 판 밖으로 빼는 선택을 실패가 아니라 집중 보호로 읽는지 확인",
         "세 카테고리 설명 길이가 모바일 완료율과 오탭에 미치는 영향"
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '지금 막는 일/시간 잡기/WIP 밖으로 나눈다'가 읽히는가?",
+      "첫 5초 안에 '막힌 일/시간 잡기/오늘 판 밖으로 나눈다'가 읽히는가?",
       "카테고리 라벨만 보고도 사용자가 같은 기준으로 카드를 보낼 수 있는가?",
       "지금 할 일은 바쁜 일이 아니라 흐름을 막는 일로 구분되는가?",
       "시간 잡기는 회피가 아니라 집중 슬롯을 확보하는 판단으로 읽히는가?",
-      "WIP 밖으로 빼는 선택이 실패가 아니라 집중 보호 선택으로 읽히는가?",
-      "WIP 밖 카테고리가 일을 포기하는 말보다 오늘 진행 중인 일을 줄이는 판단으로 보이는가?",
+      "오늘 판 밖으로 빼는 선택이 실패가 아니라 집중 보호 선택으로 읽히는가?",
+      "오늘 판 밖 카테고리가 일을 포기하는 말보다 오늘 진행 중인 일을 줄이는 판단으로 보이는가?",
       "오분류는 왜 틀렸는지 업무 기준으로 알려주는가?",
       "다음 항목에서 바로 다른 우선순위 기준을 적용할 수 있는가?"
     ],
     "visualQuestions": [
-      "지금 막는 일, 시간 잡기, WIP 밖 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
+      "막힌 일, 시간 잡기, 오늘 판 밖 세 칸이 같은 버튼처럼 보이지 않고 성격이 갈리는가?",
       "현재 업무 카드는 짧지만 막는 일인지 미룰 일인지 먼저 읽히는가?",
       "맞고 틀림보다 우선순위 기준 설명이 더 중요하게 남는가?",
-      "전체 화면이 마케팅 카드 그리드가 아니라 칸반 WIP 보드처럼 보이는가?"
+      "전체 화면이 마케팅 카드 그리드가 아니라 작은 칸반형 오늘 보드처럼 보이는가?"
     ],
     "riskAndSafetyNotes": [
       "실제 결제, 계정 성장, 서버 저장 없이 브라우저 안에서 끝나는지 확인한다.",
       "반복 플레이가 강박 문구가 아니라 선택과 복기에서 오는지 확인한다."
     ],
     "mechanicProfile": {
-      "primaryResource": "업무 항목, 지금 막는 일/예약/WIP 밖 기준, 오분류 피드백, 판단 피로도",
+      "primaryResource": "업무 항목, 막힌 일/예약/오늘 판 밖 기준, 오분류 피드백, 판단 피로도",
       "progressionQuestion": "성장은 정답 암기가 아니라 병목과 장식을 더 빨리 구분하는 능력인가?",
       "failureQuestion": "틀린 항목이 기준 오해 때문인지 바쁨 착각 때문인지 알려주는가?",
       "recoveryQuestion": "다음 항목에서 곧장 다른 우선순위 기준을 적용할 수 있는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "작은 칸반 WIP 보드와 종이 일감 카드",
-      "primarySurface": "지금 막는 일/시간 잡기/WIP 밖 세 분류 칸과 현재 일감 카드",
-      "roughnessTarget": "깨끗한 생산성 대시보드보다 종이 카드, 굵은 칸반 칸막이, 손글씨 줄, 작은 WIP 도장의 투박함",
-      "differenceFromGenericPlay": "게임판보다 오늘 일감 카드와 세 우선순위 칸, WIP 밖 도장이 화면의 성격을 만든다.",
+      "metaphor": "작은 오늘 보드와 종이 일감 카드",
+      "primarySurface": "막힌 일/시간 잡기/오늘 판 밖 세 분류 칸과 현재 일감 카드",
+      "roughnessTarget": "깨끗한 생산성 대시보드보다 종이 카드, 굵은 칸반 칸막이, 손글씨 줄, 작은 오늘판 도장의 투박함",
+      "differenceFromGenericPlay": "게임판보다 오늘 일감 카드와 세 우선순위 칸, 오늘 판 밖 도장이 화면의 성격을 만든다.",
       "mustAvoid": [
         "게임 장르와 무관한 화려한 뱃지",
         "모든 카테고리가 같은 색으로 보이는 배치"

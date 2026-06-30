@@ -386,11 +386,11 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
     if (content.slug === "priority-sorter") {
       return {
         kicker: "첫 5초 안내",
-        title: "지금 막는 일, 시간 잡기, WIP 밖을 가르는 병목판",
-        firstLook: "현재 일감 카드, 세 칸의 기준, 그리고 오늘 판에서 빼야 할 카드를 먼저 봅니다.",
-        firstMove: "첫 움직임은 바쁜 카드를 누르는 것이 아니라, 지금 흐름을 실제로 막는지 먼저 판단하는 것입니다.",
-        pacingText: `${content.durationLabel} 동안 오늘 판을 가볍게 만듭니다. 결과는 맞춘 수보다 WIP를 줄인 기준이 남습니다.`,
-        recordText: "기록은 다음 일감 카드를 더 차분히 보내기 위한 칸반 메모입니다. 모든 일이 중요해 보였다면 WIP 밖 칸을 먼저 봅니다.",
+        title: "막힌 일, 시간 잡기, 오늘 판 밖을 가르는 세 칸 보드",
+        firstLook: "현재 일감 카드, 막힌 일/시간 잡기/오늘 판 밖 세 칸, 그리고 오늘 보드의 작은 칸을 먼저 봅니다.",
+        firstMove: "첫 움직임은 바쁜 카드를 누르는 것이 아니라, 지금 흐름을 실제로 멈추는 카드인지 먼저 판단하는 것입니다.",
+        pacingText: `${content.durationLabel} 동안 오늘 보드를 가볍게 만듭니다. 결과는 맞춘 수보다 오늘 판을 줄인 기준이 남습니다.`,
+        recordText: "기록은 다음 일감 카드를 더 차분히 보내기 위한 오늘 보드 메모입니다. 모든 일이 중요해 보였다면 오늘 판 밖 칸을 먼저 봅니다.",
       };
     }
     const categoryLabels = content.categories.map((category) => category.label).join(" / ");

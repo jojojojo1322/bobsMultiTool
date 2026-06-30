@@ -42,11 +42,11 @@ export function SortMatchEngine({
         }
       : content.slug === "priority-sorter"
       ? {
-          boardLabel: "WIP 병목판",
+          boardLabel: "오늘 보드",
           scoreLabel: "정리한 카드",
           currentLabel: "오늘 들어온 카드",
-          historyTitle: "WIP 보드 기록",
-          emptyHistory: "카드를 한 장 보내면 오늘 판에서 어떤 기준으로 갈랐는지 여기에 남습니다.",
+          historyTitle: "오늘 보드 기록",
+          emptyHistory: "카드를 한 장 보내면 막힌 일, 시간 잡기, 오늘 판 밖 중 어디로 보냈는지 여기에 남습니다.",
         }
       : {
           boardLabel: "분류 보드",
@@ -143,6 +143,7 @@ export function SortMatchEngine({
               <h3 className="mt-2 text-2xl font-semibold tracking-normal">{current.label}</h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
             </div>
+            {content.slug === "priority-sorter" ? <PrioritySorterBoardNote /> : null}
             <div className={`mt-4 grid gap-3 ${isPromptWorkbench ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-3"}`}>
               {content.categories.map((category) => (
                 <button
@@ -163,6 +164,25 @@ export function SortMatchEngine({
         </div>
       ) : null}
     </section>
+  );
+}
+
+function PrioritySorterBoardNote() {
+  return (
+    <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
+      <div>
+        <span className="block font-semibold text-red-700 dark:text-red-300">막힘 먼저</span>
+        <span className="mt-1 block leading-5">남의 일까지 멈추면 오늘 칸에 둡니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-amber-700 dark:text-amber-300">시간 잡기</span>
+        <span className="mt-1 block leading-5">중요하지만 지금 끼우지 않을 카드는 시간을 잡습니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-zinc-800 dark:text-zinc-200">오늘 판 밖</span>
+        <span className="mt-1 block leading-5">좋아 보여도 흐름을 안 막으면 밖으로 뺍니다.</span>
+      </div>
+    </div>
   );
 }
 
