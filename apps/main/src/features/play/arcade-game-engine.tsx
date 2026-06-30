@@ -856,13 +856,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
         }
       : mode === "signal"
         ? {
-            noisyCloseTitle: "소문 티켓 접근",
-            noisyCloseDetail: (label: string) => `${label} 접수 금지`,
-            readyTitle: "접수할 버그 티켓",
-            readyDetail: (label: string) => `${label} 티켓 정렬`,
-            trackingTitle: "접수 방패 정렬",
-            waitingTitle: "접수 티켓 대기",
-            waitingDetail: "재현/로그 티켓이 접수선 쪽으로 내려올 때 받기",
+            noisyCloseTitle: "반려 티켓 정렬",
+            noisyCloseDetail: (label: string) => `${label} 비켜 보내기`,
+            readyTitle: "초록 접수 도장",
+            readyDetail: (label: string) => `${label} 접수선 정렬`,
+            trackingTitle: "접수선 맞추기",
+            waitingTitle: "초록 티켓 대기",
+            waitingDetail: "접수 도장 티켓이 선 가까이 내려올 때 받기",
           }
       : {
           noisyCloseTitle: "소음 가까움",
@@ -1832,13 +1832,13 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
               focusWarning: "주황 미끼까지 쏘면 게이트선이 먼저 밀립니다. 게이트선 가까운 확인 표식부터 보세요.",
               startLine1: "하단 방어포를 끌거나 A/D로 움직여 Space로 쏩니다.",
               startLine2: "확인 표식 침입자만 쏘고 주황 미끼 경고는 흘려보냅니다.",
-            }
-          : {
-              header: "버그 접수 방패판",
-              footer: "재현·로그·환경 티켓만 접수합니다. 느낌·소문 티켓은 비켜둡니다.",
-              focusWarning: "느낌 티켓까지 받으면 접수선이 막힙니다. 재현/로그 티켓만 고르세요.",
-              startLine1: "하단 접수 방패를 끌거나 A/D로 움직여 Space로 받습니다.",
-              startLine2: "재현, 로그, 환경 티켓은 받고 느낌·소문 티켓은 흘려보냅니다.",
+          }
+        : {
+              header: "버그 티켓 접수선",
+              footer: "초록 접수 도장 티켓만 선에 맞춰 받고, 붉은 반려 X 티켓은 비켜 보냅니다.",
+              focusWarning: "반려 티켓까지 받으면 접수선이 막힙니다. 초록 접수 도장만 고르세요.",
+              startLine1: "하단 접수 방패를 초록 접수 도장 티켓 아래에 맞춥니다.",
+              startLine2: "붉은 반려 X 티켓은 누르지 말고 접수선 밖으로 흘립니다.",
             };
   const dangerLineY = canvasHeight - 96;
   const aimRead = shooterAimRead(state, mode);
@@ -1891,6 +1891,23 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = state.focus <= 30 ? danger : signalMode ? "rgba(239,231,204,0.72)" : invaderMode ? "rgba(240,234,210,0.72)" : bubbleMode ? "rgba(242,231,201,0.74)" : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, canvasWidth - 44, 46);
+  if (signalMode) {
+    ctx.textAlign = "center";
+    ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillStyle = "rgba(131,176,138,0.94)";
+    ctx.beginPath();
+    ctx.roundRect(278, 31, 58, 18, 3);
+    ctx.fill();
+    ctx.fillStyle = "#172112";
+    ctx.fillText("접수", 307, 43);
+    ctx.fillStyle = "rgba(184,93,77,0.9)";
+    ctx.beginPath();
+    ctx.roundRect(344, 31, 58, 18, 3);
+    ctx.fill();
+    ctx.fillStyle = "#fff7ed";
+    ctx.fillText("반려 X", 373, 43);
+    ctx.textAlign = "right";
+  }
 
   ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.24)" : bubbleMode ? "rgba(214,179,95,0.28)" : "rgba(255,255,255,0.16)";
   ctx.setLineDash([10, 10]);
@@ -1951,6 +1968,8 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("접수선", 44, dangerLineY + 37);
+    ctx.textAlign = "right";
+    ctx.fillText("초록 도장만 받기 · 붉은 반려는 밖으로", canvasWidth - 44, dangerLineY + 37);
   } else if (bubbleMode) {
     ctx.strokeStyle = "rgba(242,231,201,0.22)";
     ctx.lineWidth = 1;
@@ -2181,30 +2200,41 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
     ctx.lineTo(sprite.radius * 1.12, sprite.radius * 1.28);
     ctx.stroke();
   } else {
-    ctx.fillStyle = sprite.good ? "rgba(239,231,204,0.96)" : "rgba(184,93,77,0.94)";
+    ctx.fillStyle = sprite.good ? "rgba(239,231,204,0.98)" : "rgba(107,48,39,0.96)";
     ctx.beginPath();
-    ctx.roundRect(-sprite.radius - 9, -sprite.radius * 0.74, sprite.radius * 2 + 18, sprite.radius * 1.5, 4);
+    ctx.roundRect(-sprite.radius - 12, -sprite.radius * 0.8, sprite.radius * 2 + 24, sprite.radius * 1.62, 4);
     ctx.fill();
-    ctx.fillStyle = sprite.good ? "rgba(131,176,138,0.95)" : "rgba(64,38,30,0.72)";
+    ctx.strokeStyle = sprite.good ? "rgba(47,74,54,0.5)" : "rgba(239,231,204,0.28)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = sprite.good ? "rgba(131,176,138,0.96)" : "rgba(184,93,77,0.94)";
     ctx.beginPath();
-    ctx.roundRect(-sprite.radius - 5, -sprite.radius * 0.64, sprite.radius * 2 + 10, 10, 2);
+    ctx.roundRect(-sprite.radius - 7, -sprite.radius * 0.68, sprite.radius * 2 + 14, 13, 2);
     ctx.fill();
     if (sprite.good) {
-      ctx.strokeStyle = "rgba(47,74,54,0.82)";
+      ctx.fillStyle = "#172112";
+      ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("접수", 0, -sprite.radius * 0.68 + 9);
+      ctx.strokeStyle = "rgba(47,74,54,0.84)";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(-sprite.radius * 0.55, 2);
-      ctx.lineTo(-sprite.radius * 0.22, sprite.radius * 0.34);
-      ctx.lineTo(sprite.radius * 0.58, -sprite.radius * 0.32);
+      ctx.moveTo(-sprite.radius * 0.62, 1);
+      ctx.lineTo(-sprite.radius * 0.22, sprite.radius * 0.38);
+      ctx.lineTo(sprite.radius * 0.66, -sprite.radius * 0.34);
       ctx.stroke();
     } else {
+      ctx.fillStyle = "#fff7ed";
+      ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("반려", 0, -sprite.radius * 0.68 + 9);
       ctx.strokeStyle = "rgba(239,231,204,0.78)";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(-sprite.radius * 0.55, -sprite.radius * 0.3);
-      ctx.lineTo(sprite.radius * 0.55, sprite.radius * 0.34);
-      ctx.moveTo(sprite.radius * 0.55, -sprite.radius * 0.3);
-      ctx.lineTo(-sprite.radius * 0.55, sprite.radius * 0.34);
+      ctx.moveTo(-sprite.radius * 0.68, -sprite.radius * 0.28);
+      ctx.lineTo(sprite.radius * 0.68, sprite.radius * 0.38);
+      ctx.moveTo(sprite.radius * 0.68, -sprite.radius * 0.28);
+      ctx.lineTo(-sprite.radius * 0.68, sprite.radius * 0.38);
       ctx.stroke();
     }
   }
@@ -2219,7 +2249,7 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
   ctx.fillText(
     sprite.label.slice(0, 5),
     0,
-    mode === "missile" ? 9 : mode === "signal" ? sprite.radius * 0.54 : mode === "bubble" ? sprite.radius * 0.14 : sprite.radius + 19,
+    mode === "missile" ? 9 : mode === "signal" ? sprite.radius * 0.58 : mode === "bubble" ? sprite.radius * 0.14 : sprite.radius + 19,
   );
   ctx.restore();
 }
@@ -4792,7 +4822,7 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     finalKicker: "버그 접수 결과",
     liveTitle: "접수선 기록",
     scoreLabel: "접수 티켓",
-    liveDetail: "재현/로그 티켓을 받은 순간과 소문 티켓에 흔들린 순간을 같이 봅니다.",
+    liveDetail: "초록 접수 도장을 받은 순간과 붉은 반려 X에 흔들린 순간을 같이 봅니다.",
   },
   "bug-bubble-shooter": {
     finalKicker: "디버그 조준 결과",
