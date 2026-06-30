@@ -3800,13 +3800,13 @@ type SumBoxSurface = {
 function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
   if (content.slug === "ten-box-rush") {
     return {
-      hintReadyText: "노란 10길을 그대로 쓸면 바로 10",
-      idleActionText: "숫자 사과 위로 지나가기",
-      idleBoardText: "과일상자 쓸어 비우기",
-      backtrackText: "지나온 사과 쪽으로 되돌아가면 마지막 선택이 빠집니다.",
-      footerText: "딱 10인 길은 사과가 비워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
-      startLine1: "마우스로 숫자 사과를 쓸어 담습니다. 노란 힌트는 한 10길만 보여줍니다.",
-      startLine2: "짧은 짝만 보지 말고 과일상자 안의 긴 10길도 찾습니다.",
+      hintReadyText: "노란 사과길을 그대로 훑으면 바로 10",
+      idleActionText: "숫자 사과 위로 훑기",
+      idleBoardText: "사과상자 10길 찾기",
+      backtrackText: "지나온 사과 쪽으로 되돌아가면 마지막 사과가 빠집니다.",
+      footerText: "딱 10인 사과길은 상자에서 비워집니다. 넘치거나 모자라면 손길이 끊깁니다.",
+      startLine1: "마우스로 숫자 사과를 훑습니다. 노란 힌트는 한 사과길만 보여줍니다.",
+      startLine2: "1+9 짝만 보지 말고 상자 안의 2+3+5 같은 긴 10길도 찾습니다.",
       ticketStamp: "",
       shape: "apple",
     };
@@ -3856,6 +3856,7 @@ function sumBoxSurfaceFor(content: ArcadeGameContent): SumBoxSurface {
 function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRenderingContext2D) {
   const { background, primary, accent, danger } = content.arcade.palette;
   const surface = sumBoxSurfaceFor(content);
+  const appleCrate = content.slug === "ten-box-rush";
   const deployBox = content.slug === "deploy-10-box";
   const promptPaper = surface.shape === "paper";
   const dragging = state.sumDragStart !== null && state.sumDragCurrent !== null;
@@ -3874,7 +3875,7 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const nextStreak = shownSum === 10 ? state.sumStreak + 1 : state.sumStreak;
   const clearStreakBonus = shownSum === 10 ? sumBoxStreakBonus(nextStreak) : 0;
   const clearScore = shownSum === 10 ? sumBoxClearScore(shownTiles) + clearStreakBonus : 0;
-  const clearScoreUnit = deployBox || promptPaper ? "장" : "점";
+  const clearScoreUnit = appleCrate ? "칸" : deployBox || promptPaper ? "장" : "점";
   const clearScoreLabel = clearStreakBonus > 0 ? `+${clearScore}${clearScoreUnit}(연속 +${clearStreakBonus})` : `+${clearScore}${clearScoreUnit}`;
   const dragPrimaryLabel = blockedTile ? `${blockedSum} 넘침` : shownSum === 10 ? "합 10" : shownSum > 0 ? `합 ${shownSum}` : "쓸기 시작";
   const dragSecondaryLabel = blockedTile
@@ -3892,7 +3893,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         : `Space ${clearScoreLabel}`
       : shownSum > 0
         ? selectionSummary.status
-        : deployBox
+        : appleCrate
+          ? "사과 10길 찾기"
+          : deployBox
           ? "전표 10묶음 닫기"
           : "합 10 만들기";
   const comboHintLabel = comboHint.length
@@ -3903,14 +3906,20 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     : "없음";
   const flowLabel = state.sumStreak > 0 ? "흐름 유지" : "새 흐름";
   const topSumLabel = dragging
-    ? deployBox
+    ? appleCrate
+      ? `사과 손길 ${shownSum} / 10`
+      : deployBox
       ? `전표 합 ${shownSum} / 10`
       : `손길 ${shownSum} / 10`
     : shownSum > 0
-      ? deployBox
+      ? appleCrate
+        ? `사과 합 ${shownSum} / 10`
+        : deployBox
         ? `전표 합 ${shownSum} / 10`
         : `합 ${shownSum} / 10`
-      : deployBox
+      : appleCrate
+        ? "사과 10길 찾기"
+        : deployBox
         ? "전표 10묶음 닫기"
         : "합 10 만들기";
   const hintLabel = comboHint.length ? `힌트 ${comboHintLabel}` : "새 판 준비";
@@ -3923,16 +3932,16 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   const glow = ctx.createRadialGradient(canvasWidth / 2, 212, 30, canvasWidth / 2, 212, 360);
-  glow.addColorStop(0, deployBox ? "rgba(120,166,163,0.1)" : promptPaper ? "rgba(217,179,95,0.11)" : "rgba(255,255,255,0.12)");
+  glow.addColorStop(0, appleCrate ? "rgba(87,117,48,0.16)" : deployBox ? "rgba(120,166,163,0.1)" : promptPaper ? "rgba(217,179,95,0.11)" : "rgba(255,255,255,0.12)");
   glow.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = deployBox ? "rgba(111,78,45,0.18)" : promptPaper ? "rgba(246,232,195,0.09)" : "rgba(255,255,255,0.06)";
+  ctx.fillStyle = appleCrate ? "rgba(92,64,39,0.24)" : deployBox ? "rgba(111,78,45,0.18)" : promptPaper ? "rgba(246,232,195,0.09)" : "rgba(255,255,255,0.06)";
   ctx.beginPath();
-  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, deployBox || promptPaper ? 8 : 22);
+  ctx.roundRect(sumBoxStartX - 14, sumBoxStartY - 14, sumBoxBoardWidth + 28, sumBoxBoardHeight + 28, deployBox || promptPaper || appleCrate ? 8 : 22);
   ctx.fill();
-  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.24)" : promptPaper ? "rgba(246,232,195,0.22)" : "rgba(255,255,255,0.13)";
+  ctx.strokeStyle = appleCrate ? "rgba(218,198,146,0.24)" : deployBox ? "rgba(218,198,146,0.24)" : promptPaper ? "rgba(246,232,195,0.22)" : "rgba(255,255,255,0.13)";
   ctx.lineWidth = 1;
   ctx.stroke();
   for (let row = 0; row < sumBoxRows; row += 1) {
@@ -3949,11 +3958,11 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.stroke();
   }
 
-  ctx.fillStyle = deployBox ? "rgba(47,43,33,0.72)" : promptPaper ? "rgba(39,34,26,0.78)" : "rgba(15,23,42,0.36)";
+  ctx.fillStyle = appleCrate ? "rgba(39,50,30,0.8)" : deployBox ? "rgba(47,43,33,0.72)" : promptPaper ? "rgba(39,34,26,0.78)" : "rgba(15,23,42,0.36)";
   ctx.beginPath();
-  ctx.roundRect(24, 18, canvasWidth - 48, 48, deployBox || promptPaper ? 6 : 16);
+  ctx.roundRect(24, 18, canvasWidth - 48, 48, deployBox || promptPaper || appleCrate ? 6 : 16);
   ctx.fill();
-  ctx.strokeStyle = deployBox ? "rgba(218,198,146,0.22)" : promptPaper ? "rgba(246,232,195,0.2)" : "rgba(255,255,255,0.12)";
+  ctx.strokeStyle = appleCrate ? "rgba(218,198,146,0.2)" : deployBox ? "rgba(218,198,146,0.22)" : promptPaper ? "rgba(246,232,195,0.2)" : "rgba(255,255,255,0.12)";
   ctx.lineWidth = 1;
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.12)";
@@ -3965,14 +3974,14 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.roundRect(canvasWidth - 176, 52, 132 * timeRatio, 6, 3);
   ctx.fill();
 
-  ctx.fillStyle = deployBox || promptPaper ? "#f0ead6" : "rgba(255,255,255,0.9)";
+  ctx.fillStyle = deployBox || promptPaper || appleCrate ? "#f0ead6" : "rgba(255,255,255,0.9)";
   ctx.font = "800 18px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(topSumLabel, 42, 48);
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillStyle = deployBox || promptPaper ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)";
-  ctx.fillText(`${deployBox ? "닫은 전표" : promptPaper ? "지운 종이" : "점수"} ${state.score} · ${flowLabel}`, 190, 48);
-  ctx.fillStyle = comboHint.length ? (deployBox || promptPaper ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)") : "rgba(251,113,133,0.88)";
+  ctx.fillStyle = deployBox || promptPaper || appleCrate ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)";
+  ctx.fillText(`${appleCrate ? "비운 사과" : deployBox ? "닫은 전표" : promptPaper ? "지운 종이" : "점수"} ${state.score} · ${flowLabel}`, 190, 48);
+  ctx.fillStyle = comboHint.length ? (deployBox || promptPaper || appleCrate ? "rgba(240,234,214,0.68)" : "rgba(255,255,255,0.66)") : "rgba(251,113,133,0.88)";
   ctx.fillText(hintLabel, 330, 48);
   ctx.strokeStyle = "rgba(255,255,255,0.18)";
   ctx.lineWidth = 5;
@@ -3999,7 +4008,9 @@ function drawSumBox(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
         : hintTiles.length
           ? surface.hintReadyText
           : state.sumStreak > 0
-            ? "흐름이 살아 있습니다. 다음 10을 이어보세요."
+            ? appleCrate
+              ? "손길이 살아 있습니다. 다음 사과 10길을 이어보세요."
+              : "흐름이 살아 있습니다. 다음 10을 이어보세요."
             : surface.idleBoardText,
     42,
     68,
@@ -4867,10 +4878,10 @@ const arcadeVariantCopy = {
 
 const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
   "ten-box-rush": {
-    finalKicker: "과일상자 결과",
-    liveTitle: "과일상자 기록",
-    scoreLabel: "비운 10길",
-    liveDetail: "짧은 짝과 긴 10길, 넘친 손길을 같이 봅니다.",
+    finalKicker: "사과상자 결과",
+    liveTitle: "사과길 기록",
+    scoreLabel: "비운 사과길",
+    liveDetail: "짧은 짝과 긴 사과길, 넘친 손길을 같이 봅니다.",
   },
   "bug-clicker": {
     finalKicker: "버그 접수 결과",
