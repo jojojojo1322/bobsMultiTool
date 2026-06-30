@@ -38,7 +38,8 @@ export function TapGameEngine({
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
   const scoreLabel = isAiReviewStampboard ? "검수 점수" : isIndexingWaitingRoom ? "운영 점수" : isMeetingExitBoard ? "결정 점수" : "판정 점수";
   const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "대기표" : isMeetingExitBoard ? "전표" : "진행";
-  const frameKicker = isAiReviewStampboard ? "검수 도장판" : isIndexingWaitingRoom ? "색인 대기표" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
+  const frameKicker = isAiReviewStampboard ? "근거 도장판" : isIndexingWaitingRoom ? "색인 대기표" : isMeetingExitBoard ? "회의 전표판" : "탭 판정";
+  const aiReviewChecklist = ["파일", "명령", "출처", "비밀값"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
   const playBodyClassName = usesTicketSurface
     ? "grid gap-4 p-3 sm:p-4 lg:grid-cols-[minmax(0,1fr)_270px]"
@@ -132,7 +133,14 @@ export function TapGameEngine({
               <div className="rounded-lg border bg-zinc-50 p-4 text-left shadow-inner dark:bg-zinc-950/40">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
                   <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">AI 답변 전표</p>
-                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">근거 먼저</span>
+                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">멈춤 후 확인</span>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
+                  {aiReviewChecklist.map((item) => (
+                    <span key={item} className="rounded-sm border bg-background px-2 py-1">
+                      [ ] {item}
+                    </span>
+                  ))}
                 </div>
                 <div className="mt-4 border-l-4 border-zinc-500 bg-background p-4">
                   <p className="text-xs font-medium text-muted-foreground">검수 문장</p>
