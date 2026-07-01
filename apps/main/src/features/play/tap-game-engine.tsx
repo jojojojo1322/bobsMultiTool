@@ -14,6 +14,60 @@ type TapHistoryItem = {
   expectedAction: "tap" | "skip";
 };
 
+function tapProgressValue({
+  slug,
+  index,
+  totalItems,
+  isFinished,
+}: {
+  slug: string;
+  index: number;
+  totalItems: number;
+  isFinished: boolean;
+}) {
+  if (slug === "ai-review-tap") return isFinished ? "검수 마감" : `SLIP-${String(index + 1).padStart(2, "0")}`;
+  if (slug === "indexing-waiting-room") return isFinished ? "창구 정산" : `WAIT-${String(index + 1).padStart(2, "0")}`;
+  if (slug === "meeting-escape") return isFinished ? "회의록 마감" : `LINE-${String(index + 1).padStart(2, "0")}`;
+  return isFinished ? `${totalItems}/${totalItems}` : `${index + 1}/${totalItems}`;
+}
+
+function tapResultLabels(slug: string) {
+  if (slug === "ai-review-tap") {
+    return {
+      kicker: "검수 정산",
+      copied: "기록 복사됨",
+      share: "근거 기록 공유",
+      restart: "다시 검수",
+      scorePrefix: "근거 도장",
+    };
+  }
+  if (slug === "indexing-waiting-room") {
+    return {
+      kicker: "대기표 정산",
+      copied: "기록 복사됨",
+      share: "대기표 기록 공유",
+      restart: "새 대기표 열기",
+      scorePrefix: "정리 도장",
+    };
+  }
+  if (slug === "meeting-escape") {
+    return {
+      kicker: "회의록 정산",
+      copied: "기록 복사됨",
+      share: "회의록 공유",
+      restart: "다시 회의록 열기",
+      scorePrefix: "닫은 발언",
+    };
+  }
+  return {
+    kicker: "기록",
+    copied: "기록 복사됨",
+    share: "기록 공유",
+    restart: "다시 하기",
+    scorePrefix: "판정 점수",
+  };
+}
+
 export function TapGameEngine({
   content,
   relatedBlogLinks,
@@ -38,6 +92,8 @@ export function TapGameEngine({
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
   const scoreLabel = isAiReviewStampboard ? "근거 도장" : isIndexingWaitingRoom ? "정리 도장" : isMeetingExitBoard ? "닫은 발언" : "판정 점수";
   const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "대기표" : isMeetingExitBoard ? "회의록" : "진행";
+  const progressValue = tapProgressValue({ slug: content.slug, index, totalItems, isFinished });
+  const resultLabels = tapResultLabels(content.slug);
   const frameKicker = isAiReviewStampboard ? "AI 답변 근거 도장판" : isIndexingWaitingRoom ? "주소 대기표 도장판" : isMeetingExitBoard ? "회의록 닫기 도장판" : "탭 판정";
   const aiReviewChecklist = ["경로 열림", "명령 출력", "원문 출처", "한계·비밀"];
   const indexingTicketChecklist = ["주소 열림", "사이트맵", "대표 주소", "검사 도구"];
@@ -69,7 +125,7 @@ export function TapGameEngine({
 
   async function shareResult() {
     const title = `${content.title} - ${ending.title}`;
-    const text = `${content.shareText}\n${scoreLabel}: ${score}`;
+    const text = `${content.shareText}\n${resultLabels.scorePrefix}: ${score}`;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url: window.location.href });
@@ -99,9 +155,7 @@ export function TapGameEngine({
             </div>
             <div className="rounded-md border bg-background px-3 py-2">
               <p className="text-xs text-muted-foreground">{progressLabel}</p>
-              <p className="text-sm font-semibold tabular-nums">
-                {isFinished ? `${totalItems}/${totalItems}` : `${index + 1}/${totalItems}`}
-              </p>
+              <p className="text-sm font-semibold tabular-nums">{progressValue}</p>
             </div>
           </div>
         </div>
@@ -110,17 +164,17 @@ export function TapGameEngine({
       {isFinished ? (
         <div className={playBodyClassName} data-play-result>
           <div>
-            <p className="text-xs font-medium text-muted-foreground">결과</p>
+            <p className="text-xs font-medium text-muted-foreground">{resultLabels.kicker}</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{ending.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={shareResult} data-play-share>
                 <Share2 className="h-4 w-4" />
-                {shareState === "copied" ? "결과 복사됨" : shareState === "shared" ? "공유 완료" : "결과 공유"}
+                {shareState === "copied" ? resultLabels.copied : shareState === "shared" ? "공유 완료" : resultLabels.share}
               </Button>
               <Button variant="outline" onClick={restart}>
                 <RotateCcw className="h-4 w-4" />
-                다시 하기
+                {resultLabels.restart}
               </Button>
             </div>
             <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
@@ -187,15 +241,15 @@ export function TapGameEngine({
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.targetLabel}</p>
-                    <p className="mt-1 leading-5">주소 열림, 사이트맵, 대표 주소, 검사 도구처럼 직접 볼 수 있는 확인 칸입니다.</p>
+                    <p className="mt-1 leading-5">주소 열림, 사이트맵, 대표 주소, 검사 도구처럼 오늘 바로 볼 수 있는 칸입니다.</p>
                   </div>
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.decoyLabel}</p>
-                    <p className="mt-1 leading-5">새로고침, 재제출, 제목 재수정은 지금 처리하지 않고 기다림 칸에 둡니다.</p>
+                    <p className="mt-1 leading-5">새로고침, 재제출, 제목 재수정은 지금 처리하지 않고 며칠 둠 칸에 둡니다.</p>
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
-                  <span className="rounded-sm border bg-background px-2 py-1">오늘 확인 칸만 도장</span>
+                  <span className="rounded-sm border bg-background px-2 py-1">오늘 볼 칸만 도장</span>
                   <span className="rounded-sm border bg-background px-2 py-1">다음 관찰은 며칠 뒤</span>
                   <span className="rounded-sm border bg-background px-2 py-1">제출 반복 금지</span>
                 </div>
