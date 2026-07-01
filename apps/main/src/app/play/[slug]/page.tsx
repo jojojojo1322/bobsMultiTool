@@ -344,11 +344,11 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
     if (content.slug === "indexing-waiting-room") {
       return {
         kicker: "첫 5초 안내",
-        title: "새 글 주소 대기표에 지금 확인과 기다림 도장을 나누는 판",
-        firstLook: "주소 대기표, 지금 확인 도장, 기다림 도장, 주소 열림/사이트맵/대표 주소/검사 도구 체크줄을 먼저 봅니다.",
-        firstMove: "첫 움직임은 도장입니다. 주소가 열리고 사이트맵에 보이고 대표 주소와 검사 도구가 맞으면 지금 확인, 새로고침이나 재제출 충동은 기다림으로 넘깁니다.",
-        pacingText: `${content.durationLabel} 동안 제출 보장 같은 환상을 걷어내고 지금 손으로 확인할 신호와 며칠 두고 볼 행동을 나눕니다.`,
-        recordText: "기록은 검색 순위 상상이 아니라 오늘 어떤 대기표를 확인했고 무엇을 기다릴지 남기는 운영 메모입니다.",
+        title: "새 글 주소 대기표에 오늘 볼 도장과 며칠 둠 도장을 찍는 판",
+        firstLook: "주소 대기표, 오늘 볼 도장, 며칠 둠 도장, 주소 열림/사이트맵/대표 주소/검사 도구 체크줄을 먼저 봅니다.",
+        firstMove: "첫 움직임은 도장입니다. 주소가 열리고 사이트맵에 보이고 대표 주소와 검사 도구가 맞으면 오늘 볼 도장, 새로고침이나 재제출 충동은 며칠 둠 도장으로 넘깁니다.",
+        pacingText: `${content.durationLabel} 동안 제출 보장 같은 환상을 걷어내고 오늘 바로 볼 신호와 며칠 두고 볼 행동을 나눕니다.`,
+        recordText: "기록은 검색 순위 상상이 아니라 오늘 본 대기표와 다음 관찰 칸을 남기는 운영 메모입니다.",
       };
     }
     if (content.slug === "meeting-escape") {
