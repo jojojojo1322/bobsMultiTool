@@ -3130,6 +3130,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   const boardWidth = snakeColumns * snakeCellSize;
   const boardHeight = snakeRows * snakeCellSize;
   const head = state.snake[0];
+  const tail = state.snake[state.snake.length - 1];
   const preview = snakeMovePreview(state);
   const directionOptions = snakeDirectionOptions(state);
   const previewInBounds = !preview.hitWall;
@@ -3155,6 +3156,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   const dangerBadge = preview.hitWall ? "벽" : preview.hitSelf ? "꼬리" : "피하기";
   const turnCue = previewDanger && suggestedTurn ? `꺾기 ${suggestedTurnCue}` : `빈칸 ${suggestedTurnCue}`;
   const headCenter = head ? snakeCellCenter(head) : null;
+  const tailCenter = tail ? snakeCellCenter(tail) : null;
   const foodCenter = snakeCellCenter(state.snakeFood);
   const previewCenter = snakeCellCenter({
     x: clamp(preview.head.x, 0, snakeColumns - 1),
@@ -3176,7 +3178,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.textAlign = "left";
   ctx.fillText("배포 레인", snakeBoardX - 4, snakeBoardY - 20);
   ctx.textAlign = "right";
-  ctx.fillText("머리 앞 한 칸 먼저", snakeBoardX + boardWidth + 4, snakeBoardY - 20);
+  ctx.fillText("머리 앞칸 · 꼬리 출구", snakeBoardX + boardWidth + 4, snakeBoardY - 20);
 
   ctx.fillStyle = "rgba(209,250,229,0.07)";
   ctx.beginPath();
@@ -3307,6 +3309,34 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     }
   }
 
+  if (tail && tailCenter && state.snake.length > 1) {
+    const labelX = clamp(tailCenter.x, snakeBoardX + 36, snakeBoardX + boardWidth - 36);
+    const labelY = clamp(tailCenter.y + 26, snakeBoardY + 20, snakeBoardY + boardHeight - 10);
+    ctx.save();
+    ctx.strokeStyle = "rgba(250,204,21,0.82)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.roundRect(
+      snakeBoardX + tail.x * snakeCellSize + 2,
+      snakeBoardY + tail.y * snakeCellSize + 2,
+      snakeCellSize - 4,
+      snakeCellSize - 4,
+      8,
+    );
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(250,204,21,0.94)";
+    ctx.beginPath();
+    ctx.roundRect(labelX - 34, labelY - 13, 68, 20, 10);
+    ctx.fill();
+    ctx.fillStyle = "#422006";
+    ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("꼬리 출구", labelX, labelY + 2);
+    ctx.restore();
+  }
+
   ctx.fillStyle = "rgba(255,255,255,0.84)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
@@ -3321,7 +3351,7 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("머리 앞 예고 칸과 조각 방향선을 보며 방향키/WASD 또는 캔버스 드래그로 배포줄을 꺾습니다.", 34, canvasHeight - 20);
+  ctx.fillText("앞칸, 꼬리 출구, 조각선을 보며 방향키/WASD나 드래그로 배포줄을 꺾습니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.7)";
@@ -3331,8 +3361,8 @@ function drawSnake(content: ArcadeGameContent, state: GameState, ctx: CanvasRend
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("머리 앞 예고 칸을 보며 방향키/WASD나 드래그로 배포줄을 꺾습니다.", canvasWidth / 2, 204);
-    ctx.fillText("노란 조각보다 꼬리 출구와 빈칸을 먼저 남깁니다.", canvasWidth / 2, 230);
+    ctx.fillText("머리 앞 예고 칸과 꼬리 끝 출구를 보며 방향키/WASD나 드래그로 꺾습니다.", canvasWidth / 2, 204);
+    ctx.fillText("노란 조각보다 곧 비워질 빈칸을 먼저 남깁니다.", canvasWidth / 2, 230);
   }
 }
 
