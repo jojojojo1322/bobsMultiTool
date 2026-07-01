@@ -1612,11 +1612,11 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "#f4ead2";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("덕트 틈 통과판", 44, 48);
+  ctx.fillText("서버실 드론 통과판", 44, 48);
   ctx.textAlign = "right";
   ctx.fillStyle = cueColor;
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`${incomingLabel} · ${flightCue.label}`, canvasWidth - 44, 47);
+  ctx.fillText(`${liftActive ? "누르는 중" : "손 뗌"} · ${incomingLabel} · ${flightCue.label}`, canvasWidth - 44, 47);
 
   ctx.fillStyle = "rgba(244,234,210,0.07)";
   ctx.beginPath();
@@ -1790,7 +1790,7 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(244,234,210,0.74)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("파란 덕트 틈과 누름/뗌 큐를 보고 손 길이를 조절하세요.", 34, canvasHeight - 24);
+  ctx.fillText("누르면 뜸 · 떼면 내려감 · 드론 코를 파란 틈 높이에 맞추세요.", 34, canvasHeight - 24);
   if (!state.started) {
     ctx.fillStyle = "rgba(28,26,21,0.78)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1798,9 +1798,17 @@ function drawFlight(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.font = "800 28px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 166);
-    ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("누르고 떼서 점검 드론을 파란 덕트 틈 사이로 보냅니다.", canvasWidth / 2, 204);
-    ctx.fillText("틈 앞에서는 짧게 누르고, 붉은 케이블 벽은 피하세요.", canvasWidth / 2, 230);
+    ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillStyle = primary;
+    ctx.fillText("누르면 뜸", canvasWidth / 2, 204);
+    ctx.fillStyle = accent;
+    ctx.fillText("떼면 내려감", canvasWidth / 2, 229);
+    ctx.fillStyle = "#f4ead2";
+    ctx.font = "650 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("드론 코를 파란 덕트 틈 높이에 맞춥니다.", canvasWidth / 2, 257);
+    ctx.fillStyle = "rgba(244,234,210,0.76)";
+    ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("붉은 케이블 벽과 팬날은 스치지 않게 지나가세요.", canvasWidth / 2, 282);
   }
 }
 
@@ -4983,10 +4991,10 @@ const arcadeVariantCopy = {
     liveDetail: "릴리스 램프, 누른 순서 줄, 첫 실수 위치를 같이 봅니다.",
   },
   flight: {
-    finalKicker: "덕트 통과 결과",
-    liveTitle: "덕트 틈 기록",
-    scoreLabel: "통과한 덕트 틈",
-    liveDetail: "누르고 뗀 길이와 다음 덕트 틈 높이선을 같이 봅니다.",
+    finalKicker: "드론 통과 결과",
+    liveTitle: "드론 손길 복기",
+    scoreLabel: "통과한 파란 틈",
+    liveDetail: "누르고 뗀 길이, 드론 앞 예측선, 다음 덕트 틈 높이를 같이 봅니다.",
   },
   "brick-breaker": {
     finalKicker: "벽돌깨기 결과",
@@ -5142,7 +5150,12 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
   }
 
   const copy = arcadeCopyFor(content);
-  const prefix = content.arcade.variant === "sum-box" ? `${copy.scoreLabel} ${view.score}.` : `${copy.scoreLabel} ${view.score}, 집중 ${view.focus}.`;
+  const prefix =
+    content.arcade.variant === "sum-box"
+      ? `${copy.scoreLabel} ${view.score}.`
+      : content.arcade.variant === "flight"
+        ? `${copy.scoreLabel} ${view.score}, 기체 여유 ${view.focus}.`
+        : `${copy.scoreLabel} ${view.score}, 집중 ${view.focus}.`;
   return `${prefix} ${copy.liveDetail}`;
 }
 
@@ -5212,6 +5225,13 @@ export function ArcadeGameEngine({
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "흐름", value: view.sumStreak > 0 ? "이어짐" : "준비" },
             { label: "방식", value: "드래그" },
+          ]
+      : content.arcade.variant === "flight"
+        ? [
+            { label: copy.scoreLabel, value: view.score },
+            { label: "기체 여유", value: `${view.focus}%` },
+            { label: "남은 시간", value: `${timeLeft}s` },
+            { label: "손 반응", value: view.started ? "누름/뗌" : "대기" },
           ]
         : [
             { label: copy.scoreLabel, value: view.score },
