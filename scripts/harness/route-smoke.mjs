@@ -201,7 +201,7 @@ for (const fragment of [
   "밤에 도메인 이름을 다시 보는 습관",
   "AI 도구가 많은데 왜 더 피곤할 때가 있을까",
   "바로 해보기:",
-  "검색 색인 대기표 도장판",
+  "주소 대기표 도장 찍기",
   "회의 끝내기 도장판",
   "/blog/category/diary",
   "/blog/category/interests",

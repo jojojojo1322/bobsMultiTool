@@ -36,11 +36,11 @@ export function TapGameEngine({
   const isMeetingExitBoard = content.slug === "meeting-escape";
   const usesTicketSurface = isAiReviewStampboard || isIndexingWaitingRoom || isMeetingExitBoard;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
-  const scoreLabel = isAiReviewStampboard ? "검수 도장" : isIndexingWaitingRoom ? "운영 점수" : isMeetingExitBoard ? "종료 점수" : "판정 점수";
+  const scoreLabel = isAiReviewStampboard ? "검수 도장" : isIndexingWaitingRoom ? "정리 도장" : isMeetingExitBoard ? "종료 점수" : "판정 점수";
   const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "대기표" : isMeetingExitBoard ? "전표" : "진행";
-  const frameKicker = isAiReviewStampboard ? "AI 답변 검수 도장판" : isIndexingWaitingRoom ? "검색 색인 대기표 도장판" : isMeetingExitBoard ? "회의록 끝내기 도장판" : "탭 판정";
+  const frameKicker = isAiReviewStampboard ? "AI 답변 검수 도장판" : isIndexingWaitingRoom ? "주소 대기표 도장판" : isMeetingExitBoard ? "회의록 끝내기 도장판" : "탭 판정";
   const aiReviewChecklist = ["경로 열림", "명령 결과", "원문 출처", "한계·비밀"];
-  const indexingTicketChecklist = ["200 열림", "Sitemap", "Canonical", "URL 검사"];
+  const indexingTicketChecklist = ["주소 열림", "사이트맵", "대표 주소", "검사 도구"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
   const playBodyClassName = usesTicketSurface
     ? "grid gap-4 p-3 sm:p-4 lg:grid-cols-[minmax(0,1fr)_270px]"
@@ -164,8 +164,13 @@ export function TapGameEngine({
             ) : isIndexingWaitingRoom ? (
               <div className="rounded-lg border bg-stone-50 p-4 text-left shadow-inner dark:bg-stone-950/30">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
-                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-300">검색 색인 대기표</p>
-                  <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">색인 보장 아님</span>
+                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-300">새 글 주소 대기표</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="rounded-sm border bg-background px-2 py-1 font-mono text-[11px] font-medium text-muted-foreground">
+                      WAIT-{String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="rounded-sm border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground">노출 보장 아님</span>
+                  </div>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
                   {indexingTicketChecklist.map((item) => (
@@ -182,12 +187,17 @@ export function TapGameEngine({
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.targetLabel}</p>
-                    <p className="mt-1 leading-5">라이브 200, sitemap 발견 힌트, canonical, URL 검사처럼 직접 볼 수 있는 확인 칸입니다.</p>
+                    <p className="mt-1 leading-5">주소 열림, 사이트맵, 대표 주소, 검사 도구처럼 직접 볼 수 있는 확인 칸입니다.</p>
                   </div>
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.decoyLabel}</p>
                     <p className="mt-1 leading-5">새로고침, 재제출, 제목 재수정은 지금 처리하지 않고 기다림 칸에 둡니다.</p>
                   </div>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                  <span className="rounded-sm border bg-background px-2 py-1">오늘 확인 칸만 도장</span>
+                  <span className="rounded-sm border bg-background px-2 py-1">다음 관찰은 며칠 뒤</span>
+                  <span className="rounded-sm border bg-background px-2 py-1">제출 반복 금지</span>
                 </div>
               </div>
             ) : isMeetingExitBoard ? (
@@ -271,7 +281,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
                     : `도장: ${labelForAction(item.action)} / 다시 찍을 도장: ${labelForAction(item.expectedAction)}`
                   : isIndexingWaitingRoom
                     ? item.correct
-                      ? `도장: ${labelForAction(item.action)} / 순서 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
+                      ? `도장: ${labelForAction(item.action)} / 분류 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
                       : `도장: ${labelForAction(item.action)} / 다시 볼 대기표: ${labelForAction(item.expectedAction)}`
                     : isMeetingExitBoard
                       ? item.correct
