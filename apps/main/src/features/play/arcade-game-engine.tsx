@@ -4873,10 +4873,10 @@ const arcadeVariantCopy = {
     liveDetail: "착지 레일, 남은 폭, 잘린 폭과 다음 층 폭을 같이 봅니다.",
   },
   growth: {
-    finalKicker: "설비 장부 기록",
-    liveTitle: "공방 설비 기록",
+    finalKicker: "업그레이드 기록",
+    liveTitle: "공방 상자 기록",
     scoreLabel: "납품 상자",
-    liveDetail: "제작대, 납품 상자 레일, 설비 줄 장부, 과열과 현재 병목표를 같이 봅니다.",
+    liveDetail: "제작대, 납품 상자, 업그레이드 줄, 과열과 현재 막힌 줄을 같이 봅니다.",
   },
 } satisfies Record<ArcadeGameContent["arcade"]["variant"], ArcadeVariantCopy>;
 
@@ -4949,7 +4949,7 @@ function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
     return `복권지: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
   }
   if (content.arcade.variant === "growth") {
-    return `납품 ${view.growthOrder}건 · 병목표 ${view.growthBottleneck} · 부품 ${view.growthScrap}`;
+    return `납품 ${view.growthOrder}건 · 막힌 줄 ${view.growthBottleneck} · 부품 ${view.growthScrap}`;
   }
   return `${arcadeCopyFor(content).scoreLabel}: ${view.score}`;
 }
@@ -4980,7 +4980,7 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     return `아직 긁지 않았습니다. 은박 9칸을 문질러 표식표의 ${stage.instantSymbol} 표식과 같은 그림 줄을 확인합니다.`;
   }
   if (content.arcade.variant === "growth") {
-    return `부품 ${view.growthScrap}. 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 현재 병목표는 ${view.growthBottleneck}입니다. 제작대, 설비 줄 장부, 작업 배분은 모두 캔버스 안에서만 조작합니다.`;
+    return `부품 ${view.growthScrap}. 납품 상자 ${view.growthOrderProgress}/${view.growthOrderTarget}. 현재 막힌 줄은 ${view.growthBottleneck}입니다. 제작대, 업그레이드 줄, 작업 배분은 모두 캔버스 안에서만 조작합니다.`;
   }
 
   const copy = arcadeCopyFor(content);
@@ -5043,10 +5043,10 @@ export function ArcadeGameEngine({
         ]
       : isGrowthGame
         ? [
-            { label: "출고", value: `${view.growthOrder}건` },
+            { label: "납품", value: `${view.growthOrder}건` },
             { label: "납품상자", value: `${view.growthOrderProgress}/${view.growthOrderTarget}` },
             { label: "부품", value: view.growthScrap },
-            { label: "병목표", value: view.growthBottleneck },
+            { label: "막힌 줄", value: view.growthBottleneck },
           ]
       : content.arcade.variant === "sum-box"
         ? [
