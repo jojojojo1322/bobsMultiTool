@@ -9,6 +9,7 @@ import "./globals.css";
 
 const adsensePublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-2620992505263949";
 const adsenseEnabled = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
+const naverSiteVerification = "f15442a32b31aaee5a69ce6d567c1f0ef7645207";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bobob.app"),
@@ -56,9 +57,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "NtDt2jnqkwLbHi1k1NXyUCVEeIlUXhnwF82bf_3bgbY",
-    other: {
-      "naver-site-verification": "f15442a32b31aaee5a69ce6d567c1f0ef7645207",
-    },
   },
 };
 
@@ -99,6 +97,7 @@ export default async function RootLayout({
         <link rel="alternate" type="application/atom+xml" title="bobob.app Blog and Play Atom Feed" href="https://www.bobob.app/atom.xml" />
         <link rel="alternate" type="application/feed+json" title="bobob.app Blog and Play JSON Feed" href="https://www.bobob.app/feed.json" />
         <link rel="search" type="application/opensearchdescription+xml" title="bobob.app Search" href="https://www.bobob.app/opensearch.xml" />
+        <meta name="naver-site-verification" content={naverSiteVerification} />
         <meta name="google-adsense-account" content="ca-pub-2620992505263949" />
         <script
           type="application/ld+json"
