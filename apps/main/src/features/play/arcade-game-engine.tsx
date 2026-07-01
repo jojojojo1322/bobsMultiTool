@@ -503,7 +503,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     lotteryLedgerLossStreak: 0,
     lotteryLedgerLoans: 0,
     lotteryLedgerLastNet: 0,
-    lotteryLedgerMessage: "1단계 10금화부터 시작합니다. 지갑이 늘면 2단계와 3단계가 열립니다.",
+    lotteryLedgerMessage: "10금화 한 장부터 시작합니다. 지갑이 늘면 25금화와 55금화 전표가 열립니다.",
     lotteryLedgerDragging: false,
     snake,
     snakeDirection: "right",
@@ -797,7 +797,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "brick-breaker") return "받기";
   if (content.slug === "deploy-10-box") return "묶기";
   if (content.arcade.variant === "sum-box") return "고르기";
-  if (content.arcade.variant === "lottery-economy") return "사기";
+  if (content.arcade.variant === "lottery-economy") return "한 장 사기";
   if (content.arcade.variant === "lottery") return "긁기";
   if (content.arcade.variant === "snake") return "길 찾기";
   if (content.arcade.variant === "password") return "증거 확인";
@@ -4807,10 +4807,10 @@ const arcadeVariantCopy = {
     liveDetail: "긁은 칸, 표식표, 이번 장 결과지를 같이 봅니다.",
   },
   "lottery-economy": {
-    finalKicker: "장부 결과",
-    liveTitle: "복권 장부",
-    scoreLabel: "지갑",
-    liveDetail: "지갑, 빚, 손실 위험을 같이 봅니다.",
+    finalKicker: "손익장부 결과",
+    liveTitle: "금화 손익장부",
+    scoreLabel: "지갑-빚",
+    liveDetail: "지갑, 빚, 평균손익, 손실 위험을 같이 봅니다.",
   },
   "match-three": {
     finalKicker: "조각 결과",
@@ -4943,7 +4943,7 @@ function arcadeCopyFor(content: ArcadeGameContent) {
 
 function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
   if (content.arcade.variant === "lottery-economy") {
-    return `장부: 금화 ${view.lotteryLedgerGold} / 빚 ${view.lotteryLedgerDebt}`;
+    return `손익장부: 금화 ${view.lotteryLedgerGold} / 빚 ${view.lotteryLedgerDebt}`;
   }
   if (content.arcade.variant === "lottery") {
     return `복권지: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
@@ -4962,8 +4962,8 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     }
     if (view.lotteryLedgerStatus === "bankrupt") {
       return view.lotteryLedgerLoans < 1
-        ? "금화가 부족합니다. 재기는 한 번만 열리고 10금화 복권으로 돌아갑니다."
-        : "금화가 부족하고 재기는 이미 썼습니다. 장부를 닫습니다.";
+        ? "금화가 부족합니다. 재기자금은 한 번만 열리고 10금화 복권으로 돌아갑니다."
+        : "금화가 부족하고 재기자금은 이미 썼습니다. 장부를 닫습니다.";
     }
     return view.lotteryLedgerMessage || `지갑 ${view.lotteryLedgerGold}, 빚 ${view.lotteryLedgerDebt}.`;
   }
@@ -6418,7 +6418,7 @@ function LotteryLedgerScreenControls({
   onScratchPointerUp: (event: React.PointerEvent<HTMLElement>) => void;
   onScratchPointerCancel: (event: React.PointerEvent<HTMLElement>) => void;
 }) {
-  const scratchLabel = view.lotteryLedgerTicketActive ? "복권 은박 긁기" : "복권지에서 사기";
+  const scratchLabel = view.lotteryLedgerTicketActive ? "복권 은박 긁기" : "복권지에서 한 장 사기";
 
   return (
     <>
@@ -6467,9 +6467,9 @@ function LotteryLedgerScreenControls({
         style={canvasRectStyle(lotteryLedgerLoanRect)}
         onClick={() => onAction("loan")}
         data-play-action="lottery-loan"
-        aria-label="재기"
+        aria-label="재기자금"
       >
-        재기
+        재기자금
       </button>
       <button
         type="button"
@@ -6546,7 +6546,7 @@ function LiveArcadeResultPanel({
   const isLotteryLedger = content.arcade.variant === "lottery-economy";
   const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
-  const title = isLotteryLedger ? "복권 장부" : isLottery ? "결과 전표" : copy.liveTitle;
+  const title = isLotteryLedger ? "금화 손익장부" : isLottery ? "결과 전표" : copy.liveTitle;
   const headline = isLottery
     ? stage.title
     : isLotteryLedger
@@ -6580,7 +6580,7 @@ function LiveArcadeResultPanel({
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
           {isLotteryLedger
-            ? "산 복권, 당첨, 멈춤 기록이 여기에 남습니다."
+            ? "산 복권, 지급, 빚, 멈춤 기록이 여기에 남습니다."
             : isLottery
               ? "긁은 칸, 표식표, 이번 장 결과지가 여기에 이어집니다."
               : "시작하면 판의 흐름이 여기에 보입니다."}

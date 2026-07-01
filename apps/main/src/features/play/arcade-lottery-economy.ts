@@ -99,13 +99,13 @@ export const lotteryLedgerTiers: LotteryLedgerTier[] = [
       { id: "small-return", label: "조금 회수", detail: "일부 회수", probability: 0.2, payout: 6 },
       { id: "even", label: "본전", detail: "비용 회수", probability: 0.3, payout: 10 },
       { id: "small-win", label: "이익", detail: "조금 남김", probability: 0.2, payout: 15 },
-      { id: "good-win", label: "큰 이익", detail: "한 번 크게 회수", probability: 0.05, payout: 30 },
+      { id: "good-win", label: "큰 회수", detail: "한 번 크게 회수", probability: 0.05, payout: 30 },
     ],
   },
   {
     id: "level-two",
     title: "2단계 25금화",
-    subtitle: "지갑 130부터",
+    subtitle: "지갑 130 해금",
     cost: 25,
     unlockGold: 130,
     outcomes: [
@@ -113,13 +113,13 @@ export const lotteryLedgerTiers: LotteryLedgerTier[] = [
       { id: "partial", label: "조금 회수", detail: "손실 축소", probability: 0.25, payout: 14 },
       { id: "even", label: "본전", detail: "비용 회수", probability: 0.18, payout: 25 },
       { id: "medium-win", label: "이익", detail: "비용보다 남김", probability: 0.17, payout: 42 },
-      { id: "good-win", label: "큰 이익", detail: "지갑 회복", probability: 0.05, payout: 95 },
+      { id: "good-win", label: "큰 회수", detail: "지갑 회복", probability: 0.05, payout: 95 },
     ],
   },
   {
     id: "level-three",
     title: "3단계 55금화",
-    subtitle: "지갑 190부터",
+    subtitle: "지갑 190 해금",
     cost: 55,
     unlockGold: 190,
     outcomes: [
@@ -127,7 +127,7 @@ export const lotteryLedgerTiers: LotteryLedgerTier[] = [
       { id: "partial", label: "조금 회수", detail: "일부 회수", probability: 0.26, payout: 28 },
       { id: "even", label: "본전", detail: "비용 회수", probability: 0.14, payout: 55 },
       { id: "large-win", label: "이익", detail: "빚도 줄이는 이익", probability: 0.13, payout: 105 },
-      { id: "rare-win", label: "큰 이익", detail: "확률표 끝", probability: 0.03, payout: 320 },
+      { id: "rare-win", label: "큰 회수", detail: "확률표 끝", probability: 0.03, payout: 320 },
     ],
   },
 ];
@@ -172,7 +172,7 @@ export function lotteryLedgerTierGateReason(state: LotteryLedgerGateState, index
   if (index <= 0) return "";
   const tier = lotteryLedgerTierAt(index);
   if (state.lotteryLedgerDebt > 0) return "빚 있으면 1단계만";
-  if (state.lotteryLedgerLossStreak >= 2) return "손실 뒤 1단계부터";
+  if (state.lotteryLedgerLossStreak >= 2) return "손실 2장 뒤 1단계";
   if (state.lotteryLedgerGold < tier.unlockGold) return `지갑 ${tier.unlockGold}금화부터`;
   return "";
 }
@@ -183,10 +183,10 @@ export function lotteryLedgerTierAvailable(state: LotteryLedgerGateState, index:
 
 export function lotteryLedgerStatusText(state: LotteryLedgerViewState) {
   if (state.lotteryLedgerStatus === "stopped") return "멈춤";
-  if (state.lotteryLedgerStatus === "bankrupt") return state.lotteryLedgerLoans < lotteryLedgerMaxLoans ? "재기 가능" : "파산 기록";
+  if (state.lotteryLedgerStatus === "bankrupt") return state.lotteryLedgerLoans < lotteryLedgerMaxLoans ? "재기자금 가능" : "파산 기록";
   if ((state.lotteryLedgerTicket && !state.lotteryLedgerTicket.settled) || state.lotteryLedgerTicketActive) return "은박 긁는 중";
   if (state.lotteryLedgerLossStreak >= 2) return "위험 단계 차단";
-  return "장부 대기";
+  return "확률표 확인";
 }
 
 export function lotteryLedgerActiveTicketComplete(state: LotteryLedgerPlayState) {
@@ -203,10 +203,10 @@ export function lotteryLedgerMainActionLabel(
     lotteryLedgerTicketActive?: boolean;
   },
 ) {
-  if (state.lotteryLedgerStatus === "bankrupt") return state.lotteryLedgerLoans < lotteryLedgerMaxLoans ? "재기" : "닫기";
+  if (state.lotteryLedgerStatus === "bankrupt") return state.lotteryLedgerLoans < lotteryLedgerMaxLoans ? "재기자금" : "장부 닫기";
   if (state.lotteryLedgerStatus === "stopped") return "새 장부";
   if ((state.lotteryLedgerTicket && !state.lotteryLedgerTicket.settled) || state.lotteryLedgerTicketActive) return "긁기";
-  return "사기";
+  return "한 장 사기";
 }
 
 export function moveLotteryLedgerTier(state: LotteryLedgerPlayState, delta: number) {
@@ -223,7 +223,7 @@ export function selectLotteryLedgerTier(state: LotteryLedgerPlayState, index: nu
     return;
   }
   state.lotteryLedgerSelectedTier = nextIndex;
-  state.lotteryLedgerMessage = `${shortLotteryLedgerTierTitle(tier)} 선택 · 비용 ${tier.cost} · 손실 ${percent(lotteryLedgerLossChance(tier))}`;
+  state.lotteryLedgerMessage = `${shortLotteryLedgerTierTitle(tier)} 선택 · 비용 ${tier.cost} · 평균손익 ${formatSigned(lotteryLedgerExpectedNet(tier))} · 손실 ${percent(lotteryLedgerLossChance(tier))}`;
   state.playTick += 1;
 }
 
@@ -280,10 +280,10 @@ export function stopLotteryLedgerSession(state: LotteryLedgerPlayState) {
 
 export function takeLotteryLedgerRecovery(state: LotteryLedgerPlayState) {
   if (state.lotteryLedgerStatus !== "bankrupt") {
-    state.lotteryLedgerMessage = "재기는 금화가 부족해진 뒤에만 열립니다.";
+    state.lotteryLedgerMessage = "재기자금은 금화가 부족해진 뒤에만 열립니다.";
     state.playTick += 1;
     rememberLotteryLedgerHistory(state, {
-      label: "재기 보류",
+      label: "재기자금 보류",
       detail: state.lotteryLedgerMessage,
       score: 0,
     });
@@ -292,7 +292,7 @@ export function takeLotteryLedgerRecovery(state: LotteryLedgerPlayState) {
   if (state.lotteryLedgerLoans >= lotteryLedgerMaxLoans) {
     state.lotteryLedgerStatus = "stopped";
     state.finished = true;
-    state.lotteryLedgerMessage = "재기는 이미 사용했습니다. 장부를 닫습니다.";
+    state.lotteryLedgerMessage = "재기자금은 이미 사용했습니다. 장부를 닫습니다.";
     return;
   }
   state.playTick += 1;
@@ -302,10 +302,10 @@ export function takeLotteryLedgerRecovery(state: LotteryLedgerPlayState) {
   state.lotteryLedgerSelectedTier = 0;
   state.lotteryLedgerLossStreak = 0;
   state.lotteryLedgerStatus = "idle";
-  state.lotteryLedgerMessage = `재기 ${lotteryLedgerRecoveryGold}금화 · 빚 ${lotteryLedgerRecoveryDebt} · 10금화 복권만`;
+  state.lotteryLedgerMessage = `재기자금 ${lotteryLedgerRecoveryGold}금화 · 빚 ${lotteryLedgerRecoveryDebt} · 10금화 복권만`;
   state.score = state.lotteryLedgerGold - state.lotteryLedgerDebt - lotteryLedgerInitialGold;
   rememberLotteryLedgerHistory(state, {
-    label: "재기",
+    label: "재기자금",
     detail: state.lotteryLedgerMessage,
     score: 0,
   });
@@ -369,7 +369,7 @@ function scratchLotteryLedgerCell(
   if (cell.scratch >= scratchRevealThreshold) {
     revealLotteryLedgerCell(content, state, index);
   } else {
-    state.lotteryLedgerMessage = cell.scratch >= 0.6 ? "거의 열렸습니다. 조금 더 긁으세요." : "은박을 문질러 긁으세요.";
+    state.lotteryLedgerMessage = cell.scratch >= 0.6 ? "은박이 많이 벗겨졌습니다. 조금 더 긁으세요." : "은박을 문질러 긁으세요.";
   }
   return true;
 }
@@ -388,10 +388,10 @@ export function drawLotteryLedger(content: ArcadeGameContent, state: LotteryLedg
   ctx.fillStyle = "#2f2419";
   ctx.font = "900 24px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("복권 장부", 48, 60);
+  ctx.fillText("금화 복권 손익장부", 48, 60);
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "#6f5a44";
-  ctx.fillText("확률표 / 지갑 / 빚 기록", 48, 80);
+  ctx.fillText("확률표 먼저 보고 한 장씩 긁기", 48, 80);
 
   drawWalletStamp(ctx, 404, 38, "지갑", `${state.lotteryLedgerGold}`, primary);
   drawWalletStamp(ctx, 504, 38, "빚", `${state.lotteryLedgerDebt}`, state.lotteryLedgerDebt > 0 ? danger : "#70604c");
@@ -406,7 +406,7 @@ export function drawLotteryLedger(content: ArcadeGameContent, state: LotteryLedg
   ctx.fillStyle = "#2f2419";
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(state.lotteryLedgerMessage || "값 선택 → 사기 → 은박 긁기", 360, 478, 616);
+  ctx.fillText(state.lotteryLedgerMessage || "전표 선택 → 한 장 사기 → 은박 긁기", 360, 478, 616);
 }
 
 function buyLotteryLedgerTicket(content: ArcadeGameContent, state: LotteryLedgerPlayState) {
@@ -422,7 +422,7 @@ function buyLotteryLedgerTicket(content: ArcadeGameContent, state: LotteryLedger
   if (state.lotteryLedgerGold < tier.cost) {
     state.lotteryLedgerStatus = "bankrupt";
     state.lotteryLedgerMessage =
-      state.lotteryLedgerLoans < lotteryLedgerMaxLoans ? "금화 부족 · 재기는 한 번만 열립니다." : "금화 부족 · 장부를 닫아야 합니다.";
+      state.lotteryLedgerLoans < lotteryLedgerMaxLoans ? "금화 부족 · 재기자금은 한 번만 열립니다." : "금화 부족 · 장부를 닫아야 합니다.";
     state.playTick += 1;
     rememberLotteryLedgerHistory(state, { label: "파산선", detail: state.lotteryLedgerMessage, score: 0 });
     state.score = state.lotteryLedgerGold - state.lotteryLedgerDebt - lotteryLedgerInitialGold;
@@ -437,8 +437,8 @@ function buyLotteryLedgerTicket(content: ArcadeGameContent, state: LotteryLedger
   state.lotteryLedgerMessage = `${shortLotteryLedgerTierTitle(tier)} · 은박을 긁으세요.`;
   state.score = state.lotteryLedgerGold - state.lotteryLedgerDebt - lotteryLedgerInitialGold;
   rememberLotteryLedgerHistory(state, {
-    label: "복권 삼",
-    detail: `${shortLotteryLedgerTierTitle(tier)} · 비용 ${tier.cost} · 손실 ${percent(lotteryLedgerLossChance(tier))}`,
+    label: "한 장 삼",
+    detail: `${shortLotteryLedgerTierTitle(tier)} · 비용 ${tier.cost} · 평균손익 ${formatSigned(lotteryLedgerExpectedNet(tier))} · 손실 ${percent(lotteryLedgerLossChance(tier))}`,
     score: -tier.cost,
   });
 }
@@ -527,7 +527,7 @@ function resetLotteryLedgerSession(state: LotteryLedgerPlayState) {
   state.lotteryLedgerLossStreak = 0;
   state.lotteryLedgerLoans = 0;
   state.lotteryLedgerLastNet = 0;
-  state.lotteryLedgerMessage = "새 장부 · 1단계 10금화부터 시작합니다.";
+  state.lotteryLedgerMessage = "새 손익장부 · 1단계 10금화부터 시작합니다.";
   state.finished = false;
   state.history = [];
 }
@@ -547,7 +547,7 @@ function drawTierSlip(ctx: CanvasRenderingContext2D, tier: LotteryLedgerTier, in
   ctx.fillText(shortLotteryLedgerTierTitle(tier), rect.x + 12, tierY + 22, tierWidth - 24);
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = disabled ? "rgba(47,36,25,0.34)" : "#6f5a44";
-  ctx.fillText(disabled ? gateReason : `${tier.cost}금 · 손실${percent(lotteryLedgerLossChance(tier))}`, rect.x + 12, tierY + 42, tierWidth - 24);
+  ctx.fillText(disabled ? gateReason : `비용 ${tier.cost} · 손실 ${percent(lotteryLedgerLossChance(tier))}`, rect.x + 12, tierY + 42, tierWidth - 24);
   if (selected) {
     ctx.strokeStyle = "#2f2419";
     ctx.lineWidth = 3;
@@ -580,10 +580,10 @@ function drawTicketDesk(ctx: CanvasRenderingContext2D, state: LotteryLedgerPlayS
     ctx.fillStyle = "#5a432f";
     ctx.font = "900 22px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("사면 복권 한 장이 놓입니다.", 248, 286, 320);
+    ctx.fillText("한 장 사면 복권지가 여기 놓입니다.", 248, 286, 320);
     ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillStyle = "#7a6047";
-    ctx.fillText("은박을 드래그로 문질러 여세요.", 248, 316, 320);
+    ctx.fillText("오른쪽 확률표를 먼저 보고 사세요.", 248, 316, 320);
     return;
   }
 
@@ -672,7 +672,7 @@ function drawLedgerPanel(
   ctx.fillStyle = "#2f2419";
   ctx.font = "900 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("확률표", ledgerPanelX + 14, ledgerPanelY + 26);
+  ctx.fillText("확률표 먼저", ledgerPanelX + 14, ledgerPanelY + 26);
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "#6f5a44";
   ctx.fillText(`${shortLotteryLedgerTierTitle(tier)} · ${tier.cost}금화`, ledgerPanelX + 14, ledgerPanelY + 46, ledgerPanelWidth - 28);
@@ -702,7 +702,7 @@ function drawLedgerPanel(
     state.lotteryLedgerDebt > 0
       ? "빚 있으면 1단계만"
       : state.lotteryLedgerLossStreak >= 2
-        ? "손실 뒤 1단계"
+        ? "손실 2장 뒤 1단계"
         : "위험하면 멈춤";
   ctx.fillStyle = state.lotteryLedgerDebt > 0 || state.lotteryLedgerLossStreak >= 2 ? danger : "#6f5a44";
   ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -733,7 +733,7 @@ function drawLedgerButtons(ctx: CanvasRenderingContext2D, state: LotteryLedgerPl
   ctx.fillStyle = "#2f2419";
   ctx.font = "900 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText("멈춤", lotteryLedgerStopRect.x + lotteryLedgerStopRect.width / 2, lotteryLedgerStopRect.y + 32);
-  ctx.fillText("재기", lotteryLedgerLoanRect.x + lotteryLedgerLoanRect.width / 2, lotteryLedgerLoanRect.y + 32);
+  ctx.fillText("재기자금", lotteryLedgerLoanRect.x + lotteryLedgerLoanRect.width / 2, lotteryLedgerLoanRect.y + 32);
 }
 
 function drawWalletStamp(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, value: string, color: string) {
