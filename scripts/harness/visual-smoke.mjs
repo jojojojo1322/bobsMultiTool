@@ -61,7 +61,7 @@ const scenarios = [
     name: "meeting-escape-desktop",
     path: "/play/meeting-escape",
     viewport: { width: 1366, height: 900 },
-    expectedText: ["회의 끝내기 도장판", "회의록 한 줄"],
+    expectedText: ["회의록 닫기 도장판", "회의록 한 줄"],
   },
   {
     name: "tools-desktop",

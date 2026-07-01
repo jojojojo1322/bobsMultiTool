@@ -202,7 +202,7 @@ for (const fragment of [
   "AI 도구가 많은데 왜 더 피곤할 때가 있을까",
   "바로 해보기:",
   "주소 대기표 도장 찍기",
-  "회의 끝내기 도장판",
+  "회의록 닫기 도장판",
   "/blog/category/diary",
   "/blog/category/interests",
   "/blog/category/ai",
