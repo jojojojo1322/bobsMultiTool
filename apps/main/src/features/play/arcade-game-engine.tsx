@@ -808,7 +808,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "memory") return "입력";
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
-  if (content.slug === "deploy-missile-defense") return "요격";
+  if (content.slug === "deploy-missile-defense") return "막기";
   return "발사";
 }
 
@@ -830,10 +830,10 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
       ? {
           noisyCloseTitle: "미끼 정렬됨",
           noisyCloseDetail: (label: string) => `${label} 넘기기`,
-          readyTitle: "요격 충돌점",
+          readyTitle: "막을 충돌점",
           readyDetail: (label: string) => `${label} 먼저 막기`,
-          trackingTitle: "릴리스 도시선 거리",
-          waitingTitle: "요격 대기",
+          trackingTitle: "도시선까지 남은 길",
+          waitingTitle: "도시선 대기",
           waitingDetail: "도시선 가까운 경고 궤적 기다리기",
         }
       : mode === "bubble"
@@ -1813,10 +1813,10 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   const drawCopy =
     mode === "missile"
       ? {
-          header: "릴리스 도시선 요격포",
-          footer: "아래 릴리스 도시선에 먼저 닿을 충돌점에 조준점을 놓고 요격탄을 쏩니다. A/D와 Space도 됩니다.",
+          header: "릴리스 도시선 먼저 막기",
+          footer: "먼 궤적보다 아래 충돌점에 조준점을 놓고 방어탄을 쏩니다. A/D와 Space도 됩니다.",
           focusWarning: "화면 위의 먼 궤적보다 아래 도시선에 닿기 직전인 경고 궤적을 먼저 보세요.",
-          startLine1: "하단 요격포를 움직여 먼저 닿을 충돌점에 조준점을 놓습니다.",
+          startLine1: "하단 방어포를 움직여 먼저 닿을 충돌점에 조준점을 놓습니다.",
           startLine2: "미끼는 넘기고 아래 도시선 가까운 경고 궤적부터 한 발씩 막습니다.",
         }
       : mode === "bubble"
@@ -2006,6 +2006,50 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fillText("먼 궤적보다 먼저 닿을 충돌점", canvasWidth - 44, dangerLineY + 37);
   }
 
+  if (mode === "missile") {
+    const impactReads = state.sprites
+      .filter((sprite) => sprite.vy > 0 && sprite.y < dangerLineY)
+      .map((sprite) => {
+        const secondsToLine = (dangerLineY - sprite.y) / sprite.vy;
+        return {
+          sprite,
+          secondsToLine,
+          impactX: clamp(sprite.x + sprite.vx * secondsToLine, 44, canvasWidth - 44),
+        };
+      })
+      .sort((left, right) => left.secondsToLine - right.secondsToLine);
+    const firstRealThreat = impactReads.find((item) => item.sprite.good);
+
+    for (const item of impactReads.slice(0, 5)) {
+      const { sprite, impactX } = item;
+      const first = firstRealThreat?.sprite.id === sprite.id;
+      ctx.save();
+      ctx.strokeStyle = sprite.good ? (first ? "rgba(248,113,113,0.58)" : "rgba(248,113,113,0.3)") : "rgba(148,163,184,0.2)";
+      ctx.lineWidth = first ? 2 : 1;
+      ctx.setLineDash(sprite.good ? [7, 6] : [3, 8]);
+      ctx.beginPath();
+      ctx.moveTo(sprite.x, sprite.y + sprite.radius);
+      ctx.lineTo(impactX, dangerLineY + 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = sprite.good ? (first ? "rgba(248,113,113,0.9)" : "rgba(248,113,113,0.5)") : "rgba(148,163,184,0.42)";
+      ctx.beginPath();
+      ctx.roundRect(impactX - 7, dangerLineY + 5, 14, 18, 4);
+      ctx.fill();
+      if (first) {
+        ctx.fillStyle = "rgba(254,226,226,0.96)";
+        ctx.beginPath();
+        ctx.roundRect(clamp(impactX - 36, 46, canvasWidth - 118), dangerLineY - 22, 72, 18, 9);
+        ctx.fill();
+        ctx.fillStyle = "#7f1d1d";
+        ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("먼저 닿음", clamp(impactX, 82, canvasWidth - 82), dangerLineY - 9);
+      }
+      ctx.restore();
+    }
+  }
+
   for (const sprite of state.sprites) {
     drawShooterSprite(ctx, sprite, mode, accent, danger);
   }
@@ -2034,7 +2078,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(
-        signalMode ? "접수" : bubbleMode ? "단서" : mode === "missile" ? "요격" : "쏘기",
+        signalMode ? "접수" : bubbleMode ? "단서" : mode === "missile" ? "막기" : "쏘기",
         aimRead.target.x,
         aimRead.target.y - aimRead.target.radius - 19,
       );
@@ -4987,9 +5031,9 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
   },
   "deploy-missile-defense": {
     finalKicker: "릴리스 도시선 방어 결과",
-    liveTitle: "릴리스 도시선 요격 기록",
-    scoreLabel: "요격한 미사일",
-    liveDetail: "요격한 경고 궤적, 놓친 도시선 위협, 미끼에 흔들린 순간을 같이 봅니다.",
+    liveTitle: "릴리스 도시선 방어 기록",
+    scoreLabel: "막은 미사일",
+    liveDetail: "막은 경고 궤적, 놓친 도시선 위협, 미끼에 흔들린 순간을 같이 봅니다.",
   },
 };
 
