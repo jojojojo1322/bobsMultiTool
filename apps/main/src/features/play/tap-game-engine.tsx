@@ -36,10 +36,10 @@ export function TapGameEngine({
   const isMeetingExitBoard = content.slug === "meeting-escape";
   const usesTicketSurface = isAiReviewStampboard || isIndexingWaitingRoom || isMeetingExitBoard;
   const ending = [...content.endings].sort((a, b) => b.minScore - a.minScore).find((item) => score >= item.minScore) ?? content.endings[content.endings.length - 1];
-  const scoreLabel = isAiReviewStampboard ? "검수 도장" : isIndexingWaitingRoom ? "정리 도장" : isMeetingExitBoard ? "닫은 발언" : "판정 점수";
+  const scoreLabel = isAiReviewStampboard ? "근거 도장" : isIndexingWaitingRoom ? "정리 도장" : isMeetingExitBoard ? "닫은 발언" : "판정 점수";
   const progressLabel = isAiReviewStampboard ? "전표" : isIndexingWaitingRoom ? "대기표" : isMeetingExitBoard ? "회의록" : "진행";
-  const frameKicker = isAiReviewStampboard ? "AI 답변 검수 도장판" : isIndexingWaitingRoom ? "주소 대기표 도장판" : isMeetingExitBoard ? "회의록 닫기 도장판" : "탭 판정";
-  const aiReviewChecklist = ["경로 열림", "명령 결과", "원문 출처", "한계·비밀"];
+  const frameKicker = isAiReviewStampboard ? "AI 답변 근거 도장판" : isIndexingWaitingRoom ? "주소 대기표 도장판" : isMeetingExitBoard ? "회의록 닫기 도장판" : "탭 판정";
+  const aiReviewChecklist = ["경로 열림", "명령 출력", "원문 출처", "한계·비밀"];
   const indexingTicketChecklist = ["주소 열림", "사이트맵", "대표 주소", "검사 도구"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
   const playBodyClassName = usesTicketSurface
@@ -133,7 +133,7 @@ export function TapGameEngine({
             {isAiReviewStampboard ? (
               <div className="rounded-lg border bg-zinc-50 p-4 text-left shadow-inner ring-1 ring-inset ring-zinc-200/70 dark:bg-zinc-950/40 dark:ring-zinc-800/80">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed pb-3">
-                  <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">AI 답변 검수 전표</p>
+                  <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">AI 답변 근거 전표</p>
                   <span className="rounded-sm border bg-background px-2 py-1 font-mono text-[11px] font-medium text-muted-foreground">
                     SLIP-{String(index + 1).padStart(2, "0")}
                   </span>
@@ -146,14 +146,14 @@ export function TapGameEngine({
                   ))}
                 </div>
                 <div className="mt-4 border-l-4 border-zinc-500 bg-background p-4 shadow-sm">
-                  <p className="text-xs font-medium text-muted-foreground">도장 찍을 문장</p>
+                  <p className="text-xs font-medium text-muted-foreground">확인할 문장</p>
                   <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-normal">{current.label}</h3>
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
                 </div>
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.targetLabel}</p>
-                    <p className="mt-1 leading-5">경로 열림, 명령 결과, 원문 출처, 한계 표시가 비면 여기 찍습니다.</p>
+                    <p className="mt-1 leading-5">경로 열림, 명령 출력, 원문 출처, 한계 표시가 비면 여기 찍습니다.</p>
                   </div>
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.decoyLabel}</p>
@@ -260,7 +260,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
   const isAiReviewStampboard = content.slug === "ai-review-tap";
   const isIndexingWaitingRoom = content.slug === "indexing-waiting-room";
   const isMeetingExitBoard = content.slug === "meeting-escape";
-  const title = isAiReviewStampboard ? "검수 도장 기록" : isIndexingWaitingRoom ? "대기표 기록" : isMeetingExitBoard ? "회의록 복기" : "선택 기준";
+  const title = isAiReviewStampboard ? "근거 도장 복기" : isIndexingWaitingRoom ? "대기표 기록" : isMeetingExitBoard ? "회의록 복기" : "선택 기준";
 
   function labelForAction(action: "tap" | "skip") {
     return action === "tap" ? content.targetLabel : content.decoyLabel;
@@ -277,7 +277,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
               <p className={item.correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
                 {isAiReviewStampboard
                   ? item.correct
-                    ? `도장: ${labelForAction(item.action)} / 기준 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
+                    ? `도장: ${labelForAction(item.action)} / 근거칸 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
                     : `도장: ${labelForAction(item.action)} / 다시 찍을 도장: ${labelForAction(item.expectedAction)}`
                   : isIndexingWaitingRoom
                     ? item.correct
@@ -297,7 +297,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
           {isAiReviewStampboard
-            ? "도장을 찍으면 전표와 다시 볼 기준이 여기에 남습니다."
+            ? "도장을 찍으면 문장과 다시 볼 근거칸이 여기에 남습니다."
             : isIndexingWaitingRoom
               ? "도장을 찍으면 확인한 대기표와 기준이 여기에 남습니다."
               : isMeetingExitBoard
