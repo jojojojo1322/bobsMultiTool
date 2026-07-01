@@ -811,7 +811,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
   if (content.slug === "bug-bubble-shooter") return "터뜨리기";
-  if (content.slug === "deploy-missile-defense") return "막기";
+  if (content.slug === "deploy-missile-defense") return "요격";
   return "발사";
 }
 
@@ -833,11 +833,11 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
       ? {
           noisyCloseTitle: "미끼 정렬됨",
           noisyCloseDetail: (label: string) => `${label} 넘기기`,
-          readyTitle: "막을 충돌점",
-          readyDetail: (label: string) => `${label} 먼저 막기`,
-          trackingTitle: "도시선까지 남은 길",
-          waitingTitle: "도시선 대기",
-          waitingDetail: "도시선 가까운 경고 궤적 기다리기",
+          readyTitle: "요격할 충돌점",
+          readyDetail: (label: string) => `${label} 먼저 요격`,
+          trackingTitle: "충돌핀까지 조준",
+          waitingTitle: "도시선 감시",
+          waitingDetail: "도시선 가까운 충돌핀 기다리기",
         }
       : mode === "bubble"
         ? {
@@ -1824,11 +1824,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   const drawCopy =
     mode === "missile"
       ? {
-          header: "릴리스 도시선 먼저 막기",
-          footer: "먼 궤적보다 아래 충돌점에 조준점을 놓고 방어탄을 쏩니다. A/D와 Space도 됩니다.",
-          focusWarning: "화면 위의 먼 궤적보다 아래 도시선에 닿기 직전인 경고 궤적을 먼저 보세요.",
-          startLine1: "하단 방어포를 움직여 먼저 닿을 충돌점에 조준점을 놓습니다.",
-          startLine2: "미끼는 넘기고 아래 도시선 가까운 경고 궤적부터 한 발씩 막습니다.",
+          header: "릴리스 충돌점 방어포",
+          footer: "위쪽 먼 궤적보다 아래 충돌핀에 조준점을 놓고 요격탄을 쏩니다. A/D와 Space도 됩니다.",
+          focusWarning: "위쪽 먼 궤적보다 아래 도시선에 닿기 직전인 경고 궤적을 먼저 보세요.",
+          startLine1: "하단 방어포를 움직여 먼저 닿을 충돌핀에 조준점을 놓습니다.",
+          startLine2: "미끼는 넘기고 아래 도시선 가까운 경고 궤적부터 한 발씩 요격합니다.",
         }
       : mode === "bubble"
         ? {
@@ -1903,7 +1903,8 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "right";
   ctx.fillStyle = state.focus <= 30 ? danger : signalMode ? "rgba(239,231,204,0.72)" : invaderMode ? "rgba(240,234,210,0.72)" : bubbleMode ? "rgba(242,231,201,0.74)" : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, canvasWidth - 44, 46);
+  const shooterStatLine = mode === "missile" ? `요격 ${state.score} · 도시선 ${Math.round(state.focus)}` : `기록 ${state.score} · 집중 ${Math.round(state.focus)}`;
+  ctx.fillText(shooterStatLine, canvasWidth - 44, 46);
   if (signalMode) {
     ctx.textAlign = "center";
     ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
@@ -2044,7 +2045,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "left";
     ctx.fillText("릴리스 도시선", 44, dangerLineY + 37);
     ctx.textAlign = "right";
-    ctx.fillText("먼 궤적보다 먼저 닿을 충돌점", canvasWidth - 44, dangerLineY + 37);
+    ctx.fillText("가장 가까운 충돌핀부터", canvasWidth - 44, dangerLineY + 37);
   }
 
   if (mode === "missile") {
@@ -2085,7 +2086,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         ctx.fillStyle = "#7f1d1d";
         ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("먼저 닿음", clamp(impactX, 82, canvasWidth - 82), dangerLineY - 9);
+        ctx.fillText("첫 충돌핀", clamp(impactX, 82, canvasWidth - 82), dangerLineY - 9);
       }
       ctx.restore();
     }
@@ -2119,7 +2120,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(
-        signalMode ? "접수" : bubbleMode ? "단서표" : mode === "missile" ? "막기" : "쏘기",
+        signalMode ? "접수" : bubbleMode ? "단서표" : mode === "missile" ? "요격" : "쏘기",
         aimRead.target.x,
         aimRead.target.y - aimRead.target.radius - 19,
       );
@@ -5096,10 +5097,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "차단한 확인 표식, 놓친 게이트선, 주황 미끼에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
-    finalKicker: "릴리스 도시선 방어 결과",
-    liveTitle: "릴리스 도시선 방어 기록",
-    scoreLabel: "막은 미사일",
-    liveDetail: "막은 경고 궤적, 놓친 도시선 위협, 미끼에 흔들린 순간을 같이 봅니다.",
+    finalKicker: "릴리스 도시선 복기",
+    liveTitle: "충돌점 요격 기록",
+    scoreLabel: "요격한 궤적",
+    liveDetail: "요격한 경고 궤적, 놓친 도시선 위협, 미끼에 흔들린 순간을 같이 봅니다.",
   },
 };
 
