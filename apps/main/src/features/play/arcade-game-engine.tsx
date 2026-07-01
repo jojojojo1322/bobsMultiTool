@@ -808,6 +808,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "memory") return "입력";
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
+  if (content.slug === "bug-bubble-shooter") return "터뜨리기";
   if (content.slug === "deploy-missile-defense") return "막기";
   return "발사";
 }
@@ -838,13 +839,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
         }
       : mode === "bubble"
         ? {
-          noisyCloseTitle: "소문 버블 가까움",
-          noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
-          readyTitle: "버그 단서",
-          readyDetail: (label: string) => `${label} 정렬됨`,
-          trackingTitle: "단서 버블 따라가기",
-          waitingTitle: "단서 대기",
-          waitingDetail: "재현/로그/원인 버블이 내려올 때 쏘기",
+          noisyCloseTitle: "소문지 가까움",
+          noisyCloseDetail: (label: string) => `${label} 소문지 흘리기`,
+          readyTitle: "터뜨릴 단서표",
+          readyDetail: (label: string) => `${label} 단서표 맞히기`,
+          trackingTitle: "단서표 따라가기",
+          waitingTitle: "단서표 대기",
+          waitingDetail: "재현/로그/환경 버블이 내려올 때 쏘기",
           }
       : mode === "invader"
       ? {
@@ -1821,11 +1822,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         }
       : mode === "bubble"
         ? {
-            header: "버그 단서 버블 조준판",
-            footer: "하단 발사대에서 점선 조준선을 맞춰 재현·로그·원인 버블만 쏩니다. 소문 버블은 흘립니다.",
-            focusWarning: "소문 버블까지 터뜨리면 판이 흐려집니다. 바닥선 가까운 단서 버블부터 보세요.",
-            startLine1: "하단 발사대를 끌거나 A/D로 움직여 Space로 쏩니다.",
-            startLine2: "재현, 로그, 원인 표식 버블만 겨냥하고 소문 버블은 흘립니다.",
+            header: "버그 단서 버블 터뜨리기",
+            footer: "하단 단서 발사대에서 조준선을 올려 재현·로그·환경 버블만 터뜨립니다. 소문지는 흘립니다.",
+            focusWarning: "소문지까지 터뜨리면 판이 흐려집니다. 바닥선 가까운 단서표부터 보세요.",
+            startLine1: "하단 단서 발사대를 움직여 단서표 버블에 조준선을 올립니다.",
+            startLine2: "재현, 로그, 환경 표식 버블만 터뜨리고 소문지 버블은 흘립니다.",
           }
         : mode === "invader"
           ? {
@@ -1909,6 +1910,22 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fillStyle = "#fff7ed";
     ctx.fillText("반려 X", 373, 43);
     ctx.textAlign = "right";
+  } else if (bubbleMode) {
+    ctx.textAlign = "center";
+    ctx.font = "900 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillStyle = "rgba(125,211,168,0.94)";
+    ctx.beginPath();
+    ctx.roundRect(274, 31, 62, 18, 9);
+    ctx.fill();
+    ctx.fillStyle = "#132018";
+    ctx.fillText("단서표", 305, 43);
+    ctx.fillStyle = "rgba(191,95,90,0.88)";
+    ctx.beginPath();
+    ctx.roundRect(344, 31, 62, 18, 9);
+    ctx.fill();
+    ctx.fillStyle = "#fff7ed";
+    ctx.fillText("소문지 X", 375, 43);
+    ctx.textAlign = "right";
   }
 
   ctx.strokeStyle = signalMode ? "rgba(184,165,106,0.28)" : invaderMode ? "rgba(216,196,106,0.24)" : bubbleMode ? "rgba(214,179,95,0.28)" : "rgba(255,255,255,0.16)";
@@ -1987,6 +2004,20 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("바닥 경고선", 44, dangerLineY + 37);
+    ctx.textAlign = "right";
+    ctx.fillText("소문지 말고 가까운 단서표만", canvasWidth - 44, dangerLineY + 37);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(125,211,168,0.2)";
+    for (let x = canvasWidth - 172; x <= canvasWidth - 122; x += 25) {
+      ctx.beginPath();
+      ctx.arc(x, dangerLineY + 9, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(125,211,168,0.58)";
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(242,231,201,0.74)";
+    ctx.font = "800 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("단서 3칸 견본", canvasWidth - 146, dangerLineY - 5);
   } else if (mode === "missile") {
     ctx.strokeStyle = "rgba(191,219,254,0.24)";
     ctx.lineWidth = 1;
@@ -2078,7 +2109,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(
-        signalMode ? "접수" : bubbleMode ? "단서" : mode === "missile" ? "막기" : "쏘기",
+        signalMode ? "접수" : bubbleMode ? "단서표" : mode === "missile" ? "막기" : "쏘기",
         aimRead.target.x,
         aimRead.target.y - aimRead.target.radius - 19,
       );
@@ -2206,6 +2237,12 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
       ctx.beginPath();
       ctx.roundRect(-sprite.radius * 0.74, -sprite.radius * 0.48, sprite.radius * 1.48, 15, 3);
       ctx.fill();
+      ctx.fillStyle = "rgba(19,32,24,0.18)";
+      for (let dot = -1; dot <= 1; dot += 1) {
+        ctx.beginPath();
+        ctx.arc(dot * 7, -sprite.radius * 0.68, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.fillStyle = "rgba(31,41,32,0.9)";
       ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
@@ -2222,13 +2259,21 @@ function drawShooterSprite(ctx: CanvasRenderingContext2D, sprite: Sprite, mode: 
       ctx.beginPath();
       ctx.ellipse(0, 2, sprite.radius * 0.74, sprite.radius * 0.32, 0.15, 0, Math.PI * 2);
       ctx.fill();
+      ctx.fillStyle = "rgba(242,231,201,0.24)";
+      ctx.beginPath();
+      ctx.roundRect(-sprite.radius * 0.68, -sprite.radius * 0.48, sprite.radius * 1.36, 14, 5);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,247,237,0.82)";
+      ctx.font = "900 7px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("소문지", 0, -sprite.radius * 0.48 + 10);
       ctx.strokeStyle = "rgba(242,231,201,0.48)";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(-sprite.radius * 0.62, -sprite.radius * 0.12);
-      ctx.lineTo(sprite.radius * 0.58, sprite.radius * 0.12);
-      ctx.moveTo(-sprite.radius * 0.46, sprite.radius * 0.34);
-      ctx.lineTo(sprite.radius * 0.46, sprite.radius * 0.48);
+      ctx.moveTo(-sprite.radius * 0.62, -sprite.radius * 0.08);
+      ctx.lineTo(sprite.radius * 0.58, sprite.radius * 0.36);
+      ctx.moveTo(sprite.radius * 0.58, -sprite.radius * 0.08);
+      ctx.lineTo(-sprite.radius * 0.58, sprite.radius * 0.36);
       ctx.stroke();
     }
   } else if (mode === "invader") {
@@ -4994,10 +5039,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "초록 접수 도장을 받은 순간과 붉은 반려 X에 흔들린 순간을 같이 봅니다.",
   },
   "bug-bubble-shooter": {
-    finalKicker: "디버그 조준 결과",
-    liveTitle: "단서 조준 기록",
-    scoreLabel: "맞힌 단서 버블",
-    liveDetail: "맞힌 버그 단서와 소문 버블에 흔들린 순간을 같이 봅니다.",
+    finalKicker: "단서 버블 결과",
+    liveTitle: "단서표 터뜨린 기록",
+    scoreLabel: "터뜨린 단서표",
+    liveDetail: "맞힌 버그 단서표와 소문지에 흔들린 순간을 같이 봅니다.",
   },
   "bug-brick-breaker": {
     finalKicker: "패치 패들 결과",
