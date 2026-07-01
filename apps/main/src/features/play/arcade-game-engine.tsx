@@ -811,6 +811,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
   if (content.slug === "bug-bubble-shooter") return "터뜨리기";
+  if (content.slug === "deploy-invaders") return "방어탄";
   if (content.slug === "deploy-missile-defense") return "요격";
   return "발사";
 }
@@ -851,13 +852,13 @@ function shooterAimRead(state: GameState, mode: string): ShooterAimRead {
           }
       : mode === "invader"
       ? {
-          noisyCloseTitle: "주황 미끼 정렬",
-          noisyCloseDetail: (label: string) => `${label} 흘려보내기`,
-          readyTitle: "쏠 확인 표식",
-          readyDetail: (label: string) => `${label} 정렬됨`,
-          trackingTitle: "게이트 방어포 정렬",
-          waitingTitle: "게이트 침입자 대기",
-          waitingDetail: "확인 표식이 게이트선 쪽으로 내려올 때 쏘기",
+          noisyCloseTitle: "주황 미끼 선상",
+          noisyCloseDetail: (label: string) => `${label} 게이트 밖으로`,
+          readyTitle: "차단할 확인 표식",
+          readyDetail: (label: string) => `${label} 게이트선 앞`,
+          trackingTitle: "하단 레일 맞춤",
+          waitingTitle: "하강 행렬 대기",
+          waitingDetail: "확인 표식이 게이트선 가까이 내려올 때 한 발",
         }
       : mode === "signal"
         ? {
@@ -1841,10 +1842,10 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
         : mode === "invader"
           ? {
               header: "릴리스 게이트 방어포",
-              footer: "하단 방어포를 마우스/터치로 끌어 확인 표식 침입자에만 방어탄을 쏩니다. A/D와 Space도 됩니다.",
-              focusWarning: "주황 미끼까지 쏘면 게이트선이 먼저 밀립니다. 게이트선 가까운 확인 표식부터 보세요.",
-              startLine1: "하단 방어포를 끌거나 A/D로 움직여 Space로 쏩니다.",
-              startLine2: "확인 표식 침입자만 쏘고 주황 미끼 경고는 흘려보냅니다.",
+              footer: "하단 레일 방어포를 마우스/터치로 맞춰 확인 표식 침입자에만 방어탄을 냅니다. A/D와 Space도 됩니다.",
+              focusWarning: "주황 미끼까지 막으면 게이트선이 먼저 밀립니다. 게이트선 가까운 확인 표식부터 보세요.",
+              startLine1: "하단 레일 방어포를 끌거나 A/D로 움직여 Space로 한 발 냅니다.",
+              startLine2: "확인 표식 침입자만 막고 주황 미끼 경고는 게이트 밖으로 흘립니다.",
           }
         : {
               header: "버그 티켓 접수선",
@@ -1903,7 +1904,11 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.textAlign = "right";
   ctx.fillStyle = state.focus <= 30 ? danger : signalMode ? "rgba(239,231,204,0.72)" : invaderMode ? "rgba(240,234,210,0.72)" : bubbleMode ? "rgba(242,231,201,0.74)" : "rgba(255,255,255,0.68)";
   ctx.font = "750 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  const shooterStatLine = mode === "missile" ? `요격 ${state.score} · 도시선 ${Math.round(state.focus)}` : `기록 ${state.score} · 집중 ${Math.round(state.focus)}`;
+  const shooterStatLine = mode === "missile"
+    ? `요격 ${state.score} · 도시선 ${Math.round(state.focus)}`
+    : invaderMode
+      ? `차단 ${state.score} · 게이트 ${Math.round(state.focus)}`
+      : `기록 ${state.score} · 집중 ${Math.round(state.focus)}`;
   ctx.fillText(shooterStatLine, canvasWidth - 44, 46);
   if (signalMode) {
     ctx.textAlign = "center";
@@ -2029,6 +2034,38 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fillStyle = "rgba(242,231,201,0.74)";
     ctx.font = "800 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("단서 3칸 견본", canvasWidth - 146, dangerLineY - 5);
+  } else if (invaderMode) {
+    ctx.strokeStyle = "rgba(240,234,210,0.22)";
+    ctx.lineWidth = 1;
+    for (let x = 54; x < canvasWidth - 70; x += 82) {
+      ctx.beginPath();
+      ctx.roundRect(x, dangerLineY + 22, 48, 16, 3);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + 8, dangerLineY + 17);
+      ctx.lineTo(x + 8, dangerLineY + 43);
+      ctx.moveTo(x + 40, dangerLineY + 17);
+      ctx.lineTo(x + 40, dangerLineY + 43);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(240,234,210,0.64)";
+    ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("릴리스 게이트선", 44, dangerLineY + 37);
+    ctx.textAlign = "right";
+    ctx.fillText("주황 미끼 밖으로 · 가까운 OK 표식만 차단", canvasWidth - 44, dangerLineY + 37);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(143,191,123,0.2)";
+    for (let x = canvasWidth - 178; x <= canvasWidth - 128; x += 25) {
+      ctx.beginPath();
+      ctx.roundRect(x - 7, dangerLineY + 4, 14, 12, 3);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(216,196,106,0.52)";
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(240,234,210,0.72)";
+    ctx.font = "800 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("OK 행렬 견본", canvasWidth - 153, dangerLineY - 5);
   } else if (mode === "missile") {
     ctx.strokeStyle = "rgba(191,219,254,0.24)";
     ctx.lineWidth = 1;
@@ -2120,7 +2157,7 @@ function drawShooter(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
       ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(
-        signalMode ? "접수" : bubbleMode ? "단서표" : mode === "missile" ? "요격" : "쏘기",
+        signalMode ? "접수" : bubbleMode ? "단서표" : mode === "missile" ? "요격" : invaderMode ? "차단" : "쏘기",
         aimRead.target.x,
         aimRead.target.y - aimRead.target.radius - 19,
       );
@@ -5091,10 +5128,10 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
     liveDetail: "옆 칸으로 민 질문칩과 이어진 3칸 맞춤이 다음 한 수의 단서로 남습니다.",
   },
   "deploy-invaders": {
-    finalKicker: "릴리스 게이트 결과",
-    liveTitle: "게이트 방어 기록",
+    finalKicker: "릴리스 게이트 복기",
+    liveTitle: "게이트선 방어 메모",
     scoreLabel: "차단한 표식",
-    liveDetail: "차단한 확인 표식, 놓친 게이트선, 주황 미끼에 흔들린 순간을 같이 봅니다.",
+    liveDetail: "차단한 확인 표식, 밀린 게이트선, 주황 미끼에 흔들린 순간을 같이 봅니다.",
   },
   "deploy-missile-defense": {
     finalKicker: "릴리스 도시선 복기",
@@ -5157,6 +5194,8 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
       : content.arcade.variant === "flight"
         ? `${copy.scoreLabel} ${view.score}, 기체 여유 ${view.focus}.`
         : content.arcade.variant === "crossing"
+          ? `${copy.scoreLabel} ${view.score}, 게이트 여유 ${view.focus}.`
+        : content.slug === "deploy-invaders"
           ? `${copy.scoreLabel} ${view.score}, 게이트 여유 ${view.focus}.`
         : `${copy.scoreLabel} ${view.score}, 집중 ${view.focus}.`;
   return `${prefix} ${copy.liveDetail}`;
@@ -5242,6 +5281,13 @@ export function ArcadeGameEngine({
               { label: "게이트 여유", value: `${view.focus}%` },
               { label: "남은 시간", value: `${timeLeft}s` },
               { label: "게이트", value: view.started ? "읽는 중" : "대기선" },
+            ]
+        : content.slug === "deploy-invaders"
+          ? [
+              { label: copy.scoreLabel, value: view.score },
+              { label: "게이트 여유", value: `${view.focus}%` },
+              { label: "남은 시간", value: `${timeLeft}s` },
+              { label: "게이트", value: view.started ? "하강 행렬" : "대기선" },
             ]
         : [
             { label: copy.scoreLabel, value: view.score },
