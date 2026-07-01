@@ -794,7 +794,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "flight") return "띄우기";
   if (shouldUseSideScroller(content)) return "점프";
   if (content.arcade.variant === "crossing") return "건너기";
-  if (content.arcade.variant === "brick-breaker") return "받기";
+  if (content.arcade.variant === "brick-breaker") return "공 받기";
   if (content.slug === "deploy-10-box") return "묶기";
   if (content.arcade.variant === "sum-box") return "고르기";
   if (content.arcade.variant === "lottery-economy") return "한 장 사기";
@@ -1312,7 +1312,7 @@ function updateBrickBreaker(content: ArcadeGameContent, state: GameState, keys: 
       state.focus = clamp(state.focus + (hitBrick.good ? 1 : -5), 0, 100);
       addHistory(state, {
         label: hitBrick.label,
-        detail: hitBrick.good ? "단서 벽돌 깸" : "소문 벽돌 건드림",
+        detail: hitBrick.good ? "단서 벽돌 열림" : "소문 벽돌 건드림",
         score: delta,
       });
     }
@@ -4725,6 +4725,20 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
   ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("패치", state.playerX, state.playerY + 4);
+  ctx.strokeStyle = "rgba(32,28,23,0.5)";
+  ctx.lineWidth = 2;
+  for (const edgeX of [state.playerX - brickPaddleWidth / 2 + 15, state.playerX + brickPaddleWidth / 2 - 15]) {
+    ctx.beginPath();
+    ctx.moveTo(edgeX, state.playerY - 10);
+    ctx.lineTo(edgeX, state.playerY + 10);
+    ctx.stroke();
+  }
+  ctx.fillStyle = "rgba(248,250,252,0.72)";
+  ctx.font = "700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.fillText("중심", state.playerX, state.playerY - 18);
+  ctx.fillStyle = "rgba(248,250,252,0.48)";
+  ctx.fillText("끝 반사", state.playerX - brickPaddleWidth / 2 + 22, state.playerY - 18);
+  ctx.fillText("끝 반사", state.playerX + brickPaddleWidth / 2 - 22, state.playerY - 18);
   ctx.fillStyle = "#f8fafc";
   ctx.beginPath();
   ctx.arc(state.brickBallX, state.brickBallY, brickBallRadius, 0, Math.PI * 2);
@@ -4736,7 +4750,7 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`단서벽 ${state.bricks.filter((brick) => brick.alive).length}`, 24, canvasHeight - 22);
+  ctx.fillText(`남은 단서 벽돌 ${state.bricks.filter((brick) => brick.alive).length}`, 24, canvasHeight - 22);
   ctx.textAlign = "right";
   ctx.fillText("흰 착지선에 패들 중심을 맞춥니다.", canvasWidth - 24, canvasHeight - 22);
 
@@ -4749,14 +4763,14 @@ function drawBrickBreaker(content: ArcadeGameContent, state: GameState, ctx: Can
     ctx.fillText(content.title, canvasWidth / 2, 172);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.fillText("하단 패치 패들을 밀어 공을 되받습니다.", canvasWidth / 2, 208);
-    ctx.fillText("상단 단서벽보다 먼저 흰 착지선을 보고 받을 자리를 잡으세요.", canvasWidth / 2, 234);
+    ctx.fillText("상단 단서 벽돌보다 먼저 흰 착지선을 보고 받을 자리를 잡으세요.", canvasWidth / 2, 234);
   } else if (!state.brickLaunched) {
     ctx.fillStyle = "rgba(32,28,23,0.58)";
     ctx.fillRect(0, canvasHeight - 116, canvasWidth, 42);
     ctx.fillStyle = "#f8fafc";
     ctx.font = "600 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("받을 자리로 패들을 옮기고 Space 또는 터치로 발사", canvasWidth / 2, canvasHeight - 90);
+    ctx.fillText("받을 자리로 패들을 옮기고 Space 또는 터치로 공 보내기", canvasWidth / 2, canvasHeight - 90);
   }
 }
 
@@ -4831,9 +4845,9 @@ const arcadeVariantCopy = {
     liveDetail: "누르고 뗀 길이와 다음 덕트 틈 높이선을 같이 봅니다.",
   },
   "brick-breaker": {
-    finalKicker: "버그 벽돌 결과",
+    finalKicker: "벽돌깨기 결과",
     liveTitle: "패치 착지 기록",
-    scoreLabel: "정리한 버그",
+    scoreLabel: "깬 벽돌",
     liveDetail: "공이 내려올 자리와 패치 패들 위치를 다시 봅니다.",
   },
   snake: {
@@ -4902,8 +4916,8 @@ const arcadeSlugCopyOverrides: Partial<Record<string, ArcadeVariantCopy>> = {
   "bug-brick-breaker": {
     finalKicker: "패치 패들 결과",
     liveTitle: "패치 착지 기록",
-    scoreLabel: "깬 단서벽",
-    liveDetail: "흰 착지선, 패들 중심, 재현 단서 벽돌을 같이 봅니다.",
+    scoreLabel: "깬 단서 벽돌",
+    liveDetail: "흰 착지선, 패들 중심, 재현·로그·원인 단서 벽돌을 같이 봅니다.",
   },
   "deploy-10-box": {
     finalKicker: "마감 전표 결과",
