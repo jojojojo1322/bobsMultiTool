@@ -801,7 +801,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "lottery") return "긁기";
   if (content.arcade.variant === "snake") return "길 찾기";
   if (content.arcade.variant === "password") return "증거 확인";
-  if (content.arcade.variant === "minesweeper") return "열기";
+  if (content.arcade.variant === "minesweeper") return "칸 열기";
   if (content.arcade.variant === "match-three") return "고르기";
   if (content.arcade.variant === "stacker") return "층 멈추기";
   if (content.arcade.variant === "mole") return "확인";
@@ -3357,9 +3357,9 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ? cursor.mine
       ? "지뢰칸을 열었습니다"
       : cursorCanChord
-        ? "숫자와 깃발이 맞음"
+        ? "주변 열기 준비"
         : cursorHasTooManyFlags
-          ? "깃발이 많습니다"
+          ? "깃발 초과"
           : cursor.adjacent > 0
             ? `숫자 ${cursor.adjacent}`
             : "빈칸입니다"
@@ -3400,7 +3400,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillStyle = "rgba(216,196,154,0.62)";
   ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "right";
-  ctx.fillText("숫자=주변 지뢰 · 깃발=보류 · 맞으면 주변 열기", canvasWidth - 28, 32);
+  ctx.fillText("숫자=주변 지뢰 수 · 깃발=보류 · 맞으면 주변 열기", canvasWidth - 28, 32);
 
   ctx.fillStyle = "rgba(109,84,55,0.45)";
   ctx.beginPath();
@@ -3415,6 +3415,18 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
       ctx.fillRect(mineBoardX - 10, mineBoardY + row * (mineCellSize + mineGap) - 4, mineBoardWidth + 20, mineCellSize + 8);
     }
   }
+
+  ctx.fillStyle = "rgba(120,185,141,0.18)";
+  ctx.strokeStyle = "rgba(120,185,141,0.62)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(mineBoardX - 8, mineBoardY - 8, mineCellSize * 2 + mineGap + 16, mineCellSize * 2 + mineGap + 16, 6);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "rgba(120,185,141,0.9)";
+  ctx.font = "800 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("시작 안전 구역", mineBoardX, mineBoardY - 13);
 
   for (const cell of state.mineCells) {
     const x = mineBoardX + cell.column * (mineCellSize + mineGap);
@@ -3547,7 +3559,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillStyle = "rgba(216,196,154,0.9)";
   ctx.font = "800 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("숫자-깃발 대조표", panelX + 18, mineBoardY + 22);
+  ctx.fillText("현재 숫자 대조표", panelX + 18, mineBoardY + 22);
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillStyle = "rgba(216,196,154,0.58)";
   ctx.fillText("현재 칸 기준으로 주변을 셉니다", panelX + 18, mineBoardY + 40);
@@ -3580,7 +3592,7 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
   ctx.fillStyle = "rgba(216,196,154,0.8)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("숫자와 주변 깃발 수가 맞으면 닫힌 주변 칸이 함께 열립니다.", 36, canvasHeight - 20);
+  ctx.fillText("첫 커서는 안전 구역입니다. 숫자와 주변 깃발 수가 맞으면 닫힌 주변 칸이 함께 열립니다.", 36, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(23,19,15,0.78)";
@@ -3590,8 +3602,8 @@ function drawMinesweeper(content: ArcadeGameContent, state: GameState, ctx: Canv
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("숫자는 주변 지뢰 수입니다. 의심 칸은 F 또는 우클릭으로 깃발을 꽂습니다.", canvasWidth / 2, 202);
-    ctx.fillText("숫자와 깃발 수가 맞으면 숫자를 다시 눌러 주변 칸을 엽니다.", canvasWidth / 2, 228);
+    ctx.fillText("첫 커서는 안전 구역입니다. 숫자는 주변 지뢰 수입니다.", canvasWidth / 2, 202);
+    ctx.fillText("의심 칸은 깃발로 보류하고, 숫자와 깃발 수가 맞으면 주변 칸을 엽니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4870,9 +4882,9 @@ const arcadeVariantCopy = {
   },
   minesweeper: {
     finalKicker: "지뢰 지도 결과",
-    liveTitle: "릴리스 지뢰 지도",
+    liveTitle: "숫자-깃발 기록",
     scoreLabel: "안전칸",
-    liveDetail: "숫자 주변의 깃발 수와 열린 칸을 같이 봅니다.",
+    liveDetail: "시작 안전 구역, 숫자 주변의 깃발 수, 열린 칸을 같이 봅니다.",
   },
   mole: {
     finalKicker: "알림 선별 결과",
