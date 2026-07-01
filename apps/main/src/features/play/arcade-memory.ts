@@ -114,7 +114,7 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     state.focus = clamp(state.focus - 6, 0, 100);
     rememberMemoryHistory(state, {
       label: "너무 빠름",
-      detail: "입력 대기 뒤에 누르기",
+      detail: "대기 불 뒤에 누르기",
       score: -1,
     });
     resetMemoryPreview(content, state, true);
@@ -133,8 +133,8 @@ export function chooseMemoryCell(content: ArcadeGameContent, state: MemoryPlaySt
     state.score = Math.max(0, state.score + delta);
     state.focus = clamp(state.focus + 5, 0, 100);
     rememberMemoryHistory(state, {
-      label: "릴리스 신호 성공",
-      detail: "입력열 맞음",
+      label: "램프 순서 성공",
+      detail: "누른 순서 맞음",
       score: delta,
     });
     state.memoryRound += 1;
@@ -164,7 +164,7 @@ export function replayMemoryPreview(content: ArcadeGameContent, state: MemoryPla
     state.focus = clamp(state.focus - 5, 0, 100);
     rememberMemoryHistory(state, {
       label: "다시 보기",
-      detail: "릴리스 신호 재확인",
+      detail: "램프 순서 재확인",
       score: -1,
     });
   }

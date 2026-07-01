@@ -430,6 +430,7 @@ type ViewState = Pick<
   | "lotteryLedgerLoans"
   | "lotteryLedgerLastNet"
   | "lotteryLedgerMessage"
+  | "memoryShowing"
   | "history"
 > & {
   sumClearedCount: number;
@@ -616,6 +617,7 @@ function snapshot(state: GameState): ViewState {
     lotteryLedgerRevealedCount: lotteryLedgerRevealedCount(state),
     lotteryLedgerTicketDone: Boolean(state.lotteryLedgerTicket?.settled),
     lotteryLedgerTicketActive: Boolean(state.lotteryLedgerTicket && !state.lotteryLedgerTicket.settled),
+    memoryShowing: state.memoryShowing,
     growthScrap: Math.round(state.growth.scrap),
     growthOutput: growthOutput(state.growth),
     growthAutoIncome: growthAutoIncome(state.growth),
@@ -805,7 +807,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "match-three") return "고르기";
   if (content.arcade.variant === "stacker") return "층 멈추기";
   if (content.arcade.variant === "mole") return "확인";
-  if (content.arcade.variant === "memory") return "입력";
+  if (content.arcade.variant === "memory") return "누르기";
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
   if (content.slug === "bug-bubble-shooter") return "터뜨리기";
@@ -2921,8 +2923,8 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   const lastMemoryLabel = typeof lastMemoryInput === "number" ? pickLabel(content.arcade.goodLabels, lastMemoryInput) : "";
   const sequenceLength = state.memorySequence.length || memoryLengthForRound(state.memoryRound);
   const playbackStep = state.memoryShowing ? clamp(state.memoryFlashIndex + 1, 0, sequenceLength) : sequenceLength;
-  const statusTitle = state.memoryShowing ? "재생중" : "입력 대기";
-  const statusDetail = state.memoryShowing ? "손 떼고 신호 순서 보기" : "입력 대기에서 같은 순서 누르기";
+  const statusTitle = state.memoryShowing ? "보기 중" : "누르기 대기";
+  const statusDetail = state.memoryShowing ? "손 떼고 켜진 램프 순서 보기" : "같은 순서로 램프 누르기";
   const nextSlot = state.memoryInput.length + 1;
 
   ctx.fillStyle = background;
@@ -2945,7 +2947,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.78)";
   ctx.font = "850 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("릴리스 신호 콘솔", 42, 44);
+  ctx.fillText("릴리스 램프 순서판", 42, 44);
 
   ctx.fillStyle = state.memoryShowing ? "rgba(250,204,21,0.92)" : "rgba(190,242,100,0.92)";
   ctx.beginPath();
@@ -2967,7 +2969,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
   ctx.textAlign = "right";
   ctx.fillStyle = "rgba(255,255,255,0.76)";
-  ctx.fillText(`라운드 ${state.memoryRound} · 신호 ${sequenceLength}`, canvasWidth - 42, 43);
+  ctx.fillText(`보기 ${state.memoryRound} · 램프 ${sequenceLength}`, canvasWidth - 42, 43);
 
   ctx.fillStyle = "rgba(255,255,255,0.06)";
   ctx.beginPath();
@@ -3074,7 +3076,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(state.memoryShowing ? "재생 신호" : "입력열", railX + 16, railY + 24);
+  ctx.fillText(state.memoryShowing ? "본 순서" : "누른 순서", railX + 16, railY + 24);
 
   const slotGap = Math.min(38, (railWidth - 52) / Math.max(1, sequenceLength));
   for (let index = 0; index < sequenceLength; index += 1) {
@@ -3090,7 +3092,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
       ctx.fillStyle = "rgba(255,255,255,0.44)";
       ctx.font = "700 9px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("묶음", dividerX, railY + 68);
+      ctx.fillText("3칸", dividerX, railY + 68);
     }
     const isPlayed = state.memoryShowing && index < playbackStep;
     const isDone = !state.memoryShowing && index < state.memoryInput.length;
@@ -3111,7 +3113,7 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = state.memoryShowing ? "rgba(250,204,21,0.86)" : "rgba(190,242,100,0.86)";
   ctx.font = "850 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "right";
-  ctx.fillText(state.memoryShowing ? `${playbackStep}/${sequenceLength} 신호` : `${state.memoryInput.length}/${sequenceLength} 입력`, railX + railWidth - 16, railY + 24);
+  ctx.fillText(state.memoryShowing ? `${playbackStep}/${sequenceLength} 보기` : `${state.memoryInput.length}/${sequenceLength} 누름`, railX + railWidth - 16, railY + 24);
 
   const panelX = 430;
   ctx.fillStyle = "rgba(255,255,255,0.08)";
@@ -3124,12 +3126,23 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
   ctx.fillStyle = "#f8fafc";
   ctx.font = "850 17px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(state.memoryShowing ? "신호 재생 보기" : hasMemoryInput ? "입력열 이어가기" : "첫 신호 누르기", panelX + 18, 118);
+  ctx.fillText(state.memoryShowing ? "켜진 램프 보기" : hasMemoryInput ? "누른 순서 이어가기" : "첫 램프 누르기", panelX + 18, 118);
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(state.memoryShowing ? "켜진 순서를 3칸씩 끊어 봅니다." : `입력 위치 ${nextSlot}부터 이어 누릅니다.`, panelX + 18, 146);
+  ctx.fillText(state.memoryShowing ? "켜진 램프를 3칸씩 끊어 봅니다." : `누를 자리 ${nextSlot}부터 이어 누릅니다.`, panelX + 18, 146);
 
-  const dotY = 184;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.roundRect(panelX + 18, 158, 176, 22, 11);
+  ctx.fill();
+  ctx.fillStyle = state.memoryShowing ? "rgba(250,204,21,0.9)" : "rgba(255,255,255,0.52)";
+  ctx.font = "850 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("1 보기", panelX + 56, 173);
+  ctx.fillStyle = !state.memoryShowing ? "rgba(190,242,100,0.9)" : "rgba(255,255,255,0.52)";
+  ctx.fillText("2 같은 순서 누르기", panelX + 138, 173);
+
+  const dotY = 198;
   for (let index = 0; index < state.memorySequence.length; index += 1) {
     const dotX = panelX + 22 + index * 24;
     const done = index < state.memoryInput.length;
@@ -3142,20 +3155,20 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
 
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText(state.memoryShowing ? "재생이 끝나면 입력 대기가 켜집니다." : hasMemoryInput ? "입력열에 맞은 신호가 남았습니다." : "첫 신호를 고를 차례입니다.", panelX + 18, 224);
-  ctx.fillText("맞은 신호는 선과 입력열로 남습니다.", panelX + 18, 252);
-  ctx.fillText("순서가 흐리면 R이나 다시 보기.", panelX + 18, 276);
+  ctx.fillText(state.memoryShowing ? "보기 끝나면 누르기 대기가 켜집니다." : hasMemoryInput ? "맞은 램프가 누른 순서 줄에 남았습니다." : "첫 램프를 고를 차례입니다.", panelX + 18, 224);
+  ctx.fillText("맞은 램프는 선과 순서 줄로 남습니다.", panelX + 18, 252);
+  ctx.fillText("헷갈리면 R이나 다시 보기.", panelX + 18, 276);
 
   if (hasMemoryInput) {
     ctx.fillStyle = "rgba(190,242,100,0.9)";
     ctx.font = "850 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`방금 ${lastMemoryLabel.slice(0, 4)} 신호`, panelX + 18, 304);
+    ctx.fillText(`방금 ${lastMemoryLabel.slice(0, 4)} 램프`, panelX + 18, 304);
   }
 
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("재생중에는 보고, 입력 대기에서 마우스/방향키/숫자 1~9로 다시 누릅니다. 순서가 흐리면 R로 다시 봅니다.", 34, canvasHeight - 20);
+  ctx.fillText("보기 중에는 손을 멈추고, 누르기 대기에서 마우스/방향키/숫자 1~9로 같은 램프를 누릅니다. 헷갈리면 R.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -3165,8 +3178,8 @@ function drawMemory(content: ArcadeGameContent, state: GameState, ctx: CanvasRen
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("재생중에는 신호 순서만 보고, 입력 대기가 켜지면 같은 순서로 다시 누릅니다.", canvasWidth / 2, 202);
-    ctx.fillText("입력열과 연결선이 맞은 구간을 남깁니다. 순서가 흐리면 R로 다시 봅니다.", canvasWidth / 2, 228);
+    ctx.fillText("보기 중에는 누르지 말고 램프 순서만 봅니다.", canvasWidth / 2, 202);
+    ctx.fillText("누르기 대기가 켜지면 같은 순서로 누릅니다. 헷갈리면 R로 다시 봅니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4964,10 +4977,10 @@ const arcadeVariantCopy = {
     liveDetail: "움직인 문장 조각과 이어진 역할이 다음 한 수의 단서로 남습니다.",
   },
   memory: {
-    finalKicker: "릴리스 기억 결과",
-    liveTitle: "입력열 기록",
-    scoreLabel: "기억 길이",
-    liveDetail: "릴리스 신호, 입력열, 첫 실수 위치를 같이 봅니다.",
+    finalKicker: "릴리스 램프 결과",
+    liveTitle: "누른 순서 기록",
+    scoreLabel: "가장 긴 순서",
+    liveDetail: "릴리스 램프, 누른 순서 줄, 첫 실수 위치를 같이 봅니다.",
   },
   flight: {
     finalKicker: "덕트 통과 결과",
@@ -6698,6 +6711,10 @@ function LiveArcadeResultPanel({
       ? shortLotteryLedgerTierTitle(lotteryLedgerTierAt(view.lotteryLedgerSelectedTier))
       : content.arcade.variant === "growth"
         ? `납품 ${view.growthOrder}건`
+        : content.arcade.variant === "memory"
+          ? view.memoryShowing
+            ? "보기 중"
+            : "누르기 대기"
         : ending.title;
   const detail = arcadeLiveDetail(content, view);
 
