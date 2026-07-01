@@ -806,7 +806,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "minesweeper") return "칸 열기";
   if (content.arcade.variant === "match-three") return "고르기";
   if (content.arcade.variant === "stacker") return "층 멈추기";
-  if (content.arcade.variant === "mole") return "확인";
+  if (content.arcade.variant === "mole") return "찍기";
   if (content.arcade.variant === "memory") return "누르기";
   if (content.arcade.variant === "growth") return "부품 만들기";
   if (content.slug === "bug-clicker") return "접수";
@@ -2833,7 +2833,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     ctx.fillStyle = "#052e16";
     ctx.font = "900 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("우선 확인", priorityCenter.x, priorityCenter.y - 83);
+    ctx.fillText("먼저 보기", priorityCenter.x, priorityCenter.y - 83);
     ctx.restore();
   }
 
@@ -2903,7 +2903,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
         ctx.fill();
         ctx.fillStyle = isPriority ? "#052e16" : "#fff7ed";
         ctx.font = "900 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-        ctx.fillText(isPriority ? "확인" : "꺼두기", center.x, center.y - 57);
+        ctx.fillText(isPriority ? "찍기" : "흘리기", center.x, center.y - 57);
       }
     }
 
@@ -2938,7 +2938,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(`꺼둘 알림 ${noiseMoles}`, panelX + 66, 149);
   ctx.fillText(`곧 닫힐 알림 ${urgentGoodMoles}`, panelX + 18, 174);
-  ctx.fillText(`기록 ${state.score} · 집중 ${Math.round(state.focus)}`, panelX + 18, 188);
+  ctx.fillText(`찍은 볼 알림 ${state.score}`, panelX + 18, 188);
+  ctx.fillText(`선별 여유 ${Math.round(state.focus)}`, panelX + 18, 202);
   ctx.fillText(priorityMole ? `먼저 ${priorityMole.label} 보기` : "볼 알림 기다리기", panelX + 18, 222);
   ctx.fillText(priorityMole ? "빈칸 Space는 볼 알림으로" : "빈칸이면 기다려도 됨", panelX + 18, 246);
   ctx.fillText(avoidMole ? `${avoidMole.label}은 꺼둠` : "꺼둘 알림은 그대로 두기", panelX + 18, 270);
@@ -2946,7 +2947,7 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("마우스로 볼 알림을 누르거나 방향키/WASD로 슬롯을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
+  ctx.fillText("마우스로 볼 알림을 찍거나 방향키/WASD로 슬롯을 옮겨 Space를 누릅니다.", 34, canvasHeight - 20);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(15,23,42,0.72)";
@@ -2956,8 +2957,8 @@ function drawMole(content: ArcadeGameContent, state: GameState, ctx: CanvasRende
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("볼 알림만 확인하고, 꺼둘 알림은 건드리지 않습니다.", canvasWidth / 2, 202);
-    ctx.fillText("곧 닫힐 알림부터 마우스나 방향키와 Space로 확인합니다.", canvasWidth / 2, 228);
+    ctx.fillText("볼 알림만 찍고, 꺼둘 알림은 건드리지 않습니다.", canvasWidth / 2, 202);
+    ctx.fillText("곧 닫힐 알림부터 마우스나 방향키와 Space로 집습니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -5065,10 +5066,10 @@ const arcadeVariantCopy = {
     liveDetail: "시작 안전 구역, 숫자 주변의 깃발 수, 열린 칸을 같이 봅니다.",
   },
   mole: {
-    finalKicker: "알림 선별 결과",
-    liveTitle: "알림 선별 기록",
-    scoreLabel: "확인한 알림",
-    liveDetail: "지금 볼 알림과 꺼둘 알림을 나눠 봅니다.",
+    finalKicker: "알림 선별 복기",
+    liveTitle: "선별판 메모",
+    scoreLabel: "찍은 볼 알림",
+    liveDetail: "지금 볼 알림, 흘려보낸 꺼둘 알림, 소음에 손이 간 순간을 같이 봅니다.",
   },
   stacker: {
     finalKicker: "착지 레일 결과",
@@ -5197,6 +5198,8 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
           ? `${copy.scoreLabel} ${view.score}, 게이트 여유 ${view.focus}.`
         : content.slug === "deploy-invaders"
           ? `${copy.scoreLabel} ${view.score}, 게이트 여유 ${view.focus}.`
+        : content.arcade.variant === "mole"
+          ? `${copy.scoreLabel} ${view.score}, 선별 여유 ${view.focus}.`
         : `${copy.scoreLabel} ${view.score}, 집중 ${view.focus}.`;
   return `${prefix} ${copy.liveDetail}`;
 }
@@ -5288,6 +5291,13 @@ export function ArcadeGameEngine({
               { label: "게이트 여유", value: `${view.focus}%` },
               { label: "남은 시간", value: `${timeLeft}s` },
               { label: "게이트", value: view.started ? "하강 행렬" : "대기선" },
+            ]
+        : content.arcade.variant === "mole"
+          ? [
+              { label: copy.scoreLabel, value: view.score },
+              { label: "선별 여유", value: `${view.focus}%` },
+              { label: "닫히는 링", value: `${timeLeft}s` },
+              { label: "알림판", value: view.started ? "선별 중" : "대기" },
             ]
         : [
             { label: copy.scoreLabel, value: view.score },
