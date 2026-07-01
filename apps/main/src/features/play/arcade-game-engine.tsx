@@ -4968,10 +4968,10 @@ const arcadeVariantCopy = {
     liveDetail: "합 10 후보와 연속 흐름을 보고 다음 묶음을 찾습니다.",
   },
   lottery: {
-    finalKicker: "복권 전표",
-    liveTitle: "결과 전표",
+    finalKicker: "복권 표식 전표",
+    liveTitle: "한 장 표식 전표",
     scoreLabel: "복권지",
-    liveDetail: "긁은 칸, 표식표, 이번 장 결과지를 같이 봅니다.",
+    liveDetail: "긁은 칸, 표식표, 한 장 기록을 같이 봅니다.",
   },
   "lottery-economy": {
     finalKicker: "빚장부 복기",
@@ -5139,7 +5139,7 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
     const stage = lotteryStageAt(view.lotteryStage);
     const nextStage = lotteryStageAt((view.lotteryStage + 1) % lotteryStages.length);
     if (view.lotteryTicketDone) {
-      return `이번 장 ${view.lotteryLastPrize > 0 ? "표식 있음" : "꽝"}. 표식표와 결과 전표를 먼저 읽고, 더 긁고 싶으면 다음은 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
+      return `이번 장 ${view.lotteryLastPrize > 0 ? "표식 있음" : "꽝"}. 표식표와 한 장 기록 전표를 먼저 읽고, 더 긁고 싶으면 다음 복권지는 ${lotteryShortStageTitle(nextStage.title)}입니다.`;
     }
     if (view.lotteryRevealedCount > 0) {
       return `${lotteryShortStageTitle(stage.title)} ${view.lotteryRevealedCount}/9칸 열림. 표식표 ${stage.instantSymbol}, 같은 그림 줄을 확인합니다.`;
@@ -5195,7 +5195,7 @@ export function ArcadeGameEngine({
     isLotteryLedgerPlay
       ? lotteryLedgerMainActionLabel(view)
       : content.arcade.variant === "lottery" && view.lotteryTicketDone
-        ? "결과 보고 다음 장"
+        ? "전표 보고 다음 장"
         : view.started
           ? mainActionLabel(content)
           : "시작";
@@ -6734,7 +6734,7 @@ function LiveArcadeResultPanel({
   const isLotteryLedger = content.arcade.variant === "lottery-economy";
   const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
-  const title = isLotteryLedger ? "금화 복권 빚장부" : isLottery ? "결과 전표" : copy.liveTitle;
+  const title = isLotteryLedger ? "금화 복권 빚장부" : isLottery ? "한 장 표식 전표" : copy.liveTitle;
   const headline = isLottery
     ? stage.title
     : isLotteryLedger
@@ -6774,7 +6774,7 @@ function LiveArcadeResultPanel({
           {isLotteryLedger
             ? "산 복권, 지급, 빚, 멈춤 기록이 여기에 남습니다."
             : isLottery
-              ? "긁은 칸, 표식표, 이번 장 결과지가 여기에 이어집니다."
+              ? "긁은 칸, 표식표, 한 장 기록이 여기에 이어집니다."
               : "시작하면 판의 흐름이 여기에 보입니다."}
         </p>
       )}

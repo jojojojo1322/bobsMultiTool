@@ -270,7 +270,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   const revealedCount = lotteryRevealedCount(state);
   const progressHint =
     winningLines.length > 0
-      ? `${winningLines.length}줄 보임 · 결과 전표 먼저 확인`
+      ? `${winningLines.length}줄 보임 · 표식 전표 먼저 확인`
       : `${stageShortTitle} · 9칸 긁고 표식표 확인`;
   const completeLabel =
     winningLines.length > 0 ? `${winningLines.length}줄 확인` : state.lotteryLastPrize > 0 ? "이번 장 즉석 표식" : "이번 장 꽝";
@@ -504,7 +504,7 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
     ctx.fillText(completeLabel, lotteryCanvasWidth / 2, bannerY + 30);
     ctx.fillStyle = "rgba(248,250,252,0.72)";
     ctx.font = "800 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText(`결과 전표 확인 · 더 긁고 싶으면 다음은 ${nextStageShortTitle}`, lotteryCanvasWidth / 2, bannerY + 52);
+    ctx.fillText(`표식 전표 확인 · 더 긁고 싶으면 다음은 ${nextStageShortTitle}`, lotteryCanvasWidth / 2, bannerY + 52);
   }
 
   ctx.fillStyle = "rgba(15,23,42,0.56)";
@@ -515,9 +515,9 @@ export function drawLottery(content: ArcadeGameContent, state: LotteryPlayState,
   ctx.font = "800 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
   const status = complete
-    ? `${completeLabel} · 결과 전표 먼저`
+    ? `${completeLabel} · 표식 전표 먼저`
     : winningLines.length > 0
-      ? `${winningLines.length}줄 보임 · 결과 전표 먼저`
+      ? `${winningLines.length}줄 보임 · 표식 전표 먼저`
       : `${stageShortTitle} · 표식 ${stage.instantSymbol} 확인`;
   ctx.fillText(status, lotteryCanvasWidth / 2, 490);
 }
