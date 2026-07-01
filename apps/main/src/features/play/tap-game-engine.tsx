@@ -34,10 +34,10 @@ function tapProgressValue({
 function tapResultLabels(slug: string) {
   if (slug === "ai-review-tap") {
     return {
-      kicker: "검수 정산",
-      copied: "기록 복사됨",
-      share: "근거 기록 공유",
-      restart: "다시 검수",
+      kicker: "검수 전표 마감",
+      copied: "검수 전표 복사됨",
+      share: "근거 전표 공유",
+      restart: "새 전표 열기",
       scorePrefix: "근거 도장",
     };
   }
@@ -95,7 +95,7 @@ export function TapGameEngine({
   const progressValue = tapProgressValue({ slug: content.slug, index, totalItems, isFinished });
   const resultLabels = tapResultLabels(content.slug);
   const frameKicker = isAiReviewStampboard ? "AI 답변 근거 도장판" : isIndexingWaitingRoom ? "주소 대기표 도장판" : isMeetingExitBoard ? "회의록 닫기 도장판" : "탭 판정";
-  const aiReviewChecklist = ["경로 열림", "명령 출력", "원문 출처", "한계·비밀"];
+  const aiReviewChecklist = ["경로 열림", "출력 흔적", "원문 링크", "한계·비밀"];
   const indexingTicketChecklist = ["주소 열림", "사이트맵", "대표 주소", "검사 도구"];
   const meetingCloseChecklist = ["담당자", "기한", "다음 행동", "범위"];
   const playBodyClassName = usesTicketSurface
@@ -200,18 +200,18 @@ export function TapGameEngine({
                   ))}
                 </div>
                 <div className="mt-4 border-l-4 border-zinc-500 bg-background p-4 shadow-sm">
-                  <p className="text-xs font-medium text-muted-foreground">확인할 문장</p>
+                  <p className="text-xs font-medium text-muted-foreground">전표 문장</p>
                   <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-normal">{current.label}</h3>
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{current.detail}</p>
                 </div>
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.targetLabel}</p>
-                    <p className="mt-1 leading-5">경로 열림, 명령 출력, 원문 출처, 한계 표시가 비면 여기 찍습니다.</p>
+                    <p className="mt-1 leading-5">경로, 출력, 원문, 한계 칸이 비면 여기 찍습니다.</p>
                   </div>
                   <div className="rounded-sm border bg-background px-3 py-2">
                     <p className="font-semibold text-foreground">{content.decoyLabel}</p>
-                    <p className="mt-1 leading-5">확인 흔적, 원문 링크, 기준일, 못 본 범위가 있으면 여기 찍습니다.</p>
+                    <p className="mt-1 leading-5">열어본 흔적, 원문 링크, 기준일, 못 본 범위가 남아 있으면 여기 찍습니다.</p>
                   </div>
                 </div>
               </div>
@@ -320,6 +320,14 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
     return action === "tap" ? content.targetLabel : content.decoyLabel;
   }
 
+  function historyDetailClass(correct: boolean) {
+    if (isAiReviewStampboard) {
+      return correct ? "mt-1 text-xs text-zinc-600 dark:text-zinc-300" : "mt-1 text-xs text-amber-700 dark:text-amber-300";
+    }
+
+    return correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600";
+  }
+
   return (
     <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
       <p className="text-sm font-semibold">{title}</p>
@@ -328,11 +336,11 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
           {history.slice(-8).map((item, index) => (
             <li key={`${item.label}-${index}`} className="rounded-sm border bg-background p-2.5">
               <p className="text-sm font-medium">{item.label}</p>
-              <p className={item.correct ? "mt-1 text-xs text-emerald-600" : "mt-1 text-xs text-red-600"}>
+              <p className={historyDetailClass(item.correct)}>
                 {isAiReviewStampboard
                   ? item.correct
-                    ? `도장: ${labelForAction(item.action)} / 근거칸 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
-                    : `도장: ${labelForAction(item.action)} / 다시 찍을 도장: ${labelForAction(item.expectedAction)}`
+                    ? `도장: ${labelForAction(item.action)} / 전표 기준 남김 ${item.points > 0 ? `+${item.points}` : item.points}`
+                    : `도장: ${labelForAction(item.action)} / 다음엔 ${labelForAction(item.expectedAction)}`
                   : isIndexingWaitingRoom
                     ? item.correct
                       ? `도장: ${labelForAction(item.action)} / 분류 맞음 ${item.points > 0 ? `+${item.points}` : item.points}`
@@ -351,7 +359,7 @@ function TapHistory({ content, history }: { content: TapGameContent; history: Ta
       ) : (
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
           {isAiReviewStampboard
-            ? "도장을 찍으면 문장과 다시 볼 근거칸이 여기에 남습니다."
+            ? "도장을 찍으면 문장과 다시 열어볼 근거칸이 여기에 남습니다."
             : isIndexingWaitingRoom
               ? "도장을 찍으면 확인한 대기표와 기준이 여기에 남습니다."
               : isMeetingExitBoard
