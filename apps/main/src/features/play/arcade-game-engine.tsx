@@ -1238,7 +1238,7 @@ function updateCrossing(content: ArcadeGameContent, state: GameState, dt: number
     state.playerY = crossingStartY;
     addHistory(state, {
       label: sprite.label,
-      detail: "위험차와 충돌",
+      detail: "빨강 트럭과 충돌",
       score: -3,
     });
     break;
@@ -4664,11 +4664,11 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(232,221,174,0.86)";
   ctx.font = "700 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("도착 슬롯", 20, 30);
+  ctx.fillText("도착 게이트", 20, 30);
   ctx.textAlign = "right";
   ctx.fillStyle = "rgba(232,221,174,0.62)";
   ctx.font = "750 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("초록칸은 한 칸, 노랑/빨강은 대기", canvasWidth - 22, 29);
+  ctx.fillText("초록 통과 · 노랑 차단봉 · 빨강 멈춤", canvasWidth - 22, 29);
 
   ctx.fillStyle =
     nextDanger.level === "danger" ? "rgba(200,95,89,0.2)" : nextDanger.level === "watch" ? "rgba(216,185,79,0.18)" : "rgba(134,200,143,0.16)";
@@ -4736,13 +4736,13 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "#e8ddae";
   ctx.font = "800 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("다음 칸 신호", 518, 98);
+  ctx.fillText("앞 칸 게이트", 518, 98);
   ctx.fillStyle = nextColor;
   ctx.font = "900 24px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(crossingDangerLabel(nextDanger), 518, 132);
   ctx.fillStyle = "rgba(232,221,174,0.72)";
   ctx.font = "700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-  const secondsText = nextDanger.seconds === null ? "차 간격을 보고 이동" : `${nextDanger.seconds.toFixed(1)}초 안에 위험차`;
+  const secondsText = nextDanger.seconds === null ? "게이트 열리면 이동" : `${nextDanger.seconds.toFixed(1)}초 안에 빨강 트럭`;
   ctx.fillText(secondsText, 518, 156);
 
   ctx.fillStyle = "rgba(232,221,174,0.8)";
@@ -4752,7 +4752,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
   ctx.fillStyle = "rgba(232,221,174,0.76)";
   ctx.font = "600 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("초록칸이면 한 칸 전진하고, 노랑/빨강 차선이면 대기선에서 기다립니다.", 24, canvasHeight - 18);
+  ctx.fillText("초록 통과면 한 칸 전진하고, 노랑 차단봉/빨강 멈춤이면 대기선에서 기다립니다.", 24, canvasHeight - 18);
 
   if (!state.started) {
     ctx.fillStyle = "rgba(23,26,21,0.78)";
@@ -4762,7 +4762,7 @@ function drawCrossing(content: ArcadeGameContent, state: GameState, ctx: CanvasR
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 168);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("앞 칸이 초록이면 한 칸 건너고, 노랑이나 빨강이면 대기선에서 기다립니다.", canvasWidth / 2, 204);
+    ctx.fillText("앞 칸 게이트가 초록이면 한 칸 건너고, 노랑/빨강이면 대기선에서 기다립니다.", canvasWidth / 2, 204);
     ctx.fillText("방향키/WASD 또는 마우스/터치로 차선을 한 칸씩 건넙니다.", canvasWidth / 2, 230);
   }
 }
@@ -5015,10 +5015,10 @@ const arcadeVariantCopy = {
     liveDetail: "지난 자리맞음·숫자있음 꼬리표와 살아 있는 숫자를 같이 봅니다.",
   },
   crossing: {
-    finalKicker: "릴리스 차선 결과",
-    liveTitle: "다음 칸 신호 기록",
-    scoreLabel: "도착 슬롯",
-    liveDetail: "다음 칸 신호, 대기선에서 기다린 타이밍, 충돌한 위험차를 같이 봅니다.",
+    finalKicker: "배포표 차선 복기",
+    liveTitle: "앞 칸 게이트 기록",
+    scoreLabel: "도착 게이트",
+    liveDetail: "앞 칸 게이트, 대기선에서 기다린 타이밍, 충돌한 빨강 트럭을 같이 봅니다.",
   },
   minesweeper: {
     finalKicker: "지뢰 지도 결과",
@@ -5155,6 +5155,8 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
       ? `${copy.scoreLabel} ${view.score}.`
       : content.arcade.variant === "flight"
         ? `${copy.scoreLabel} ${view.score}, 기체 여유 ${view.focus}.`
+        : content.arcade.variant === "crossing"
+          ? `${copy.scoreLabel} ${view.score}, 게이트 여유 ${view.focus}.`
         : `${copy.scoreLabel} ${view.score}, 집중 ${view.focus}.`;
   return `${prefix} ${copy.liveDetail}`;
 }
@@ -5233,6 +5235,13 @@ export function ArcadeGameEngine({
             { label: "남은 시간", value: `${timeLeft}s` },
             { label: "손 반응", value: view.started ? "누름/뗌" : "대기" },
           ]
+        : content.arcade.variant === "crossing"
+          ? [
+              { label: copy.scoreLabel, value: view.score },
+              { label: "게이트 여유", value: `${view.focus}%` },
+              { label: "남은 시간", value: `${timeLeft}s` },
+              { label: "게이트", value: view.started ? "읽는 중" : "대기선" },
+            ]
         : [
             { label: copy.scoreLabel, value: view.score },
             { label: "집중", value: view.focus },
