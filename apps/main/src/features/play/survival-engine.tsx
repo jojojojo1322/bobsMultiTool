@@ -84,6 +84,15 @@ function statTone(key: PlayStatKey, value: number) {
   return "bg-emerald-500";
 }
 
+function workdayStageLabel(turnIndex: number, totalTurns: number, isFinished: boolean) {
+  if (isFinished) return "마감 정산";
+  const ratio = (turnIndex + 1) / totalTurns;
+  if (ratio <= 0.3) return "오전 전표";
+  if (ratio <= 0.6) return "오후 전표";
+  if (ratio < 1) return "퇴근 전표";
+  return "마감 전표";
+}
+
 export function SurvivalPlayEngine({
   content,
   relatedBlogLinks,
@@ -101,7 +110,7 @@ export function SurvivalPlayEngine({
   const ending = isFinished ? pickEnding(content, stats) : null;
   const currentTurn = content.turns[turnIndex];
   const totalTurns = content.turns.length;
-  const progressLabel = isFinished ? `${totalTurns}/${totalTurns}` : `${turnIndex + 1}/${totalTurns}`;
+  const progressLabel = workdayStageLabel(turnIndex, totalTurns, isFinished);
   const timeLabel = isFinished ? "18:10 마감" : (currentTurn?.title.split(",")[0] ?? "대기");
   const mostPressingStat = [...content.stats].sort((a, b) => statRiskScore(b.key, stats[b.key]) - statRiskScore(a.key, stats[a.key]))[0];
   const riskLabel = mostPressingStat ? `${mostPressingStat.label} ${statRiskLabel(mostPressingStat.key, stats[mostPressingStat.key])}` : "대기";
@@ -133,7 +142,7 @@ export function SurvivalPlayEngine({
 
   async function shareResult() {
     const title = ending ? `${content.title} - ${ending.title}` : content.title;
-    const text = ending ? `${content.shareText}\n결과: ${ending.title}` : content.shareText;
+    const text = ending ? `${content.shareText}\n마감 기록: ${ending.title}` : content.shareText;
     const url = window.location.href;
 
     try {
@@ -188,24 +197,24 @@ export function SurvivalPlayEngine({
         </div>
         <ResourceLedgerNote />
         <p className="mt-3 text-xs leading-5 text-muted-foreground">
-          일더미는 낮을수록 퇴근선이 가까워지고, 몸 배터리·마음 여유·신뢰 잔고는 높을수록 하루를 버틸 여지가 남습니다. 전표 흐름 {progressLabel}
+          일더미는 낮을수록 퇴근선이 가까워지고, 몸 배터리·마음 여유·신뢰 잔고는 높을수록 하루를 버틸 여지가 남습니다. 현재 구간: {progressLabel}
         </p>
       </div>
 
       {ending ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px]" data-play-result>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">결과</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">퇴근 정산</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{ending.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={shareResult} data-play-share>
                 <Share2 className="h-4 w-4" />
-                {shareState === "copied" ? "결과 복사됨" : shareState === "shared" ? "공유 완료" : "결과 공유"}
+                {shareState === "copied" ? "기록 복사됨" : shareState === "shared" ? "공유 완료" : "퇴근 기록 공유"}
               </Button>
               <Button variant="outline" onClick={restart}>
                 <RotateCcw className="h-4 w-4" />
-                다시 하기
+                다시 하루 열기
               </Button>
             </div>
             <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />

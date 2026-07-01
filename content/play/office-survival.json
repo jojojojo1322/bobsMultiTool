@@ -1,11 +1,11 @@
 {
   "slug": "office-survival",
   "title": "퇴근 전 일더미 줄이기",
-  "description": "10개의 직장 전표를 넘기며 몸 배터리, 마음 여유, 일더미, 신뢰 잔고를 같이 보는 3-5분 자원관리 게임입니다. 급한 부탁을 다 받는 대신 범위를 줄이고, 시간을 지키고, 도움을 빌려 퇴근선을 가까이 당깁니다.",
+  "description": "10장의 직장 전표를 넘기며 몸 배터리, 마음 여유, 일더미, 신뢰 잔고를 맞추는 3-5분 퇴근 전표판입니다. 급한 부탁을 전부 받기보다 범위를 줄이고, 시간을 지키고, 도움을 빌려 퇴근선을 가까이 당깁니다.",
   "type": "micro-sim",
   "durationLabel": "3-5분",
   "updatedAt": "2026-07-01",
-  "shareText": "퇴근 전 일더미 줄이기를 해봤다. 급한 부탁마다 몸 배터리, 마음 여유, 일더미, 신뢰 잔고의 대가가 달랐다.",
+  "shareText": "퇴근 전 일더미 전표판을 해봤다. 급한 부탁마다 몸 배터리, 마음 여유, 일더미, 신뢰 잔고의 대가가 달랐다.",
   "order": 1,
   "relatedBlogSlugs": [
     "office-survival-workday",
@@ -623,7 +623,7 @@
   ],
   "planningBrief": {
     "gameMode": "퇴근 전 일더미를 줄이고 자원을 지키는 전표 시뮬레이션",
-    "planningIntent": "퇴근 전 일더미 줄이기는 답 고르기 목록이 아니라 하루 끝에 들어오는 부탁 전표를 줄일 일, 지킬 자원, 빌릴 도움으로 판단하는 자원관리 게임이다. NIOSH는 직무 요구가 개인의 능력, 자원, 필요와 맞지 않을 때 직무 스트레스가 생긴다고 설명하고, HSE Management Standards는 demands, control, support, relationships, role, change를 주요 위험 요인으로 본다. 그래서 공개 화면에서는 이 학술어를 그대로 내세우지 않고 '부탁 범위 줄이기', '내 시간 지키기', '도움 빌리기'로 번역한다. 의미 있는 선택은 결과를 바꾸고 이후 기록에 다시 떠올라야 하므로, 각 전표는 몸 배터리, 마음 여유, 일더미, 신뢰 잔고 중 무엇을 얻고 잃었는지 즉시 남긴다.",
+    "planningIntent": "퇴근 전 일더미 줄이기는 답 고르기 목록이 아니라 하루 끝에 들어오는 부탁 전표를 줄일 일, 지킬 자원, 빌릴 도움으로 판단하는 자원관리 전표판이다. NIOSH는 직무 요구가 개인의 능력, 자원, 필요와 맞지 않을 때 직무 스트레스가 생긴다고 설명하고, HSE Management Standards는 demands, control, support, relationships, role, change를 주요 위험 요인으로 본다. Devolver의 Reigns 설명처럼 끊임없이 들어오는 요청과 여러 자원 균형을 버티는 구조를 참고하되, 왕국 대신 사무실 하루 전표로 낮춘다. Frictional Games의 선택-결과-계획성 관점처럼 선택은 이후 계획을 바꿀 만큼 손익을 보여줘야 한다. 공개 화면에서는 학술어나 디자인 용어를 드러내지 않고 '부탁 범위 줄이기', '내 시간 지키기', '도움 빌리기', '퇴근 기록지'로 번역한다.",
     "researchPlan": {
       "webSearchSeeds": [
         "CDC NIOSH job stress demands resources worker needs",
@@ -638,17 +638,20 @@
         "resource management game tradeoffs feedback loops",
         "official HSE stress management standards demands control support",
         "CDC NIOSH stress at work job design workload support",
+        "Devolver Reigns requests maintaining balance between factions",
         "Frictional Games Choices Consequences Ability to Plan",
         "Game Developer meaningful choice awareness consequences reminders permanence"
       ],
       "referenceTypes": [
         "NIOSH의 job demands, worker resources, needs 불일치에 따른 직무 스트레스 설명",
         "HSE Management Standards의 demands, control, support, relationships, role, change 위험 요인",
+        "Reigns의 계속 들어오는 요청 카드와 여러 자원 균형을 버티는 선택 구조",
+        "Frictional Games의 선택이 이후 계획을 가능하게 만드는 결과/피드백 관점",
         "짧은 선택형 시뮬레이션의 즉시 스탯 피드백",
         "자원 관리 게임의 회복/소모 균형",
-        "의미 있는 선택이 행동과 다음 계획을 바꾸고, 이후 기록으로 다시 떠오르는 게임 디자인 사례",
-        "하루 진행 상태와 가장 흔들리는 자원을 먼저 보여주는 상태 표시",
-        "엔딩 조건을 보여주는 결과 화면",
+        "의미 있는 선택이 행동과 다음 계획을 바꾸고, 이후 퇴근 기록으로 다시 떠오르는 게임 디자인 사례",
+        "하루 구간과 가장 흔들리는 자원을 먼저 보여주는 상태 표시",
+        "엔딩 조건을 보여주는 마감 기록지",
         "업무/시간관리 보드에서 줄일 일, 지킬 시간, 빌릴 도움, 비용과 효과를 함께 보여주는 화면",
         "공식 HSE Management Standards의 demands, control, support, relationships, role, change를 사용자가 바로 읽는 짧은 전표 기준으로 번역하는 방식",
         "NIOSH Stress at Work 문서의 workload, control, social support, work-life balance 예방 요인을 게임 자원으로 바꾸는 방식"
@@ -672,7 +675,7 @@
       "회복 선택은 쉬운 정답이 아니라 기회비용을 갖는가?",
       "범위 확인, 비동기 전환, 도움 요청처럼 하루 주도권을 되찾는 선택이 실제로 일더미와 마음 여유를 바꾸는가?",
       "모든 부탁을 받아 신뢰 잔고만 올리는 경로가 좋은 결말로 고정되지 않는가?",
-      "엔딩은 랜덤이 아니라 누적 선택의 결과로 읽히는가?",
+      "엔딩은 랜덤이 아니라 누적 선택의 마감 기록으로 읽히는가?",
       "다음 판에서 부탁을 줄이는 쪽, 시간을 지키는 쪽, 도움을 빌리는 쪽을 다르게 시험하고 싶은가?",
       "스탯 수가 짧은 게임에 비해 과하지 않은가?",
       "선택 직후 어떤 자원을 방치했는지 퇴근 기록지에서 복기할 수 있는가?",
@@ -684,7 +687,7 @@
       "선택지는 예쁜 답변 카드가 아니라 비용/효과가 찍힌 업무 전표처럼 보이는가?",
       "일더미 증가와 감소가 같은 숫자처럼 보이지 않고 부담/완화로 구분되는가?",
       "엔딩은 성취 배지가 아니라 하루 마감 보고서처럼 짧고 투박하게 남는가?",
-      "게임 화면이 일반 퀴즈 화면처럼 보이지 않고 퇴근 전 조절판, 체크리스트, 전표 묶음처럼 보이는가?",
+      "전표판이 일반 퀴즈 화면처럼 보이지 않고 퇴근 전 조절판, 체크리스트, 전표 묶음처럼 보이는가?",
       "모바일에서도 네 자원과 현재 사건이 위아래로 겹치지 않고 먼저 읽히는가?",
       "줄일 것/지킬 것/빌릴 것 메모가 튜토리얼 문구가 아니라 전표판의 업무 기준처럼 보이는가?"
     ],
@@ -698,7 +701,7 @@
     "mechanicProfile": {
       "primaryResource": "몸 배터리, 마음 여유, 일더미, 신뢰 잔고, 줄일 일/지킬 시간/빌릴 도움 판단",
       "progressionQuestion": "성장은 좋은 선택 암기가 아니라 상황별 손익을 더 빨리 읽는 능력인가?",
-      "failureQuestion": "실패 엔딩이 어느 자원을 방치했는지 설명하는가?",
+      "failureQuestion": "방전, 번아웃, 업무 폭탄 잔류 같은 마감 기록이 어느 자원을 방치했는지 설명하는가?",
       "recoveryQuestion": "회복 선택은 다음 사건의 여지를 만들지만 다른 자원을 압박하는가?"
     },
     "initialVisualDirection": {
@@ -710,7 +713,7 @@
         "과한 캐릭터 감정 일러스트",
         "선택 효과가 숨겨진 긴 문장만 있는 화면",
         "야근을 영웅화하는 보상 연출",
-        "단순 숫자판처럼 보이는 하루 진행 표시"
+        "단순 숫자판처럼 보이는 하루 흐름 표시"
       ]
     }
   }
