@@ -803,7 +803,7 @@ function mainActionLabel(content: ArcadeGameContent) {
   if (content.arcade.variant === "password") return "증거 확인";
   if (content.arcade.variant === "minesweeper") return "열기";
   if (content.arcade.variant === "match-three") return "고르기";
-  if (content.arcade.variant === "stacker") return "적재";
+  if (content.arcade.variant === "stacker") return "층 멈추기";
   if (content.arcade.variant === "mole") return "확인";
   if (content.arcade.variant === "memory") return "입력";
   if (content.arcade.variant === "growth") return "부품 만들기";
@@ -2487,7 +2487,7 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.fillStyle = "rgba(167,243,208,0.9)";
     ctx.font = "800 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("정렬권", clamp(topCenter, stackerBoardX + 34, stackerBoardX + stackerBoardWidth - 34), stackerBoardY + 3);
+    ctx.fillText("안전 폭", clamp(topCenter, stackerBoardX + 34, stackerBoardX + stackerBoardWidth - 34), stackerBoardY + 3);
   }
 
   if (isDraggingStacker) {
@@ -2612,7 +2612,7 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "700 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    `남을폭 ${savedWidth} · 잘림 ${cutWidth} · 현재폭 ${Math.round(state.stackerActiveWidth)}`,
+    `남을 폭 ${savedWidth} · 잘림 폭 ${cutWidth} · 다음 폭 ${Math.round(state.stackerActiveWidth)}`,
     94,
     36,
   );
@@ -2637,7 +2637,7 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
   ctx.fillStyle = "rgba(255,255,255,0.72)";
   ctx.font = "650 12px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.fillText(
-    isDraggingStacker ? "초록 겹침을 착지 레일에 맞추고 떼면 적재합니다. Space/Enter도 됩니다." : "붉은 바깥 폭을 줄인 뒤 멈춥니다. A/D는 살짝 보정합니다.",
+    isDraggingStacker ? "초록 남을 폭을 착지 레일에 맞추고 떼면 멈춥니다. Space/Enter도 됩니다." : "붉은 잘림 폭을 줄인 뒤 층을 멈춥니다. A/D는 살짝 보정합니다.",
     34,
     canvasHeight - 20,
   );
@@ -2650,8 +2650,8 @@ function drawStacker(content: ArcadeGameContent, state: GameState, ctx: CanvasRe
     ctx.textAlign = "center";
     ctx.fillText(content.title, canvasWidth / 2, 164);
     ctx.font = "500 15px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("움직이는 릴리스 층을 착지 레일 위에 멈춥니다.", canvasWidth / 2, 202);
-    ctx.fillText("초록 겹침은 살고 붉은 바깥 폭은 잘려 다음 층이 좁아집니다.", canvasWidth / 2, 228);
+    ctx.fillText("움직이는 릴리스 층을 아래 착지 레일 위에 멈춥니다.", canvasWidth / 2, 202);
+    ctx.fillText("초록 남을 폭만 다음 층이 되고 붉은 잘림 폭은 사라집니다.", canvasWidth / 2, 228);
   }
 }
 
@@ -4867,10 +4867,10 @@ const arcadeVariantCopy = {
     liveDetail: "지금 볼 알림과 꺼둘 알림을 나눠 봅니다.",
   },
   stacker: {
-    finalKicker: "적재탑 결과",
-    liveTitle: "릴리스 적재 기록",
-    scoreLabel: "살린 적재층",
-    liveDetail: "착지 레일, 남은 폭, 잘린 폭과 다음 층 폭을 같이 봅니다.",
+    finalKicker: "착지 레일 결과",
+    liveTitle: "릴리스 층 기록",
+    scoreLabel: "살린 층",
+    liveDetail: "착지 레일, 남을 폭, 잘림 폭과 다음 폭을 같이 봅니다.",
   },
   growth: {
     finalKicker: "업그레이드 기록",
