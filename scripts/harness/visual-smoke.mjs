@@ -43,13 +43,13 @@ const scenarios = [
     name: "content-home-desktop",
     path: "/",
     viewport: { width: 1440, height: 1000 },
-    expectedText: ["퇴근 전 일감 조절판", "Latest Blog", "Popular Tools"],
+    expectedText: ["퇴근 전 일더미 줄이기", "Latest Blog", "Popular Tools"],
   },
   {
     name: "office-survival-mobile",
     path: "/play/office-survival",
     viewport: { width: 390, height: 844 },
-    expectedText: ["퇴근 전 일감 조절판", "근무 시각"],
+    expectedText: ["퇴근 전 일더미 줄이기", "근무 시각"],
   },
   {
     name: "prompt-cleanup-mobile",

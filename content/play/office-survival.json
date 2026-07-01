@@ -1,11 +1,11 @@
 {
   "slug": "office-survival",
-  "title": "퇴근 전 일감 조절판",
-  "description": "10개의 직장 상황에서 요구·통제·지원 신호를 보고 몸 배터리·마음 여유·일더미·신뢰 잔고를 조절하는 3-5분 자원관리 게임입니다. 급한 부탁을 다 받는 게임이 아니라, 오늘 줄일 일과 도움을 요청할 일을 고르는 퇴근 전표판입니다.",
+  "title": "퇴근 전 일더미 줄이기",
+  "description": "10개의 직장 전표를 넘기며 몸 배터리, 마음 여유, 일더미, 신뢰 잔고를 같이 보는 3-5분 자원관리 게임입니다. 급한 부탁을 다 받는 대신 범위를 줄이고, 시간을 지키고, 도움을 빌려 퇴근선을 가까이 당깁니다.",
   "type": "micro-sim",
   "durationLabel": "3-5분",
-  "updatedAt": "2026-06-30",
-  "shareText": "퇴근 전 일감 조절판을 해봤다. 급한 부탁마다 몸 배터리, 마음 여유, 일더미, 신뢰 잔고의 대가가 달랐다.",
+  "updatedAt": "2026-07-01",
+  "shareText": "퇴근 전 일더미 줄이기를 해봤다. 급한 부탁마다 몸 배터리, 마음 여유, 일더미, 신뢰 잔고의 대가가 달랐다.",
   "order": 1,
   "relatedBlogSlugs": [
     "office-survival-workday",
@@ -622,8 +622,8 @@
     }
   ],
   "planningBrief": {
-    "gameMode": "퇴근 전 일감을 줄이고 자원을 지키는 업무 요구/자원 조절 시뮬레이션",
-    "planningIntent": "퇴근 전 일감 조절판은 선택지 나열이 아니라 요구(demands), 통제(control), 지원(support), 관계/역할/변화 같은 업무 스트레스 요인을 짧은 사건으로 바꿔 보는 자원관리 게임이다. NIOSH는 직무 요구가 개인의 능력, 자원, 필요와 맞지 않을 때 직무 스트레스가 생긴다고 설명하고, HSE는 demands, control, support, relationships, role, change를 관리 기준으로 본다. 따라서 이 게임은 '좋은 직원 되기'가 아니라 오늘의 일더미를 낮추면서 몸 배터리, 마음 여유, 신뢰 잔고가 어떤 대가로 움직이는지 조절판에서 즉시 읽히게 해야 한다.",
+    "gameMode": "퇴근 전 일더미를 줄이고 자원을 지키는 전표 시뮬레이션",
+    "planningIntent": "퇴근 전 일더미 줄이기는 답 고르기 목록이 아니라 하루 끝에 들어오는 부탁 전표를 줄일 일, 지킬 자원, 빌릴 도움으로 판단하는 자원관리 게임이다. NIOSH는 직무 요구가 개인의 능력, 자원, 필요와 맞지 않을 때 직무 스트레스가 생긴다고 설명하고, HSE Management Standards는 demands, control, support, relationships, role, change를 주요 위험 요인으로 본다. 그래서 공개 화면에서는 이 학술어를 그대로 내세우지 않고 '부탁 범위 줄이기', '내 시간 지키기', '도움 빌리기'로 번역한다. 의미 있는 선택은 결과를 바꾸고 이후 기록에 다시 떠올라야 하므로, 각 전표는 몸 배터리, 마음 여유, 일더미, 신뢰 잔고 중 무엇을 얻고 잃었는지 즉시 남긴다.",
     "researchPlan": {
       "webSearchSeeds": [
         "CDC NIOSH job stress demands resources worker needs",
@@ -637,44 +637,46 @@
         "workplace stress workload control support visual dashboard",
         "resource management game tradeoffs feedback loops",
         "official HSE stress management standards demands control support",
-        "CDC NIOSH stress at work job design workload support"
+        "CDC NIOSH stress at work job design workload support",
+        "Frictional Games Choices Consequences Ability to Plan",
+        "Game Developer meaningful choice awareness consequences reminders permanence"
       ],
       "referenceTypes": [
         "NIOSH의 job demands, worker resources, needs 불일치에 따른 직무 스트레스 설명",
         "HSE Management Standards의 demands, control, support, relationships, role, change 위험 요인",
-        "짧은 선택형 시뮬레이션의 스탯 피드백",
+        "짧은 선택형 시뮬레이션의 즉시 스탯 피드백",
         "자원 관리 게임의 회복/소모 균형",
-        "의미 있는 선택이 행동과 다음 계획을 바꾸는 게임 디자인 사례",
+        "의미 있는 선택이 행동과 다음 계획을 바꾸고, 이후 기록으로 다시 떠오르는 게임 디자인 사례",
         "하루 진행 상태와 가장 흔들리는 자원을 먼저 보여주는 상태 표시",
         "엔딩 조건을 보여주는 결과 화면",
-        "업무/시간관리 보드에서 요구, 통제, 지원, 비용과 효과를 함께 보여주는 화면",
-        "공식 HSE Management Standards의 demands, control, support, relationships, role, change를 짧은 선택 기준으로 번역하는 방식",
+        "업무/시간관리 보드에서 줄일 일, 지킬 시간, 빌릴 도움, 비용과 효과를 함께 보여주는 화면",
+        "공식 HSE Management Standards의 demands, control, support, relationships, role, change를 사용자가 바로 읽는 짧은 전표 기준으로 번역하는 방식",
         "NIOSH Stress at Work 문서의 workload, control, social support, work-life balance 예방 요인을 게임 자원으로 바꾸는 방식"
       ],
       "dataOrSimulationNeeds": [
         "선택 경로별 스탯 분포와 엔딩 도달률",
         "회복 선택이 너무 강하거나 약하지 않은지 비교",
-        "선택지 효과 칩을 보기 전후에 유저가 고른 선택이 달라지는지 비교",
+        "전표 손익 도장을 보기 전후에 유저가 고른 선택이 달라지는지 비교",
         "일더미 감소만 정답이 되지 않도록 신뢰 잔고/몸 배터리 비용의 분포 확인",
-        "요구를 낮추는 선택, 통제를 늘리는 선택, 지원을 요청하는 선택이 서로 다른 대가로 보이는지 확인",
+        "부탁 범위를 줄이는 선택, 시간을 지키는 선택, 도움을 빌리는 선택이 서로 다른 대가로 보이는지 확인",
         "일더미가 낮아도 몸 배터리·마음 여유가 무너지면 좋은 엔딩으로 읽히지 않는지 확인",
-        "줄일 것, 지킬 것, 빌릴 것 기준을 본 뒤 선택지가 더 빠르게 이해되는지 확인"
+        "줄일 것, 지킬 것, 빌릴 것 기준을 본 뒤 전표 선택이 더 빠르게 이해되는지 확인"
       ]
     },
     "systemQuestions": [
-      "첫 5초 안에 '퇴근 전에 요구를 낮추고 자원을 지킨다'가 읽히는가?",
+      "첫 5초 안에 '퇴근 전에 일더미를 줄이고 몸/마음/신뢰를 지킨다'가 읽히는가?",
       "현재 사건이 하루 흐름에서 어디쯤인지 근무 시각처럼 보이는가?",
       "가장 위험한 자원이 몸 배터리, 마음 여유, 일더미, 신뢰 잔고 중 무엇인지 바로 보이는가?",
-      "선택마다 무엇을 얻고 무엇을 잃는지 명확한가?",
+      "전표마다 무엇을 얻고 무엇을 잃는지 명확한가?",
       "일더미는 낮을수록 좋고 몸 배터리/마음 여유/신뢰 잔고는 높을수록 좋다는 방향이 화면에 보이는가?",
       "회복 선택은 쉬운 정답이 아니라 기회비용을 갖는가?",
-      "범위 확인, 비동기 전환, 도움 요청처럼 통제를 되찾는 선택이 실제로 일더미와 마음 여유를 바꾸는가?",
+      "범위 확인, 비동기 전환, 도움 요청처럼 하루 주도권을 되찾는 선택이 실제로 일더미와 마음 여유를 바꾸는가?",
       "모든 부탁을 받아 신뢰 잔고만 올리는 경로가 좋은 결말로 고정되지 않는가?",
       "엔딩은 랜덤이 아니라 누적 선택의 결과로 읽히는가?",
-      "다음 판에서 다른 성격의 운영을 시험하고 싶은가?",
+      "다음 판에서 부탁을 줄이는 쪽, 시간을 지키는 쪽, 도움을 빌리는 쪽을 다르게 시험하고 싶은가?",
       "스탯 수가 짧은 게임에 비해 과하지 않은가?",
-      "선택 직후 어떤 자원을 방치했는지 히스토리에서 복기할 수 있는가?",
-      "유저가 선택지를 보기 전 줄일 것, 지킬 것, 빌릴 것 중 어느 기준을 적용해야 하는지 떠올릴 수 있는가?"
+      "선택 직후 어떤 자원을 방치했는지 퇴근 기록지에서 복기할 수 있는가?",
+      "유저가 선택 전 줄일 것, 지킬 것, 빌릴 것 중 어느 기준을 적용해야 하는지 떠올릴 수 있는가?"
     ],
     "visualQuestions": [
       "사무실 운영판처럼 스탯과 사건이 분리되어 보이는가?",
@@ -694,16 +696,16 @@
       "퇴근을 '무조건 도망'으로만 표현하지 않고 범위 확인, 기록, 지원 요청 같은 통제 회복 선택을 남긴다."
     ],
     "mechanicProfile": {
-      "primaryResource": "몸 배터리, 마음 여유, 일더미, 신뢰 잔고, 요구/통제/지원 판단",
+      "primaryResource": "몸 배터리, 마음 여유, 일더미, 신뢰 잔고, 줄일 일/지킬 시간/빌릴 도움 판단",
       "progressionQuestion": "성장은 좋은 선택 암기가 아니라 상황별 손익을 더 빨리 읽는 능력인가?",
       "failureQuestion": "실패 엔딩이 어느 자원을 방치했는지 설명하는가?",
       "recoveryQuestion": "회복 선택은 다음 사건의 여지를 만들지만 다른 자원을 압박하는가?"
     },
     "initialVisualDirection": {
-      "metaphor": "퇴근 전 사무실 일감 조절판과 마감 전표",
-      "primarySurface": "근무 시각, 퇴근선, 네 자원 막대, 줄일 것/지킬 것/빌릴 것 기준 메모, 현재 사건 전표, 선택 비용 도장, 하루 기록지",
-      "roughnessTarget": "회색 사무 문서, 얇은 표 선, 빨간/노란 체크 표시, 복사기 종이 같은 건조한 느낌",
-      "differenceFromGenericPlay": "캐릭터 일러스트나 퀴즈 버튼보다 근무 시각, 자원 장부, 선택 비용 도장, 퇴근선이 먼저 보인다.",
+      "metaphor": "퇴근 전 사무실 일더미 전표판",
+      "primarySurface": "근무 시각, 퇴근선, 네 자원 막대, 줄일 것/지킬 것/빌릴 것 기준 메모, 현재 사건 전표, 손익 도장, 하루 기록지",
+      "roughnessTarget": "회색 사무 문서, 얇은 표 선, 빨간/노란 체크 표시, 복사기 종이, 퇴근 도장 같은 건조한 느낌",
+      "differenceFromGenericPlay": "캐릭터 일러스트나 퀴즈 버튼보다 근무 시각, 자원 장부, 손익 도장, 퇴근선이 먼저 보인다.",
       "mustAvoid": [
         "과한 캐릭터 감정 일러스트",
         "선택 효과가 숨겨진 긴 문장만 있는 화면",

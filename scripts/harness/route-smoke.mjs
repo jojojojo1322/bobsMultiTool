@@ -332,7 +332,7 @@ for (const fragment of [
   "## Discovery",
   "[일기](https://www.bobob.app/blog/category/diary)",
   "[개발](https://www.bobob.app/blog/category/development)",
-  "[퇴근 전 일감 조절판](https://www.bobob.app/play/office-survival)",
+  "[퇴근 전 일더미 줄이기](https://www.bobob.app/play/office-survival)",
   "[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](https://www.bobob.app/blog/ai-side-project-realistic-order)",
   "[다시 작게 시작하기로 한 날](https://www.bobob.app/blog/small-reset-note)",
   "[Sitemap index](https://www.bobob.app/sitemap.xml)",

@@ -150,8 +150,8 @@ export function SurvivalPlayEngine({
   }
 
   return (
-    <section className="rounded-lg border bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--muted)/0.2))] shadow-sm" data-play-engine={content.slug}>
-      <div className="border-b bg-muted/30 px-4 py-4 sm:px-5">
+    <section className="rounded-md border border-zinc-300 bg-zinc-50/80 shadow-sm dark:border-zinc-700 dark:bg-zinc-950/40" data-play-engine={content.slug}>
+      <div className="border-b border-zinc-300 bg-zinc-100/80 px-4 py-4 dark:border-zinc-700 dark:bg-zinc-900/60 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-muted-foreground">퇴근 전표판</p>
@@ -159,19 +159,19 @@ export function SurvivalPlayEngine({
             <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{content.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-right">
-            <div className="rounded-md border bg-background px-3 py-2">
+            <div className="rounded-sm border border-zinc-300 bg-white/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950/60">
               <p className="text-xs text-muted-foreground">근무 시각</p>
               <p className="text-sm font-semibold tabular-nums">{timeLabel}</p>
             </div>
-            <div className="rounded-md border bg-background px-3 py-2">
-              <p className="text-xs text-muted-foreground">마감 위험</p>
+            <div className="rounded-sm border border-zinc-300 bg-white/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950/60">
+              <p className="text-xs text-muted-foreground">가장 흔들림</p>
               <p className="text-sm font-semibold">{isFinished ? "정산 완료" : riskLabel}</p>
             </div>
           </div>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-play-stats>
           {content.stats.map((stat) => (
-            <div key={stat.key} className="rounded-md border bg-background p-3">
+            <div key={stat.key} className="rounded-sm border border-zinc-300 bg-white/80 p-3 dark:border-zinc-700 dark:bg-zinc-950/60">
               <div className="flex items-center justify-between gap-2 text-xs">
                 <span className="font-medium">{stat.label}</span>
                 <span className="tabular-nums text-muted-foreground">{stats[stat.key]}</span>
@@ -188,7 +188,7 @@ export function SurvivalPlayEngine({
         </div>
         <ResourceLedgerNote />
         <p className="mt-3 text-xs leading-5 text-muted-foreground">
-          일더미는 낮을수록 퇴근선이 가까워지고, 몸 배터리·마음 여유·신뢰 잔고는 높을수록 하루를 버틸 여지가 남습니다. 사건 흐름 {progressLabel}
+          일더미는 낮을수록 퇴근선이 가까워지고, 몸 배터리·마음 여유·신뢰 잔고는 높을수록 하루를 버틸 여지가 남습니다. 전표 흐름 {progressLabel}
         </p>
       </div>
 
@@ -225,7 +225,7 @@ export function SurvivalPlayEngine({
                   type="button"
                   data-play-action="choice"
                   data-play-choice-index={choiceIndex}
-                  className="rounded-md border border-l-4 border-l-zinc-300 bg-background p-4 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-l-zinc-700"
+                  className="rounded-sm border border-zinc-300 border-l-4 border-l-zinc-500 bg-white/90 p-4 text-left transition-colors hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-zinc-700 dark:border-l-zinc-400 dark:bg-zinc-950/70 dark:hover:bg-zinc-900"
                   onClick={() => choose(choiceIndex)}
                 >
                   <span className="block text-sm font-semibold">{choice.label}</span>
@@ -258,7 +258,7 @@ function ResourceLedgerNote() {
     <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
       <div>
         <span className="block font-semibold text-red-700 dark:text-red-300">줄일 것</span>
-        <span className="mt-1 block leading-5">요구가 커질수록 일더미가 붙습니다. 범위 확인과 비동기로 낮춥니다.</span>
+        <span className="mt-1 block leading-5">부탁 범위가 커질수록 일더미가 붙습니다. 범위 확인과 비동기로 낮춥니다.</span>
       </div>
       <div>
         <span className="block font-semibold text-emerald-700 dark:text-emerald-300">지킬 것</span>
@@ -274,12 +274,12 @@ function ResourceLedgerNote() {
 
 function HistoryPanel({ content, history }: { content: MicroSimPlayContent; history: HistoryItem[] }) {
   return (
-    <aside className="rounded-md border bg-muted/20 p-3" data-play-history>
+    <aside className="rounded-sm border border-zinc-300 bg-zinc-100/60 p-3 dark:border-zinc-700 dark:bg-zinc-950/40" data-play-history>
       <p className="text-sm font-semibold">퇴근 기록지</p>
       {history.length ? (
         <ol className="mt-3 space-y-3">
           {history.map((item, index) => (
-            <li key={`${item.turnTitle}-${index}`} className="rounded-sm border bg-background p-2.5">
+            <li key={`${item.turnTitle}-${index}`} className="rounded-sm border border-zinc-300 bg-white/80 p-2.5 dark:border-zinc-700 dark:bg-zinc-950/60">
               <p className="text-xs text-muted-foreground">{item.turnTitle}</p>
               <p className="mt-1 text-sm font-medium">{item.choiceLabel}</p>
               <div className="mt-2 flex flex-wrap gap-1">
@@ -297,7 +297,7 @@ function HistoryPanel({ content, history }: { content: MicroSimPlayContent; hist
           ))}
         </ol>
       ) : (
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">첫 전표를 처리하면 줄인 요구, 되찾은 통제, 빌린 지원 판단이 여기에 남습니다.</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">첫 전표를 처리하면 줄인 부탁, 지킨 시간, 빌린 도움 판단이 여기에 남습니다.</p>
       )}
     </aside>
   );
