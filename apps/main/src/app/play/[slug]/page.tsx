@@ -380,7 +380,7 @@ function playContextGuide(content: PlayContent): PlayContextGuide {
         firstLook: "분류할 요청 메모, 해야 할 일/상황·대상/예시/답 모양/지킬 선 칸, 오른쪽 붙인 기록을 먼저 봅니다.",
         firstMove: "첫 움직임은 메모 붙이기입니다. 문장이 AI가 처리할 일인지, 대상과 현재 상태인지, 샘플인지, 답의 모양인지, 지킬 기준인지 고릅니다.",
         pacingText: `${content.durationLabel} 동안 빠르게 맞히기보다 요청이 어디서 뭉쳤는지 분리합니다. 예시와 답 모양은 지킬 선 문구와 따로 봅니다.`,
-        recordText: "기록은 결과 자랑판이 아니라 다음 AI 요청서를 쓰기 위한 붙인 기록입니다. 헷갈린 문장은 한 문장에 역할이 둘 이상 섞였는지 다시 봅니다.",
+        recordText: "기록은 점수 자랑판이 아니라 다음 AI 요청서를 쓰기 위한 붙인 기록입니다. 헷갈린 문장은 한 문장에 역할이 둘 이상 섞였는지 다시 봅니다.",
       };
     }
     if (content.slug === "priority-sorter") {

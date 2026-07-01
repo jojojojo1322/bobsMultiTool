@@ -40,6 +40,10 @@ export function SortMatchEngine({
           currentLabel: "분류할 요청 메모",
           historyTitle: "요청서 붙인 기록",
           emptyHistory: "메모를 한 장 붙이면 어느 요청서 칸으로 보냈는지 여기에 남습니다.",
+          resultKicker: "요청서 정산",
+          copiedLabel: "붙인 기록 복사됨",
+          shareLabel: "요청서 기록 공유",
+          restartLabel: "새 요청서 정리",
         }
       : isPrioritySorter
       ? {
@@ -48,6 +52,10 @@ export function SortMatchEngine({
           currentLabel: "분류할 일감 카드",
           historyTitle: "카드 이동 기록",
           emptyHistory: "카드를 한 장 보내면 지금 막힘, 시간 잡기, 오늘은 안 함 중 어디로 보냈는지 여기에 남습니다.",
+          resultKicker: "일감 정산",
+          copiedLabel: "이동 기록 복사됨",
+          shareLabel: "일감 기록 공유",
+          restartLabel: "새 일감 분류",
         }
       : {
           boardLabel: "분류 보드",
@@ -55,6 +63,10 @@ export function SortMatchEngine({
           currentLabel: "현재 카드",
           historyTitle: "선택 기준",
           emptyHistory: "카드를 한 장 보내면 선택한 기준이 여기에 남습니다.",
+          resultKicker: "기록",
+          copiedLabel: "기록 복사됨",
+          shareLabel: "기록 공유",
+          restartLabel: "다시 하기",
         };
 
   function choose(categoryId: string) {
@@ -119,17 +131,17 @@ export function SortMatchEngine({
       {isFinished ? (
         <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]" data-play-result>
           <div>
-            <p className="text-xs font-medium text-muted-foreground">결과</p>
+            <p className="text-xs font-medium text-muted-foreground">{engineCopy.resultKicker}</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-normal">{ending.title}</h3>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">{ending.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button onClick={shareResult} data-play-share>
                 <Share2 className="h-4 w-4" />
-                {shareState === "copied" ? "결과 복사됨" : shareState === "shared" ? "공유 완료" : "결과 공유"}
+                {shareState === "copied" ? engineCopy.copiedLabel : shareState === "shared" ? "공유 완료" : engineCopy.shareLabel}
               </Button>
               <Button variant="outline" onClick={restart}>
                 <RotateCcw className="h-4 w-4" />
-                다시 하기
+                {engineCopy.restartLabel}
               </Button>
             </div>
             <PlayResultLinks relatedBlogLinks={relatedBlogLinks} relatedPlayLinks={relatedPlayLinks} />
@@ -179,18 +191,26 @@ export function SortMatchEngine({
 
 function PromptRequestDeskNote() {
   return (
-    <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-3">
+    <div className="mt-3 grid gap-2 rounded-md border border-zinc-300/80 bg-zinc-50/80 p-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 sm:grid-cols-5">
       <div>
         <span className="block font-semibold text-slate-800 dark:text-slate-100">해야 할 일</span>
-        <span className="mt-1 block leading-5">AI가 실제로 끝내야 할 동작을 붙입니다. 요청서의 첫 줄을 세우는 칸입니다.</span>
+        <span className="mt-1 block leading-5">AI가 실제로 끝내야 할 동작을 붙입니다.</span>
       </div>
       <div>
-        <span className="block font-semibold text-sky-700 dark:text-sky-300">상황·예시</span>
-        <span className="mt-1 block leading-5">대상, 현재 상태, 따라 할 샘플을 붙입니다. 답이 허공에서 나오지 않게 잡는 칸입니다.</span>
+        <span className="block font-semibold text-sky-700 dark:text-sky-300">상황/대상</span>
+        <span className="mt-1 block leading-5">누구에게, 어디서, 어떤 상태인지 붙입니다.</span>
       </div>
       <div>
-        <span className="block font-semibold text-rose-700 dark:text-rose-300">답 모양·지킬 선</span>
-        <span className="mt-1 block leading-5">표, JSON, 길이, 제외 범위, 성공 기준을 붙입니다. 결과물의 모양과 경계를 닫는 칸입니다.</span>
+        <span className="block font-semibold text-emerald-700 dark:text-emerald-300">예시</span>
+        <span className="mt-1 block leading-5">따라 할 샘플과 피할 샘플을 붙입니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-amber-700 dark:text-amber-300">답 모양</span>
+        <span className="mt-1 block leading-5">표, JSON, 길이, 먼저 보일 순서를 붙입니다.</span>
+      </div>
+      <div>
+        <span className="block font-semibold text-rose-700 dark:text-rose-300">지킬 선</span>
+        <span className="mt-1 block leading-5">제외 범위와 성공 기준을 붙입니다.</span>
       </div>
     </div>
   );
