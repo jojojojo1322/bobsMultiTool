@@ -504,7 +504,7 @@ function makeInitialState(content: ArcadeGameContent): GameState {
     lotteryLedgerLossStreak: 0,
     lotteryLedgerLoans: 0,
     lotteryLedgerLastNet: 0,
-    lotteryLedgerMessage: "10금화 한 장부터 시작합니다. 지갑이 늘면 25금화와 55금화 전표가 열립니다.",
+    lotteryLedgerMessage: "확률표를 보고 10금화 전표부터 시작합니다. 이전 장은 다음 장을 보장하지 않습니다.",
     lotteryLedgerDragging: false,
     snake,
     snakeDirection: "right",
@@ -4974,8 +4974,8 @@ const arcadeVariantCopy = {
     liveDetail: "긁은 칸, 표식표, 이번 장 결과지를 같이 봅니다.",
   },
   "lottery-economy": {
-    finalKicker: "손익장부 결과",
-    liveTitle: "금화 손익장부",
+    finalKicker: "빚장부 복기",
+    liveTitle: "금화 복권 빚장부",
     scoreLabel: "지갑-빚",
     liveDetail: "지갑, 빚, 평균손익, 손실 위험을 같이 봅니다.",
   },
@@ -5110,7 +5110,7 @@ function arcadeCopyFor(content: ArcadeGameContent) {
 
 function arcadeShareSummary(content: ArcadeGameContent, view: ViewState) {
   if (content.arcade.variant === "lottery-economy") {
-    return `손익장부: 금화 ${view.lotteryLedgerGold} / 빚 ${view.lotteryLedgerDebt}`;
+    return `빚장부: 금화 ${view.lotteryLedgerGold} / 빚 ${view.lotteryLedgerDebt}`;
   }
   if (content.arcade.variant === "lottery") {
     return `복권지: ${lotteryShortStageTitle(lotteryStageAt(view.lotteryStage).title)}`;
@@ -5125,7 +5125,7 @@ function arcadeLiveDetail(content: ArcadeGameContent, view: ViewState) {
   if (content.arcade.variant === "lottery-economy") {
     const tier = lotteryLedgerTierAt(view.lotteryLedgerSelectedTier);
     if (view.lotteryLedgerTicketActive) {
-      return `${shortLotteryLedgerTierTitle(tier)}을 긁는 중입니다. 은박을 충분히 문지르면 결과가 열립니다.`;
+      return `${shortLotteryLedgerTierTitle(tier)} 전표를 긁는 중입니다. 은박을 충분히 문지르면 지급 전표가 열립니다.`;
     }
     if (view.lotteryLedgerStatus === "bankrupt") {
       return view.lotteryLedgerLoans < 1
@@ -5205,8 +5205,8 @@ export function ArcadeGameEngine({
       ? [
           { label: "지갑", value: view.lotteryLedgerGold },
           { label: "빚", value: view.lotteryLedgerDebt },
-          { label: "선택", value: shortLotteryLedgerTierTitle(lotteryLedgerTier) },
-          { label: "상태", value: lotteryLedgerStatusText(view) },
+          { label: "전표", value: shortLotteryLedgerTierTitle(lotteryLedgerTier) },
+          { label: "장부", value: lotteryLedgerStatusText(view) },
         ]
       : content.arcade.variant === "lottery"
       ? [
@@ -6621,7 +6621,7 @@ function LotteryLedgerScreenControls({
           aria-label={
             lotteryLedgerTierGateReason(view, index)
               ? `${shortLotteryLedgerTierTitle(tier)} 잠김, ${lotteryLedgerTierGateReason(view, index)}`
-              : `${shortLotteryLedgerTierTitle(tier)} 선택`
+              : `${shortLotteryLedgerTierTitle(tier)} 전표`
           }
           aria-disabled={Boolean(lotteryLedgerTierGateReason(view, index))}
           aria-pressed={view.lotteryLedgerSelectedTier === index}
@@ -6734,7 +6734,7 @@ function LiveArcadeResultPanel({
   const isLotteryLedger = content.arcade.variant === "lottery-economy";
   const copy = arcadeCopyFor(content);
   const stage = lotteryStageAt(view.lotteryStage);
-  const title = isLotteryLedger ? "금화 손익장부" : isLottery ? "결과 전표" : copy.liveTitle;
+  const title = isLotteryLedger ? "금화 복권 빚장부" : isLottery ? "결과 전표" : copy.liveTitle;
   const headline = isLottery
     ? stage.title
     : isLotteryLedger
