@@ -8,11 +8,9 @@
   "shareText": "부품 공방 상자 키우기에서 지금 막힌 줄을 보고 업그레이드를 골랐다.",
   "order": 23,
   "relatedBlogSlugs": [
-    "small-web-games-retention",
-    "game-feedback-before-score-note",
     "static-micro-games-architecture",
-    "small-play-rules-note",
-    "why-small-web-toys-return"
+    "why-bobob-shifted-to-content-lab",
+    "content-indexing-checklist-before-resubmission"
   ],
   "relatedPlaySlugs": [
     "deploy-stacker",

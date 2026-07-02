@@ -8,11 +8,9 @@
   "shareText": "릴리스 지뢰 지도 열기를 해봤다. 숫자와 깃발 수가 맞을 때만 주변 칸을 여는 쪽이 나았다.",
   "order": 15,
   "relatedBlogSlugs": [
-    "minesweeper-chord-ready-note",
-    "minesweeper-number-open-note",
-    "minesweeper-flag-note",
+    "deploy-minesweeper-build-log",
     "small-web-games-retention",
-    "why-small-web-toys-return"
+    "static-micro-games-architecture"
   ],
   "relatedPlaySlugs": [
     "password-lock",

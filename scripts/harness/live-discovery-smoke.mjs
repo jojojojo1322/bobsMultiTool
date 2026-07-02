@@ -44,7 +44,9 @@ function listBlogSlugs() {
   return fs
     .readdirSync(blogDir)
     .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
-    .map((file) => parseFrontmatter(read(path.join(blogDir, file))).slug)
+    .map((file) => parseFrontmatter(read(path.join(blogDir, file))))
+    .filter((frontmatter) => frontmatter.indexPolicy === "index")
+    .map((frontmatter) => frontmatter.slug)
     .filter(Boolean)
     .sort();
 }

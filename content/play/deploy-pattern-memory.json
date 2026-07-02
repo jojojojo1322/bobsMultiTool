@@ -8,11 +8,9 @@
   "shareText": "릴리스 램프 순서 누르기를 해봤다. 보기 중에는 손을 멈추고, 누르기 대기에서 같은 순서로 따라 누르는 쪽이 더 잘 남았다.",
   "order": 7,
   "relatedBlogSlugs": [
-    "memory-flow-panel-note",
-    "memory-input-trail-note",
-    "memory-replay-note",
-    "small-play-rules-note",
-    "static-micro-games-architecture"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture",
+    "small-web-games-retention"
   ],
   "relatedPlaySlugs": [
     "deploy-stacker",

@@ -1159,6 +1159,18 @@ Decision:
   - `sitemaps/en` was not visible in the submitted sitemap list.
   - Submission attempts for `sitemaps/en`, `https://www.bobob.app/sitemaps/en`, and `/sitemaps/en` did not add a visible `sitemaps/en` row; the full URL attempt triggered a JavaScript alert. No old sitemap row was deleted in this pass.
   - Interpretation: Naver ownership is confirmed, but the canonical reduced sitemap is not visibly registered, and Naver does not yet show content exposure/click evidence.
+- Post-representative Blog pruning source snapshot:
+  - Change: selected a smaller representative Blog set for the next submitted sitemap and moved short development notes into noindex archive candidates instead of deleting them.
+  - Total Blog source count: `120`
+  - Representative Blog count: `36`
+  - Archive/noindex Blog candidate count: `84`
+  - Representative minimum body depth after the `2026-07-03` quality pass: `401` words, with `npm run harness:blog-play-mvp` enforcing a 400-word floor for submitted representative Blog posts.
+  - Representative sitemap URL target: `73`
+  - Representative feed item target: `62`
+  - Consolidated devlog posts added for `password-lock`, `ten-box-rush`, `deploy-snake`, `deploy-stacker`, and `deploy-minesweeper`.
+  - First pillar set now includes `why-bobob-shifted-to-content-lab`, `static-micro-games-architecture`, and `content-indexing-checklist-before-resubmission`.
+  - Search Console action: no post-pruning Search Console sitemap resubmission has been performed yet. After deployment, submit the reduced `/sitemaps/en`, then inspect `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
+  - Interpretation: this is source and deployment-prep evidence, not indexing proof. The next observation must compare Search Console discovered pages against the reduced `73`-URL sitemap after it is live and submitted.
 
 Decision:
 

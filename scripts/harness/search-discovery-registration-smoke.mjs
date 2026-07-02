@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const baseUrl = (process.env.BOBOB_DISCOVERY_REGISTRATION_BASE_URL || "https://www.bobob.app").replace(/\/$/, "");
+const canonicalBaseUrl = (process.env.BOBOB_DISCOVERY_REGISTRATION_CANONICAL_BASE_URL || "https://www.bobob.app").replace(/\/$/, "");
+const fetchBaseUrl = (process.env.BOBOB_DISCOVERY_REGISTRATION_BASE_URL || canonicalBaseUrl).replace(/\/$/, "");
 const requestTimeoutMs = Number.parseInt(process.env.BOBOB_DISCOVERY_REGISTRATION_TIMEOUT_MS || "15000", 10);
 const matrixPath = path.join(root, "docs/search-discovery-registration.md");
 const observationLogPath = path.join(root, "docs/search-indexing-observation-log.md");
@@ -43,7 +44,7 @@ async function fetchText(routePath, accept = "*/*") {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
   try {
-    const response = await fetch(`${baseUrl}${routePath}`, {
+    const response = await fetch(`${fetchBaseUrl}${routePath}`, {
       headers: {
         "user-agent": "BobobSearchDiscoveryRegistrationSmoke/1.0",
         accept,
@@ -72,13 +73,14 @@ const blogEntries = fs
   .readdirSync(blogDir)
   .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
   .map((file) => parseFrontmatter(read(path.join(blogDir, file))));
+const submittedBlogEntries = blogEntries.filter((entry) => entry.indexPolicy === "index");
 const playEntries = fs
   .readdirSync(playDir)
   .filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(read(path.join(playDir, file))));
 const categorySlugs = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
-const expectedSitemapUrlCount = blogEntries.length + playEntries.length + categorySlugs.length + 5;
-const expectedFeedItemCount = blogEntries.length + playEntries.length;
+const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 5;
+const expectedFeedItemCount = submittedBlogEntries.length + playEntries.length;
 
 for (const fragment of [
   "# bobob.app Search Discovery Registration Matrix",
@@ -86,11 +88,12 @@ for (const fragment of [
   `Current submitted sitemap URL count: \`${expectedSitemapUrlCount}\``,
   `Current feed item count: \`${expectedFeedItemCount}\``,
   `Current Blog count: \`${blogEntries.length}\``,
+  `Current representative Blog count: \`${submittedBlogEntries.length}\``,
   `Current Play count: \`${playEntries.length}\``,
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
-  "Latest `bobob935@gmail.com` resubmission confirmed `사이트맵이 제출됨`; submitted `2026. 7. 2.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`, while the live XML has `151` URLs",
+  "Latest `bobob935@gmail.com` resubmission happened before representative pruning; discovered pages remain `68` against the prior `151`-URL XML",
   "Google Search Console performance",
   "Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`",
   "Google Search Console page indexing",
@@ -98,7 +101,7 @@ for (const fragment of [
   "Google URL Inspection",
   "Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`",
   "Bing and IndexNow",
-  `Latest response status \`200\`; submitted URL count \`${expectedSitemapUrlCount}\` after the Play canvas upgrade`,
+  `Next IndexNow representative submission target: \`${expectedSitemapUrlCount}\` URLs`,
   "Bing Webmaster Tools",
   "Latest browser check reached the public landing page with `Sign In`",
   "Public Bing search",
@@ -111,7 +114,7 @@ for (const fragment of [
   "Atom feed",
   "JSON Feed",
   "WebSub",
-  `Latest publish responses \`204\`, \`204\` with feed item counts \`${expectedFeedItemCount}\`, \`${expectedFeedItemCount}\``,
+  `Next WebSub representative feed target: \`${expectedFeedItemCount}\` items`,
   "robots.txt",
   "OpenSearch",
   "llms.txt",
@@ -127,11 +130,11 @@ for (const fragment of [
 for (const fragment of [
   "Search Console sitemap row after resubmission: `/sitemaps/en`, status `성공`, discovered pages `53`.",
   "Representative URL indexing request confirmation: `색인 생성 요청됨`",
-  `IndexNow submitted URL count: \`${expectedSitemapUrlCount}\``,
-  `Live \`/sitemaps/en\` URL count: \`${expectedSitemapUrlCount}\``,
+  `Representative sitemap URL target: \`${expectedSitemapUrlCount}\``,
+  `Representative feed item target: \`${expectedFeedItemCount}\``,
   "Search Console sitemap row after resubmission: `/sitemaps/en`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`.",
   "Bing Webmaster Tools still needs a signed-in pass.",
-  `WebSub feed item counts: \`${expectedFeedItemCount}\`, \`${expectedFeedItemCount}\``,
+  "Post-representative Blog pruning source snapshot:",
   "WebSub response statuses: `204`, `204`",
   "Total impressions: `18`",
   "Indexed pages: `0`",
@@ -155,11 +158,11 @@ const [robots, sitemapIndex, sitemap, rss, atom, jsonFeedResponse, opensearch, l
   fetchText("/ac3d32921a2fa361bd499222bff28abf.txt", "text/plain,*/*"),
 ]);
 
-assertIncludes(robots.body, `Sitemap: ${baseUrl}/sitemap.xml`, "/robots.txt");
-assertIncludes(sitemapIndex.body, `<loc>${baseUrl}/sitemaps/en</loc>`, "/sitemap.xml");
+assertIncludes(robots.body, `Sitemap: ${canonicalBaseUrl}/sitemap.xml`, "/robots.txt");
+assertIncludes(sitemapIndex.body, `<loc>${canonicalBaseUrl}/sitemaps/en</loc>`, "/sitemap.xml");
 const sitemapUrlCount = (sitemap.body.match(/<url>/g) ?? []).length;
 if (sitemapUrlCount !== expectedSitemapUrlCount) failures.push(`/sitemaps/en URL count ${sitemapUrlCount} should be ${expectedSitemapUrlCount}`);
-for (const loc of [`${baseUrl}/`, `${baseUrl}/search`, `${baseUrl}/blog`, `${baseUrl}/play`, `${baseUrl}/tools`]) {
+for (const loc of [`${canonicalBaseUrl}/`, `${canonicalBaseUrl}/search`, `${canonicalBaseUrl}/blog`, `${canonicalBaseUrl}/play`, `${canonicalBaseUrl}/tools`]) {
   if (!xmlLocs(sitemap.body).includes(loc)) failures.push(`/sitemaps/en missing ${loc}`);
 }
 
@@ -181,9 +184,9 @@ if (atomEntryCount !== expectedFeedItemCount) failures.push(`/atom.xml entry cou
 if (jsonFeedItemCount !== expectedFeedItemCount) failures.push(`/feed.json item count ${jsonFeedItemCount} should be ${expectedFeedItemCount}`);
 assertIncludes(rss.body, '<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />', "/feed.xml");
 assertIncludes(atom.body, '<link rel="hub" href="https://pubsubhubbub.appspot.com/" />', "/atom.xml");
-assertIncludes(opensearch.body, `template="${baseUrl}/search?q={searchTerms}"`, "/opensearch.xml");
-assertIncludes(llms.body, `[Sitemap index](${baseUrl}/sitemap.xml)`, "/llms.txt");
-assertIncludes(llms.body, `[OpenSearch descriptor](${baseUrl}/opensearch.xml)`, "/llms.txt");
+assertIncludes(opensearch.body, `template="${canonicalBaseUrl}/search?q={searchTerms}"`, "/opensearch.xml");
+assertIncludes(llms.body, `[Sitemap index](${canonicalBaseUrl}/sitemap.xml)`, "/llms.txt");
+assertIncludes(llms.body, `[OpenSearch descriptor](${canonicalBaseUrl}/opensearch.xml)`, "/llms.txt");
 if (indexNowKey.body.trim() !== "ac3d32921a2fa361bd499222bff28abf") failures.push("IndexNow key file body mismatch");
 
 if (failures.length) {
@@ -192,5 +195,5 @@ if (failures.length) {
 }
 
 console.log(
-  `Search discovery registration smoke passed: ${expectedSitemapUrlCount} sitemap URLs, ${expectedFeedItemCount} feed items, ${blogEntries.length} Blog posts, ${playEntries.length} Play entries.`,
+  `Search discovery registration smoke passed: ${expectedSitemapUrlCount} sitemap URLs, ${expectedFeedItemCount} feed items, ${submittedBlogEntries.length}/${blogEntries.length} Blog posts, ${playEntries.length} Play entries.`,
 );

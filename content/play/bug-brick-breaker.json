@@ -8,10 +8,9 @@
   "shareText": "패치 패들 벽돌 깨기를 해봤다. 벽돌보다 공 착지선과 패들 중심을 먼저 보게 됐다.",
   "order": 12,
   "relatedBlogSlugs": [
-    "brick-breaker-landing-guide-note",
-    "brick-breaker-paddle-touch-note",
-    "cursor-codex-web-service-bottlenecks",
-    "small-web-games-retention"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture",
+    "cursor-codex-web-service-bottlenecks"
   ],
   "relatedPlaySlugs": [
     "bug-bubble-shooter",

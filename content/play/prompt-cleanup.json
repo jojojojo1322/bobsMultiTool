@@ -8,10 +8,9 @@
   "shareText": "AI 요청서 분류대를 해봤다. 해야 할 일, 상황, 예시, 답 모양, 지킬 선을 나누니 질문이 덜 뭉쳤다.",
   "order": 2,
   "relatedBlogSlugs": [
-    "ai-answer-review-habit",
-    "ai-before-delegation-checklist",
     "ai-side-project-realistic-order",
-    "human-decisions-in-ai-coding"
+    "human-decisions-in-ai-coding",
+    "ai-coding-needs-human-last-check"
   ],
   "relatedPlaySlugs": [
     "prompt-sum-box",

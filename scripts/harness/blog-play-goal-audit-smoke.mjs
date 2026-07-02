@@ -50,6 +50,8 @@ const blogEntries = fs
       slug: frontmatter.slug,
       date: frontmatter.date,
       category: frontmatter.category,
+      publicationTier: frontmatter.publicationTier,
+      indexPolicy: frontmatter.indexPolicy,
       relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
     };
   });
@@ -74,17 +76,26 @@ const informationCategory = "정보";
 const requiredPlayTypes = ["micro-sim", "tap-game", "sort-match-game", "arcade-game"];
 
 const blogSlugs = new Set(blogEntries.map((entry) => entry.slug));
+const representativeBlogEntries = blogEntries.filter((entry) => entry.indexPolicy === "index");
+const archivedBlogEntries = blogEntries.filter((entry) => entry.indexPolicy === "noindex");
 const playSlugs = new Set(playEntries.map((entry) => entry.slug));
 const playTypes = new Set(playEntries.map((entry) => entry.type));
 const blogDates = blogEntries.map((entry) => entry.date).filter(Boolean).sort();
 const categoryCounts = Object.fromEntries(requiredCategories.map((category) => [category, blogEntries.filter((entry) => entry.category === category).length]));
 const standaloneBlogCount = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0).length;
+const representativeStandaloneBlogCount = representativeBlogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0).length;
 const informationCategoryCount = blogEntries.filter((entry) => entry.category === informationCategory).length;
+const representativeInformationCategoryCount = representativeBlogEntries.filter((entry) => entry.category === informationCategory).length;
 const currentSubmittedSitemapCount = backtickNumber(discoveryRegistration, "Current submitted sitemap URL count");
 const currentFeedItemCount = backtickNumber(discoveryRegistration, "Current feed item count");
 const currentRegisteredBlogCount = backtickNumber(discoveryRegistration, "Current Blog count");
+const currentRepresentativeBlogCount = backtickNumber(discoveryRegistration, "Current representative Blog count");
 
 if (blogEntries.length < 39) failures.push(`audit expects at least 39 Blog posts, found ${blogEntries.length}`);
+if (representativeBlogEntries.length < 30 || representativeBlogEntries.length > 45) {
+  failures.push(`audit expects 30-45 representative Blog posts, found ${representativeBlogEntries.length}`);
+}
+if (archivedBlogEntries.length < 20) failures.push(`audit expects noindex archive candidates, found ${archivedBlogEntries.length}`);
 if (playEntries.length < 24) failures.push(`audit expects at least 24 Play entries, found ${playEntries.length}`);
 if (standaloneBlogCount < 13) failures.push(`audit expects at least 13 standalone Blog posts, found ${standaloneBlogCount}`);
 if (blogDates[0] !== "2026-01-05") {
@@ -109,25 +120,32 @@ if (currentFeedItemCount === null) failures.push(`${discoveryRegistrationPath} m
 if (currentRegisteredBlogCount !== blogEntries.length) {
   failures.push(`${discoveryRegistrationPath} current Blog count should match source Blog count ${blogEntries.length}, found ${currentRegisteredBlogCount}`);
 }
+if (currentRepresentativeBlogCount !== representativeBlogEntries.length) {
+  failures.push(`${discoveryRegistrationPath} representative Blog count should match indexable Blog count ${representativeBlogEntries.length}, found ${currentRepresentativeBlogCount}`);
+}
 
 for (const fragment of [
   "This audit tracks the active first-pass goal. It is not a completion certificate.",
   `Current count: \`${blogEntries.length}\` Blog posts.`,
+  `Representative submitted count: \`${representativeBlogEntries.length}\` Blog posts.`,
+  `Archive/noindex candidate count: \`${archivedBlogEntries.length}\` Blog posts.`,
   `Date range: \`${blogDates[0]}\` through \`${blogDates[blogDates.length - 1]}\``,
   `Date-sensitive information lane: \`${informationCategoryCount}\` posts live under \`정보\``,
+  `Representative information lane: \`${representativeInformationCategoryCount}\` posts remain submitted under \`정보\``,
   `Standalone Blog lane: \`${standaloneBlogCount}\` posts have no forced \`relatedPlay\``,
+  `Representative standalone lane: \`${representativeStandaloneBlogCount}\` submitted posts have no forced \`relatedPlay\``,
   `Current count: \`${playEntries.length}\` Play entries.`,
   "`arcade-game`",
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,
   "Search Console sitemap row showed status `성공`, submitted `2026. 7. 2.`, last read `2026. 6. 26.`, and discovered pages `68`.",
-  "Live `/sitemaps/en` had `151` URLs at that check, so Search Console sitemap discovery still trails the current XML.",
+  "The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check against the new URL count.",
   "Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1`",
   "Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.",
   "URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.",
   "Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`",
-  `Latest submitted URL count: \`${currentSubmittedSitemapCount}\``,
-  `The ${currentSubmittedSitemapCount}-URL live sitemap set was submitted after the Play canvas`,
+  `Next submitted URL count target: \`${currentSubmittedSitemapCount}\``,
+  `The ${currentSubmittedSitemapCount}-URL representative sitemap set is the next Search Console submission target after content pruning`,
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
@@ -140,7 +158,7 @@ for (const fragment of [
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
-  `Search Console sitemap discovery still trails the live sitemap URL count (\`${currentSubmittedSitemapCount}\`)`,
+  `Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (\`${currentSubmittedSitemapCount}\`)`,
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",
   "Automation id: `bobob-indexing-observation`",
@@ -175,4 +193,6 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Blog + Play goal audit smoke passed: ${blogEntries.length} Blog posts, ${standaloneBlogCount} standalone, ${playEntries.length} Play entries.`);
+console.log(
+  `Blog + Play goal audit smoke passed: ${representativeBlogEntries.length}/${blogEntries.length} Blog posts, ${representativeStandaloneBlogCount} representative standalone, ${playEntries.length} Play entries.`,
+);

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
-import { getBlogPosts } from "@/features/content/blog";
+import { getIndexableBlogPosts } from "@/features/content/blog";
 import { homeContentKeywords } from "@/features/content/discovery";
 import { getPlayContents } from "@/features/content/play";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
@@ -19,7 +19,7 @@ interface HomePageProps {
 
 const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base64-tool", "cron-generator", "dns-lookup"];
 const contentLocale = "ko";
-const homeKeywords = homeContentKeywords(getBlogPosts(), getPlayContents());
+const homeKeywords = homeContentKeywords(getIndexableBlogPosts(), getPlayContents());
 const homeShareTitle = "짧게 읽고 바로 눌러보는 Blog + Play";
 const homeShareImage = openGraphImage({ kind: "home", title: homeShareTitle });
 
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const dictionary = getClientDictionary(contentLocale);
-  const posts = getBlogPosts().slice(0, 5);
+  const posts = getIndexableBlogPosts().slice(0, 5);
   const playContents = getPlayContents();
   const featuredPlay = playContents[0];
   const localizedTools = getLocalizedTools("en");

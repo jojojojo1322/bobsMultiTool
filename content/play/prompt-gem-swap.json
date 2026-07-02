@@ -8,9 +8,9 @@
   "shareText": "AI 질문 칩 맞추기를 해봤다. 좋은 질문은 목적, 맥락, 예시, 답 모양 칩 위치부터 다르게 보인다.",
   "order": 6,
   "relatedBlogSlugs": [
-    "gem-swap-hint-note",
-    "why-small-web-toys-return",
-    "small-play-rules-note"
+    "static-micro-games-architecture",
+    "game-feedback-before-score-note",
+    "small-web-games-retention"
   ],
   "relatedPlaySlugs": [
     "prompt-sum-box",

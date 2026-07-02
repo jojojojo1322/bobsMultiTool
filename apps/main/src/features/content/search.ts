@@ -1,5 +1,5 @@
 import { getLocalizedTools } from "@/features/i18n/localized-content";
-import { getBlogPosts } from "./blog";
+import { getIndexableBlogPosts } from "./blog";
 import { getPlayContents } from "./play";
 import type { BlogBlock, BlogPost, PlayContent } from "./types";
 
@@ -157,7 +157,7 @@ export function readContentSearchQuery(searchParams?: Record<string, string | st
 
 export function searchContentLab(query: string) {
   const trimmedQuery = query.trim();
-  const blogPosts = getBlogPosts();
+  const blogPosts = getIndexableBlogPosts();
   const playContents = getPlayContents();
   const playBySlug = new Map(playContents.map((content) => [content.slug, content]));
   const tools = getLocalizedTools("en");

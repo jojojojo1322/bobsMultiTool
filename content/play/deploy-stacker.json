@@ -8,10 +8,9 @@
   "shareText": "릴리스 층 멈추기 레일을 해봤다. 높이보다 착지선, 남을 폭, 잘림 폭을 먼저 보게 됐다.",
   "order": 17,
   "relatedBlogSlugs": [
-    "stacker-drag-align-note",
-    "stacker-landing-preview-note",
-    "commit-small-visible-slice",
-    "static-micro-games-architecture"
+    "deploy-stacker-build-log",
+    "static-micro-games-architecture",
+    "vercel-sitemap-canonical-log"
   ],
   "relatedPlaySlugs": [
     "deploy-pattern-memory",

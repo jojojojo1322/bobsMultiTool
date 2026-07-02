@@ -113,6 +113,15 @@ function normalizedTextLength(value) {
   return (value ?? "").replace(/\s+/g, " ").trim().length;
 }
 
+function wordCount(value) {
+  return (value ?? "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/[|#*_`>\-[\](){}:;,.!?"“”‘’]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
 function listFiles(dir, extension) {
   return fs.readdirSync(dir).filter((file) => file.endsWith(extension)).sort();
 }
@@ -141,12 +150,16 @@ const blogEntries = listFiles(blogDir, ".mdx").map((file) => {
     source,
     body,
     bodyChars: body.replace(/\s+/g, " ").length,
+    bodyWords: wordCount(body),
     slug: frontmatter.slug,
     title: frontmatter.title,
     description: frontmatter.description,
     date: frontmatter.date,
     updatedAt: frontmatter.updatedAt,
     category: frontmatter.category,
+    publicationTier: frontmatter.publicationTier,
+    indexPolicy: frontmatter.indexPolicy,
+    archiveGroup: frontmatter.archiveGroup,
     relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
   };
 });
@@ -157,6 +170,8 @@ const playEntries = listFiles(playDir, ".json").map((file) => ({
 failures.push(...validatePlayPlanningBriefs(playEntries));
 const blogBySlug = new Map(blogEntries.map((entry) => [entry.slug, entry]));
 const playBySlug = new Map(playEntries.map((entry) => [entry.slug, entry]));
+const indexableBlogEntries = blogEntries.filter((entry) => entry.indexPolicy === "index");
+const archivedBlogEntries = blogEntries.filter((entry) => entry.indexPolicy === "noindex");
 const categorySource = read(blogCategoryPath);
 const categoryDefinitions = Array.from(categorySource.matchAll(/slug:\s+"([^"]+)"[\s\S]*?label:\s+"([^"]+)"[\s\S]*?description:\s+"([^"]+)"/g)).map(
   (match) => ({
@@ -168,6 +183,10 @@ const categoryDefinitions = Array.from(categorySource.matchAll(/slug:\s+"([^"]+)
 const categoryByLabel = new Map(categoryDefinitions.map((category) => [category.label, category]));
 
 if (blogEntries.length < 32) failures.push(`expected at least 32 Blog posts for the expanded MVP, found ${blogEntries.length}`);
+if (indexableBlogEntries.length < 30 || indexableBlogEntries.length > 45) {
+  failures.push(`representative/indexable Blog set should stay between 30 and 45 posts, found ${indexableBlogEntries.length}`);
+}
+if (archivedBlogEntries.length < 20) failures.push(`short Blog archive should retain noindex candidates, found ${archivedBlogEntries.length}`);
 if (playEntries.length < 5) failures.push(`expected at least 5 Play entries, found ${playEntries.length}`);
 
 for (const slug of requiredBlogSlugs) {
@@ -182,8 +201,10 @@ for (const type of requiredPlayTypes) {
 
 for (const category of requiredCategories) {
   const count = blogEntries.filter((entry) => entry.category === category).length;
+  const indexableCount = indexableBlogEntries.filter((entry) => entry.category === category).length;
   const categoryDefinition = categoryByLabel.get(category);
   if (count < 2) failures.push(`Blog category "${category}" should have at least 2 posts, found ${count}`);
+  if (indexableCount < 1) failures.push(`representative Blog set should keep at least one indexable post in "${category}"`);
   if (!categoryDefinition) {
     failures.push(`Blog category definition missing label: ${category}`);
   } else if (normalizedTextLength(categoryDefinition.description) < minCategoryDescriptionLength) {
@@ -195,6 +216,7 @@ for (const category of requiredCategories) {
   }
 }
 const dates = blogEntries.map((entry) => entry.date).filter(Boolean).sort();
+const indexableDates = indexableBlogEntries.map((entry) => entry.date).filter(Boolean).sort();
 if (dates.length !== blogEntries.length) failures.push("all Blog posts must have a date");
 if (dates.length && dateDaysBetween(dates[0], dates[dates.length - 1]) < 90) {
   failures.push(`Blog dates should look gradually published across several months, found ${dates[0]} to ${dates[dates.length - 1]}`);
@@ -217,6 +239,19 @@ if (blogMonthCounts.size < 6 || crowdedBlogMonths.length) {
       .map(([month, count]) => `${month}=${count}`)
       .join(", ")}`,
   );
+}
+
+for (const entry of indexableBlogEntries) {
+  if (entry.publicationTier !== "pillar" && entry.publicationTier !== "representative") {
+    failures.push(`${entry.slug ?? entry.file} is indexable but not marked pillar/representative`);
+  }
+  if (entry.bodyChars < 850) failures.push(`${entry.slug ?? entry.file} representative body is too thin: ${entry.bodyChars} chars`);
+  if (entry.bodyWords < 400) failures.push(`${entry.slug ?? entry.file} representative body should be at least 400 words: ${entry.bodyWords} words`);
+  const hasStructuredSignal = /^\|.+\|\s*\n\|[-:|\s]+\|/m.test(entry.body) || /^-\s+/m.test(entry.body) || sectionHeadings(entry.body).length >= 3;
+  if (!hasStructuredSignal) failures.push(`${entry.slug ?? entry.file} representative posts should include a table, checklist, or several sections`);
+}
+if (indexableDates[0] > "2026-01-31") {
+  failures.push(`representative Blog dates should preserve older publication history, found ${indexableDates[0]}`);
 }
 
 for (const entry of blogEntries) {
@@ -275,7 +310,7 @@ for (const entry of blogEntries) {
   }
 }
 
-const standaloneBlogs = blogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0);
+const standaloneBlogs = indexableBlogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0);
 if (standaloneBlogs.length < 8) {
   failures.push(`standalone Blog posts should remain allowed and visible, found only ${standaloneBlogs.length}`);
 }
@@ -324,6 +359,7 @@ for (const entry of playEntries) {
   if (!entry.relatedPlaySlugs?.length) failures.push(`${entry.slug ?? entry.file} should recommend other Play entries`);
   for (const blogSlug of entry.relatedBlogSlugs ?? []) {
     if (!blogBySlug.has(blogSlug)) failures.push(`${entry.slug ?? entry.file} references missing Blog: ${blogSlug}`);
+    if (blogBySlug.get(blogSlug)?.indexPolicy !== "index") failures.push(`${entry.slug ?? entry.file} should link to representative/indexable Blog post: ${blogSlug}`);
   }
   for (const playSlug of entry.relatedPlaySlugs ?? []) {
     if (!playBySlug.has(playSlug)) failures.push(`${entry.slug ?? entry.file} references missing related Play: ${playSlug}`);
@@ -370,7 +406,7 @@ for (const entry of playEntries.filter((item) => item.type === "arcade-game")) {
   if (!entry.endings?.length) failures.push(`${entry.slug} should provide arcade endings`);
 }
 
-for (const blog of blogEntries) {
+for (const blog of indexableBlogEntries) {
   for (const playSlug of blog.relatedPlaySlugs) {
     const play = playBySlug.get(playSlug);
     if (play && !play.relatedBlogSlugs?.includes(blog.slug)) {
@@ -407,7 +443,7 @@ for (const fragment of ["data-play-result-links", "data-play-related-play", "dat
 for (const fragment of ["data-blog-related-play-bottom", "relatedPlays.map"]) {
   if (!blogDetail.includes(fragment)) failures.push(`Blog detail route missing ${fragment}`);
 }
-for (const fragment of ["getBlogPosts", "getPlayContents", "getLocalizedTools", "scoreBlogPost", "scorePlayContent", "scoreTool"]) {
+for (const fragment of ["getIndexableBlogPosts", "getPlayContents", "getLocalizedTools", "scoreBlogPost", "scorePlayContent", "scoreTool"]) {
   if (!contentSearch.includes(fragment)) failures.push(`global content search missing ${fragment}`);
 }
 for (const fragment of ["BlogPosting", "Game", "SearchResultsPage", "CollectionPage", "BreadcrumbList", "keywords", "about", "subjectOf"]) {
@@ -416,7 +452,7 @@ for (const fragment of ["BlogPosting", "Game", "SearchResultsPage", "CollectionP
 for (const fragment of ["blogPostKeywords", "playContentKeywords", "blogIndexKeywords", "playIndexKeywords", "homeContentKeywords"]) {
   if (!discovery.includes(fragment)) failures.push(`content discovery helper missing ${fragment}`);
 }
-for (const fragment of ["getBlogPosts", "getPlayContents", "sitemapSubmissionLocales", "/search", "/tools", "blogCategoryDefinitions"]) {
+for (const fragment of ["getIndexableBlogPosts", "getPlayContents", "sitemapSubmissionLocales", "/search", "/tools", "blogCategoryDefinitions"]) {
   if (!sitemap.includes(fragment)) failures.push(`reduced sitemap source missing ${fragment}`);
 }
 for (const fragment of ["rssFeedXml", "atomFeedXml", "jsonFeed", "tags", "<category>", "blogPostKeywords", "playContentKeywords"]) {
@@ -446,8 +482,8 @@ if (failures.length) {
 
 console.log(
   [
-    `Blog + Play MVP smoke passed for ${blogEntries.length} Blog posts, ${standaloneBlogs.length} standalone posts, ${playEntries.length} Play entries.`,
-    `Categories: ${requiredCategories.map((category) => `${category}=${blogEntries.filter((entry) => entry.category === category).length}`).join(", ")}`,
+    `Blog + Play MVP smoke passed for ${indexableBlogEntries.length}/${blogEntries.length} Blog posts, ${standaloneBlogs.length} standalone representative posts, ${playEntries.length} Play entries.`,
+    `Representative categories: ${requiredCategories.map((category) => `${category}=${indexableBlogEntries.filter((entry) => entry.category === category).length}`).join(", ")}`,
     `Required Play: ${requiredPlaySlugs.join(", ")}`,
   ].join("\n"),
 );

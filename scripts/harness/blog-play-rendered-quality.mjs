@@ -51,9 +51,11 @@ function blogPosts() {
         title: frontmatter.title,
         description: frontmatter.description,
         category: frontmatter.category,
+        indexPolicy: frontmatter.indexPolicy,
       };
     })
     .filter((post) => post.slug)
+    .filter((post) => post.indexPolicy === "index")
     .sort((left, right) => left.slug.localeCompare(right.slug));
 }
 

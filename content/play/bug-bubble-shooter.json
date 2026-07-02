@@ -8,9 +8,9 @@
   "shareText": "버그 단서 버블 터뜨리기를 해봤다. 보이는 버블을 다 쏘지 않고 바닥선 가까운 단서표만 맞히는 쪽이 더 낫다.",
   "order": 9,
   "relatedBlogSlugs": [
-    "shooter-target-cue-note",
-    "cursor-codex-web-service-bottlenecks",
-    "small-web-games-retention"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture",
+    "cursor-codex-web-service-bottlenecks"
   ],
   "relatedPlaySlugs": [
     "bug-clicker",

@@ -9,10 +9,8 @@
   "order": 16,
   "relatedBlogSlugs": [
     "game-feedback-before-score-note",
-    "mole-priority-cue-note",
-    "mole-urgency-feedback-note",
-    "ai-output-is-not-finished-work",
-    "codex-work-note"
+    "ai-coding-needs-human-last-check",
+    "static-micro-games-architecture"
   ],
   "relatedPlaySlugs": [
     "bug-clicker",

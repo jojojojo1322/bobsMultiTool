@@ -8,18 +8,9 @@
   "shareText": "숫자 사과 합 10 지우기를 해봤다. 두 칸 짝만 보다가 긴 합 10 묶음을 놓치기 쉬웠다.",
   "order": 8,
   "relatedBlogSlugs": [
-    "sum-box-counter-panel-note",
-    "sum-box-clear-pop-note",
-    "sum-box-backtrack-drag-note",
-    "sum-box-release-preview-note",
-    "sum-box-streak-note",
-    "sum-box-combo-bonus-note",
-    "sum-box-hint-highlight-note",
-    "sum-box-overflow-drag-note",
-    "sum-box-visible-ten-hint-note",
-    "drag-feedback-small-game-note",
+    "ten-box-rush-build-log",
     "small-web-games-retention",
-    "tiny-web-things"
+    "game-feedback-before-score-note"
   ],
   "relatedPlaySlugs": [
     "prompt-sum-box",

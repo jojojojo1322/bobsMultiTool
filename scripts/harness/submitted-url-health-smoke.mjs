@@ -83,7 +83,11 @@ async function fetchText(url, options = {}) {
   }
 }
 
-const blogCount = fs.readdirSync(blogDir).filter((file) => file.endsWith(".mdx") || file.endsWith(".md")).length;
+const blogCount = fs
+  .readdirSync(blogDir)
+  .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
+  .map((file) => parseFrontmatter(read(path.join(blogDir, file))))
+  .filter((frontmatter) => frontmatter.indexPolicy === "index").length;
 const playCount = fs.readdirSync(playDir).filter((file) => file.endsWith(".json")).length;
 const categoryCount = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).length;
 const expectedSitemapUrlCount = blogCount + playCount + categoryCount + 5;

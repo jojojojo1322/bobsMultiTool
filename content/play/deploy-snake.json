@@ -8,12 +8,9 @@
   "shareText": "배포줄 빈칸 출구 찾기를 해봤다. 노란 조각보다 머리 앞 칸과 꼬리 끝 출구를 먼저 봐야 했다.",
   "order": 13,
   "relatedBlogSlugs": [
+    "deploy-snake-build-log",
     "game-feedback-before-score-note",
-    "snake-open-turn-cue-note",
-    "snake-next-cell-preview-note",
-    "snake-swipe-control-note",
-    "static-micro-games-architecture",
-    "why-small-web-toys-return"
+    "static-micro-games-architecture"
   ],
   "relatedPlaySlugs": [
     "deploy-crossing",

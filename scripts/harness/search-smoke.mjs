@@ -57,7 +57,7 @@ if (!layout.includes("https://www.bobob.app/search?q={search_term_string}")) fai
 if (!layout.includes('rel="search"') || !layout.includes("https://www.bobob.app/opensearch.xml")) {
   failures.push("root layout missing OpenSearch discovery link");
 }
-for (const fragment of ["searchContentLab", "scoreBlogPost", "scorePlayContent", "scoreTool", "getBlogPosts", "getPlayContents", "getLocalizedTools"]) {
+for (const fragment of ["searchContentLab", "scoreBlogPost", "scorePlayContent", "scoreTool", "getIndexableBlogPosts", "getPlayContents", "getLocalizedTools"]) {
   if (!contentSearch.includes(fragment)) failures.push(`content lab search helper missing ${fragment}`);
 }
 for (const fragment of ["data-content-search-form", "data-content-search-count", "data-content-search-play", "data-content-search-blog", "data-content-search-tools", "searchPageStructuredData"]) {

@@ -8,11 +8,9 @@
   "shareText": "은박 복권 9칸 긁기를 해봤다. 한 장을 다 긁고 표식표와 한 장 기록 전표를 먼저 봤다.",
   "order": 12.5,
   "relatedBlogSlugs": [
-    "lottery-endless-stage-loop-note",
     "lottery-scratch-stage-note",
-    "why-small-web-toys-return",
-    "small-web-games-retention",
-    "small-play-rules-note"
+    "lottery-endless-stage-loop-note",
+    "small-web-games-retention"
   ],
   "relatedPlaySlugs": [
     "lottery-ledger",

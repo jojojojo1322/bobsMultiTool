@@ -146,7 +146,7 @@ const latestSubmittedUrlCount = Array.from(log.matchAll(/(?:Submitted URL count|
   .filter(Number.isFinite)
   .at(-1);
 if (!latestSubmittedUrlCount) failures.push("Could not parse latest submitted URL count");
-const latestLoggedLiveSitemapUrlCount = Array.from(log.matchAll(/Live `?\/sitemaps\/en`? URL count: `(\d+)`/g))
+const latestLoggedLiveSitemapUrlCount = Array.from(log.matchAll(/(?:Live `?\/sitemaps\/en`? URL count|Representative sitemap URL target): `(\d+)`/g))
   .map((match) => Number.parseInt(match[1], 10))
   .filter(Number.isFinite)
   .at(-1);

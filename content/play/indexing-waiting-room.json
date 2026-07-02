@@ -8,9 +8,8 @@
   "shareText": "주소 대기표 도장 찍기를 해봤다. 제출 요청을 더 누르기 전에 주소 열림, 사이트맵, 대표 주소, 검사 도구 순서부터 봤다.",
   "order": 19,
   "relatedBlogSlugs": [
-    "search-console-waiting-diary",
-    "search-console-waiting-room-note",
-    "search-console-zero-checklist",
+    "content-indexing-checklist-before-resubmission",
+    "search-console-misreads-for-indie-devs",
     "vercel-sitemap-canonical-log"
   ],
   "relatedPlaySlugs": [

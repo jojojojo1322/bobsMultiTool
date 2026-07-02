@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { resolveContentDir } from "./content-paths";
-import type { BlogBlock, BlogPost } from "./types";
+import type { BlogBlock, BlogIndexPolicy, BlogPost, BlogPublicationTier } from "./types";
 
 type Frontmatter = {
   slug?: string;
@@ -11,6 +11,9 @@ type Frontmatter = {
   updatedAt?: string;
   category?: string;
   readingMinutes?: string;
+  publicationTier?: string;
+  indexPolicy?: string;
+  archiveGroup?: string;
   relatedPlay?: string;
 };
 
@@ -114,6 +117,18 @@ function parseMarkdownBlocks(markdown: string): BlogBlock[] {
   return blocks;
 }
 
+function normalizePublicationTier(value?: string): BlogPublicationTier {
+  if (value === "pillar" || value === "representative" || value === "devlog-archive" || value === "archive") {
+    return value;
+  }
+  return "archive";
+}
+
+function normalizeIndexPolicy({ value, publicationTier }: { value?: string; publicationTier: BlogPublicationTier }): BlogIndexPolicy {
+  if (value === "index" || value === "noindex") return value;
+  return publicationTier === "pillar" || publicationTier === "representative" ? "index" : "noindex";
+}
+
 function readBlogPost(filePath: string): BlogPost {
   const raw = fs.readFileSync(filePath, "utf8");
   const { frontmatter, body } = parseFrontmatter(raw);
@@ -121,6 +136,8 @@ function readBlogPost(filePath: string): BlogPost {
   const title = frontmatter.title;
   const description = frontmatter.description;
   const date = frontmatter.date;
+  const publicationTier = normalizePublicationTier(frontmatter.publicationTier);
+  const indexPolicy = normalizeIndexPolicy({ value: frontmatter.indexPolicy, publicationTier });
 
   if (!slug || !title || !description || !date) {
     throw new Error(`Blog post is missing required frontmatter: ${filePath}`);
@@ -134,6 +151,9 @@ function readBlogPost(filePath: string): BlogPost {
     updatedAt: frontmatter.updatedAt,
     category: frontmatter.category ?? "General",
     readingMinutes: Number(frontmatter.readingMinutes ?? 3),
+    publicationTier,
+    indexPolicy,
+    archiveGroup: frontmatter.archiveGroup,
     relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
     sourcePath: path.relative(process.cwd(), filePath),
     body: parseMarkdownBlocks(body),
@@ -154,4 +174,16 @@ export function getBlogPosts() {
 
 export function getBlogPostBySlug(slug: string) {
   return getBlogPosts().find((post) => post.slug === slug);
+}
+
+export function getIndexableBlogPosts() {
+  return getBlogPosts().filter((post) => post.indexPolicy === "index");
+}
+
+export function getRepresentativeBlogPosts() {
+  return getIndexableBlogPosts().filter((post) => post.publicationTier === "pillar" || post.publicationTier === "representative");
+}
+
+export function getArchivedBlogPosts() {
+  return getBlogPosts().filter((post) => post.indexPolicy === "noindex");
 }

@@ -11,12 +11,27 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Blog Evidence
 
 - Blog source: `content/blog/*.mdx`
-- Current count: `114` Blog posts.
-- Date range: `2026-01-05` through `2026-06-28`, with public dates spread across the first half of 2026 instead of piling up in late June.
+- Current count: `120` Blog posts.
+- Representative submitted count: `36` Blog posts.
+- Archive/noindex candidate count: `84` Blog posts.
+- Representative minimum body depth: `401` words after the source-level 400-word gate was added to `npm run harness:blog-play-mvp`.
+- Date range: `2026-01-05` through `2026-07-02`, with public dates spread across the first half of 2026 plus the current representative pruning note.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
+- Representative information lane: `18` posts remain submitted under `정보`.
 - Standalone Blog lane: `46` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
+- Representative standalone lane: `18` submitted posts have no forced `relatedPlay`.
+- First consolidated devlog posts now replace clusters of short development notes in the submitted Blog set:
+  - `password-lock-build-log`
+  - `ten-box-rush-build-log`
+  - `deploy-snake-build-log`
+  - `deploy-stacker-build-log`
+  - `deploy-minesweeper-build-log`
+- First pillar posts now carry the site-owner evidence surface:
+  - `why-bobob-shifted-to-content-lab`
+  - `static-micro-games-architecture`
+  - `content-indexing-checklist-before-resubmission`
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`
@@ -52,9 +67,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current live discovery snapshot:
-  - Sitemap URLs: `151`
-  - Feed items: `140`
-  - Blog posts: `114`
+  - Sitemap URLs: `73`
+  - Feed items: `62`
+  - Blog posts: `120`
+  - Representative Blog posts: `36`
   - Play entries: `26`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
@@ -62,7 +78,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again on `2026-07-02` from the signed-in `bobob935@gmail.com` Chrome session.
   - Search Console sitemap row showed status `성공`, submitted `2026. 7. 2.`, last read `2026. 6. 26.`, and discovered pages `68`.
-  - Live `/sitemaps/en` had `151` URLs at that check, so Search Console sitemap discovery still trails the current XML.
+  - The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check against the new URL count.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -70,9 +86,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Representative Blog/Play URL status before request: `/blog`, `/play`, and `/play/office-survival` were `크롤링됨 - 현재 색인이 생성되지 않음`; `/blog/ai-side-project-realistic-order` was `발견됨 - 현재 색인이 생성되지 않음`.
   - Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
-  - Latest submitted URL count: `151`
-  - Latest response status: `200`
-  - The 151-URL live sitemap set was submitted after the Play canvas upgrade, information-content expansion, arcade count wording cleanup, latest Play cue updates, Naver verification confirmation, indexing waiting room update, and workshop growth ledger update.
+  - Next submitted URL count target: `73`
+  - The 73-URL representative sitemap set is the next Search Console submission target after content pruning. The previous broad 151-URL set had been submitted before this pruning slice.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -85,7 +100,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest feed item counts: `140`, `140`
+  - Latest feed item counts: `62`, `62`
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -96,7 +111,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery still trails the live sitemap URL count (`151`): `/sitemaps/en` discovered pages remain `68`.
+- Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (`73`): `/sitemaps/en` discovered pages remain `68` from the prior broad submission.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.

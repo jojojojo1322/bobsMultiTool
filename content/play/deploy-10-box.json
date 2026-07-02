@@ -8,12 +8,9 @@
   "shareText": "마감 전표 상자 비우기를 해봤다. 새 일을 더 넣기보다 지금 접을 전표 묶음부터 보는 게 나았다.",
   "order": 11,
   "relatedBlogSlugs": [
-    "sum-box-release-preview-note",
-    "drag-feedback-small-game-note",
-    "sum-box-backtrack-drag-note",
-    "sum-box-clear-pop-note",
-    "commit-small-visible-slice",
-    "vercel-sitemap-canonical-log"
+    "ten-box-rush-build-log",
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture"
   ],
   "relatedPlaySlugs": [
     "ten-box-rush",

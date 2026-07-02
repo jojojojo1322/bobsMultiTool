@@ -8,11 +8,9 @@
   "shareText": "AI 답변 근거 도장판을 해봤다. 매끈한 말투보다 경로 열림, 명령 출력, 원문 출처, 한계 표시를 먼저 보게 됐다.",
   "order": 20,
   "relatedBlogSlugs": [
-    "ai-output-is-not-finished-work",
-    "ai-answer-review-habit",
     "ai-coding-needs-human-last-check",
     "human-decisions-in-ai-coding",
-    "codex-work-note"
+    "ai-side-project-realistic-order"
   ],
   "relatedPlaySlugs": [
     "prompt-cleanup",

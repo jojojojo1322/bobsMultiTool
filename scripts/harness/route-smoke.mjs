@@ -21,23 +21,29 @@ const blogSlugs = fs
   .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
   .map((file) => {
     const source = fs.readFileSync(path.join(blogDir, file), "utf8");
-    const match = source.match(/^slug:\s*(.+)$/m);
-    return match?.[1]?.trim().replace(/^"|"$/g, "");
+    const slug = source.match(/^slug:\s*(.+)$/m)?.[1]?.trim().replace(/^"|"$/g, "");
+    const indexPolicy = source.match(/^indexPolicy:\s*(.+)$/m)?.[1]?.trim().replace(/^"|"$/g, "");
+    return { slug, indexPolicy };
   })
+  .filter((entry) => entry.slug);
+const submittedBlogSlugs = blogSlugs
+  .filter((entry) => entry.indexPolicy === "index")
+  .map((entry) => entry.slug)
   .filter(Boolean);
+const allBlogSlugs = blogSlugs.map((entry) => entry.slug).filter(Boolean);
 const playSlugs = fs
   .readdirSync(playDir)
   .filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(fs.readFileSync(path.join(playDir, file), "utf8")).slug)
   .filter(Boolean);
-const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + blogCategorySlugs.length + 5;
-const expectedFeedItemCount = blogSlugs.length + playSlugs.length;
+const expectedSitemapUrlCount = submittedBlogSlugs.length + playSlugs.length + blogCategorySlugs.length + 5;
+const expectedFeedItemCount = submittedBlogSlugs.length + playSlugs.length;
 
 const paths = [
   "/",
   "/blog",
   ...blogCategorySlugs.map((slug) => `/blog/category/${slug}`),
-  ...blogSlugs.map((slug) => `/blog/${slug}`),
+  ...allBlogSlugs.map((slug) => `/blog/${slug}`),
   "/play",
   ...playSlugs.map((slug) => `/play/${slug}`),
   "/search",
@@ -198,8 +204,8 @@ for (const fragment of [
   'data-blog-category="정보"',
   "글만 남긴 기록입니다.",
   "AI 유료 플랜, 누가 무엇을 고르면 좋을까",
-  "밤에 도메인 이름을 다시 보는 습관",
-  "AI 도구가 많은데 왜 더 피곤할 때가 있을까",
+  "콘텐츠 품질과 색인 상태를 다시 보기 전에 정리한 체크리스트",
+  "작은 게임에서 점수보다 먼저 보여야 하는 것",
   "바로 해보기:",
   "주소 대기표 도장 찍기",
   "회의록 닫기 도장판",
@@ -241,7 +247,7 @@ for (const fragment of [
   "<loc>https://www.bobob.app/blog/category/info</loc>",
   "<loc>https://www.bobob.app/blog/ai-plan-price-comparison-2026-06-26</loc>",
   "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
-  "<loc>https://www.bobob.app/blog/small-reset-note</loc>",
+  "<loc>https://www.bobob.app/blog/content-indexing-checklist-before-resubmission</loc>",
   "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
   "<loc>https://www.bobob.app/tools</loc>",
   "<lastmod>2026-06-27</lastmod>",
@@ -260,7 +266,7 @@ for (const fragment of [
   'xmlns:atom="http://www.w3.org/2005/Atom"',
   '<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
   '<atom:link rel="self" href="https://www.bobob.app/feed.xml" />',
-  "<link>https://www.bobob.app/blog/small-reset-note</link>",
+  "<link>https://www.bobob.app/blog/content-indexing-checklist-before-resubmission</link>",
   "<link>https://www.bobob.app/blog/ai-side-project-realistic-order</link>",
   "<link>https://www.bobob.app/play/prompt-cleanup</link>",
   "<category>AI</category>",
@@ -283,7 +289,7 @@ for (const fragment of [
   "<title>bobob.app - 개발/AI 기록과 짧은 Play</title>",
   '<link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
   '<link rel="self" href="https://www.bobob.app/atom.xml" />',
-  "<id>https://www.bobob.app/blog/small-reset-note</id>",
+  "<id>https://www.bobob.app/blog/content-indexing-checklist-before-resubmission</id>",
   "<id>https://www.bobob.app/play/prompt-cleanup</id>",
   '<category term="AI" />',
   '<category term="Play" />',
@@ -306,7 +312,7 @@ if (jsonFeedBody?.items?.length !== expectedFeedItemCount) {
   failures.push(`/feed.json should expose ${expectedFeedItemCount} Blog + Play feed items, found ${jsonFeedBody?.items?.length ?? "none"}`);
 }
 for (const url of [
-  "https://www.bobob.app/blog/small-reset-note",
+  "https://www.bobob.app/blog/content-indexing-checklist-before-resubmission",
   "https://www.bobob.app/blog/ai-side-project-realistic-order",
   "https://www.bobob.app/play/prompt-cleanup",
 ]) {
@@ -334,7 +340,7 @@ for (const fragment of [
   "[개발](https://www.bobob.app/blog/category/development)",
   "[퇴근 전 일더미 줄이기](https://www.bobob.app/play/office-survival)",
   "[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](https://www.bobob.app/blog/ai-side-project-realistic-order)",
-  "[다시 작게 시작하기로 한 날](https://www.bobob.app/blog/small-reset-note)",
+  "[콘텐츠 품질과 색인 상태를 다시 보기 전에 정리한 체크리스트](https://www.bobob.app/blog/content-indexing-checklist-before-resubmission)",
   "[Sitemap index](https://www.bobob.app/sitemap.xml)",
   "[Atom feed](https://www.bobob.app/atom.xml)",
   "[JSON feed](https://www.bobob.app/feed.json)",

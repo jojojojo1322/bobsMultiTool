@@ -8,9 +8,9 @@
   "shareText": "릴리스 충돌점 방어포를 해봤다. 위쪽 먼 경고보다 아래 도시선에 먼저 닿을 충돌핀부터 요격하는 게 나았다.",
   "order": 5,
   "relatedBlogSlugs": [
-    "shooter-target-cue-note",
-    "static-first-before-server",
-    "vercel-sitemap-canonical-log"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture",
+    "cursor-codex-web-service-bottlenecks"
   ],
   "relatedPlaySlugs": [
     "deploy-invaders",

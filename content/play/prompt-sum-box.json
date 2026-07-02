@@ -8,13 +8,9 @@
   "shareText": "AI 질문 종이 합 10 지우기를 해봤다. 질문 조각도 숫자도 한 덩어리로 밀면 금방 넘쳤다.",
   "order": 3,
   "relatedBlogSlugs": [
-    "drag-feedback-small-game-note",
-    "sum-box-counter-panel-note",
-    "sum-box-clear-pop-note",
-    "sum-box-backtrack-drag-note",
-    "sum-box-release-preview-note",
-    "why-small-web-toys-return",
-    "small-play-rules-note"
+    "ten-box-rush-build-log",
+    "small-web-games-retention",
+    "game-feedback-before-score-note"
   ],
   "relatedPlaySlugs": [
     "ten-box-rush",

@@ -6,13 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { blogCategoryDefinitions, blogCategoryPath, getBlogCategoryByLabel } from "@/features/content/blog-categories";
-import { getBlogPosts } from "@/features/content/blog";
+import { getIndexableBlogPosts } from "@/features/content/blog";
 import { blogIndexKeywords } from "@/features/content/discovery";
 import { getPlayContentBySlug } from "@/features/content/play";
 import { blogIndexStructuredData } from "@/features/content/structured-data";
 import { openGraphImage, shareImageUrl } from "@/features/seo/share-image";
 
-const postsForMetadata = getBlogPosts();
+const postsForMetadata = getIndexableBlogPosts();
 const blogShareTitle = "막히면 적고, 좀 알겠으면 다시 적는 글";
 const blogShareImage = openGraphImage({ kind: "blog", title: blogShareTitle });
 
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function BlogIndexPage() {
   const dictionary = getClientDictionary(contentLocale);
-  const posts = getBlogPosts();
+  const posts = getIndexableBlogPosts();
   const jsonLd = blogIndexStructuredData(posts);
   const categories = blogCategoryDefinitions
     .map((category) => ({
@@ -59,8 +59,8 @@ export default function BlogIndexPage() {
           <Badge>Blog</Badge>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">막히면 적고, 좀 알겠으면 다시 적는 글</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            검색어만 맞춘 글은 재미가 없습니다. 여기에는 개발, AI 도구, 사이드프로젝트 운영을 하다가 실제로 헷갈렸던 것들을 조금 덜 다듬은 말투로 남깁니다.
-            어떤 글은 Play로 이어지고, 어떤 글은 그냥 글로 끝납니다. 그게 더 자연스럽다고 봅니다.
+            검색어만 맞춘 글은 재미가 없습니다. 여기에는 개발, AI 도구, 사이드프로젝트 운영을 하다가 실제로 헷갈렸던 것 중 대표로 남길 만한 글만 앞에 둡니다.
+            짧은 제작 메모는 Play별 제작 로그로 묶고, 먼저 읽어도 사이트 방향이 보이는 글을 이 목록에 남깁니다.
           </p>
         </div>
       </section>

@@ -8,10 +8,17 @@ export type BlogPost = {
   updatedAt?: string;
   category: string;
   readingMinutes: number;
+  publicationTier: BlogPublicationTier;
+  indexPolicy: BlogIndexPolicy;
+  archiveGroup?: string;
   relatedPlaySlugs: string[];
   sourcePath: string;
   body: BlogBlock[];
 };
+
+export type BlogPublicationTier = "pillar" | "representative" | "devlog-archive" | "archive";
+
+export type BlogIndexPolicy = "index" | "noindex";
 
 export type PlayType = "micro-sim" | "tap-game" | "sort-match-game" | "arcade-game";
 

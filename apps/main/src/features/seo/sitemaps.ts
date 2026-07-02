@@ -1,6 +1,6 @@
 import { defaultLocale, type Locale } from "@/features/i18n/config";
 import { blogCategoryDefinitions, blogCategoryPath } from "@/features/content/blog-categories";
-import { getBlogPosts } from "@/features/content/blog";
+import { getIndexableBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
@@ -38,7 +38,7 @@ function blogPostLastmod(post: { date: string; updatedAt?: string }) {
 }
 
 function blogLastmod() {
-  return latestDate(getBlogPosts().map(blogPostLastmod));
+  return latestDate(getIndexableBlogPosts().map(blogPostLastmod));
 }
 
 function playLastmod() {
@@ -53,7 +53,7 @@ function basePaths(): SitemapPath[] {
   const latestBlogLastmod = blogLastmod();
   const latestPlayLastmod = playLastmod();
   const latestSiteLastmod = siteLastmod();
-  const posts = getBlogPosts();
+  const posts = getIndexableBlogPosts();
 
   return [
     { path: "/", changefreq: "weekly", priority: "1.0", lastmod: latestSiteLastmod },

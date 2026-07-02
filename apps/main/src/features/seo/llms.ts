@@ -1,4 +1,4 @@
-import { getBlogPosts } from "@/features/content/blog";
+import { getIndexableBlogPosts } from "@/features/content/blog";
 import { blogCategoryDefinitions, blogCategoryPath } from "@/features/content/blog-categories";
 import { getPlayContents } from "@/features/content/play";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
@@ -15,7 +15,7 @@ function markdownLink(title: string, url: string, description: string) {
 }
 
 function blogLinks() {
-  return getBlogPosts().map((post) => markdownLink(post.title, `${siteUrl}/blog/${post.slug}`, post.description));
+  return getIndexableBlogPosts().map((post) => markdownLink(post.title, `${siteUrl}/blog/${post.slug}`, post.description));
 }
 
 function playLinks() {
@@ -23,7 +23,7 @@ function playLinks() {
 }
 
 function blogCategoryLinks() {
-  const posts = getBlogPosts();
+  const posts = getIndexableBlogPosts();
 
   return blogCategoryDefinitions
     .filter((category) => posts.some((post) => post.category === category.label))

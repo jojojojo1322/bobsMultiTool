@@ -8,10 +8,9 @@
   "shareText": "릴리스 게이트 방어포를 해봤다. 주황 미끼보다 게이트선 가까운 확인 표식부터 봐야 했다.",
   "order": 4,
   "relatedBlogSlugs": [
-    "shooter-target-cue-note",
-    "shooter-touch-aim-note",
-    "vercel-sitemap-canonical-log",
-    "boring-maintenance-is-content-too"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture",
+    "cursor-codex-web-service-bottlenecks"
   ],
   "relatedPlaySlugs": [
     "deploy-missile-defense",

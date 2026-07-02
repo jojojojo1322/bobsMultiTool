@@ -8,10 +8,9 @@
   "shareText": "서버실 덕트 드론 띄우기를 해봤다. 계속 누르는 것보다 파란 틈 앞에서 손을 떼는 길이가 더 중요했다.",
   "order": 10,
   "relatedBlogSlugs": [
-    "flight-hold-release-cue-note",
-    "flight-touch-hold-note",
-    "small-web-games-retention",
-    "why-small-web-toys-return"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture",
+    "cursor-codex-web-service-bottlenecks"
   ],
   "relatedPlaySlugs": [
     "office-survival",

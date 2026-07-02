@@ -8,12 +8,9 @@
   "shareText": "버그 티켓 접수선을 해봤다. 초록 접수 도장만 받는다고 생각하니 느낌 티켓에 덜 끌려갔다.",
   "order": 22,
   "relatedBlogSlugs": [
-    "shooter-target-cue-note",
-    "codex-work-note",
     "cursor-codex-web-service-bottlenecks",
-    "static-micro-games-architecture",
-    "why-i-like-one-button-web",
-    "why-small-web-toys-return"
+    "game-feedback-before-score-note",
+    "static-micro-games-architecture"
   ],
   "relatedPlaySlugs": [
     "notification-mole",

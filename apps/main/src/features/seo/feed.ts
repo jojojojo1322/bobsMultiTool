@@ -1,4 +1,4 @@
-import { getBlogPosts } from "@/features/content/blog";
+import { getIndexableBlogPosts } from "@/features/content/blog";
 import { blogPostKeywords, playContentKeywords } from "@/features/content/discovery";
 import { getPlayContents } from "@/features/content/play";
 
@@ -38,7 +38,7 @@ function isoDate(date: string) {
 }
 
 function blogFeedItems(): FeedItem[] {
-  return getBlogPosts().map((post) => ({
+  return getIndexableBlogPosts().map((post) => ({
     title: post.title,
     description: post.description,
     url: `${siteUrl}/blog/${post.slug}`,
