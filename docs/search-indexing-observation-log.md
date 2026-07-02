@@ -1189,6 +1189,22 @@ Decision:
   - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed after the reduced `73` URL sitemap went live.
   - Search Console discovered pages remain at the latest recorded `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
   - Interpretation: discovery submission is refreshed for the reduced representative sitemap, but indexing is not complete. The next manual check must resubmit `/sitemaps/en`, inspect the pillar URLs, and compare Search Console/Bing/Naver state against this `73` URL surface.
+- Post-pruning Search Console resubmission and pillar live tests:
+  - Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`
+  - Browser/session guard: Chrome profile/session signed in as `bobob935@gmail.com`.
+  - Search Console URL-prefix property: `https://www.bobob.app/`
+  - Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live sitemap has `73` URLs.
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - Search Console sitemap visible row after post-pruning resubmission: `/sitemaps/en`, submitted `2026. 7. 2.`, last read `2026. 7. 2.`, status `성공`, stale broad-set count-column value `151`, videos `0`.
+  - Search Console interpretation: the reduced sitemap resubmission is accepted, but the count column has not yet converged to the live `73` URL XML. Treat this as a pending reprocessing state, not as indexing proof.
+  - Pillar URL inspection target: `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`
+  - Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
+  - Pillar live URL test result: tested `2026. 7. 3. 오전 12:39`; `URL을 Google에 등록할 수 있음`; `페이지 색인을 생성할 수 있음`; breadcrumb enhancement `유효한 항목 1개 감지됨`.
+  - Pillar URL inspection target: `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`
+  - Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
+  - Pillar live URL test result: tested `2026. 7. 3. 오전 12:38`; `URL을 Google에 등록할 수 있음`; `페이지 색인을 생성할 수 있음`; breadcrumb enhancement `유효한 항목 1개 감지됨`.
+  - Search Console action: no pillar `색인 생성 요청` button was pressed in this pass; this pass only resubmitted the sitemap and tested live URL eligibility.
+  - Interpretation: the two new pillar posts are discoverable from the submitted sitemap and live-test eligible for Google indexing, but they are still not indexed. The next observation should check whether `/sitemaps/en` reprocesses toward `73` and whether either pillar status moves beyond `발견됨 - 현재 색인이 생성되지 않음`.
 
 Decision:
 
