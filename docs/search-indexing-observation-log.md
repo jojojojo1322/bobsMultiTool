@@ -1277,6 +1277,22 @@ Completion guard:
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this narrows the review surface and removes one duplicate submitted Blog page, but it is not deployment, resubmission, or indexing proof. After deployment, the next external pass should submit or verify `/sitemaps/en` against the `76` URL target and compare discovered pages against the previous `73` reading.
 
+## 2026-07-03 Information Representative Prune Source Target
+
+- Change: demoted four duplicate date-sensitive information posts from representative/indexable content to archive/noindex candidates instead of deleting them:
+  - `world-cup-search-terms-check-2026-06-27`
+  - `world-cup-player-stats-check-2026-06-27`
+  - `world-cup-round-of-32-korea-time-2026-06-27`
+  - `youth-future-savings-search-questions-2026-06-27`
+- Reason: the representative set was still `35` posts with `18` submitted `정보` posts, making the review surface look too dominated by date-sensitive search wrappers. The narrowed source target keeps the 30-45 representative requirement while reducing duplicate information coverage.
+- Representative Blog count: `31`
+- Archive/noindex Blog candidate count: `89`
+- Representative information lane count: `14`
+- Representative sitemap URL target: `72`
+- Representative feed item target: `57`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 72-URL target is deployed, submitted, and observed.
+
 ## 2026-07-03 76-URL Deployment Registration
 
 - PR: `https://github.com/jojojojo1322/bobsMultiTool/pull/1`

@@ -86,8 +86,8 @@ const standaloneBlogCount = blogEntries.filter((entry) => entry.relatedPlaySlugs
 const representativeStandaloneBlogCount = representativeBlogEntries.filter((entry) => entry.relatedPlaySlugs.length === 0).length;
 const informationCategoryCount = blogEntries.filter((entry) => entry.category === informationCategory).length;
 const representativeInformationCategoryCount = representativeBlogEntries.filter((entry) => entry.category === informationCategory).length;
-const currentSubmittedSitemapCount = backtickNumber(discoveryRegistration, "Current submitted sitemap URL count");
-const currentFeedItemCount = backtickNumber(discoveryRegistration, "Current feed item count");
+const currentSubmittedSitemapCount = backtickNumber(discoveryRegistration, "Current submitted sitemap source target URL count");
+const currentFeedItemCount = backtickNumber(discoveryRegistration, "Current feed source target item count");
 const currentRegisteredBlogCount = backtickNumber(discoveryRegistration, "Current Blog count");
 const currentRepresentativeBlogCount = backtickNumber(discoveryRegistration, "Current representative Blog count");
 
@@ -141,8 +141,8 @@ for (const fragment of [
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,
   "Search Console sitemap resubmission for the current 76-URL sitemap showed `사이트맵이 제출됨`.",
-  `discovered pages \`${currentSubmittedSitemapCount}\``,
-  `The representative sitemap is now intentionally reduced and Search Console discovered pages match the current \`${currentSubmittedSitemapCount}\` URL count.`,
+  "discovered pages `76`",
+  `it does not yet cover the new \`${currentSubmittedSitemapCount}\` URL source target`,
   "Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1`",
   "Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.",
   "URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.",
@@ -150,12 +150,12 @@ for (const fragment of [
   "Post-76-URL pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`",
   "Both pillar URLs were `URL이 Google에 등록되어 있지 않음`",
   "Both pillar URL indexing request confirmations showed `색인 생성 요청됨`",
-  `Latest submitted URL count: \`${currentSubmittedSitemapCount}\``,
-  `The current ${currentSubmittedSitemapCount}-URL representative sitemap set has been submitted to IndexNow with response status \`200\``,
+  "Latest submitted URL count: `76`",
+  `the new ${currentSubmittedSitemapCount}-URL source target has not been submitted yet`,
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
-  `Latest feed item counts: \`${currentFeedItemCount}\`, \`${currentFeedItemCount}\``,
+  `the new source target is \`${currentFeedItemCount}\``,
   "Discovery registration matrix:",
   "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
   "Submitted URL health:",
@@ -164,7 +164,7 @@ for (const fragment of [
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
-  `Search Console sitemap discovery now matches the reduced representative sitemap URL count (\`${currentSubmittedSitemapCount}\`)`,
+  `the new source target is \`${currentSubmittedSitemapCount}\` and still needs deployment/resubmission`,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",
@@ -175,8 +175,8 @@ for (const fragment of [
 }
 
 for (const fragment of [
-  `Current submitted sitemap URL count: \`${currentSubmittedSitemapCount}\``,
-  `Current feed item count: \`${currentFeedItemCount}\``,
+  `Current submitted sitemap source target URL count: \`${currentSubmittedSitemapCount}\``,
+  `Current feed source target item count: \`${currentFeedItemCount}\``,
   "Google Search Console sitemap",
   "Bing and IndexNow",
   "Naver Search Advisor",
@@ -191,8 +191,11 @@ for (const fragment of [
   "Post-pruning Search Console resubmission and pillar live tests:",
   "Trust-page Search Console resubmission and pillar inspections:",
   "76-URL Deployment Registration",
+  "Information Representative Prune Source Target",
   "Search Console confirmation: `사이트맵이 제출됨`",
   "Search Console sitemap visible row after 76-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `76`, discovered videos `0`.",
+  `Representative sitemap URL target: \`${currentSubmittedSitemapCount}\``,
+  `Representative feed item target: \`${currentFeedItemCount}\``,
   "Pillar live URL test result: tested `2026. 7. 3. 오전 12:39`; `URL을 Google에 등록할 수 있음`",
   "Pillar live URL test result: tested `2026. 7. 3. 오전 12:38`; `URL을 Google에 등록할 수 있음`",
   "Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.",
