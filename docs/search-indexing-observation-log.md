@@ -1413,3 +1413,36 @@ Completion guard:
 - Representative feed item target: `62`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 77-URL source target is deployed, submitted, and observed.
+
+## 2026-07-03 77-URL Deployment Discovery Refresh
+
+- PR: `https://github.com/jojojojo1322/bobsMultiTool/pull/4`
+- Merge commit: `be977b8`
+- Vercel status: GitHub `Vercel` context for `be977b89e0817d72c489fecc3739ee941da799c7` returned `success`.
+- Live sitemap check: `https://www.bobob.app/sitemaps/en` now returns `77` URLs.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `77`, feed items `62`, Blog posts `36`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `77` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `77` sitemap URLs, `62` feed items, `36/126` Blog posts, and `26` Play entries.
+- Indexing observation check before the Search Console resubmission: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed while still showing Search Console discovered pages `76` against live sitemap URLs `77`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `77`
+- IndexNow response status: `200`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+- WebSub feed item counts: `62`, `62`
+- WebSub response statuses: `204`, `204`
+- Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`.
+- Browser/session guard: Chrome profile/session signed in as `bobob935@gmail.com`.
+- Search Console URL-prefix property: `https://www.bobob.app/`
+- Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live sitemap has `77` URLs.
+- Search Console confirmation: `사이트맵이 제출됨`
+- Search Console sitemap visible row after 77-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `77`, discovered videos `0`.
+- Search Console interpretation: Google has now discovered the full current `77` URL sitemap set, but this is discovery evidence only and does not prove indexing, ranking, impressions, or clicks for the submitted Blog + Play pages.
+- Post-resubmission indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `77`, Search Console discovered pages `77`, and live sitemap URLs `77`.
+- Pillar URL inspection target: `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`
+- Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `2026. 7. 3. 오전 2:58:20`; crawl agent `Googlebot 스마트폰`; page fetch `성공`; indexing allowed `예`.
+- Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
+- Pillar URL inspection target: `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`
+- Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `2026. 7. 3. 오전 3:00:15`; crawl agent `Googlebot 스마트폰`; page fetch `성공`; indexing allowed `예`.
+- Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
+- Interpretation: production discovery now matches the 77-URL representative surface, Google Search Console discovered the current sitemap count, and both pillar URLs have fresh crawl evidence plus indexing-request confirmations. This still must not be treated as indexed or search-ready because both pillar URLs remain `크롤링됨 - 현재 색인이 생성되지 않음`. The goal remains open until later Search Console, Bing, or Naver observation shows changed indexing, recommendation, collection, or measured performance evidence.
