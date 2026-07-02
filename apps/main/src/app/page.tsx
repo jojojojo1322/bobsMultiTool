@@ -18,6 +18,7 @@ interface HomePageProps {
 }
 
 const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base64-tool", "cron-generator", "dns-lookup"];
+const pillarBlogSlugs = ["why-bobob-shifted-to-content-lab", "static-micro-games-architecture", "content-indexing-checklist-before-resubmission"];
 const contentLocale = "ko";
 const homeKeywords = homeContentKeywords(getIndexableBlogPosts(), getPlayContents());
 const homeShareTitle = "짧게 읽고 바로 눌러보는 Blog + Play";
@@ -48,7 +49,12 @@ export const metadata: Metadata = {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const dictionary = getClientDictionary(contentLocale);
-  const posts = getIndexableBlogPosts().slice(0, 5);
+  const indexablePosts = getIndexableBlogPosts();
+  const pillarPosts = indexablePosts
+    .filter((post) => pillarBlogSlugs.includes(post.slug))
+    .sort((left, right) => pillarBlogSlugs.indexOf(left.slug) - pillarBlogSlugs.indexOf(right.slug));
+  const pillarPostSlugs = new Set(pillarPosts.map((post) => post.slug));
+  const posts = indexablePosts.filter((post) => !pillarPostSlugs.has(post.slug)).slice(0, 5);
   const playContents = getPlayContents();
   const featuredPlay = playContents[0];
   const localizedTools = getLocalizedTools("en");
@@ -96,6 +102,43 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <p>Play는 한 가지 규칙과 한 가지 움직임으로 시작합니다.</p>
               <p>로그인, 랭킹, 댓글 없이 한 판 결과만 보고 넘어갑니다.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b" data-pillar-blog>
+        <div className="mx-auto max-w-6xl px-4 py-8">
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">First reads</p>
+              <h2 className="mt-1 text-2xl font-semibold tracking-normal">처음 읽을 글</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                처음 온 사람이 사이트 방향을 바로 이해하도록, 방향 전환과 정적 Play 구조, 콘텐츠 정리 기준을 먼저 고정해 둡니다.
+              </p>
+            </div>
+            <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              대표 글 전체
+            </Link>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {pillarPosts.map((post) => (
+              <Link key={post.slug} href={`/blog/${post.slug}`}>
+                <Card className="h-full transition-colors hover:bg-muted/50">
+                  <CardHeader>
+                    <div className="mb-2 flex flex-wrap gap-2">
+                      <Badge>{post.category}</Badge>
+                      <Badge>{post.readingMinutes}분 읽기</Badge>
+                    </div>
+                    <CardTitle>{post.title}</CardTitle>
+                    <CardDescription>{post.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex items-center gap-2 border-t pt-4 text-sm text-muted-foreground">
+                    <Newspaper className="h-4 w-4" />
+                    {post.date}
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

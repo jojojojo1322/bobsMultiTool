@@ -32,6 +32,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `why-bobob-shifted-to-content-lab`
   - `static-micro-games-architecture`
   - `content-indexing-checklist-before-resubmission`
+- Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section before ordinary latest Blog cards, so a first visitor can see the direction change, static Play architecture, and content/indexing cleanup criteria without opening the full archive.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`

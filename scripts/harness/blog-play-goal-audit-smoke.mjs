@@ -136,6 +136,7 @@ for (const fragment of [
   `Representative standalone lane: \`${representativeStandaloneBlogCount}\` submitted posts have no forced \`relatedPlay\``,
   `Current count: \`${playEntries.length}\` Play entries.`,
   "`arcade-game`",
+  "Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section",
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,
   "Search Console sitemap resubmission after the 77-URL trust-page correction showed `사이트맵이 제출됨`.",
