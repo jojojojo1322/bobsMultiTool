@@ -22,7 +22,7 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Trust-page sitemap correction target: `77` URLs. The previous post-pruning `bobob935@gmail.com` resubmission was accepted when the live sitemap had `73` URLs, and the visible row still showed a stale prior count-column value of `151`. Search Console still needs a fresh read or resubmission for the 77-URL trust-page correction | Google accepted the earlier reduced sitemap resubmission from the correct property and account | It does not prove indexing, impressions, ranking, or that Search Console has reprocessed the current reduced URL count |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Trust-page sitemap correction target: `77` URLs. The `bobob935@gmail.com` session resubmitted `sitemaps/en` after the live 77-URL deployment, and Search Console showed `사이트맵이 제출됨`. The visible row now shows `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `73`, videos `0` | Google accepted and read the canonical sitemap after the trust-page correction | It does not prove indexing, impressions, ranking, or that Search Console has discovered all `77` live sitemap URLs yet |
 | Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`; last updated `8.5시간 전` | Google has begun showing more search impressions than the earlier `3`-impression observation | It does not prove useful traffic or broad Blog + Play indexing completion |
 | Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5`, last updated `2026-06-12`; reason rows remain `리디렉션이 포함된 페이지` `3` and `적절한 표준 태그가 포함된 대체 페이지` `2` | The old page indexing report is still visible and measurable | It does not yet reflect the homepage URL Inspection indexed state or the submitted Blog + Play URL set |
 | Google URL Inspection | Homepage plus Blog/Play representatives | Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`. `/blog`, `/play`, `/blog/ai-side-project-realistic-order`, and `/play/office-survival` are not registered; each has a confirmed `색인 생성 요청됨` after inspection. Post-pruning pillar live tests for `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` both returned `URL을 Google에 등록할 수 있음` with valid breadcrumb detection | URL Inspection proves homepage indexing, queues representative Blog/Play URLs, and confirms the new pillar pages are live-test eligible | It does not prove the Blog/Play representatives or pillar posts were indexed after inspection |
@@ -65,11 +65,12 @@ Compare against the first `2026-06-25` baseline:
 Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
-- Latest `/sitemaps/en` discovered pages after the 2026-07-02 resubmission: `68`
+- Prior `/sitemaps/en` discovered pages after the 2026-07-02 resubmission: `68`
+- Latest `/sitemaps/en` discovered pages after the 2026-07-03 trust-page correction resubmission: `73`
 - Current representative `/sitemaps/en` URL count: `77`
 - Latest IndexNow representative submission count: `77`
 - Latest representative feed item count: `62`
-- Post-pruning Search Console sitemap submission was accepted, but the visible count column still showed stale broad-set value `151` until Google reprocesses the reduced XML.
+- Trust-page correction Search Console sitemap submission was accepted and read, but the discovered page count remains `73` until Google reprocesses the full `77`-URL XML.
 
 Latest Search Console observation from `bobob935@gmail.com`:
 
@@ -77,8 +78,9 @@ Latest Search Console observation from `bobob935@gmail.com`:
 - Total impressions: `18`
 - Indexed pages: `0`
 - Not indexed pages: `5`
+- `/sitemaps/en` discovered pages: `73` against the current `77`-URL sitemap.
 - URL Inspection: `https://www.bobob.app/` is indexed; Blog/Play representative URLs are not indexed yet.
-- Pillar live URL tests: `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` can be registered by Google, with valid breadcrumb detection.
+- Pillar URL inspections: `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` are still not indexed, with `발견됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`.
 
 ## Stop Rule
 

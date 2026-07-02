@@ -1223,6 +1223,20 @@ Decision:
   - IndexNow response status: `200`
   - Search Console action: not repeated in this pass. The next signed-in `bobob935@gmail.com` follow-up should resubmit or verify `/sitemaps/en` against the current `77` URL sitemap and record whether the count column moves away from stale `151`.
   - Interpretation: live discovery now includes the required trust pages and Bing-compatible discovery has been refreshed, but this is still discovery evidence, not indexing proof.
+- Trust-page Search Console resubmission and pillar inspections:
+  - Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`.
+  - Browser/session guard: Chrome profile/session signed in as `bobob935@gmail.com`.
+  - Search Console URL-prefix property: `https://www.bobob.app/`
+  - Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live sitemap has `77` URLs.
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - Search Console sitemap visible row after trust-page correction resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `73`, discovered videos `0`.
+  - Search Console interpretation: Google accepted and read the corrected sitemap, but discovered pages remain `73` against the current `77` URL sitemap. Treat this as a pending reprocessing state, not indexing proof.
+  - Pillar URL inspection target: `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`
+  - Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
+  - Pillar URL inspection target: `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`
+  - Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
+  - Search Console action: no pillar `색인 생성 요청` button was pressed and no new live URL test was run in this pass; this pass resubmitted the sitemap and inspected stored URL Inspection state.
+  - Interpretation: the two new pillar posts remain discoverable from the submitted sitemap but are still not indexed. The next observation should check whether `/sitemaps/en` discovered pages reaches `77` and whether either pillar status moves beyond `발견됨 - 현재 색인이 생성되지 않음`.
 
 Decision:
 

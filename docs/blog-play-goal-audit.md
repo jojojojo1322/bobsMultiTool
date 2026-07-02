@@ -77,8 +77,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again after the representative sitemap was reduced to `73` live URLs from the signed-in `bobob935@gmail.com` Chrome session; the trust-page sitemap correction now raises the current target to `77` URLs.
-  - Search Console sitemap resubmission showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row still showed status `성공`, submitted `2026. 7. 2.`, last read `2026. 7. 2.`, and stale broad-set count-column value `151`.
-  - The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check that reflects the new `77` URL count.
+  - Search Console sitemap resubmission after the 77-URL trust-page correction showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `73`, and videos `0`.
+  - The representative sitemap is now intentionally reduced; Search Console still needs the discovered-pages count to converge from `73` to the current `77` URL count.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -113,9 +113,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (`77`): the visible `/sitemaps/en` row still shows a stale broad-set count-column value `151` until Google reprocesses the reduced XML.
+- Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (`77`): the visible `/sitemaps/en` row now shows discovered pages `73`, so Google has read the corrected sitemap but has not discovered the full submitted set yet.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
-- The two new pillar posts are live-test eligible for Google indexing, but they are not indexed yet.
+- The two new pillar posts are live-test eligible for Google indexing, but they are still not indexed after the latest inspection.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
