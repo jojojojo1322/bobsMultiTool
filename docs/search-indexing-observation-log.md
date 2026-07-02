@@ -1276,3 +1276,33 @@ Completion guard:
 - Representative feed item target: `61`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this narrows the review surface and removes one duplicate submitted Blog page, but it is not deployment, resubmission, or indexing proof. After deployment, the next external pass should submit or verify `/sitemaps/en` against the `76` URL target and compare discovered pages against the previous `73` reading.
+
+## 2026-07-03 76-URL Deployment Registration
+
+- PR: `https://github.com/jojojojo1322/bobsMultiTool/pull/1`
+- Merge commit: `cd27c54`
+- Vercel status: GitHub `Vercel` context for `cd27c540e7d20ea385e1e5d5f491777fe2ec7a39` returned `success`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `76`, feed items `61`, Blog posts `35`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `76` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `76` sitemap URLs, `61` feed items, `35/120` Blog posts, and `26` Play entries.
+- Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`.
+- Browser/session guard: Chrome profile/session signed in as `bobob935@gmail.com`.
+- Search Console URL-prefix property: `https://www.bobob.app/`
+- Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live sitemap has `76` URLs and `lottery-scratch-stage-note` is no longer in the sitemap/feed.
+- Search Console confirmation: `사이트맵이 제출됨`
+- Search Console sitemap visible row after 76-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `76`, discovered videos `0`.
+- Search Console interpretation: Google has now discovered the full current `76` URL sitemap set, but this is discovery evidence only and does not prove indexing, ranking, impressions, or clicks for the submitted Blog + Play pages.
+- Pillar URL inspection target: `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`
+- Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
+- Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
+- Pillar URL inspection target: `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`
+- Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
+- Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `76`
+- IndexNow response status: `200`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+- WebSub feed item counts: `61`, `61`
+- WebSub response statuses: `204`, `204`
+- Interpretation: production discovery now matches the narrowed review surface and both pillar URLs are queued for crawling, but the goal remains open because the pillar URLs are still not indexed and Bing/Naver observation has not improved yet. The next observation should compare indexed pages, not-indexed pages, sitemap discovered pages, pillar URL Inspection status, Bing Webmaster recommendation classes, and Naver sitemap/page collection state after propagation.

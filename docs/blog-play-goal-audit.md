@@ -78,20 +78,21 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked and submitted again after the representative sitemap was reduced to `73` live URLs from the signed-in `bobob935@gmail.com` Chrome session; the trust-page sitemap correction raised the target to `77` URLs, and the latest lucky-scratch duplicate archive pass now lowers the current source target to `76` URLs.
-  - Search Console sitemap resubmission after the 77-URL trust-page correction showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `73`, and videos `0`.
-  - The representative sitemap is now intentionally reduced; Search Console still needs the discovered-pages count to converge from `73` to the current `76` URL count.
+  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the latest lucky-scratch duplicate archive deployment lowered the live representative sitemap to `76` URLs.
+  - Search Console sitemap resubmission for the current 76-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `76`, and videos `0`.
+  - The representative sitemap is now intentionally reduced and Search Console discovered pages match the current `76` URL count. This is discovery evidence, not indexing proof.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
   - Representative Blog/Play URLs inspected: `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
   - Representative Blog/Play URL status before request: `/blog`, `/play`, and `/play/office-survival` were `크롤링됨 - 현재 색인이 생성되지 않음`; `/blog/ai-side-project-realistic-order` was `발견됨 - 현재 색인이 생성되지 않음`.
   - Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`
-  - Post-pruning pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
-  - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 발견됨 - 현재 색인이 생성되지 않음`, but both live URL tests returned `URL을 Google에 등록할 수 있음` and detected one valid breadcrumb item.
+  - Post-76-URL pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
+  - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 발견됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`.
+  - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
-  - Current submitted URL target: `76`
-  - The current 76-URL representative sitemap target is ready for the next IndexNow, WebSub, and Search Console pass; the previous broad 151-URL set was superseded by the reduced representative submission.
+  - Latest submitted URL count: `76`
+  - The current 76-URL representative sitemap set has been submitted to IndexNow with response status `200`; the previous broad 151-URL set was superseded by the reduced representative submission.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -104,7 +105,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Current feed item target: `61`
+  - Latest feed item counts: `61`, `61`
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -115,9 +116,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (`76`): the visible `/sitemaps/en` row now shows discovered pages `73`, so Google has read the corrected sitemap but has not discovered the full submitted set yet.
+- Search Console sitemap discovery now matches the reduced representative sitemap URL count (`76`), but this only proves Google has read the current submitted sitemap.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
-- The two new pillar posts are live-test eligible for Google indexing, but they are still not indexed after the latest inspection.
+- The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
