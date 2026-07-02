@@ -1534,3 +1534,28 @@ Completion guard:
 - WebSub response statuses: `204`, `204`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The Search Console tab was previously prepared with `sitemaps/en`, but external submission still requires explicit action-time confirmation before clicking `제출`.
 - Interpretation: production, IndexNow, WebSub, and submitted URL health now match the refined 74-URL representative set. This is still not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
+
+## 2026-07-03 Information Representative Depth Refresh
+
+- Master commit: `f788ff1869a5b6db596480af907e60579f8aeef6`
+- Content change: deepened three submitted date-sensitive information posts: `youth-future-savings-eligibility-check-2026-06-27`, `world-cup-host-city-travel-check-2026-06-27`, and `world-cup-ticket-official-channel-check-2026-06-27`.
+- Reason: keep the representative set at `33` posts while making weaker information posts read less like external summaries and more like practical confirmation flows with 기준일, official-source paths, comparison tables, and final stop/check criteria.
+- Source word counts after the refresh: youth savings `631`, host-city travel `676`, ticket official channel `672`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, and `npm run harness:adsense-content` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `67` pages, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `267` paths. Playwright snapshots confirmed the new sections rendered on the three updated Blog detail pages.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Deployment status: `npm run harness:deployment-status` returned overall state `success` for commit `f788ff1869a5b6db596480af907e60579f8aeef6`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `74`, feed items `59`, Blog posts `33`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `74` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `74` sitemap URLs, `59` feed items, `33/126` Blog posts, and `26` Play entries.
+- Indexing observation check before Search Console resubmission: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed while still showing Search Console discovered pages `77` against live sitemap URLs `74`.
+- IndexNow dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexnow`
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `74`
+- IndexNow response status: `200`
+- WebSub dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub feed item counts: `59`, `59`
+- WebSub response statuses: `204`, `204`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action is still to submit `/sitemaps/en` again from the prepared `https://www.bobob.app/` property tab only after explicit action-time confirmation.
+- Interpretation: production, IndexNow, WebSub, and submitted URL health reflect the deeper 74-URL representative set. This improves site-quality evidence, but it is still not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
