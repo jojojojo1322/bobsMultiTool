@@ -87,6 +87,7 @@ const categorySlugs = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]
 const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 9;
 const expectedFeedItemCount = submittedBlogEntries.length + playEntries.length;
 const latestExternalSitemapCount = backtickNumber(matrix, "Latest external sitemap discovery count") ?? expectedSitemapUrlCount;
+const latestIndexNowSubmissionCount = backtickNumber(matrix, "Latest IndexNow representative submission count") ?? expectedSitemapUrlCount;
 const latestExternalFeedItemCount = backtickNumber(matrix, "Latest external feed publish item count") ?? expectedFeedItemCount;
 
 for (const fragment of [
@@ -100,12 +101,13 @@ for (const fragment of [
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
-  `Current source sitemap target: \`${expectedSitemapUrlCount}\` URLs`,
+  `Current production sitemap target: \`${expectedSitemapUrlCount}\` URLs`,
   `Latest external sitemap discovery count: \`${latestExternalSitemapCount}\``,
+  `Latest IndexNow representative submission count: \`${latestIndexNowSubmissionCount}\``,
   `Latest external feed publish item count: \`${latestExternalFeedItemCount}\``,
   "Latest signed-in Search Console observation after resubmission",
   `submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${latestExternalSitemapCount}\`, videos \`0\``,
-  `Google accepted, read, and discovered the latest externally submitted ${latestExternalSitemapCount}-URL canonical sitemap set`,
+  `Google accepted, read, and discovered the previous ${latestExternalSitemapCount}-URL canonical sitemap set`,
   "Google Search Console performance",
   "Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`",
   "Google Search Console page indexing",
@@ -117,7 +119,7 @@ for (const fragment of [
   "page fetch `성공`, indexing allowed `예`",
   "both have `색인 생성 요청됨` confirmations",
   "Bing and IndexNow",
-  `Latest IndexNow representative submission: \`${latestExternalSitemapCount}\` URLs with response \`200\``,
+  `Latest IndexNow representative submission: \`${latestIndexNowSubmissionCount}\` URLs with response \`200\``,
   "Bing Webmaster Tools",
   "Latest browser check reached the public landing page with `Sign In`",
   "Public Bing search",
@@ -163,7 +165,7 @@ for (const fragment of [
   "Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.",
   "WebSub response statuses: `204`, `204`",
   "77-URL Deployment Discovery Refresh",
-  `IndexNow submitted URL count: \`${latestExternalSitemapCount}\``,
+  `IndexNow submitted URL count: \`${latestIndexNowSubmissionCount}\``,
   `Search Console sitemap visible row after 77-URL resubmission`,
   "page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`",
   "Total impressions: `18`",

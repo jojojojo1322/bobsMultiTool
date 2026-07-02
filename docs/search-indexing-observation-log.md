@@ -1491,3 +1491,25 @@ Completion guard:
 - Deployment status check: `npm run harness:deployment-status` returned overall state `success` for commit `406156d0836514bfc606337f5f259df840558017`, but no GitHub main Vercel status context was found. Treat this as branch/status evidence only, not proof that the canonical production site is serving the 74-URL source target.
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed because the canonical production site has not yet served the 74-URL reduced sitemap.
 - Interpretation: merge and production deployment must happen before `/sitemaps/en` can be resubmitted for the reduced `74` URL target. The latest external Search Console discovery evidence remains the prior `77` discovered-page state until production and Search Console are refreshed.
+
+## 2026-07-03 74-URL Production Deployment Discovery Refresh
+
+- PR: `https://github.com/jojojojo1322/bobsMultiTool/pull/5`
+- Merge method: fast-forward push of `feat/adsense-content-depth-next` to `master`.
+- Master commit: `bfaf2be1eaca8493ffe933c91a841fefc0a6c5b3`
+- Vercel status: GitHub `Vercel` context for `bfaf2be1eaca8493ffe933c91a841fefc0a6c5b3` returned `success`.
+- Live sitemap check: `https://www.bobob.app/sitemaps/en` now returns `74` URLs.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `74`, feed items `59`, Blog posts `33`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `74` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check before docs refresh: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `74` sitemap URLs, `59` feed items, `33/126` Blog posts, and `26` Play entries.
+- Indexing observation check before Search Console resubmission: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed while still showing Search Console discovered pages `77` against live sitemap URLs `74`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `74`
+- IndexNow response status: `200`
+- WebSub dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+- WebSub feed item counts: `59`, `59`
+- WebSub response statuses: `204`, `204`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this deployment refresh. The next required external action is to submit `/sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live `74` URL sitemap.
+- Interpretation: production, IndexNow, WebSub, and submitted URL health now match the reduced `74` URL / `59` feed target. This is still not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the `74` URL target is submitted and observed there.

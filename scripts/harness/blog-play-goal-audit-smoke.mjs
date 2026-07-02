@@ -91,6 +91,7 @@ const currentFeedItemCount = backtickNumber(discoveryRegistration, "Current feed
 const currentRegisteredBlogCount = backtickNumber(discoveryRegistration, "Current Blog count");
 const currentRepresentativeBlogCount = backtickNumber(discoveryRegistration, "Current representative Blog count");
 const latestExternalSitemapCount = backtickNumber(discoveryRegistration, "Latest external sitemap discovery count") ?? currentSubmittedSitemapCount;
+const latestIndexNowSubmissionCount = backtickNumber(discoveryRegistration, "Latest IndexNow representative submission count") ?? currentSubmittedSitemapCount;
 const latestExternalFeedItemCount = backtickNumber(discoveryRegistration, "Latest external feed publish item count") ?? currentFeedItemCount;
 
 if (blogEntries.length < 39) failures.push(`audit expects at least 39 Blog posts, found ${blogEntries.length}`);
@@ -161,8 +162,8 @@ for (const fragment of [
   "Both pillar URLs were `URL이 Google에 등록되어 있지 않음`",
   "크롤링됨 - 현재 색인이 생성되지 않음",
   "Both pillar URL indexing request confirmations showed `색인 생성 요청됨`",
-  `Latest submitted URL count: \`${latestExternalSitemapCount}\``,
-  `The latest externally submitted ${latestExternalSitemapCount}-URL representative sitemap set has been submitted to IndexNow with response status \`200\`.`,
+  `Latest submitted URL count: \`${latestIndexNowSubmissionCount}\``,
+  `The latest deployed ${latestIndexNowSubmissionCount}-URL representative sitemap set has been submitted to IndexNow with response status \`200\`.`,
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
@@ -175,7 +176,7 @@ for (const fragment of [
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
-  `Search Console sitemap discovery matched the latest externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
+  `Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",
