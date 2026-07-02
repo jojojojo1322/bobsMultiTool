@@ -37,6 +37,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `static-micro-games-architecture`
   - `content-indexing-checklist-before-resubmission`
 - Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section before ordinary latest Blog cards, so a first visitor can see the direction change, static Play architecture, and content/indexing cleanup criteria without opening the full archive.
+- Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`

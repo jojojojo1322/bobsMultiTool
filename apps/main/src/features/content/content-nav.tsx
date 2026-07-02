@@ -17,7 +17,7 @@ export function ContentNav({ dictionary }: { dictionary: ClientDictionary }) {
         <Link href="/" className="text-sm font-semibold tracking-tight">
           bobob.app
         </Link>
-        <nav className="flex w-full min-w-0 items-center gap-1 overflow-x-auto sm:w-auto sm:justify-end">
+        <nav className="flex w-full min-w-0 flex-wrap items-center gap-1 sm:w-auto sm:justify-end">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
               {item.label}

@@ -14,6 +14,7 @@ const feedPath = path.join(root, "apps/main/src/features/seo/feed.ts");
 const llmsPath = path.join(root, "apps/main/src/features/seo/llms.ts");
 const opensearchPath = path.join(root, "apps/main/src/features/seo/opensearch.ts");
 const homePagePath = path.join(root, "apps/main/src/app/page.tsx");
+const blogIndexPagePath = path.join(root, "apps/main/src/app/blog/page.tsx");
 const playDetailPath = path.join(root, "apps/main/src/app/play/[slug]/page.tsx");
 const blogDetailPath = path.join(root, "apps/main/src/app/blog/[slug]/page.tsx");
 const playResultLinksPath = path.join(root, "apps/main/src/features/play/result-links.tsx");
@@ -29,6 +30,11 @@ const requiredBlogSlugs = [
   "human-decisions-in-ai-coding",
   "why-bobob-shifted-to-content-lab",
   "static-micro-games-architecture",
+];
+const requiredPillarSlugs = [
+  "why-bobob-shifted-to-content-lab",
+  "static-micro-games-architecture",
+  "content-indexing-checklist-before-resubmission",
 ];
 const requiredPlaySlugs = ["office-survival", "prompt-cleanup", "meeting-escape", "priority-sorter", "bug-clicker", "ai-review-tap"];
 const requiredCategories = ["일기", "요즘 관심사", "AI", "개발", "운영 기록", "정보"];
@@ -191,6 +197,19 @@ if (playEntries.length < 5) failures.push(`expected at least 5 Play entries, fou
 
 for (const slug of requiredBlogSlugs) {
   if (!blogBySlug.has(slug)) failures.push(`missing required MVP Blog post: ${slug}`);
+}
+const pillarBlogEntries = indexableBlogEntries.filter((entry) => entry.publicationTier === "pillar");
+if (pillarBlogEntries.length !== 3) {
+  failures.push(`Blog should expose exactly the first 3 pillar posts before expanding the pillar set, found ${pillarBlogEntries.length}`);
+}
+for (const slug of requiredPillarSlugs) {
+  const entry = blogBySlug.get(slug);
+  if (!entry) {
+    failures.push(`missing required pillar Blog post: ${slug}`);
+    continue;
+  }
+  if (entry.publicationTier !== "pillar") failures.push(`${slug} should be marked publicationTier: pillar`);
+  if (entry.indexPolicy !== "index") failures.push(`${slug} pillar post should remain indexable`);
 }
 for (const slug of requiredPlaySlugs) {
   if (!playBySlug.has(slug)) failures.push(`missing required MVP Play entry: ${slug}`);
@@ -447,6 +466,7 @@ const feed = read(feedPath);
 const llms = read(llmsPath);
 const opensearch = read(opensearchPath);
 const homePage = read(homePagePath);
+const blogIndexPage = read(blogIndexPagePath);
 const playEngineSource = scanFiles(playEngineDir, (filePath) => filePath.endsWith(".tsx")).map(read).join("\n");
 
 if (!homePage.includes("{playContents.map((content")) {
@@ -463,6 +483,15 @@ for (const fragment of [
   "content-indexing-checklist-before-resubmission",
 ]) {
   if (!homePage.includes(fragment)) failures.push(`home page should pin the first three pillar posts before ordinary latest Blog cards: missing ${fragment}`);
+}
+for (const fragment of [
+  "data-blog-pillars",
+  "pillarPosts",
+  'publicationTier === "pillar"',
+  "사이트 방향을 보여주는 세 글",
+  "대표 기준",
+]) {
+  if (!blogIndexPage.includes(fragment)) failures.push(`Blog index should expose the first three pillar posts before category cards: missing ${fragment}`);
 }
 for (const fragment of ["SurvivalPlayEngine", "TapGameEngine", "SortMatchEngine", "ArcadeGameEngine", "relatedBlogLinks", "relatedPlayLinks"]) {
   if (!playDetail.includes(fragment)) failures.push(`Play detail route missing ${fragment}`);
