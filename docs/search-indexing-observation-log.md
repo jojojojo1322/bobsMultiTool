@@ -1213,6 +1213,16 @@ Decision:
   - Local production discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=http://localhost:3000 npm run harness:search-discovery-registration` should pass against the built localhost server before deployment.
   - Search Console action: not yet repeated for the 77-URL trust-page correction. The last signed-in Search Console resubmission remains the earlier 73-URL post-pruning pass.
   - Interpretation: this fixes the submitted surface target and trust-page visibility, but it is not indexing proof. After deployment, live discovery, submitted URL health, IndexNow submission, and a later Search Console read/resubmission must be logged separately.
+- Trust-page sitemap correction deployment and IndexNow refresh:
+  - Content commit: `0267667` strengthened the public About/trust surface and added `/about`, `/contact`, `/privacy`, and `/terms` to the reduced `/sitemaps/en` submitted URL set.
+  - Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=0267667 npm run harness:deployment-status` returned `overallState: success`. Strict Vercel project fallback was not run because `VERCEL_TOKEN` was not present in the shell.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `77`, feed items `62`, Blog posts `36`, Play entries `26`.
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `77` final 200 sitemap URLs with unique title/description, canonical, h1, social metadata, and indexable robots metadata.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `77`
+  - IndexNow response status: `200`
+  - Search Console action: not repeated in this pass. The next signed-in `bobob935@gmail.com` follow-up should resubmit or verify `/sitemaps/en` against the current `77` URL sitemap and record whether the count column moves away from stale `151`.
+  - Interpretation: live discovery now includes the required trust pages and Bing-compatible discovery has been refreshed, but this is still discovery evidence, not indexing proof.
 
 Decision:
 
