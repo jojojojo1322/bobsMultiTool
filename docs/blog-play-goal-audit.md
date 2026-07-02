@@ -65,6 +65,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `search-console-misreads-for-indie-devs` was deepened from a short Search Console warning into an 800+ word observation workflow with a proof/not-proof table, current 77-URL sitemap interpretation, wait-period stop rules, and the next external checks to compare.
   - `cursor-codex-web-service-bottlenecks` was deepened from a short AI-tool bottleneck note into an 800+ word development operations article with route/content/sitemap/workflow boundaries, failure-mode checks, and the final verification bundle.
   - `human-decisions-in-ai-coding` was deepened from a short AI judgment note into an 800+ word product-decision article with a human/AI responsibility table, explicit deferred features, public URL decisions, and indexing-observation wording discipline.
+  - `vercel-sitemap-canonical-log` was deepened from a short canonical cleanup note into a near-800 word web-operations article with domain/app/content/external-tool layers, a sitemap-scope table, and a public-surface check bundle.
+  - `ai-side-project-realistic-order` was deepened from a short AI side-project note into an 800+ word product-scope article with deferred-feature decisions, completion criteria, and a Blog/Play/search/deploy verification table.
 
 ## Play Evidence
 
