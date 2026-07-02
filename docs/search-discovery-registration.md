@@ -21,14 +21,14 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` resubmission confirmed `사이트맵이 제출됨`; submitted/read `2026. 6. 26.`, status `성공`, discovered pages `68`, matching the prior live XML count before the 정보 expansion. Later CLI discovery work moved the live sitemap to `151` URLs after the stacker drag-alignment, Play count-toned wording cleanup, memory flow-cue update, sum-box counter-cue cleanup, Play count-toned panel cleanup, snake open-turn cue update, development Blog date distribution update, play feedback development note, sum-box drag guide update, password slot candidate cue update, Naver verification confirmation, indexing waiting room, and workshop growth ledger updates, but no signed-in Search Console resubmission was performed in that CLI slice | Google can discover the submitted sitemap URL set | It does not prove indexing, impressions, or ranking |
-| Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `3`, CTR `0%` for `3개월` | Google has begun showing at least some search impressions | It does not prove useful traffic or page indexing completion |
-| Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5` | The indexing problem is still visible and measurable | It does not identify all submitted Blog + Play URLs as indexed |
-| Google URL Inspection | `/blog/boring-maintenance-is-content-too` | Request confirmed with `색인 생성 요청됨` | A representative Blog URL was manually queued | It does not prove the URL was indexed |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` resubmission confirmed `사이트맵이 제출됨`; submitted `2026. 7. 2.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`, while the live XML has `151` URLs | Google can discover the submitted sitemap URL set, but Search Console has not reread the current 151-URL XML yet | It does not prove indexing, impressions, or ranking |
+| Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`; last updated `8.5시간 전` | Google has begun showing more search impressions than the earlier `3`-impression observation | It does not prove useful traffic or broad Blog + Play indexing completion |
+| Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5`, last updated `2026-06-12`; reason rows remain `리디렉션이 포함된 페이지` `3` and `적절한 표준 태그가 포함된 대체 페이지` `2` | The old page indexing report is still visible and measurable | It does not yet reflect the homepage URL Inspection indexed state or the submitted Blog + Play URL set |
+| Google URL Inspection | Homepage plus Blog/Play representatives | Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`. `/blog`, `/play`, `/blog/ai-side-project-realistic-order`, and `/play/office-survival` are not registered; each has a confirmed `색인 생성 요청됨` after inspection | URL Inspection now proves homepage indexing and queues representative Blog/Play URLs | It does not prove the Blog/Play representatives were indexed after the requests |
 | Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest response status `200`; submitted URL count `151` after the Play canvas upgrade, password guess preview, follow-up youth savings result expansion, sum-box combo bonus, stacker landing preview, notification mole urgency feedback, crossing lane preview, sum-box streak bonus, password split feedback, gem-swap hint, sum-box release preview, password clue history, latest information notes, endless lottery Play update, arcade action-cap removal, lottery scratch drag update, shooter drag aiming update, arcade count-field cleanup, lottery scratch stage note, sum-box backtrack drag update, visible Play counter cleanup, password digit heatmap update, endless lottery stage update, sum-box clear feedback update, password suggestion-cycle update, Play action-limit wording cleanup, memory input-trail update, Play count-limit label cleanup, brick-breaker landing guide update, flight hold-release cue update, snake next-cell preview update, minesweeper chord-ready cue update, shooter target-cue update, mole priority-cue update, Play state-hook cleanup, password slot-keypad update, stacker drag-alignment update, Play count-toned copy cleanup, memory flow-cue update, sum-box counter-cue cleanup, Play count-toned panel cleanup, snake open-turn cue update, development Blog date distribution update, play feedback development note, sum-box drag guide update, password slot candidate cue update, Naver verification confirmation, indexing waiting room, and workshop growth ledger updates | Bing-compatible discovery ping accepted the current live sitemap URL set | It does not prove Bing indexed or ranked the pages |
 | Bing Webmaster Tools | `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app` | Latest browser check reached the public landing page with `Sign In`; site-specific recommendations were not visible | Bing Webmaster follow-up still needs a signed-in session | It does not provide indexing or recommendation evidence yet |
 | Public Bing search | `site:www.bobob.app` | Latest browser check hit a `계속하려면 아래 과제 해결` challenge | Public Bing search was attempted | It does not prove whether Bing has indexed the URL set |
-| Naver Search Advisor | `https://searchadvisor.naver.com/` | Homepage `naver-site-verification` meta is live. Needs a signed-in Search Advisor pass for the canonical host, sitemap state, robots.txt state, and representative page collection/request status | Naver follow-up can confirm whether the site and submitted URLs are visible to Search Advisor | It does not prove Naver indexed or ranked the pages |
+| Naver Search Advisor | `https://searchadvisor.naver.com/` | Signed-in Search Advisor showed `https://www.bobob.app` owned under `풀꽃`, registered `25.07.24`, ownership expires `26.07.24`. Security certificate and HTTPS redirect are normal. Naver reports `사이트맵을 찾을 수 없습니다` and `콘텐츠 노출/클릭 정보가 없습니다`; visible sitemap rows are old broad locale entries from `26.06.16`, and `sitemaps/en` was not visibly added after submission attempts | Naver ownership and basic HTTPS state are confirmed | It does not prove Naver indexed or ranked pages, and the reduced sitemap still needs a separate Naver cleanup/pass |
 | RSS feed | `/feed.xml` | Live feed has `140` Blog + Play items and WebSub hub discovery | Feed readers and lightweight crawlers can discover current content | It does not replace sitemap or webmaster-tool evidence |
 | Atom feed | `/atom.xml` | Live feed has `140` Blog + Play entries and WebSub hub discovery | Feed readers and WebSub can discover current content | It does not prove search indexing |
 | JSON Feed | `/feed.json` | Live feed has `140` Blog + Play items and WebSub hub metadata | Programmatic readers can discover current content | It does not broaden the submitted sitemap scope |
@@ -40,7 +40,8 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 ## Manual Follow-up Window
 
-- Next scheduled observation: `2026-07-02`
+- Completed observation: `2026-07-02`
+- Next scheduled observation: `2026-07-09`
 - Second scheduled observation: `2026-07-09`
 - Automation id: `bobob-indexing-observation`
 - Use Search Console property: `https://www.bobob.app/`
@@ -63,7 +64,7 @@ Compare against the first `2026-06-25` baseline:
 Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
-- Latest `/sitemaps/en` discovered pages after the 2026-06-26 resubmission: `68`
+- Latest `/sitemaps/en` discovered pages after the 2026-07-02 resubmission: `68`
 - Current live `/sitemaps/en` URL count: `151`
 - Latest IndexNow URL count: `151`
 - Latest feed item count: `140`
@@ -71,9 +72,10 @@ Also compare against the later same-day post-expansion registration:
 Latest Search Console observation from `bobob935@gmail.com`:
 
 - Total clicks: `0`
-- Total impressions: `3`
+- Total impressions: `18`
 - Indexed pages: `0`
 - Not indexed pages: `5`
+- URL Inspection: `https://www.bobob.app/` is indexed; Blog/Play representative URLs are not indexed yet.
 
 ## Stop Rule
 

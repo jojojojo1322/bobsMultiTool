@@ -1106,7 +1106,67 @@ Decision:
 - Do not broaden sitemap scope yet.
 - Keep `/sitemaps/en` as the submitted canonical Blog + Play sitemap.
 - Continue with a 1-2 week Search Console observation window before treating indexing as solved.
-- Next check should compare indexed count, not-indexed count, sitemap discovered page count, and 3-month impressions against the initial zero-impression baseline and the latest `3`-impression observation.
+## 2026-07-02
+
+- Observation date marker: `2026-07-02`
+- Scheduled Search Console/Bing/Naver observation:
+  - Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`
+  - Browser/session guard: Chrome profile/session signed in as `bobob935@gmail.com`.
+  - Search Console URL-prefix property: `https://www.bobob.app/`
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `151`, feed items `140`, Blog posts `114`, Play entries `26`.
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `151` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+  - Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_TIMEOUT_MS=30000 npm run harness:search-discovery-registration` passed with `151` sitemap URLs and `140` feed items.
+  - Performance report range: `3개월`
+  - Performance last updated: `8.5시간 전`
+  - Total clicks: `0`
+  - Total impressions: `18`
+  - Average CTR: `0%`
+  - Average position: `1.1`
+  - Page indexing report last updated: `2026-06-12`
+  - Indexed pages: `0`
+  - Not indexed pages: `5`
+  - Reason rows:
+    - `리디렉션이 포함된 페이지`: `3`, validation `시작됨`
+    - `적절한 표준 태그가 포함된 대체 페이지`: `2`, validation `시작됨`
+  - Sitemaps report before resubmission: `/sitemaps/en`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`, discovered videos `0`.
+  - Search Console action: submitted `sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live sitemap has `151` URLs.
+  - Search Console confirmation: `사이트맵이 제출됨`
+  - Search Console sitemap row after resubmission: `/sitemaps/en`, submitted `2026. 7. 2.`, last read `2026. 6. 26.`, status `성공`, discovered pages `68`, discovered videos `0`.
+  - Search Console sitemap index row: `/sitemap.xml`, type `Sitemap 색인`, submitted `2026. 6. 25.`, last read `2026. 6. 25.`, status `성공`, discovered pages `0`.
+- Representative URL inspection:
+  - `https://www.bobob.app/`: `URL이 Google에 등록되어 있음`; page indexing `페이지 색인이 생성됨`.
+  - `https://www.bobob.app/blog`: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `2026. 6. 25. 오후 8:53:06`; crawler `Googlebot 스마트폰`; crawl allowed `예`; page fetch `성공`; indexing allowed `예`; Google-selected canonical `검사된 URL`; indexing request confirmation `색인 생성 요청됨`.
+  - `https://www.bobob.app/play`: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `2026. 7. 2. 오후 7:11:42`; crawler `Googlebot 스마트폰`; crawl allowed `예`; page fetch `성공`; indexing allowed `예`; Google-selected canonical `검사된 URL`; indexing request confirmation `색인 생성 요청됨`.
+  - `https://www.bobob.app/blog/ai-side-project-realistic-order`: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`; indexing request confirmation `색인 생성 요청됨`.
+  - `https://www.bobob.app/play/office-survival`: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `2026. 6. 25. 오전 10:07:35`; crawler `Googlebot 스마트폰`; crawl allowed `예`; page fetch `성공`; indexing allowed `예`; Google-selected canonical `검사된 URL`; indexing request confirmation `색인 생성 요청됨`.
+  - Interpretation: Google URL Inspection now proves the homepage itself is indexed, and Search Console performance impressions increased from `3` to `18`. The broader Search Console page indexing report still has indexed pages `0`, discovered sitemap pages remain `68` against the live `151` URL sitemap, and the inspected Blog/Play representative URLs are still not indexed.
+- Bing follow-up:
+  - Bing Webmaster Tools URL opened: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`
+  - Result: redirected to the public Bing Webmaster Tools landing page with `Sign In`; site-specific recommendation classes were not visible.
+  - Public Bing search attempted: `site:www.bobob.app`
+  - Result: Bing showed a `계속하려면 아래 과제 해결` challenge, so public Bing indexed-result evidence was not collected in this pass.
+  - Interpretation: IndexNow submission remains the only confirmed Bing-compatible discovery evidence; Bing recommendation/indexing evidence remains pending.
+- Naver Search Advisor follow-up:
+  - Signed-in Search Advisor surface opened for `https://www.bobob.app`.
+  - Visible account/name surface: `풀꽃`
+  - Site ownership row: `https://www.bobob.app`, registered `25.07.24`, ownership expires `26.07.24`.
+  - Site summary:
+    - `보안 인증서`: `보안 인증서 정상입니다.`
+    - `HTTPS 리다이렉션`: `정상입니다.`
+    - `사이트맵`: `사이트맵을 찾을 수 없습니다.`
+    - `콘텐츠 노출/클릭`: `콘텐츠 노출/클릭 정보가 없습니다.`
+  - Visible submitted sitemap rows were old broad locale entries from `26.06.16`: `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`.
+  - `sitemaps/en` was not visible in the submitted sitemap list.
+  - Submission attempts for `sitemaps/en`, `https://www.bobob.app/sitemaps/en`, and `/sitemaps/en` did not add a visible `sitemaps/en` row; the full URL attempt triggered a JavaScript alert. No old sitemap row was deleted in this pass.
+  - Interpretation: Naver ownership is confirmed, but the canonical reduced sitemap is not visibly registered, and Naver does not yet show content exposure/click evidence.
+
+Decision:
+
+- Homepage indexing and 18 impressions are concrete progress, but the indexing part of the Blog + Play goal is still not complete.
+- Do not broaden sitemap scope yet.
+- Keep `/sitemaps/en` as the submitted canonical Blog + Play sitemap for Google/Bing. Naver needs a separate cleanup/pass because old broad locale sitemap rows are still visible there and `sitemaps/en` did not visibly register.
+- Continue with the next Search Console/Bing/Naver observation before treating indexing as solved.
+- Next check should compare indexed count, not-indexed count, sitemap discovered page count, homepage inspection, Blog/Play representative inspection, Bing Webmaster recommendation classes, Naver sitemap state, and 3-month impressions against the initial zero-impression baseline and the latest `18`-impression observation.
 
 Next observation windows:
 
@@ -1114,14 +1174,6 @@ Next observation windows:
   - Codex heartbeat automation id: `bobob-indexing-observation`
   - Schedule: starts `2026-07-02 10:00`, weekly, `2` runs.
   - Purpose: continue this thread and record concrete Search Console/Bing/Naver changes instead of treating discovery submissions as indexing proof.
-- `2026-07-02`:
-  - Use the `bobob935` Google account.
-  - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
-  - Search Console property: `https://www.bobob.app/`.
-  - Compare total clicks, total impressions, indexed pages, not-indexed pages, and `/sitemaps/en` discovered pages against the `2026-06-25` baseline, the later same-day `52` and `53` discovered-page sitemap resubmissions, the `2026-06-26` discovered-page values of `66` and `68`, and the current live `151` URL sitemap after the Play, information-content, arcade action-cap-removal, lottery scratch-drag, shooter drag-aiming, arcade count-field cleanup, lottery scratch stage-note, sum-box backtrack, visible Play counter-cleanup, password digit heatmap, endless lottery stage-loop, sum-box clear-feedback, password suggestion-cycle, Play action-limit wording cleanup, memory input-trail, Play count-limit label cleanup, brick-breaker landing guide, flight hold-release cue, snake next-cell preview, minesweeper chord-ready cue, shooter target-cue, mole priority-cue, Play state-hook cleanup, password slot-keypad, stacker drag-alignment, memory flow-cue, sum-box counter-cue, Play count-toned panel cleanup, snake open-turn cue, development Blog date distribution, play feedback development note, sum-box drag guide, password slot candidate cue, Naver verification confirmation, indexing waiting room, and workshop growth ledger updates.
-  - Confirm whether the old reason rows `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` moved, disappeared, or gained new sample URLs.
-  - Inspect representative URLs: `https://www.bobob.app/`, `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
-  - Naver Search Advisor still needs a signed-in pass. Check the canonical host, sitemap state, robots.txt state, and representative page collection/request status without treating a collection request as indexing proof.
 - `2026-07-09`:
   - Use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Repeat the same Search Console comparison.

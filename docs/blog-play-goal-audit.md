@@ -60,14 +60,15 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked and submitted again on `2026-06-26` from the signed-in `bobob935@gmail.com` Chrome session.
-  - Search Console sitemap row showed status `성공`, submitted `2026. 6. 26.`, last read `2026. 6. 26.`, and discovered pages `68`.
-  - Live `/sitemaps/en` had `68` URLs at that check, so Search Console sitemap discovery matched the prior XML count before the 정보 expansion.
-  - Latest performance observation showed total clicks `0` and total impressions `3` for the `3개월` range.
-  - Latest page indexing observation still showed indexed pages `0` and not-indexed pages `5`.
-  - Representative URL inspected: `https://www.bobob.app/blog/boring-maintenance-is-content-too`
-  - Representative URL status before request: `발견됨 - 현재 색인이 생성되지 않음`
-  - Representative URL indexing request confirmation: `색인 생성 요청됨`
+  - `/sitemaps/en` was checked and submitted again on `2026-07-02` from the signed-in `bobob935@gmail.com` Chrome session.
+  - Search Console sitemap row showed status `성공`, submitted `2026. 7. 2.`, last read `2026. 6. 26.`, and discovered pages `68`.
+  - Live `/sitemaps/en` had `151` URLs at that check, so Search Console sitemap discovery still trails the current XML.
+  - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
+  - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
+  - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
+  - Representative Blog/Play URLs inspected: `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
+  - Representative Blog/Play URL status before request: `/blog`, `/play`, and `/play/office-survival` were `크롤링됨 - 현재 색인이 생성되지 않음`; `/blog/ai-side-project-realistic-order` was `발견됨 - 현재 색인이 생성되지 않음`.
+  - Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`
 - IndexNow:
   - Latest submitted URL count: `151`
   - Latest response status: `200`
@@ -76,8 +77,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - Naver:
-  - Naver Search Advisor still needs a signed-in follow-up pass for the canonical host, sitemap state, robots.txt state, and representative page collection/request status.
-  - A Naver page collection request, when submitted, must be logged separately and must not be treated as indexing proof.
+  - Signed-in Search Advisor showed `https://www.bobob.app` owned under `풀꽃`, registered `25.07.24`, with ownership expiring `26.07.24`.
+  - Naver reports security certificate and HTTPS redirect as normal.
+  - Naver still reports `사이트맵을 찾을 수 없습니다` and `콘텐츠 노출/클릭 정보가 없습니다`.
+  - Visible Naver sitemap rows are old broad locale entries from `26.06.16`; `sitemaps/en` was not visibly added after submission attempts.
+  - A Naver page collection request, when submitted later, must be logged separately and must not be treated as indexing proof.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
@@ -89,11 +93,13 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 ## Still Not Complete
 
-- Search Console has started showing impressions (`3`) in the `3개월` performance report, but clicks remain `0`.
+- Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
+- Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked again against the new live sitemap URL count (`151`), and indexing is still unresolved.
+- Search Console sitemap discovery still trails the live sitemap URL count (`151`): `/sitemaps/en` discovered pages remain `68`.
+- Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
-- Naver Search Advisor collection/indexing state still needs a signed-in follow-up pass after deployment and submission propagation.
+- Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
 
 ## Scheduled Follow-up
