@@ -24,6 +24,7 @@ export function ThemeToggle({ dictionary }: { dictionary: ClientDictionary }) {
         {value === "light" ? <Sun className="h-4 w-4" /> : value === "dark" ? <Moon className="h-4 w-4" /> : <Laptop className="h-4 w-4" />}
       </Button>
       <Select
+        id="theme-select"
         value={value}
         onChange={(event) => setTheme(event.target.value)}
         className="h-8 w-20 px-2 sm:w-28 sm:px-3"

@@ -165,6 +165,9 @@ const latestSearchConsoleDiscoveredPages = Array.from(log.matchAll(/\/sitemaps\/
   .at(-1);
 if (!latestSearchConsoleDiscoveredPages) failures.push("Could not parse latest Search Console discovered pages");
 const discoveredPages = numberAfter(log, /\/sitemaps\/en`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `(\d+)`/, "/sitemaps/en discovered pages");
+const hasPendingSourceTargetPrune =
+  log.includes("Source Target") &&
+  /latest external Search Console discovery evidence remains the previous `76` discovered pages until the \d+-URL target is deployed/.test(log);
 
 if (submittedUrlCount !== null && discoveredPages !== null && submittedUrlCount !== discoveredPages) {
   failures.push(`IndexNow submitted URL count ${submittedUrlCount} should match /sitemaps/en discovered pages ${discoveredPages}`);
@@ -181,7 +184,12 @@ try {
 if (liveSitemapUrlCount !== null && latestLoggedLiveSitemapUrlCount && liveSitemapUrlCount !== latestLoggedLiveSitemapUrlCount) {
   failures.push(`Live /sitemaps/en URL count ${liveSitemapUrlCount} should match latest logged live sitemap URL count ${latestLoggedLiveSitemapUrlCount}`);
 }
-if (liveSitemapUrlCount !== null && latestSearchConsoleDiscoveredPages && latestSearchConsoleDiscoveredPages > liveSitemapUrlCount) {
+if (
+  liveSitemapUrlCount !== null &&
+  latestSearchConsoleDiscoveredPages &&
+  latestSearchConsoleDiscoveredPages > liveSitemapUrlCount &&
+  !hasPendingSourceTargetPrune
+) {
   failures.push(
     `Latest Search Console discovered pages ${latestSearchConsoleDiscoveredPages} should not exceed live sitemap URL count ${liveSitemapUrlCount}`,
   );

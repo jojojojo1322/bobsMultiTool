@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Newspaper } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Newspaper } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
@@ -42,6 +42,7 @@ export const metadata: Metadata = {
 export default function BlogIndexPage() {
   const dictionary = getClientDictionary(contentLocale);
   const posts = getIndexableBlogPosts();
+  const pillarPosts = posts.filter((post) => post.publicationTier === "pillar");
   const jsonLd = blogIndexStructuredData(posts);
   const categories = blogCategoryDefinitions
     .map((category) => ({
@@ -62,6 +63,48 @@ export default function BlogIndexPage() {
             검색어만 맞춘 글은 재미가 없습니다. 여기에는 개발, AI 도구, 사이드프로젝트 운영을 하다가 실제로 헷갈렸던 것 중 대표로 남길 만한 글만 앞에 둡니다.
             짧은 제작 메모는 Play별 제작 로그로 묶고, 먼저 읽어도 사이트 방향이 보이는 글을 이 목록에 남깁니다.
           </p>
+        </div>
+      </section>
+      <section className="border-b bg-background" data-blog-pillars>
+        <div className="mx-auto max-w-6xl px-4 py-8">
+          <div className="mb-5 max-w-3xl">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">먼저 읽을 글</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-normal">사이트 방향을 보여주는 세 글</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              도구 중심에서 Blog + Play로 바꾼 이유, 정적 Play를 운영하는 구조, 제출할 콘텐츠를 줄여 보는 기준을 먼저 묶었습니다.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {pillarPosts.map((post) => {
+              const relatedPlay = post.relatedPlaySlugs[0] ? getPlayContentBySlug(post.relatedPlaySlugs[0]) : undefined;
+              return (
+                <Link key={post.slug} href={`/blog/${post.slug}`}>
+                  <Card className="h-full transition-colors hover:bg-muted/50">
+                    <CardHeader>
+                      <div className="mb-2 flex flex-wrap gap-2">
+                        <Badge>대표 기준</Badge>
+                        <Badge>{post.readingMinutes}분 읽기</Badge>
+                      </div>
+                      <CardTitle>{post.title}</CardTitle>
+                      <CardDescription>{post.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="border-t pt-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <BookOpenCheck className="h-4 w-4" />
+                        <span>{post.date}</span>
+                      </div>
+                      {relatedPlay ? (
+                        <span className="mt-3 inline-flex w-fit items-center gap-2 rounded-md border bg-background px-3 py-1.5 text-foreground">
+                          이어서 해보기: {relatedPlay.title}
+                          <ArrowRight className="h-4 w-4 shrink-0" />
+                        </span>
+                      ) : null}
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </section>
       <section className="border-b" data-blog-categories>

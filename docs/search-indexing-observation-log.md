@@ -1277,6 +1277,22 @@ Completion guard:
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this narrows the review surface and removes one duplicate submitted Blog page, but it is not deployment, resubmission, or indexing proof. After deployment, the next external pass should submit or verify `/sitemaps/en` against the `76` URL target and compare discovered pages against the previous `73` reading.
 
+## 2026-07-03 Information Representative Prune Source Target
+
+- Change: demoted four duplicate date-sensitive information posts from representative/indexable content to archive/noindex candidates instead of deleting them:
+  - `world-cup-search-terms-check-2026-06-27`
+  - `world-cup-player-stats-check-2026-06-27`
+  - `world-cup-round-of-32-korea-time-2026-06-27`
+  - `youth-future-savings-search-questions-2026-06-27`
+- Reason: the representative set was still `35` posts with `18` submitted `정보` posts, making the review surface look too dominated by date-sensitive search wrappers. The narrowed source target keeps the 30-45 representative requirement while reducing duplicate information coverage.
+- Representative Blog count: `31`
+- Archive/noindex Blog candidate count: `89`
+- Representative information lane count: `14`
+- Representative sitemap URL target: `72`
+- Representative feed item target: `57`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 72-URL target is deployed, submitted, and observed.
+
 ## 2026-07-03 76-URL Deployment Registration
 
 - PR: `https://github.com/jojojojo1322/bobsMultiTool/pull/1`
@@ -1306,3 +1322,35 @@ Completion guard:
 - WebSub feed item counts: `61`, `61`
 - WebSub response statuses: `204`, `204`
 - Interpretation: production discovery now matches the narrowed review surface and both pillar URLs are queued for crawling, but the goal remains open because the pillar URLs are still not indexed and Bing/Naver observation has not improved yet. The next observation should compare indexed pages, not-indexed pages, sitemap discovered pages, pillar URL Inspection status, Bing Webmaster recommendation classes, and Naver sitemap/page collection state after propagation.
+
+## 2026-07-03 Owner Operations Representative Source Target
+
+- Change: promoted `search-console-waiting-diary` from a short `devlog-archive` note to a representative operations article tied to `indexing-waiting-room`.
+- Change: demoted two more duplicate date-sensitive information posts from representative/indexable content to archive/noindex candidates instead of deleting them:
+  - `world-cup-round-of-32-bracket-check-2026-06-27`
+  - `youth-future-savings-switch-check-2026-06-27`
+- Reason: the representative set needed more owner-operated evidence and less duplicated date-sensitive information. The promoted Search Console waiting log now has a comparison table, today's-check checklist, wait-list checklist, and verification-record shape, while the two demoted information posts remain reachable but no longer broaden the submitted review surface.
+- Representative Blog count: `30`
+- Archive/noindex Blog candidate count: `90`
+- Representative information lane count: `12`
+- Representative operations lane count: `4`
+- Representative sitemap URL target: `71`
+- Representative feed item target: `56`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 71-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Owner Category Balance Source Target
+
+- Change: promoted two owner/Play-context archive notes to deeper representative articles instead of adding new thin URLs:
+  - `first-small-web-note`
+  - `why-small-web-toys-return`
+- Reason: the submitted set was technically within the 30-45 representative range, but the `일기` and `요즘 관심사` category hubs each had only one submitted post. The promoted notes make those hubs feel more like real source-locale lanes while keeping the total submitted Blog set below the prior 35-post review surface.
+- Representative Blog count: `32`
+- Archive/noindex Blog candidate count: `88`
+- Representative diary lane count: `2`
+- Representative interests lane count: `2`
+- Representative information lane count: `12`
+- Representative sitemap URL target: `73`
+- Representative feed item target: `58`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 73-URL target is deployed, submitted, and observed.
