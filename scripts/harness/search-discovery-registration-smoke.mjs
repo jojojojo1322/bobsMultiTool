@@ -40,6 +40,11 @@ function assertIncludes(source, fragment, label) {
   if (!source.includes(fragment)) failures.push(`${label} missing fragment: ${fragment}`);
 }
 
+function backtickNumber(source, label) {
+  const match = source.match(new RegExp(`${label}: \`(\\d+)\``));
+  return match ? Number(match[1]) : null;
+}
+
 async function fetchText(routePath, accept = "*/*") {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
@@ -81,6 +86,8 @@ const playEntries = fs
 const categorySlugs = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 9;
 const expectedFeedItemCount = submittedBlogEntries.length + playEntries.length;
+const latestExternalSitemapCount = backtickNumber(matrix, "Latest external sitemap discovery count") ?? expectedSitemapUrlCount;
+const latestExternalFeedItemCount = backtickNumber(matrix, "Latest external feed publish item count") ?? expectedFeedItemCount;
 
 for (const fragment of [
   "# bobob.app Search Discovery Registration Matrix",
@@ -93,10 +100,12 @@ for (const fragment of [
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
-  `Current reduced live sitemap target: \`${expectedSitemapUrlCount}\` URLs`,
+  `Current source sitemap target: \`${expectedSitemapUrlCount}\` URLs`,
+  `Latest external sitemap discovery count: \`${latestExternalSitemapCount}\``,
+  `Latest external feed publish item count: \`${latestExternalFeedItemCount}\``,
   "Latest signed-in Search Console observation after resubmission",
-  `submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${expectedSitemapUrlCount}\`, videos \`0\``,
-  `Google accepted, read, and discovered the current ${expectedSitemapUrlCount}-URL canonical sitemap set`,
+  `submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${latestExternalSitemapCount}\`, videos \`0\``,
+  `Google accepted, read, and discovered the latest externally submitted ${latestExternalSitemapCount}-URL canonical sitemap set`,
   "Google Search Console performance",
   "Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`",
   "Google Search Console page indexing",
@@ -108,7 +117,7 @@ for (const fragment of [
   "page fetch `성공`, indexing allowed `예`",
   "both have `색인 생성 요청됨` confirmations",
   "Bing and IndexNow",
-  `Latest IndexNow representative submission: \`${expectedSitemapUrlCount}\` URLs with response \`200\``,
+  `Latest IndexNow representative submission: \`${latestExternalSitemapCount}\` URLs with response \`200\``,
   "Bing Webmaster Tools",
   "Latest browser check reached the public landing page with `Sign In`",
   "Public Bing search",
@@ -122,7 +131,7 @@ for (const fragment of [
   "JSON Feed",
   "WebSub",
   `Current representative feed has \`${expectedFeedItemCount}\` Blog + Play items`,
-  `Latest WebSub representative publish: \`${expectedFeedItemCount}\` RSS items and \`${expectedFeedItemCount}\` Atom entries with response statuses \`204\`, \`204\``,
+  `Latest WebSub representative publish: \`${latestExternalFeedItemCount}\` RSS items and \`${latestExternalFeedItemCount}\` Atom entries with response statuses \`204\`, \`204\``,
   "robots.txt",
   "OpenSearch",
   "llms.txt",
@@ -148,13 +157,13 @@ for (const fragment of [
   "76-URL Deployment Registration",
   "Search Console confirmation: `사이트맵이 제출됨`",
   "Search Console sitemap visible row after 76-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `76`, discovered videos `0`.",
-  `Search Console sitemap visible row after 77-URL resubmission: \`/sitemaps/en\`, submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${expectedSitemapUrlCount}\`, discovered videos \`0\`.`,
+  `Search Console sitemap visible row after 77-URL resubmission: \`/sitemaps/en\`, submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${latestExternalSitemapCount}\`, discovered videos \`0\`.`,
   "Pillar live URL test result: tested `2026. 7. 3. 오전 12:39`; `URL을 Google에 등록할 수 있음`",
   "Pillar live URL test result: tested `2026. 7. 3. 오전 12:38`; `URL을 Google에 등록할 수 있음`",
   "Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.",
   "WebSub response statuses: `204`, `204`",
   "77-URL Deployment Discovery Refresh",
-  `IndexNow submitted URL count: \`${expectedSitemapUrlCount}\``,
+  `IndexNow submitted URL count: \`${latestExternalSitemapCount}\``,
   `Search Console sitemap visible row after 77-URL resubmission`,
   "page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`",
   "Total impressions: `18`",

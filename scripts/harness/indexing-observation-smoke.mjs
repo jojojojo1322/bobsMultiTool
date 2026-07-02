@@ -167,7 +167,7 @@ if (!latestSearchConsoleDiscoveredPages) failures.push("Could not parse latest S
 const discoveredPages = numberAfter(log, /\/sitemaps\/en`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `(\d+)`/, "/sitemaps/en discovered pages");
 const hasPendingSourceTargetPrune =
   log.includes("Source Target") &&
-  /latest external Search Console discovery evidence remains the previous `76` discovered pages until the \d+-URL target is deployed/.test(log);
+  /latest external Search Console discovery evidence remains the previous `\d+` discovered pages until the \d+-URL target is deployed/.test(log);
 
 if (submittedUrlCount !== null && discoveredPages !== null && submittedUrlCount !== discoveredPages) {
   failures.push(`IndexNow submitted URL count ${submittedUrlCount} should match /sitemaps/en discovered pages ${discoveredPages}`);
@@ -181,7 +181,7 @@ try {
   failures.push(`Could not fetch live /sitemaps/en for observation smoke: ${error instanceof Error ? error.message : String(error)}`);
 }
 
-if (liveSitemapUrlCount !== null && latestLoggedLiveSitemapUrlCount && liveSitemapUrlCount !== latestLoggedLiveSitemapUrlCount) {
+if (liveSitemapUrlCount !== null && latestLoggedLiveSitemapUrlCount && liveSitemapUrlCount !== latestLoggedLiveSitemapUrlCount && !hasPendingSourceTargetPrune) {
   failures.push(`Live /sitemaps/en URL count ${liveSitemapUrlCount} should match latest logged live sitemap URL count ${latestLoggedLiveSitemapUrlCount}`);
 }
 if (

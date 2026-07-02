@@ -90,6 +90,8 @@ const currentSubmittedSitemapCount = backtickNumber(discoveryRegistration, "Curr
 const currentFeedItemCount = backtickNumber(discoveryRegistration, "Current feed source target item count");
 const currentRegisteredBlogCount = backtickNumber(discoveryRegistration, "Current Blog count");
 const currentRepresentativeBlogCount = backtickNumber(discoveryRegistration, "Current representative Blog count");
+const latestExternalSitemapCount = backtickNumber(discoveryRegistration, "Latest external sitemap discovery count") ?? currentSubmittedSitemapCount;
+const latestExternalFeedItemCount = backtickNumber(discoveryRegistration, "Latest external feed publish item count") ?? currentFeedItemCount;
 
 if (blogEntries.length < 39) failures.push(`audit expects at least 39 Blog posts, found ${blogEntries.length}`);
 if (representativeBlogEntries.length < 30 || representativeBlogEntries.length > 45) {
@@ -148,8 +150,8 @@ for (const fragment of [
   "`why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article",
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,
-  `Search Console sitemap resubmission for the current ${currentSubmittedSitemapCount}-URL sitemap showed \`사이트맵이 제출됨\`.`,
-  `discovered pages \`${currentSubmittedSitemapCount}\``,
+  `Search Console sitemap resubmission for the latest externally submitted ${latestExternalSitemapCount}-URL sitemap showed \`사이트맵이 제출됨\`.`,
+  `discovered pages \`${latestExternalSitemapCount}\``,
   "This is discovery evidence, not indexing proof.",
   "Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1`",
   "Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.",
@@ -159,12 +161,12 @@ for (const fragment of [
   "Both pillar URLs were `URL이 Google에 등록되어 있지 않음`",
   "크롤링됨 - 현재 색인이 생성되지 않음",
   "Both pillar URL indexing request confirmations showed `색인 생성 요청됨`",
-  `Latest submitted URL count: \`${currentSubmittedSitemapCount}\``,
-  `The current ${currentSubmittedSitemapCount}-URL representative sitemap set has been submitted to IndexNow with response status \`200\`.`,
+  `Latest submitted URL count: \`${latestExternalSitemapCount}\``,
+  `The latest externally submitted ${latestExternalSitemapCount}-URL representative sitemap set has been submitted to IndexNow with response status \`200\`.`,
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
-  `Latest published feed item counts: \`${currentFeedItemCount}\`, \`${currentFeedItemCount}\`.`,
+  `Latest published feed item counts: \`${latestExternalFeedItemCount}\`, \`${latestExternalFeedItemCount}\`.`,
   "Discovery registration matrix:",
   "`docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule",
   "Submitted URL health:",
@@ -173,7 +175,7 @@ for (const fragment of [
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
   "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
-  `Search Console sitemap discovery matched the current reduced representative sitemap URL count (\`${currentSubmittedSitemapCount}\`)`,
+  `Search Console sitemap discovery matched the latest externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",

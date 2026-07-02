@@ -1446,3 +1446,18 @@ Completion guard:
 - Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `2026. 7. 3. 오전 3:00:15`; crawl agent `Googlebot 스마트폰`; page fetch `성공`; indexing allowed `예`.
 - Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - Interpretation: production discovery now matches the 77-URL representative surface, Google Search Console discovered the current sitemap count, and both pillar URLs have fresh crawl evidence plus indexing-request confirmations. This still must not be treated as indexed or search-ready because both pillar URLs remain `크롤링됨 - 현재 색인이 생성되지 않음`. The goal remains open until later Search Console, Bing, or Naver observation shows changed indexing, recommendation, collection, or measured performance evidence.
+
+## 2026-07-03 Additional World Cup Information Prune Source Target
+
+- Change: demoted three duplicate World Cup information posts from representative/indexable content to archive/noindex candidates instead of deleting them:
+  - `world-cup-round-of-32-check-2026-06-27`
+  - `world-cup-third-place-rules-2026-06-27`
+  - `world-cup-watch-replay-check-2026-06-27`
+- Reason: the submitted information lane still had too many World Cup derivative URLs after the 77-URL deployment. Keeping the official-channel, host-city travel, and resale/transfer checks as submitted World Cup representatives preserves distinct reader tasks while narrowing duplicated bracket/replay/third-place wrappers.
+- Representative Blog count: `33`
+- Archive/noindex Blog candidate count: `93`
+- Representative information lane count: `7`
+- Representative sitemap URL target: `74`
+- Representative feed item target: `59`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the 74-URL target is deployed, submitted, and observed.
