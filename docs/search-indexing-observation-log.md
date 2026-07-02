@@ -1378,3 +1378,15 @@ Completion guard:
 - Representative feed item target: `60`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 75-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Prompt Request Representative Source Target
+
+- Change: added `prompt-cleanup-build-log` as a representative build log tied to `prompt-cleanup`.
+- Reason: the short prompt/review notes explain useful habits, but the submitted set needed one stronger article showing how the playable request sorter separates task, context, examples, output shape, and constraints before AI work begins.
+- Representative Blog count: `35`
+- Archive/noindex Blog candidate count: `90`
+- Representative AI lane count: `5`
+- Representative sitemap URL target: `76`
+- Representative feed item target: `61`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages, and that count alone is not evidence for this new 76-URL source set because the submitted URLs changed.
