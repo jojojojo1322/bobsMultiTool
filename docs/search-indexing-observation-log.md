@@ -1237,6 +1237,16 @@ Decision:
   - Pillar URL inspection status: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; recent crawl `해당사항 없음`; page fetch `해당사항 없음`.
   - Search Console action: no pillar `색인 생성 요청` button was pressed and no new live URL test was run in this pass; this pass resubmitted the sitemap and inspected stored URL Inspection state.
   - Interpretation: the two new pillar posts remain discoverable from the submitted sitemap but are still not indexed. The next observation should check whether `/sitemaps/en` discovered pages reaches `77` and whether either pillar status moves beyond `발견됨 - 현재 색인이 생성되지 않음`.
+- Same-day Bing/Naver discovery follow-up:
+  - Bing Webmaster Tools target: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`
+  - Bing result: the page still opened the public Bing Webmaster Tools landing page with `Sign In`; clicking `Sign In` did not reveal a site-specific dashboard or recommendation classes in this Chrome session.
+  - Bing interpretation: IndexNow `200` remains the only confirmed Bing-compatible discovery evidence for the reduced `77` URL set. Bing Webmaster recommendation/indexing evidence remains pending.
+  - Naver Search Advisor account surface: signed-in as `풀꽃`.
+  - Naver site row: `https://www.bobob.app`, ownership message `소유확인 만료일은 26.07.24 입니다`, registration date `25.07.24`.
+  - Naver summary status: security certificate normal, HTTPS redirect normal, `사이트맵을 찾을 수 없습니다`, and `콘텐츠 노출/클릭 정보가 없습니다`.
+  - Naver sitemap screen: old broad locale sitemap rows from `26.06.16` remain visible, including `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`; no `sitemaps/en` row was visible in the current screen.
+  - Naver action: no `sitemaps/en` submission was made in this pass because submitting the form changes Naver Search Advisor state and needs action-time confirmation.
+  - Naver interpretation: ownership and the sitemap-registration gap are confirmed. The next cleanup action is to submit `sitemaps/en` from the visible Search Advisor sitemap form after confirmation, then separately record whether Naver accepts and lists it. That still would be discovery evidence, not indexing proof.
 
 Decision:
 

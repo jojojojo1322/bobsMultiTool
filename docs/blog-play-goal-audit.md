@@ -91,13 +91,15 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Latest submitted URL count: `77`
   - The 77-URL representative sitemap set has been submitted to IndexNow with response status `200`; the previous broad 151-URL set was superseded by the reduced representative submission.
 - Bing:
-  - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
+  - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a working signed-in dashboard session.
+  - A `2026-07-03` browser pass clicked `Sign In`, but the tab stayed on the public Bing Webmaster Tools landing page rather than revealing site-specific recommendation classes.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - Naver:
   - Signed-in Search Advisor showed `https://www.bobob.app` owned under `풀꽃`, registered `25.07.24`, with ownership expiring `26.07.24`.
   - Naver reports security certificate and HTTPS redirect as normal.
   - Naver still reports `사이트맵을 찾을 수 없습니다` and `콘텐츠 노출/클릭 정보가 없습니다`.
-  - Visible Naver sitemap rows are old broad locale entries from `26.06.16`; `sitemaps/en` was not visibly added after submission attempts.
+  - Visible Naver sitemap rows are old broad locale entries from `26.06.16`; `sitemaps/en` is still not visible in the current sitemap table.
+  - The `2026-07-03` signed-in pass reached the `sitemaps/en` submission field, but no new Naver submission was made because it changes webmaster-tool state and needs action-time confirmation.
   - A Naver page collection request, when submitted later, must be logged separately and must not be treated as indexing proof.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
