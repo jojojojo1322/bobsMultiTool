@@ -1338,3 +1338,19 @@ Completion guard:
 - Representative feed item target: `56`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 71-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Owner Category Balance Source Target
+
+- Change: promoted two owner/Play-context archive notes to deeper representative articles instead of adding new thin URLs:
+  - `first-small-web-note`
+  - `why-small-web-toys-return`
+- Reason: the submitted set was technically within the 30-45 representative range, but the `일기` and `요즘 관심사` category hubs each had only one submitted post. The promoted notes make those hubs feel more like real source-locale lanes while keeping the total submitted Blog set below the prior 35-post review surface.
+- Representative Blog count: `32`
+- Archive/noindex Blog candidate count: `88`
+- Representative diary lane count: `2`
+- Representative interests lane count: `2`
+- Representative information lane count: `12`
+- Representative sitemap URL target: `73`
+- Representative feed item target: `58`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 73-URL target is deployed, submitted, and observed.
