@@ -22,10 +22,12 @@ const blogSlugs = fs
   .map((file) => {
     const source = fs.readFileSync(path.join(blogDir, file), "utf8");
     const slug = source.match(/^slug:\s*(.+)$/m)?.[1]?.trim().replace(/^"|"$/g, "");
+    const title = source.match(/^title:\s*(.+)$/m)?.[1]?.trim().replace(/^"|"$/g, "");
     const indexPolicy = source.match(/^indexPolicy:\s*(.+)$/m)?.[1]?.trim().replace(/^"|"$/g, "");
-    return { slug, indexPolicy };
+    return { slug, title, indexPolicy };
   })
   .filter((entry) => entry.slug);
+const archivedBlogEntries = blogSlugs.filter((entry) => entry.indexPolicy === "noindex");
 const submittedBlogSlugs = blogSlugs
   .filter((entry) => entry.indexPolicy === "index")
   .map((entry) => entry.slug)
@@ -36,7 +38,8 @@ const playSlugs = fs
   .filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(fs.readFileSync(path.join(playDir, file), "utf8")).slug)
   .filter(Boolean);
-const expectedSitemapUrlCount = submittedBlogSlugs.length + playSlugs.length + blogCategorySlugs.length + 5;
+const expectedBaseSitemapUrlCount = 9; // /, search, four trust/legal pages, blog, play, and tools.
+const expectedSitemapUrlCount = submittedBlogSlugs.length + playSlugs.length + blogCategorySlugs.length + expectedBaseSitemapUrlCount;
 const expectedFeedItemCount = submittedBlogSlugs.length + playSlugs.length;
 
 const paths = [
@@ -218,6 +221,33 @@ for (const fragment of [
 ]) {
   if (!blogHtml.includes(fragment)) failures.push(`/blog missing source-locale category fragment: ${fragment}`);
 }
+for (const entry of archivedBlogEntries) {
+  if (blogHtml.includes(`href="/blog/${entry.slug}"`) || (entry.title && blogHtml.includes(entry.title))) {
+    failures.push(`/blog should not promote noindex/archive Blog post ${entry.slug}`);
+  }
+}
+
+const searchHtml = await (await fetch(`${baseUrl}/search`, { headers: smokeHeaders })).text();
+for (const entry of archivedBlogEntries) {
+  if (searchHtml.includes(`href="/blog/${entry.slug}"`) || (entry.title && searchHtml.includes(entry.title))) {
+    failures.push(`/search should not show noindex/archive Blog post ${entry.slug} in default results`);
+  }
+}
+for (const entry of archivedBlogEntries.slice(0, 5)) {
+  const query = entry.title || entry.slug;
+  const archiveSearchHtml = await (await fetch(`${baseUrl}/search?q=${encodeURIComponent(query)}`, { headers: smokeHeaders })).text();
+  if (archiveSearchHtml.includes(`href="/blog/${entry.slug}"`)) {
+    failures.push(`/search?q=${query} should not return noindex/archive Blog post ${entry.slug}`);
+  }
+}
+for (const categorySlug of blogCategorySlugs) {
+  const categoryHtml = await (await fetch(`${baseUrl}/blog/category/${categorySlug}`, { headers: smokeHeaders })).text();
+  for (const entry of archivedBlogEntries) {
+    if (categoryHtml.includes(`href="/blog/${entry.slug}"`) || (entry.title && categoryHtml.includes(entry.title))) {
+      failures.push(`/blog/category/${categorySlug} should not promote noindex/archive Blog post ${entry.slug}`);
+    }
+  }
+}
 
 const adsTxtResponse = await fetch(`${baseUrl}/ads.txt`, { headers: smokeHeaders });
 const adsTxtBody = await adsTxtResponse.text();
@@ -249,11 +279,20 @@ for (const fragment of [
   "<loc>https://www.bobob.app/blog/ai-side-project-realistic-order</loc>",
   "<loc>https://www.bobob.app/blog/content-indexing-checklist-before-resubmission</loc>",
   "<loc>https://www.bobob.app/play/prompt-cleanup</loc>",
+  "<loc>https://www.bobob.app/about</loc>",
+  "<loc>https://www.bobob.app/contact</loc>",
+  "<loc>https://www.bobob.app/privacy</loc>",
+  "<loc>https://www.bobob.app/terms</loc>",
   "<loc>https://www.bobob.app/tools</loc>",
-  "<lastmod>2026-06-27</lastmod>",
+  "<lastmod>2026-07-03</lastmod>",
   'hreflang="x-default"',
 ]) {
   if (!reducedSitemapBody.includes(fragment)) failures.push(`/sitemaps/en missing discovery fragment: ${fragment}`);
+}
+for (const entry of archivedBlogEntries) {
+  if (reducedSitemapBody.includes(`/blog/${entry.slug}`)) {
+    failures.push(`/sitemaps/en should exclude noindex/archive Blog post ${entry.slug}`);
+  }
 }
 
 const feedBody = await (await fetch(`${baseUrl}/feed.xml`, { headers: smokeHeaders })).text();
@@ -274,6 +313,11 @@ for (const fragment of [
   "<lastBuildDate>",
 ]) {
   if (!feedBody.includes(fragment)) failures.push(`/feed.xml missing discovery fragment: ${fragment}`);
+}
+for (const entry of archivedBlogEntries) {
+  if (feedBody.includes(`/blog/${entry.slug}`)) {
+    failures.push(`/feed.xml should exclude noindex/archive Blog post ${entry.slug}`);
+  }
 }
 
 const atomResponse = await fetch(`${baseUrl}/atom.xml`, { headers: smokeHeaders });
@@ -296,6 +340,11 @@ for (const fragment of [
 ]) {
   if (!atomBody.includes(fragment)) failures.push(`/atom.xml missing discovery fragment: ${fragment}`);
 }
+for (const entry of archivedBlogEntries) {
+  if (atomBody.includes(`/blog/${entry.slug}`)) {
+    failures.push(`/atom.xml should exclude noindex/archive Blog post ${entry.slug}`);
+  }
+}
 
 const jsonFeedResponse = await fetch(`${baseUrl}/feed.json`, { headers: smokeHeaders });
 const jsonFeedBody = await jsonFeedResponse.json().catch(() => null);
@@ -317,6 +366,11 @@ for (const url of [
   "https://www.bobob.app/play/prompt-cleanup",
 ]) {
   if (!jsonFeedBody?.items?.some((item) => item.url === url)) failures.push(`/feed.json missing item URL: ${url}`);
+}
+for (const entry of archivedBlogEntries) {
+  if (jsonFeedBody?.items?.some((item) => item.url === `https://www.bobob.app/blog/${entry.slug}`)) {
+    failures.push(`/feed.json should exclude noindex/archive Blog post ${entry.slug}`);
+  }
 }
 if (!jsonFeedBody?.items?.some((item) => item.url === "https://www.bobob.app/blog/ai-side-project-realistic-order" && item.tags?.includes("AI"))) {
   failures.push("/feed.json missing Blog category tags");
@@ -347,6 +401,11 @@ for (const fragment of [
   "[OpenSearch descriptor](https://www.bobob.app/opensearch.xml)",
 ]) {
   if (!llmsBody.includes(fragment)) failures.push(`/llms.txt missing discovery fragment: ${fragment}`);
+}
+for (const entry of archivedBlogEntries) {
+  if (llmsBody.includes(`/blog/${entry.slug}`)) {
+    failures.push(`/llms.txt should exclude noindex/archive Blog post ${entry.slug}`);
+  }
 }
 
 const openSearchResponse = await fetch(`${baseUrl}/opensearch.xml`, { headers: smokeHeaders });
