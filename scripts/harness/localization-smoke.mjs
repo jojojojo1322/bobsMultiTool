@@ -257,7 +257,7 @@ for (const fragment of [
 }
 for (const fragment of [
   "getLocalizedTrustContent",
-  "Bob's Multi Tool 소개",
+  "bobob.app 소개",
   "問い合わせ",
   "关于 Bob's Multi Tool",
   "Acerca de Bob's Multi Tool",

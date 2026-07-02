@@ -156,10 +156,13 @@ for (const [source, label] of [
 }
 
 for (const fragment of [
-  "Core utility coverage",
+  "About bobob.app",
+  "Representative writing",
+  "Play experiments",
+  "Archived practical tools",
   "International coverage",
   "Review workflow before copying",
-  "Public trust surface",
+  "Public discovery surface",
   "Useful issue reports",
   "Response priorities",
   "What to include in content feedback",

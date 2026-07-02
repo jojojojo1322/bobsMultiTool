@@ -90,7 +90,7 @@ const blogCount = fs
   .filter((frontmatter) => frontmatter.indexPolicy === "index").length;
 const playCount = fs.readdirSync(playDir).filter((file) => file.endsWith(".json")).length;
 const categoryCount = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).length;
-const expectedSitemapUrlCount = blogCount + playCount + categoryCount + 5;
+const expectedSitemapUrlCount = blogCount + playCount + categoryCount + 9;
 
 function fetchUrlFor(canonicalUrl) {
   if (fetchBaseUrl === canonicalBaseUrl) return canonicalUrl;

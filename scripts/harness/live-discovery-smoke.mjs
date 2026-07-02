@@ -117,7 +117,7 @@ function assertIncludes(label, body, fragments) {
 const blogSlugs = listBlogSlugs();
 const playSlugs = listPlaySlugs();
 const blogCategorySlugs = listBlogCategorySlugs();
-const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + blogCategorySlugs.length + 5;
+const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + blogCategorySlugs.length + 9;
 const expectedFeedItemCount = blogSlugs.length + playSlugs.length;
 
 const apexResponse = await fetchLive(`${apexUrl}/`, { redirect: "manual" });
@@ -169,6 +169,10 @@ if (sitemapUrlCount !== expectedSitemapUrlCount) {
 assertIncludes("/sitemaps/en", sitemap, [
   `<loc>${baseUrl}/</loc>`,
   `<loc>${baseUrl}/search</loc>`,
+  `<loc>${baseUrl}/about</loc>`,
+  `<loc>${baseUrl}/contact</loc>`,
+  `<loc>${baseUrl}/privacy</loc>`,
+  `<loc>${baseUrl}/terms</loc>`,
   `<loc>${baseUrl}/blog</loc>`,
   `<loc>${baseUrl}/blog/category/ai</loc>`,
   `<loc>${baseUrl}/blog/category/info</loc>`,

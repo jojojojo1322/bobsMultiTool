@@ -21,55 +21,55 @@ export type TrustPageContent = {
 
 const english: Record<TrustPageKind, TrustPageContent> = {
   about: {
-    title: "About Bob's Multi Tool",
-    description: "A focused developer utility workbench for formatting, decoding, validation, generation, SEO, and network checks.",
+    title: "About bobob.app",
+    description: "A small Blog + Play workshop about shipping tiny web experiments, writing the decisions down, and keeping practical browser tools available.",
     lastUpdated: "Last updated: June 11, 2026",
-    backToTools: "Back to tools",
+    backToTools: "Back to home",
     sections: [
       {
-        heading: "What this site provides",
-        body: "Bob's Multi Tool is a practical collection of browser-first developer utilities. It is built for quick tasks such as formatting JSON, checking JWT payloads, generating UUIDs, testing regex patterns, creating QR codes, and debugging public DNS or HTTP behavior.",
+        heading: "What this site is now",
+        body: "bobob.app is a small Blog + Play workshop. The main surface is original writing about building, operating, and revising small web projects, paired with browser-playable experiments that show the work instead of only describing it.",
       },
       {
-        heading: "Local-first workflow",
-        body: "Most tools run directly in your browser so input can stay on your device. Tools that require public network checks, such as DNS lookup and HTTP status checks, use small server routes and reject private or local hosts.",
+        heading: "Representative writing",
+        body: "The public blog intentionally shows a smaller representative set: complete posts with paragraphs, tables, checklists, build logs, production notes, and clear dates when the topic depends on current information. Short notes stay reachable as archive pages, but they are not promoted in the public blog list, feed, or submitted sitemap.",
       },
       {
-        heading: "Content and maintenance",
-        body: "Each tool is paired with examples, failure cases, copy checks, FAQs, and related next tools so visitors can complete a real workflow instead of reading generic filler content.",
+        heading: "Play experiments",
+        body: "The Play section contains small static games and interactive experiments built for direct use in the browser. Each public entry is meant to have a playable surface, result or sharing path, related reading when it fits, and enough surrounding context to explain why the experiment exists.",
       },
       {
-        heading: "How tools are selected",
-        body: "New utilities are prioritized when they solve repeat developer tasks with deterministic output, clear review steps, and low privacy risk. Formatters, validators, generators, conversion helpers, SEO checks, and public network checks fit the site because users can verify the result immediately.",
-      },
-      {
-        heading: "Core utility coverage",
-        body: "The current workbench focuses on high-demand task clusters: JSON and data cleanup, regex and text review, JWT and token inspection, Base64 and encoding, cron and time conversion, UUID and password generation, hash and HMAC checks, QR payload building, DNS and HTTP diagnostics, color contrast, SEO metadata, sitemap and robots review, plus SQL, CSS, and JavaScript formatting.",
+        heading: "Archived practical tools",
+        body: "The older developer utilities remain available under /tools because they still solve real browser-side tasks. They are maintained as a supporting archive rather than the front-page identity of the site, with local-first behavior, examples, diagnostics, and related next steps preserved for users who need them.",
       },
       {
         heading: "How pages stay useful",
-        body: "Tool pages are maintained as working surfaces first. The input and output area appears before reference material, while examples, diagnostics, failure cases, copy checklists, guides, and related tools explain how to review the result before using it elsewhere.",
+        body: "New public pages should help a visitor decide or do something concrete. A post should add original judgment, a build record, a comparison, a checklist, or a useful mistake report. A Play page should expose the game surface quickly. A tool page should show the working input and output before reference material.",
+      },
+      {
+        heading: "Local-first workflow",
+        body: "Most archived tools run directly in your browser so input can stay on your device. Tools that require public network checks, such as DNS lookup and HTTP status checks, use small server routes and reject private or local hosts.",
       },
       {
         heading: "Accessibility and navigation",
-        body: "The site keeps keyboard-reachable controls, localized route paths, sitemap coverage, trust links, and predictable navigation so users can move from a search query to a tool, then continue into the next related task without landing on empty or unfinished pages.",
+        body: "The site keeps keyboard-reachable controls, predictable navigation, search, Blog and Play indexes, trust links, and archived tool routes so visitors can move from the home page or a search result to complete pages instead of empty or unfinished routes.",
       },
       {
         heading: "International coverage",
-        body: "Default English pages stay unprefixed, while localized routes provide translated tool titles, descriptions, examples, FAQ, guide leads, trust pages, legal pages, and sitemap entries. Locale support is checked so non-English visitors are not sent to a page made only from raw English registry text.",
+        body: "Default English pages stay unprefixed. Localized routes keep translated trust pages, legal pages, tool labels, examples, FAQ, and guide leads where those surfaces are published, so visitors are not sent to pages made only from raw English registry text.",
+      },
+      {
+        heading: "Public discovery surface",
+        body: "The submitted discovery surface is kept intentionally narrow: home, global search, Blog index, representative Blog posts, Blog category hubs, Play index, Play pages, trust pages, and selected archived tools. Canonical routes, feeds, sitemap entries, redirects, and public verification files are maintained so crawlers and visitors can reach complete pages.",
       },
       {
         heading: "Review workflow before copying",
-        body: "Formatter, validator, generator, network, and SEO pages are written around a review loop: paste or enter a safe example, inspect diagnostics and warnings, compare the result with the target runtime or platform, then copy only the part that still fits the task.",
-      },
-      {
-        heading: "Public trust surface",
-        body: "The site keeps crawlable about, contact, privacy, terms, tool directory, tool detail, guide, and localized pages in the sitemap. Canonical routes, locale alternates, redirects, and public verification files are maintained so crawlers and visitors can reach complete pages instead of dead ends.",
+        body: "Formatter, validator, generator, network, and SEO tool pages are still written around a review loop: paste or enter a safe example, inspect diagnostics and warnings, compare the result with the target runtime or platform, then copy only the part that still fits the task.",
       },
     ],
     primaryLink: {
-      label: "Open the tool index",
-      href: "/tools",
+      label: "Read the blog",
+      href: "/blog",
     },
   },
   contact: {
@@ -129,16 +129,18 @@ const english: Record<TrustPageKind, TrustPageContent> = {
 const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageContent>> = {
   ko: {
     about: {
-      title: "Bob's Multi Tool 소개",
-      description: "포맷, 디코딩, 검증, 생성, SEO, 네트워크 확인을 위한 개발자 유틸리티 워크벤치입니다.",
+      title: "bobob.app 소개",
+      description: "작은 웹 실험을 만들고, 그 판단을 글로 남기고, 필요한 브라우저 도구는 계속 사용할 수 있게 유지하는 Blog + Play 작업장입니다.",
       lastUpdated: "최종 업데이트: 2026년 6월 11일",
-      backToTools: "도구로 돌아가기",
+      backToTools: "홈으로 돌아가기",
       sections: [
-        { heading: "사이트가 제공하는 것", body: "Bob's Multi Tool은 브라우저 우선 개발자 유틸리티 모음입니다. JSON 포맷, JWT 확인, UUID 생성, regex 테스트, QR 코드 생성, 공개 DNS 또는 HTTP 동작 확인처럼 빠르게 끝내야 하는 작업을 위해 만들었습니다." },
-        { heading: "로컬 우선 작업 방식", body: "대부분의 도구는 브라우저에서 직접 실행되어 입력값이 기기에 남을 수 있습니다. DNS 조회와 HTTP 상태 확인처럼 공개 네트워크 검사가 필요한 도구만 작은 서버 route를 사용하며, 비공개 또는 로컬 호스트는 거부합니다." },
-        { heading: "콘텐츠와 유지관리", body: "각 도구에는 예제, 실패 사례, 복사 전 확인, FAQ, 관련 다음 도구를 함께 두어 일반적인 설명이 아니라 실제 작업 흐름을 끝낼 수 있게 합니다." },
+        { heading: "지금 이 사이트가 하는 일", body: "bobob.app은 작은 Blog + Play 작업장입니다. 중심 표면은 작은 웹 프로젝트를 만들고 운영하고 다시 고치는 과정을 직접 쓴 글이며, 그 글과 이어지는 브라우저 플레이 실험은 말로만 설명하지 않고 실제로 만져 볼 수 있게 둡니다." },
+        { heading: "대표 글만 보여 주는 방식", body: "공개 블로그에는 문장과 단락이 충분하고, 필요한 경우 표, 체크리스트, 제작 기록, 운영 판단, 기준일이 들어간 대표 글만 올립니다. 짧은 메모는 archive 상세로는 남겨도 공개 블로그 목록, feed, 제출 sitemap에는 넣지 않습니다." },
+        { heading: "Play 실험", body: "Play 섹션은 브라우저에서 바로 실행되는 작은 게임과 상호작용 실험을 담습니다. 각 공개 항목은 빠르게 열리는 게임 표면, 결과 또는 공유 흐름, 자연스러운 관련 글, 왜 만든 실험인지 알 수 있는 주변 맥락을 갖추는 것을 목표로 합니다." },
+        { heading: "보존된 실용 도구", body: "이전 개발자 유틸리티는 여전히 실제 작업에 쓸 수 있기 때문에 /tools 아래에 보존합니다. 다만 사이트의 첫인상은 도구 모음이 아니라 Blog + Play이며, 도구는 로컬 우선 동작, 예제, 진단, 다음 작업 링크를 갖춘 보조 archive로 유지합니다." },
+        { heading: "페이지를 유용하게 유지하는 기준", body: "새 공개 페이지는 방문자가 판단하거나 실행할 수 있는 내용을 가져야 합니다. 글은 원래 판단, 제작 기록, 비교, 체크리스트, 실패에서 배운 점을 담고, Play 페이지는 게임 표면을 빠르게 보여 주며, 도구 페이지는 참고 문서보다 입력과 결과를 먼저 보여 줍니다." },
       ],
-      primaryLink: { label: "도구 목록 열기", href: "/tools" },
+      primaryLink: { label: "블로그 읽기", href: "/blog" },
     },
     contact: {
       title: "문의",
@@ -468,8 +470,8 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
 };
 
 const trustUpdatedAt: Record<Locale, string> = {
-  en: "Last updated: June 23, 2026",
-  ko: "최종 업데이트: 2026년 6월 23일",
+  en: "Last updated: July 3, 2026",
+  ko: "최종 업데이트: 2026년 7월 3일",
   ja: "最終更新日: 2026年6月23日",
   "zh-CN": "最后更新: 2026年6月23日",
   "zh-TW": "最後更新: 2026年6月23日",

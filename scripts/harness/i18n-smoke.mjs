@@ -86,7 +86,7 @@ if (!toolDirectory.includes("dir={dictionary.dir}") || !toolDirectory.includes("
 if (!localizedContent.includes("getLocalizedTool") || !localizedContent.includes("getLocalizedGuide")) {
   failures.push("localized content resolvers missing");
 }
-if (!trustContent.includes("getLocalizedTrustContent") || !trustContent.includes("Bob's Multi Tool 소개") || !trustContent.includes("حول Bob's Multi Tool")) {
+if (!trustContent.includes("getLocalizedTrustContent") || !trustContent.includes("bobob.app 소개") || !trustContent.includes("حول Bob's Multi Tool")) {
   failures.push("localized trust content resolver or locale prose missing");
 }
 

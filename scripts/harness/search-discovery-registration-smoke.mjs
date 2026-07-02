@@ -79,7 +79,7 @@ const playEntries = fs
   .filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(read(path.join(playDir, file))));
 const categorySlugs = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
-const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 5;
+const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 9;
 const expectedFeedItemCount = submittedBlogEntries.length + playEntries.length;
 
 for (const fragment of [
@@ -93,7 +93,8 @@ for (const fragment of [
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
-  "Post-pruning `bobob935@gmail.com` resubmission completed for `sitemaps/en` after the live sitemap was reduced to `73` URLs",
+  `Trust-page sitemap correction target: \`${expectedSitemapUrlCount}\` URLs`,
+  `Search Console still needs a fresh read or resubmission for the ${expectedSitemapUrlCount}-URL trust-page correction`,
   "stale prior count-column value of `151`",
   "Google Search Console performance",
   "Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`",
@@ -169,7 +170,17 @@ assertIncludes(robots.body, `Sitemap: ${canonicalBaseUrl}/sitemap.xml`, "/robots
 assertIncludes(sitemapIndex.body, `<loc>${canonicalBaseUrl}/sitemaps/en</loc>`, "/sitemap.xml");
 const sitemapUrlCount = (sitemap.body.match(/<url>/g) ?? []).length;
 if (sitemapUrlCount !== expectedSitemapUrlCount) failures.push(`/sitemaps/en URL count ${sitemapUrlCount} should be ${expectedSitemapUrlCount}`);
-for (const loc of [`${canonicalBaseUrl}/`, `${canonicalBaseUrl}/search`, `${canonicalBaseUrl}/blog`, `${canonicalBaseUrl}/play`, `${canonicalBaseUrl}/tools`]) {
+for (const loc of [
+  `${canonicalBaseUrl}/`,
+  `${canonicalBaseUrl}/search`,
+  `${canonicalBaseUrl}/about`,
+  `${canonicalBaseUrl}/contact`,
+  `${canonicalBaseUrl}/privacy`,
+  `${canonicalBaseUrl}/terms`,
+  `${canonicalBaseUrl}/blog`,
+  `${canonicalBaseUrl}/play`,
+  `${canonicalBaseUrl}/tools`,
+]) {
   if (!xmlLocs(sitemap.body).includes(loc)) failures.push(`/sitemaps/en missing ${loc}`);
 }
 

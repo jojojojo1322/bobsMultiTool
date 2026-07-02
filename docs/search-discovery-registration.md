@@ -8,13 +8,13 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 - Apex host: `https://bobob.app` should permanently redirect to the canonical host.
 - Submitted sitemap index: `https://www.bobob.app/sitemap.xml`
 - Current submitted sitemap: `https://www.bobob.app/sitemaps/en`
-- Current submitted sitemap URL count: `73`
+- Current submitted sitemap URL count: `77`
 - Current feed item count: `62`
 - Current Blog count: `120`
 - Current representative Blog count: `36`
 - Current Play count: `26`
 - Current Blog categories in sitemap: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`
-- Sitemap scope: home, global search, Blog index, Blog category hubs with representative posts, representative Blog posts, Play index, Play pages, and archived `/tools`. Short devlog/archive Blog posts remain reachable but are excluded from the submitted sitemap/feed and marked noindex.
+- Sitemap scope: home, global search, trust pages (`/about`, `/contact`, `/privacy`, `/terms`), Blog index, Blog category hubs with representative posts, representative Blog posts, Play index, Play pages, and archived `/tools`. Short devlog/archive Blog posts remain reachable but are excluded from the submitted sitemap/feed and marked noindex.
 - Submitted URL health: every `/sitemaps/en` URL should be a final 200 HTML response with matching canonical, one h1, unique title/description metadata, OpenGraph/Twitter title and description, and indexable robots metadata.
 - Paused scope: broad locale sitemap expansion. Do not restore it until localized Blog/Play content exists and measured demand supports it.
 
@@ -22,11 +22,11 @@ This matrix tracks the public discovery paths used for the Blog + Play migration
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Post-pruning `bobob935@gmail.com` resubmission completed for `sitemaps/en` after the live sitemap was reduced to `73` URLs. The visible row still showed a stale prior count-column value of `151`, so Search Console still needs a fresh read of the reduced XML | Google accepted the reduced sitemap resubmission from the correct property and account | It does not prove indexing, impressions, ranking, or that Search Console has reprocessed the reduced URL count |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Trust-page sitemap correction target: `77` URLs. The previous post-pruning `bobob935@gmail.com` resubmission was accepted when the live sitemap had `73` URLs, and the visible row still showed a stale prior count-column value of `151`. Search Console still needs a fresh read or resubmission for the 77-URL trust-page correction | Google accepted the earlier reduced sitemap resubmission from the correct property and account | It does not prove indexing, impressions, ranking, or that Search Console has reprocessed the current reduced URL count |
 | Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`; last updated `8.5시간 전` | Google has begun showing more search impressions than the earlier `3`-impression observation | It does not prove useful traffic or broad Blog + Play indexing completion |
 | Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5`, last updated `2026-06-12`; reason rows remain `리디렉션이 포함된 페이지` `3` and `적절한 표준 태그가 포함된 대체 페이지` `2` | The old page indexing report is still visible and measurable | It does not yet reflect the homepage URL Inspection indexed state or the submitted Blog + Play URL set |
 | Google URL Inspection | Homepage plus Blog/Play representatives | Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`. `/blog`, `/play`, `/blog/ai-side-project-realistic-order`, and `/play/office-survival` are not registered; each has a confirmed `색인 생성 요청됨` after inspection. Post-pruning pillar live tests for `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` both returned `URL을 Google에 등록할 수 있음` with valid breadcrumb detection | URL Inspection proves homepage indexing, queues representative Blog/Play URLs, and confirms the new pillar pages are live-test eligible | It does not prove the Blog/Play representatives or pillar posts were indexed after inspection |
-| Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest IndexNow representative submission: `73` URLs with response `200` after the sitemap/feed pruning deployment | Bing-compatible discovery has been refreshed for the reduced representative URL set | It does not prove Bing indexed or ranked the pages |
+| Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest IndexNow representative submission: `77` URLs with response `200` after the trust-page sitemap correction deployment | Bing-compatible discovery has been refreshed for the reduced representative URL set | It does not prove Bing indexed or ranked the pages |
 | Bing Webmaster Tools | `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app` | Latest browser check reached the public landing page with `Sign In`; site-specific recommendations were not visible | Bing Webmaster follow-up still needs a signed-in session | It does not provide indexing or recommendation evidence yet |
 | Public Bing search | `site:www.bobob.app` | Latest browser check hit a `계속하려면 아래 과제 해결` challenge | Public Bing search was attempted | It does not prove whether Bing has indexed the URL set |
 | Naver Search Advisor | `https://searchadvisor.naver.com/` | Signed-in Search Advisor showed `https://www.bobob.app` owned under `풀꽃`, registered `25.07.24`, ownership expires `26.07.24`. Security certificate and HTTPS redirect are normal. Naver reports `사이트맵을 찾을 수 없습니다` and `콘텐츠 노출/클릭 정보가 없습니다`; visible sitemap rows are old broad locale entries from `26.06.16`, and `sitemaps/en` was not visibly added after submission attempts | Naver ownership and basic HTTPS state are confirmed | It does not prove Naver indexed or ranked pages, and the reduced sitemap still needs a separate Naver cleanup/pass |
@@ -66,8 +66,8 @@ Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
 - Latest `/sitemaps/en` discovered pages after the 2026-07-02 resubmission: `68`
-- Current representative `/sitemaps/en` URL count: `73`
-- Latest IndexNow representative submission count: `73`
+- Current representative `/sitemaps/en` URL count: `77`
+- Latest IndexNow representative submission count: `77`
 - Latest representative feed item count: `62`
 - Post-pruning Search Console sitemap submission was accepted, but the visible count column still showed stale broad-set value `151` until Google reprocesses the reduced XML.
 

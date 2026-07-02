@@ -4,7 +4,7 @@ import { getIndexableBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
 
 const siteUrl = "https://www.bobob.app";
-const archiveLastmod = "2026-06-27";
+const archiveLastmod = "2026-07-03";
 const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
@@ -58,6 +58,10 @@ function basePaths(): SitemapPath[] {
   return [
     { path: "/", changefreq: "weekly", priority: "1.0", lastmod: latestSiteLastmod },
     { path: "/search", changefreq: "weekly", priority: "0.7", lastmod: latestSiteLastmod },
+    { path: "/about", changefreq: "monthly", priority: "0.6", lastmod: archiveLastmod },
+    { path: "/contact", changefreq: "monthly", priority: "0.5", lastmod: archiveLastmod },
+    { path: "/privacy", changefreq: "monthly", priority: "0.5", lastmod: archiveLastmod },
+    { path: "/terms", changefreq: "monthly", priority: "0.5", lastmod: archiveLastmod },
     { path: "/blog", changefreq: "weekly", priority: "0.8", lastmod: latestBlogLastmod },
     ...blogCategoryDefinitions
       .map((category) => ({

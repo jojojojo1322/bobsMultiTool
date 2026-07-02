@@ -67,7 +67,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current live discovery snapshot:
-  - Sitemap URLs: `73`
+  - Sitemap URLs: `77`
   - Feed items: `62`
   - Blog posts: `120`
   - Representative Blog posts: `36`
@@ -76,9 +76,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked and submitted again after the representative sitemap was reduced to `73` live URLs from the signed-in `bobob935@gmail.com` Chrome session.
+  - `/sitemaps/en` was checked and submitted again after the representative sitemap was reduced to `73` live URLs from the signed-in `bobob935@gmail.com` Chrome session; the trust-page sitemap correction now raises the current target to `77` URLs.
   - Search Console sitemap resubmission showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row still showed status `성공`, submitted `2026. 7. 2.`, last read `2026. 7. 2.`, and stale broad-set count-column value `151`.
-  - The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check that reflects the new `73` URL count.
+  - The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check that reflects the new `77` URL count.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -88,8 +88,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Post-pruning pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 발견됨 - 현재 색인이 생성되지 않음`, but both live URL tests returned `URL을 Google에 등록할 수 있음` and detected one valid breadcrumb item.
 - IndexNow:
-  - Latest submitted URL count: `73`
-  - The 73-URL representative sitemap set has been submitted to IndexNow with response status `200`; the previous broad 151-URL set was superseded by the reduced representative submission.
+  - Latest submitted URL count: `77`
+  - The 77-URL representative sitemap set has been submitted to IndexNow with response status `200`; the previous broad 151-URL set was superseded by the reduced representative submission.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -113,7 +113,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (`73`): the visible `/sitemaps/en` row still shows a stale broad-set count-column value `151` until Google reprocesses the reduced XML.
+- Search Console sitemap discovery must be checked against the reduced representative sitemap URL count (`77`): the visible `/sitemaps/en` row still shows a stale broad-set count-column value `151` until Google reprocesses the reduced XML.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts are live-test eligible for Google indexing, but they are not indexed yet.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.

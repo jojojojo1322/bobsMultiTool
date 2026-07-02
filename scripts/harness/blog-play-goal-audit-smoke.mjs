@@ -140,7 +140,7 @@ for (const fragment of [
   `Feed items: \`${currentFeedItemCount}\``,
   "Search Console sitemap resubmission showed `사이트맵이 제출됨`.",
   "stale broad-set count-column value `151`",
-  "The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check that reflects the new `73` URL count.",
+  `The representative sitemap is now intentionally reduced; Search Console still needs a fresh discovered-pages check that reflects the new \`${currentSubmittedSitemapCount}\` URL count.`,
   "Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1`",
   "Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.",
   "URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.",

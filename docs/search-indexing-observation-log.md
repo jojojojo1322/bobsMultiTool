@@ -1205,6 +1205,14 @@ Decision:
   - Pillar live URL test result: tested `2026. 7. 3. 오전 12:38`; `URL을 Google에 등록할 수 있음`; `페이지 색인을 생성할 수 있음`; breadcrumb enhancement `유효한 항목 1개 감지됨`.
   - Search Console action: no pillar `색인 생성 요청` button was pressed in this pass; this pass only resubmitted the sitemap and tested live URL eligibility.
   - Interpretation: the two new pillar posts are discoverable from the submitted sitemap and live-test eligible for Google indexing, but they are still not indexed. The next observation should check whether `/sitemaps/en` reprocesses toward `73` and whether either pillar status moves beyond `발견됨 - 현재 색인이 생성되지 않음`.
+- Trust-page sitemap correction source snapshot:
+  - Change: added `/about`, `/contact`, `/privacy`, and `/terms` to the reduced `/sitemaps/en` generation so the required trust pages are part of the submitted discovery surface.
+  - About-page trust copy now identifies bobob.app as a Blog + Play workshop first, explains the representative Blog set, keeps archived tools as a supporting surface, and avoids public approval or monetization-status wording.
+  - Representative sitemap URL target: `77`
+  - Representative feed item target: `62`
+  - Local production discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=http://localhost:3000 npm run harness:search-discovery-registration` should pass against the built localhost server before deployment.
+  - Search Console action: not yet repeated for the 77-URL trust-page correction. The last signed-in Search Console resubmission remains the earlier 73-URL post-pruning pass.
+  - Interpretation: this fixes the submitted surface target and trust-page visibility, but it is not indexing proof. After deployment, live discovery, submitted URL health, IndexNow submission, and a later Search Console read/resubmission must be logged separately.
 
 Decision:
 
