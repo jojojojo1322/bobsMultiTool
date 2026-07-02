@@ -259,11 +259,11 @@ for (const fragment of [
   "getLocalizedTrustContent",
   "bobob.app 소개",
   "問い合わせ",
-  "关于 Bob's Multi Tool",
-  "Acerca de Bob's Multi Tool",
-  "Ueber Bob's Multi Tool",
+  "关于 bobob.app",
+  "Acerca de bobob.app",
+  "Ueber bobob.app",
   "ติดต่อ",
-  "حول Bob's Multi Tool",
+  "حول bobob.app",
 ]) {
   if (!trustContent.includes(fragment)) failures.push(`localized trust content missing ${fragment}`);
 }

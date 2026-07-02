@@ -1461,3 +1461,13 @@ Completion guard:
 - Representative feed item target: `59`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the 74-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Localized Trust Copy Alignment Source Update
+
+- Change: aligned default and localized About/Contact trust copy with the current Blog + Play direction. The first trust-page impression now describes bobob.app as a Blog + Play workshop, explains representative writing and Play experiments, and treats `/tools` as a maintained supporting archive instead of the main site identity.
+- Change: removed public Blog copy that named AdSense directly from representative development posts and added a source harness guard so future `content/blog/*.mdx` copy cannot reintroduce direct AdSense review wording.
+- Reason: the previous default English and Korean About surfaces had already moved toward Blog + Play, but many localized About pages still opened as a developer-tool workbench. A site-wide trust page mismatch can make the public surface look unfinished even when the submitted English sitemap is narrowed.
+- Sitemap URL target: unchanged at `74`
+- Feed item target: unchanged at `59`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local trust-copy update.
+- Interpretation: this is visible trust and public-copy cleanup only. It improves site-quality consistency, but it is not deployment, resubmission, discovery, or indexing proof.

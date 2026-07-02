@@ -51,6 +51,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `content-indexing-checklist-before-resubmission`
 - Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section before ordinary latest Blog cards, so a first visitor can see the direction change, static Play architecture, and content/indexing cleanup criteria without opening the full archive.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
+- Trust surface alignment: default and localized About/Contact copy now describe bobob.app as a Blog + Play workshop first, with archived tools as a supporting surface, so visitors do not see a tools-first identity on localized trust routes.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`

@@ -18,6 +18,7 @@ const localizedContent = read("apps/main/src/features/i18n/localized-content.ts"
 const trustContent = read("apps/main/src/features/i18n/trust-content.ts");
 const legalContent = read("apps/main/src/features/i18n/legal-content.ts");
 const toolRegistry = read("apps/main/src/features/tools/registry.ts");
+const blogDir = path.join(root, "content/blog");
 const guidePage = read("apps/main/src/app/guides/[slug]/page.tsx");
 const localizedGuidePage = read("apps/main/src/app/[locale]/guides/[slug]/page.tsx");
 const guidesIndexPage = read("apps/main/src/app/guides/page.tsx");
@@ -57,6 +58,13 @@ for (const file of publicSourceFiles) {
   const source = read(file);
   if (publicRiskPattern.test(source)) {
     failures.push(`${file} contains public low-value, fake-ad, or approval-status wording`);
+  }
+}
+
+for (const file of fs.readdirSync(blogDir).filter((entry) => entry.endsWith(".mdx"))) {
+  const source = fs.readFileSync(path.join(blogDir, file), "utf8");
+  if (/\bAdSense\b|애드센스/.test(source)) {
+    failures.push(`content/blog/${file} should not expose AdSense review wording in public Blog copy`);
   }
 }
 
@@ -157,7 +165,11 @@ for (const [source, label] of [
 
 for (const fragment of [
   "About bobob.app",
+  "bobob.app について",
+  "Acerca de bobob.app",
+  "حول bobob.app",
   "Representative writing",
+  "Escritura representativa",
   "Play experiments",
   "Archived practical tools",
   "International coverage",
