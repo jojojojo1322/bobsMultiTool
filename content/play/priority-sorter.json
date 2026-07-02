@@ -8,6 +8,7 @@
   "shareText": "오늘 일감 분류대를 해봤다. 지금 막힌 일과 시간을 잡을 일, 오늘은 안 할 일을 나누니 보드가 가벼워졌다.",
   "order": 18,
   "relatedBlogSlugs": [
+    "priority-sorter-build-log",
     "ai-side-project-realistic-order",
     "search-console-misreads-for-indie-devs",
     "static-micro-games-architecture",

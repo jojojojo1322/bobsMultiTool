@@ -1354,3 +1354,15 @@ Completion guard:
 - Representative feed item target: `58`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 73-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Priority Board Representative Source Target
+
+- Change: added `priority-sorter-build-log` as a representative build log tied to `priority-sorter`.
+- Reason: the short static-first/login/server-limit notes were useful production decisions, but as separate archive notes they did not show a strong submitted page. The new build log folds those decisions into the actual priority-board Play: what is a current blocker, what needs scheduled time, and what belongs outside today's board.
+- Representative Blog count: `33`
+- Archive/noindex Blog candidate count: `90`
+- Representative development lane count: `12`
+- Representative sitemap URL target: `74`
+- Representative feed item target: `59`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 74-URL target is deployed, submitted, and observed.
