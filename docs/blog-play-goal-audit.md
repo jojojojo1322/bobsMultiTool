@@ -19,7 +19,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
-- Representative information lane: `7` posts remain submitted under `정보`.
+- Representative information lane: `6` posts remain submitted under `정보`.
 - Standalone Blog lane: `47` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
 - Representative standalone lane: `8` submitted posts have no forced `relatedPlay`.
 - First consolidated devlog posts now replace clusters of short development notes in the submitted Blog set:
@@ -34,6 +34,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `deploy-snake-build-log`
   - `deploy-stacker-build-log`
   - `deploy-minesweeper-build-log`
+  - `lottery-scratch-stage-note`
 - Password-lock consolidation: `password-lock-build-log` now absorbs eight short noindex notes about candidate chips, history candidate counts, digit heatmaps, guess previews, split meters, smarter candidates, keyboard suggestion cycling, and slot-aware keypad cues into one representative build log tied to `password-lock`.
 - Memory-console consolidation: `deploy-pattern-memory-build-log` now absorbs the short noindex notes for replay, input trail, and flow-panel cleanup into one representative build log tied to `deploy-pattern-memory`.
 - Meeting-routine consolidation: `meeting-escape-build-log` now absorbs the short noindex notes about small starts, one-rule Play, button response, naming, and routine into one representative build log tied to `meeting-escape`.
@@ -42,9 +43,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Prompt-request consolidation: `prompt-cleanup-build-log` now absorbs the short noindex notes about reviewing AI answers and deciding before delegation into one representative build log tied to `prompt-cleanup`.
 - Bug-ticket consolidation: `bug-clicker-build-log` now absorbs the short noindex notes about Codex work direction and one-button Play response into one representative build log tied to `bug-clicker`, so the required bug-ticket Play has a direct build-log page instead of relying only on adjacent operations posts.
 - Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes for `bug-brick-breaker`, `server-room-flight`, `bug-bubble-shooter`, `deploy-crossing`, `deploy-invaders`, and `prompt-gem-swap`, so those short implementation notes do not need separate submitted pages.
+- Lottery-scratch promotion: `lottery-scratch-stage-note` was promoted from archive to representative after being deepened with a table of deliberately excluded mechanics, a screen-check record, and safety wording that keeps `lucky-scratch` as a paper-to-foil-to-slip toy rather than a score, timer, or loss-recovery loop.
 - Owner-operations consolidation: `search-console-waiting-diary` now absorbs the short indexing-waiting notes into one representative operations article with a table, today's-check checklist, wait-list checklist, and verification record shape tied to `indexing-waiting-room`.
 - Owner category balance: `first-small-web-note` and `why-small-web-toys-return` are now deeper representative posts, so the `일기` and `요즘 관심사` category hubs each have at least two submitted posts instead of looking like one-post hubs.
-- Date-sensitive information pruning: `world-cup-search-terms-check-2026-06-27`, `world-cup-player-stats-check-2026-06-27`, `world-cup-round-of-32-korea-time-2026-06-27`, `world-cup-round-of-32-bracket-check-2026-06-27`, `world-cup-round-of-32-check-2026-06-27`, `world-cup-third-place-rules-2026-06-27`, `world-cup-watch-replay-check-2026-06-27`, `youth-future-savings-search-questions-2026-06-27`, `youth-future-savings-switch-check-2026-06-27`, `youth-future-savings-vs-youth-leap-check-2026-06-27`, and `youth-future-savings-rate-check-2026-06-27` are now archive/noindex candidates so the submitted set is less dominated by duplicate information wrappers.
+- Date-sensitive information pruning: `world-cup-search-terms-check-2026-06-27`, `world-cup-player-stats-check-2026-06-27`, `world-cup-round-of-32-korea-time-2026-06-27`, `world-cup-round-of-32-bracket-check-2026-06-27`, `world-cup-round-of-32-check-2026-06-27`, `world-cup-third-place-rules-2026-06-27`, `world-cup-watch-replay-check-2026-06-27`, `world-cup-resale-transfer-check-2026-06-27`, `youth-future-savings-search-questions-2026-06-27`, `youth-future-savings-switch-check-2026-06-27`, `youth-future-savings-vs-youth-leap-check-2026-06-27`, and `youth-future-savings-rate-check-2026-06-27` are now archive/noindex candidates so the submitted set is less dominated by duplicate information wrappers.
 - First pillar posts now carry the site-owner evidence surface:
   - `why-bobob-shifted-to-content-lab`
   - `static-micro-games-architecture`
@@ -71,6 +73,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `first-small-web-note` was deepened from a smaller diary entry into a 900+ word owner-note article with a public-surface operating-unit table, list-review criteria, and representative/archive separation rules.
   - `why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article with a small-Play quality table, mobile/result-link checks, and visual-metaphor criteria.
   - `content-indexing-checklist-before-resubmission` was strengthened with a concrete source-surface table, the current 33 representative / 93 archive split, user-visible route checks, and the reminder that source cleanup is not external indexing proof.
+  - `lottery-scratch-stage-note` was deepened from a short noindex development note into a 700+ word representative Play-safety build log with an excluded-mechanics table, screen-check record, and verification criteria for keeping lottery-style Play away from scoreboards, timers, cumulative winnings, and loss-recovery prompts.
 
 ## Play Evidence
 
