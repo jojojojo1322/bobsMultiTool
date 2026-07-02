@@ -63,6 +63,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Representative quality hardening:
   - `small-web-games-retention` was deepened from a short retention argument into an 800+ word Blog + Play operating note with a signal table, explicit choices not built, Play QA hooks, and consolidation criteria for short notes.
   - `search-console-misreads-for-indie-devs` was deepened from a short Search Console warning into an 800+ word observation workflow with a proof/not-proof table, current 77-URL sitemap interpretation, wait-period stop rules, and the next external checks to compare.
+  - `cursor-codex-web-service-bottlenecks` was deepened from a short AI-tool bottleneck note into an 800+ word development operations article with route/content/sitemap/workflow boundaries, failure-mode checks, and the final verification bundle.
+  - `human-decisions-in-ai-coding` was deepened from a short AI judgment note into an 800+ word product-decision article with a human/AI responsibility table, explicit deferred features, public URL decisions, and indexing-observation wording discipline.
 
 ## Play Evidence
 
