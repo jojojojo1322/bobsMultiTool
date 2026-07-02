@@ -1401,3 +1401,15 @@ Completion guard:
 - Representative feed item target: `61`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local content-depth update.
 - Interpretation: this is source-depth cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the current source set is deployed, submitted, and observed.
+
+## 2026-07-03 Bug Ticket Representative Source Target
+
+- Change: added `bug-clicker-build-log` as a representative build log tied to `bug-clicker`.
+- Reason: `bug-clicker` is one of the required first-pass Play entries, but it previously relied on adjacent operations and small-web essays rather than a direct build-log page explaining why the game separates reproducible/logged/environment/severity tickets from feeling, rumor, occasional, and guessed tickets.
+- Representative Blog count: `36`
+- Archive/noindex Blog candidate count: `90`
+- Representative development lane count: `13`
+- Representative sitemap URL target: `77`
+- Representative feed item target: `62`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 77-URL source target is deployed, submitted, and observed.
