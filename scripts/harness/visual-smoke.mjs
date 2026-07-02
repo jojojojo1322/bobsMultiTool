@@ -43,7 +43,7 @@ const scenarios = [
     name: "content-home-desktop",
     path: "/",
     viewport: { width: 1440, height: 1000 },
-    expectedText: ["퇴근 전 일더미 줄이기", "Latest Blog", "Popular Tools"],
+    expectedText: ["퇴근 전 일더미 줄이기", "처음 읽을 글", "Latest Blog", "Popular Tools"],
   },
   {
     name: "office-survival-mobile",

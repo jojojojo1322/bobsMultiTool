@@ -1265,3 +1265,14 @@ Completion guard:
 - This Blog + Play migration should not be treated as indexed or search-ready only because deployment, sitemap fetch, live discovery, or IndexNow submission passed.
 - WebSub publish and repeated Search Console sitemap submission are discovery hints, not indexing proof.
 - The next Search Console/Bing/Naver check must record concrete changed numbers or webmaster-tool state changes before closing the indexing part of the goal.
+
+## 2026-07-03 Source Target Update
+
+- Change: demoted the duplicate lucky-scratch development note `lottery-scratch-stage-note` from representative/indexable content to `devlog-archive` with `indexPolicy: noindex` and `archiveGroup: lucky-scratch`.
+- Public Play related Blog links now keep `lottery-endless-stage-loop-note` as the indexable lucky-scratch representative instead of linking to both short notes.
+- Representative Blog count: `35`
+- Archive/noindex Blog candidate count: `85`
+- Representative sitemap URL target: `76`
+- Representative feed item target: `61`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this narrows the review surface and removes one duplicate submitted Blog page, but it is not deployment, resubmission, or indexing proof. After deployment, the next external pass should submit or verify `/sitemaps/en` against the `76` URL target and compare discovered pages against the previous `73` reading.

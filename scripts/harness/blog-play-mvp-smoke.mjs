@@ -314,6 +314,27 @@ const standaloneBlogs = indexableBlogEntries.filter((entry) => entry.relatedPlay
 if (standaloneBlogs.length < 8) {
   failures.push(`standalone Blog posts should remain allowed and visible, found only ${standaloneBlogs.length}`);
 }
+const archivedEntriesByGroup = archivedBlogEntries
+  .filter((entry) => entry.archiveGroup)
+  .reduce((groups, entry) => {
+    const group = entry.archiveGroup;
+    groups.set(group, [...(groups.get(group) ?? []), entry]);
+    return groups;
+  }, new Map());
+for (const [archiveGroup, entries] of archivedEntriesByGroup.entries()) {
+  if (entries.length < 2) continue;
+  const absorbingRepresentative = indexableBlogEntries.find(
+    (entry) =>
+      entry.relatedPlaySlugs.includes(archiveGroup) ||
+      entry.slug?.includes(archiveGroup) ||
+      entry.title?.includes(archiveGroup),
+  );
+  if (!absorbingRepresentative) {
+    failures.push(
+      `${archiveGroup} has ${entries.length} noindex development notes but no representative Blog post absorbing that Play archive group`,
+    );
+  }
+}
 const arcadeEntries = playEntries.filter((entry) => entry.type === "arcade-game");
 if (arcadeEntries.length < Math.ceil(playEntries.length * 0.5)) {
   failures.push(`Play roadmap should prioritize direct canvas/JS arcade games, found ${arcadeEntries.length}/${playEntries.length}`);
@@ -433,6 +454,15 @@ if (!homePage.includes("{playContents.map((content")) {
 }
 if (homePage.includes("playContents.slice(0, 5).map")) {
   failures.push("home Featured Play should not be capped at the original five-entry MVP lineup");
+}
+for (const fragment of [
+  "data-pillar-blog",
+  "pillarBlogSlugs",
+  "why-bobob-shifted-to-content-lab",
+  "static-micro-games-architecture",
+  "content-indexing-checklist-before-resubmission",
+]) {
+  if (!homePage.includes(fragment)) failures.push(`home page should pin the first three pillar posts before ordinary latest Blog cards: missing ${fragment}`);
 }
 for (const fragment of ["SurvivalPlayEngine", "TapGameEngine", "SortMatchEngine", "ArcadeGameEngine", "relatedBlogLinks", "relatedPlayLinks"]) {
   if (!playDetail.includes(fragment)) failures.push(`Play detail route missing ${fragment}`);
