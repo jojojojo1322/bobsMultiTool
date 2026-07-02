@@ -166,8 +166,8 @@ const latestSearchConsoleDiscoveredPages = Array.from(log.matchAll(/\/sitemaps\/
 if (!latestSearchConsoleDiscoveredPages) failures.push("Could not parse latest Search Console discovered pages");
 const discoveredPages = numberAfter(log, /\/sitemaps\/en`: submitted `2026-06-25`, last read `2026-06-25`, status `성공`, discovered pages `(\d+)`/, "/sitemaps/en discovered pages");
 const hasPendingSourceTargetPrune =
-  log.includes("Information Representative Prune Source Target") &&
-  log.includes("latest external Search Console discovery evidence remains the previous `76` discovered pages until the 72-URL target is deployed");
+  log.includes("Source Target") &&
+  /latest external Search Console discovery evidence remains the previous `76` discovered pages until the \d+-URL target is deployed/.test(log);
 
 if (submittedUrlCount !== null && discoveredPages !== null && submittedUrlCount !== discoveredPages) {
   failures.push(`IndexNow submitted URL count ${submittedUrlCount} should match /sitemaps/en discovered pages ${discoveredPages}`);

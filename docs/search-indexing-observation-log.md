@@ -1322,3 +1322,19 @@ Completion guard:
 - WebSub feed item counts: `61`, `61`
 - WebSub response statuses: `204`, `204`
 - Interpretation: production discovery now matches the narrowed review surface and both pillar URLs are queued for crawling, but the goal remains open because the pillar URLs are still not indexed and Bing/Naver observation has not improved yet. The next observation should compare indexed pages, not-indexed pages, sitemap discovered pages, pillar URL Inspection status, Bing Webmaster recommendation classes, and Naver sitemap/page collection state after propagation.
+
+## 2026-07-03 Owner Operations Representative Source Target
+
+- Change: promoted `search-console-waiting-diary` from a short `devlog-archive` note to a representative operations article tied to `indexing-waiting-room`.
+- Change: demoted two more duplicate date-sensitive information posts from representative/indexable content to archive/noindex candidates instead of deleting them:
+  - `world-cup-round-of-32-bracket-check-2026-06-27`
+  - `youth-future-savings-switch-check-2026-06-27`
+- Reason: the representative set needed more owner-operated evidence and less duplicated date-sensitive information. The promoted Search Console waiting log now has a comparison table, today's-check checklist, wait-list checklist, and verification-record shape, while the two demoted information posts remain reachable but no longer broaden the submitted review surface.
+- Representative Blog count: `30`
+- Archive/noindex Blog candidate count: `90`
+- Representative information lane count: `12`
+- Representative operations lane count: `4`
+- Representative sitemap URL target: `71`
+- Representative feed item target: `56`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 71-URL target is deployed, submitted, and observed.
