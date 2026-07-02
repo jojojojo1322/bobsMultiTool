@@ -134,6 +134,7 @@ for (const fragment of [
   `Representative information lane: \`${representativeInformationCategoryCount}\` posts remain submitted under \`정보\``,
   `Standalone Blog lane: \`${standaloneBlogCount}\` posts have no forced \`relatedPlay\``,
   `Representative standalone lane: \`${representativeStandaloneBlogCount}\` submitted posts have no forced \`relatedPlay\``,
+  "Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes",
   `Current count: \`${playEntries.length}\` Play entries.`,
   "`arcade-game`",
   "Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section",

@@ -28,6 +28,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `deploy-snake-build-log`
   - `deploy-stacker-build-log`
   - `deploy-minesweeper-build-log`
+- Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes for `deploy-pattern-memory`, `bug-brick-breaker`, `server-room-flight`, `bug-bubble-shooter`, `deploy-crossing`, `deploy-invaders`, and `prompt-gem-swap`, so those short implementation notes do not need separate submitted pages.
 - First pillar posts now carry the site-owner evidence surface:
   - `why-bobob-shifted-to-content-lab`
   - `static-micro-games-architecture`
