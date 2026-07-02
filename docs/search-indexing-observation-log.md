@@ -1366,3 +1366,15 @@ Completion guard:
 - Representative feed item target: `59`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 74-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 AI Review Representative Source Target
+
+- Change: added `ai-review-tap-build-log` as a representative build log tied to `ai-review-tap`.
+- Reason: the short AI-output and answer-review habit notes were useful, but as separate noindex notes they did not show the playable review routine. The new build log turns them into one submitted article about checking file paths, command output, source links, and limitation markers before treating an AI answer as usable work.
+- Representative Blog count: `34`
+- Archive/noindex Blog candidate count: `90`
+- Representative AI lane count: `4`
+- Representative sitemap URL target: `75`
+- Representative feed item target: `60`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 75-URL target is deployed, submitted, and observed.
