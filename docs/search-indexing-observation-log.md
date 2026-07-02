@@ -1513,3 +1513,24 @@ Completion guard:
 - WebSub response statuses: `204`, `204`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this deployment refresh. The next required external action is to submit `/sitemaps/en` again from the `https://www.bobob.app/` property after confirming the live `74` URL sitemap.
 - Interpretation: production, IndexNow, WebSub, and submitted URL health now match the reduced `74` URL / `59` feed target. This is still not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the `74` URL target is submitted and observed there.
+
+## 2026-07-03 Lottery-Scratch Representative Swap Refresh
+
+- Master commit: `d04c654437455f105c6e10e9e16b69063b5023a7`
+- Content change: `world-cup-resale-transfer-check-2026-06-27` moved from representative/index to archive/noindex, while `lottery-scratch-stage-note` moved from noindex devlog archive to representative/index after being deepened with excluded mechanics, screen-check evidence, and lottery-style safety criteria.
+- Reason: keep the submitted set at `33` representative Blog posts and `8` standalone Blog posts while reducing duplicate date-sensitive World Cup information and increasing direct Play production evidence.
+- Deployment status: `npm run harness:deployment-status` returned overall state `success` for commit `d04c654437455f105c6e10e9e16b69063b5023a7`.
+- Live sitemap membership check: `https://www.bobob.app/sitemaps/en` returned `74` URLs, excluded `/blog/world-cup-resale-transfer-check-2026-06-27`, and included `/blog/lottery-scratch-stage-note`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `74`, feed items `59`, Blog posts `33`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `74` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `74` sitemap URLs, `59` feed items, `33/126` Blog posts, and `26` Play entries.
+- Indexing observation check before Search Console resubmission: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed while still showing Search Console discovered pages `77` against live sitemap URLs `74`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `74`
+- IndexNow response status: `200`
+- WebSub dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub feed item counts: `59`, `59`
+- WebSub response statuses: `204`, `204`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The Search Console tab was previously prepared with `sitemaps/en`, but external submission still requires explicit action-time confirmation before clicking `제출`.
+- Interpretation: production, IndexNow, WebSub, and submitted URL health now match the refined 74-URL representative set. This is still not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.

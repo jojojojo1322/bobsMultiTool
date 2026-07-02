@@ -113,6 +113,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Sitemap URLs: `74`
   - Feed items: `59`
   - Representative Blog posts: `33`
+- Latest deployed production discovery snapshot after the lottery-scratch representative swap:
+  - Sitemap URLs: `74`
+  - Feed items: `59`
+  - Representative Blog posts: `33`
+  - Representative set change: `world-cup-resale-transfer-check-2026-06-27` moved to archive/noindex and `lottery-scratch-stage-note` moved into the submitted representative set.
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
@@ -132,6 +137,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - IndexNow:
   - Latest submitted URL count: `74`
   - The latest deployed 74-URL representative sitemap set has been submitted to IndexNow with response status `200`.
+  - The same 74-URL count now reflects the lottery-scratch representative swap.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -145,6 +151,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
   - Latest published feed item counts: `59`, `59`.
+  - The current 59-item feed set now reflects the lottery-scratch representative swap.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
