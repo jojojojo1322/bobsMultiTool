@@ -126,6 +126,14 @@ for (const fragment of [
   "WebSub publish and repeated Search Console sitemap submission are discovery hints, not indexing proof.",
   "Bing Webmaster recommendations",
   "npm run harness:seo-opportunities",
+  "2026-07-03 76-URL Deployment Registration",
+  "Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `76`, feed items `61`, Blog posts `35`, Play entries `26`.",
+  "Search Console sitemap visible row after 76-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `76`, discovered videos `0`.",
+  "Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.",
+  "IndexNow submitted URL count: `76`",
+  "IndexNow response status: `200`",
+  "WebSub feed item counts: `61`, `61`",
+  "WebSub response statuses: `204`, `204`",
 ]) {
   assertIncludes(log, fragment, logPath);
 }
