@@ -1559,3 +1559,27 @@ Completion guard:
 - WebSub response statuses: `204`, `204`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action is still to submit `/sitemaps/en` again from the prepared `https://www.bobob.app/` property tab only after explicit action-time confirmation.
 - Interpretation: production, IndexNow, WebSub, and submitted URL health reflect the deeper 74-URL representative set. This improves site-quality evidence, but it is still not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
+
+## 2026-07-03 Ten-Box Archive Consolidation Refresh
+
+- Master commit: `d4c60f79b03b75a81a675e4d08be026e062f452e`
+- Content change: deepened `ten-box-rush-build-log` with an explicit archive absorption table that maps all `10` `ten-box-rush` noindex development notes into the representative production log.
+- Reason: make the short-development-note consolidation visible inside the submitted Blog set. The short notes remain reachable as noindex archive evidence, while the representative page now explains how overflow feedback, visible hints, hint highlighting, release preview, backtrack dragging, combo/streak feedback, success traces, overflow recording, and counter cleanup became one production judgment.
+- Source word count after the refresh: `1308` words for `ten-box-rush-build-log`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, and `npm run harness:adsense-content` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `67` pages, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `267` paths. Playwright confirmed the new archive mapping table and verification paragraph rendered on `/blog/ten-box-rush-build-log`.
+- Deployment status: `npm run harness:deployment-status` returned overall state `success` for commit `d4c60f79b03b75a81a675e4d08be026e062f452e`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `74`, feed items `59`, Blog posts `33`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `74` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `74` sitemap URLs, `59` feed items, `33/126` Blog posts, and `26` Play entries.
+- IndexNow dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexnow`
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `74`
+- IndexNow response status: `200`
+- WebSub dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub feed item counts: `59`, `59`
+- WebSub response statuses: `204`, `204`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action remains the prepared `/sitemaps/en` Search Console resubmission, but only after explicit action-time confirmation.
+- Interpretation: production, IndexNow, WebSub, and submitted URL health now reflect the stronger short-note consolidation evidence. This is content-quality and discovery-refresh evidence only, not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
