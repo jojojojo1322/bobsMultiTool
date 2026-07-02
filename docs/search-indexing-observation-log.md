@@ -1171,6 +1171,24 @@ Decision:
   - First pillar set now includes `why-bobob-shifted-to-content-lab`, `static-micro-games-architecture`, and `content-indexing-checklist-before-resubmission`.
   - Search Console action: no post-pruning Search Console sitemap resubmission has been performed yet. After deployment, submit the reduced `/sitemaps/en`, then inspect `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
   - Interpretation: this is source and deployment-prep evidence, not indexing proof. The next observation must compare Search Console discovered pages against the reduced `73`-URL sitemap after it is live and submitted.
+- Post-pruning deployment and discovery refresh:
+  - Content commit: `d942530` selected the representative Blog set and added the first post-pruning pillar/checklist content.
+  - Production trigger commit: `09739d4` forced a fresh `master` production deployment after the same content SHA first appeared as a Vercel Preview deployment.
+  - Deployment check: `npm run harness:deployment-status` returned `overallState: success` for `09739d4853bae832733a33e32d67cfe3873948d4`.
+  - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `73`, feed items `62`, Blog posts `36`, Play entries `26`.
+  - Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `73` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+  - Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `73` sitemap URLs and `62` feed items.
+  - Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `151`, Search Console discovered pages `68`, and live sitemap URLs `73` before the reduced IndexNow submission below.
+  - IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+  - IndexNow submitted URL count: `73`
+  - IndexNow response status: `200`
+  - WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+  - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+  - WebSub feed item counts: `62`, `62`
+  - WebSub response statuses: `204`, `204`
+  - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed after the reduced `73` URL sitemap went live.
+  - Search Console discovered pages remain at the latest recorded `68` against the current live `73` URL sitemap until the next signed-in Search Console follow-up.
+  - Interpretation: discovery submission is refreshed for the reduced representative sitemap, but indexing is not complete. The next manual check must resubmit `/sitemaps/en`, inspect the pillar URLs, and compare Search Console/Bing/Naver state against this `73` URL surface.
 
 Decision:
 
