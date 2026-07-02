@@ -1485,7 +1485,7 @@ Completion guard:
 ## 2026-07-03 Draft PR and Live Mismatch Check
 
 - PR: `https://github.com/jojojojo1322/bobsMultiTool/pull/5`
-- PR state: draft, open, mergeable clean, base `master`, head `feat/adsense-content-depth-next`, head commit `406156d0836514bfc606337f5f259df840558017`.
+- PR state: draft, open, mergeable clean, base `master`, head `feat/adsense-content-depth-next`. Use the PR page for the latest head SHA because follow-up documentation commits may advance the branch before merge.
 - Live check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` still fails because production `/sitemaps/en` exposes `77` URLs and feeds expose `62` items, while the current source target is `74` sitemap URLs and `59` feed items.
 - Live registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` fails for the same live/source mismatch: `/sitemaps/en` `77` vs `74`, feed entries `62` vs `59`.
 - Deployment status check: `npm run harness:deployment-status` returned overall state `success` for commit `406156d0836514bfc606337f5f259df840558017`, but no GitHub main Vercel status context was found. Treat this as branch/status evidence only, not proof that the canonical production site is serving the 74-URL source target.
