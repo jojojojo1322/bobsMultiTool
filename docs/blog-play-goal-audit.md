@@ -11,27 +11,40 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Blog Evidence
 
 - Blog source: `content/blog/*.mdx`
-- Current count: `120` Blog posts.
-- Representative submitted count: `32` Blog posts.
-- Archive/noindex candidate count: `88` Blog posts.
+- Current count: `126` Blog posts.
+- Representative submitted count: `36` Blog posts.
+- Archive/noindex candidate count: `90` Blog posts.
 - Representative minimum body depth: `401` words after the source-level 400-word gate was added to `npm run harness:blog-play-mvp`.
 - Date range: `2026-01-05` through `2026-07-02`, with public dates spread across the first half of 2026 plus the current representative pruning note.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
-- Representative information lane: `12` posts remain submitted under `정보`.
+- Representative information lane: `10` posts remain submitted under `정보`.
 - Standalone Blog lane: `47` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
-- Representative standalone lane: `13` submitted posts have no forced `relatedPlay`.
+- Representative standalone lane: `11` submitted posts have no forced `relatedPlay`.
 - First consolidated devlog posts now replace clusters of short development notes in the submitted Blog set:
   - `password-lock-build-log`
   - `ten-box-rush-build-log`
+  - `deploy-pattern-memory-build-log`
+  - `meeting-escape-build-log`
+  - `priority-sorter-build-log`
+  - `ai-review-tap-build-log`
+  - `prompt-cleanup-build-log`
+  - `bug-clicker-build-log`
   - `deploy-snake-build-log`
   - `deploy-stacker-build-log`
   - `deploy-minesweeper-build-log`
-- Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes for `deploy-pattern-memory`, `bug-brick-breaker`, `server-room-flight`, `bug-bubble-shooter`, `deploy-crossing`, `deploy-invaders`, and `prompt-gem-swap`, so those short implementation notes do not need separate submitted pages.
+- Password-lock consolidation: `password-lock-build-log` now absorbs eight short noindex notes about candidate chips, history candidate counts, digit heatmaps, guess previews, split meters, smarter candidates, keyboard suggestion cycling, and slot-aware keypad cues into one representative build log tied to `password-lock`.
+- Memory-console consolidation: `deploy-pattern-memory-build-log` now absorbs the short noindex notes for replay, input trail, and flow-panel cleanup into one representative build log tied to `deploy-pattern-memory`.
+- Meeting-routine consolidation: `meeting-escape-build-log` now absorbs the short noindex notes about small starts, one-rule Play, button response, naming, and routine into one representative build log tied to `meeting-escape`.
+- Priority-board consolidation: `priority-sorter-build-log` now absorbs the short noindex notes about static-first operation, delayed login, and server limits into one representative build log tied to `priority-sorter`.
+- AI-review consolidation: `ai-review-tap-build-log` now absorbs the short noindex notes about AI outputs as drafts and answer-review habits into one representative build log tied to `ai-review-tap`.
+- Prompt-request consolidation: `prompt-cleanup-build-log` now absorbs the short noindex notes about reviewing AI answers and deciding before delegation into one representative build log tied to `prompt-cleanup`.
+- Bug-ticket consolidation: `bug-clicker-build-log` now absorbs the short noindex notes about Codex work direction and one-button Play response into one representative build log tied to `bug-clicker`, so the required bug-ticket Play has a direct build-log page instead of relying only on adjacent operations posts.
+- Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes for `bug-brick-breaker`, `server-room-flight`, `bug-bubble-shooter`, `deploy-crossing`, `deploy-invaders`, and `prompt-gem-swap`, so those short implementation notes do not need separate submitted pages.
 - Owner-operations consolidation: `search-console-waiting-diary` now absorbs the short indexing-waiting notes into one representative operations article with a table, today's-check checklist, wait-list checklist, and verification record shape tied to `indexing-waiting-room`.
 - Owner category balance: `first-small-web-note` and `why-small-web-toys-return` are now deeper representative posts, so the `일기` and `요즘 관심사` category hubs each have at least two submitted posts instead of looking like one-post hubs.
-- Date-sensitive information pruning: `world-cup-search-terms-check-2026-06-27`, `world-cup-player-stats-check-2026-06-27`, `world-cup-round-of-32-korea-time-2026-06-27`, `world-cup-round-of-32-bracket-check-2026-06-27`, `youth-future-savings-search-questions-2026-06-27`, and `youth-future-savings-switch-check-2026-06-27` are now archive/noindex candidates so the submitted set is less dominated by duplicate information wrappers.
+- Date-sensitive information pruning: `world-cup-search-terms-check-2026-06-27`, `world-cup-player-stats-check-2026-06-27`, `world-cup-round-of-32-korea-time-2026-06-27`, `world-cup-round-of-32-bracket-check-2026-06-27`, `youth-future-savings-search-questions-2026-06-27`, `youth-future-savings-switch-check-2026-06-27`, `youth-future-savings-vs-youth-leap-check-2026-06-27`, and `youth-future-savings-rate-check-2026-06-27` are now archive/noindex candidates so the submitted set is less dominated by duplicate information wrappers.
 - First pillar posts now carry the site-owner evidence surface:
   - `why-bobob-shifted-to-content-lab`
   - `static-micro-games-architecture`
@@ -72,11 +85,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
-- Current source discovery target after category-balance:
-  - Sitemap URLs: `73`
-  - Feed items: `58`
-  - Blog posts: `120`
-  - Representative Blog posts: `32`
+- Current source discovery target after bug-ticket build-log promotion:
+  - Sitemap URLs: `77`
+  - Feed items: `62`
+  - Blog posts: `126`
+  - Representative Blog posts: `36`
   - Play entries: `26`
 - Latest deployed/Search Console-observed discovery snapshot before this source prune:
   - Sitemap URLs: `76`
@@ -88,7 +101,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the lucky-scratch duplicate archive deployment lowered the live representative sitemap to `76` URLs.
   - Search Console sitemap resubmission for the current 76-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `76`, and videos `0`.
-  - The representative sitemap was intentionally reduced and Search Console discovered pages matched the previous `76` URL count. This is discovery evidence, not indexing proof, and it does not yet cover the new `73` URL source target.
+  - The representative sitemap was intentionally reduced and Search Console discovered pages matched the previous `76` URL count. This is discovery evidence, not indexing proof, and it does not yet cover the new `77` URL source target with the bug-ticket build log.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -100,7 +113,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
   - Latest submitted URL count: `76`
-  - The previous 76-URL representative sitemap set has been submitted to IndexNow with response status `200`; the new 73-URL source target has not been submitted yet.
+  - The previous 76-URL representative sitemap set has been submitted to IndexNow with response status `200`; the new 77-URL source target has not been submitted yet.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -113,7 +126,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest published feed item counts: `61`, `61`; the new source target is `58`.
+  - Latest published feed item counts: `61`, `61`; the new source target is `62`.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -124,7 +137,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery matched the previous reduced representative sitemap URL count (`76`), but this only proves Google read the prior submitted sitemap; the new source target is `73` and still needs deployment/resubmission.
+- Search Console sitemap discovery matched the previous reduced representative sitemap URL count (`76`), but this only proves Google read the prior submitted sitemap; the new source target is `77` and still needs deployment/resubmission because the submitted URL set changed.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.

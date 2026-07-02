@@ -1354,3 +1354,62 @@ Completion guard:
 - Representative feed item target: `58`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 73-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Priority Board Representative Source Target
+
+- Change: added `priority-sorter-build-log` as a representative build log tied to `priority-sorter`.
+- Reason: the short static-first/login/server-limit notes were useful production decisions, but as separate archive notes they did not show a strong submitted page. The new build log folds those decisions into the actual priority-board Play: what is a current blocker, what needs scheduled time, and what belongs outside today's board.
+- Representative Blog count: `33`
+- Archive/noindex Blog candidate count: `90`
+- Representative development lane count: `12`
+- Representative sitemap URL target: `74`
+- Representative feed item target: `59`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 74-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 AI Review Representative Source Target
+
+- Change: added `ai-review-tap-build-log` as a representative build log tied to `ai-review-tap`.
+- Reason: the short AI-output and answer-review habit notes were useful, but as separate noindex notes they did not show the playable review routine. The new build log turns them into one submitted article about checking file paths, command output, source links, and limitation markers before treating an AI answer as usable work.
+- Representative Blog count: `34`
+- Archive/noindex Blog candidate count: `90`
+- Representative AI lane count: `4`
+- Representative sitemap URL target: `75`
+- Representative feed item target: `60`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 75-URL target is deployed, submitted, and observed.
+
+## 2026-07-03 Prompt Request Representative Source Target
+
+- Change: added `prompt-cleanup-build-log` as a representative build log tied to `prompt-cleanup`.
+- Reason: the short prompt/review notes explain useful habits, but the submitted set needed one stronger article showing how the playable request sorter separates task, context, examples, output shape, and constraints before AI work begins.
+- Representative Blog count: `35`
+- Archive/noindex Blog candidate count: `90`
+- Representative AI lane count: `5`
+- Representative sitemap URL target: `76`
+- Representative feed item target: `61`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages, and that count alone is not evidence for this new 76-URL source set because the submitted URLs changed.
+
+## 2026-07-03 Password-Lock Representative Deepening
+
+- Change: deepened `password-lock-build-log` without adding a new submitted URL.
+- Reason: `password-lock` already had one representative build log, but eight short archive/noindex notes still needed a clearer single-page explanation of why candidate chips, history candidate counts, digit heatmaps, guess previews, split meters, smarter candidates, suggestion cycling, and slot-aware keypad cues belong to one deduction flow.
+- Representative Blog count: `35`
+- Archive/noindex Blog candidate count: `90`
+- Representative sitemap URL target: `76`
+- Representative feed item target: `61`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local content-depth update.
+- Interpretation: this is source-depth cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the current source set is deployed, submitted, and observed.
+
+## 2026-07-03 Bug Ticket Representative Source Target
+
+- Change: added `bug-clicker-build-log` as a representative build log tied to `bug-clicker`.
+- Reason: `bug-clicker` is one of the required first-pass Play entries, but it previously relied on adjacent operations and small-web essays rather than a direct build-log page explaining why the game separates reproducible/logged/environment/severity tickets from feeling, rumor, occasional, and guessed tickets.
+- Representative Blog count: `36`
+- Archive/noindex Blog candidate count: `90`
+- Representative development lane count: `13`
+- Representative sitemap URL target: `77`
+- Representative feed item target: `62`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
+- Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the 77-URL source target is deployed, submitted, and observed.
