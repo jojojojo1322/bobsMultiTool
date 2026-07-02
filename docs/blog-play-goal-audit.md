@@ -70,6 +70,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `ai-side-project-realistic-order` was deepened from a short AI side-project note into an 800+ word product-scope article with deferred-feature decisions, completion criteria, and a Blog/Play/search/deploy verification table.
   - `first-small-web-note` was deepened from a smaller diary entry into a 900+ word owner-note article with a public-surface operating-unit table, list-review criteria, and representative/archive separation rules.
   - `why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article with a small-Play quality table, mobile/result-link checks, and visual-metaphor criteria.
+  - `content-indexing-checklist-before-resubmission` was strengthened with a concrete source-surface table, the current 33 representative / 93 archive split, user-visible route checks, and the reminder that source cleanup is not external indexing proof.
 
 ## Play Evidence
 

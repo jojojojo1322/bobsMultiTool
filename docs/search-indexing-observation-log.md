@@ -1471,3 +1471,13 @@ Completion guard:
 - Feed item target: unchanged at `59`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local trust-copy update.
 - Interpretation: this is visible trust and public-copy cleanup only. It improves site-quality consistency, but it is not deployment, resubmission, discovery, or indexing proof.
+
+## 2026-07-03 Content-Indexing Pillar Depth Source Update
+
+- Change: deepened `content-indexing-checklist-before-resubmission` with the current source split of `33` representative Blog posts, `93` archive/noindex candidates, `7` representative information posts, `8` representative standalone Blog posts, and `26` Play entries.
+- Change: added a user-visible route review section for home, `/blog`, category hubs, Play detail related links, hidden short-note behavior, and trust pages so the pillar explains how the public surface is judged, not only how frontmatter is changed.
+- Reason: this pillar is one of the first three ownership-evidence articles and directly explains the reduced sitemap/indexable policy. It should read like a concrete operating checklist, not a thin summary of the same policy in the docs.
+- Sitemap URL target: unchanged at `74`
+- Feed item target: unchanged at `59`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local pillar-depth update.
+- Interpretation: this is source and visible-content strengthening only. It is not deployment, sitemap resubmission, discovery, indexing, or approval proof.
