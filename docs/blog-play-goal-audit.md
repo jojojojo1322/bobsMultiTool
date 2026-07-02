@@ -33,6 +33,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `deploy-snake-build-log`
   - `deploy-stacker-build-log`
   - `deploy-minesweeper-build-log`
+- Password-lock consolidation: `password-lock-build-log` now absorbs eight short noindex notes about candidate chips, history candidate counts, digit heatmaps, guess previews, split meters, smarter candidates, keyboard suggestion cycling, and slot-aware keypad cues into one representative build log tied to `password-lock`.
 - Memory-console consolidation: `deploy-pattern-memory-build-log` now absorbs the short noindex notes for replay, input trail, and flow-panel cleanup into one representative build log tied to `deploy-pattern-memory`.
 - Meeting-routine consolidation: `meeting-escape-build-log` now absorbs the short noindex notes about small starts, one-rule Play, button response, naming, and routine into one representative build log tied to `meeting-escape`.
 - Priority-board consolidation: `priority-sorter-build-log` now absorbs the short noindex notes about static-first operation, delayed login, and server limits into one representative build log tied to `priority-sorter`.

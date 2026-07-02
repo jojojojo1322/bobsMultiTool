@@ -1390,3 +1390,14 @@ Completion guard:
 - Representative feed item target: `61`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local source-target update.
 - Interpretation: this is source-target cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages, and that count alone is not evidence for this new 76-URL source set because the submitted URLs changed.
+
+## 2026-07-03 Password-Lock Representative Deepening
+
+- Change: deepened `password-lock-build-log` without adding a new submitted URL.
+- Reason: `password-lock` already had one representative build log, but eight short archive/noindex notes still needed a clearer single-page explanation of why candidate chips, history candidate counts, digit heatmaps, guess previews, split meters, smarter candidates, suggestion cycling, and slot-aware keypad cues belong to one deduction flow.
+- Representative Blog count: `35`
+- Archive/noindex Blog candidate count: `90`
+- Representative sitemap URL target: `76`
+- Representative feed item target: `61`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this local content-depth update.
+- Interpretation: this is source-depth cleanup only. The latest external Search Console discovery evidence remains the previous `76` discovered pages until the current source set is deployed, submitted, and observed.
