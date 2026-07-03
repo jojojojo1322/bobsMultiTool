@@ -2007,3 +2007,26 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens the first Play's reviewer-facing evidence, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 MacBook Information Representative Depth Refresh
+
+- Content change: deepened `macbook-price-outlook-2026-06-26` with a 2026-07-03 follow-up check, official Apple announcement price table, Apple Store purchase-screen caveat, AppleInsider discount-tracker caveat, WIRED buying-guide context, and a purchase checklist.
+- External source check:
+  - Apple M5 MacBook Air announcement: 13-inch starts at `$1,099` U.S. / `$999` education, and 15-inch starts at `$1,299` U.S. / `$1,199` education.
+  - Apple M5 Pro/Max MacBook Pro announcement: 14-inch M5 starts at `$1,699`, 14-inch M5 Pro at `$2,199`, 16-inch M5 Pro at `$2,699`, 14-inch M5 Max at `$3,599`, and 16-inch M5 Max at `$3,899`.
+  - WIRED buying guide context: the M5 MacBook Air remains the most broadly recommended MacBook for most people.
+  - AppleInsider discount tracker context: some M5 Pro configurations showed discounted reseller prices as of `2026-07-03`, so the article separates official starting price from purchase-screen and reseller-discount checks.
+- Reason: the submitted information lane should not read like stale price snippets. This representative post now gives a reusable decision structure: official price, current checkout total, education/trade-in/reseller discount, and workload fit.
+- Source quality snapshot:
+  - `macbook-price-outlook-2026-06-26` body depth: `1,046` words.
+  - Representative Blog count: `35`.
+  - Representative information-lane count: `6`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens one of the six submitted date-sensitive information representatives, but it is not deployment, discovery, or indexing proof.
