@@ -67,6 +67,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `why-bobob-shifted-to-content-lab`
   - `static-micro-games-architecture`
 - Representative quality hardening:
+  - `npm run harness:blog-play-mvp` now checks archive consolidation at the slug level: every noindex Blog note with `archiveGroup` must be explicitly named inside an indexable representative Blog post, not only share a related Play.
   - `small-web-games-retention` was deepened from a short retention argument into an 800+ word Blog + Play operating note with a signal table, explicit choices not built, Play QA hooks, and consolidation criteria for short notes.
   - `search-console-misreads-for-indie-devs` was deepened from a short Search Console warning into an 800+ word observation workflow with a proof/not-proof table, current 77-URL sitemap interpretation, wait-period stop rules, and the next external checks to compare.
   - `cursor-codex-web-service-bottlenecks` was deepened from a short AI-tool bottleneck note into an 800+ word development operations article with route/content/sitemap/workflow boundaries, failure-mode checks, and the final verification bundle.

@@ -1920,3 +1920,16 @@ Completion guard:
 - Deployment blocker: production still serves the previous 74-URL deployed sitemap, so the 76-URL source target has not been externally observed yet.
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed because the canonical production site still serves the previous 74-URL deployed sitemap, not the current 76-URL source target.
 - Interpretation: this is source-target and content-quality evidence only. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the 76-URL target is deployed, submitted, and observed. Do not run IndexNow, WebSub, Search Console resubmission, or AdSense re-review from this blocked deployment state.
+
+## 2026-07-03 Archive Absorption Harness Guard
+
+- Source change: strengthened `npm run harness:blog-play-mvp` so every noindex Blog note with `archiveGroup` must be explicitly named inside an indexable representative Blog post for that Play or operating group.
+- Reason: keep short-note consolidation verifiable in source. A representative post merely sharing `relatedPlay` is not enough; the submitted page should show exactly which archive notes it absorbed.
+- Source Target state:
+  - Representative Blog count: `35`
+  - Archive/noindex Blog candidate count: `92`
+  - Representative sitemap URL target: `76`
+  - Representative feed item target: `61`
+- Source checks: `npm run harness:blog-play-mvp` passed with the stricter archive absorption rule, and `npm run harness:agents` passed after the AdSense/verification skill wording was updated.
+- Search Console action: none. This change is a source-level guard and does not change the deployed live sitemap/feed counts.
+- Interpretation: this prevents future regressions where short notes are hidden from the submitted surface without being visibly consolidated. It is not deployment, discovery, or indexing proof.

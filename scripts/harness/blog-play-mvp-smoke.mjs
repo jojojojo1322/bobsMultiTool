@@ -341,16 +341,26 @@ const archivedEntriesByGroup = archivedBlogEntries
     return groups;
   }, new Map());
 for (const [archiveGroup, entries] of archivedEntriesByGroup.entries()) {
-  if (entries.length < 2) continue;
-  const absorbingRepresentative = indexableBlogEntries.find(
+  const absorbingRepresentatives = indexableBlogEntries.filter(
     (entry) =>
       entry.relatedPlaySlugs.includes(archiveGroup) ||
       entry.slug?.includes(archiveGroup) ||
-      entry.title?.includes(archiveGroup),
+      entry.title?.includes(archiveGroup) ||
+      entries.some((archivedEntry) => archivedEntry.slug && entry.body.includes(archivedEntry.slug)),
   );
-  if (!absorbingRepresentative) {
+  if (absorbingRepresentatives.length === 0) {
     failures.push(
       `${archiveGroup} has ${entries.length} noindex development notes but no representative Blog post absorbing that Play archive group`,
+    );
+    continue;
+  }
+
+  const missingAbsorbedSlugs = entries
+    .filter((archivedEntry) => archivedEntry.slug && !absorbingRepresentatives.some((entry) => entry.body.includes(archivedEntry.slug)))
+    .map((entry) => entry.slug);
+  if (missingAbsorbedSlugs.length > 0) {
+    failures.push(
+      `${archiveGroup} representative Blog absorption should name every noindex archive note slug, missing ${missingAbsorbedSlugs.join(", ")}`,
     );
   }
 }
