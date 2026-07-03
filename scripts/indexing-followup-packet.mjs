@@ -11,6 +11,7 @@ const baseUrl = (argValue("--base-url") || process.env.BOBOB_INDEXING_PACKET_BAS
 const outputPath = argValue("--out") || process.env.BOBOB_INDEXING_PACKET_OUT;
 const checkOnly = hasArg("--check");
 const logPath = path.join(root, "docs/search-indexing-observation-log.md");
+const discoveryRegistrationPath = path.join(root, "docs/search-discovery-registration.md");
 const searchConsoleProperty = "https://www.bobob.app/";
 const searchConsoleResource = encodeURIComponent(searchConsoleProperty);
 const searchConsoleSitemapsUrl = `https://search.google.com/u/1/search-console/sitemaps?resource_id=${searchConsoleResource}&pageId=none`;
@@ -38,6 +39,53 @@ function countMatches(source, pattern) {
 function latestLoggedCount(log, label) {
   const matches = [...log.matchAll(new RegExp(`${label}: \`(\\d+)\``, "g"))];
   return matches.length ? Number.parseInt(matches[matches.length - 1][1], 10) : null;
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function latestRegisteredCount(registration, label) {
+  const matches = [...registration.matchAll(new RegExp(`${escapeRegExp(label)}: \`(\\d+)\``, "g"))];
+  return matches.length ? Number.parseInt(matches[matches.length - 1][1], 10) : null;
+}
+
+function sourceTargets(registration) {
+  return {
+    sitemapUrlCount: latestRegisteredCount(registration, "Current submitted sitemap source target URL count"),
+    feedItemCount: latestRegisteredCount(registration, "Current feed source target item count"),
+    representativeBlogCount: latestRegisteredCount(registration, "Current representative Blog count"),
+    playCount: latestRegisteredCount(registration, "Current Play count"),
+  };
+}
+
+function targetStatus(liveCount, targetCount) {
+  if (targetCount === null) {
+    return {
+      label: "not parsed",
+      gap: "not parsed",
+    };
+  }
+  const gap = targetCount - liveCount;
+  return {
+    label: gap === 0 ? "aligned" : "pending deployment",
+    gap,
+  };
+}
+
+function feedTargetStatus(checks, targetCount) {
+  if (targetCount === null) {
+    return {
+      label: "not parsed",
+      gap: "not parsed",
+    };
+  }
+  const feedCounts = [checks.rssItemCount, checks.atomEntryCount, checks.jsonFeedItemCount];
+  const aligned = feedCounts.every((count) => count === targetCount);
+  return {
+    label: aligned ? "aligned" : "pending deployment",
+    gap: targetCount - Math.min(...feedCounts),
+  };
 }
 
 function latestSitemapDiscoveredPages(log) {
@@ -137,16 +185,25 @@ function assertSnapshot(snapshot, log) {
   }
 }
 
-function assertPacket(packet, snapshot, log) {
+function assertPacket(packet, snapshot, log, registration) {
   const initialDiscoveredPages = firstSitemapDiscoveredPages(log);
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
+  const targets = sourceTargets(registration);
   const liveSitemapUrlCount = snapshot.checks.sitemapUrlCount;
+  const liveSitemapStatus = targetStatus(liveSitemapUrlCount, targets.sitemapUrlCount);
+  const liveFeedStatus = feedTargetStatus(snapshot.checks, targets.feedItemCount);
   const searchConsoleGap = latestDiscoveredPages === null ? "not parsed" : liveSitemapUrlCount - latestDiscoveredPages;
   const requiredFragments = [
+    `Source /sitemaps/en target: \`${targets.sitemapUrlCount ?? "not parsed"}\``,
+    `Source feed target: \`${targets.feedItemCount ?? "not parsed"}\``,
+    `Source-vs-live sitemap status: \`${liveSitemapStatus.label}\``,
+    `Source-vs-live feed status: \`${liveFeedStatus.label}\``,
     `Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
     `Search Console discovered-vs-live gap: \`${searchConsoleGap}\``,
+    "## Deployment Gate",
+    "Do not resubmit `/sitemaps/en`, run IndexNow/WebSub submit commands, or request AdSense re-review until live counts match the source targets.",
     "Chrome profile/session already signed in as `bobob935@gmail.com`",
     `same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}`,
     `live sitemap URL count ${liveSitemapUrlCount}`,
@@ -156,13 +213,21 @@ function assertPacket(packet, snapshot, log) {
   ];
   const missing = requiredFragments.filter((fragment) => !packet.includes(fragment));
   if (missing.length) throw new Error(`indexing follow-up packet missing current-count guidance:\n${missing.join("\n")}`);
+  if (targets.sitemapUrlCount === null || targets.feedItemCount === null) {
+    throw new Error("indexing follow-up packet could not parse source sitemap/feed targets");
+  }
 }
 
-function renderPacket(snapshot, log) {
+function renderPacket(snapshot, log, registration) {
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
   const initialDiscoveredPages = firstSitemapDiscoveredPages(log);
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
   const checks = snapshot.checks;
+  const targets = sourceTargets(registration);
+  const liveSitemapStatus = targetStatus(checks.sitemapUrlCount, targets.sitemapUrlCount);
+  const liveFeedStatus = feedTargetStatus(checks, targets.feedItemCount);
+  const deploymentGateStatus =
+    liveSitemapStatus.label === "aligned" && liveFeedStatus.label === "aligned" ? "ready" : "blocked";
   const searchConsoleGap = latestDiscoveredPages === null ? "not parsed" : checks.sitemapUrlCount - latestDiscoveredPages;
 
   return [
@@ -175,16 +240,28 @@ function renderPacket(snapshot, log) {
     `- Base URL checked: \`${baseUrl}\``,
     `- Canonical property: \`${searchConsoleProperty}\``,
     `- Sitemap index entries: \`${snapshot.sitemapIndexUrls.length}\``,
+    `- Source /sitemaps/en target: \`${targets.sitemapUrlCount ?? "not parsed"}\``,
     `- Live /sitemaps/en URL count: \`${checks.sitemapUrlCount}\``,
+    `- Source-vs-live sitemap status: \`${liveSitemapStatus.label}\` (target-live gap \`${liveSitemapStatus.gap}\`)`,
+    `- Source feed target: \`${targets.feedItemCount ?? "not parsed"}\``,
     `- Latest logged IndexNow URL count: \`${latestIndexNowCount ?? "not parsed"}\``,
     `- Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `- Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
     `- Search Console discovered-vs-live gap: \`${searchConsoleGap}\``,
     `- Feed counts: RSS \`${checks.rssItemCount}\`, Atom \`${checks.atomEntryCount}\`, JSON Feed \`${checks.jsonFeedItemCount}\``,
+    `- Source-vs-live feed status: \`${liveFeedStatus.label}\` (target-min-live gap \`${liveFeedStatus.gap}\`)`,
+    `- Representative Blog source count: \`${targets.representativeBlogCount ?? "not parsed"}\``,
+    `- Play source count: \`${targets.playCount ?? "not parsed"}\``,
     `- WebSub discovery: \`${checks.webSubDiscovery ? "ok" : "check"}\``,
     `- robots.txt sitemap: \`${checks.robotsSitemap ? "ok" : "check"}\``,
     `- OpenSearch descriptor: \`${checks.opensearch ? "ok" : "check"}\``,
     `- llms.txt discovery section: \`${checks.llmsDiscovery ? "ok" : "check"}\``,
+    "",
+    "## Deployment Gate",
+    "",
+    `- Deployment gate: \`${deploymentGateStatus}\``,
+    "- Do not resubmit `/sitemaps/en`, run IndexNow/WebSub submit commands, or request AdSense re-review until live counts match the source targets.",
+    `- Current gate check: source sitemap target \`${targets.sitemapUrlCount ?? "not parsed"}\` vs live \`${checks.sitemapUrlCount}\`; source feed target \`${targets.feedItemCount ?? "not parsed"}\` vs live RSS/Atom/JSON \`${checks.rssItemCount}/${checks.atomEntryCount}/${checks.jsonFeedItemCount}\`.`,
     "",
     "## Google Search Console Check",
     "",
@@ -228,16 +305,18 @@ function renderPacket(snapshot, log) {
     "## Stop Rule",
     "",
     "- Do not mark search readiness complete from deployment, sitemap fetch, WebSub 204, IndexNow 200, or a Naver collection request alone.",
+    "- Do not begin the manual submission loop or AdSense re-review while the deployment gate is `blocked`.",
     "- The next completion evidence must be changed Search Console/Bing/Naver numbers or measured exports that cover the submitted Blog + Play URL set.",
     "",
   ].join("\n");
 }
 
 const log = fs.readFileSync(logPath, "utf8");
+const registration = fs.readFileSync(discoveryRegistrationPath, "utf8");
 const snapshot = await snapshotDiscovery();
 assertSnapshot(snapshot, log);
-const packet = renderPacket(snapshot, log);
-assertPacket(packet, snapshot, log);
+const packet = renderPacket(snapshot, log, registration);
+assertPacket(packet, snapshot, log, registration);
 
 if (checkOnly) {
   console.log(
