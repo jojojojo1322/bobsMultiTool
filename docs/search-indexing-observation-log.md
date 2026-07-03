@@ -2135,3 +2135,31 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 AI Plan Price Information Representative Depth Refresh
+
+- Content change: deepened `ai-plan-price-comparison-2026-06-26` with a 2026-07-03 source refresh, an immediate top plan comparison table, a workflow-first decision table, ChatGPT Plus/Pro usage-tier notes, Claude Pro/Max upgrade guidance, Google AI storage/app-bundle separation, GitHub Copilot credit/usage-billing cautions, a one-month experiment table, and a pre-payment stop-signal checklist.
+- External source check:
+  - ChatGPT pricing and OpenAI help pages were rechecked for Free/Go/Plus/Pro structure, Plus `$20/month`, Pro `$100` and `$200` tiers, and the key Pro distinction that both Pro tiers share core capabilities while usage allowance differs.
+  - OpenAI Plus and Pro help pages were rechecked for API-billing separation, no annual billing for Go/Plus/Pro, Pro model / Codex / deep research / file-upload framing, and model allowance reset behavior.
+  - Claude plan guide was rechecked for Free, Pro `$20/month` or `$200/year`, Max 5x `$100/month`, Max 20x `$200/month`, and the Pro-to-Max capacity framing.
+  - Google AI plans were rechecked for Google AI Plus / Pro / Ultra tiers, 400GB / 5TB / 20TB / 30TB storage framing, Gemini higher-usage tiers, Gmail/Docs/NotebookLM/Flow/AI Studio/Antigravity feature bundling, and region/account-specific checkout caveats.
+  - GitHub Copilot plans and usage-based billing announcement were rechecked for Free / Pro `$10` / Pro+ `$39` / Max `$100`, cloud agent / code review / premium model / high-volume workflow positioning, included-credit wording, and June 2026 usage-based billing transition.
+  - Public comparison articles and community questions were used only to identify current reader confusion around ChatGPT Pro 100-vs-200 naming, Claude Max value, and Copilot credits; official vendor pages remain the source of record.
+- Reason: the submitted information lane should not read like a short price list. This representative post now gives a reusable confirmation flow for choosing by work surface: browser chat, long documents, Google workspace/storage, IDE coding, and high-usage agent workflows.
+- Source quality snapshot:
+  - `ai-plan-price-comparison-2026-06-26` body depth: `1,587` words.
+  - Representative Blog count: `35`.
+  - Representative information-lane count: `6`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Public copy check: `rg` found no direct review, approval, monetization, revenue, or AdSense wording in `content/blog/2026-03-28-ai-plan-price-comparison.mdx`.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment status check: `BOBOB_DEPLOY_SHA=0f774f2d60128a8ed4966c2e5af8890908fee1ed npm run harness:deployment-status` still reports Vercel `failure` with `Deployment rate limited — retry in 24 hours`.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
