@@ -125,7 +125,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 77-URL representative deployment.
   - Search Console sitemap resubmission for the latest externally submitted 77-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `77`, and videos `0`.
-  - The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `77` URL count. This is discovery evidence, not indexing proof. It is also not proof for the new 74-URL source target.
+  - The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `77` URL count. This is discovery evidence, not indexing proof. It is also not proof for the new 75-URL source target.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -163,7 +163,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`77`), but production now serves the reduced `74` URL target and this still needs a Search Console resubmission/observation pass.
+- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`77`), but production still serves the last deployed `74` URL target while the source target is now `75`; the 75-URL target still needs deployment, Search Console resubmission, and observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
