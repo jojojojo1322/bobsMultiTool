@@ -2105,3 +2105,33 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 World Cup Host-City Travel Information Representative Depth Refresh
+
+- Content change: deepened `world-cup-host-city-travel-check-2026-06-27` with a 2026-07-03 source refresh, an immediate top comparison table, a 16-host-city match-count/risk table, a match-planning row checklist, official matchday transport examples, cross-border entry-document notes, and a final pre-payment stop-signal table.
+- External source check:
+  - FIFA host-city and schedule surfaces were rechecked for the 16-city, 3-country tournament frame and current fixtures/source-of-record behavior.
+  - Inside FIFA schedule release was rechecked for the 104-match venue/kickoff-time source, Mexico City opening match, host country opener examples, and FIFA's note that schedule design considered travel, rest days, temperature, cooling infrastructure, public transport, and security.
+  - FIFA World Cup 2026 Venues page was used to verify the host-city match counts used in the new data table: Atlanta `8`, Boston `7`, Dallas `9`, Houston `7`, Kansas City `6`, Los Angeles `8`, Miami `7`, New York New Jersey `8`, Philadelphia `6`, San Francisco Bay Area `6`, Seattle `6`, Toronto `6`, Vancouver `7`, Mexico City `5`, Guadalajara `4`, and Monterrey `4`.
+  - Dallas official host-city pages were used to check GoPass / North Texas mobility framing, Dallas Stadium in Arlington, road-closure context, pedestrian-priority corridors, and the separate matchday warning that parking must be pre-purchased with no on-site sales.
+  - NJ TRANSIT and NYNJ official pages were used to check Secaucus Junction transfer, Meadowlands rail, official shuttle pre-purchase, FIFA match-ticket-holder shuttle checks, rideshare walk distance, vehicle-access limits, and post-match load-and-go return behavior.
+  - LA Metro was used to check direct World Cup service from designated pick-up locations, park-and-ride behavior, approximate 10-minute bus frequency where noted, matchday start windows, and stadium walking segments.
+  - Korean Embassy / MOFA and Canada.ca-linked sources were used to check cross-border travel reminders: eTA/ESTA or visa checks, Canada eTA passport linkage, Mexico FMM/entry-duration caution, and 3-country/16-city support and emergency-contact guidance.
+  - Public travel summaries were used only to identify current reader questions around where to stay, shuttles, parking, post-match transport, and multi-country paperwork; official schedules, host-city pages, transport agencies, and government entry guidance remain the source of record.
+- Reason: the submitted information lane should not read like a short city list. This representative post now gives a reusable confirmation flow for match identity, stadium location, last-mile transport, cross-border documents, and irreversible travel payments.
+- Source quality snapshot:
+  - `world-cup-host-city-travel-check-2026-06-27` body depth: `1,907` words.
+  - Representative Blog count: `35`.
+  - Representative information-lane count: `6`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Public copy check: direct public-revenue terms were absent from `content/blog/2026-04-11-world-cup-host-city-travel-check.mdx`; Korean `승인` appears only in the travel-entry/eTA context, not in site review or monetization wording.
+- Deployment status check: `BOBOB_DEPLOY_SHA=0f774f2d60128a8ed4966c2e5af8890908fee1ed npm run harness:deployment-status` still reports Vercel `failure` with `Deployment rate limited — retry in 24 hours`.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
