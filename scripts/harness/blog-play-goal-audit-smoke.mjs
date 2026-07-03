@@ -145,7 +145,7 @@ for (const fragment of [
   "`search-console-misreads-for-indie-devs` was deepened from a short Search Console warning into an 800+ word observation workflow",
   "`cursor-codex-web-service-bottlenecks` was deepened from a short AI-tool bottleneck note into an 800+ word development operations article",
   "`human-decisions-in-ai-coding` was deepened from a short AI judgment note into an 800+ word product-decision article",
-  "`vercel-sitemap-canonical-log` was deepened from a short canonical cleanup note into a near-800 word web-operations article",
+  "`vercel-sitemap-canonical-log` was deepened from a short canonical cleanup note into a 1,300+ word web-operations article",
   "`ai-side-project-realistic-order` was deepened from a short AI side-project note into an 800+ word product-scope article",
   "`first-small-web-note` was deepened from a smaller diary entry into a 900+ word owner-note article",
   "`why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article",
