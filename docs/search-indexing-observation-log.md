@@ -2163,3 +2163,25 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 AI Coding Last-Check Representative Depth Refresh
+
+- Content change: deepened `ai-coding-needs-human-last-check` with a larger human-review table, AI-vs-human responsibility split, concrete Bobob stop points for representative posts/archive/search/sitemap/rendering, and a final evidence table for route, Play, sitemap/feed/search, rendered output, and external-observation limits.
+- Reason: the submitted AI lane should prove original owner-operated practice, not only general AI commentary. This representative post now explains how AI speed is useful while the site owner still decides what becomes representative content, what moves to archive/noindex, what gets a related Play link, and what remains unproven until deployment and external discovery catch up.
+- Related Play check: `ai-review-tap` remains the natural continuation because it turns the same last-check routine into a small evidence-stamping Play loop: path, command output, source, and limitation checks.
+- Source quality snapshot:
+  - `ai-coding-needs-human-last-check` body depth: `1,302` words.
+  - Representative Blog count: `35`.
+  - Representative AI-lane count: `5`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Public copy check: `rg` found no direct review, approval, monetization, revenue, or AdSense wording in `content/blog/2026-05-29-ai-coding-needs-human-last-check.mdx`.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment status check: `BOBOB_DEPLOY_SHA=0f774f2d60128a8ed4966c2e5af8890908fee1ed npm run harness:deployment-status` still reports Vercel `failure` with `Deployment rate limited — retry in 24 hours`.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens one of the submitted original AI/owner-operator representatives, but it is not deployment, discovery, or indexing proof.
