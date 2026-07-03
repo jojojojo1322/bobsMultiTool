@@ -1886,3 +1886,20 @@ Completion guard:
 - WebSub response statuses: `204`, `204`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action remains the prepared `/sitemaps/en` Search Console resubmission, but only after explicit action-time confirmation.
 - Interpretation: production, IndexNow, WebSub, and submitted URL health now reflect the stronger bug-clicker short-note consolidation evidence. This is content-quality and discovery-refresh evidence only, not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
+
+## 2026-07-03 Office-Survival Source Target Deployment Block
+
+- Source commit: `443eb883faf10e002222de32aa33d786822070a8`
+- Source change: `office-survival-workday` is now part of the representative submitted Blog set, and `content-indexing-checklist-before-resubmission` now reflects the current representative/archive counts.
+- Source Target state:
+  - Representative Blog count: `34`
+  - Archive/noindex Blog candidate count: `92`
+  - Representative information-lane count: `6`
+  - Current submitted sitemap source target URL count: `75`
+  - Current feed source target item count: `60`
+- Local source audit: representative posts remain inside the 30-45 target, all submitted posts pass the 400-word/table/checklist/judgment/verification signal gate, and archive absorption holes are `0`.
+- Deployment status check: `npm run harness:deployment-status` returned overall state `failure` for commit `443eb883faf10e002222de32aa33d786822070a8`.
+- Deployment blocker: Vercel status `failure`, description `Deployment rate limited — retry in 24 hours`.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `74`, Search Console discovered pages `77`, and live sitemap URLs `74`.
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed because the canonical production site still serves the previous 74-URL deployed sitemap, not the current 75-URL source target.
+- Interpretation: this is source-target and deployment-block evidence only. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the 75-URL target is deployed, submitted, and observed. Do not run IndexNow, WebSub, Search Console resubmission, or AdSense re-review from this blocked deployment state.
