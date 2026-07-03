@@ -1960,3 +1960,16 @@ Completion guard:
 - Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reported production sitemap URLs `74` and feed items `59`, so production has not yet picked up the 76-URL source target.
 - Search Console action: none. This change is a local route/detail-page guard and does not change deployed live sitemap/feed counts.
 - Interpretation: this protects the submitted representative surface before production submission. It is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Direction Pillar Depth Refresh
+
+- Content change: deepened `why-bobob-shifted-to-content-lab` with public-surface reduction criteria, representative-evidence requirements, archive/noindex detail-page checks, and a final screen-review checklist.
+- Reason: this is the first ownership pillar visitors see from the home and Blog first-read sections. It should prove that the Tools-to-Blog+Play shift is an actual operating decision with route, sitemap, archive, and Search Console boundaries, not a short repositioning note.
+- Source quality snapshot:
+  - `why-bobob-shifted-to-content-lab` body depth: `1,289` words.
+  - Representative Blog count: `35`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before resubmission or re-review.
+- Interpretation: this strengthens the first pillar's reviewer-facing evidence, but it is not deployment, discovery, or indexing proof.
