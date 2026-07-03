@@ -1834,3 +1834,29 @@ Completion guard:
 - WebSub response statuses: `204`, `204`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action remains the prepared `/sitemaps/en` Search Console resubmission, but only after explicit action-time confirmation.
 - Interpretation: production, IndexNow, WebSub, and submitted URL health now reflect the stronger indexing-waiting short-note consolidation evidence. This is content-quality and discovery-refresh evidence only, not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
+
+## 2026-07-03 AI-Review Archive Consolidation Refresh
+
+- Master commit: `e2a467571b7e3a73eb4ac11fc96b160f2500981a`
+- Content change: deepened `ai-review-tap-build-log` with an explicit archive absorption row that maps the `ai-review-tap` noindex development note into the representative production log.
+- Absorbed archive note: `ai-output-is-not-finished-work`.
+- Reason: keep the submitted Blog surface centered on one useful AI-work judgment. The short note remains reachable as noindex archive evidence, while the representative page now explains how "AI output is a draft, not finished work" becomes a concrete Play rule: check path open, command output, source/date, and limitations before calling an answer complete.
+- Source word count after the refresh: `921` words for `ai-review-tap-build-log`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, and `npm run harness:adsense-content` passed. A local archive absorption audit dropped remaining missing groups from `3` groups to `2` groups.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `67` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `267` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages. Playwright confirmed the new archive mapping row rendered on `/blog/ai-review-tap-build-log` with `0` console errors; the only console warning was the existing Google advertising script `data-nscript` warning.
+- Deployment status: `npm run harness:deployment-status` returned overall state `success` for commit `e2a467571b7e3a73eb4ac11fc96b160f2500981a` after an initial Vercel pending state.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `74`, feed items `59`, Blog posts `33`, and Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `74` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `74` sitemap URLs, `59` feed items, `33/126` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `74`, Search Console discovered pages `77`, and live sitemap URLs `74`.
+- IndexNow dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexnow`
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `74`
+- IndexNow response status: `200`
+- WebSub dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub feed item counts: `59`, `59`
+- WebSub response statuses: `204`, `204`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action remains the prepared `/sitemaps/en` Search Console resubmission, but only after explicit action-time confirmation.
+- Interpretation: production, IndexNow, WebSub, and submitted URL health now reflect the stronger AI-review short-note consolidation evidence. This is content-quality and discovery-refresh evidence only, not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
