@@ -2207,3 +2207,26 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens one of the submitted owner-operated web-operations representatives, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Lucky Scratch Duplicate Representative Consolidation Refresh
+
+- Content change: moved `lottery-scratch-stage-note` back to `devlog-archive`/`noindex` with `archiveGroup: lucky-scratch`, and kept `lottery-endless-stage-loop-note` as the single submitted `lucky-scratch` representative. The representative now explicitly names the archived scratch-stage memo and explains why the lottery-style Play avoids scoreboards, timers, cumulative winnings, and loss-recovery prompts.
+- Blog independence check: removed the forced `priority-sorter` related Play link from `search-console-misreads-for-indie-devs`, and removed the reciprocal `priority-sorter` related-Blog entry, so the Search Console operations article remains a standalone representative Blog post instead of being subordinate to Play.
+- Reason: the AdSense-readiness source set should not submit two representative pages for the same short lucky-scratch production decision. The deeper article absorbs the smaller implementation memo, while the independent Search Console article preserves the Blog-first owner-operations lane.
+- Source quality snapshot:
+  - `lottery-endless-stage-loop-note` body depth: `1,166` words.
+  - Representative Blog count: `34`.
+  - Representative development-lane count: `14`.
+  - Representative standalone Blog count: `8`.
+  - Archive/noindex Blog candidate count: `93`.
+  - Representative sitemap URL target: `75`.
+  - Representative feed item target: `60`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Public copy check: `rg` found no direct public review, approval, monetization, revenue, or AdSense wording in the changed Blog/Play source files.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `68` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages on rerun after an initial cold-dev timeout on `/ko/privacy`.
+- Deployment status check: `BOBOB_DEPLOY_SHA=0f774f2d60128a8ed4966c2e5af8890908fee1ed npm run harness:deployment-status` still reports Vercel `failure` with `Deployment rate limited — retry in 24 hours`.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target is now `75` URLs and `60` feed items. Do not use this source-only consolidation as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content consolidation refresh and production still needs to deploy the 75-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this removes one duplicate submitted lucky-scratch representative and preserves a standalone owner-operations Blog representative, but it is not deployment, discovery, indexing, or AdSense re-review proof.

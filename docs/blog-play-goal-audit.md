@@ -12,15 +12,15 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Blog source: `content/blog/*.mdx`
 - Current count: `127` Blog posts.
-- Representative submitted count: `35` Blog posts.
-- Archive/noindex candidate count: `92` Blog posts.
+- Representative submitted count: `34` Blog posts.
+- Archive/noindex candidate count: `93` Blog posts.
 - Representative minimum body depth: `401` words after the source-level 400-word gate was added to `npm run harness:blog-play-mvp`.
 - Date range: `2026-01-05` through `2026-07-02`, with public dates spread across the first half of 2026 plus the current representative pruning note.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
 - Representative information lane: `6` posts remain submitted under `정보`.
-- Standalone Blog lane: `47` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
+- Standalone Blog lane: `48` posts have no forced `relatedPlay`, so Blog is not subordinate to Play.
 - Representative standalone lane: `8` submitted posts have no forced `relatedPlay`.
 - First consolidated devlog posts now replace clusters of short development notes in the submitted Blog set:
   - `password-lock-build-log`
@@ -35,7 +35,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `deploy-stacker-build-log`
   - `deploy-minesweeper-build-log`
   - `notification-mole-build-log`
-  - `lottery-scratch-stage-note`
+  - `lottery-endless-stage-loop-note`
 - Password-lock consolidation: `password-lock-build-log` now absorbs eight short noindex notes about candidate chips, history candidate counts, digit heatmaps, guess previews, split meters, smarter candidates, keyboard suggestion cycling, and slot-aware keypad cues into one representative build log tied to `password-lock`.
 - Memory-console consolidation: `deploy-pattern-memory-build-log` now absorbs the short noindex notes for replay, input trail, and flow-panel cleanup into one representative build log tied to `deploy-pattern-memory`.
 - Meeting-routine consolidation: `meeting-escape-build-log` now absorbs the short noindex notes about small starts, one-rule Play, button response, naming, and routine into one representative build log tied to `meeting-escape`.
@@ -46,7 +46,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Office-survival promotion: `office-survival-workday` moved from a short noindex diary note into a representative production log tied to `office-survival`, with an archive absorption table, four-resource design table, and screen-check checklist for the first Play surface.
 - Notification-mole consolidation: `notification-mole-build-log` now absorbs the two short noindex notes about urgency rings and priority cues into one representative build log tied to `notification-mole`, so the Play has its own screen-judgment record instead of relying only on the cross-game feedback article.
 - Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes for `bug-brick-breaker`, `server-room-flight`, `bug-bubble-shooter`, `deploy-crossing`, `deploy-invaders`, and `prompt-gem-swap`, so those short implementation notes do not need separate submitted pages.
-- Lottery-scratch promotion: `lottery-scratch-stage-note` was promoted from archive to representative after being deepened with a table of deliberately excluded mechanics, a screen-check record, and safety wording that keeps `lucky-scratch` as a paper-to-foil-to-slip toy rather than a score, timer, or loss-recovery loop.
+- Lottery-scratch consolidation: `lottery-endless-stage-loop-note` now absorbs the shorter `lottery-scratch-stage-note` archive note, so `lucky-scratch` has one submitted representative page for the paper-to-foil-to-slip loop while the earlier scratch-stage implementation memo remains reachable by URL but noindex.
 - Owner-operations consolidation: `search-console-waiting-diary` now absorbs the short indexing-waiting notes into one representative operations article with a table, today's-check checklist, wait-list checklist, and verification record shape tied to `indexing-waiting-room`.
 - Owner category balance: `first-small-web-note` and `why-small-web-toys-return` are now deeper representative posts, so the `일기` and `요즘 관심사` category hubs each have at least two submitted posts instead of looking like one-post hubs.
 - Date-sensitive information pruning: `world-cup-search-terms-check-2026-06-27`, `world-cup-player-stats-check-2026-06-27`, `world-cup-round-of-32-korea-time-2026-06-27`, `world-cup-round-of-32-bracket-check-2026-06-27`, `world-cup-round-of-32-check-2026-06-27`, `world-cup-third-place-rules-2026-06-27`, `world-cup-watch-replay-check-2026-06-27`, `world-cup-resale-transfer-check-2026-06-27`, `youth-future-savings-search-questions-2026-06-27`, `youth-future-savings-switch-check-2026-06-27`, `youth-future-savings-vs-youth-leap-check-2026-06-27`, and `youth-future-savings-rate-check-2026-06-27` are now archive/noindex candidates so the submitted set is less dominated by duplicate information wrappers.
@@ -76,13 +76,13 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `ai-side-project-realistic-order` was deepened from a short AI side-project note into an 800+ word product-scope article with deferred-feature decisions, completion criteria, and a Blog/Play/search/deploy verification table.
   - `first-small-web-note` was deepened from a smaller diary entry into a 900+ word owner-note article with a public-surface operating-unit table, list-review criteria, and representative/archive separation rules.
   - `why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article with a small-Play quality table, mobile/result-link checks, and visual-metaphor criteria.
-  - `content-indexing-checklist-before-resubmission` was strengthened with a concrete source-surface table, the current 35 representative / 92 archive split, user-visible route checks, and the reminder that source cleanup is not external indexing proof.
+  - `content-indexing-checklist-before-resubmission` was strengthened with a concrete source-surface table, the representative/archive split, user-visible route checks, and the reminder that source cleanup is not external indexing proof.
   - `why-bobob-shifted-to-content-lab` was deepened from a first-direction note into a 1,200+ word ownership pillar with public-surface reduction criteria, representative-evidence requirements, archive/noindex detail-page checks, and a final screen-review checklist for proving that Blog + Play is the visible first impression.
   - `static-micro-games-architecture` was deepened from a short static-Play structure note into a 1,600+ word architecture pillar with a content/engine/discovery/verification/privacy boundary table, a pre-publication question table, a static-runtime failure table, and a final public-readiness checklist for proving that Play is a deliberately operated static content surface rather than loose sample games.
   - `office-survival-workday` was deepened from a 700+ word first-Play production log into a 1,300+ word representative article with a ten-ticket placement table, choice-effect tuning notes, deliberately excluded feature table, result-screen continuation notes, and a pre-publication checklist for proving that the first Play is an operated resource-management surface rather than a short workplace joke.
   - `macbook-price-outlook-2026-06-26` was deepened from a thinner information note into a 1,000+ word comparison article with a 2026-07-03 follow-up check, official announcement price table, purchase-screen/discount separation, reseller-discount caveat, and a purchase checklist so the submitted information lane reads like a reusable decision note instead of a stale price snippet.
   - `notification-mole-build-log` now gives the notification selector its own representative production log with an archive absorption table, signal table, and desktop/mobile verification criteria for making the game about selecting important alerts instead of tapping everything.
-  - `lottery-scratch-stage-note` was deepened from a short noindex development note into a 700+ word representative Play-safety build log with an excluded-mechanics table, screen-check record, and verification criteria for keeping lottery-style Play away from scoreboards, timers, cumulative winnings, and loss-recovery prompts.
+  - `lottery-endless-stage-loop-note` now absorbs `lottery-scratch-stage-note` into a 1,100+ word representative Play-safety build log with an archive absorption table, excluded-mechanics reasoning, screen-check criteria, and verification criteria for keeping lottery-style Play away from scoreboards, timers, cumulative winnings, and loss-recovery prompts.
 
 ## Play Evidence
 
@@ -108,11 +108,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
-- Current source discovery target after notification-mole representative consolidation:
-  - Sitemap URLs: `76`
-  - Feed items: `61`
+- Current source discovery target after lucky-scratch duplicate representative consolidation:
+  - Sitemap URLs: `75`
+  - Feed items: `60`
   - Blog posts: `127`
-  - Representative Blog posts: `35`
+  - Representative Blog posts: `34`
   - Play entries: `26`
 - Latest deployed/Search Console-observed discovery snapshot:
   - Sitemap URLs: `77`
@@ -127,13 +127,14 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Feed items: `59`
   - Representative Blog posts: `33`
   - Representative set change: `world-cup-resale-transfer-check-2026-06-27` moved to archive/noindex and `lottery-scratch-stage-note` moved into the submitted representative set.
+- Current source consolidation after that deployed snapshot: `lottery-scratch-stage-note` moved back to `devlog-archive`/`noindex`, while `lottery-endless-stage-loop-note` remains the single submitted lucky-scratch representative and names the archived note explicitly.
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 77-URL representative deployment.
   - Search Console sitemap resubmission for the latest externally submitted 77-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `77`, and videos `0`.
-  - The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `77` URL count. This is discovery evidence, not indexing proof. It is also not proof for the new 76-URL source target.
+- The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `77` URL count. This is discovery evidence, not indexing proof. It is also not proof for the new 75-URL source target.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -171,7 +172,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`77`), but production still serves the last deployed `74` URL target while the source target is now `76`; the 76-URL target still needs deployment, Search Console resubmission, and observation.
+- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`77`), but production still serves the last deployed `74` URL target while the source target is now `75`; the 75-URL target still needs deployment, Search Console resubmission, and observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
