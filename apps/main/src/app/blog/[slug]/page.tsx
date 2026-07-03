@@ -109,7 +109,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <Badge>{post.category}</Badge>
           <Badge>{post.date}</Badge>
           <Badge>{post.readingMinutes}분 읽기</Badge>
-          {post.indexPolicy === "noindex" ? <Badge>제작 메모 보관</Badge> : null}
+          {post.indexPolicy === "noindex" ? <Badge data-blog-archive-badge>제작 메모 보관</Badge> : null}
         </div>
         <h1 className="mt-5 text-4xl font-semibold tracking-normal">{post.title}</h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">{post.description}</p>

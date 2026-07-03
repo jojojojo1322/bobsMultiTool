@@ -116,6 +116,7 @@ const contentStructuredDataPaths = [
 const failures = [];
 const blogDetailHtmlByPath = new Map();
 const robotsNoindexPattern = /<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["'][^"']*noindex)/i;
+const archiveBadgePattern = /\bdata-blog-archive-badge(?:=""|="true")?/i;
 
 for (const routePath of paths) {
   const response = await fetch(`${baseUrl}${routePath}`, { redirect: "manual", headers: smokeHeaders });
@@ -256,7 +257,7 @@ for (const categorySlug of blogCategorySlugs) {
 for (const entry of archivedBlogEntries) {
   const blogPath = `/blog/${entry.slug}`;
   const archiveDetailHtml = blogDetailHtmlByPath.get(blogPath) ?? "";
-  if (!archiveDetailHtml.includes("제작 메모 보관")) {
+  if (!archiveBadgePattern.test(archiveDetailHtml)) {
     failures.push(`${blogPath} should show archive/noindex badge`);
   }
   if (!robotsNoindexPattern.test(archiveDetailHtml)) {
@@ -266,7 +267,7 @@ for (const entry of archivedBlogEntries) {
 for (const slug of submittedBlogSlugs) {
   const blogPath = `/blog/${slug}`;
   const submittedDetailHtml = blogDetailHtmlByPath.get(blogPath) ?? "";
-  if (submittedDetailHtml.includes("제작 메모 보관")) {
+  if (archiveBadgePattern.test(submittedDetailHtml)) {
     failures.push(`${blogPath} should not show archive/noindex badge`);
   }
   if (robotsNoindexPattern.test(submittedDetailHtml)) {
