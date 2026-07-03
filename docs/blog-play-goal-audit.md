@@ -171,6 +171,13 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search` passed, so content search remains aligned with Blog + Play first and noindex archive separation.
   - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:blog-play-quality` passed for `68` live Blog/Play pages.
   - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:rendered-content` passed for `383` live pages, covering home, tools, guides, trust/legal, and localized support surfaces.
+- Live Play completion verification after the 75-URL deployment:
+  - `npm run harness:play-planning` passed for all `26` Play entries.
+  - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:play-interaction` passed for all `26` Play entries across desktop and mobile viewports, including result sharing and related Blog/Play links.
+- Measured SEO/AdSense export readiness:
+  - `npm run harness:seo-opportunities` found `77` measured-review inventory pages (`60` tools and `17` guides), but no private Search Console or AdSense exports are present.
+  - `npm run harness:seo-measured` correctly fails until Search Console and AdSense rows exist, with `0/36` required measured core pages covered.
+  - `metadataRewriteReadiness.canRewritePublicMetadata=false`, so title/description rewrites from backlog-only suggestions remain blocked.
 
 ## Still Not Complete
 
@@ -180,6 +187,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the representative Blog/Play URLs still need post-submission indexing observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
+- Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
 - Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
