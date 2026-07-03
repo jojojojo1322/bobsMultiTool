@@ -2053,3 +2053,27 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Safe-Driving Insurance Information Representative Depth Refresh
+
+- Content change: deepened `safe-driving-insurance-discounts-2026-06-26` with a 2026-07-03 source refresh, app/insurer comparison table, pre-calculation condition checklist, official insurer-by-insurer notes, and comparison mistakes to avoid before opening an auto-insurance quote screen.
+- External source check:
+  - Samsung Fire Direct TMAP good-driving page: TMAP score threshold, recent 6-month 500km condition, named-insured score requirement, mileage-special-clause compatibility, and no duplicate good-driving special clauses were rechecked.
+  - Hyundai Marine & Fire Direct auto-insurance page: TMAP `0.3~27.0%`, Naver Map `3.1~26.3%`, connected safe-driving, monthly safe-driving additional discount, and table splits by age, new-car status, and driver scope were rechecked.
+  - KB Insurance Direct public search surface: TMAP `4.2~27.3%`, Naver `7.2~22.7%`, and the score/500km framing were rechecked against current public snippets because the static detail page is not text-readable in this environment.
+  - DB Insurance Direct TMAP/Kakao and Naver safe-driving pages: TMAP/Kakao `0.2~25.4%`, Naver `5.7~22.4%`, recent 6-month 500km, TMAP/Kakao `81` score, Naver `71` score, and mid-policy contract-change guidance were rechecked.
+  - Public summaries were used only to identify recurring reader confusion around maximum-rate comparison, driver-scope matching, mileage, child discount, black-box discount, and final quote-screen comparison; insurer pages remain the source of record.
+- Reason: the submitted information lane should not read like a rate table. This representative post now gives a reusable confirmation flow for app choice, driving-distance evidence, named-insured score, electronic lookup consent, insurance-start-date rate tables, and final same-condition quote comparison.
+- Source quality snapshot:
+  - `safe-driving-insurance-discounts-2026-06-26` body depth: `1,342` words.
+  - Representative Blog count: `35`.
+  - Representative information-lane count: `6`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
