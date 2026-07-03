@@ -166,6 +166,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
   - `npm run harness:submitted-url-health` verifies every submitted `/sitemaps/en` URL as a final 200 HTML response with matching canonical, one h1, unique title/description, social metadata, and indexable robots metadata.
+- Live first-impression verification after the 75-URL deployment:
+  - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:routes` passed for `268` live paths.
+  - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search` passed, so content search remains aligned with Blog + Play first and noindex archive separation.
+  - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:blog-play-quality` passed for `68` live Blog/Play pages.
+  - `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:rendered-content` passed for `383` live pages, covering home, tools, guides, trust/legal, and localized support surfaces.
 
 ## Still Not Complete
 

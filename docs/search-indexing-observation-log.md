@@ -2281,3 +2281,13 @@ Completion guard:
 - WebSub response statuses: `204`, `204`.
 - Source Target post-deployment state: latest external Search Console discovery evidence now matches the current `75` URL sitemap. This is discovery and crawl-readiness evidence, not indexing proof, because the representative pillar URLs remain not indexed.
 - Interpretation: deployment, live discovery, submitted URL health, Search Console sitemap discovery, IndexNow, and WebSub are now aligned on the reduced 75-URL / 60-feed-item representative set. Do not request AdSense re-review yet; the next evidence still needs several-day Search Console/Bing/Naver observation or changed URL Inspection/indexing states.
+
+## 2026-07-03 Live First-Impression Surface Verification
+
+- Reason: after the 75-URL production deployment and Search Console resubmission, the review surface should prove that visitors and crawlers see the reduced Blog + Play set, not the old long archive of short notes.
+- Live route check: `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:routes` passed for `268` paths at `https://www.bobob.app`.
+- Live search check: `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search` passed, confirming content search still prefers Blog, Play, and archived Tools without exposing noindex Blog notes as promoted results.
+- Live Blog + Play rendered quality check: `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:blog-play-quality` passed for `68` pages at `https://www.bobob.app`.
+- Live rendered content check: `BOBOB_BASE_URL=https://www.bobob.app NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:rendered-content` passed for `383` pages at `https://www.bobob.app`; the rendered-content summary showed the home page, tool directory, 60 tools, 17 guides, trust/legal pages, and localized guide/trust/legal surfaces above the visible-content thresholds.
+- Source content gates: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, and `npm run harness:adsense-content` passed with `34/127` representative Blog posts, `8` representative standalone posts, `26` Play entries, `17` guides, `13` localized guide packs, and `15` public source surfaces.
+- Interpretation: the current public surface is now aligned with the content-pruning strategy: pillar-first Blog, current Play registry, reduced sitemap/feed, noindex archive separation, and enough rendered visible content across the submitted and supporting pages. This still does not prove indexing or AdSense readiness by itself; it only removes the previous live-surface mismatch as a reason to delay observation.
