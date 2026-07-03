@@ -2260,3 +2260,24 @@ Completion guard:
 - Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` fails because `/sitemaps/en` should expose `75` URLs but production exposes `74`, and `/feed.xml`, `/atom.xml`, and `/feed.json` should expose `60` items or entries but production exposes `59`.
 - GitHub CLI check: `gh pr status --repo jojojojo1322/bobsMultiTool` could not run because `gh` is not installed in this environment.
 - Interpretation: the branch SHA is no longer blocked by the earlier Vercel rate-limit status, but the canonical production discovery surface still serves the previous `74` URL sitemap and `59` item feed set. Do not run Search Console `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review until the canonical production host serves the `75` URL sitemap and `60` item feeds.
+
+## 2026-07-03 75-URL Production Discovery Refresh
+
+- Source action: fast-forwarded `origin/master` from `09949bc` to `880a55b` with the verified `feat/retry-office-survival-production` HEAD, so the current representative Blog + Play cleanup is now on the production branch.
+- Deployment status check: `BOBOB_DEPLOY_SHA=880a55b npm run harness:deployment-status` moved from Vercel `pending` to `success`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `75`, feed items `60`, Blog posts `34`, Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed for `75` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search Console account: `Google 계정: 조현재 (bobob935@gmail.com)`.
+- Search Console property: `https://www.bobob.app/`.
+- Search Console confirmation: `사이트맵이 제출됨`.
+- Search Console sitemap visible row after 75-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
+- Pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission` after the 75-URL sitemap resubmission.
+- Pillar URL status: both URLs are still `URL이 Google에 등록되어 있지 않음` with page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`.
+- Pillar crawl details: both remain tied to `https://www.bobob.app/sitemaps/en`; recent crawls are `2026. 7. 3. 오전 2:58:20` and `2026. 7. 3. 오전 3:00:15`; crawler is `Googlebot 스마트폰`; page fetch is `성공`; crawling allowed `예`; indexing allowed `예`.
+- Pillar indexing action: no fresh indexing re-request was made in this pass because both pillar URLs already had previous `색인 생성 요청됨` confirmations and the UI shows the request action as a re-request.
+- IndexNow submitted URL count: `75`.
+- IndexNow response status: `200`.
+- WebSub feed item counts: `60`, `60`.
+- WebSub response statuses: `204`, `204`.
+- Source Target post-deployment state: latest external Search Console discovery evidence now matches the current `75` URL sitemap. This is discovery and crawl-readiness evidence, not indexing proof, because the representative pillar URLs remain not indexed.
+- Interpretation: deployment, live discovery, submitted URL health, Search Console sitemap discovery, IndexNow, and WebSub are now aligned on the reduced 75-URL / 60-feed-item representative set. Do not request AdSense re-review yet; the next evidence still needs several-day Search Console/Bing/Naver observation or changed URL Inspection/indexing states.

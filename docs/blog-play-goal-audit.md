@@ -123,19 +123,18 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Sitemap URLs: `74`
   - Feed items: `59`
   - Representative Blog posts: `33`
-- Latest deployed production discovery snapshot after the lottery-scratch representative swap:
-  - Sitemap URLs: `74`
-  - Feed items: `59`
-  - Representative Blog posts: `33`
-  - Representative set change: `world-cup-resale-transfer-check-2026-06-27` moved to archive/noindex and `lottery-scratch-stage-note` moved into the submitted representative set.
-- Current source consolidation after that deployed snapshot: `lottery-scratch-stage-note` moved back to `devlog-archive`/`noindex`, while `lottery-endless-stage-loop-note` remains the single submitted lucky-scratch representative and names the archived note explicitly.
+- Latest deployed production discovery snapshot after the 75-URL production refresh:
+  - Sitemap URLs: `75`
+  - Feed items: `60`
+  - Representative Blog posts: `34`
+  - Representative set change: `lottery-scratch-stage-note` moved back to `devlog-archive`/`noindex`, while `lottery-endless-stage-loop-note` remains the single submitted lucky-scratch representative and names the archived note explicitly.
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 77-URL representative deployment.
-  - Search Console sitemap resubmission for the latest externally submitted 77-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `77`, and videos `0`.
-- The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `77` URL count. This is discovery evidence, not indexing proof. It is also not proof for the new 75-URL source target.
+  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 75-URL representative deployment.
+  - Search Console sitemap resubmission for the latest externally submitted 75-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `75`, and videos `0`.
+- The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `75` URL count. This is discovery evidence, not indexing proof.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
@@ -146,9 +145,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, fetched successfully, and allowed indexing.
   - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
-  - Latest submitted URL count: `74`
-  - The latest deployed 74-URL representative sitemap set has been submitted to IndexNow with response status `200`.
-  - The same 74-URL count now reflects the lottery-scratch representative swap.
+  - Latest submitted URL count: `75`
+  - The latest deployed 75-URL representative sitemap set has been submitted to IndexNow with response status `200`.
+  - The same 75-URL count now reflects the lottery-scratch duplicate representative consolidation.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -161,8 +160,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest published feed item counts: `59`, `59`.
-  - The current 59-item feed set now reflects the lottery-scratch representative swap.
+  - Latest published feed item counts: `60`, `60`.
+  - The current 60-item feed set now reflects the lottery-scratch duplicate representative consolidation.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -173,7 +172,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`77`), but production still serves the last deployed `74` URL target while the source target is now `75`; the 75-URL target still needs deployment, Search Console resubmission, and observation.
+- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the representative Blog/Play URLs still need post-submission indexing observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.

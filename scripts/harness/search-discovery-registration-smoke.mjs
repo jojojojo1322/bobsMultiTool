@@ -159,7 +159,7 @@ for (const fragment of [
   "76-URL Deployment Registration",
   "Search Console confirmation: `사이트맵이 제출됨`",
   "Search Console sitemap visible row after 76-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `76`, discovered videos `0`.",
-  `Search Console sitemap visible row after 77-URL resubmission: \`/sitemaps/en\`, submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${latestExternalSitemapCount}\`, discovered videos \`0\`.`,
+  `Search Console sitemap visible row after ${latestExternalSitemapCount}-URL resubmission: \`/sitemaps/en\`, submitted \`2026. 7. 3.\`, last read \`2026. 7. 3.\`, status \`성공\`, discovered pages \`${latestExternalSitemapCount}\`, discovered videos \`0\`.`,
   "Pillar live URL test result: tested `2026. 7. 3. 오전 12:39`; `URL을 Google에 등록할 수 있음`",
   "Pillar live URL test result: tested `2026. 7. 3. 오전 12:38`; `URL을 Google에 등록할 수 있음`",
   "Pillar URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`.",
