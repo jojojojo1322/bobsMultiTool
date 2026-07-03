@@ -2030,3 +2030,26 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens one of the six submitted date-sensitive information representatives, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Youth Savings Information Representative Depth Refresh
+
+- Content change: deepened `youth-future-savings-eligibility-check-2026-06-27` with a 2026-07-03 eligibility workflow, applicant-state table, official schedule separation, general/priority type auto-classification notes, small-business confirmation bottleneck, youth-account switching order, and final screen-check table.
+- External source check:
+  - Financial Services Commission launch notice: first application period runs `2026-06-22` through `2026-07-03`, followed by screening `2026-07-06` through `2026-07-24` and account opening `2026-07-27` through `2026-08-07`.
+  - Financial Services Commission pre-launch procedure notice: applicants do not choose general vs priority type directly; income, household, employment, and business checks determine the type during review.
+  - Korea Inclusive Finance Agency product page: target age, monthly deposit limit, 3-year term, general/priority contribution rates, income/household criteria, financial-income taxation restriction, and small-business income thresholds were rechecked.
+  - Public article summaries were used only to identify recurring reader confusion around small-business confirmation timing and youth-account switching order; official notices remain the source of record.
+- Reason: the submitted information lane should not read like a short policy snippet. This representative post now gives a reusable confirmation flow for application deadline, review status, evidence screens, small-business paperwork, switching risk, and account-opening timing.
+- Source quality snapshot:
+  - `youth-future-savings-eligibility-check-2026-06-27` body depth: `1,479` words.
+  - Representative Blog count: `35`.
+  - Representative information-lane count: `6`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
