@@ -149,6 +149,7 @@ for (const fragment of [
   "`ai-side-project-realistic-order` was deepened from a short AI side-project note into an 800+ word product-scope article",
   "`first-small-web-note` was deepened from a smaller diary entry into a 900+ word owner-note article",
   "`why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article",
+  "`deploy-stacker-build-log` was deepened from an 860-word archive absorption note into a 1,200+ word release-rail production log",
   "`lottery-endless-stage-loop-note` now absorbs `lottery-scratch-stage-note` into a 1,100+ word representative Play-safety build log",
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,

@@ -2230,3 +2230,24 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target is now `75` URLs and `60` feed items. Do not use this source-only consolidation as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content consolidation refresh and production still needs to deploy the 75-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this removes one duplicate submitted lucky-scratch representative and preserves a standalone owner-operations Blog representative, but it is not deployment, discovery, indexing, or AdSense re-review proof.
+
+## 2026-07-03 Deploy Stacker Representative Depth Refresh
+
+- Content change: deepened `deploy-stacker-build-log` from the previous archive-absorption note into a fuller release-rail production log. The post now separates stacker-style jackpot/height-ranking temptations from the actual Play goal: read the landing rail, green remaining width, red cut loss, and next-layer width before releasing.
+- Reason: the submitted development lane should not only say that two short archive notes were absorbed. It should prove the Play has a concrete production judgment: `deploy-stacker` is a one-minute landing-width and cut-loss loop, not a prize ladder, ranking climb, or recovery-button game.
+- Source quality snapshot:
+  - `deploy-stacker-build-log` body depth: `1,272` words.
+  - Representative Blog count: `34`.
+  - Representative development-lane count: `14`.
+  - Archive/noindex Blog candidate count: `93`.
+  - Representative sitemap URL target: `75`.
+  - Representative feed item target: `60`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Public copy check: `rg` found no direct public review, approval, monetization, revenue, or AdSense wording in `content/blog/2026-06-03-deploy-stacker-build-log.mdx`.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered check: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `68` pages.
+- Deployment status check: `BOBOB_DEPLOY_SHA=0f774f2d60128a8ed4966c2e5af8890908fee1ed npm run harness:deployment-status` still reports Vercel `failure` with `Deployment rate limited — retry in 24 hours`.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `75` URLs and `60` feed items. Do not use this source-only depth refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 75-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens the weakest submitted development representative by body depth and production judgment, but it is not deployment, discovery, indexing, or AdSense re-review proof.
