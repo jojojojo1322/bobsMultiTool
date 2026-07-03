@@ -222,7 +222,7 @@ function renderPacket(snapshot, log) {
     "NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation",
     "NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexnow",
     "NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub",
-    "npm run seo:indexing-followup",
+    "NODE_TLS_REJECT_UNAUTHORIZED=0 npm run seo:indexing-followup",
     "```",
     "",
     "## Stop Rule",

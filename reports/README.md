@@ -14,7 +14,7 @@ Tracked files in this folder are safe templates and instructions only. Real expo
 
 ## Indexing Follow-up
 
-Run `npm run seo:indexing-followup` before the next Search Console/Bing pass. It writes `reports/indexing-followup.md` with:
+Run `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run seo:indexing-followup` before the next Search Console/Bing pass when local CLI TLS trust fails. It writes `reports/indexing-followup.md` with:
 
 - the current live sitemap/feed/OpenSearch/robots snapshot
 - the `bobob935@gmail.com` Search Console property link
@@ -22,11 +22,11 @@ Run `npm run seo:indexing-followup` before the next Search Console/Bing pass. It
 - the Bing Webmaster recommendation checklist
 - the stop rule that IndexNow/WebSub/sitemap success is not indexing proof
 
-Use `npm run harness:indexing-followup` when only the live checks are needed without writing the report.
+Use `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` when only the live checks are needed without writing the report in the same TLS-limited shell.
 
 ## Export Steps
 
-1. Run `npm run seo:indexing-followup` for the manual indexing pass checklist.
+1. Run `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run seo:indexing-followup` for the manual indexing pass checklist when the shell cannot verify the live certificate chain.
 2. Run `npm run seo:export-packet`.
 3. Copy the Search Console page regex from the packet. It is the same value as `measuredExportPlan.copyTargets.searchConsolePageRegex`.
 4. In Search Console, export Performance rows grouped by Page and Query for that page regex.
