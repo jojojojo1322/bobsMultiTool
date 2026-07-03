@@ -1657,3 +1657,28 @@ Completion guard:
 - WebSub response statuses: `204`, `204`
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action remains the prepared `/sitemaps/en` Search Console resubmission, but only after explicit action-time confirmation.
 - Interpretation: production, IndexNow, WebSub, and submitted URL health now reflect the stronger deploy-pattern-memory short-note consolidation evidence. This is content-quality and discovery-refresh evidence only, not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
+
+## 2026-07-03 Deploy-Snake Archive Consolidation Refresh
+
+- Master commit: `04b035b1c7784f85ce7a4cedda8ad274c55d66cf`
+- Content change: deepened `deploy-snake-build-log` with an explicit archive absorption table that maps all `3` `deploy-snake` noindex development notes into the representative production log.
+- Reason: keep the submitted Blog surface centered on one useful production judgment. The short notes remain reachable as noindex archive evidence, while the representative page now explains how swipe control, next-cell preview, and open-turn cues work together to make the snake game about leaving exit cells instead of chasing pieces.
+- Source word count after the refresh: `921` words for `deploy-snake-build-log`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, and `npm run harness:adsense-content` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `67` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `267` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages. Playwright confirmed the new archive mapping table and consolidation paragraph rendered on `/blog/deploy-snake-build-log`.
+- Deployment status: `npm run harness:deployment-status` returned overall state `success` for commit `04b035b1c7784f85ce7a4cedda8ad274c55d66cf` after an initial Vercel pending state.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `74`, feed items `59`, Blog posts `33`, Play entries `26`.
+- Submitted URL health: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed with `74` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `74` sitemap URLs, `59` feed items, `33/126` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `74`, Search Console discovered pages `77`, and live sitemap URLs `74`.
+- IndexNow dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexnow`
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `74`
+- IndexNow response status: `200`
+- WebSub dry-run command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub feed item counts: `59`, `59`
+- WebSub response statuses: `204`, `204`
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed in this refresh. The next external action remains the prepared `/sitemaps/en` Search Console resubmission, but only after explicit action-time confirmation.
+- Interpretation: production, IndexNow, WebSub, and submitted URL health now reflect the stronger deploy-snake short-note consolidation evidence. This is content-quality and discovery-refresh evidence only, not indexing proof. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the current `74` URL target is submitted and observed there.
