@@ -2251,3 +2251,12 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `75` URLs and `60` feed items. Do not use this source-only depth refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 75-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens the weakest submitted development representative by body depth and production judgment, but it is not deployment, discovery, indexing, or AdSense re-review proof.
+
+## 2026-07-03 Post-Push Deployment Status Check
+
+- Source action: pushed `feat/retry-office-survival-production` from `0f774f2` to `5b9b8e2` after the deploy-stacker representative depth refresh and duplicate lucky-scratch consolidation.
+- Deployment status check: `BOBOB_DEPLOY_SHA=5b9b8e2 npm run harness:deployment-status` moved from Vercel `pending` to `success`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` fails because `/sitemaps/en` should expose `75` URLs but production exposes `74`, and `/feed.xml`, `/atom.xml`, and `/feed.json` should expose `60` items or entries but production exposes `59`.
+- GitHub CLI check: `gh pr status --repo jojojojo1322/bobsMultiTool` could not run because `gh` is not installed in this environment.
+- Interpretation: the branch SHA is no longer blocked by the earlier Vercel rate-limit status, but the canonical production discovery surface still serves the previous `74` URL sitemap and `59` item feed set. Do not run Search Console `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review until the canonical production host serves the `75` URL sitemap and `60` item feeds.
