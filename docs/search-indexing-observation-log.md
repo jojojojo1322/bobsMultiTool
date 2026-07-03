@@ -2077,3 +2077,31 @@ Completion guard:
 - Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 World Cup Ticket Information Representative Depth Refresh
+
+- Content change: deepened `world-cup-ticket-official-channel-check-2026-06-27` with a 2026-07-03 source refresh, an immediate top comparison table, state-by-state first-click table, unofficial seller stop signals, purchase-history flow, mobile-ticket app flow, official Resale/Exchange vs Ticket Transfer separation, and no-stadium-sale guidance.
+- External source check:
+  - FIFA purchase phases: the Last-Minute Sales Phase runs from `2026-04-01` through the end of the tournament on `2026-07-19`, uses first-come real-time transactions, and earlier draw phases are closed.
+  - FIFA no-stadium-sales FAQ: tickets should be purchased through FIFA.com/tickets and there will be no over-the-counter stadium sales for FIFA World Cup 2026.
+  - FIFA unofficial-purchase warning: tickets bought outside FIFA.com/tickets or official channels may be fake, duplicate, voided, invalid, already used, or rejected at the gate.
+  - FIFA purchase-history and mobile-ticket guidance: official purchases should be checked through Ticket purchase history, and FWC2026 Mobile Tickets app access uses the ticketing account, one-time email code, My tickets, and QR display close to gate opening.
+  - FIFA Resale/Exchange and Ticket Transfer guidance: Marketplace availability is not guaranteed, Single Match Ticket handling is separate from Ticket Transfer, and transfer acceptance depends on the recipient using the same email account that received the transfer notice.
+  - Public reseller-cancellation summaries were used only to identify current reader confusion around third-party cancellations and late ticket non-delivery; official FIFA pages remain the source of record.
+- Reason: the submitted information lane should not read like a short ticket-link note. This representative post now gives a reusable confirmation flow for official purchase, resale, transfer, mobile app, and pre-payment stop decisions during the live tournament window.
+- Source quality snapshot:
+  - `world-cup-ticket-official-channel-check-2026-06-27` body depth: `1,713` words.
+  - Representative Blog count: `35`.
+  - Representative information-lane count: `6`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed. The first MVP pass correctly rejected the comparison table placement; after moving `한눈에 비교` above the long prose, the same harness passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Public copy check: `rg` found no direct review, approval, monetization, or AdSense wording in `content/blog/2026-05-12-world-cup-ticket-official-channel-check.mdx`.
+- Deployment status check: `BOBOB_DEPLOY_SHA=0f774f2d60128a8ed4966c2e5af8890908fee1ed npm run harness:deployment-status` still reports Vercel `failure` with `Deployment rate limited — retry in 24 hours`.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reports production sitemap URLs `74`, RSS items `59`, Atom entries `59`, and JSON Feed items `59`.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens another submitted date-sensitive information representative, but it is not deployment, discovery, or indexing proof.
