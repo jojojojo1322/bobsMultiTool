@@ -1973,3 +1973,20 @@ Completion guard:
   - Representative feed item target: `61`.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before resubmission or re-review.
 - Interpretation: this strengthens the first pillar's reviewer-facing evidence, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Static Play Architecture Pillar Depth Refresh
+
+- Content change: deepened `static-micro-games-architecture` with a content/engine/discovery/verification/privacy boundary table, a Play pre-publication question table, a static-runtime failure table, and a final public-readiness checklist.
+- Reason: this is the second ownership pillar visitors see from the home and Blog first-read sections. It should prove that the Play surface is a deliberately operated static architecture with JSON content, shared engines, stable QA hooks, result links, and reduced discovery scope, not a loose collection of sample games.
+- Source quality snapshot:
+  - `static-micro-games-architecture` body depth: `1,665` words.
+  - Representative Blog count: `35`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment blocker: `npm run harness:deployment-status` still reports the PR head `0f774f2d60128a8ed4966c2e5af8890908fee1ed` as Vercel `failure` with `Deployment rate limited — retry in 24 hours`; production still serves the previous `74` URL sitemap and `59` feed items.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens the second pillar's reviewer-facing evidence, but it is not deployment, discovery, or indexing proof.
