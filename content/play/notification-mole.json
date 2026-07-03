@@ -8,6 +8,7 @@
   "shareText": "지금 볼 알림 선별판을 해봤다. 손이 급할수록 소음 알림을 그냥 보내는 게 어려웠다.",
   "order": 16,
   "relatedBlogSlugs": [
+    "notification-mole-build-log",
     "game-feedback-before-score-note",
     "ai-coding-needs-human-last-check",
     "static-micro-games-architecture"

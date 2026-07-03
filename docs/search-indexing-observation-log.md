@@ -1903,3 +1903,20 @@ Completion guard:
 - Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `74`, Search Console discovered pages `77`, and live sitemap URLs `74`.
 - Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed because the canonical production site still serves the previous 74-URL deployed sitemap, not the current 75-URL source target.
 - Interpretation: this is source-target and deployment-block evidence only. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the 75-URL target is deployed, submitted, and observed. Do not run IndexNow, WebSub, Search Console resubmission, or AdSense re-review from this blocked deployment state.
+
+## 2026-07-03 Notification-Mole Source Target Refresh
+
+- Source change: added `notification-mole-build-log` as a representative Blog post tied to `notification-mole`, and linked it back from the Play entry.
+- Absorbed archive notes: `mole-urgency-feedback-note`, `mole-priority-cue-note`.
+- Reason: keep the submitted Blog surface centered on one useful Play-specific production judgment. The short notes remain reachable as noindex archive evidence, while the representative page now explains how urgency rings, `보기`/`꺼둠` badges, keyboard priority movement, and mobile board checks make the game about selecting important alerts instead of tapping every alert.
+- Source Target state:
+  - Representative Blog count: `35`
+  - Archive/noindex Blog candidate count: `92`
+  - Representative information-lane count: `6`
+  - Representative sitemap URL target: `76`
+  - Representative feed item target: `61`
+  - Current submitted sitemap source target URL count: `76`
+  - Current feed source target item count: `61`
+- Deployment blocker: production still serves the previous 74-URL deployed sitemap, so the 76-URL source target has not been externally observed yet.
+- Search Console action: no signed-in `bobob935@gmail.com` Search Console sitemap pass was performed because the canonical production site still serves the previous 74-URL deployed sitemap, not the current 76-URL source target.
+- Interpretation: this is source-target and content-quality evidence only. The latest external Search Console discovery evidence remains the previous `77` discovered pages until the 76-URL target is deployed, submitted, and observed. Do not run IndexNow, WebSub, Search Console resubmission, or AdSense re-review from this blocked deployment state.
