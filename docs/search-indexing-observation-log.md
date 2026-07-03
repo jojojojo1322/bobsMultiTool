@@ -1990,3 +1990,20 @@ Completion guard:
 - Deployment blocker: `npm run harness:deployment-status` still reports the PR head `0f774f2d60128a8ed4966c2e5af8890908fee1ed` as Vercel `failure` with `Deployment rate limited — retry in 24 hours`; production still serves the previous `74` URL sitemap and `59` feed items.
 - Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
 - Interpretation: this strengthens the second pillar's reviewer-facing evidence, but it is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Office-Survival First-Play Depth Refresh
+
+- Content change: deepened `office-survival-workday` with a ten-ticket placement table, choice-effect tuning notes, a deliberately excluded feature table, result-screen continuation criteria, and a public pre-publication checklist.
+- Reason: this is the first Play's representative production log. It should prove that `office-survival` is an operated resource-management Play surface with scenario ordering, four-resource tradeoffs, result links, and scope choices, not a short workplace-joke note.
+- Source quality snapshot:
+  - `office-survival-workday` body depth: `1,365` words.
+  - Representative Blog count: `35`.
+  - Archive/noindex Blog candidate count: `92`.
+  - Representative sitemap URL target: `76`.
+  - Representative feed item target: `61`.
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Local rendered checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `69` pages, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `268` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed for `383` pages.
+- Deployment blocker: production still serves the previous `74` URL sitemap and `59` feed items while the source target remains `76` URLs and `61` feed items. Do not use this source-only refresh as Search Console or AdSense re-review evidence until the deployment succeeds.
+- Search Console action: none. This is a source content-depth refresh and production still needs to deploy the 76-URL source target before `/sitemaps/en` resubmission, IndexNow/WebSub refresh, or AdSense re-review.
+- Interpretation: this strengthens the first Play's reviewer-facing evidence, but it is not deployment, discovery, or indexing proof.
