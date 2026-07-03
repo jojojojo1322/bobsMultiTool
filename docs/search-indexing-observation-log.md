@@ -1945,3 +1945,18 @@ Completion guard:
   - Representative feed item target: `61`
 - Search Console action: none. This change is a local route/discovery guard and does not change the deployed live sitemap/feed counts.
 - Interpretation: this protects the "representative list first" policy before production submission. It is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Archive Detail Noindex Guard
+
+- Source change: strengthened `npm run harness:routes` so every direct noindex/archive Blog detail page must render the visible `제작 메모 보관` badge and `noindex` robots metadata.
+- Reason: the archive notes should remain reachable as work evidence, but the direct pages must make their non-submitted status explicit to crawlers and to human reviewers. This closes the gap between "not listed in public discovery" and "direct archive page is visibly/technically marked as archive."
+- Source Target state:
+  - Representative Blog count: `35`
+  - Archive/noindex Blog candidate count: `92`
+  - Representative sitemap URL target: `76`
+  - Representative feed item target: `61`
+- Source checks: `npm run harness:blog-play-mvp`, `npm run harness:goal-audit`, `npm run harness:adsense-content`, and `npm run harness:agents` passed. Local route smoke passed for `268` paths with the new archive detail noindex guard.
+- Build checks: `npm run lint` and `npm run build` passed.
+- Live follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` still reported production sitemap URLs `74` and feed items `59`, so production has not yet picked up the 76-URL source target.
+- Search Console action: none. This change is a local route/detail-page guard and does not change deployed live sitemap/feed counts.
+- Interpretation: this protects the submitted representative surface before production submission. It is not deployment, discovery, or indexing proof.

@@ -114,11 +114,16 @@ const contentStructuredDataPaths = [
 ];
 
 const failures = [];
+const blogDetailHtmlByPath = new Map();
+const robotsNoindexPattern = /<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["'][^"']*noindex)/i;
 
 for (const routePath of paths) {
   const response = await fetch(`${baseUrl}${routePath}`, { redirect: "manual", headers: smokeHeaders });
   if (response.status < 200 || response.status >= 400) {
     failures.push(`${routePath} returned ${response.status}`);
+  }
+  if (response.status >= 200 && response.status < 400 && routePath.startsWith("/blog/") && !routePath.startsWith("/blog/category/")) {
+    blogDetailHtmlByPath.set(routePath, await response.text());
   }
 }
 
@@ -246,6 +251,26 @@ for (const categorySlug of blogCategorySlugs) {
     if (categoryHtml.includes(`href="/blog/${entry.slug}"`) || (entry.title && categoryHtml.includes(entry.title))) {
       failures.push(`/blog/category/${categorySlug} should not promote noindex/archive Blog post ${entry.slug}`);
     }
+  }
+}
+for (const entry of archivedBlogEntries) {
+  const blogPath = `/blog/${entry.slug}`;
+  const archiveDetailHtml = blogDetailHtmlByPath.get(blogPath) ?? "";
+  if (!archiveDetailHtml.includes("제작 메모 보관")) {
+    failures.push(`${blogPath} should show archive/noindex badge`);
+  }
+  if (!robotsNoindexPattern.test(archiveDetailHtml)) {
+    failures.push(`${blogPath} should render noindex robots metadata`);
+  }
+}
+for (const slug of submittedBlogSlugs) {
+  const blogPath = `/blog/${slug}`;
+  const submittedDetailHtml = blogDetailHtmlByPath.get(blogPath) ?? "";
+  if (submittedDetailHtml.includes("제작 메모 보관")) {
+    failures.push(`${blogPath} should not show archive/noindex badge`);
+  }
+  if (robotsNoindexPattern.test(submittedDetailHtml)) {
+    failures.push(`${blogPath} should not render noindex robots metadata`);
   }
 }
 
