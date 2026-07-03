@@ -233,7 +233,7 @@ for (const entry of archivedBlogEntries) {
     failures.push(`/search should not show noindex/archive Blog post ${entry.slug} in default results`);
   }
 }
-for (const entry of archivedBlogEntries.slice(0, 5)) {
+for (const entry of archivedBlogEntries) {
   const query = entry.title || entry.slug;
   const archiveSearchHtml = await (await fetch(`${baseUrl}/search?q=${encodeURIComponent(query)}`, { headers: smokeHeaders })).text();
   if (archiveSearchHtml.includes(`href="/blog/${entry.slug}"`)) {

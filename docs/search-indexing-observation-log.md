@@ -1933,3 +1933,15 @@ Completion guard:
 - Source checks: `npm run harness:blog-play-mvp` passed with the stricter archive absorption rule, and `npm run harness:agents` passed after the AdSense/verification skill wording was updated.
 - Search Console action: none. This change is a source-level guard and does not change the deployed live sitemap/feed counts.
 - Interpretation: this prevents future regressions where short notes are hidden from the submitted surface without being visibly consolidated. It is not deployment, discovery, or indexing proof.
+
+## 2026-07-03 Archive Search Exposure Guard
+
+- Source change: strengthened `npm run harness:routes` so direct `/search?q=` lookups are checked for every noindex/archive Blog note, not only a five-post sample.
+- Reason: the review goal is not just to remove weak notes from sitemap/feed. Weak short notes should also stay out of public discovery surfaces such as `/blog`, category hubs, default search, and direct title searches while remaining reachable by exact URL as archive evidence.
+- Source Target state:
+  - Representative Blog count: `35`
+  - Archive/noindex Blog candidate count: `92`
+  - Representative sitemap URL target: `76`
+  - Representative feed item target: `61`
+- Search Console action: none. This change is a local route/discovery guard and does not change the deployed live sitemap/feed counts.
+- Interpretation: this protects the "representative list first" policy before production submission. It is not deployment, discovery, or indexing proof.
