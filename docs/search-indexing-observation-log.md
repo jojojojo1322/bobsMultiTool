@@ -2564,3 +2564,12 @@ Completion guard:
 - IndexNow response status: `200`
 - Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
 - Interpretation: production now serves the Meta crawler report on a submitted operations tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 84-URL Search Console Meta Report Resubmission
+
+- Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`.
+- Search Console property: domain property `sc-domain:bobob.app`.
+- Search Console action: submitted `https://www.bobob.app/sitemaps/en` from the Sitemaps page after the Meta crawler report deployment.
+- Search Console confirmation: `사이트맵이 제출됨`.
+- Search Console sitemap row after submission: `https://www.bobob.app/sitemaps/en`, type `Sitemap`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, status `성공`, discovered pages `84`, discovered videos `0`.
+- Interpretation: Search Console sitemap discovery now matches the live `84` URL sitemap. This is discovery evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
