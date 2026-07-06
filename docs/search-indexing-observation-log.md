@@ -2303,3 +2303,29 @@ Completion guard:
 - Export handoff: `npm run seo:export-packet` and `npm run seo:report` regenerated `reports/seo-export-packet.md` and `reports/seo-opportunities.md`; those report files remain gitignored private artifacts and were not committed.
 - Strict measured gate: `npm run harness:seo-measured` failed with exit code `1` as expected because required Search Console and AdSense measured rows are missing. The failure message was `Measured SEO gate failed. Covered 0/36 required pages. Required sources: search-console, adsense.`
 - Interpretation: do not rewrite public title or description copy from backlog-only suggestions, and do not claim measured SEO or AdSense readiness until real Search Console and AdSense exports exist. This is a deliberate stop rule, not a new content-depth failure.
+
+## 2026-07-06 Web-Operations Recovery Source Target
+
+- Source action: changed the homepage from a Blog + Play-only first impression into a web-operations workbench that leads with URL status, redirect chain, response header, DNS, sitemap, robots, meta/canonical, JWT, and JSON/API response checks.
+- Sitemap source change: added selected operations-first tool URLs to the reduced submitted sitemap set without restoring broad locale sitemap coverage.
+- Representative sitemap URL target: `83`
+- Representative feed item target: `60`
+- Submitted operations tool URLs: `8`
+- Operations tool paths added to the source sitemap target: `/tools/http-status-checker`, `/tools/dns-lookup`, `/tools/sitemap-generator`, `/tools/robots-txt-generator`, `/tools/meta-tag-generator`, `/tools/url-parser`, `/tools/jwt-decoder`, and `/tools/json-formatter`.
+- Search Console account guard: continue using the Chrome profile/session signed in as `bobob935@gmail.com`.
+- Search Console sitemap state before this source deployment: latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is deployed.
+- Search Console page indexing report from the latest `bobob935@gmail.com` check:
+  - Indexed pages: `1`
+  - Not indexed pages: `32`
+  - Last updated: `2026. 6. 30`
+  - `크롤링됨 - 현재 색인이 생성되지 않음`: `24`
+  - `리디렉션이 포함된 페이지`: `5`
+  - `사용자가 선택한 표준이 없는 중복 페이지`: `2`
+  - `적절한 표준 태그가 포함된 대체 페이지`: `1`
+- Sitemaps report from the same Search Console pass:
+  - `/sitemaps/en`: status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `75`, videos `0`
+  - `/sitemap.xml`: status `성공`, submitted `2026. 6. 25`, last read `2026. 6. 25`, discovered pages `0`
+- Sample `크롤링됨 - 현재 색인이 생성되지 않음` URLs shown in Search Console included `/blog`, `/blog/boring-maintenance-is-content-too`, `/play/office-survival`, `/play`, `/tools`, `/blog/office-survival-workday`, `/about`, `/terms`, `/privacy`, and `/tools/iframe-viewer`.
+- Google URL Inspection now proves the homepage itself is indexed, but the page-indexing report still leaves the wider submitted surface unresolved.
+- Search Console action: none after the source change. Deploy the 83-URL source target first, then run submitted URL health, Search Console `/sitemaps/en` resubmission, IndexNow, WebSub if feed content changed, and a later Search Console/Bing/Naver observation pass.
+- Interpretation: this is a source-target correction for the product direction and discovery surface. It is not indexing proof, traffic proof, measured SEO proof, or a reason to mark the active goal complete.

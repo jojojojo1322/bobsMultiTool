@@ -64,7 +64,8 @@ for (const fragment of ["archiveLastmod", "latestDate", "blogLastmod", "playLast
   if (!sitemapSource.includes(fragment)) failures.push(`sitemap source missing dynamic lastmod fragment: ${fragment}`);
 }
 const latestContentDate = latestRelevantGitDate();
-if (latestContentDate && !sitemapSource.includes(latestContentDate)) {
+const archiveLastmod = sitemapSource.match(/const archiveLastmod = "(\d{4}-\d{2}-\d{2})"/)?.[1];
+if (latestContentDate && (!archiveLastmod || archiveLastmod < latestContentDate)) {
   failures.push(`sitemap archive lastmod should be reviewed for latest relevant content commit ${latestContentDate}`);
 }
 if (!sitemapIndexRoute.includes("sitemapIndexXml")) failures.push("sitemap index route missing generator");

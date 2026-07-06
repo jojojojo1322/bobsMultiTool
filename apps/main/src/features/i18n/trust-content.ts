@@ -22,13 +22,13 @@ export type TrustPageContent = {
 const english: Record<TrustPageKind, TrustPageContent> = {
   about: {
     title: "About bobob.app",
-    description: "A small Blog + Play workshop about shipping tiny web experiments, writing the decisions down, and keeping practical browser tools available.",
+    description: "A web-operations workbench for checking URLs, redirects, headers, DNS, sitemap, robots, tokens, and API responses, with Blog and Play notes preserved.",
     lastUpdated: "Last updated: June 11, 2026",
     backToTools: "Back to home",
     sections: [
       {
         heading: "What this site is now",
-        body: "bobob.app is a small Blog + Play workshop. The main surface is original writing about building, operating, and revising small web projects, paired with browser-playable experiments that show the work instead of only describing it.",
+        body: "bobob.app is a web-operations workbench first. The main surface helps check URL status, redirect chains, response headers, DNS records, canonical/meta signals, robots rules, sitemap entries, tokens, and API payloads in practical task flows.",
       },
       {
         heading: "Representative writing",
@@ -39,8 +39,8 @@ const english: Record<TrustPageKind, TrustPageContent> = {
         body: "The Play section contains small static games and interactive experiments built for direct use in the browser. Each public entry is meant to have a playable surface, result or sharing path, related reading when it fits, and enough surrounding context to explain why the experiment exists.",
       },
       {
-        heading: "Archived practical tools",
-        body: "The older developer utilities remain available under /tools because they still solve real browser-side tasks. They are maintained as a supporting archive rather than the front-page identity of the site, with local-first behavior, examples, diagnostics, and related next steps preserved for users who need them.",
+        heading: "Practical tools",
+        body: "The developer utilities remain available under /tools, but the priority is no longer a generic tool shelf. High-utility pages are maintained as deployment, search, security-header, token, API, and data-debug workflows with local-first behavior, examples, diagnostics, and related next steps.",
       },
       {
         heading: "How pages stay useful",
@@ -48,11 +48,11 @@ const english: Record<TrustPageKind, TrustPageContent> = {
       },
       {
         heading: "Local-first workflow",
-        body: "Most archived tools run directly in your browser so input can stay on your device. Tools that require public network checks, such as DNS lookup and HTTP status checks, use small server routes and reject private or local hosts.",
+        body: "Most tools run directly in your browser so input can stay on your device. Tools that require public network checks, such as DNS lookup and HTTP status checks, use small server routes and reject private or local hosts.",
       },
       {
         heading: "Accessibility and navigation",
-        body: "The site keeps keyboard-reachable controls, predictable navigation, search, Blog and Play indexes, trust links, and archived tool routes so visitors can move from the home page or a search result to complete pages instead of empty or unfinished routes.",
+        body: "The site keeps keyboard-reachable controls, predictable navigation, search, Blog and Play indexes, trust links, and tool routes so visitors can move from the home page or a search result to complete pages instead of empty or unfinished routes.",
       },
       {
         heading: "International coverage",
@@ -60,7 +60,7 @@ const english: Record<TrustPageKind, TrustPageContent> = {
       },
       {
         heading: "Public discovery surface",
-        body: "The submitted discovery surface is kept intentionally narrow: home, global search, Blog index, representative Blog posts, Blog category hubs, Play index, Play pages, trust pages, and selected archived tools. Canonical routes, feeds, sitemap entries, redirects, and public verification files are maintained so crawlers and visitors can reach complete pages.",
+        body: "The submitted discovery surface is kept intentionally narrow: home, global search, trust pages, Blog index, representative Blog posts, Blog category hubs, Play index, Play pages, /tools, and selected operations-first tool pages. Canonical routes, feeds, sitemap entries, redirects, and public verification files are maintained so crawlers and visitors can reach complete pages.",
       },
       {
         heading: "Review workflow before copying",
@@ -74,7 +74,7 @@ const english: Record<TrustPageKind, TrustPageContent> = {
   },
   contact: {
     title: "Contact",
-    description: "Contact bobob.app for Blog, Play, archived tool, content correction, and policy questions.",
+    description: "Contact bobob.app for web-operations tool, Blog, Play, content correction, and policy questions.",
     lastUpdated: "Last updated: June 11, 2026",
     backToTools: "Back to home",
     sections: [
@@ -88,7 +88,7 @@ const english: Record<TrustPageKind, TrustPageContent> = {
       },
       {
         heading: "Site operation",
-        body: "The site is maintained as a Blog + Play workshop with an archived utility surface. Feedback that improves original writing, playable experiments, accuracy, navigation, accessibility, localization, or practical workflow coverage is prioritized.",
+        body: "The site is maintained as a web-operations workbench with Blog and Play supporting surfaces. Feedback that improves URL/header/DNS/sitemap/token/API checks, original writing, playable experiments, accuracy, navigation, accessibility, localization, or practical workflow coverage is prioritized.",
       },
       {
         heading: "Useful issue reports",
@@ -354,27 +354,27 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
   hi: {
     about: {
       title: "bobob.app के बारे में",
-      description: "छोटे web प्रयोग बनाने, फैसले लिखने और जरूरी browser tools संभालने वाला Blog + Play कार्यक्षेत्र.",
+      description: "URL, redirect, headers, DNS, sitemap, robots, token और API response जांचने वाला web-operations workbench.",
       lastUpdated: "अंतिम अपडेट: 11 जून 2026",
       backToTools: "होम पर वापस",
       sections: [
-        { heading: "यह साइट अब क्या है", body: "bobob.app एक छोटा Blog + Play कार्यक्षेत्र है. मुख्य सतह छोटे web projects बनाने, चलाने और सुधारने पर लिखे original notes और उनसे जुड़े browser-play experiments हैं." },
+        { heading: "यह साइट अब क्या है", body: "bobob.app पहले web-operations workbench है. मुख्य सतह URL status, redirect chain, response headers, DNS records, canonical/meta signals, robots rules, sitemap entries, tokens और API payloads को practical flows में जांचने में मदद करती है." },
         { heading: "प्रतिनिधि लेख", body: "Public blog जानबूझकर छोटा representative set दिखाता है: पर्याप्त text, tables, checklists, build logs, production decisions और date-sensitive topics में साफ तारीख. Short notes archive में रह सकते हैं, लेकिन blog list, feed या submitted sitemap में आगे नहीं रखे जाते." },
         { heading: "Play experiments", body: "Play section में छोटे static games और interactive experiments हैं. हर public entry जल्दी खुलनी चाहिए, playable surface दिखाना चाहिए, result या share path देना चाहिए, और जहां उपयोगी हो वहां related reading से जुड़ना चाहिए." },
-        { heading: "Archived practical tools", body: "पुराने developer tools /tools में बने रहते हैं क्योंकि वे अभी भी real tasks हल करते हैं. वे support archive हैं, homepage identity नहीं; उनमें local-first behavior, examples, diagnostics और next steps बने रहते हैं." },
+        { heading: "Practical operations tools", body: "Developer tools /tools में बने रहते हैं, लेकिन priority generic tools shelf नहीं है. High-utility pages deploy, search, security-header, token, API और data-debug workflows के रूप में maintain होते हैं." },
         { heading: "Pages उपयोगी कैसे रहती हैं", body: "नई public page visitor को कोई decision लेने या action करने में मदद करे. Article original judgment, build record, comparison या checklist दे; Play game surface जल्दी दिखाए; tool reference से पहले input और output दिखाए." },
       ],
       primaryLink: { label: "Blog पढ़ें", href: "/blog" },
     },
     contact: {
       title: "संपर्क",
-      description: "Blog, Play, archived tools, content corrections और policy questions के लिए bobob.app से संपर्क करें.",
+      description: "Web-operations tools, Blog, Play, content corrections और policy questions के लिए bobob.app से संपर्क करें.",
       lastUpdated: "अंतिम अपडेट: 11 जून 2026",
       backToTools: "होम पर वापस",
       sections: [
         { heading: "Email", body: "Site questions, tool issues, content corrections या policy requests के लिए bobob935@gmail.com पर email करें. Tool problem report करते समय page URL, input type, browser और expected result शामिल करें." },
         { heading: "Responsible use", body: "Passwords, private keys, live access tokens, customer data या confidential internal hostnames न भेजें. Examples भेजने से पहले sensitive values हटाएं." },
-        { heading: "Site operation", body: "यह site Blog + Play workspace और archived tools surface के रूप में maintain होती है. Original writing, playable experiments, accuracy, navigation, accessibility, localization और practical workflow सुधारने वाला feedback priority है." },
+        { heading: "Site operation", body: "यह site web-operations workbench के रूप में maintain होती है, जिसमें Blog और Play supporting surfaces हैं. URL/header/DNS/sitemap/token/API checks, original writing, playable experiments, accuracy, navigation, accessibility, localization और practical workflow सुधारने वाला feedback priority है." },
       ],
       primaryLink: { label: "bobob935@gmail.com पर email करें", href: "mailto:bobob935@gmail.com" },
     },

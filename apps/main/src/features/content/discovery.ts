@@ -1,6 +1,6 @@
 import type { BlogPost, PlayContent } from "./types";
 
-const siteKeywords = ["bobob.app", "개발 기록", "AI 활용", "사이드프로젝트", "정적 웹", "작은 웹게임"];
+const siteKeywords = ["bobob.app", "웹 운영 점검", "URL 상태 점검", "개발 기록", "AI 활용", "사이드프로젝트", "정적 웹", "작은 웹게임"];
 
 const categoryKeywords: Record<string, string[]> = {
   일기: ["개발 일기", "작업 기록", "개인 프로젝트"],
@@ -36,9 +36,10 @@ export function playTypeLabel(type: PlayContent["type"]) {
 
 export function blogPostKeywords(post: BlogPost, relatedPlays: PlayContent[] = []) {
   return compactUnique([
-    ...siteKeywords,
+    "bobob.app",
     post.category,
     ...(categoryKeywords[post.category] ?? []),
+    ...siteKeywords,
     post.title,
     post.slug,
     ...post.relatedPlaySlugs,
@@ -48,7 +49,7 @@ export function blogPostKeywords(post: BlogPost, relatedPlays: PlayContent[] = [
 
 export function playContentKeywords(content: PlayContent, relatedPosts: BlogPost[] = []) {
   return compactUnique([
-    ...siteKeywords,
+    "bobob.app",
     "Play",
     "웹 게임",
     "모바일 웹 게임",
@@ -57,6 +58,7 @@ export function playContentKeywords(content: PlayContent, relatedPosts: BlogPost
     content.durationLabel,
     playTypeLabel(content.type),
     ...playTypeKeywords[content.type],
+    ...siteKeywords,
     ...content.relatedBlogSlugs,
     ...content.relatedPlaySlugs,
     ...relatedPosts.flatMap((post) => [post.title, post.slug, post.category, ...(categoryKeywords[post.category] ?? [])]),
@@ -90,7 +92,10 @@ export function homeContentKeywords(posts: BlogPost[], contents: PlayContent[]) 
   return compactUnique([
     ...blogIndexKeywords(posts),
     ...playIndexKeywords(contents),
-    "개발자 도구 보관소",
+    "redirect chain checker",
+    "sitemap health check",
+    "security headers checker",
+    "개발자 도구 워크벤치",
     "Blog and Play",
   ]).slice(0, 22);
 }

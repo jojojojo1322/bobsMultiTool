@@ -140,7 +140,7 @@ for (const fragment of [
   "Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes",
   `Current count: \`${playEntries.length}\` Play entries.`,
   "`arcade-game`",
-  "Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section",
+  "Homepage evidence surface: `apps/main/src/app/page.tsx` now opens with `data-ops-workflows`",
   "`small-web-games-retention` was deepened from a short retention argument into an 800+ word Blog + Play operating note",
   "`search-console-misreads-for-indie-devs` was deepened from a short Search Console warning into an 800+ word observation workflow",
   "`cursor-codex-web-service-bottlenecks` was deepened from a short AI-tool bottleneck note into an 800+ word development operations article",
@@ -157,7 +157,8 @@ for (const fragment of [
   `discovered pages \`${latestExternalSitemapCount}\``,
   "This is discovery evidence, not indexing proof.",
   "Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1`",
-  "Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.",
+  "Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.",
+  "`크롤링됨 - 현재 색인이 생성되지 않음`: `24`",
   "URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.",
   "Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`",
   "Post-77-URL pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`",
@@ -177,7 +178,7 @@ for (const fragment of [
   "Still Not Complete",
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
-  "Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.",
+  "Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.",
   `Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
@@ -194,7 +195,7 @@ for (const fragment of [
   "Google Search Console sitemap",
   "Bing and IndexNow",
   "Naver Search Advisor",
-  "Do not mark the active Blog + Play goal complete",
+  "Do not mark the active web-operations + Blog + Play goal complete",
 ]) {
   assertIncludes(discoveryRegistration, fragment, discoveryRegistrationPath);
 }

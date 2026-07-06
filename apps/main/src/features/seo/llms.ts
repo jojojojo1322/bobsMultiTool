@@ -2,9 +2,9 @@ import { getIndexableBlogPosts } from "@/features/content/blog";
 import { blogCategoryDefinitions, blogCategoryPath } from "@/features/content/blog-categories";
 import { getPlayContents } from "@/features/content/play";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
+import { operationalToolSlugs } from "@/features/tools/operational-surface";
 
 const siteUrl = "https://www.bobob.app";
-const popularToolSlugs = ["json-formatter", "regex-tester", "jwt-decoder", "base64-tool", "cron-generator", "dns-lookup"];
 
 function markdownText(value: string) {
   return value.replaceAll("[", "(").replaceAll("]", ")").replace(/\s+/g, " ").trim();
@@ -33,7 +33,7 @@ function blogCategoryLinks() {
 function toolLinks() {
   const tools = getLocalizedTools("en");
 
-  return popularToolSlugs.flatMap((slug) => {
+  return operationalToolSlugs.flatMap((slug) => {
     const tool = tools.find((item) => item.slug === slug);
     return tool ? [markdownLink(tool.shortTitle, `${siteUrl}/tools/${tool.slug}`, tool.description)] : [];
   });
@@ -43,16 +43,16 @@ export function llmsTxt() {
   return [
     "# bobob.app",
     "",
-    "> 개발/AI 기록과 브라우저에서 바로 해보는 짧은 Play를 모은 정적 웹사이트입니다.",
+    "> URL, 헤더, DNS, sitemap, robots, JWT/API 응답을 점검하는 웹 운영 워크벤치입니다.",
     "",
-    "bobob.app은 Blog + Play 중심의 정적 웹사이트입니다. 글은 실제 개발, AI 활용, 사이드 프로젝트 운영 판단을 다루고, Play는 단일 규칙과 짧은 플레이로 바로 시작하는 웹 놀이입니다.",
+    "bobob.app은 DevTools와 터미널에 흩어진 웹 운영 확인을 하나의 작업 흐름으로 묶고, Blog 운영 기록과 짧은 Play 실험을 함께 보존하는 정적 웹사이트입니다.",
     "",
     "## Core",
-    markdownLink("Home", `${siteUrl}/`, "Blog, Play, archived Tools로 이어지는 canonical landing page."),
-    markdownLink("Search", `${siteUrl}/search`, "Blog, Play, archived Tools를 함께 찾는 전역 검색."),
+    markdownLink("Home", `${siteUrl}/`, "URL, header, sitemap 점검 흐름에서 Blog와 Play로 이어지는 canonical landing page."),
+    markdownLink("Search", `${siteUrl}/search`, "운영 도구, Blog, Play를 함께 찾는 전역 검색."),
     markdownLink("Blog index", `${siteUrl}/blog`, "개발, AI 활용, 생산성, 사이드 프로젝트, 웹서비스 운영 기록 목록."),
     markdownLink("Play index", `${siteUrl}/play`, "30초에서 3분 안에 끝나는 웹 게임 목록."),
-    markdownLink("Tools archive", `${siteUrl}/tools`, "기존 개발자 도구를 보관한 archive hub."),
+    markdownLink("Tools workbench", `${siteUrl}/tools`, "URL, DNS, sitemap, robots, meta, token, JSON 점검 도구 hub."),
     "",
     "## Blog Categories",
     ...blogCategoryLinks(),
@@ -76,7 +76,7 @@ export function llmsTxt() {
     markdownLink("Privacy", `${siteUrl}/privacy`, "입력 데이터와 브라우저/서버 경계 안내."),
     markdownLink("Terms", `${siteUrl}/terms`, "사이트 이용 조건."),
     "",
-    "## Optional",
+    "## Operational Tools",
     ...toolLinks(),
     "",
   ].join("\n");

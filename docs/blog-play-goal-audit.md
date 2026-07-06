@@ -4,8 +4,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 ## Current Product State
 
-- Public direction: bobob.app is now a Blog + Play workshop for development, AI, side-project, and web-operations writing plus lightweight web play.
-- Tools position: existing developer tools remain available under `/tools`, but they are no longer the main homepage direction.
+- Public direction: bobob.app is now a web-operations workbench first, with Blog and Play preserved as supporting operating evidence and retention experiments.
+- Tools position: selected high-utility tools for URL status, redirect chains, response headers, DNS, sitemap, robots, meta/canonical, JWT, and JSON/API inspection are now presented as the main homepage workflow. Generic developer utilities remain available under `/tools` but should not read as a thin DevTools clone.
+- Blog/Play position: Blog and Play are not removed; they stay visible as operating notes, build logs, and short interaction surfaces below the primary operations workflow.
 - No support monetization: the first pass does not expose donation, coffee, paid-pack, login, ranking, comments, or game-ad UI.
 
 ## Blog Evidence
@@ -42,7 +43,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Priority-board consolidation: `priority-sorter-build-log` now absorbs the short noindex notes about static-first operation, delayed login, and server limits into one representative build log tied to `priority-sorter`.
 - AI-review consolidation: `ai-review-tap-build-log` now absorbs the short noindex notes about AI outputs as drafts and answer-review habits into one representative build log tied to `ai-review-tap`.
 - Prompt-request consolidation: `prompt-cleanup-build-log` now absorbs the short noindex notes about reviewing AI answers and deciding before delegation into one representative build log tied to `prompt-cleanup`.
-- Bug-ticket consolidation: `bug-clicker-build-log` now absorbs the short noindex notes about Codex work direction and one-button Play response into one representative build log tied to `bug-clicker`, so the required bug-ticket Play has a direct build-log page instead of relying only on adjacent operations posts.
+- Bug-ticket consolidation: `bug-clicker-build-log` now absorbs the short noindex notes about Codex work direction and one-button Play response into a 1,300+ word representative build log tied to `bug-clicker`, with first-5-second screen decisions, rejected feature choices, failure-cause separation, and result-link verification criteria so the required bug-ticket Play has a direct build-log page instead of relying only on adjacent operations posts.
 - Office-survival promotion: `office-survival-workday` moved from a short noindex diary note into a representative production log tied to `office-survival`, with an archive absorption table, four-resource design table, and screen-check checklist for the first Play surface.
 - Notification-mole consolidation: `notification-mole-build-log` now absorbs the two short noindex notes about urgency rings and priority cues into one representative build log tied to `notification-mole`, so the Play has its own screen-judgment record instead of relying only on the cross-game feedback article.
 - Cross-game feedback consolidation: `game-feedback-before-score-note` now absorbs smaller noindex cue notes for `bug-brick-breaker`, `server-room-flight`, `bug-bubble-shooter`, `deploy-crossing`, `deploy-invaders`, and `prompt-gem-swap`, so those short implementation notes do not need separate submitted pages.
@@ -54,9 +55,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `why-bobob-shifted-to-content-lab`
   - `static-micro-games-architecture`
   - `content-indexing-checklist-before-resubmission`
-- Homepage evidence surface: `apps/main/src/app/page.tsx` pins those three pillar posts in the `data-pillar-blog` first-read section before ordinary latest Blog cards, so a first visitor can see the direction change, static Play architecture, and content/indexing cleanup criteria without opening the full archive.
+- Homepage evidence surface: `apps/main/src/app/page.tsx` now opens with `data-ops-workflows` for URL/header/DNS/sitemap/token checks, then keeps the three pillar posts in the `data-pillar-blog` operating-notes section before ordinary latest Blog cards, so a first visitor sees a concrete reason to use the site while Blog/Play evidence stays visible.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
-- Trust surface alignment: default and localized About/Contact copy now describe bobob.app as a Blog + Play workshop first, with archived tools as a supporting surface, so visitors do not see a tools-first identity on localized trust routes.
+- Trust surface alignment: default About/Contact copy now describes the web-operations workbench first while preserving Blog/Play context; localized trust routes still need a follow-up pass if the operations-first wording is expanded beyond this source-locale recovery slice.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`
@@ -109,12 +110,13 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
-- Current source discovery target after lucky-scratch duplicate representative consolidation:
-  - Sitemap URLs: `75`
+- Current source discovery target after web-operations recovery:
+  - Sitemap URLs: `83`
   - Feed items: `60`
   - Blog posts: `127`
   - Representative Blog posts: `34`
   - Play entries: `26`
+  - Submitted operations tool URLs: `8`
 - Latest deployed/Search Console-observed discovery snapshot:
   - Sitemap URLs: `77`
   - Feed items: `62`
@@ -134,9 +136,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 75-URL representative deployment.
   - Search Console sitemap resubmission for the latest externally submitted 75-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `75`, and videos `0`.
-- The representative sitemap is intentionally reduced and Search Console discovered pages matched the latest externally submitted `75` URL count. This is discovery evidence, not indexing proof.
+- The representative sitemap remains intentionally reduced. Source now targets `83` URLs after adding the selected operations-first tool pages, while Search Console still only proves discovery for the previous externally submitted `75` URL count. This is discovery evidence, not indexing proof.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
-  - Latest page indexing report still showed indexed pages `0` and not-indexed pages `5`, with last update `2026-06-12`.
+  - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
+  - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
   - Representative Blog/Play URLs inspected: `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
   - Representative Blog/Play URL status before request: `/blog`, `/play`, and `/play/office-survival` were `크롤링됨 - 현재 색인이 생성되지 않음`; `/blog/ai-side-project-realistic-order` was `발견됨 - 현재 색인이 생성되지 않음`.
@@ -147,7 +150,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - IndexNow:
   - Latest submitted URL count: `75`
   - The latest deployed 75-URL representative sitemap set has been submitted to IndexNow with response status `200`.
-  - The same 75-URL count now reflects the lottery-scratch duplicate representative consolidation.
+  - The same 75-URL count reflects the latest deployed production submission. The new 83-URL source target has not been submitted to IndexNow yet.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
@@ -183,8 +186,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
-- Search Console page indexing is still unresolved: indexed pages `0`, not-indexed pages `5`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the representative Blog/Play URLs still need post-submission indexing observation.
+- Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.
+- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the current source target is `83` URLs and still needs deployment, submitted URL health, resubmission, and later discovery observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.

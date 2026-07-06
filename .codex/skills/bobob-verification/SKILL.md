@@ -7,7 +7,7 @@ description: Use before handing off Bob's Multi Tool changes, especially route, 
 
 - Keep handoff/status text short unless the user explicitly asks for analysis.
 - UI, CSS, layout, theme, localization, or background changes require real browser verification on `localhost` before handoff.
-- Blog + Play MVP changes should verify `/`, `/blog`, `/play`, `/play/office-survival`, `/play/prompt-cleanup`, `/play/meeting-escape`, `/play/priority-sorter`, `/play/bug-clicker`, `/tools`, and the reduced sitemap index before handoff.
+- Web-operations + Blog/Play changes should verify `/`, `/tools/http-status-checker`, `/tools/dns-lookup`, `/tools/sitemap-generator`, `/tools/robots-txt-generator`, `/tools/meta-tag-generator`, `/tools/jwt-decoder`, `/blog`, `/play`, representative Play pages, `/tools`, and the reduced sitemap index before handoff.
 - If `npm run build` ran while a local server was already running, restart the server before browser verification so stale CSS/JS chunks do not create false visual failures.
 - Do not expose access tokens or secrets in verification output. Pass deployment credentials as environment variables such as `VERCEL_TOKEN`.
 
@@ -109,9 +109,9 @@ Include:
 - `/blog` should expose broad source-locale categories such as `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, and date-sensitive `정보`; standalone Blog posts must remain allowed and numerous enough to be visible as their own content lane, and any post that declares `relatedPlay` should link to an existing Play page whose metadata links back without fake SEO padding.
 - `/blog/category/{slug}` should return source-locale category hub pages with real posts, category-specific metadata, structured data, and sitemap coverage only for categories with content.
 - Route smoke should verify that every noindex/archive Blog post is absent from `/blog`, category pages, default `/search`, and direct `/search?q=` title lookups, and that each direct archive detail page renders both `noindex` robots metadata and the visible archive badge, so weak short notes stay reachable by URL but are not promoted or mistaken for submitted representative content.
-- Global `/search?q=` should render Blog, Play, and archived Tools results, and root WebSite SearchAction should target that route. Home, `/tools`, localized tool directories, and workbench shared tool search should keep `?q=` URL state for the archived tool registry.
+- Global `/search?q=` should render operations tool, Blog, and Play results, and root WebSite SearchAction should target that route. Home, `/tools`, localized tool directories, and workbench shared tool search should keep `?q=` URL state for the tool registry.
 - `/opensearch.xml` should return `application/opensearchdescription+xml`, point to `/search?q={searchTerms}`, and be discoverable through the root `rel="search"` head link.
-- `/llms.txt` should return `text/plain`, include the canonical Blog + Play MVP links, discovery routes, trust pages, and selected archived tools, and must not broaden the submitted sitemap URL set.
+- `/llms.txt` should return `text/plain`, include the canonical web-operations workbench, Blog/Play links, discovery routes, trust pages, and selected representative tools, and must not broaden into full per-locale URL coverage.
 - `/tools` and localized tool directories should expose acquisition workflow clusters with localized tool copy and next-action links.
 - Tool directory and tool detail pages should expose local-first workflow recipe cards for task paths such as API response formatting, API token debugging, redirect debugging, DNS deployment checks, Wi-Fi QR creation, secure token generation, security-header review, deploy config validation, and CSV cleanup for API payloads.
 - Search results should surface workflow recipe matches for task-shaped queries and show localized recipe title, description, step chips, and step reasons. task-shaped search query recipe results must be checked in the search panel.

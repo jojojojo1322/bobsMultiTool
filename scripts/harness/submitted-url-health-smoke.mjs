@@ -8,6 +8,7 @@ const requestTimeoutMs = Number.parseInt(process.env.BOBOB_SUBMITTED_URL_HEALTH_
 const blogDir = path.join(root, "content/blog");
 const playDir = path.join(root, "content/play");
 const blogCategoryPath = path.join(root, "apps/main/src/features/content/blog-categories.ts");
+const operationalSurfacePath = path.join(root, "apps/main/src/features/tools/operational-surface.ts");
 const failures = [];
 
 function read(filePath) {
@@ -90,7 +91,8 @@ const blogCount = fs
   .filter((frontmatter) => frontmatter.indexPolicy === "index").length;
 const playCount = fs.readdirSync(playDir).filter((file) => file.endsWith(".json")).length;
 const categoryCount = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).length;
-const expectedSitemapUrlCount = blogCount + playCount + categoryCount + 9;
+const operationalToolCount = Array.from(read(operationalSurfacePath).matchAll(/"([^"]+)"/g)).length;
+const expectedSitemapUrlCount = blogCount + playCount + categoryCount + 9 + operationalToolCount;
 
 function fetchUrlFor(canonicalUrl) {
   if (fetchBaseUrl === canonicalBaseUrl) return canonicalUrl;

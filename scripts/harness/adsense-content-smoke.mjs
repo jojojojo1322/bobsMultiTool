@@ -171,7 +171,7 @@ for (const fragment of [
   "Representative writing",
   "Escritura representativa",
   "Play experiments",
-  "Archived practical tools",
+  "Practical tools",
   "International coverage",
   "Review workflow before copying",
   "Public discovery surface",

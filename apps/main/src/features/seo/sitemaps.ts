@@ -2,9 +2,10 @@ import { defaultLocale, type Locale } from "@/features/i18n/config";
 import { blogCategoryDefinitions, blogCategoryPath } from "@/features/content/blog-categories";
 import { getIndexableBlogPosts } from "@/features/content/blog";
 import { getPlayContents } from "@/features/content/play";
+import { operationalToolSlugs } from "@/features/tools/operational-surface";
 
 const siteUrl = "https://www.bobob.app";
-const archiveLastmod = "2026-07-03";
+const archiveLastmod = "2026-07-06";
 const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";
@@ -88,7 +89,13 @@ function basePaths(): SitemapPath[] {
       priority: content.type === "micro-sim" ? "0.9" : "0.8",
       lastmod: content.updatedAt,
     })),
-    { path: "/tools", changefreq: "monthly", priority: "0.5", lastmod: archiveLastmod },
+    { path: "/tools", changefreq: "weekly", priority: "0.7", lastmod: archiveLastmod },
+    ...operationalToolSlugs.map((slug) => ({
+      path: `/tools/${slug}`,
+      changefreq: "monthly" as const,
+      priority: "0.7",
+      lastmod: archiveLastmod,
+    })),
   ];
 }
 

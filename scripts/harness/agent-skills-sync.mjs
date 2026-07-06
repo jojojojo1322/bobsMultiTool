@@ -15,8 +15,8 @@ const files = {
 
 const failures = [];
 const checks = [
-  ["agents", "original writing and hands-on game development"],
-  ["agents", "direct canvas/JavaScript Play experiments"],
+  ["agents", "web-operations workbench first"],
+  ["agents", "URL status, redirect chains, response headers, DNS"],
   ["agents", "fresh task branch"],
   ["agents", "harness:play-planning"],
   ["agents", "planningBrief"],
@@ -733,7 +733,7 @@ const checks = [
   ["product", "harness:seo-opportunities:smoke"],
   ["product", "titleDescriptionRecommendations"],
   ["product", "inputWarnings"],
-  ["product", "original writing and hands-on game development"],
+  ["product", "web-operations workbench first"],
   ["product", "old-web-mini-game loops"],
   ["product", "generated outline"],
   ["product", "measurementBacklog"],

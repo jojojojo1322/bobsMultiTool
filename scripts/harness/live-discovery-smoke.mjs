@@ -14,6 +14,7 @@ const headers = {
 const blogDir = path.join(root, "content/blog");
 const playDir = path.join(root, "content/play");
 const blogCategoryPath = path.join(root, "apps/main/src/features/content/blog-categories.ts");
+const operationalSurfacePath = path.join(root, "apps/main/src/features/tools/operational-surface.ts");
 
 const failures = [];
 
@@ -62,6 +63,10 @@ function listPlaySlugs() {
 
 function listBlogCategorySlugs() {
   return Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]).sort();
+}
+
+function listOperationalToolSlugs() {
+  return Array.from(read(operationalSurfacePath).matchAll(/"([^"]+)"/g)).map((match) => match[1]).sort();
 }
 
 async function fetchLive(url, options = {}) {
@@ -117,7 +122,8 @@ function assertIncludes(label, body, fragments) {
 const blogSlugs = listBlogSlugs();
 const playSlugs = listPlaySlugs();
 const blogCategorySlugs = listBlogCategorySlugs();
-const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + blogCategorySlugs.length + 9;
+const operationalToolSlugs = listOperationalToolSlugs();
+const expectedSitemapUrlCount = blogSlugs.length + playSlugs.length + blogCategorySlugs.length + 9 + operationalToolSlugs.length;
 const expectedFeedItemCount = blogSlugs.length + playSlugs.length;
 
 const apexResponse = await fetchLive(`${apexUrl}/`, { redirect: "manual" });
@@ -181,6 +187,10 @@ assertIncludes("/sitemaps/en", sitemap, [
   `<loc>${baseUrl}/play</loc>`,
   `<loc>${baseUrl}/play/office-survival</loc>`,
   `<loc>${baseUrl}/tools</loc>`,
+  `<loc>${baseUrl}/tools/http-status-checker</loc>`,
+  `<loc>${baseUrl}/tools/dns-lookup</loc>`,
+  `<loc>${baseUrl}/tools/sitemap-generator</loc>`,
+  `<loc>${baseUrl}/tools/jwt-decoder</loc>`,
 ]);
 
 const rssFeed = await textFor("/feed.xml");
@@ -262,8 +272,10 @@ if (llmsResponse) {
     "## Play",
     "## Blog Categories",
     "## Discovery",
+    "## Operational Tools",
     `[AI로 사이드프로젝트를 만들 때, 사실 코드는 먼저가 아니었다](${baseUrl}/blog/ai-side-project-realistic-order)`,
     `[퇴근 전 일더미 줄이기](${baseUrl}/play/office-survival)`,
+    `[HTTP Status Checker](${baseUrl}/tools/http-status-checker)`,
     `[Sitemap index](${baseUrl}/sitemap.xml)`,
     `[OpenSearch descriptor](${baseUrl}/opensearch.xml)`,
   ]);

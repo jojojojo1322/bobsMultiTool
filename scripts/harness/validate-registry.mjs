@@ -152,6 +152,7 @@ const blogEntries = fs
       description: frontmatter.description,
       date: frontmatter.date,
       category: frontmatter.category,
+      indexPolicy: frontmatter.indexPolicy,
       relatedPlaySlugs: frontmatter.relatedPlay ? frontmatter.relatedPlay.split(",").map((item) => item.trim()).filter(Boolean) : [],
     };
   });
@@ -161,6 +162,7 @@ const playEntries = fs
   .map((file) => ({ file, ...JSON.parse(fs.readFileSync(path.join(playContentDir, file), "utf8")) }));
 const blogContentSlugs = new Set(blogEntries.map((entry) => entry.slug).filter(Boolean));
 const playContentSlugs = new Set(playEntries.map((entry) => entry.slug).filter(Boolean));
+const indexableBlogEntries = blogEntries.filter((entry) => entry.indexPolicy === "index");
 
 if (slugs.length < 40) failures.push(`expected at least 40 tools, found ${slugs.length}`);
 if (uniqueSlugs.size !== slugs.length) failures.push("duplicate tool slugs detected");
@@ -220,7 +222,7 @@ for (const fragment of ["relatedBlogLinks", "relatedPlayLinks", "getBlogPostBySl
 for (const fragment of ["data-play-result-links", "data-play-related-play", "data-play-related-blog", "relatedPlayLinks.slice", "relatedBlogLinks.slice"]) {
   if (!playResultLinks.includes(fragment)) failures.push(`Play result links component missing ${fragment}`);
 }
-for (const entry of blogEntries) {
+for (const entry of indexableBlogEntries) {
   for (const playSlug of entry.relatedPlaySlugs) {
     const playEntry = playEntries.find((play) => play.slug === playSlug);
     if (playEntry && !playEntry.relatedBlogSlugs?.includes(entry.slug)) {
@@ -353,7 +355,7 @@ for (const fragment of [
   "blogCategoryPath",
   "xmlns:xhtml",
   "hreflang=\"x-default\"",
-  "getBlogPosts",
+  "getIndexableBlogPosts",
   "getPlayContents",
   'path: "/"',
   'path: "/search"',
@@ -380,4 +382,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Registry harness passed for ${slugs.length} archived tools, ${guideSlugs.size} guides, ${locales.length} configured locales, and the reduced Blog + Play sitemap policy.`);
+console.log(`Registry harness passed for ${slugs.length} tools, ${guideSlugs.size} guides, ${locales.length} configured locales, and the reduced web-operations + Blog + Play sitemap policy.`);

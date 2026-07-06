@@ -8,7 +8,7 @@ const size = {
 };
 
 const kindLabels: Record<string, string> = {
-  home: "BLOG + PLAY",
+  home: "WEB OPS",
   blog: "BLOG NOTE",
   play: "SMALL PLAY",
   category: "BLOG CATEGORY",

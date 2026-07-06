@@ -10,6 +10,7 @@ const observationLogPath = path.join(root, "docs/search-indexing-observation-log
 const blogDir = path.join(root, "content/blog");
 const playDir = path.join(root, "content/play");
 const blogCategoryPath = path.join(root, "apps/main/src/features/content/blog-categories.ts");
+const operationalSurfacePath = path.join(root, "apps/main/src/features/tools/operational-surface.ts");
 const failures = [];
 
 function read(filePath) {
@@ -84,7 +85,8 @@ const playEntries = fs
   .filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(read(path.join(playDir, file))));
 const categorySlugs = Array.from(read(blogCategoryPath).matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
-const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 9;
+const operationalToolSlugs = Array.from(read(operationalSurfacePath).matchAll(/"([^"]+)"/g)).map((match) => match[1]);
+const expectedSitemapUrlCount = submittedBlogEntries.length + playEntries.length + categorySlugs.length + 9 + operationalToolSlugs.length;
 const expectedFeedItemCount = submittedBlogEntries.length + playEntries.length;
 const latestExternalSitemapCount = backtickNumber(matrix, "Latest external sitemap discovery count") ?? expectedSitemapUrlCount;
 const latestIndexNowSubmissionCount = backtickNumber(matrix, "Latest IndexNow representative submission count") ?? expectedSitemapUrlCount;
@@ -101,7 +103,7 @@ for (const fragment of [
   "Google Search Console sitemap",
   "`bobob935@gmail.com`",
   "Chrome profile/session signed in as `bobob935@gmail.com`",
-  `Current production sitemap target: \`${expectedSitemapUrlCount}\` URLs`,
+  `Current source sitemap target after web-operations recovery: \`${expectedSitemapUrlCount}\` URLs`,
   `Latest external sitemap discovery count: \`${latestExternalSitemapCount}\``,
   `Latest IndexNow representative submission count: \`${latestIndexNowSubmissionCount}\``,
   `Latest external feed publish item count: \`${latestExternalFeedItemCount}\``,
@@ -111,7 +113,8 @@ for (const fragment of [
   "Google Search Console performance",
   "Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`",
   "Google Search Console page indexing",
-  "Latest `bobob935@gmail.com` check showed indexed pages `0`, not-indexed pages `5`, last updated `2026-06-12`",
+  "Latest `bobob935@gmail.com` check showed indexed pages `1`, not-indexed pages `32`, last updated `2026. 6. 30`",
+  "`크롤링됨 - 현재 색인이 생성되지 않음`: `24`",
   "Google URL Inspection",
   "Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`",
   "Post-77-URL pillar inspections for `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission`",
@@ -140,7 +143,7 @@ for (const fragment of [
   "Public search spot check",
   "`2026-07-02`",
   "`2026-07-09`",
-  "Do not mark the active Blog + Play goal complete",
+  "Do not mark the active web-operations + Blog + Play goal complete",
   "docs/search-indexing-observation-log.md",
 ]) {
   assertIncludes(matrix, fragment, matrixPath);
@@ -169,9 +172,10 @@ for (const fragment of [
   `Search Console sitemap visible row after 77-URL resubmission`,
   "page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`",
   "Total impressions: `18`",
-  "Indexed pages: `0`",
-  "Not indexed pages: `5`",
+  "Indexed pages: `1`",
+  "Not indexed pages: `32`",
   "Google URL Inspection now proves the homepage itself is indexed",
+  "2026-07-06 Web-Operations Recovery Source Target",
   "Naver ownership is confirmed",
   "Codex heartbeat automation id: `bobob-indexing-observation`",
 ]) {

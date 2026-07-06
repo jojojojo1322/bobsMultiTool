@@ -6,14 +6,38 @@ const root = process.cwd();
 const registry = fs.readFileSync(path.join(root, "apps/main/src/features/tools/registry.ts"), "utf8");
 const guides = fs.readFileSync(path.join(root, "apps/main/src/features/guides/registry.ts"), "utf8");
 const blogCategories = fs.readFileSync(path.join(root, "apps/main/src/features/content/blog-categories.ts"), "utf8");
+const operationalSurface = fs.readFileSync(path.join(root, "apps/main/src/features/tools/operational-surface.ts"), "utf8");
 const blogDir = path.join(root, "content/blog");
 const playDir = path.join(root, "content/play");
 const smokeHeaders = {
   "user-agent": process.env.BOBOB_ROUTE_USER_AGENT || "Googlebot",
   "accept-language": process.env.BOBOB_ROUTE_ACCEPT_LANGUAGE || "en-US,en;q=0.9",
 };
+const fetchRetries = Number.parseInt(process.env.BOBOB_ROUTE_FETCH_RETRIES || "2", 10);
+const retryableStatuses = new Set([500, 502, 503, 504]);
+const rawFetch = globalThis.fetch.bind(globalThis);
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+globalThis.fetch = async (input, init) => {
+  let lastError;
+
+  for (let attempt = 0; attempt <= fetchRetries; attempt += 1) {
+    try {
+      const response = await rawFetch(input, init);
+      if (!retryableStatuses.has(response.status) || attempt === fetchRetries) return response;
+      await sleep(300 * (attempt + 1));
+    } catch (error) {
+      lastError = error;
+      if (attempt === fetchRetries) throw error;
+      await sleep(300 * (attempt + 1));
+    }
+  }
+
+  throw lastError;
+};
 
 const toolSlugs = Array.from(registry.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
+const operationalToolSlugs = Array.from(operationalSurface.matchAll(/"([^"]+)"/g)).map((match) => match[1]);
 const guideSlugs = Array.from(guides.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const blogCategorySlugs = Array.from(blogCategories.matchAll(/slug:\s+"([^"]+)"/g)).map((match) => match[1]);
 const blogSlugs = fs
@@ -39,7 +63,8 @@ const playSlugs = fs
   .map((file) => JSON.parse(fs.readFileSync(path.join(playDir, file), "utf8")).slug)
   .filter(Boolean);
 const expectedBaseSitemapUrlCount = 9; // /, search, four trust/legal pages, blog, play, and tools.
-const expectedSitemapUrlCount = submittedBlogSlugs.length + playSlugs.length + blogCategorySlugs.length + expectedBaseSitemapUrlCount;
+const expectedSitemapUrlCount =
+  submittedBlogSlugs.length + playSlugs.length + blogCategorySlugs.length + expectedBaseSitemapUrlCount + operationalToolSlugs.length;
 const expectedFeedItemCount = submittedBlogSlugs.length + playSlugs.length;
 
 const paths = [
@@ -294,7 +319,7 @@ if (!sitemapIndexBody.includes("<sitemapindex") || !sitemapIndexBody.includes("h
 const reducedSitemapBody = await (await fetch(`${baseUrl}/sitemaps/en`, { headers: smokeHeaders })).text();
 const reducedSitemapUrlCount = (reducedSitemapBody.match(/<url>/g) ?? []).length;
 if (reducedSitemapUrlCount !== expectedSitemapUrlCount) {
-  failures.push(`/sitemaps/en should expose ${expectedSitemapUrlCount} reduced Blog + Play MVP URLs, found ${reducedSitemapUrlCount}`);
+  failures.push(`/sitemaps/en should expose ${expectedSitemapUrlCount} reduced web-operations + Blog + Play URLs, found ${reducedSitemapUrlCount}`);
 }
 for (const fragment of [
   "<loc>https://www.bobob.app/search</loc>",
@@ -310,7 +335,11 @@ for (const fragment of [
   "<loc>https://www.bobob.app/privacy</loc>",
   "<loc>https://www.bobob.app/terms</loc>",
   "<loc>https://www.bobob.app/tools</loc>",
-  "<lastmod>2026-07-03</lastmod>",
+  "<loc>https://www.bobob.app/tools/http-status-checker</loc>",
+  "<loc>https://www.bobob.app/tools/dns-lookup</loc>",
+  "<loc>https://www.bobob.app/tools/sitemap-generator</loc>",
+  "<loc>https://www.bobob.app/tools/jwt-decoder</loc>",
+  "<lastmod>2026-07-06</lastmod>",
   'hreflang="x-default"',
 ]) {
   if (!reducedSitemapBody.includes(fragment)) failures.push(`/sitemaps/en missing discovery fragment: ${fragment}`);
@@ -442,7 +471,7 @@ if (!openSearchResponse.headers.get("content-type")?.includes("application/opens
 for (const fragment of [
   "<OpenSearchDescription",
   "<ShortName>bobob.app</ShortName>",
-  "Search bobob.app Blog, Play, and archived developer tools.",
+  "Search bobob.app web-operations tools, Blog, and Play.",
   'template="https://www.bobob.app/search?q={searchTerms}"',
 ]) {
   if (!openSearchBody.includes(fragment)) failures.push(`/opensearch.xml missing discovery fragment: ${fragment}`);
