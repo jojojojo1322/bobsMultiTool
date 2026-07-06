@@ -152,6 +152,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - The representative sitemap remains intentionally reduced. Production now serves `84` URLs after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post, while Search Console still only proves discovery for the previous externally submitted `75` URL count. This is discovery evidence, not indexing proof.
   - 2026-07-06 follow-up after the search-discovery workflow deployment opened the `https://www.bobob.app/` URL-prefix Search Console property, but the visible Chrome account was `task10@ljfriends.net`, not `bobob935@gmail.com`; no 83-URL `/sitemaps/en` resubmission was made from that session.
   - A later 2026-07-06 follow-up against the current 84-URL production target opened the same sitemap page and checked the Google account menu; it still exposed only `task10@ljfriends.net`, so no 84-URL `/sitemaps/en` resubmission was made from that session either.
+  - A same-day authuser retry opened a fresh Search Console URL with `authuser=bobob935@gmail.com`, but Chrome still resolved the visible account to `task10@ljfriends.net`; no 84-URL `/sitemaps/en` resubmission was made from that session.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
   - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
@@ -202,7 +203,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the current production target is `84` URLs and still needs Search Console resubmission from `bobob935@gmail.com` plus later discovery observation.
+- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the current production target is `84` URLs and still needs Search Console resubmission from a Chrome session that actually resolves to `bobob935@gmail.com` plus later discovery observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.

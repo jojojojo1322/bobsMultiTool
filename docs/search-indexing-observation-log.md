@@ -2406,3 +2406,14 @@ Completion guard:
 - Search Console visible sitemap row remained `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
 - Search Console action result: no sitemap was submitted because the active Chrome account was not the required `bobob935@gmail.com` session.
 - Interpretation: this is an account-session blocker for the manual Google resubmission, not a live sitemap or source-generation blocker. Production still serves the 84-URL target and IndexNow/WebSub have been refreshed, but Google Search Console still only proves the previous 75-URL sitemap observation.
+
+## 2026-07-06 84-URL Search Console Authuser Retry
+
+- Live discovery check before browser retry: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Indexing observation check before browser retry: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `75`, and live sitemap URLs `84`.
+- Search Console attempted action: opened the existing URL-prefix `https://www.bobob.app/` Search Console sitemap tab and also opened a fresh URL with `authuser=bobob935%40gmail.com` for the same property.
+- Search Console visible account after both attempts: `Google 계정: 조현재 (task10@ljfriends.net)`.
+- Required Search Console account: `bobob935@gmail.com`.
+- Search Console visible sitemap row remained `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
+- Search Console action result: no sitemap was submitted because Chrome still resolved the Search Console session to `task10@ljfriends.net` even when the URL requested `authuser=bobob935@gmail.com`.
+- Interpretation: this is still an account-session blocker for Google Search Console. The source and live discovery surfaces are current at 84 URLs, but Google Search Console still only proves the previous 75-URL sitemap observation until the browser session is actually signed in as `bobob935@gmail.com`.
