@@ -2520,3 +2520,18 @@ Completion guard:
 - Local route/content health: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths, `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs, and `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
 - Search Console action: none in this source pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
 - Interpretation: this strengthens one submitted operations tool page as a crawl-policy workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 Robots Crawl Report Production Deployment
+
+- Source action: pushed `841a931661db7abebfac207051a21c3d75fb742c` to `origin/master` with the Robots.txt Generator crawl report, localized report labels, registry/search-intent updates, workflow recipe wording, and harness coverage.
+- Deployment status check: `BOBOB_DEPLOY_SHA=841a931661db7abebfac207051a21c3d75fb742c npm run harness:deployment-status` moved from Vercel `pending` to `success`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `75`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/robots-txt-generator`, confirmed `Robots crawl report`, `Copy report`, crawl-policy, sitemap-host, directive-count, custom-directive metrics, review notes, Markdown preview, and clicked the report copy button with no console errors.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `84`
+- IndexNow response status: `200`
+- Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
+- Interpretation: production now serves the Robots crawl report on a submitted operations tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
