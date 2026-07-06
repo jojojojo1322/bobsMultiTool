@@ -179,7 +179,7 @@ for (const fragment of [
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
   "Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.",
-  `Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
+  `Search Console sitemap discovery now matches the current live representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",

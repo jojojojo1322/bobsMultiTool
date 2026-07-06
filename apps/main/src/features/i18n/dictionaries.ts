@@ -808,6 +808,7 @@ const localizedMetaPreviewToolUi: Record<Locale, Record<string, string>> = {
 const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> = {
   en: {
     metaCrawlerReport: "Meta crawler report",
+    openGraphCrawlerReport: "Open Graph crawler report",
     metaCrawlerReportDescription: "Copy a compact title, description, canonical, robots, image, and crawler follow-up note before changing public metadata.",
     copyMetaCrawlerReport: "Copy report",
     metaCrawlerReportReviewNotes: "Review notes",
@@ -821,6 +822,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   ko: {
     metaCrawlerReport: "메타 크롤러 보고서",
+    openGraphCrawlerReport: "Open Graph 크롤러 보고서",
     metaCrawlerReportDescription: "공개 metadata를 바꾸기 전에 title, description, canonical, robots, image, crawler 후속 메모를 복사합니다.",
     copyMetaCrawlerReport: "보고서 복사",
     metaCrawlerReportReviewNotes: "검토 메모",
@@ -834,6 +836,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   ja: {
     metaCrawlerReport: "メタクローラーレポート",
+    openGraphCrawlerReport: "Open Graphクローラーレポート",
     metaCrawlerReportDescription: "公開metadataを変える前に、title、description、canonical、robots、image、crawler確認メモをコピーします。",
     copyMetaCrawlerReport: "レポートをコピー",
     metaCrawlerReportReviewNotes: "確認メモ",
@@ -847,6 +850,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   "zh-CN": {
     metaCrawlerReport: "Meta 抓取报告",
+    openGraphCrawlerReport: "Open Graph 抓取报告",
     metaCrawlerReportDescription: "修改公开 metadata 前，复制 title、description、canonical、robots、image 和 crawler 跟进摘要。",
     copyMetaCrawlerReport: "复制报告",
     metaCrawlerReportReviewNotes: "检查备注",
@@ -860,6 +864,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   "zh-TW": {
     metaCrawlerReport: "Meta 抓取報告",
+    openGraphCrawlerReport: "Open Graph 抓取報告",
     metaCrawlerReportDescription: "修改公開 metadata 前，複製 title、description、canonical、robots、image 與 crawler 後續摘要。",
     copyMetaCrawlerReport: "複製報告",
     metaCrawlerReportReviewNotes: "檢查備註",
@@ -873,6 +878,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   es: {
     metaCrawlerReport: "Reporte crawler meta",
+    openGraphCrawlerReport: "Reporte crawler Open Graph",
     metaCrawlerReportDescription: "Copia title, description, canonical, robots, imagen y seguimiento crawler antes de cambiar metadata publica.",
     copyMetaCrawlerReport: "Copiar reporte",
     metaCrawlerReportReviewNotes: "Notas de revision",
@@ -886,6 +892,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   "pt-BR": {
     metaCrawlerReport: "Relatorio crawler meta",
+    openGraphCrawlerReport: "Relatorio crawler Open Graph",
     metaCrawlerReportDescription: "Copie title, description, canonical, robots, imagem e follow-up crawler antes de mudar metadata publica.",
     copyMetaCrawlerReport: "Copiar relatorio",
     metaCrawlerReportReviewNotes: "Notas de revisao",
@@ -899,6 +906,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   de: {
     metaCrawlerReport: "Meta-Crawler-Report",
+    openGraphCrawlerReport: "Open-Graph-Crawler-Report",
     metaCrawlerReportDescription: "Kopiere Title, Description, Canonical, Robots, Bild und Crawler-Follow-up vor Aenderungen an oeffentlicher Metadata.",
     copyMetaCrawlerReport: "Report kopieren",
     metaCrawlerReportReviewNotes: "Pruefnotizen",
@@ -912,6 +920,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   fr: {
     metaCrawlerReport: "Rapport crawler meta",
+    openGraphCrawlerReport: "Rapport crawler Open Graph",
     metaCrawlerReportDescription: "Copiez title, description, canonical, robots, image et suivi crawler avant de changer la metadata publique.",
     copyMetaCrawlerReport: "Copier le rapport",
     metaCrawlerReportReviewNotes: "Notes de revue",
@@ -925,6 +934,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   hi: {
     metaCrawlerReport: "Meta crawler रिपोर्ट",
+    openGraphCrawlerReport: "Open Graph crawler रिपोर्ट",
     metaCrawlerReportDescription: "Public metadata बदलने से पहले title, description, canonical, robots, image और crawler follow-up note कॉपी करें.",
     copyMetaCrawlerReport: "Report कॉपी करें",
     metaCrawlerReportReviewNotes: "समीक्षा नोट",
@@ -938,6 +948,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   id: {
     metaCrawlerReport: "Laporan crawler meta",
+    openGraphCrawlerReport: "Laporan crawler Open Graph",
     metaCrawlerReportDescription: "Salin title, description, canonical, robots, gambar, dan catatan crawler sebelum mengubah metadata publik.",
     copyMetaCrawlerReport: "Salin laporan",
     metaCrawlerReportReviewNotes: "Catatan tinjauan",
@@ -951,6 +962,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   vi: {
     metaCrawlerReport: "Báo cáo crawler meta",
+    openGraphCrawlerReport: "Báo cáo crawler Open Graph",
     metaCrawlerReportDescription: "Sao chép title, description, canonical, robots, image và ghi chú crawler trước khi đổi metadata công khai.",
     copyMetaCrawlerReport: "Sao chép báo cáo",
     metaCrawlerReportReviewNotes: "Ghi chú kiểm tra",
@@ -964,6 +976,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   th: {
     metaCrawlerReport: "รายงาน crawler meta",
+    openGraphCrawlerReport: "รายงาน crawler Open Graph",
     metaCrawlerReportDescription: "คัดลอก title, description, canonical, robots, image และบันทึก crawler ก่อนเปลี่ยน metadata สาธารณะ",
     copyMetaCrawlerReport: "คัดลอกรายงาน",
     metaCrawlerReportReviewNotes: "บันทึกตรวจสอบ",
@@ -977,6 +990,7 @@ const localizedMetaCrawlerReportToolUi: Record<Locale, Record<string, string>> =
   },
   ar: {
     metaCrawlerReport: "تقرير زاحف meta",
+    openGraphCrawlerReport: "تقرير زاحف Open Graph",
     metaCrawlerReportDescription: "انسخ title وdescription وcanonical وrobots والصورة وملاحظة crawler قبل تغيير metadata العامة.",
     copyMetaCrawlerReport: "نسخ التقرير",
     metaCrawlerReportReviewNotes: "ملاحظات الفحص",

@@ -1102,6 +1102,82 @@ function buildMetaCrawlerReport({
   };
 }
 
+function buildOpenGraphCrawlerReport({
+  titleText,
+  descriptionText,
+  pageUrl,
+  rawUrl,
+  imageUrl,
+  rawImage,
+  robots,
+  warnings,
+  tags,
+  checkedAt,
+  dictionary,
+}: {
+  titleText: string;
+  descriptionText: string;
+  pageUrl: URL | null;
+  rawUrl: string;
+  imageUrl: URL | null;
+  rawImage: string;
+  robots: string;
+  warnings: string[];
+  tags: string;
+  checkedAt: string;
+  dictionary: ClientDictionary;
+}) {
+  const pageValue = pageUrl?.href ?? (rawUrl.trim() || "-");
+  const imageValue = imageUrl?.href ?? (rawImage.trim() || "-");
+  const pageHost = pageUrl?.hostname ?? ui(dictionary, "invalidUrl", "Invalid URL");
+  const imageHost = rawImage.trim() ? imageUrl?.hostname ?? ui(dictionary, "invalidUrl", "Invalid URL") : "-";
+  const reportTitle = `${ui(dictionary, "openGraphReview", "Open Graph review")} / ${ui(dictionary, "openGraphCrawlerReport", "Open Graph crawler report")}`;
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "metaCrawlerReportNoWarnings", "No metadata crawler warnings were detected.")];
+  const checklist = [
+    ui(dictionary, "metaChecklistFetch", "Fetch the final public page and confirm these tags render in the HTML head."),
+    ui(dictionary, "metaChecklistCanonical", "Confirm canonical URL, Open Graph URL, and submitted sitemap URL describe the same final page."),
+    ui(dictionary, "metaChecklistRobots", "Confirm the robots policy matches the indexing intent before submitting or requesting inspection."),
+    ui(dictionary, "metaChecklistSocial", "Preview the Open Graph image with a public HTTPS URL and supported image extension."),
+    ui(dictionary, "metaChecklistSearchConsole", "Record Search Console/Bing/Naver follow-up separately because valid tags are not indexing proof."),
+  ];
+  const markdown = [
+    `# ${reportTitle}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt || "-"}`,
+    `- ${ui(dictionary, "title", "Title")}: ${titleText || "-"}`,
+    `- ${ui(dictionary, "titleLength", "Title length")}: ${titleText.length}`,
+    `- ${ui(dictionary, "descriptionLength", "Description length")}: ${descriptionText.length}`,
+    `- ${ui(dictionary, "url", "URL")}: ${pageValue}`,
+    `- ${ui(dictionary, "pageHost", "Page host")}: ${pageHost}`,
+    `- ${ui(dictionary, "openGraphImage", "Open Graph image")}: ${imageValue}`,
+    `- ${ui(dictionary, "imageHost", "Image host")}: ${imageHost}`,
+    `- ${ui(dictionary, "robotsPolicy", "Robots policy")}: ${robots}`,
+    "",
+    `## ${ui(dictionary, "metaCrawlerReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "metaCrawlerReportChecklist", "Crawler checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+    "",
+    `## ${ui(dictionary, "openGraphTags", "Open Graph tags")}`,
+    "```html",
+    tags,
+    "```",
+  ].join("\n");
+
+  return {
+    markdown,
+    metrics: [
+      { label: ui(dictionary, "titleLength", "Title length"), value: String(titleText.length), description: "1-70" },
+      { label: ui(dictionary, "descriptionLength", "Description length"), value: String(descriptionText.length), description: "1-200" },
+      { label: ui(dictionary, "pageHost", "Page host"), value: pageHost },
+      { label: ui(dictionary, "imageHost", "Image host"), value: imageHost },
+      { label: ui(dictionary, "robotsPolicy", "Robots policy"), value: robots },
+    ],
+    reportTitle,
+  };
+}
+
 function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [title, setTitle] = React.useState("Bob's Multi Tool - Practical Developer Utilities");
   const [description, setDescription] = React.useState("Fast browser tools for developers, built for daily workflows.");
@@ -6356,6 +6432,11 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
   const [description, setDescription] = React.useState("Practical developer utilities for daily workflows.");
   const [url, setUrl] = React.useState("https://www.bobob.app");
   const [image, setImage] = React.useState("https://www.bobob.app/og-image.png");
+  const [robots, setRobots] = React.useState("index,follow");
+  const [reportCheckedAt, setReportCheckedAt] = React.useState("");
+  React.useEffect(() => {
+    setReportCheckedAt(new Date().toISOString());
+  }, [description, image, robots, title, url]);
   const titleText = title.trim();
   const descriptionText = description.trim();
   const pageUrl = parsePublicUrl(url.trim());
@@ -6368,6 +6449,8 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
     url.trim() && !pageUrl ? ui(dictionary, "canonicalInvalidWarning", "Canonical URL is not a valid absolute URL.") : "",
     pageUrl && pageUrl.protocol !== "https:" ? ui(dictionary, "canonicalNonHttpsWarning", "Use HTTPS for canonical URLs on public pages.") : "",
     pageUrl && isPrivateOrLocalHostname(pageUrl.hostname) ? ui(dictionary, "canonicalPrivateWarning", "Canonical URL points to a local or private host.") : "",
+    url.includes("#") ? ui(dictionary, "canonicalHashWarning", "Canonical URLs should not include fragment identifiers.") : "",
+    robots.startsWith("noindex") ? ui(dictionary, "noindexWarning", "Noindex prevents the page from appearing in search results.") : "",
     !image.trim() ? ui(dictionary, "imageMissingWarning", "Add an Open Graph image for richer social previews.") : "",
     image.trim() && !imageUrl ? ui(dictionary, "imageInvalidWarning", "Image URL is not a valid absolute URL.") : "",
     imageUrl && imageUrl.protocol !== "https:" ? ui(dictionary, "imageNonHttpsWarning", "Use HTTPS image URLs for social preview crawlers.") : "",
@@ -6385,13 +6468,46 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
     `<meta name="twitter:description" content="${escapeXml(descriptionText)}" />`,
     `<meta name="twitter:image" content="${escapeXml(imageUrl?.href ?? image.trim())}" />`,
   ].join("\n");
+  const crawlerReport = buildOpenGraphCrawlerReport({
+    titleText,
+    descriptionText,
+    pageUrl,
+    rawUrl: url,
+    imageUrl,
+    rawImage: image,
+    robots,
+    warnings,
+    tags,
+    checkedAt: reportCheckedAt,
+    dictionary,
+  });
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
-        <Input value={title} onChange={(event) => setTitle(event.target.value)} aria-label={ui(dictionary, "title", "Title")} />
-        <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" />
-        <Textarea value={description} onChange={(event) => setDescription(event.target.value)} className="md:col-span-2" aria-label={ui(dictionary, "description", "Description")} />
-        <Input value={image} onChange={(event) => setImage(event.target.value)} aria-label={ui(dictionary, "imageUrl", "Image URL")} className="md:col-span-2" />
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "title", "Title")}</span>
+          <Input value={title} onChange={(event) => setTitle(event.target.value)} />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "url", "URL")}</span>
+          <Input value={url} onChange={(event) => setUrl(event.target.value)} />
+        </label>
+        <label className="space-y-2 md:col-span-2">
+          <span className="text-sm font-medium">{ui(dictionary, "description", "Description")}</span>
+          <Textarea value={description} onChange={(event) => setDescription(event.target.value)} />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "openGraphImage", "Open Graph image")}</span>
+          <Input value={image} onChange={(event) => setImage(event.target.value)} />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm font-medium">{ui(dictionary, "robotsPolicy", "Robots policy")}</span>
+          <Select value={robots} onChange={(event) => setRobots(event.target.value)}>
+            <option value="index,follow">index,follow</option>
+            <option value="noindex,follow">noindex,follow</option>
+            <option value="noindex,nofollow">noindex,nofollow</option>
+          </Select>
+        </label>
       </div>
       <div className="max-w-xl overflow-hidden rounded-lg border bg-card">
         <div className="aspect-[1.91/1] bg-muted p-4 text-sm text-muted-foreground">{image}</div>
@@ -6407,11 +6523,33 @@ function OpenGraphPreviewTool({ dictionary }: { dictionary: ClientDictionary }) 
           { label: ui(dictionary, "descriptionLength", "Description length"), value: String(descriptionText.length), description: "1-200" },
           { label: ui(dictionary, "pageHost", "Page host"), value: getUrlHostLabel(pageUrl, dictionary) },
           { label: ui(dictionary, "imageHost", "Image host"), value: image.trim() ? getUrlHostLabel(imageUrl, dictionary) : "-" },
+          { label: ui(dictionary, "robotsPolicy", "Robots policy"), value: robots },
         ]}
       />
       <div data-og-diagnostics>
         <ToolWarningList title={ui(dictionary, "openGraphReview", "Open Graph review")} warnings={warnings} emptyLabel={ui(dictionary, "openGraphLooksReady", "Open Graph tags look ready for link previews.")} />
       </div>
+      <section className="rounded-md border bg-card" data-og-crawler-report>
+        <div className="border-b p-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">{crawlerReport.reportTitle}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "metaCrawlerReportDescription", "Copy a compact title, description, canonical, robots, image, and crawler follow-up note before changing public metadata.")}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => copyToClipboard(crawlerReport.markdown)} data-og-crawler-report-copy>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyMetaCrawlerReport", "Copy report")}
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={crawlerReport.metrics} />
+          <ToolWarningList title={ui(dictionary, "metaCrawlerReportReviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "metaCrawlerReportNoWarnings", "No metadata crawler warnings were detected.")} />
+          <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-og-crawler-report-preview>
+            <code>{crawlerReport.markdown}</code>
+          </pre>
+        </div>
+      </section>
       <ResultBlock title={ui(dictionary, "openGraphTags", "Open Graph tags")} value={tags} dictionary={dictionary} />
     </div>
   );

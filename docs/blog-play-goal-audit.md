@@ -63,6 +63,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Sitemap Generator evidence surface: `/tools/sitemap-generator` now exposes a copyable Search discovery report with URL count, canonical host, HTTPS count, duplicate warnings, and submission checklist notes so the submitted tool page supports Search Console/Bing/Naver handoff instead of only producing XML.
 - Robots.txt Generator evidence surface: `/tools/robots-txt-generator` now exposes a copyable Robots crawl report with crawl policy, sitemap directive, sitemap host, directive counts, warning notes, and crawler checklist so the submitted tool page supports crawl-policy handoff instead of only producing text.
 - Meta Tag Generator evidence surface: `/tools/meta-tag-generator` now exposes a copyable Meta crawler report with title and description lengths, canonical host, robots policy, Open Graph image host, warning notes, and crawler checklist so the submitted tool page supports metadata/Search Console handoff instead of only producing tag markup.
+- Open Graph Preview evidence surface: `/tools/open-graph-preview` now exposes a copyable Open Graph crawler report with title and description lengths, page host, image host, robots policy, warning notes, and crawler checklist so the submitted SEO tool page supports social-preview/Search Console handoff instead of only showing a card mock.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
 - Trust surface alignment: default About/Contact copy now describes the web-operations workbench first while preserving Blog/Play context; localized trust routes still need a follow-up pass if the operations-first wording is expanded beyond this source-locale recovery slice.
 - Required first-pass topics are present:
@@ -152,12 +153,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 75-URL representative deployment.
-  - Search Console sitemap resubmission for the latest externally submitted 75-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `75`, and videos `0`.
-- The representative sitemap remains intentionally reduced. Production now serves `84` URLs after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post, while Search Console still only proves discovery for the previous externally submitted `75` URL count. This is discovery evidence, not indexing proof.
-  - 2026-07-06 follow-up after the search-discovery workflow deployment opened the `https://www.bobob.app/` URL-prefix Search Console property, but the visible Chrome account was `task10@ljfriends.net`, not `bobob935@gmail.com`; no 83-URL `/sitemaps/en` resubmission was made from that session.
-  - A later 2026-07-06 follow-up against the current 84-URL production target opened the same sitemap page and checked the Google account menu; it still exposed only `task10@ljfriends.net`, so no 84-URL `/sitemaps/en` resubmission was made from that session either.
-  - A same-day authuser retry opened a fresh Search Console URL with `authuser=bobob935@gmail.com`, but Chrome still resolved the visible account to `task10@ljfriends.net`; no 84-URL `/sitemaps/en` resubmission was made from that session.
+  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 84-URL representative target was live.
+  - Search Console sitemap resubmission for the latest externally submitted 84-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, discovered pages `84`, and videos `0`.
+- The representative sitemap remains intentionally reduced. Production and Search Console now align at the current `84` URL count after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post. This is discovery evidence, not indexing proof.
+  - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
+  - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 84-URL target.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
   - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
@@ -171,7 +171,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - IndexNow:
   - Latest submitted URL count: `84`
   - The latest deployed 84-URL representative sitemap set has been submitted to IndexNow with response status `200`.
-  - Search Console still needs a separate `/sitemaps/en` resubmission and later observation; IndexNow is not Google indexing proof.
+  - Search Console resubmission is also aligned at `84`, but both Search Console discovery and IndexNow submission still need later indexing observation; IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - The latest 2026-07-06 retry against the current 84-URL production target still reached only the public Bing Webmaster Tools landing page, so no Bing sitemap or recommendation state was observed.
@@ -210,7 +210,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the current production target is `84` URLs and still needs Search Console resubmission from a Chrome session that actually resolves to `bobob935@gmail.com` plus later discovery observation.
+- Search Console sitemap discovery now matches the current live representative sitemap URL count (`84`), but this is discovery only and still does not prove that submitted Blog, Play, or tool URLs are indexed.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.

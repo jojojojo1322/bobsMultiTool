@@ -919,7 +919,7 @@ for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics
 for (const fragment of ["data-robots-diagnostics", "data-sitemap-diagnostics", "escapeXml", "isPrivateOrLocalHostname", "parsePublicUrl", "robotsUnknownDirectiveWarning", "sitemapDuplicateUrlWarning", "sitemapMixedHostWarning"]) {
   if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing robots/sitemap crawl-readiness implementation ${fragment}`);
 }
-for (const fragment of ["data-meta-diagnostics", "data-og-diagnostics", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning"]) {
+for (const fragment of ["data-meta-diagnostics", "data-og-diagnostics", "data-og-crawler-report", "data-og-crawler-report-preview", "buildOpenGraphCrawlerReport", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning"]) {
   if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing Meta/Open Graph readiness implementation ${fragment}`);
 }
 

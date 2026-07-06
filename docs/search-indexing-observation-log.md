@@ -2572,4 +2572,18 @@ Completion guard:
 - Search Console action: submitted `https://www.bobob.app/sitemaps/en` from the Sitemaps page after the Meta crawler report deployment.
 - Search Console confirmation: `사이트맵이 제출됨`.
 - Search Console sitemap row after submission: `https://www.bobob.app/sitemaps/en`, type `Sitemap`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, status `성공`, discovered pages `84`, discovered videos `0`.
+- Search Console sitemap visible row after 84-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, status `성공`, discovered pages `84`, discovered videos `0`.
 - Interpretation: Search Console sitemap discovery now matches the live `84` URL sitemap. This is discovery evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 Open Graph Crawler Report Source Slice
+
+- Source action: added a copyable Open Graph crawler report to `/tools/open-graph-preview` so the submitted SEO tool produces a shareable social-preview, page URL, image host, robots policy, warning-note, and crawler-checklist artifact instead of only showing a card preview and raw tags.
+- Search surface action: expanded the Open Graph Preview registry/search intents and the search-discovery workflow recipe for `open graph crawler report`, `social crawler report`, and `link preview qa report`, and updated layout/search harness coverage so the feature stays inside the submitted Open Graph tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/open-graph-preview`, confirmed `Open Graph review / Open Graph crawler report`, `Copy report`, title/description/page/image/robots metrics, review notes, Markdown preview, and clicked the report copy button with no console errors.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one submitted operations tool page as a social crawler workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
