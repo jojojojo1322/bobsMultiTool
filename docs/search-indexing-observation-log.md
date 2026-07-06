@@ -2509,3 +2509,14 @@ Completion guard:
 - IndexNow response status: `200`
 - Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
 - Interpretation: production now serves the Sitemap Generator Search discovery report on a submitted operations tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 Robots Crawl Report Source Slice
+
+- Source action: added a copyable Robots crawl report to `/tools/robots-txt-generator` so the submitted operations tool produces a shareable crawl policy, sitemap directive, sitemap host, directive count, warning-note, and crawler-checklist artifact instead of only exposing robots.txt output.
+- Search surface action: expanded the Robots.txt Generator registry/search intents and search-discovery workflow recipe for `robots crawl report`, `robots txt report`, and `crawl policy report`, and updated layout/search harness coverage so the feature stays inside the submitted robots tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/robots-txt-generator`, confirmed `Robots crawl report`, `Copy report`, crawl-policy, sitemap-host, directive-count, custom-directive metrics, review notes, Markdown preview, and clicked the report copy button with no console errors.
+- Local route/content health: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths, `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs, and `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
+- Interpretation: this strengthens one submitted operations tool page as a crawl-policy workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

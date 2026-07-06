@@ -6025,10 +6025,79 @@ function buildSearchDiscoveryReport({
   };
 }
 
+function buildRobotsCrawlReport({
+  sitemap,
+  sitemapUrl,
+  mode,
+  customRuleLines,
+  output,
+  warnings,
+  checkedAt,
+  dictionary,
+}: {
+  sitemap: string;
+  sitemapUrl: URL | null;
+  mode: string;
+  customRuleLines: string[];
+  output: string;
+  warnings: string[];
+  checkedAt: string;
+  dictionary: ClientDictionary;
+}) {
+  const directiveCount = output.split(/\r?\n/).filter((line) => line.trim() && !line.startsWith("#")).length;
+  const crawlPolicy = mode === "allow" ? ui(dictionary, "robotsAllowAll", "Allow all") : ui(dictionary, "robotsBlockAll", "Block all");
+  const sitemapValue = sitemapUrl?.href ?? (sitemap.trim() || "-");
+  const sitemapHost = sitemapUrl?.hostname ?? ui(dictionary, "invalidUrl", "Invalid URL");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "robotsCrawlReportNoWarnings", "No robots.txt crawl warnings were detected.")];
+  const checklist = [
+    ui(dictionary, "robotsChecklistFetch", "Fetch /robots.txt on the public host and confirm it returns 200 text/plain."),
+    ui(dictionary, "robotsChecklistSitemap", "Confirm the Sitemap directive points at the submitted canonical sitemap."),
+    ui(dictionary, "robotsChecklistPublicPaths", "Check that public tool, Blog, Play, trust, and sitemap paths are not accidentally blocked."),
+    ui(dictionary, "robotsChecklistCanonical", "Keep canonical links, sitemap URLs, and robots host on the same public domain."),
+    ui(dictionary, "robotsChecklistResubmit", "After changing crawl rules, refresh sitemap discovery and record Search Console/Bing/Naver follow-up separately."),
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "robotsCrawlReport", "Robots crawl report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt || "-"}`,
+    `- ${ui(dictionary, "crawlPolicy", "Crawl policy")}: ${crawlPolicy}`,
+    `- ${ui(dictionary, "sitemapUrl", "Sitemap URL")}: ${sitemapValue}`,
+    `- ${ui(dictionary, "sitemapHost", "Sitemap host")}: ${sitemapHost}`,
+    `- ${ui(dictionary, "directiveCount", "Directive count")}: ${directiveCount}`,
+    `- ${ui(dictionary, "customDirectiveCount", "Custom directives")}: ${customRuleLines.length}`,
+    "",
+    `## ${ui(dictionary, "robotsCrawlReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "robotsCrawlReportChecklist", "Crawl checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+    "",
+    "## robots.txt",
+    "```txt",
+    output,
+    "```",
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    metrics: [
+      { label: ui(dictionary, "crawlPolicy", "Crawl policy"), value: crawlPolicy },
+      { label: ui(dictionary, "sitemapHost", "Sitemap host"), value: sitemapHost },
+      { label: ui(dictionary, "directiveCount", "Directive count"), value: String(directiveCount) },
+      { label: ui(dictionary, "customDirectiveCount", "Custom directives"), value: String(customRuleLines.length) },
+    ],
+  };
+}
+
 function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [sitemap, setSitemap] = React.useState("https://www.bobob.app/sitemap.xml");
   const [mode, setMode] = React.useState("allow");
   const [customRules, setCustomRules] = React.useState("Disallow: /api/\nDisallow: /admin/");
+  const [reportCheckedAt, setReportCheckedAt] = React.useState("");
+  React.useEffect(() => {
+    setReportCheckedAt(new Date().toISOString());
+  }, [customRules, mode, sitemap]);
   const sitemapUrl = parsePublicUrl(sitemap.trim());
   const customRuleLines = customRules
     .split(/\r?\n/)
@@ -6049,6 +6118,7 @@ function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
     mode === "block" ? ui(dictionary, "robotsBlockAllWarning", "Block all prevents normal crawling. Use it only for private or temporary environments.") : "",
     customRuleLines.some((line) => !/^(allow|disallow|crawl-delay|user-agent):/i.test(line)) ? ui(dictionary, "robotsUnknownDirectiveWarning", "One or more custom lines are not common robots.txt directives.") : "",
   ].filter(Boolean);
+  const crawlReport = buildRobotsCrawlReport({ sitemap, sitemapUrl, mode, customRuleLines, output, warnings, checkedAt: reportCheckedAt, dictionary });
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-[1fr_180px]">
@@ -6070,6 +6140,27 @@ function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-robots-diagnostics>
         <ToolWarningList title={ui(dictionary, "robotsWarnings", "robots.txt review")} warnings={warnings} emptyLabel={ui(dictionary, "robotsLooksReady", "robots.txt is ready for a public crawl review.")} />
       </div>
+      <section className="rounded-md border bg-card" data-robots-crawl-report>
+        <div className="border-b p-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">{ui(dictionary, "robotsCrawlReport", "Robots crawl report")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "robotsCrawlReportDescription", "Copy a compact crawl policy, sitemap directive, warning, and follow-up checklist before changing public crawler access.")}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => copyToClipboard(crawlReport.markdown)} data-robots-crawl-report-copy>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyRobotsCrawlReport", "Copy report")}
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={crawlReport.metrics} />
+          <ToolWarningList title={ui(dictionary, "robotsCrawlReportReviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "robotsCrawlReportNoWarnings", "No robots.txt crawl warnings were detected.")} />
+          <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-robots-crawl-report-preview>
+            <code>{crawlReport.markdown}</code>
+          </pre>
+        </div>
+      </section>
       <ResultBlock title="robots.txt" value={output} dictionary={dictionary} />
     </div>
   );
