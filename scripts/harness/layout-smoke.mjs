@@ -207,10 +207,10 @@ if (!dictionaries.includes("localizedHttpHeaderToolUi")) failures.push("HTTP hea
 if (!dictionaries.includes("localizedHttpSecurityToolUi") || !dictionaries.includes("securityHeaderReadiness")) failures.push("HTTP security header readiness labels must be localized");
 if (!dictionaries.includes("localizedPublicUrlReportToolUi") || !dictionaries.includes("copyPublicUrlReport")) failures.push("public URL report labels must be localized");
 if (!dictionaries.includes("localizedCspGeneratorToolUi")) failures.push("CSP generator UI labels must be localized");
-for (const fragment of ["data-meta-diagnostics", "data-og-diagnostics", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning", "ogDescriptionTooLongWarning"]) {
+for (const fragment of ["data-meta-diagnostics", "data-meta-crawler-report", "data-meta-crawler-report-preview", "data-meta-crawler-report-copy", "buildMetaCrawlerReport", "data-og-diagnostics", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning", "ogDescriptionTooLongWarning"]) {
   if (!toolComponents.includes(fragment)) failures.push(`Meta/Open Graph readiness UI missing ${fragment}`);
 }
-for (const fragment of ["localizedMetaPreviewToolUi", "metaSeoReview", "metaLooksReady", "openGraphReview", "openGraphLooksReady", "titleLength", "descriptionLength", "canonicalHost", "imageHost", "robotsPolicy"]) {
+for (const fragment of ["localizedMetaPreviewToolUi", "localizedMetaCrawlerReportToolUi", "metaSeoReview", "metaLooksReady", "openGraphReview", "openGraphLooksReady", "titleLength", "descriptionLength", "canonicalHost", "imageHost", "robotsPolicy", "metaCrawlerReport", "copyMetaCrawlerReport"]) {
   if (!dictionaries.includes(fragment)) failures.push(`Meta/Open Graph dictionary labels missing ${fragment}`);
 }
 for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {

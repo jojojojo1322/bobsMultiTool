@@ -1028,12 +1028,90 @@ function getImageExtensionSignal(url: URL | null) {
   return /\.(png|jpe?g|webp|gif|avif)(\?.*)?$/i.test(url.pathname);
 }
 
+function buildMetaCrawlerReport({
+  titleText,
+  descriptionText,
+  canonicalUrl,
+  rawCanonical,
+  imageUrl,
+  rawImage,
+  robots,
+  warnings,
+  output,
+  checkedAt,
+  dictionary,
+}: {
+  titleText: string;
+  descriptionText: string;
+  canonicalUrl: URL | null;
+  rawCanonical: string;
+  imageUrl: URL | null;
+  rawImage: string;
+  robots: string;
+  warnings: string[];
+  output: string;
+  checkedAt: string;
+  dictionary: ClientDictionary;
+}) {
+  const canonicalValue = canonicalUrl?.href ?? (rawCanonical.trim() || "-");
+  const imageValue = imageUrl?.href ?? (rawImage.trim() || "-");
+  const canonicalHost = canonicalUrl?.hostname ?? ui(dictionary, "invalidUrl", "Invalid URL");
+  const imageHost = rawImage.trim() ? imageUrl?.hostname ?? ui(dictionary, "invalidUrl", "Invalid URL") : "-";
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "metaCrawlerReportNoWarnings", "No metadata crawler warnings were detected.")];
+  const checklist = [
+    ui(dictionary, "metaChecklistFetch", "Fetch the final public page and confirm these tags render in the HTML head."),
+    ui(dictionary, "metaChecklistCanonical", "Confirm canonical URL, Open Graph URL, and submitted sitemap URL describe the same final page."),
+    ui(dictionary, "metaChecklistRobots", "Confirm the robots policy matches the indexing intent before submitting or requesting inspection."),
+    ui(dictionary, "metaChecklistSocial", "Preview the Open Graph image with a public HTTPS URL and supported image extension."),
+    ui(dictionary, "metaChecklistSearchConsole", "Record Search Console/Bing/Naver follow-up separately because valid tags are not indexing proof."),
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "metaCrawlerReport", "Meta crawler report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt || "-"}`,
+    `- ${ui(dictionary, "title", "Title")}: ${titleText || "-"}`,
+    `- ${ui(dictionary, "titleLength", "Title length")}: ${titleText.length}`,
+    `- ${ui(dictionary, "descriptionLength", "Description length")}: ${descriptionText.length}`,
+    `- ${ui(dictionary, "canonicalUrl", "Canonical URL")}: ${canonicalValue}`,
+    `- ${ui(dictionary, "canonicalHost", "Canonical host")}: ${canonicalHost}`,
+    `- ${ui(dictionary, "openGraphImage", "Open Graph image")}: ${imageValue}`,
+    `- ${ui(dictionary, "imageHost", "Image host")}: ${imageHost}`,
+    `- ${ui(dictionary, "robotsPolicy", "Robots policy")}: ${robots}`,
+    "",
+    `## ${ui(dictionary, "metaCrawlerReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "metaCrawlerReportChecklist", "Crawler checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+    "",
+    `## ${ui(dictionary, "generatedMetaTags", "Generated meta tags")}`,
+    "```html",
+    output,
+    "```",
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    metrics: [
+      { label: ui(dictionary, "titleLength", "Title length"), value: String(titleText.length), description: "30-60" },
+      { label: ui(dictionary, "descriptionLength", "Description length"), value: String(descriptionText.length), description: "70-160" },
+      { label: ui(dictionary, "canonicalHost", "Canonical host"), value: canonicalHost },
+      { label: ui(dictionary, "robotsPolicy", "Robots policy"), value: robots },
+    ],
+  };
+}
+
 function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [title, setTitle] = React.useState("Bob's Multi Tool - Practical Developer Utilities");
   const [description, setDescription] = React.useState("Fast browser tools for developers, built for daily workflows.");
   const [url, setUrl] = React.useState("https://www.bobob.app/tools/meta-tag-generator");
   const [image, setImage] = React.useState("https://www.bobob.app/og-image.png");
   const [robots, setRobots] = React.useState("index,follow");
+  const [reportCheckedAt, setReportCheckedAt] = React.useState("");
+  React.useEffect(() => {
+    setReportCheckedAt(new Date().toISOString());
+  }, [description, image, robots, title, url]);
   const titleText = title.trim();
   const descriptionText = description.trim();
   const canonicalUrl = parsePublicUrl(url.trim());
@@ -1073,6 +1151,19 @@ function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
     `<meta name="twitter:description" content="${escapedDescription}" />`,
     `<meta name="twitter:image" content="${escapedImage}" />`,
   ].join("\n");
+  const crawlerReport = buildMetaCrawlerReport({
+    titleText,
+    descriptionText,
+    canonicalUrl,
+    rawCanonical: url,
+    imageUrl,
+    rawImage: image,
+    robots,
+    warnings,
+    output,
+    checkedAt: reportCheckedAt,
+    dictionary,
+  });
 
   return (
     <div className="space-y-4">
@@ -1114,6 +1205,27 @@ function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-meta-diagnostics>
         <ToolWarningList title={ui(dictionary, "metaSeoReview", "Meta SEO review")} warnings={warnings} emptyLabel={ui(dictionary, "metaLooksReady", "Meta tags look ready for search and social crawlers.")} />
       </div>
+      <section className="rounded-md border bg-card" data-meta-crawler-report>
+        <div className="border-b p-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">{ui(dictionary, "metaCrawlerReport", "Meta crawler report")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "metaCrawlerReportDescription", "Copy a compact title, description, canonical, robots, image, and crawler follow-up note before changing public metadata.")}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => copyToClipboard(crawlerReport.markdown)} data-meta-crawler-report-copy>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyMetaCrawlerReport", "Copy report")}
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={crawlerReport.metrics} />
+          <ToolWarningList title={ui(dictionary, "metaCrawlerReportReviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "metaCrawlerReportNoWarnings", "No metadata crawler warnings were detected.")} />
+          <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-meta-crawler-report-preview>
+            <code>{crawlerReport.markdown}</code>
+          </pre>
+        </div>
+      </section>
       <ResultBlock title={ui(dictionary, "generatedMetaTags", "Generated meta tags")} value={output} dictionary={dictionary} />
     </div>
   );

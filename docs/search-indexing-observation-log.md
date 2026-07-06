@@ -2535,3 +2535,16 @@ Completion guard:
 - IndexNow response status: `200`
 - Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
 - Interpretation: production now serves the Robots crawl report on a submitted operations tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 Meta Crawler Report Source Slice
+
+- Source action: added a copyable Meta crawler report to `/tools/meta-tag-generator` so the submitted operations tool produces a shareable title/description, canonical, robots, Open Graph image, warning-note, and crawler-checklist artifact instead of only exposing tag markup.
+- Search surface action: expanded the Meta Tag Generator registry/search intents and search-discovery workflow recipe for `meta crawler report`, `seo meta report`, and `social preview report`, and updated layout/search harness coverage so the feature stays inside the submitted meta tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/meta-tag-generator`, confirmed `Meta crawler report`, `Copy report`, title/description/canonical/image/robots metrics, review notes, Markdown preview, and clicked the report copy button with no console errors.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
+- Interpretation: this strengthens one submitted operations tool page as a metadata crawler workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
