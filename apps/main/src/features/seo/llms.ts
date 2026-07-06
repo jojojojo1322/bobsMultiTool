@@ -35,7 +35,7 @@ function toolLinks() {
 
   return operationalToolSlugs.flatMap((slug) => {
     const tool = tools.find((item) => item.slug === slug);
-    return tool ? [markdownLink(tool.shortTitle, `${siteUrl}/tools/${tool.slug}`, tool.description)] : [];
+    return tool ? [markdownLink(tool.title, `${siteUrl}/tools/${tool.slug}`, tool.description)] : [];
   });
 }
 
