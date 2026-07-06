@@ -1,0 +1,95 @@
+---
+slug: devtools-cannot-see-crawler-state
+title: Chrome DevTools로는 안 보이는 공개 URL 점검
+description: Chrome DevTools에서 보이는 로컬 응답과 검색엔진이 보는 공개 URL 상태를 분리하며 status, sitemap, robots, canonical, Search Console 확인 순서를 정리한 운영 기록입니다.
+date: 2026-07-06
+category: 운영 기록
+readingMinutes: 7
+relatedPlay: indexing-waiting-room
+publicationTier: representative
+indexPolicy: index
+---
+
+## 브라우저에서 보인다고 끝난 게 아니었다
+
+Chrome DevTools는 빠르고 정확하다. 요청이 어떤 status로 끝났는지, 어떤 JavaScript가 실패했는지, 어떤 header가 붙었는지 바로 볼 수 있다. 그런데 사이트를 검색에 맡기는 순간 DevTools만으로는 부족해진다. 내가 보고 있는 것은 내 브라우저의 세션이고, 검색엔진이 보는 것은 공개 URL의 최종 응답이다.
+
+로컬 개발 서버에서 `/blog`가 잘 열려도 production sitemap에 빠져 있을 수 있다. DevTools Network 탭에서 200이 보여도 apex에서 www로 가는 redirect가 플랫폼 앞단에서 다르게 응답할 수 있다. HTML source에 canonical이 있어도 Search Console이 마지막으로 읽은 sitemap은 예전 숫자일 수 있다. 이런 차이를 섞으면 "사이트는 되는데 왜 색인이 안 되지?"라는 질문만 반복하게 된다.
+
+그래서 bobob.app의 개발자도구 방향도 단일 변환기 묶음이 아니라 공개 URL 점검 흐름으로 바꿨다. URL status, redirect chain, response headers, DNS, sitemap, robots, canonical/meta, URL shape를 한 번에 엮어야 DevTools에서 보이는 페이지와 crawler가 받는 페이지를 나눠 볼 수 있다.
+
+## 내가 먼저 나누는 표
+
+| 확인 위치 | 잘 보이는 것 | 놓치기 쉬운 것 |
+| --- | --- | --- |
+| Chrome DevTools | 현재 브라우저 요청, console error, client-side asset 실패 | Googlebot이 받는 최종 URL, Search Console의 마지막 sitemap 읽기 시점 |
+| curl 또는 status checker | 공개 URL의 status, redirect chain, header | 페이지 본문 품질, canonical 선택 결과 |
+| sitemap 점검 | 제출하려는 URL 목록, 중복, host 혼합 | Search Console이 실제로 다시 읽었는지 |
+| robots/meta 점검 | noindex, disallow, canonical 후보 | 검색엔진이 나중에 고른 canonical |
+| Search Console | Google이 마지막으로 본 발견, 검사, 색인 상태 | Bing/Naver 상태, 즉시 traffic 보장 |
+
+이 표를 만든 뒤로는 같은 "200"도 다르게 적는다. 로컬 200, production 200, Googlebot fetch 성공, Search Console discovered pages는 서로 다른 줄이다. 줄을 섞으면 고칠 곳도 섞인다. 특히 작은 사이트는 데이터가 적어서 한 번 잘못 섞은 기록이 며칠 동안 판단을 흐린다.
+
+## DevTools가 강한 구간
+
+DevTools를 버리자는 뜻은 아니다. 입력 폼이 깨졌는지, client bundle이 실패했는지, CSS가 늦게 붙는지, hydration warning이 있는지는 DevTools가 제일 빠르다. 내가 버튼을 눌렀을 때 어떤 request가 나가는지, response body가 어떻게 생겼는지, 로컬 스토리지에 무엇이 남는지도 여기서 본다.
+
+다만 DevTools는 지금 내 탭에서 일어난 일을 잘 보여준다. Search Console의 URL Inspection이 보는 Googlebot smartphone fetch, Bing Webmaster의 recommendation, Naver Search Advisor의 sitemap 상태는 다른 표면이다. 내 탭이 로그인되어 있거나 캐시가 따뜻하거나 locale cookie를 들고 있으면 crawler와 더 멀어진다.
+
+이 차이 때문에 운영 도구는 "내 브라우저에서 됨"을 "공개 URL이 검색에 준비됨"으로 바로 번역하면 안 된다. 중간에 공개 status, redirect, canonical, robots, sitemap, feed, webmaster tool 상태를 끼워 넣어야 한다.
+
+## 공개 URL 점검 순서
+
+- 먼저 canonical host에서 URL이 final 200으로 끝나는지 본다.
+- redirect chain에 임시 redirect, 다른 host, 불필요한 hop이 섞이지 않는지 본다.
+- response header에서 content-type, cache-control, security header를 확인한다.
+- sitemap에 들어간 URL이 실제 final 200 HTML인지 확인한다.
+- robots.txt가 sitemap index를 가리키고 public content를 막지 않는지 본다.
+- meta robots와 canonical이 제출하려는 URL과 같은 방향인지 본다.
+- URL query, tracking parameter, hash, mixed host를 정리한다.
+- Search Console은 반드시 맞는 계정과 property에서 본다.
+- 제출, 발견, 색인, 노출, 클릭을 같은 성공 단어로 합치지 않는다.
+
+이 순서는 느려 보이지만 실제로는 시간을 줄인다. Search Console에서 "크롤링됨 - 현재 색인이 생성되지 않음"을 봤을 때도 바로 제목을 고치지 않는다. 먼저 sitemap에 들어갔는지, fetch가 성공했는지, canonical이 맞는지, noindex가 없는지 본다. 그 다음에 본문 품질과 title/description을 본다.
+
+## bobob.app에서 바꾼 이유
+
+예전 도구 목록만 보면 많은 기능이 이미 브라우저나 IDE 안에 있었다. JSON formatting, Base64 decode, CSS 정리 같은 기능은 필요하지만, 그것만으로는 다시 들어올 이유가 약하다. 반대로 공개 사이트 운영자는 배포 뒤에 여러 표면을 이어서 본다. redirect 확인 후 DNS를 보고, sitemap을 정리한 뒤 robots와 canonical을 보고, 마지막에 Search Console이나 Bing/Naver를 본다.
+
+그래서 `/search?q=site indexing checklist` 같은 검색은 이제 개별 도구 하나보다 `검색 노출 준비 점검` 흐름을 먼저 보여준다. HTTP status checker, sitemap generator, robots.txt generator, meta tag generator, URL parser가 한 줄로 이어진다. 이 조합은 DevTools의 Network 탭을 대체하려는 게 아니다. DevTools가 보여주는 현재 탭 상태를 공개 검색 표면으로 확장하는 역할이다.
+
+## 상태를 잘못 적으면 생기는 문제
+
+| 잘못 적은 말 | 실제로 다시 적어야 하는 말 |
+| --- | --- |
+| 배포됐으니 색인 준비 끝 | production deployment는 성공했지만 Search Console이 새 sitemap을 읽었는지 별도 확인 필요 |
+| sitemap 제출 성공 | 제출은 됐지만 discovered pages와 indexed pages는 나중에 따로 봐야 함 |
+| 브라우저에서 200 | 내 탭 200인지, canonical host final 200인지, Googlebot fetch 성공인지 분리 필요 |
+| robots 괜찮음 | robots.txt, meta robots, canonical, sitemap 포함 여부를 같이 봐야 함 |
+| 노출이 없으니 제목 변경 | impressions와 query/page export가 충분한지 먼저 확인 필요 |
+
+이런 문장 정리는 사소해 보이지만 운영 품질을 만든다. "됐음"이 아니라 "어느 표면까지 됐음"이라고 적어야 다음 작업이 정해진다. status 문제면 status를 고치고, canonical 문제면 canonical을 고치고, 본문 깊이 문제면 대표 글을 보강한다. 증거가 없을 때 title만 계속 바꾸면 나중에 무엇이 효과였는지 모른다.
+
+## 지금 이 사이트에서 확인할 것
+
+bobob.app은 현재 공개 표면을 작게 유지하고 있다. `/sitemaps/en`에는 홈, 검색, trust pages, Blog category hub, 대표 Blog, Play, `/tools`, 그리고 운영 우선 도구만 넣는다. 짧은 제작 메모는 URL로 남아도 sitemap/feed/search에서 대표 글처럼 밀지 않는다.
+
+이 상태에서 내가 봐야 할 것은 URL 수 자체가 아니라 줄이 맞는지다. source target, live sitemap, IndexNow 제출 수, WebSub feed item 수, Search Console discovered pages를 따로 적는다. 지금 live 쪽이 맞아도 Search Console 계정이 다르면 제출 버튼을 누르지 않는다. 계정이 다른 상태에서 본 화면은 관찰 기록이 될 수는 있어도, bobob.app property의 운영 행동으로 쓰면 안 된다.
+
+## 기다리는 동안 할 수 있는 일
+
+색인은 기다려야 하는 구간이 있다. 하지만 기다리는 동안 할 일이 없는 것은 아니다. DevTools로 local interaction을 보고, 공개 URL status checker로 final response를 보고, sitemap과 robots 도구로 제출 표면을 줄이고, meta/canonical을 다시 확인한다. Blog 글은 짧은 조각보다 대표 판단을 담게 만들고, Play는 관련 글과 다시 이어지게 둔다.
+
+주소 대기표 도장 찍기는 이 루틴을 작은 Play로 바꾼 것이다. 오늘 볼 도장과 며칠 둬야 할 도장을 나누는 방식은 Search Console을 볼 때도 그대로 필요하다. 지금 바로 고칠 수 있는 표면과 외부 도구가 다시 읽을 때까지 기다려야 하는 표면을 나눠야 불안한 수정이 줄어든다.
+
+## 마지막 체크
+
+- DevTools에서 본 200을 production canonical 200으로 다시 확인했는가.
+- sitemap URL이 실제 final 200 HTML인지 확인했는가.
+- robots.txt와 meta robots가 같은 방향인지 확인했는가.
+- canonical이 제출 URL과 같은 host/path를 가리키는가.
+- Search Console은 `bobob935@gmail.com` 계정과 `https://www.bobob.app/` property에서 봤는가.
+- discovered pages, indexed pages, impressions, clicks를 같은 숫자로 말하지 않았는가.
+- Bing/Naver 상태를 Google 상태로 대신 말하지 않았는가.
+
+이 정도를 통과해야 "개발자도구 사이트"가 아니라 "공개 웹 운영 점검대"라고 말할 수 있다. DevTools는 계속 쓴다. 다만 DevTools가 끝낸 일과 검색엔진이 아직 끝내지 않은 일을 같은 줄에 놓지 않는다. 그 구분이 지금 사이트의 방향이다.

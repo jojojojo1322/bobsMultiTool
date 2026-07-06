@@ -4,11 +4,12 @@
   "description": "새 글 주소가 들어오면 오늘 바로 볼 표와 며칠 둬야 할 표를 나눠 도장을 찍는 30-60초 운영 창구입니다. 주소 열림, 사이트맵, 대표 주소, 검사 도구 접근성을 먼저 보고 새로고침·재제출·제목 재수정은 며칠 둠 칸에 둡니다.",
   "type": "tap-game",
   "durationLabel": "30-60초",
-  "updatedAt": "2026-07-01",
+  "updatedAt": "2026-07-06",
   "shareText": "주소 대기표 도장 찍기를 해봤다. 제출 요청을 더 누르기 전에 주소 열림, 사이트맵, 대표 주소, 검사 도구 순서부터 봤다.",
   "order": 19,
   "relatedBlogSlugs": [
     "content-indexing-checklist-before-resubmission",
+    "devtools-cannot-see-crawler-state",
     "search-console-waiting-diary",
     "search-console-misreads-for-indie-devs",
     "vercel-sitemap-canonical-log"

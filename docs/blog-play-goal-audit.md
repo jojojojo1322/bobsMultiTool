@@ -12,11 +12,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Blog Evidence
 
 - Blog source: `content/blog/*.mdx`
-- Current count: `127` Blog posts.
-- Representative submitted count: `34` Blog posts.
+- Current count: `128` Blog posts.
+- Representative submitted count: `35` Blog posts.
 - Archive/noindex candidate count: `93` Blog posts.
 - Representative minimum body depth: `401` words after the source-level 400-word gate was added to `npm run harness:blog-play-mvp`.
-- Date range: `2026-01-05` through `2026-07-02`, with public dates spread across the first half of 2026 plus the current representative pruning note.
+- Date range: `2026-01-05` through `2026-07-06`, with public dates spread across the first half of 2026 plus the current representative operations note.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
@@ -57,6 +57,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `content-indexing-checklist-before-resubmission`
 - Homepage evidence surface: `apps/main/src/app/page.tsx` now opens with `data-ops-workflows` for URL/header/DNS/sitemap/token checks, then keeps the three pillar posts in the `data-pillar-blog` operating-notes section before ordinary latest Blog cards, so a first visitor sees a concrete reason to use the site while Blog/Play evidence stays visible.
 - Global search evidence surface: `/search?q=` now returns `data-content-search-workflows` results for task-shaped operations queries such as redirect debugging, search discovery readiness, DNS deployment, and security-header review before falling through to individual tool cards, so internal search no longer reads as only a generic developer-tool archive.
+- DevTools boundary evidence: `devtools-cannot-see-crawler-state` is now a representative operations post tied to `indexing-waiting-room`, with a DevTools/public crawler comparison table, public URL checklist, and Search Console account/property stop rule so the new developer-tool direction is explained as a web-operations workflow rather than another browser-tool clone.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
 - Trust surface alignment: default About/Contact copy now describes the web-operations workbench first while preserving Blog/Play context; localized trust routes still need a follow-up pass if the operations-first wording is expanded beyond this source-locale recovery slice.
 - Required first-pass topics are present:
@@ -86,6 +87,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `macbook-price-outlook-2026-06-26` was deepened from a thinner information note into a 1,000+ word comparison article with a 2026-07-03 follow-up check, official announcement price table, purchase-screen/discount separation, reseller-discount caveat, and a purchase checklist so the submitted information lane reads like a reusable decision note instead of a stale price snippet.
   - `notification-mole-build-log` now gives the notification selector its own representative production log with an archive absorption table, signal table, and desktop/mobile verification criteria for making the game about selecting important alerts instead of tapping everything.
   - `lottery-endless-stage-loop-note` now absorbs `lottery-scratch-stage-note` into a 1,100+ word representative Play-safety build log with an archive absorption table, excluded-mechanics reasoning, screen-check criteria, and verification criteria for keeping lottery-style Play away from scoreboards, timers, cumulative winnings, and loss-recovery prompts.
+  - `devtools-cannot-see-crawler-state` adds a representative operations note that separates Chrome DevTools, public status checks, sitemap/robots/canonical review, and Search Console observations with a table and final checklist before the next manual indexing pass.
 
 ## Play Evidence
 
@@ -112,10 +114,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Live canonical host: `https://www.bobob.app`
 - Reduced submitted sitemap route: `/sitemaps/en`
 - Current source discovery target after web-operations recovery:
-  - Sitemap URLs: `83`
-  - Feed items: `60`
-  - Blog posts: `127`
-  - Representative Blog posts: `34`
+  - Sitemap URLs: `84`
+  - Feed items: `61`
+  - Blog posts: `128`
+  - Representative Blog posts: `35`
   - Play entries: `26`
   - Submitted operations tool URLs: `8`
 - Latest deployed/Search Console-observed discovery snapshot:

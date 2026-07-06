@@ -2364,3 +2364,16 @@ Completion guard:
 - Search Console visible sitemap row remained `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
 - The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is resubmitted from the `bobob935@gmail.com` Chrome session and observed there.
 - Interpretation: production and IndexNow now reflect the search-discovery workflow slice, but Google Search Console still has an account-session blocker. This is not indexing proof and does not complete the active goal.
+
+## 2026-07-06 DevTools Boundary Operations Post Source Target
+
+- Source action: added the representative operations post `devtools-cannot-see-crawler-state` to explain why Chrome DevTools is useful for the current browser tab but insufficient for public crawler/indexing readiness, with a DevTools/public status/sitemap/robots/canonical/Search Console comparison table and final public URL checklist.
+- Blog/Play link action: connected the post to `indexing-waiting-room` and added the reciprocal Play `relatedBlogSlugs` entry so Blog and Play remain connected without forcing unrelated Play links.
+- Representative sitemap URL target: `84`
+- Representative feed item target: `61`
+- Representative Blog target: `35`
+- Total Blog source count: `128`
+- Current source target change: the previous production-facing web-operations target was `83` sitemap URLs and `60` feed items; this source slice adds one representative operations Blog URL and one feed item.
+- Search Console account guard: continue using the Chrome profile/session signed in as `bobob935@gmail.com`; do not resubmit from a visible `task10@ljfriends.net` session.
+- Search Console action: none in this source pass. The latest external Search Console discovery evidence remains the previous `75` discovered pages until the new 84-URL target is deployed, resubmitted from the `bobob935@gmail.com` Chrome session, and observed there.
+- Interpretation: this strengthens the public explanation for the operations-first developer-tool direction, but it is source and content evidence only. It is not deployment proof, IndexNow proof, WebSub proof, Search Console discovery proof, indexing proof, or traffic proof.
