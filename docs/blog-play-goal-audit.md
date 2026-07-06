@@ -138,13 +138,18 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Feed items: `60`
   - Representative Blog posts: `34`
   - Submitted operations tool URLs: `8`
+- Latest deployed production discovery snapshot after the DevTools boundary operations post:
+  - Sitemap URLs: `84`
+  - Feed items: `61`
+  - Representative Blog posts: `35`
+  - Submitted operations tool URLs: `8`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 75-URL representative deployment.
   - Search Console sitemap resubmission for the latest externally submitted 75-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `75`, and videos `0`.
-- The representative sitemap remains intentionally reduced. Production now serves `83` URLs after adding the selected operations-first tool pages, while Search Console still only proves discovery for the previous externally submitted `75` URL count. This is discovery evidence, not indexing proof.
+- The representative sitemap remains intentionally reduced. Production now serves `84` URLs after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post, while Search Console still only proves discovery for the previous externally submitted `75` URL count. This is discovery evidence, not indexing proof.
   - 2026-07-06 follow-up after the search-discovery workflow deployment opened the `https://www.bobob.app/` URL-prefix Search Console property, but the visible Chrome account was `task10@ljfriends.net`, not `bobob935@gmail.com`; no 83-URL `/sitemaps/en` resubmission was made from that session.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
@@ -157,8 +162,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, fetched successfully, and allowed indexing.
   - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
-  - Latest submitted URL count: `83`
-  - The latest deployed 83-URL representative sitemap set has been submitted to IndexNow with response status `200`.
+  - Latest submitted URL count: `84`
+  - The latest deployed 84-URL representative sitemap set has been submitted to IndexNow with response status `200`.
   - Search Console still needs a separate `/sitemaps/en` resubmission and later observation; IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
@@ -172,8 +177,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
   - Latest response statuses: `204`, `204`
-  - Latest published feed item counts: `60`, `60`.
-  - The current 60-item feed set now reflects the lottery-scratch duplicate representative consolidation.
+  - Latest published feed item counts: `61`, `61`.
+  - The current 61-item feed set now reflects the DevTools/public-crawler boundary operations post.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -196,7 +201,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.
-- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the current production target is `83` URLs and still needs Search Console resubmission and later discovery observation.
+- Search Console sitemap discovery matched the previous externally submitted representative sitemap URL count (`75`), but this is discovery only; the current production target is `84` URLs and still needs Search Console resubmission and later discovery observation.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.

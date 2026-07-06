@@ -2377,3 +2377,22 @@ Completion guard:
 - Search Console account guard: continue using the Chrome profile/session signed in as `bobob935@gmail.com`; do not resubmit from a visible `task10@ljfriends.net` session.
 - Search Console action: none in this source pass. The latest external Search Console discovery evidence remains the previous `75` discovered pages until the new 84-URL target is deployed, resubmitted from the `bobob935@gmail.com` Chrome session, and observed there.
 - Interpretation: this strengthens the public explanation for the operations-first developer-tool direction, but it is source and content evidence only. It is not deployment proof, IndexNow proof, WebSub proof, Search Console discovery proof, indexing proof, or traffic proof.
+
+## 2026-07-06 DevTools Boundary Operations Post Production Deployment
+
+- Source action: pushed `3f1d75f68c4b2cd00989a67419c8edbc8e04e5d8` to `origin/master` with `devtools-cannot-see-crawler-state`, the reciprocal `indexing-waiting-room` related Blog link, and 84/61 source discovery counts.
+- Deployment status check: `npm run harness:deployment-status` moved from Vercel `pending` to `success` for `3f1d75f68c4b2cd00989a67419c8edbc8e04e5d8`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live cache note: the first live discovery check still saw the previous `83` sitemap URLs and `60` feed items from the prerendered discovery routes. A no-cache fetch regenerated `/sitemaps/en` and `/feed.xml`, after which the live harnesses read the new 84/61 set.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `84`
+- IndexNow response status: `200`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+- WebSub feed item counts: `61`, `61`
+- WebSub response statuses: `204`, `204`
+- Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
+- The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 84-URL target is resubmitted from the `bobob935@gmail.com` Chrome session and observed there.
+- Interpretation: production, IndexNow, and WebSub now reflect the DevTools boundary operations post, but this is still discovery-surface evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
