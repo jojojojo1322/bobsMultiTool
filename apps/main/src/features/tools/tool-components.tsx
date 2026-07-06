@@ -7087,6 +7087,58 @@ function getDnsDeploymentStatus(check: DnsDeploymentCheck, dictionary: ClientDic
   return check.required ? ui(dictionary, "dnsCheckMissing", "Missing") : ui(dictionary, "dnsCheckReview", "Review");
 }
 
+function buildDnsDeploymentReport(hostname: string, checks: DnsDeploymentCheck[], dictionary: ClientDictionary) {
+  const checkedAt = new Date().toISOString();
+  const targetHostname = hostname.trim() || "-";
+  const readyCount = checks.filter((check) => check.records.length > 0).length;
+  const missingRequiredCount = checks.filter((check) => check.required && check.records.length === 0).length;
+  const reviewCount = checks.filter((check) => !check.required && check.records.length === 0).length;
+  const reviewNotes = checks
+    .filter((check) => check.records.length === 0)
+    .map((check) => {
+      const label = ui(dictionary, check.labelKey, check.fallbackLabel);
+      const status = getDnsDeploymentStatus(check, dictionary);
+      const reason = check.error || ui(dictionary, "dnsNoRecordsWarning", "No records returned for this type. Try A, AAAA, TXT, MX, or NS.");
+      return `${label}: ${status} - ${reason}`;
+    });
+  const checklistRows = checks.map((check, index) => {
+    const label = ui(dictionary, check.labelKey, check.fallbackLabel);
+    const status = getDnsDeploymentStatus(check, dictionary);
+    const values = getDnsRecordTextValues(check.records);
+    const preview = values.length ? values.slice(0, 3).join(" / ") : check.error || ui(dictionary, "dnsNoRecordsWarning", "No records returned for this type. Try A, AAAA, TXT, MX, or NS.");
+    const suffix = values.length > 3 ? ` (+${values.length - 3})` : "";
+    return `- ${index + 1}. ${label} (${check.hostname} / ${check.record}) - ${status}: ${preview}${suffix}`;
+  });
+
+  const markdown = [
+    `# ${ui(dictionary, "dnsDeploymentReport", "DNS deployment report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "targetHostname", "Target hostname")}: ${targetHostname}`,
+    `- ${ui(dictionary, "dnsDeploymentReady", "Ready")}: ${readyCount}`,
+    `- ${ui(dictionary, "dnsDeploymentMissingRequired", "Missing required")}: ${missingRequiredCount}`,
+    `- ${ui(dictionary, "dnsDeploymentReview", "Review")}: ${reviewCount}`,
+    `- ${ui(dictionary, "recordCount", "Record count")}: ${checks.reduce((total, check) => total + check.records.length, 0)}`,
+    "",
+    `## ${ui(dictionary, "dnsDeploymentReportReviewNotes", "Review notes")}`,
+    ...(reviewNotes.length ? reviewNotes.map((note) => `- ${note}`) : [`- ${ui(dictionary, "dnsDeploymentReportNoWarnings", "Required DNS deployment signals were found.")}`]),
+    "",
+    `## ${ui(dictionary, "dnsDeploymentChecklist", "Deployment checklist")}`,
+    ...(checklistRows.length ? checklistRows : [`- ${ui(dictionary, "dnsDeploymentReportNoChecks", "Run the deployment check before copying a report.")}`]),
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    metrics: [
+      { label: ui(dictionary, "targetHostname", "Target hostname"), value: targetHostname },
+      { label: ui(dictionary, "dnsDeploymentReady", "Ready"), value: String(readyCount) },
+      { label: ui(dictionary, "dnsDeploymentMissingRequired", "Missing required"), value: String(missingRequiredCount) },
+      { label: ui(dictionary, "dnsDeploymentReview", "Review"), value: String(reviewCount) },
+    ],
+  };
+}
+
 function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [hostname, setHostname] = React.useState("bobob.app");
   const [record, setRecord] = React.useState("A");
@@ -7152,6 +7204,7 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
   const deploymentReadyCount = deploymentChecks.filter((check) => check.records.length > 0).length;
   const deploymentMissingRequiredCount = deploymentChecks.filter((check) => check.required && check.records.length === 0).length;
   const deploymentReviewCount = deploymentChecks.filter((check) => !check.required && check.records.length === 0).length;
+  const deploymentReport = deploymentChecks.length ? buildDnsDeploymentReport(hostname, deploymentChecks, dictionary) : null;
 
   return (
     <div className="space-y-4" data-dns-tool>
@@ -7262,6 +7315,29 @@ function DnsLookupTool({ dictionary }: { dictionary: ClientDictionary }) {
           )}
         </div>
       </section>
+      {deploymentReport ? (
+        <section className="rounded-md border bg-card" data-dns-deployment-report>
+          <div className="border-b p-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold">{ui(dictionary, "dnsDeploymentReport", "DNS deployment report")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "dnsDeploymentReportDescription", "Copy a compact DNS routing, provider, and mail-policy note for deploy handoffs or domain issue tickets.")}</p>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={() => copyToClipboard(deploymentReport.markdown)}>
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copyDnsDeploymentReport", "Copy report")}
+              </Button>
+            </div>
+          </div>
+          <div className="space-y-3 p-3">
+            <ToolMetricGrid items={deploymentReport.metrics} />
+            <ToolWarningList title={ui(dictionary, "dnsDeploymentReportReviewNotes", "Review notes")} warnings={deploymentReport.reviewNotes} emptyLabel={ui(dictionary, "dnsDeploymentReportNoWarnings", "Required DNS deployment signals were found.")} />
+            <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-dns-deployment-report-preview>
+              <code>{deploymentReport.markdown}</code>
+            </pre>
+          </div>
+        </section>
+      ) : null}
       {records.length ? (
         <section className="rounded-md border bg-card" data-dns-record-list>
           <div className="border-b p-3">

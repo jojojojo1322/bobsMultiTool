@@ -284,10 +284,11 @@ if (!dictionaries.includes("localizedGeneratorToolUi")) failures.push("generator
 for (const fragment of ["data-color-examples", "data-color-preview", "data-color-result-details", "data-color-diagnostics", "data-color-swatches", "data-color-warnings"]) {
   if (!toolComponents.includes(fragment)) failures.push(`Color Converter detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-dns-examples", "data-dns-result-details", "data-dns-diagnostics", "data-dns-record-list", "data-dns-warnings", "data-dns-deployment-checklist", "data-dns-deployment-results", "runDeploymentCheck", "getDnsDeploymentStatus", "getApexHostname"]) {
+for (const fragment of ["data-dns-examples", "data-dns-result-details", "data-dns-diagnostics", "data-dns-record-list", "data-dns-warnings", "data-dns-deployment-checklist", "data-dns-deployment-results", "data-dns-deployment-report", "data-dns-deployment-report-preview", "runDeploymentCheck", "buildDnsDeploymentReport", "getDnsDeploymentStatus", "getApexHostname"]) {
   if (!toolComponents.includes(fragment)) failures.push(`DNS Lookup detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedColorDnsToolUi") || !dictionaries.includes("localizedColorDiagnosticsToolUi")) failures.push("Color and DNS detail UI labels must be localized");
+if (!dictionaries.includes("localizedDnsReportToolUi") || !dictionaries.includes("copyDnsDeploymentReport")) failures.push("DNS deployment report labels must be localized");
 for (const fragment of ["normalizePublicDnsName", "label.includes(\"_\")", "isPrivateOrReservedIp"]) {
   if (!dnsRoute.includes(fragment)) failures.push(`DNS Lookup API guard missing ${fragment}`);
 }
