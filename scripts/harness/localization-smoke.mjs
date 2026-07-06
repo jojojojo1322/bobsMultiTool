@@ -76,10 +76,10 @@ for (const fragment of [
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
 }
-for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
   if (!workflows.includes(fragment)) failures.push(`workflow localization missing ${fragment}`);
 }
-for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
   const recipeSource = workflows.match(new RegExp(`slug: "${recipeSlug}"[\\s\\S]*?(?=\\n  \\{\\n    slug: "|\\n\\];)`))?.[0] ?? "";
   if (!recipeSource) {
     failures.push(`workflow recipe missing localized source for ${recipeSlug}`);

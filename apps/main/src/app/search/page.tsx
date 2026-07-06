@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Gamepad2, Newspaper, Search, Wrench } from "lucide-react";
+import { ArrowRight, Gamepad2, Newspaper, Search, Workflow, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,7 @@ const contentLocale = "ko";
 
 export const metadata: Metadata = {
   title: "Search - bobob.app",
-  description: "bobob.app의 개발/AI 글, 가벼운 Play, 보관된 개발자 도구를 함께 찾는 검색 페이지입니다.",
+  description: "bobob.app의 웹 운영 점검 흐름, 개발/AI 글, 가벼운 Play, 도구 결과를 함께 찾는 검색 페이지입니다.",
   alternates: {
     canonical: "https://www.bobob.app/search",
   },
@@ -27,12 +27,12 @@ export const metadata: Metadata = {
     url: "https://www.bobob.app/search",
     siteName: "bobob.app",
     title: "Search - bobob.app",
-    description: "개발/AI 글, Play, 보관 Tools를 한 번에 찾는 bobob.app 검색.",
+    description: "웹 운영 점검 흐름, 개발/AI 글, Play, Tools를 한 번에 찾는 bobob.app 검색.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Search - bobob.app",
-    description: "개발/AI 글, Play, 보관 Tools를 한 번에 찾습니다.",
+    description: "웹 운영 점검 흐름, 개발/AI 글, Play, Tools를 한 번에 찾습니다.",
   },
 };
 
@@ -52,9 +52,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const dictionary = getClientDictionary(contentLocale);
   const query = readContentSearchQuery(await searchParams);
   const results = searchContentLab(query);
-  const resultCount = results.blogResults.length + results.playResults.length + results.toolResults.length;
+  const resultCount = results.workflowResults.length + results.blogResults.length + results.playResults.length + results.toolResults.length;
   const jsonLd = searchPageStructuredData({
     query: results.query,
+    workflowResults: results.workflowResults.map((result) => result.item),
     blogResults: results.blogResults.map((result) => result.item),
     playResults: results.playResults.map((result) => result.item),
     toolResults: results.toolResults.map((result) => result.item),
@@ -67,9 +68,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       <section className="border-b bg-muted/20">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <Badge>Search</Badge>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">글, Play, 보관 도구를 함께 찾기</h1>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-normal">운영 점검 흐름, 글, Play를 함께 찾기</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-            개발/AI 기록과 바로 해볼 수 있는 Play를 먼저 보여주고, 필요한 경우 기존 개발자 도구 보관소 결과까지 이어줍니다.
+            리다이렉트, sitemap, robots, 보안 헤더처럼 배포 후 확인할 흐름을 먼저 찾고, 필요한 경우 Blog 기록과 Play, 도구 결과로 이어갑니다.
           </p>
           <form action="/search" className="mt-6 flex max-w-2xl flex-col gap-2 sm:flex-row" data-content-search-form>
             <label className="relative min-w-0 flex-1">
@@ -86,6 +87,49 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
       <section className="mx-auto grid max-w-6xl gap-6 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-8">
+          <section data-content-search-workflows>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Workflows</p>
+                <h2 className="text-2xl font-semibold tracking-normal">웹 운영 점검 흐름</h2>
+              </div>
+              <Badge>{results.workflowResults.length}</Badge>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {results.workflowResults.map(({ item, signals }) => {
+                const firstStep = item.steps[0];
+                if (!firstStep) return null;
+
+                return (
+                  <Link
+                    key={item.slug}
+                    href={`/tools/${firstStep.tool.slug}`}
+                    className="rounded-lg border bg-background p-4 transition-colors hover:bg-muted/40"
+                    data-content-search-workflow-slug={item.slug}
+                  >
+                    <Workflow className="h-5 w-5 text-muted-foreground" />
+                    <h3 className="mt-3 text-lg font-semibold">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                    <ol className="mt-3 grid gap-2 border-t pt-3">
+                      {item.steps.map((step, index) => (
+                        <li key={`${item.slug}-${step.tool.slug}`} className="grid grid-cols-[1.5rem_1fr] gap-2 text-xs">
+                          <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-muted font-medium text-muted-foreground">
+                            {index + 1}
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block truncate font-medium text-foreground">{step.tool.shortTitle}</span>
+                            <span className="mt-0.5 block line-clamp-1 text-muted-foreground">{step.reason}</span>
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                    {signalBadges(signals)}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
           <section data-content-search-play>
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
@@ -148,10 +192,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <div className="rounded-lg border bg-card p-4">
             <div className="flex items-center gap-2">
               <Wrench className="h-4 w-4 text-muted-foreground" />
-              <h2 className="text-sm font-semibold">Tools archive</h2>
+              <h2 className="text-sm font-semibold">Operation tools</h2>
             </div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              검색어가 개발 도구 작업에 가까우면 기존 `/tools` 보관소로 이어집니다.
+              검색어가 구체적인 점검 작업에 가까우면 해당 `/tools` 작업 화면으로 바로 이어집니다.
             </p>
           </div>
           <div className="grid gap-2">

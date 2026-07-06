@@ -3,6 +3,7 @@ import type { BlogCategoryDefinition } from "./blog-categories";
 import { blogCategoryPath } from "./blog-categories";
 import { blogIndexKeywords, blogPostKeywords, playContentKeywords, playIndexKeywords } from "./discovery";
 import type { ToolDefinition } from "@/features/tools/types";
+import type { LocalizedWorkflowRecipe } from "@/features/tools/workflows";
 
 const siteUrl = "https://www.bobob.app";
 const siteName = "bobob.app";
@@ -317,17 +318,37 @@ export function playDetailStructuredData({ content, relatedBlogs }: { content: P
 
 export function searchPageStructuredData({
   query,
+  workflowResults,
   blogResults,
   playResults,
   toolResults,
 }: {
   query: string;
+  workflowResults: LocalizedWorkflowRecipe[];
   blogResults: BlogPost[];
   playResults: PlayContent[];
   toolResults: ToolDefinition[];
 }) {
   const url = query ? `${siteUrl}/search?q=${encodeURIComponent(query)}` : `${siteUrl}/search`;
   const items = [
+    ...workflowResults.map((recipe) => {
+      const firstStep = recipe.steps[0];
+
+      return {
+        "@type": "HowTo",
+        name: recipe.title,
+        description: recipe.description,
+        url: firstStep ? `${siteUrl}/tools/${firstStep.tool.slug}` : url,
+        inLanguage: contentLocale,
+        step: recipe.steps.map((step, index) => ({
+          "@type": "HowToStep",
+          position: index + 1,
+          name: step.tool.title,
+          text: step.reason,
+          url: `${siteUrl}/tools/${step.tool.slug}`,
+        })),
+      };
+    }),
     ...blogResults.map((post) => ({
       "@type": "BlogPosting",
       headline: post.title,
@@ -359,7 +380,7 @@ export function searchPageStructuredData({
     "@type": "SearchResultsPage",
     name: query ? `${query} - bobob.app search` : "bobob.app search",
     url,
-    description: "bobob.app의 개발/AI 글, 가벼운 Play, 보관된 개발자 도구를 함께 찾는 검색 페이지.",
+    description: "bobob.app의 웹 운영 점검 흐름, 개발/AI 글, 가벼운 Play, 도구 결과를 함께 찾는 검색 페이지.",
     inLanguage: contentLocale,
     isPartOf: websiteNode(),
     mainEntity: {

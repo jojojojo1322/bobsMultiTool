@@ -57,10 +57,10 @@ if (!layout.includes("https://www.bobob.app/search?q={search_term_string}")) fai
 if (!layout.includes('rel="search"') || !layout.includes("https://www.bobob.app/opensearch.xml")) {
   failures.push("root layout missing OpenSearch discovery link");
 }
-for (const fragment of ["searchContentLab", "scoreBlogPost", "scorePlayContent", "scoreTool", "getIndexableBlogPosts", "getPlayContents", "getLocalizedTools"]) {
+for (const fragment of ["searchContentLab", "scoreBlogPost", "scorePlayContent", "scoreTool", "scoreWorkflowRecipe", "getIndexableBlogPosts", "getPlayContents", "getLocalizedTools", "getLocalizedWorkflowRecipes", "scoreWorkflowRecipeSearch"]) {
   if (!contentSearch.includes(fragment)) failures.push(`content lab search helper missing ${fragment}`);
 }
-for (const fragment of ["data-content-search-form", "data-content-search-count", "data-content-search-play", "data-content-search-blog", "data-content-search-tools", "searchPageStructuredData"]) {
+for (const fragment of ["data-content-search-form", "data-content-search-count", "data-content-search-workflows", "data-content-search-workflow-slug", "data-content-search-play", "data-content-search-blog", "data-content-search-tools", "searchPageStructuredData"]) {
   if (!searchPage.includes(fragment)) failures.push(`content search page missing ${fragment}`);
 }
 if (!toolDirectory.includes("acquisitionClusterSlugs")) failures.push("tool directory missing acquisition workflow clusters");
@@ -88,10 +88,10 @@ for (const fragment of ["export function scoreWorkflowRecipeSearch", "title === 
 if (!workspace.includes("data-tool-workflow-recipes") || !workspace.includes("getWorkflowRecipesForTool")) {
   failures.push("tool detail pages must surface workflow recipes connected to the active tool");
 }
-for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "review-security-headers", "validate-deploy-config", "clean-csv-for-api"]) {
+for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "review-security-headers", "validate-deploy-config", "clean-csv-for-api"]) {
   if (!workflows.includes(`slug: "${recipeSlug}"`)) failures.push(`workflow recipe registry missing ${recipeSlug}`);
 }
-for (const intent of ["api response formatter", "json error line column", "json parse error context", "json field extractor", "json path extractor", "recursive jsonpath", "jwt exp checker", "jwt authorization header", "jwt sensitive claims", "jwt redacted payload", "jwt issuer checker", "jwt audience checker", "jwt scope checker", "redirect chain checker", "base64 image decoder", "download base64 image", "data url decoder", "dns propagation checklist", "dns deployment checker", "dns deployment checklist", "dmarc checker", "name server checker", "wifi qr code generator", "qr quiet zone", "csrf token generator", "security headers checker", "security response header checker", "hsts checker", "referrer policy checker", "content security policy generator", "docker compose validator", "deployment config checker", "csv cleaner", "markdown table generator"]) {
+for (const intent of ["api response formatter", "json error line column", "json parse error context", "json field extractor", "json path extractor", "recursive jsonpath", "jwt exp checker", "jwt authorization header", "jwt sensitive claims", "jwt redacted payload", "jwt issuer checker", "jwt audience checker", "jwt scope checker", "redirect chain checker", "site indexing checklist", "google indexing checker", "search console sitemap", "sitemap indexing check", "robots canonical check", "search discovery checklist", "base64 image decoder", "download base64 image", "data url decoder", "dns propagation checklist", "dns deployment checker", "dns deployment checklist", "dmarc checker", "name server checker", "wifi qr code generator", "qr quiet zone", "csrf token generator", "security headers checker", "security response header checker", "hsts checker", "referrer policy checker", "content security policy generator", "docker compose validator", "deployment config checker", "csv cleaner", "markdown table generator"]) {
   if (!workflows.includes(intent)) failures.push(`workflow recipe search intent missing ${intent}`);
 }
 for (const intent of ["dns deployment checker", "dns deployment checklist", "dmarc checker", "name server checker"]) {

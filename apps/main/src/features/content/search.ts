@@ -1,4 +1,9 @@
 import { getLocalizedTools } from "@/features/i18n/localized-content";
+import {
+  getLocalizedWorkflowRecipes,
+  scoreWorkflowRecipeSearch,
+  type LocalizedWorkflowRecipe,
+} from "@/features/tools/workflows";
 import { getIndexableBlogPosts } from "./blog";
 import { getPlayContents } from "./play";
 import type { BlogBlock, BlogPost, PlayContent } from "./types";
@@ -149,6 +154,49 @@ function scoreTool(tool: ReturnType<typeof getLocalizedTools>[number], query: st
   return scoreValues({ query, title: tool.title, description: tool.description, values });
 }
 
+const defaultWorkflowSlugs = [
+  "debug-redirect",
+  "check-search-discovery-readiness",
+  "check-dns-deployment",
+  "review-security-headers",
+];
+
+function workflowSearchValues(recipe: LocalizedWorkflowRecipe) {
+  return [
+    recipe.slug,
+    ...recipe.searchIntents,
+    ...recipe.steps.flatMap((step) => [
+      step.reason,
+      step.tool.title,
+      step.tool.shortTitle,
+      step.tool.slug,
+      step.tool.description,
+      ...step.tool.aliases,
+      ...step.tool.searchIntents,
+      ...step.tool.useCases,
+      ...step.tool.inputExamples,
+      ...(step.tool.failureCases ?? []),
+      ...(step.tool.preCopyChecklist ?? []),
+    ]),
+  ];
+}
+
+function scoreWorkflowRecipe(recipe: LocalizedWorkflowRecipe, query: string): ContentSearchResult<LocalizedWorkflowRecipe> {
+  const workflowScore = scoreWorkflowRecipeSearch(recipe, query);
+  const result = scoreValues({
+    query,
+    title: recipe.title,
+    description: recipe.description,
+    values: workflowSearchValues(recipe),
+  });
+
+  return {
+    item: recipe,
+    score: workflowScore + result.score,
+    signals: result.signals,
+  };
+}
+
 export function readContentSearchQuery(searchParams?: Record<string, string | string[] | undefined>) {
   const value = searchParams?.q;
   if (Array.isArray(value)) return value[0] ?? "";
@@ -160,11 +208,22 @@ export function searchContentLab(query: string) {
   const blogPosts = getIndexableBlogPosts();
   const playContents = getPlayContents();
   const playBySlug = new Map(playContents.map((content) => [content.slug, content]));
-  const tools = getLocalizedTools("en");
+  const tools = getLocalizedTools("ko");
+  const workflowRecipes = getLocalizedWorkflowRecipes("ko", tools);
 
   if (!trimmedQuery) {
+    const defaultWorkflowRank = new Map(defaultWorkflowSlugs.map((slug, index) => [slug, index]));
+
     return {
       query: "",
+      workflowResults: workflowRecipes
+        .filter((recipe) => defaultWorkflowRank.has(recipe.slug))
+        .sort((left, right) => (defaultWorkflowRank.get(left.slug) ?? 999) - (defaultWorkflowRank.get(right.slug) ?? 999))
+        .map((recipe) => ({
+          item: recipe,
+          score: 0,
+          signals: recipe.steps.map((step) => step.tool.shortTitle).slice(0, 4),
+        })),
       blogResults: blogPosts.slice(0, 5).map((post) => ({ item: post, score: 0, signals: [post.category] })),
       playResults: playContents.slice(0, 5).map((content) => ({ item: content, score: 0, signals: [content.durationLabel] })),
       toolResults: tools.filter((tool) => tool.monetizationTier === "core").slice(0, 6).map((tool) => ({ item: tool, score: 0, signals: tool.useCases.slice(0, 2) })),
@@ -173,6 +232,11 @@ export function searchContentLab(query: string) {
 
   return {
     query: trimmedQuery,
+    workflowResults: workflowRecipes
+      .map((recipe) => scoreWorkflowRecipe(recipe, trimmedQuery))
+      .filter((result) => result.score > 0)
+      .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title))
+      .slice(0, 5),
     blogResults: blogPosts
       .map((post) => scoreBlogPost(post, trimmedQuery, playBySlug))
       .filter((result) => result.score > 0)

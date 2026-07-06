@@ -56,6 +56,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `static-micro-games-architecture`
   - `content-indexing-checklist-before-resubmission`
 - Homepage evidence surface: `apps/main/src/app/page.tsx` now opens with `data-ops-workflows` for URL/header/DNS/sitemap/token checks, then keeps the three pillar posts in the `data-pillar-blog` operating-notes section before ordinary latest Blog cards, so a first visitor sees a concrete reason to use the site while Blog/Play evidence stays visible.
+- Global search evidence surface: `/search?q=` now returns `data-content-search-workflows` results for task-shaped operations queries such as redirect debugging, search discovery readiness, DNS deployment, and security-header review before falling through to individual tool cards, so internal search no longer reads as only a generic developer-tool archive.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
 - Trust surface alignment: default About/Contact copy now describes the web-operations workbench first while preserving Blog/Play context; localized trust routes still need a follow-up pass if the operations-first wording is expanded beyond this source-locale recovery slice.
 - Required first-pass topics are present:
