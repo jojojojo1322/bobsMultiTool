@@ -6516,6 +6516,61 @@ function getRedirectDiagnostics(result: HttpStatusResult, dictionary: ClientDict
   };
 }
 
+function buildPublicUrlReport(
+  result: HttpStatusResult,
+  redirectDiagnostics: ReturnType<typeof getRedirectDiagnostics>,
+  checkedHeaders: ReturnType<typeof parseHttpHeaders>,
+  responseHeaderLines: string,
+  dictionary: ClientDictionary,
+) {
+  const checkedAt = new Date().toISOString();
+  const securityScore = `${checkedHeaders.metrics.presentSecurityHeaders}/${checkedHeaders.metrics.securityCheckCount}`;
+  const requiredMissing = checkedHeaders.metrics.missingRequiredSecurityHeaders;
+  const headerWarnings = responseHeaderLines
+    ? checkedHeaders.warnings
+    : [ui(dictionary, "publicUrlReportNoHeadersWarning", "No allowlisted final-response headers were available for the report.")];
+  const reviewNotes = Array.from(new Set([...redirectDiagnostics.warnings, ...headerWarnings]));
+  const finalStatus = `${result.status ?? "-"} ${result.statusText ?? ""}`.trim();
+  const finalUrl = result.finalUrl ?? "-";
+  const inputUrl = result.inputUrl ?? result.redirectChain?.[0]?.url ?? "-";
+  const contentType = result.contentType ?? "-";
+  const cacheControl = result.cacheControl ?? "-";
+  const redirectCount = result.redirectCount ?? 0;
+
+  const markdown = [
+    `# ${ui(dictionary, "publicUrlReport", "Public URL report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "inputUrl", "Input URL")}: ${inputUrl}`,
+    `- ${ui(dictionary, "finalUrl", "Final URL")}: ${finalUrl}`,
+    `- ${ui(dictionary, "finalStatus", "Final status")}: ${finalStatus}`,
+    `- ${ui(dictionary, "redirects", "Redirects")}: ${redirectCount}`,
+    `- ${ui(dictionary, "securityHeaderScore", "Security header score")}: ${securityScore}`,
+    `- ${ui(dictionary, "missingRequiredHeaders", "Missing required")}: ${requiredMissing}`,
+    `- ${ui(dictionary, "contentType", "Content type")}: ${contentType}`,
+    `- ${ui(dictionary, "cacheControl", "Cache-Control")}: ${cacheControl}`,
+    "",
+    `## ${ui(dictionary, "publicUrlReportReviewNotes", "Review notes")}`,
+    ...(reviewNotes.length ? reviewNotes.map((note) => `- ${note}`) : [`- ${ui(dictionary, "publicUrlReportNoWarnings", "No redirect or final-response header warnings were detected.")}`]),
+    "",
+    `## ${ui(dictionary, "redirectChain", "Redirect chain")}`,
+    ...(result.redirectChain?.length
+      ? result.redirectChain.map((hop, index) => `- ${index + 1}. ${hop.status} ${hop.url}${hop.location ? ` -> ${hop.location}` : ""}`)
+      : [`- ${ui(dictionary, "noRedirectHops", "No redirect hops recorded.")}`]),
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    metrics: [
+      { label: ui(dictionary, "finalStatus", "Final status"), value: finalStatus },
+      { label: ui(dictionary, "redirects", "Redirects"), value: String(redirectCount) },
+      { label: ui(dictionary, "securityHeaderScore", "Security header score"), value: securityScore },
+      { label: ui(dictionary, "missingRequiredHeaders", "Missing required"), value: String(requiredMissing) },
+    ],
+  };
+}
+
 function formatHttpStatusError(message: string, dictionary: ClientDictionary) {
   if (/fetch failed/i.test(message)) {
     return ui(dictionary, "httpRequestFailedPublic", "The request failed before a response was received. The host may block server-side checks; try another public URL.");
@@ -6576,6 +6631,11 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   const generatedCspHeader = React.useMemo(() => buildCspHeader(cspDirectives, cspReportOnly), [cspDirectives, cspReportOnly]);
   const cspWarnings = React.useMemo(() => getCspWarnings(cspDirectives, cspReportOnly, dictionary), [cspDirectives, cspReportOnly, dictionary]);
   const redirectDiagnostics = React.useMemo(() => (result && !result.error ? getRedirectDiagnostics(result, dictionary) : null), [dictionary, result]);
+  const checkedResponseHeaders = React.useMemo(() => parseHttpHeaders(responseHeaderLines, dictionary), [dictionary, responseHeaderLines]);
+  const publicUrlReport = React.useMemo(
+    () => (result && !result.error && redirectDiagnostics ? buildPublicUrlReport(result, redirectDiagnostics, checkedResponseHeaders, responseHeaderLines, dictionary) : null),
+    [checkedResponseHeaders, dictionary, redirectDiagnostics, responseHeaderLines, result],
+  );
   const cspDirectiveCount = cspDirectiveRows.filter((row) => cspDirectives[row.key].trim()).length;
   const updateCspDirective = (key: CspDirectiveKey, value: string) => setCspDirectives((current) => ({ ...current, [key]: value }));
   const applyCspPreset = (preset: CspPresetKey) => setCspDirectives(cspPresets[preset].directives);
@@ -6672,6 +6732,29 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
 	                  </div>
 	                ))}
 	              </dl>
+            </section>
+          ) : null}
+          {publicUrlReport ? (
+            <section className="rounded-md border bg-card" data-public-url-report>
+              <div className="border-b p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold">{ui(dictionary, "publicUrlReport", "Public URL report")}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "publicUrlReportDescription", "Copy a compact status, redirect, and security-header note for issue trackers, deploy handoffs, or Search Console follow-up.")}</p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(publicUrlReport.markdown)}>
+                    <Copy className="h-4 w-4" />
+                    {ui(dictionary, "copyPublicUrlReport", "Copy report")}
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-3 p-3">
+                <ToolMetricGrid items={publicUrlReport.metrics} />
+                <ToolWarningList title={ui(dictionary, "publicUrlReportReviewNotes", "Review notes")} warnings={publicUrlReport.reviewNotes} emptyLabel={ui(dictionary, "publicUrlReportNoWarnings", "No redirect or final-response header warnings were detected.")} />
+                <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-public-url-report-preview>
+                  <code>{publicUrlReport.markdown}</code>
+                </pre>
+              </div>
             </section>
           ) : null}
         </div>

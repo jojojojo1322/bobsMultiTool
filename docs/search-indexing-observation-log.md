@@ -2432,3 +2432,13 @@ Completion guard:
 - Naver visible result: public Search Advisor landing page with `로그인`; visible page copy described Search Advisor and linked to `웹마스터 도구`, but no signed-in site dashboard or `https://www.bobob.app` property state was visible in this Chrome session.
 - Naver console retry: opening `https://searchadvisor.naver.com/console/board` did not yield a readable signed-in console state before the browser-control session timed out; no sitemap submission, page collection request, or site setting change was made.
 - Interpretation: this pass confirms that Bing and Naver still need signed-in webmaster-tool sessions before they can provide recommendation, sitemap, collection, or indexing evidence. It does not change the current 84-URL production discovery target and does not prove Bing or Naver indexing.
+
+## 2026-07-06 Public URL Report Source Slice
+
+- Source action: added a copyable Public URL report to `/tools/http-status-checker` so the submitted operations tool produces a shareable status, redirect, response-header, and security-header handoff artifact instead of only exposing fields a developer could already inspect in browser DevTools.
+- Search surface action: expanded the HTTP Status Checker registry/search intents for `public url report` and `website status report`, and updated layout/search harness coverage so the feature stays tied to the submitted operations tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Local browser verification: after a fresh dev-server restart, Playwright loaded `http://127.0.0.1:3000/tools/http-status-checker?url=http%3A%2F%2Fexample.com%2F`, clicked the check action, and confirmed `data-public-url-report`, the copy button, review notes, and a Markdown report containing `Redirects: 0`.
+- Local route health: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths, and `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs.
+- Search Console action: none in this source pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
+- Interpretation: this strengthens one submitted operations tool page as a developer-facing web-ops workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

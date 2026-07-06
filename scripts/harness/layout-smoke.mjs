@@ -190,7 +190,7 @@ if (resizable.includes("after:transition-colors")) failures.push("resize handle 
 if (resizable.includes("hover:bg-muted/50")) failures.push("resize handle hover background can flash during navigation");
 if (resizable.includes("border-x border-transparent")) failures.push("resize handle still uses extra border columns");
 if (globals.includes("inset 1px 0 0 var(--bobob-divider-soft)") || globals.includes("inset -1px 0 0 var(--bobob-divider-soft)")) failures.push("center panel side inset lines can duplicate the resizable divider and flash during navigation");
-for (const fragment of ["data-http-status-details", "data-http-redirect-chain", "data-http-redirect-diagnostics", "data-http-response-headers", "data-http-header-parser", "data-http-header-summary", "data-http-security-readiness", "data-http-security-checklist", "getSecurityHeaderChecks", "formatHttpStatusError", "presentSecurityHeaders", "missingRequiredSecurityHeaders", "data-http-header-warnings", "data-http-header-json", "data-csp-generator", "data-csp-directives", "data-csp-warnings", "data-csp-output", "rawResponse", "finalResponseHeaders", "elapsedMs", "cacheControl"]) {
+for (const fragment of ["data-http-status-details", "data-http-redirect-chain", "data-http-redirect-diagnostics", "data-http-response-headers", "data-public-url-report", "data-public-url-report-preview", "buildPublicUrlReport", "data-http-header-parser", "data-http-header-summary", "data-http-security-readiness", "data-http-security-checklist", "getSecurityHeaderChecks", "formatHttpStatusError", "presentSecurityHeaders", "missingRequiredSecurityHeaders", "data-http-header-warnings", "data-http-header-json", "data-csp-generator", "data-csp-directives", "data-csp-warnings", "data-csp-output", "rawResponse", "finalResponseHeaders", "elapsedMs", "cacheControl"]) {
   if (!toolComponents.includes(fragment)) failures.push(`HTTP status detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedHttpStatusToolUi")) failures.push("HTTP status tool UI labels must be localized");
@@ -205,6 +205,7 @@ if (!dictionaries.includes("redirectDiagnostics") || !dictionaries.includes("red
 if (!dictionaries.includes("localizedHttpRedirectAdvancedToolUi") || !dictionaries.includes("redirectTemporaryWarning")) failures.push("advanced HTTP redirect diagnostics labels must be localized");
 if (!dictionaries.includes("localizedHttpHeaderToolUi")) failures.push("HTTP header parser UI labels must be localized");
 if (!dictionaries.includes("localizedHttpSecurityToolUi") || !dictionaries.includes("securityHeaderReadiness")) failures.push("HTTP security header readiness labels must be localized");
+if (!dictionaries.includes("localizedPublicUrlReportToolUi") || !dictionaries.includes("copyPublicUrlReport")) failures.push("public URL report labels must be localized");
 if (!dictionaries.includes("localizedCspGeneratorToolUi")) failures.push("CSP generator UI labels must be localized");
 for (const fragment of ["data-meta-diagnostics", "data-og-diagnostics", "getImageExtensionSignal", "titleTooShortWarning", "descriptionTooLongWarning", "canonicalHashWarning", "noindexWarning", "ogTitleTooLongWarning", "ogDescriptionTooLongWarning"]) {
   if (!toolComponents.includes(fragment)) failures.push(`Meta/Open Graph readiness UI missing ${fragment}`);

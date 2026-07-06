@@ -122,7 +122,7 @@ for (const intent of ["email regex", "url regex", "uuid regex", "ipv4 regex", "h
 }
 if (!registry.includes("jwt sensitive claims") || !registry.includes("jwt redacted payload") || !registry.includes("jwt redaction checker")) failures.push("JWT Decoder search intents must cover sensitive claim and redacted payload queries");
 if (!registry.includes("jwt issuer checker") || !registry.includes("jwt audience checker") || !registry.includes("jwt scope checker") || !registry.includes("jwt audience mismatch")) failures.push("JWT Decoder search intents must cover issuer, audience, scope, and mismatch debug queries");
-for (const intent of ["security headers checker", "security response header checker", "hsts checker", "x content type options checker", "referrer policy checker"]) {
+for (const intent of ["security headers checker", "security response header checker", "hsts checker", "x content type options checker", "referrer policy checker", "public url report", "website status report"]) {
   if (!registry.includes(intent)) failures.push(`HTTP Status Checker search intent missing ${intent}`);
 }
 for (const intent of ["base64 image decoder", "base64 to png", "download base64 image", "base64 json formatter", "data url decoder", "image data url preview"]) {
