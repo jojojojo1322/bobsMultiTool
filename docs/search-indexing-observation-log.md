@@ -2329,3 +2329,19 @@ Completion guard:
 - Google URL Inspection now proves the homepage itself is indexed, but the page-indexing report still leaves the wider submitted surface unresolved.
 - Search Console action: none after the source change. Deploy the 83-URL source target first, then run submitted URL health, Search Console `/sitemaps/en` resubmission, IndexNow, WebSub if feed content changed, and a later Search Console/Bing/Naver observation pass.
 - Interpretation: this is a source-target correction for the product direction and discovery surface. It is not indexing proof, traffic proof, measured SEO proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 Web-Operations Production Deployment
+
+- Source action: fast-forwarded `origin/master` to `7d2e12edb9728917ebac1d52be26650f1161222b` with the operations-first homepage, selected operation tool sitemap entries, full-title `/llms.txt` operation tool links, and updated discovery harnesses.
+- Deployment status check: `npm run harness:deployment-status` moved from Vercel `pending` to `success` for `7d2e12edb9728917ebac1d52be26650f1161222b`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `83`, feed items `60`, Blog posts `34`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `83` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `83`
+- IndexNow response status: `200`
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
+- WebSub feed item counts: `60`, `60`
+- WebSub response statuses: `204`, `204`
+- Search Console action: none in this pass. The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is resubmitted and observed there.
+- Interpretation: production now serves the operations-first 83-URL sitemap and the discovery pings have been refreshed, but this is still not indexing proof. The next manual pass must resubmit `/sitemaps/en` from the `bobob935@gmail.com` Chrome session, then later compare discovered pages, page-indexing reasons, URL Inspection status, Bing recommendation classes, and Naver sitemap/page collection state.
