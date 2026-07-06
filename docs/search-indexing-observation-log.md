@@ -2468,3 +2468,18 @@ Completion guard:
 - Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed after the stale `.next` cache was cleared; the earlier build and `tsc --noEmit` attempts had hung against the stale cache and were not used as final evidence.
 - Search Console action: none in this source pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
 - Interpretation: this strengthens one submitted operations tool page as a developer-facing web-ops workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 DNS Deployment Report Production Deployment
+
+- Source action: pushed `e25527caa3407e409e94a33223a8da557f0f778b` to `origin/master` with the DNS Lookup deployment report, localized report labels, registry/search-intent updates, workflow recipe wording, and harness coverage.
+- Deployment status check: `BOBOB_DEPLOY_SHA=e25527caa3407e409e94a33223a8da557f0f778b npm run harness:deployment-status` moved from Vercel `pending` to `success`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `75`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/dns-lookup`, clicked `Run deployment check`, and confirmed `DNS deployment report`, `Copy report`, review notes, and a Markdown report containing web address, IPv6, canonical target, name servers, TXT policy, and DMARC rows.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `84`
+- IndexNow response status: `200`
+- Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
+- Interpretation: production now serves the DNS deployment report on a submitted operations tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
