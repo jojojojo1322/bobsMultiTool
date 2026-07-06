@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Gamepad2, Network, Newspaper, SearchCheck, ShieldCheck, Workflow } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getClientDictionary } from "@/features/i18n/dictionaries";
 import { ContentNav } from "@/features/content/content-nav";
 import { getIndexableBlogPosts } from "@/features/content/blog";
@@ -128,17 +130,23 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </Link>
             </div>
           </div>
-          <div className="rounded-lg border bg-background p-4 shadow-sm">
+          <form action="/tools/http-status-checker" className="rounded-lg border bg-background p-4 shadow-sm" data-home-url-check>
             <div className="flex items-center gap-2">
               <SearchCheck className="h-4 w-4 text-muted-foreground" />
-              <p className="text-sm font-semibold">왜 여기서 확인하나</p>
+              <p className="text-sm font-semibold">공개 URL 바로 점검</p>
             </div>
-            <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <p>한 URL을 기준으로 status, redirect, DNS, URL 구조, crawler 신호를 이어서 봅니다.</p>
-              <p>개별 포맷터보다 배포/검색/공유 전 체크리스트에 가까운 결과를 먼저 보여줍니다.</p>
-              <p>Blog와 Play는 버리지 않고 운영 기록과 체류 실험으로 아래에 계속 노출합니다.</p>
+            <label className="mt-4 block space-y-2">
+              <span className="text-xs font-medium text-muted-foreground">검사할 공개 URL</span>
+              <Input name="url" type="url" inputMode="url" placeholder="https://www.bobob.app/" aria-label="검사할 공개 URL" />
+            </label>
+            <Button type="submit" className="mt-3 w-full">
+              URL 상태 확인 <ArrowRight className="h-4 w-4" />
+            </Button>
+            <div className="mt-4 space-y-2 border-t pt-3 text-xs leading-5 text-muted-foreground">
+              <p>status, redirect chain, 최종 응답 header, CSP 점검으로 먼저 들어갑니다.</p>
+              <p>다음 단계는 DNS, sitemap, robots, canonical/meta 점검으로 이어집니다.</p>
             </div>
-          </div>
+          </form>
         </div>
       </section>
 

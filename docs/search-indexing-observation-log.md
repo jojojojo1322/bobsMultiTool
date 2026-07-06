@@ -2396,3 +2396,13 @@ Completion guard:
 - Search Console action: none in this pass. The current 84-URL `/sitemaps/en` target still needs resubmission from the Chrome profile/session signed in as `bobob935@gmail.com`; do not submit from a visible `task10@ljfriends.net` session.
 - The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 84-URL target is resubmitted from the `bobob935@gmail.com` Chrome session and observed there.
 - Interpretation: production, IndexNow, and WebSub now reflect the DevTools boundary operations post, but this is still discovery-surface evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 84-URL Search Console Account-Guard Retry
+
+- Search Console attempted action: reopened the URL-prefix `https://www.bobob.app/` Search Console sitemap page for the current 84-URL `/sitemaps/en` production target.
+- Search Console visible account: `Google 계정: 조현재 (task10@ljfriends.net)`.
+- Required Search Console account: `bobob935@gmail.com`.
+- Account menu observation: the visible Google account menu showed `task10@ljfriends.net` and account-add/logout controls; it did not expose `bobob935@gmail.com` as a selectable signed-in account in this Chrome session.
+- Search Console visible sitemap row remained `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
+- Search Console action result: no sitemap was submitted because the active Chrome account was not the required `bobob935@gmail.com` session.
+- Interpretation: this is an account-session blocker for the manual Google resubmission, not a live sitemap or source-generation blocker. Production still serves the 84-URL target and IndexNow/WebSub have been refreshed, but Google Search Console still only proves the previous 75-URL sitemap observation.

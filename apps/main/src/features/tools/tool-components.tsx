@@ -6540,6 +6540,13 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [cspDirectives, setCspDirectives] = React.useState<CspDirectives>(cspPresets.strict.directives);
   const [cspReportOnly, setCspReportOnly] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const hydratedUrlParamRef = React.useRef(false);
+  React.useEffect(() => {
+    if (hydratedUrlParamRef.current || typeof window === "undefined") return;
+    hydratedUrlParamRef.current = true;
+    const nextUrl = new URLSearchParams(window.location.search).get("url")?.trim();
+    if (nextUrl && nextUrl.length <= 2048) setUrl(nextUrl);
+  }, []);
   const check = async () => {
     setLoading(true);
     try {
@@ -6586,7 +6593,7 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-        <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" />
+        <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" data-session-key="url" />
         <Button onClick={check} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
       </div>
       {result?.error ? <ErrorAlert title={ui(dictionary, "httpCheckFailed", "HTTP check failed")} message={formatHttpStatusError(result.error, dictionary)} /> : null}

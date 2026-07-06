@@ -10,16 +10,18 @@ import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
 import { getLocalizedTrustContent } from "@/features/i18n/trust-content";
 import { creativeTextToolSlugs } from "@/features/tools/creative-cluster";
+import { operationalToolSlugs } from "@/features/tools/operational-surface";
 import { toolCategories } from "@/features/tools/registry";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
 import type { ToolDefinition } from "@/features/tools/types";
 import { getLocalizedWorkflowRecipes, type LocalizedWorkflowRecipe } from "@/features/tools/workflows";
 
 const acquisitionClusterSlugs = [
+  ["http-status-checker", "dns-lookup", "sitemap-generator", "robots-txt-generator"],
+  ["meta-tag-generator", "open-graph-preview", "url-parser", "favicon-generator"],
   ["json-formatter", "json-escape-unescape", "json-to-typescript", "json-schema-validator"],
   ["yaml-validator", "env-parser-validator", "yaml-json-converter", "json-formatter"],
   ["jwt-decoder", "timestamp-converter", "base64-tool", "hash-generator"],
-  ["http-status-checker", "dns-lookup", "meta-tag-generator", "open-graph-preview"],
   ["color-converter", "css-formatter", "css-unit-converter", "css-clamp-generator"],
   ["uuid-generator", "password-generator", "qr-code-generator", "random-token-generator"],
   ["regex-tester", "javascript-formatter", "sql-formatter", "text-diff"],
@@ -46,8 +48,14 @@ export function ToolDirectory({
   compactHero?: boolean;
 }) {
   const localizedTools = getLocalizedTools(locale);
-  const coreTools = localizedTools.filter((tool) => tool.monetizationTier === "core").slice(0, 12);
   const localizedToolBySlug = new Map(localizedTools.map((tool) => [tool.slug, tool]));
+  const priorityToolSlugs = Array.from(
+    new Set([
+      ...operationalToolSlugs,
+      ...localizedTools.filter((tool) => tool.monetizationTier === "core").map((tool) => tool.slug),
+    ]),
+  ).slice(0, 12);
+  const coreTools = priorityToolSlugs.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition);
   const creativeTools = creativeTextToolSlugs.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition);
   const [leadCreativeTool, ...supportCreativeTools] = creativeTools;
   const aboutContent = getLocalizedTrustContent(locale, "about");
