@@ -213,10 +213,10 @@ for (const fragment of ["data-meta-diagnostics", "data-meta-crawler-report", "da
 for (const fragment of ["localizedMetaPreviewToolUi", "localizedMetaCrawlerReportToolUi", "metaSeoReview", "metaLooksReady", "openGraphReview", "openGraphLooksReady", "titleLength", "descriptionLength", "canonicalHost", "imageHost", "robotsPolicy", "metaCrawlerReport", "copyMetaCrawlerReport"]) {
   if (!dictionaries.includes(fragment)) failures.push(`Meta/Open Graph dictionary labels missing ${fragment}`);
 }
-for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {
+for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "data-url-canonical-report", "data-url-canonical-report-preview", "data-url-canonical-report-copy", "buildUrlCanonicalReport", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {
   if (!toolComponents.includes(fragment)) failures.push(`URL Parser detail UI missing ${fragment}`);
 }
-for (const fragment of ["localizedUrlParserToolUi", "urlStructure", "copyCleanUrl", "queryParameters", "trackingParameters", "canonicalCandidate", "urlReviewNotes", "urlTrackingWarning"]) {
+for (const fragment of ["localizedUrlParserToolUi", "localizedUrlReportToolUi", "urlCanonicalReport", "copyUrlCanonicalReport", "urlStructure", "copyCleanUrl", "queryParameters", "trackingParameters", "canonicalCandidate", "urlReviewNotes", "urlTrackingWarning"]) {
   if (!dictionaries.includes(fragment)) failures.push(`URL Parser dictionary labels missing ${fragment}`);
 }
 for (const fragment of ["data-regex-presets", "data-regex-cheat-snippets", "data-regex-result-details", "data-regex-match-list", "data-regex-generator", "data-regex-generator-results", "localizedRegexToolUi", "localizedRegexGeneratorToolUi", "localizedRegexSnippetToolUi"]) {

@@ -2603,3 +2603,16 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the Open Graph crawler report on a submitted SEO tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-06 URL Canonical Report Source Slice
+
+- Source action: added a copyable URL canonical report to `/tools/url-parser` so the submitted operations tool produces a shareable URL structure, clean URL, tracking-parameter, canonical-candidate, warning-note, and crawler follow-up checklist artifact instead of only showing parsed URL JSON.
+- Search surface action: expanded the URL Parser registry/search intents and the search-discovery workflow recipe for `url canonical report`, `clean url report`, and `utm cleanup report`, and updated layout/search/agent-skill harness coverage so the feature stays inside the submitted URL Parser tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: after clearing the stale Playwright profile cache, Playwright loaded `http://127.0.0.1:3000/tools/url-parser`, confirmed `URL canonical report`, `Copy report`, host/query/tracking/fragment/clean-URL metrics, review notes, Markdown preview, and clicked the report copy button with no console errors.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one submitted operations tool page as a URL cleanup and canonical-review workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

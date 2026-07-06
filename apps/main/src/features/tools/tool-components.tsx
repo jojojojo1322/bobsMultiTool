@@ -5929,6 +5929,70 @@ function urlParserWarnings(rawValue: string, url: URL, rows: ReturnType<typeof u
   ].filter(Boolean);
 }
 
+function buildUrlCanonicalReport({
+  rawValue,
+  url,
+  rows,
+  pathSegments,
+  cleanUrl,
+  warnings,
+  checkedAt,
+  dictionary,
+}: {
+  rawValue: string;
+  url: URL;
+  rows: ReturnType<typeof urlQueryRows>;
+  pathSegments: string[];
+  cleanUrl: string;
+  warnings: string[];
+  checkedAt: string;
+  dictionary: ClientDictionary;
+}) {
+  const canonicalCandidate = `${url.origin}${url.pathname}`;
+  const trackingCount = rows.filter((row) => row.tracking).length;
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "urlNoWarnings", "URL structure looks ready for copy or metadata review.")];
+  const checklist = [
+    ui(dictionary, "urlChecklistFetch", "Fetch the final public URL after redirects before submitting it."),
+    ui(dictionary, "urlChecklistCanonical", "Compare the clean URL with canonical tags, Open Graph URL, and sitemap entries."),
+    ui(dictionary, "urlChecklistTracking", "Remove tracking parameters unless campaign attribution is intentional."),
+    ui(dictionary, "urlChecklistSensitive", "Remove credentials, tokens, callback codes, and fragments before sharing."),
+    ui(dictionary, "urlChecklistSearchConsole", "Record Search Console/Bing/Naver follow-up separately because clean URLs are not indexing proof."),
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "urlCanonicalReport", "URL canonical report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt || "-"}`,
+    `- ${ui(dictionary, "url", "URL")}: ${url.href}`,
+    `- ${ui(dictionary, "protocol", "Protocol")}: ${url.protocol}`,
+    `- ${ui(dictionary, "host", "Host")}: ${url.host}`,
+    `- ${ui(dictionary, "pathSegments", "Path segments")}: ${pathSegments.length ? pathSegments.join(" / ") : "/"}`,
+    `- ${ui(dictionary, "queryParameters", "Query parameters")}: ${rows.length}`,
+    `- ${ui(dictionary, "trackingParameters", "Tracking parameters")}: ${trackingCount}`,
+    `- ${ui(dictionary, "fragment", "Fragment")}: ${url.hash || "-"}`,
+    `- ${ui(dictionary, "canonicalCandidate", "Canonical candidate")}: ${canonicalCandidate}`,
+    `- ${ui(dictionary, "cleanUrl", "Clean URL")}: ${cleanUrl}`,
+    `- ${ui(dictionary, "commonInput", "Input")}: ${rawValue.trim() || "-"}`,
+    "",
+    `## ${ui(dictionary, "urlReviewNotes", "URL review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "urlReportChecklist", "Review checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return {
+    canonicalCandidate,
+    markdown,
+    metrics: [
+      { label: ui(dictionary, "host", "Host"), value: url.host },
+      { label: ui(dictionary, "queryParameters", "Query parameters"), value: String(rows.length) },
+      { label: ui(dictionary, "trackingParameters", "Tracking parameters"), value: String(trackingCount) },
+      { label: ui(dictionary, "fragment", "Fragment"), value: url.hash || ui(dictionary, "notApplicable", "Not applicable") },
+      { label: ui(dictionary, "cleanUrl", "Clean URL"), value: cleanUrl },
+    ],
+  };
+}
+
 function UrlParserTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState(urlParserExamples[0]!);
   const result = React.useMemo(() => {
@@ -5974,6 +6038,22 @@ function UrlParserTool({ dictionary }: { dictionary: ClientDictionary }) {
       };
     }
   }, [dictionary, input]);
+  const [reportCheckedAt, setReportCheckedAt] = React.useState("");
+  React.useEffect(() => {
+    setReportCheckedAt(new Date().toISOString());
+  }, [input]);
+  const urlReport = result.url
+    ? buildUrlCanonicalReport({
+        rawValue: input,
+        url: result.url,
+        rows: result.rows,
+        pathSegments: result.pathSegments,
+        cleanUrl: result.cleanUrl,
+        warnings: result.warnings,
+        checkedAt: reportCheckedAt,
+        dictionary,
+      })
+    : null;
 
   return (
     <div className="space-y-4">
@@ -6039,12 +6119,35 @@ function UrlParserTool({ dictionary }: { dictionary: ClientDictionary }) {
           <section className="space-y-3 rounded-md border bg-card p-3" data-url-canonical-review>
             <ToolMetricGrid
               items={[
-                { label: ui(dictionary, "canonicalCandidate", "Canonical candidate"), value: result.url?.origin ? `${result.url.origin}${result.url.pathname}` : "—" },
+                { label: ui(dictionary, "canonicalCandidate", "Canonical candidate"), value: urlReport?.canonicalCandidate ?? "—" },
                 { label: ui(dictionary, "cleanUrl", "Clean URL"), value: result.cleanUrl },
               ]}
             />
             <ToolWarningList title={ui(dictionary, "urlReviewNotes", "URL review notes")} warnings={result.warnings} emptyLabel={ui(dictionary, "urlNoWarnings", "URL structure looks ready for copy or metadata review.")} />
           </section>
+          {urlReport ? (
+            <section className="rounded-md border bg-card" data-url-canonical-report>
+              <div className="border-b p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold">{ui(dictionary, "urlCanonicalReport", "URL canonical report")}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "urlCanonicalReportDescription", "Copy a compact URL structure, clean URL, tracking, and canonical review note before submitting or sharing.")}</p>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" onClick={() => copyToClipboard(urlReport.markdown)} data-url-canonical-report-copy>
+                    <Copy className="h-4 w-4" />
+                    {ui(dictionary, "copyUrlCanonicalReport", "Copy report")}
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-3 p-3">
+                <ToolMetricGrid items={urlReport.metrics} />
+                <ToolWarningList title={ui(dictionary, "urlReviewNotes", "URL review notes")} warnings={result.warnings} emptyLabel={ui(dictionary, "urlNoWarnings", "URL structure looks ready for copy or metadata review.")} />
+                <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-url-canonical-report-preview>
+                  <code>{urlReport.markdown}</code>
+                </pre>
+              </div>
+            </section>
+          ) : null}
           <ResultBlock title={ui(dictionary, "parsedUrlDetails", "Parsed URL details")} value={result.output} dictionary={dictionary} />
         </>
       )}

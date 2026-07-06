@@ -185,7 +185,7 @@ const checks = [
   ["agents", "CSP generator"],
   ["agents", "Meta Tag Generator and Open Graph Preview must show SEO/social crawler readiness"],
   ["agents", "robots.txt Generator and Sitemap Generator must act as crawl-readiness tools"],
-  ["agents", "URL Parser must show URL examples"],
+  ["agents", "copyable URL canonical report"],
   ["agents", "harness:seo-opportunities"],
   ["agents", "harness:seo-measured"],
   ["agents", "BOBOB_REQUIRE_MEASURED_SEO"],
@@ -408,7 +408,7 @@ const checks = [
   ["localization", "native language labels"],
   ["localization", "empty-output placeholders"],
   ["localization", "Tool-specific result labels"],
-  ["localization", "URL Parser structure/query/tracking/canonical/warning labels"],
+  ["localization", "URL Parser structure/query/tracking/canonical/warning/report labels"],
   ["localization", "JSON diagnostics for sensitive-looking keys, empty values, duplicate keys, and large arrays"],
   ["localization", "`action`, and `result`"],
   ["localization", "JSON Escape example/metric/warning labels"],
@@ -667,7 +667,7 @@ const checks = [
   ["verification", "Meta Tag Generator and Open Graph Preview UIs"],
   ["verification", "image-format warning before raw tag output"],
   ["verification", "robots.txt and sitemap generator UIs"],
-  ["verification", "URL Parser should show examples"],
+  ["verification", "copyable URL canonical report"],
   ["verification", "localized review labels"],
   ["verification", "Recent/favorite/tool-session repeat-usage sections"],
   ["verification", "`data-recent-tools`, `data-favorite-tools`, `data-tool-session`"],
@@ -906,14 +906,14 @@ for (const fragment of ["localizedSeoGeneratorToolUi", "robotsSitemapUrl", "robo
 for (const fragment of ["localizedMetaPreviewToolUi", "metaSeoReview", "metaLooksReady", "openGraphReview", "openGraphLooksReady", "titleLength", "descriptionLength", "canonicalHost", "imageHost", "robotsPolicy"]) {
   if (!dictionaries.includes(fragment)) failures.push(`dictionary missing Meta/Open Graph localized label ${fragment}`);
 }
-for (const fragment of ["localizedUrlParserToolUi", "urlStructure", "queryParameters", "trackingParameters", "canonicalCandidate", "urlReviewNotes", "urlTrackingWarning"]) {
+for (const fragment of ["localizedUrlParserToolUi", "localizedUrlReportToolUi", "urlCanonicalReport", "copyUrlCanonicalReport", "urlStructure", "queryParameters", "trackingParameters", "canonicalCandidate", "urlReviewNotes", "urlTrackingWarning"]) {
   if (!dictionaries.includes(fragment)) failures.push(`dictionary missing URL Parser localized label ${fragment}`);
 }
 const toolComponentsSource = read("apps/main/src/features/tools/tool-components.tsx");
 for (const fragment of ["data-tool-output-block", "bobob-tool-result-card", "data-tool-metric-grid", "bobob-diagnostic-card", "data-tool-warning-list"]) {
   if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing primary result/diagnostic separation ${fragment}`);
 }
-for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {
+for (const fragment of ["data-url-parser-examples", "data-url-parser-diagnostics", "data-url-query-params", "data-url-canonical-review", "data-url-canonical-report", "data-url-canonical-report-preview", "data-url-canonical-report-copy", "buildUrlCanonicalReport", "cleanUrlCandidate", "urlParserWarnings", "trackingParameterPattern"]) {
   if (!toolComponentsSource.includes(fragment)) failures.push(`tool components missing URL Parser readiness implementation ${fragment}`);
 }
 for (const fragment of ["data-robots-diagnostics", "data-sitemap-diagnostics", "escapeXml", "isPrivateOrLocalHostname", "parsePublicUrl", "robotsUnknownDirectiveWarning", "sitemapDuplicateUrlWarning", "sitemapMixedHostWarning"]) {
