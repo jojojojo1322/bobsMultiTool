@@ -5965,6 +5965,66 @@ function parsePublicUrl(value: string) {
   }
 }
 
+function buildSearchDiscoveryReport({
+  rawUrlCount,
+  uniqueUrls,
+  duplicateCount,
+  warnings,
+  checkedAt,
+  dictionary,
+}: {
+  rawUrlCount: number;
+  uniqueUrls: URL[];
+  duplicateCount: number;
+  warnings: string[];
+  checkedAt: string;
+  dictionary: ClientDictionary;
+}) {
+  const hosts = Array.from(new Set(uniqueUrls.map((url) => url.hostname)));
+  const primaryHost = hosts[0] ?? "-";
+  const httpsUrls = uniqueUrls.filter((url) => url.protocol === "https:").length;
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "searchDiscoveryReportNoWarnings", "No sitemap URL warnings were detected.")];
+  const checklist = [
+    ui(dictionary, "searchDiscoveryChecklistFinal200", "Fetch submitted URLs as Googlebot or a public browser and confirm final 200 responses."),
+    ui(dictionary, "searchDiscoveryChecklistSubmit", "Submit the sitemap in Search Console, Bing Webmaster Tools, and any regional webmaster tools you use."),
+    ui(dictionary, "searchDiscoveryChecklistRobots", "Keep robots.txt pointing at the public sitemap URL."),
+    ui(dictionary, "searchDiscoveryChecklistCanonical", "Confirm page canonical links use the same final host and URL shape."),
+    ui(dictionary, "searchDiscoveryChecklistPing", "Use IndexNow or feed/WebSub pings only as discovery signals after content changes."),
+  ];
+  const urlSample = uniqueUrls.slice(0, 5).map((url) => url.href);
+  const markdown = [
+    `# ${ui(dictionary, "searchDiscoveryReport", "Search discovery report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt || "-"}`,
+    `- ${ui(dictionary, "urlCount", "URL count")}: ${rawUrlCount}`,
+    `- ${ui(dictionary, "generatedEntries", "Generated sitemap entries")}: ${uniqueUrls.length}`,
+    `- ${ui(dictionary, "primaryHost", "Primary host")}: ${primaryHost}`,
+    `- ${ui(dictionary, "uniqueHosts", "Unique hosts")}: ${hosts.length}`,
+    `- ${ui(dictionary, "httpsUrls", "HTTPS URLs")}: ${httpsUrls}`,
+    `- ${ui(dictionary, "duplicateUrls", "Duplicate URLs")}: ${duplicateCount}`,
+    "",
+    `## ${ui(dictionary, "searchDiscoveryReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "searchDiscoveryReportChecklist", "Submission checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+    "",
+    `## ${ui(dictionary, "urlSample", "URL sample")}`,
+    ...(urlSample.length ? urlSample.map((url) => `- ${url}`) : [`- ${ui(dictionary, "searchDiscoveryReportNoUrls", "Add public URLs before copying a discovery report.")}`]),
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    metrics: [
+      { label: ui(dictionary, "generatedEntries", "Generated sitemap entries"), value: String(uniqueUrls.length) },
+      { label: ui(dictionary, "primaryHost", "Primary host"), value: primaryHost },
+      { label: ui(dictionary, "uniqueHosts", "Unique hosts"), value: String(hosts.length) },
+      { label: ui(dictionary, "httpsUrls", "HTTPS URLs"), value: String(httpsUrls) },
+    ],
+  };
+}
+
 function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [sitemap, setSitemap] = React.useState("https://www.bobob.app/sitemap.xml");
   const [mode, setMode] = React.useState("allow");
@@ -6017,6 +6077,10 @@ function RobotsGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
 
 function SitemapGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [urls, setUrls] = React.useState("https://www.bobob.app/\nhttps://www.bobob.app/tools/json-formatter");
+  const [reportCheckedAt, setReportCheckedAt] = React.useState("");
+  React.useEffect(() => {
+    setReportCheckedAt(new Date().toISOString());
+  }, [urls]);
   const rawUrls = urls.split(/\r?\n/).map((url) => url.trim()).filter(Boolean);
   const parsedUrls = rawUrls.map((value) => ({ value, parsed: parsePublicUrl(value) }));
   const validUrls = parsedUrls.filter((entry): entry is { value: string; parsed: URL } => Boolean(entry.parsed));
@@ -6036,6 +6100,14 @@ function SitemapGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) 
   const output = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${uniqueUrls
     .map((url) => `  <url><loc>${escapeXml(url.href)}</loc></url>`)
     .join("\n")}\n</urlset>`;
+  const searchDiscoveryReport = buildSearchDiscoveryReport({
+    rawUrlCount: rawUrls.length,
+    uniqueUrls,
+    duplicateCount,
+    warnings,
+    checkedAt: reportCheckedAt,
+    dictionary,
+  });
   return (
     <div className="space-y-4">
       <Textarea value={urls} onChange={(event) => setUrls(event.target.value)} className="min-h-44" aria-label={ui(dictionary, "sitemapUrlList", "Sitemap URL list")} />
@@ -6050,6 +6122,27 @@ function SitemapGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) 
       <div data-sitemap-diagnostics>
         <ToolWarningList title={ui(dictionary, "sitemapWarnings", "Sitemap review")} warnings={warnings} emptyLabel={ui(dictionary, "sitemapLooksReady", "Sitemap entries are ready for a public crawl review.")} />
       </div>
+      <section className="rounded-md border bg-card" data-search-discovery-report>
+        <div className="border-b p-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">{ui(dictionary, "searchDiscoveryReport", "Search discovery report")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "searchDiscoveryReportDescription", "Copy a compact sitemap, host, warning, and submission checklist note before Search Console or webmaster follow-up.")}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => copyToClipboard(searchDiscoveryReport.markdown)}>
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copySearchDiscoveryReport", "Copy report")}
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-3 p-3">
+          <ToolMetricGrid items={searchDiscoveryReport.metrics} />
+          <ToolWarningList title={ui(dictionary, "searchDiscoveryReportReviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "searchDiscoveryReportNoWarnings", "No sitemap URL warnings were detected.")} />
+          <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-search-discovery-report-preview>
+            <code>{searchDiscoveryReport.markdown}</code>
+          </pre>
+        </div>
+      </section>
       <ResultBlock title={ui(dictionary, "xmlSitemap", "XML sitemap")} value={output} dictionary={dictionary} />
     </div>
   );

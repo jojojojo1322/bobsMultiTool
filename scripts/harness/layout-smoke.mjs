@@ -195,10 +195,10 @@ for (const fragment of ["data-http-status-details", "data-http-redirect-chain", 
 }
 if (!dictionaries.includes("localizedHttpStatusToolUi")) failures.push("HTTP status tool UI labels must be localized");
 if (!dictionaries.includes("localizedHttpErrorToolUi") || !dictionaries.includes("httpRequestFailedPublic")) failures.push("HTTP status error labels must be localized");
-for (const fragment of ["data-robots-diagnostics", "data-sitemap-diagnostics", "escapeXml", "isPrivateOrLocalHostname", "parsePublicUrl", "robotsUnknownDirectiveWarning", "robotsPrivateSitemapWarning", "sitemapDuplicateUrlWarning", "sitemapMixedHostWarning", "sitemapNonHttpsUrlWarning", "sitemapPrivateUrlWarning"]) {
+for (const fragment of ["data-robots-diagnostics", "data-sitemap-diagnostics", "data-search-discovery-report", "data-search-discovery-report-preview", "buildSearchDiscoveryReport", "escapeXml", "isPrivateOrLocalHostname", "parsePublicUrl", "robotsUnknownDirectiveWarning", "robotsPrivateSitemapWarning", "sitemapDuplicateUrlWarning", "sitemapMixedHostWarning", "sitemapNonHttpsUrlWarning", "sitemapPrivateUrlWarning"]) {
   if (!toolComponents.includes(fragment)) failures.push(`robots/sitemap crawl-readiness UI missing ${fragment}`);
 }
-for (const fragment of ["localizedSeoGeneratorToolUi", "robotsSitemapUrl", "robotsWarnings", "robotsLooksReady", "sitemapUrlList", "generatedEntries", "sitemapWarnings", "sitemapLooksReady"]) {
+for (const fragment of ["localizedSeoGeneratorToolUi", "localizedSearchDiscoveryReportToolUi", "robotsSitemapUrl", "robotsWarnings", "robotsLooksReady", "sitemapUrlList", "generatedEntries", "sitemapWarnings", "sitemapLooksReady", "searchDiscoveryReport", "copySearchDiscoveryReport"]) {
   if (!dictionaries.includes(fragment)) failures.push(`robots/sitemap dictionary labels missing ${fragment}`);
 }
 if (!dictionaries.includes("redirectDiagnostics") || !dictionaries.includes("redirectCanonicalChangedWarning")) failures.push("HTTP redirect diagnostics labels must be localized");
