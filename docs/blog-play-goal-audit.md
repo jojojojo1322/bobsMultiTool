@@ -143,6 +143,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the 75-URL representative deployment.
   - Search Console sitemap resubmission for the latest externally submitted 75-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, discovered pages `75`, and videos `0`.
 - The representative sitemap remains intentionally reduced. Production now serves `83` URLs after adding the selected operations-first tool pages, while Search Console still only proves discovery for the previous externally submitted `75` URL count. This is discovery evidence, not indexing proof.
+  - 2026-07-06 follow-up after the search-discovery workflow deployment opened the `https://www.bobob.app/` URL-prefix Search Console property, but the visible Chrome account was `task10@ljfriends.net`, not `bobob935@gmail.com`; no 83-URL `/sitemaps/en` resubmission was made from that session.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
   - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
   - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.

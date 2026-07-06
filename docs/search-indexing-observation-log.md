@@ -2346,3 +2346,21 @@ Completion guard:
 - Search Console action: none in this pass. Chrome opened the URL-prefix `https://www.bobob.app/` Search Console sitemap page, but the active visible Google account was `task10@ljfriends.net`, not the required `bobob935@gmail.com`, so `/sitemaps/en` was not resubmitted from that session.
 - The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is resubmitted from the `bobob935@gmail.com` Chrome session and observed there.
 - Interpretation: production now serves the operations-first 83-URL sitemap and the discovery pings have been refreshed, but this is still not indexing proof. The next manual pass must resubmit `/sitemaps/en` from the `bobob935@gmail.com` Chrome session, then later compare discovered pages, page-indexing reasons, URL Inspection status, Bing recommendation classes, and Naver sitemap/page collection state.
+
+## 2026-07-06 Search Discovery Workflow Deployment
+
+- Source action: pushed `3b210713d3386756af02ba73bbb31a6a1d6d9007` to `origin/master` with global `/search?q=` workflow results, the localized `check-search-discovery-readiness` recipe, `HowTo` structured data for workflow search results, and updated workflow search harness coverage.
+- Product surface check: live `/search?q=site%20indexing%20checklist` now renders `검색 노출 준비 점검` before individual tool cards and exposes a five-step flow: HTTP status, sitemap URL cleanup, robots rule check, meta/canonical review, and URL parsing.
+- Deployment status check: `npm run harness:deployment-status` moved from Vercel `pending` to `success` for `3b210713d3386756af02ba73bbb31a6a1d6d9007`; the report had no unknown failures, but still noted that no GitHub main Vercel status context was found unless `VERCEL_TOKEN` and `BOBOB_REQUIRE_MAIN_VERCEL=1` are provided for a strict project check.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `83`, feed items `60`, Blog posts `34`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `83` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`
+- IndexNow submitted URL count: `83`
+- IndexNow response status: `200`
+- Search Console attempted action: opened the URL-prefix `https://www.bobob.app/` Search Console sitemap page for `/sitemaps/en`.
+- Search Console visible account: `Google 계정: 조현재 (task10@ljfriends.net)`.
+- Required Search Console account: `bobob935@gmail.com`.
+- Search Console action result: no sitemap was submitted because the active Chrome account was not the required `bobob935@gmail.com` session.
+- Search Console visible sitemap row remained `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
+- The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is resubmitted from the `bobob935@gmail.com` Chrome session and observed there.
+- Interpretation: production and IndexNow now reflect the search-discovery workflow slice, but Google Search Console still has an account-session blocker. This is not indexing proof and does not complete the active goal.
