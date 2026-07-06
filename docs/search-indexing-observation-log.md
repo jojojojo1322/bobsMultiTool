@@ -2343,5 +2343,6 @@ Completion guard:
 - WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
 - WebSub feed item counts: `60`, `60`
 - WebSub response statuses: `204`, `204`
-- Search Console action: none in this pass. The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is resubmitted and observed there.
+- Search Console action: none in this pass. Chrome opened the URL-prefix `https://www.bobob.app/` Search Console sitemap page, but the active visible Google account was `task10@ljfriends.net`, not the required `bobob935@gmail.com`, so `/sitemaps/en` was not resubmitted from that session.
+- The latest external Search Console discovery evidence remains the previous `75` discovered pages until the 83-URL target is resubmitted from the `bobob935@gmail.com` Chrome session and observed there.
 - Interpretation: production now serves the operations-first 83-URL sitemap and the discovery pings have been refreshed, but this is still not indexing proof. The next manual pass must resubmit `/sitemaps/en` from the `bobob935@gmail.com` Chrome session, then later compare discovered pages, page-indexing reasons, URL Inspection status, Bing recommendation classes, and Naver sitemap/page collection state.
