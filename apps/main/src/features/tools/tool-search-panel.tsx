@@ -10,7 +10,7 @@ import { withLocale, type Locale } from "@/features/i18n/config";
 import type { ClientDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedRelatedTools, getLocalizedTools, searchLocalizedTools } from "@/features/i18n/localized-content";
 import type { ToolDefinition } from "./types";
-import { operationalToolSlugs } from "./operational-surface";
+import { pickOperationalCoreTools } from "./operational-surface";
 import { getLocalizedWorkflowRecipes, normalizeWorkflowSearchValue, scoreWorkflowRecipeSearch, workflowRecipeMatches } from "./workflows";
 
 function normalizeSearchValue(value: string) {
@@ -63,21 +63,10 @@ export function ToolSearchPanel({
 }) {
   const [query, setQuery] = React.useState(initialQuery);
   const localizedTools = React.useMemo(() => getLocalizedTools(locale), [locale]);
-  const localizedToolBySlug = React.useMemo(() => new Map(localizedTools.map((tool) => [tool.slug, tool])), [localizedTools]);
   const results = React.useMemo(() => {
-    if (!query.trim()) {
-      return Array.from(
-        new Set([
-          ...operationalToolSlugs,
-          ...localizedTools.filter((tool) => tool.monetizationTier === "core").map((tool) => tool.slug),
-        ]),
-      )
-        .map((slug) => localizedToolBySlug.get(slug))
-        .filter((tool): tool is ToolDefinition => Boolean(tool))
-        .slice(0, 8);
-    }
+    if (!query.trim()) return pickOperationalCoreTools(localizedTools, 8);
     return searchLocalizedTools(query, locale).slice(0, 8);
-  }, [locale, localizedToolBySlug, localizedTools, query]);
+  }, [locale, localizedTools, query]);
   const workflowResults = React.useMemo(() => {
     if (!query.trim()) return [];
     return getLocalizedWorkflowRecipes(locale, localizedTools)

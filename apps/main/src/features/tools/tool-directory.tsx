@@ -10,7 +10,7 @@ import { getLocalizedTools } from "@/features/i18n/localized-content";
 import { getLocalizedLegalContent } from "@/features/i18n/legal-content";
 import { getLocalizedTrustContent } from "@/features/i18n/trust-content";
 import { creativeTextToolSlugs } from "@/features/tools/creative-cluster";
-import { operationalToolSlugs } from "@/features/tools/operational-surface";
+import { pickOperationalCoreTools } from "@/features/tools/operational-surface";
 import { toolCategories } from "@/features/tools/registry";
 import { ToolSearchPanel } from "@/features/tools/tool-search-panel";
 import type { ToolDefinition } from "@/features/tools/types";
@@ -49,13 +49,7 @@ export function ToolDirectory({
 }) {
   const localizedTools = getLocalizedTools(locale);
   const localizedToolBySlug = new Map(localizedTools.map((tool) => [tool.slug, tool]));
-  const priorityToolSlugs = Array.from(
-    new Set([
-      ...operationalToolSlugs,
-      ...localizedTools.filter((tool) => tool.monetizationTier === "core").map((tool) => tool.slug),
-    ]),
-  ).slice(0, 12);
-  const coreTools = priorityToolSlugs.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition);
+  const coreTools = pickOperationalCoreTools(localizedTools, 12);
   const creativeTools = creativeTextToolSlugs.map((slug) => localizedToolBySlug.get(slug)).filter(isToolDefinition);
   const [leadCreativeTool, ...supportCreativeTools] = creativeTools;
   const aboutContent = getLocalizedTrustContent(locale, "about");

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { defaultLocale, isLocale, languageAlternates, locales, openGraphLocales, withLocale, type Locale } from "@/features/i18n/config";
 import { getClientDictionary, getDictionary } from "@/features/i18n/dictionaries";
 import { getLocalizedTools } from "@/features/i18n/localized-content";
+import { orderToolsWithOperationalFirst } from "@/features/tools/operational-surface";
 import { toolDirectoryStructuredData } from "@/features/tools/structured-data";
 import { readSearchQuery, ToolDirectory } from "@/features/tools/tool-directory";
 
@@ -58,8 +59,9 @@ export default async function LocalizedToolsIndexPage({ params, searchParams }: 
   const locale = validLocale(value);
   const dictionary = getClientDictionary(locale);
   const initialQuery = readSearchQuery(await searchParams);
+  const localizedTools = getLocalizedTools(locale);
   const jsonLd = toolDirectoryStructuredData({
-    tools: getLocalizedTools(locale),
+    tools: orderToolsWithOperationalFirst(localizedTools),
     locale,
     url: `https://www.bobob.app${withLocale("/tools", locale)}`,
     title: dictionary.home.toolIndexTitle,

@@ -2058,7 +2058,7 @@ const en: Dictionary = {
     openTools: "Open tools",
     readGuides: "Read guides",
     toolIndexTitle: "Tool index",
-    toolIndexDescription: "Search formatters, validators, decoders, generators, network checks, and SEO utilities from one workbench.",
+    toolIndexDescription: "Check public URL status, redirects, DNS, sitemap, robots, metadata, and payload utilities from one workbench.",
   },
   tool: {
     developerWorkbench: "Developer workbench",
@@ -2106,7 +2106,7 @@ const en: Dictionary = {
   },
   metadata: {
     homeTitle: "Bob's Multi Tool - Practical Developer Utilities",
-    homeDescription: "Free online developer tools for JSON, regex, Base64, JWT, cron, timestamps, UUIDs, SEO, colors, network checks, and text conversion.",
+    homeDescription: "Check public URL status, redirects, DNS, sitemap, robots, metadata, and developer payload utilities from one workbench.",
     guidesTitle: "Developer Utility Guides",
     guidesDescription: "Practical support guides for Bob's Multi Tool utilities.",
     toolDescription: (title) => `${title} in Bob's Multi Tool. Use a fast developer utility with examples, FAQ, related tools, and local-first privacy where practical.`,
@@ -2290,7 +2290,7 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
       openTools: "도구 열기",
       readGuides: "가이드 읽기",
       toolIndexTitle: "도구 목록",
-      toolIndexDescription: "포매터, 검증기, 디코더, 생성기, 네트워크 검사, SEO 도구를 한 워크벤치에서 찾습니다.",
+      toolIndexDescription: "공개 URL 상태, 리다이렉트, DNS, sitemap, robots, 메타데이터, 페이로드 도구를 한 워크벤치에서 점검합니다.",
     },
     tool: {
       developerWorkbench: "개발자 워크벤치",
@@ -2324,7 +2324,7 @@ const dictionaryOverrides: Partial<Record<Locale, CommonLocaleOverride>> = {
     },
     metadata: {
       homeTitle: "Bob's Multi Tool - 실용적인 개발자 유틸리티",
-      homeDescription: "JSON, regex, Base64, JWT, cron, timestamp, UUID, SEO, color, network, text 변환을 위한 무료 온라인 개발자 도구.",
+      homeDescription: "공개 URL 상태, 리다이렉트, DNS, sitemap, robots, 메타데이터, 개발 페이로드를 한 워크벤치에서 점검하는 도구.",
       guidesTitle: "개발자 유틸리티 가이드",
       guidesDescription: "Bob's Multi Tool 도구를 실무에서 쓰기 위한 짧은 가이드.",
       toolDescription: (title) => `${title}를 Bob's Multi Tool에서 빠르게 사용하세요. 예제, FAQ, 관련 도구, 로컬 우선 개인정보 처리를 함께 제공합니다.`,
