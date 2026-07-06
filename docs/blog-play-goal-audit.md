@@ -169,12 +169,14 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Search Console still needs a separate `/sitemaps/en` resubmission and later observation; IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
+  - The latest 2026-07-06 retry against the current 84-URL production target still reached only the public Bing Webmaster Tools landing page, so no Bing sitemap or recommendation state was observed.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - Naver:
   - Signed-in Search Advisor showed `https://www.bobob.app` owned under `풀꽃`, registered `25.07.24`, with ownership expiring `26.07.24`.
   - Naver reports security certificate and HTTPS redirect as normal.
   - Naver still reports `사이트맵을 찾을 수 없습니다` and `콘텐츠 노출/클릭 정보가 없습니다`.
   - Visible Naver sitemap rows are old broad locale entries from `26.06.16`; `sitemaps/en` was not visibly added after submission attempts.
+  - The latest 2026-07-06 retry reached only the public Search Advisor landing page with `로그인`; the console retry did not produce a readable signed-in site dashboard before the browser-control session timed out.
   - A Naver page collection request, when submitted later, must be logged separately and must not be treated as indexing proof.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`

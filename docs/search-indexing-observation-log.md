@@ -2417,3 +2417,18 @@ Completion guard:
 - Search Console visible sitemap row remained `/sitemaps/en`, submitted `2026. 7. 3.`, last read `2026. 7. 3.`, status `성공`, discovered pages `75`, discovered videos `0`.
 - Search Console action result: no sitemap was submitted because Chrome still resolved the Search Console session to `task10@ljfriends.net` even when the URL requested `authuser=bobob935@gmail.com`.
 - Interpretation: this is still an account-session blocker for Google Search Console. The source and live discovery surfaces are current at 84 URLs, but Google Search Console still only proves the previous 75-URL sitemap observation until the browser session is actually signed in as `bobob935@gmail.com`.
+
+## 2026-07-06 Bing/Naver Signed-In Surface Retry
+
+- Pre-check source/live state:
+  - `git status -sb` was clean at `92a9f35` on `feat/web-ops-recovery`.
+  - `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+  - `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `75`, and live sitemap URLs `84`.
+  - `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Bing Webmaster Tools attempted URL: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`.
+- Bing visible result: redirected to the public Bing Webmaster Tools landing page at `/webmasters/about?...` with `Sign In`; no site-specific dashboard, sitemap, or recommendation classes were visible in the current Chrome session.
+- Bing action result: no submission or site change was made. Current Bing-compatible discovery evidence remains the latest IndexNow `84` URL submission with response `200`.
+- Naver Search Advisor attempted URL: `https://searchadvisor.naver.com/`.
+- Naver visible result: public Search Advisor landing page with `로그인`; visible page copy described Search Advisor and linked to `웹마스터 도구`, but no signed-in site dashboard or `https://www.bobob.app` property state was visible in this Chrome session.
+- Naver console retry: opening `https://searchadvisor.naver.com/console/board` did not yield a readable signed-in console state before the browser-control session timed out; no sitemap submission, page collection request, or site setting change was made.
+- Interpretation: this pass confirms that Bing and Naver still need signed-in webmaster-tool sessions before they can provide recommendation, sitemap, collection, or indexing evidence. It does not change the current 84-URL production discovery target and does not prove Bing or Naver indexing.
