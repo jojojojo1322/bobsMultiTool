@@ -13,7 +13,7 @@ This matrix tracks the public discovery paths used for the web-operations + Blog
 - Current Blog count: `129`
 - Current representative Blog count: `36`
 - Current Play count: `26`
-- Latest external sitemap discovery count: `84`
+- Latest external sitemap discovery count: `85`
 - Latest IndexNow representative submission count: `85`
 - Latest external feed publish item count: `62`
 - Current Blog categories in sitemap: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`
@@ -25,10 +25,10 @@ This matrix tracks the public discovery paths used for the web-operations + Blog
 
 | Channel | Public target | Current status | What it proves | What it does not prove |
 | --- | --- | --- | --- | --- |
-| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Current source sitemap target after web-operations recovery: `85` URLs. Latest signed-in Search Console observation after resubmission from `bobob935@gmail.com`: `/sitemaps/en`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, status `성공`, discovered pages `84`, videos `0`. Earlier same-day Chrome retries resolved to `task10@ljfriends.net`; the later signed-in `bobob935@gmail.com` pass is the current observation. | Google accepted, read, and discovered the latest externally submitted 84-URL canonical sitemap set | It does not prove indexing, impressions, ranking, or that the submitted Blog, Play, or tool pages are indexed |
-| Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`; last updated `8.5시간 전` | Google has begun showing more search impressions than the earlier `3`-impression observation | It does not prove useful traffic or broad Blog + Play indexing completion |
-| Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `1`, not-indexed pages `32`, last updated `2026. 6. 30`; reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1` | The page-indexing report now reflects one indexed URL and a larger not-indexed set that must be triaged by reason | It does not prove that the new operations-first source target has been deployed, submitted, crawled, or indexed |
-| Google URL Inspection | Homepage plus Blog/Play representatives | Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`. `/blog`, `/play`, `/blog/ai-side-project-realistic-order`, and `/play/office-survival` are not registered; each has a confirmed `색인 생성 요청됨` after inspection. Post-77-URL pillar inspections for `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` both showed `URL이 Google에 등록되어 있지 않음`, reason `크롤링됨 - 현재 색인이 생성되지 않음`, sitemap `https://www.bobob.app/sitemaps/en`, recent crawls `2026. 7. 3. 오전 2:58:20` and `2026. 7. 3. 오전 3:00:15`, page fetch `성공`, indexing allowed `예`, and both have `색인 생성 요청됨` confirmations with queue messages | URL Inspection proves homepage indexing, current sitemap association, fresh Googlebot smartphone crawl, successful fetch, allowed indexing, and queued pillar URL requests | It does not prove the Blog/Play representatives or pillar posts were indexed after inspection |
+| Google Search Console sitemap | `/sitemaps/en` under the `https://www.bobob.app/` property | Current source sitemap target after web-operations recovery: `85` URLs. Latest signed-in Search Console observation after resubmission from `bobob935@gmail.com`: `/sitemaps/en`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, videos `0`. Earlier same-day Chrome retries resolved to `task10@ljfriends.net`; the signed-in `bobob935@gmail.com` pass is the current observation. | Google accepted, read, and discovered the latest externally submitted 85-URL canonical sitemap set | It does not prove indexing, impressions, ranking, or that the submitted Blog, Play, or tool pages are indexed |
+| Google Search Console performance | `검색결과에서의 실적` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`; last updated `6시간 전` | Google has begun showing more search impressions than the earlier `3`-impression observation | It does not prove useful traffic or broad Blog + Play indexing completion |
+| Google Search Console page indexing | `페이지 색인 생성` under the `https://www.bobob.app/` property | Latest `bobob935@gmail.com` check showed indexed pages `1`, not-indexed pages `25`, last updated `2026. 6. 30`; reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `20`, `리디렉션이 포함된 페이지`: `2`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1` | The page-indexing report now reflects one indexed URL and a smaller not-indexed set than the prior `32`, but its report date is still `2026. 6. 30` | It does not prove that the 2026-07-07 85-URL sitemap resubmission has been crawled or indexed |
+| Google URL Inspection | Homepage plus Blog/Play representatives | Homepage `https://www.bobob.app/` is `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`. `/blog`, `/play`, `/blog/ai-side-project-realistic-order`, and `/play/office-survival` are not registered; each has a confirmed `색인 생성 요청됨` after inspection. Post-77-URL pillar inspections for `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` both showed `URL이 Google에 등록되어 있지 않음`, reason `크롤링됨 - 현재 색인이 생성되지 않음`, sitemap `https://www.bobob.app/sitemaps/en`, recent crawls `2026. 7. 3. 오전 2:58:20` and `2026. 7. 3. 오전 3:00:15`, page fetch `성공`, indexing allowed `예`, and both have `색인 생성 요청됨` confirmations with queue messages. The new security-header operations post `https://www.bobob.app/blog/security-header-report-before-copying-devtools` is not registered yet, shows `발견됨 - 현재 색인이 생성되지 않음`, is associated with `https://www.bobob.app/sitemaps/en`, and has a `색인 생성 요청됨` confirmation with the priority crawl queue message. | URL Inspection proves homepage indexing, sitemap association, successful fetch or discovered state for inspected URLs, and queued indexing requests | It does not prove the Blog/Play representatives, pillar posts, or the new security-header operations post were indexed after inspection |
 | Bing and IndexNow | `https://api.indexnow.org/indexnow` with the public key file | Latest IndexNow representative submission: `85` URLs with response `200` after the security-header report operations post deployment | Bing-compatible discovery was refreshed for the current deployed representative URL set | It does not prove Bing indexed or ranked the pages, and it does not replace Search Console or Naver observation |
 | Bing Webmaster Tools | `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app` | Latest browser check reached the public landing page with `Sign In`; site-specific sitemap and recommendation classes were not visible | Bing Webmaster follow-up still needs a signed-in session | It does not provide indexing, sitemap, or recommendation evidence yet |
 | Public Bing search | `site:www.bobob.app` | Latest browser check hit a `계속하려면 아래 과제 해결` challenge | Public Bing search was attempted | It does not prove whether Bing has indexed the URL set |
@@ -69,23 +69,23 @@ Also compare against the later same-day post-expansion registration:
 
 - `/sitemaps/en` discovered pages after resubmission: `52`
 - Prior `/sitemaps/en` discovered pages after the 2026-07-02 resubmission: `68`
-- Latest `/sitemaps/en` discovered pages after the 2026-07-06 84-URL resubmission: `84`
+- Latest `/sitemaps/en` discovered pages after the 2026-07-07 85-URL resubmission: `85`
 - Current representative `/sitemaps/en` source URL target: `85`
-- Latest external sitemap discovery count: `84`
+- Latest external sitemap discovery count: `85`
 - Latest IndexNow representative submission count: `85`
 - Current representative feed source target item count: `62`
 - Latest external feed publish item count: `62`
-- The latest Search Console discovered count still reflects the latest externally submitted `84`-URL sitemap after the signed-in `bobob935@gmail.com` resubmission on `2026. 7. 6.`. The current source and live target is now `85` URLs after the security-header report operations post, with IndexNow refreshed at `85` URLs and WebSub refreshed at `62` feed items. Earlier same-day Chrome retries exposed only `task10@ljfriends.net`, but the current matrix uses the later successful `bobob935@gmail.com` observation. This is discovery evidence, not indexing proof.
+- The latest Search Console discovered count now reflects the latest externally submitted `85`-URL sitemap after the signed-in `bobob935@gmail.com` resubmission on `2026. 7. 7.`. The current source and live target is `85` URLs after the security-header report operations post, with IndexNow refreshed at `85` URLs and WebSub refreshed at `62` feed items. Earlier Chrome retries exposed only `task10@ljfriends.net`, but the current matrix uses the successful `bobob935@gmail.com` observation. This is discovery evidence, not indexing proof.
 
 Latest Search Console observation from `bobob935@gmail.com`:
 
 - Total clicks: `0`
 - Total impressions: `18`
 - Indexed pages: `1`
-- Not indexed pages: `32`
-- `/sitemaps/en` discovered pages: `84` against the latest externally submitted `84`-URL sitemap; the current source target is `85` URLs after the security-header report operations post, so the next live/Search Console pass must compare the new source target separately. This is discovery evidence, not indexing proof.
-- Page indexing reasons include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
-- URL Inspection: `https://www.bobob.app/` is indexed; Blog/Play representative URLs are not indexed yet.
+- Not indexed pages: `25`
+- `/sitemaps/en` discovered pages: `85` against the latest externally submitted `85`-URL sitemap on `2026. 7. 7.`. This is discovery evidence, not indexing proof.
+- Page indexing reasons include `크롤링됨 - 현재 색인이 생성되지 않음`: `20`, `리디렉션이 포함된 페이지`: `2`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
+- URL Inspection: `https://www.bobob.app/` is indexed; Blog/Play representative URLs and the new `security-header-report-before-copying-devtools` Blog URL are not indexed yet.
 - Pillar URL inspections: `why-bobob-shifted-to-content-lab` and `content-indexing-checklist-before-resubmission` are still not indexed, now with `크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, show successful Googlebot smartphone fetches on `2026. 7. 3.`, allow indexing, and both have fresh `색인 생성 요청됨` confirmations.
 
 ## Stop Rule

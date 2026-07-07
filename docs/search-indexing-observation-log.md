@@ -3077,3 +3077,25 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The latest signed-in `bobob935@gmail.com` Search Console observation still reflects the externally submitted `84`-URL sitemap from `2026. 7. 6.`; the current deployed/source target is now `85` URLs and must be checked later from a Chrome profile/session signed in as `bobob935@gmail.com`.
 - Interpretation: production now serves the security-header operations Blog post, live discovery is refreshed at `85` sitemap URLs and `62` feed items, IndexNow has been refreshed at `85`, and WebSub has been refreshed at `62`, but this is still discovery-surface and live-content evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Search Console 85-URL Resubmission And New Blog Inspection
+
+- Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`.
+- Search Console URL-prefix property: `https://www.bobob.app/`.
+- Search Console sitemap action: submitted `/sitemaps/en` again after the security-header operations Blog deployment and live 85-URL sitemap verification.
+- Search Console confirmation: `사이트맵이 제출됨`.
+- Search Console sitemap visible row after 85-URL resubmission: `/sitemaps/en`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, discovered videos `0`.
+- Performance report range: `3개월`, search type `웹`.
+- Performance last updated: `6시간 전`.
+- Total clicks: `0`.
+- Total impressions: `18`.
+- Average CTR: `0%`.
+- Average position: `1.1`.
+- Page indexing report last updated: `2026. 6. 30.`.
+- Indexed pages: `1`.
+- Not indexed pages: `25`.
+- Page-indexing reason rows: `사용자가 선택한 표준이 없는 중복 페이지`: `2`; `크롤링됨 - 현재 색인이 생성되지 않음`: `20`; `리디렉션이 포함된 페이지`: `2`; `적절한 표준 태그가 포함된 대체 페이지`: `1`.
+- New Blog URL inspection target: `https://www.bobob.app/blog/security-header-report-before-copying-devtools`.
+- New Blog URL status before request: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; referring page `감지된 페이지 없음`; recent crawl, crawler, crawl allowed, page fetch, indexing allowed, user-declared canonical, and Google-selected canonical all showed `해당사항 없음`.
+- New Blog URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`; Google also says repeated submissions do not change queue position or priority.
+- Interpretation: Search Console discovery is now aligned with the live/source `85` URL sitemap, and the new security-header operations post is queued for crawl. This is stronger discovery evidence than the previous `84` state, but it is still not indexing proof because page indexing remains `1` indexed page, not-indexed pages remain `25`, the page indexing report is still dated `2026. 6. 30.`, and the new Blog URL is explicitly not registered yet.

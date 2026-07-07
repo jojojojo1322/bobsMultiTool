@@ -95,7 +95,7 @@ const latestIndexNowSubmissionCount = backtickNumber(discoveryRegistration, "Lat
 const latestExternalFeedItemCount = backtickNumber(discoveryRegistration, "Latest external feed publish item count") ?? currentFeedItemCount;
 const searchConsoleDiscoveryStatusFragment =
   latestExternalSitemapCount === currentSubmittedSitemapCount
-    ? `Search Console sitemap discovery now matches the current live representative sitemap URL count (\`${latestExternalSitemapCount}\`)`
+    ? `Search Console sitemap discovery now matches the current live/source representative sitemap URL count (\`${latestExternalSitemapCount}\`)`
     : `Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`;
 
 if (blogEntries.length < 39) failures.push(`audit expects at least 39 Blog posts, found ${blogEntries.length}`);
@@ -161,10 +161,12 @@ for (const fragment of [
   `discovered pages \`${latestExternalSitemapCount}\``,
   "This is discovery evidence, not indexing proof.",
   "Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1`",
-  "Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.",
-  "`크롤링됨 - 현재 색인이 생성되지 않음`: `24`",
+  "Latest page indexing report now shows indexed pages `1` and not-indexed pages `25`, with last update `2026. 6. 30`.",
+  "`크롤링됨 - 현재 색인이 생성되지 않음`: `20`",
   "URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.",
   "Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`",
+  "security-header-report-before-copying-devtools",
+  "fresh `색인 생성 요청됨` confirmation",
   "Post-77-URL pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab`",
   "Both pillar URLs were `URL이 Google에 등록되어 있지 않음`",
   "크롤링됨 - 현재 색인이 생성되지 않음",
@@ -182,7 +184,7 @@ for (const fragment of [
   "Still Not Complete",
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
-  "Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.",
+  "Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `25`",
   searchConsoleDiscoveryStatusFragment,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",

@@ -172,25 +172,26 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
   - Property: `https://www.bobob.app/`
-  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 84-URL representative target was live.
-  - Search Console sitemap resubmission for the latest externally submitted 84-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, discovered pages `84`, and videos `0`.
-- The representative sitemap remains intentionally reduced. The latest Search Console observation still aligns with the externally submitted `84` URL count after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post. The current deployed/source target is now `85` URLs after the security-header report operations post, and IndexNow/WebSub have been refreshed for that deployed target. The next signed-in Search Console follow-up must compare that new target separately. This is discovery evidence, not indexing proof.
+  - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 85-URL representative target was live.
+  - Search Console sitemap resubmission for the latest externally submitted 85-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, discovered pages `85`, and videos `0`.
+- The representative sitemap remains intentionally reduced. The latest Search Console sitemap observation now aligns with the deployed/source `85` URL count after the security-header report operations post, and IndexNow/WebSub have also been refreshed for that deployed target. This is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
-  - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 84-URL target.
+  - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 85-URL target.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
-  - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
-  - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `리디렉션이 포함된 페이지`: `5`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
+  - Latest page indexing report now shows indexed pages `1` and not-indexed pages `25`, with last update `2026. 6. 30`.
+  - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `20`, `리디렉션이 포함된 페이지`: `2`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
   - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
   - Representative Blog/Play URLs inspected: `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
   - Representative Blog/Play URL status before request: `/blog`, `/play`, and `/play/office-survival` were `크롤링됨 - 현재 색인이 생성되지 않음`; `/blog/ai-side-project-realistic-order` was `발견됨 - 현재 색인이 생성되지 않음`.
   - Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`
+  - The new security-header operations post `https://www.bobob.app/blog/security-header-report-before-copying-devtools` is not indexed yet; URL Inspection shows `발견됨 - 현재 색인이 생성되지 않음`, sitemap `https://www.bobob.app/sitemaps/en`, and a fresh `색인 생성 요청됨` confirmation with the priority crawl queue message.
   - Post-77-URL pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, fetched successfully, and allowed indexing.
   - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
   - Latest submitted URL count: `85`
   - The latest deployed 85-URL representative sitemap set has been submitted to IndexNow with response status `200`.
-  - Search Console resubmission is still aligned at the previous `84` discovered pages, while current IndexNow submission is aligned at `85`; both still need later indexing observation. IndexNow is not Google indexing proof.
+  - Search Console sitemap discovery and IndexNow submission are both aligned at `85`; both still need later indexing observation. IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - The latest 2026-07-06 retry against the current 84-URL production target still reached only the public Bing Webmaster Tools landing page, so no Bing sitemap or recommendation state was observed.
@@ -231,9 +232,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 - Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
 - Google URL Inspection proves the homepage itself is indexed.
-- Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.
-- Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (`84`), but the current live/source sitemap target is now `85`; this gap needs a signed-in `bobob935@gmail.com` Search Console follow-up and still does not prove that submitted Blog, Play, or tool URLs are indexed.
-- The current source sitemap target is now `85` after the security-header report operations post, so the next Search Console/Bing/Naver pass must compare the new source target instead of treating the previous `84` discovered pages as current indexing proof.
+- Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `25`, and the report is still dated `2026. 6. 30`.
+- Search Console sitemap discovery now matches the current live/source representative sitemap URL count (`85`), but this is discovery only and still does not prove that submitted Blog, Play, or tool URLs are indexed.
+- The current source sitemap target is now `85` after the security-header report operations post, so the next Search Console/Bing/Naver pass must compare indexing/report changes instead of treating sitemap discovery as indexing proof.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
