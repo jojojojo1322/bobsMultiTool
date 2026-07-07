@@ -3128,3 +3128,25 @@ Completion guard:
 - Sitemap/feed target: unchanged at `85` submitted sitemap URLs and `62` representative feed items; this is an update to an existing representative operations article, not a new submitted URL.
 - Search Console action: none in this source pass. The latest signed-in external observation is already logged above; the next external pass should compare Page indexing report date/reason rows and Bing/Naver evidence rather than resubmitting only because this existing article changed.
 - Interpretation: this strengthens the Blog evidence for the current indexing wait-state and prevents sitemap discovery from being mistaken for indexing proof. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Search Console Misread Article Freshness Production Deployment
+
+- Commit: `c92508e`.
+- Change: deployed the refreshed `search-console-misreads-for-indie-devs` representative operations article with the 2026-07-07 Search Console sitemap/page-indexing split, Naver retired-sitemap note, and updated Blog/goal-audit evidence.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:deployment-status` returned `overallState: success` for `c92508e7d6fef9f0aa67c1593f2e156b67983d81`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- Live sitemap/feed check: production `/sitemaps/en` includes `https://www.bobob.app/blog/search-console-misreads-for-indie-devs` with `lastmod` `2026-07-07`; production `feed.json` includes the same item with `date_modified` `2026-07-06T15:00:00.000Z`, which is the source `2026-07-07` date serialized in UTC.
+- Indexing follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` returned `ok: true` with sitemap URL count `85`, RSS/Atom/JSON feed counts `62`, and retired sitemap redirects `13/13`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub feed item counts: `62`, `62`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The latest signed-in external observation already shows `/sitemaps/en` discovered pages `85`, but Page indexing remains a `2026. 6. 30.` report snapshot with `1` indexed page and `25` not-indexed pages.
+- Interpretation: production now serves the refreshed Search Console waiting-state article, live discovery is still clean at `85` sitemap URLs and `62` feed items, IndexNow and WebSub were refreshed again, and the next meaningful external check is whether Search Console page-indexing dates/reasons or Bing/Naver dashboard evidence change. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
