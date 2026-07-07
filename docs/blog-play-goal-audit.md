@@ -12,11 +12,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Blog Evidence
 
 - Blog source: `content/blog/*.mdx`
-- Current count: `128` Blog posts.
-- Representative submitted count: `35` Blog posts.
+- Current count: `129` Blog posts.
+- Representative submitted count: `36` Blog posts.
 - Archive/noindex candidate count: `93` Blog posts.
 - Representative minimum body depth: `401` words after the source-level 400-word gate was added to `npm run harness:blog-play-mvp`.
-- Date range: `2026-01-05` through `2026-07-06`, with public dates spread across the first half of 2026 plus the current representative operations note.
+- Date range: `2026-01-05` through `2026-07-07`, with public dates spread across the first half of 2026 plus the current representative operations note.
 - Categories: `일기`, `요즘 관심사`, `AI`, `개발`, `운영 기록`, `정보`.
 - Category distribution: the original five categories each have at least `7` posts, and the `정보` lane has `36` date-sensitive posts.
 - Date-sensitive information lane: `36` posts live under `정보` for AI plan prices, safe-driving insurance discounts, MacBook price/outlook notes, football checks, World Cup bracket/time/search/watch/round-of-32/ticket/host-city/resale/player-stat checks, and youth savings notes.
@@ -58,6 +58,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Homepage evidence surface: `apps/main/src/app/page.tsx` now opens with `data-ops-workflows` for URL/header/DNS/sitemap/token checks, then keeps the three pillar posts in the `data-pillar-blog` operating-notes section before ordinary latest Blog cards, so a first visitor sees a concrete reason to use the site while Blog/Play evidence stays visible.
 - Global search evidence surface: `/search?q=` now returns `data-content-search-workflows` results for task-shaped operations queries such as redirect debugging, search discovery readiness, DNS deployment, and security-header review before falling through to individual tool cards, so internal search no longer reads as only a generic developer-tool archive.
 - DevTools boundary evidence: `devtools-cannot-see-crawler-state` is now a representative operations post tied to `indexing-waiting-room`, with a DevTools/public crawler comparison table, public URL checklist, and Search Console account/property stop rule so the new developer-tool direction is explained as a web-operations workflow rather than another browser-tool clone.
+- Security-header report evidence: `security-header-report-before-copying-devtools` is now a representative operations post tied to `indexing-waiting-room`, with a DevTools/curl/report comparison table, header readiness checklist, raw-header exclusion rule, and production canonical follow-up so the HTTP Status Checker report surface is explained as an operations handoff workflow rather than another header viewer.
 - JWT auth report evidence surface: `/tools/jwt-decoder` now produces a copyable Markdown auth report with token status, expected issuer/audience/scope checks, sensitive-claim notes, signature-not-verified warnings, and a safe handoff checklist, so token debugging is a shareable API/auth workflow rather than only a decoded JSON viewer.
 - Base64 payload report evidence surface: `/tools/base64-tool` now produces a copyable Markdown payload report with Base64 variant, decoded content shape, JSON key count, JWT-segment notes, image/binary warnings, and a safe handoff checklist, so pasted encoded payloads become a shareable API/JWT debugging workflow rather than only an encode/decode field.
 - JSON API response report evidence surface: `/tools/json-formatter` now produces a copyable Markdown API response report with root shape, depth, output size, sensitive/duplicate-key diagnostics, useful JSON paths, and a safe handoff checklist, so response formatting becomes a shareable API debugging workflow rather than only a pretty-printer.
@@ -132,6 +133,13 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Representative Blog posts: `35`
   - Play entries: `26`
   - Submitted operations tool URLs: `8`
+- Current source discovery target after the security-header operations post:
+  - Sitemap URLs: `85`
+  - Feed items: `62`
+  - Blog posts: `129`
+  - Representative Blog posts: `36`
+  - Play entries: `26`
+  - Submitted operations tool URLs: `8`
 - Latest deployed/Search Console-observed discovery snapshot:
   - Sitemap URLs: `77`
   - Feed items: `62`
@@ -161,7 +169,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Property: `https://www.bobob.app/`
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 84-URL representative target was live.
   - Search Console sitemap resubmission for the latest externally submitted 84-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, discovered pages `84`, and videos `0`.
-- The representative sitemap remains intentionally reduced. Production and Search Console now align at the current `84` URL count after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post. This is discovery evidence, not indexing proof.
+- The representative sitemap remains intentionally reduced. The latest Search Console observation still aligns with the externally submitted `84` URL count after adding the selected operations-first tool pages and the DevTools/public-crawler boundary operations post. The current source target is now `85` URLs after the security-header report operations post, so deployment and Search Console follow-up must compare that new target separately. This is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
   - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 84-URL target.
   - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
@@ -194,6 +202,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Latest response statuses: `204`, `204`
   - Latest published feed item counts: `61`, `61`.
   - The current 61-item feed set now reflects the DevTools/public-crawler boundary operations post.
+- Security-header report source target:
+  - Current source feed target is now `62` representative Blog + Play items after adding `security-header-report-before-copying-devtools`.
+  - This source-target change is not Search Console indexing proof until the deployment, live discovery, IndexNow/WebSub, and later signed-in Search Console/Bing/Naver observations are recorded.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -217,6 +228,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.
 - Search Console sitemap discovery now matches the current live representative sitemap URL count (`84`), but this is discovery only and still does not prove that submitted Blog, Play, or tool URLs are indexed.
+- The current source sitemap target is now `85` after the security-header report operations post, so the next deployment/live/Search Console pass must compare the new source target instead of treating the previous `84` discovered pages as current indexing proof.
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.

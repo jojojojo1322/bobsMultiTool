@@ -7,7 +7,7 @@ const categoryKeywords: Record<string, string[]> = {
   "요즘 관심사": ["작은 웹", "웹 놀이", "인터넷 문화"],
   AI: ["AI 코딩", "AI 도구", "프롬프트", "Cursor", "Codex"],
   개발: ["웹 개발", "정적 배포", "Vercel", "Next.js"],
-  "운영 기록": ["Search Console", "sitemap", "canonical", "색인 기록"],
+  "운영 기록": ["Search Console", "sitemap", "canonical", "색인 기록", "보안 헤더", "HTTP report"],
 };
 
 const playTypeKeywords: Record<PlayContent["type"], string[]> = {

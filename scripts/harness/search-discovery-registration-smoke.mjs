@@ -109,7 +109,7 @@ for (const fragment of [
   `Latest external feed publish item count: \`${latestExternalFeedItemCount}\``,
   "Latest signed-in Search Console observation after resubmission",
   `submitted \`2026. 7. 6.\`, last read \`2026. 7. 6.\`, status \`성공\`, discovered pages \`${latestExternalSitemapCount}\`, videos \`0\``,
-  `Google accepted, read, and discovered the current ${latestExternalSitemapCount}-URL canonical sitemap set`,
+  `Google accepted, read, and discovered the latest externally submitted ${latestExternalSitemapCount}-URL canonical sitemap set`,
   "Google Search Console performance",
   "Latest `bobob935@gmail.com` check showed clicks `0`, impressions `18`, CTR `0%`, average position `1.1` for `3개월`",
   "Google Search Console page indexing",

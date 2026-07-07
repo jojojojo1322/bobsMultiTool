@@ -1,0 +1,99 @@
+---
+slug: security-header-report-before-copying-devtools
+title: 보안 헤더를 DevTools 캡처 대신 보고서로 남기는 이유
+description: Chrome DevTools나 curl에서 본 응답 헤더를 그대로 붙여넣기보다 HTTP Status Checker의 보안 헤더 보고서로 HSTS, CSP, cookie, CORS, 배포 체크를 분리해 기록한 운영 노트입니다.
+date: 2026-07-07
+category: 운영 기록
+readingMinutes: 8
+relatedPlay: indexing-waiting-room
+publicationTier: representative
+indexPolicy: index
+---
+
+## 헤더 캡처는 빨랐지만 공유하기 애매했다
+
+배포 뒤에 HTTP 응답 헤더를 볼 때 가장 빠른 화면은 Chrome DevTools Network 탭이다. 문제가 생긴 페이지를 열고 response headers를 보면 content-type, cache-control, server, security header가 바로 보인다. curl로 `-I`를 붙여도 비슷하다. 그래서 처음에는 DevTools 캡처나 터미널 출력만 남겨도 충분하다고 생각했다.
+
+그런데 실제 운영 기록으로 쓰려면 캡처만으로는 부족했다. 헤더 전체에는 cookie, server, platform hint처럼 굳이 공유하지 않아도 되는 줄이 섞인다. 반대로 정말 봐야 할 HSTS, CSP, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, frame protection, CORS 조합은 캡처 속에 묻힌다. 누군가에게 "이 헤더 괜찮아?"라고 넘길 때도 raw block만 있으면 받는 사람이 다시 읽어야 한다.
+
+그래서 HTTP Status Checker 안에 보안 헤더 보고서를 붙였다. 목적은 DevTools를 없애는 것이 아니다. DevTools나 curl에서 본 응답 헤더를 운영 판단으로 바꾸는 것이다. "헤더를 봤다"에서 멈추지 않고 "필수 헤더가 몇 개 빠졌고, cookie/CORS 위험이 있고, 배포 전 어떤 항목을 다시 볼지"를 한 장으로 남기는 쪽이 더 유용했다.
+
+## 캡처와 보고서를 나누는 표
+
+| 확인 방식 | 바로 좋은 점 | 운영 기록으로 부족한 점 | 보고서로 남길 값 |
+| --- | --- | --- | --- |
+| DevTools Network | 실제 브라우저 요청의 response header를 빠르게 본다 | raw header가 길고 민감한 줄을 같이 캡처하기 쉽다 | security score, missing required, cookie/CORS 경고 |
+| curl `-I` | 공개 URL의 최종 응답을 터미널에서 확인한다 | redirect 뒤 최종 헤더인지, 붙여넣은 블록인지 헷갈릴 수 있다 | source URL, final status, redirect count, header readiness |
+| 배포 플랫폼 대시보드 | edge/cache/CDN 설정 위치를 찾기 쉽다 | 사용자가 받는 최종 응답과 다를 수 있다 | 배포 후 공개 URL에서 다시 확인할 체크리스트 |
+| 보안 헤더 보고서 | 공유 가능한 판단을 짧게 남긴다 | 원본 헤더 전체를 대신 저장하지 않는다 | 누락 헤더, 주의 헤더, 다음 배포 확인 순서 |
+
+이 표를 만들고 나니 도구가 해야 할 일이 선명해졌다. raw header viewer를 하나 더 만드는 것이 아니라, raw header에서 공유 가능한 운영 판단만 뽑아야 했다. 특히 cookie와 CORS는 원문을 그대로 복사하면 팀 밖으로 나가면 안 되는 정보가 섞일 수 있다. 보고서는 원문 헤더를 복사하지 않고 위험 신호와 체크리스트만 남기는 쪽으로 맞췄다.
+
+## 보고서에 넣은 줄
+
+보안 헤더 보고서는 일부러 짧은 Markdown 형태로 만든다. issue, PR, 배포 메모, Search Console 관찰 로그 옆에 붙이기 쉽기 때문이다. 현재 보고서에서 보는 줄은 아래처럼 나뉜다.
+
+- Security header score: 확인한 헤더 중 통과한 수와 전체 기준을 숫자로 본다.
+- Missing required: HSTS, CSP, X-Content-Type-Options처럼 먼저 봐야 할 항목이 빠졌는지 본다.
+- Cookie warning: Set-Cookie가 있을 때 Secure, HttpOnly, SameSite 방향을 다시 보게 한다.
+- CORS warning: wildcard origin과 credentials 조합처럼 공개 API에서 특히 위험한 조합을 분리한다.
+- Header readiness: 각 security header의 현재 상태를 짧은 문장으로 남긴다.
+- Deployment checklist: 배포 전후에 다시 확인할 공개 URL, redirect, edge 설정, browser fetch 경로를 적는다.
+
+이 정도면 "헤더 전체를 봐주세요"보다 훨씬 낫다. 받는 사람은 먼저 score와 missing required를 보고, 필요하면 각 header readiness를 본다. 원문 header block은 다시 확인할 때만 로컬에서 열면 된다. 보고서가 raw header 저장소가 되면 안 된다.
+
+## 먼저 본 헤더
+
+| 헤더 | 보는 이유 | 보고서에서 남기는 판단 |
+| --- | --- | --- |
+| Strict-Transport-Security | HTTPS 강제와 downgrade 방지 방향을 본다 | max-age가 있는지, includeSubDomains/preload를 무리 없이 쓸 상황인지 |
+| Content-Security-Policy | script, style, frame, image 출처가 너무 넓지 않은지 본다 | 아예 없는지, unsafe-inline/unsafe-eval 같은 검토 신호가 있는지 |
+| X-Content-Type-Options | MIME sniffing을 막는 기본 방어선이 있는지 본다 | `nosniff`가 있는지 |
+| Referrer-Policy | 외부 이동 시 URL 정보가 과하게 새지 않는지 본다 | 정책이 비어 있거나 너무 느슨하지 않은지 |
+| Permissions-Policy | camera, microphone, geolocation 같은 기능 권한을 좁혔는지 본다 | 기능별 제한 방향이 있는지 |
+| frame protection | clickjacking 방어 방향을 본다 | `frame-ancestors` 또는 X-Frame-Options가 있는지 |
+
+이 표는 보안 심사표가 아니다. 작은 공개 웹 서비스를 운영할 때 배포 전후로 먼저 볼 항목이다. 예를 들어 CSP는 강하게 잠그면 좋지만, 지금 쓰는 script, analytics, 광고 스크립트, image host를 모르고 한 번에 잠그면 실제 페이지가 깨질 수 있다. 그래서 보고서는 "무조건 이 값"이 아니라 "이 줄을 다시 보라"에 가깝게 만든다.
+
+## DevTools에서 본 줄을 바로 믿지 않는 이유
+
+DevTools에 보이는 response header는 내 브라우저가 받은 응답이다. 로그인 상태, service worker, cache, locale cookie, edge region, preview deployment가 섞이면 공개 crawler나 첫 방문자가 받는 응답과 다를 수 있다. 보안 헤더는 특히 이 차이가 중요하다. 배포 설정을 바꿨는데 preview URL만 보고 production이 바뀐 줄 알 수도 있고, apex host redirect 헤더만 보고 canonical www host의 최종 HTML 헤더를 놓칠 수도 있다.
+
+그래서 보고서 앞뒤에는 공개 URL 점검 흐름을 같이 둔다. HTTP status로 redirect chain을 보고, final response headers를 보고, 필요하면 pasted header parser로 DevTools/curl 블록을 다시 넣는다. DNS, sitemap, robots, canonical도 같은 원리다. 한 화면에서 보였다고 전체 공개 표면이 맞는 것은 아니다.
+
+이 구분은 검색 유입에도 이어진다. 검색엔진은 보안 헤더 하나만 보고 색인을 결정하지 않는다. 그래도 최종 200 HTML, canonical, robots, sitemap, response header가 서로 다른 방향을 가리키면 운영 신뢰가 떨어진다. 작은 사이트는 한 번에 크게 유명해지지 않는다. 대신 배포 표면이 모순 없이 설명되는 쪽이 중요하다.
+
+## 공유할 때 빼야 하는 것
+
+보안 헤더 보고서가 raw header를 제외하는 이유는 단순하다. header block에는 공유하면 안 되거나 의미가 없는 줄이 자주 들어온다. `Set-Cookie`는 특히 조심해야 한다. 값 자체를 저장하지 않아도 cookie가 있었다는 사실과 Secure/HttpOnly/SameSite 검토가 필요하다는 판단만 있으면 충분할 때가 많다. `Server`, `X-Powered-By`, platform-specific trace header도 마찬가지다. 문제를 볼 때는 도움이 될 수 있지만 공개 issue에 그대로 붙일 이유는 적다.
+
+그래서 보고서에는 "cookie warning 있음", "CORS credential 조합 검토", "raw header excluded"처럼 남긴다. 이 방식은 불편해 보일 수 있지만, 운영 기록에는 오히려 맞다. 누군가가 다시 확인해야 할 것은 원문 전체가 아니라 위험 신호와 다음 확인 순서다.
+
+## 실제로 붙여넣는 흐름
+
+- DevTools Network 또는 curl에서 공개 URL의 response headers를 본다.
+- HTTP Status Checker에서 URL check로 final status와 redirect chain을 먼저 확인한다.
+- 필요하면 pasted header parser에 응답 헤더 블록을 붙인다.
+- Security header report에서 score, missing required, cookie/CORS warning을 본다.
+- 보고서를 복사해서 배포 메모나 issue에 붙인다.
+- CSP/HSTS처럼 배포 설정이 필요한 항목은 플랫폼 설정에서 고친 뒤 production URL로 다시 확인한다.
+- Search Console이나 sitemap 관찰 로그에는 배포 성공과 색인 성공을 같은 말로 쓰지 않는다.
+
+이 흐름을 따르면 DevTools와 운영 도구가 서로 싸우지 않는다. DevTools는 빠른 관찰 화면이고, 보고서는 그 관찰을 공유 가능한 판단으로 줄이는 장치다. 터미널 출력도 마찬가지다. 원문을 본 뒤 운영 기록으로 남길 줄만 추려야 다음 사람이 바로 움직일 수 있다.
+
+## 보안 헤더만으로 해결되지 않는 것
+
+헤더 보고서를 만들었다고 사이트 품질이 자동으로 좋아지는 것은 아니다. 본문이 얇으면 헤더가 좋아도 검색 유입은 약하다. canonical이 틀리면 보안 헤더 점수가 좋아도 대표 URL 판단이 흐려진다. sitemap이 오래됐거나 robots가 막으면 보고서는 배포 품질 일부만 설명한다.
+
+그래서 이번 작업은 개발자도구를 버리는 방향이 아니라 개발자도구 안에 운영 보고서를 더하는 방향이다. JSON formatter는 API response report를 만들고, DNS lookup은 DNS deployment report를 만들고, HTTP Status Checker는 public URL report와 security header report를 만든다. 이렇게 해야 Chrome DevTools에서 이미 가능한 기능을 한 번 더 복사한 사이트가 아니라, 배포와 검색 점검을 이어서 남기는 워크벤치가 된다.
+
+## 마지막 확인
+
+- 보고서가 raw header block을 그대로 복사하지 않는가.
+- HSTS, CSP, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, frame protection을 분리해서 보여주는가.
+- cookie와 CORS 위험을 값 자체보다 판단으로 남기는가.
+- URL check의 final status와 pasted header parser 결과를 혼동하지 않는가.
+- preview URL이 아니라 production canonical host에서 다시 확인했는가.
+- 보안 헤더 수정 뒤 sitemap, robots, canonical, Search Console 관찰을 같은 성공 단어로 묶지 않았는가.
+
+이 정도면 DevTools 캡처 한 장보다 운영 기록으로 더 오래 남는다. 빠르게 본 화면을 없애려는 것이 아니라, 빠르게 본 값을 배포 후 다시 확인할 수 있는 짧은 보고서로 바꾸는 일이다.
