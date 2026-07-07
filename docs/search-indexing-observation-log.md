@@ -3162,3 +3162,10 @@ Completion guard:
 - Page indexing drilldown recheck: `크롤링됨 - 현재 색인이 생성되지 않음` still shows final update `26. 6. 30.` and affected pages `20`.
 - Page indexing interpretation: the current Search Console domain-property sitemap discovery matches the deployed `85`-URL sitemap, but the page-indexing report has not refreshed past `2026. 6. 30.` and still does not prove Blog, Play, or operations-tool indexing.
 - Next useful external check: compare whether the Search Console page-indexing report date, indexed/not-indexed counts, representative URL Inspection states, Bing Webmaster dashboard evidence, or Naver Search Advisor sitemap/page-collection evidence changes. Re-submitting the same sitemap again without a changed public URL set is not useful evidence.
+
+## 2026-07-07 Localized Trust Operations-First Source Slice
+
+- Source action: aligned localized About/Contact resolver output with the web-operations workbench direction. Non-English trust pages now override their metadata descriptions, first About section, practical-tool role section, and Contact site-operation section so they lead with URL/header/DNS/sitemap/token/API workflow checks while keeping Blog and Play as supporting operating evidence and experiments.
+- Trust date action: refreshed localized trust `lastUpdated` strings to `2026-07-07` so the updated public trust copy has a current visible date across default and localized routes.
+- Goal-audit action: updated `docs/blog-play-goal-audit.md` so the prior localized trust follow-up gap is no longer listed as pending.
+- Search Console action: none in this source pass. This is trust-surface and localization alignment, not a sitemap submission, URL inspection, Bing evidence, Naver evidence, traffic proof, or a reason to mark the active goal complete.

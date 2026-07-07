@@ -493,21 +493,224 @@ const localized: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageCo
   },
 };
 
+type TrustPageOperationsFirstOverride = {
+  description: string;
+  sectionPatches: Partial<Record<number, TrustSection>>;
+};
+
+const localizedOperationsFirstOverrides: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustPageOperationsFirstOverride>> = {
+  ko: {
+    about: {
+      description: "URL 상태, redirect, header, DNS, sitemap, robots, token, API 응답을 점검하는 web-operations workbench이며 Blog와 Play는 운영 기록과 실험 표면으로 함께 유지됩니다.",
+      sectionPatches: {
+        0: { heading: "지금 이 사이트가 하는 일", body: "bobob.app은 web-operations workbench가 먼저입니다. 중심 표면은 공개 URL 상태, redirect chain, response header, DNS record, canonical/meta 신호, robots 규칙, sitemap 항목, token, API payload를 실제 운영 흐름 안에서 점검하도록 돕습니다." },
+        3: { heading: "실용 도구의 역할", body: "도구는 보조 archive가 아니라 배포, 검색 노출, 보안 header, token, API, data debug 흐름을 처리하는 중심 작업 표면입니다. 각 페이지는 로컬 우선 동작, 예제, 진단, 복사 전 검토, 관련 다음 작업을 함께 제공합니다." },
+      },
+    },
+    contact: {
+      description: "web-operations 도구, Blog, Play, 콘텐츠 수정, 접근성, localization, 정책 요청을 bobob.app에 보낼 수 있습니다.",
+      sectionPatches: {
+        2: { heading: "사이트 운영", body: "이 사이트는 web-operations workbench로 운영되며 Blog와 Play는 운영 기록과 실험을 보강하는 표면입니다. URL/header/DNS/sitemap/token/API 점검, 직접 쓴 글, 플레이 가능한 실험, 정확도, 탐색, 접근성, 번역 품질, 실제 작업 흐름을 개선하는 피드백을 우선합니다." },
+      },
+    },
+  },
+  ja: {
+    about: {
+      description: "URL status、redirect、headers、DNS、sitemap、robots、token、API response を確認する Web 運用ワークベンチで、Blog と Play も運用記録と実験として保ちます。",
+      sectionPatches: {
+        0: { heading: "いまのサイトの役割", body: "bobob.app は Web 運用ワークベンチが第一です。公開 URL の状態、redirect chain、response header、DNS record、canonical/meta signal、robots rule、sitemap entry、token、API payload を実際の運用フローの中で確認できるようにします。" },
+        3: { heading: "実用ツールの役割", body: "ツールは補助アーカイブではなく、deploy、検索公開、security header、token、API、data debug の流れを扱う中心的な作業面です。各ページは local-first の動作、例、診断、コピー前確認、関連する次の作業をまとめます。" },
+      },
+    },
+    contact: {
+      description: "Web 運用ツール、Blog、Play、内容修正、アクセシビリティ、翻訳、ポリシー依頼について bobob.app に連絡できます。",
+      sectionPatches: {
+        2: { heading: "サイト運営", body: "このサイトは Web 運用ワークベンチとして運営され、Blog と Play は運用記録と実験を支える面です。URL/header/DNS/sitemap/token/API checks、独自記事、遊べる実験、正確性、ナビゲーション、アクセシビリティ、翻訳品質、実用的な流れを改善するフィードバックを優先します。" },
+      },
+    },
+  },
+  "zh-CN": {
+    about: {
+      description: "用于检查 URL 状态、redirect、headers、DNS、sitemap、robots、token 和 API response 的网页运营工作台，同时保留 Blog 和 Play 作为记录与实验表面。",
+      sectionPatches: {
+        0: { heading: "本站现在做什么", body: "bobob.app 首先是网页运营工作台。主要表面帮助检查公开 URL 状态、redirect chain、response header、DNS record、canonical/meta 信号、robots 规则、sitemap 条目、token 和 API payload，并把它们放在实际运营流程里。" },
+        3: { heading: "实用工具的角色", body: "工具不是辅助归档，而是处理部署、搜索发现、安全 header、token、API 和数据调试的主要工作表面。每个页面都会保留本地优先处理、样例、诊断、复制前复核和相关下一步。" },
+      },
+    },
+    contact: {
+      description: "联系 bobob.app 处理网页运营工具、Blog、Play、内容修正、可访问性、本地化和政策相关问题。",
+      sectionPatches: {
+        2: { heading: "网站运营", body: "本站作为网页运营工作台维护，Blog 和 Play 用来补充运营记录与实验。能改进 URL/header/DNS/sitemap/token/API 检查、原创文章、可玩实验、准确性、导航、可访问性、本地化和实际工作流的反馈会被优先处理。" },
+      },
+    },
+  },
+  "zh-TW": {
+    about: {
+      description: "用於檢查 URL 狀態、redirect、headers、DNS、sitemap、robots、token 與 API response 的網頁營運工作台，同時保留 Blog 與 Play 作為記錄和實驗表面。",
+      sectionPatches: {
+        0: { heading: "本站現在做什麼", body: "bobob.app 首先是網頁營運工作台。主要表面協助檢查公開 URL 狀態、redirect chain、response header、DNS record、canonical/meta 訊號、robots 規則、sitemap 項目、token 與 API payload，並把它們放在實際營運流程中。" },
+        3: { heading: "實用工具的角色", body: "工具不是輔助歸檔，而是處理部署、搜尋發現、安全 header、token、API 與資料除錯的主要工作表面。每個頁面都會保留本機優先處理、範例、診斷、複製前複核和相關下一步。" },
+      },
+    },
+    contact: {
+      description: "聯絡 bobob.app 處理網頁營運工具、Blog、Play、內容修正、可訪問性、本地化和政策相關問題。",
+      sectionPatches: {
+        2: { heading: "網站營運", body: "本站作為網頁營運工作台維護，Blog 和 Play 用來補充營運記錄與實驗。能改善 URL/header/DNS/sitemap/token/API 檢查、原創文章、可玩實驗、準確性、導覽、可及性、本地化與實際工作流程的回饋會優先處理。" },
+      },
+    },
+  },
+  es: {
+    about: {
+      description: "Un banco de operaciones web para revisar estado de URL, redirects, headers, DNS, sitemap, robots, tokens y respuestas API, con Blog y Play como registro y experimentos.",
+      sectionPatches: {
+        0: { heading: "Que es ahora este sitio", body: "bobob.app es primero un banco de operaciones web. La superficie principal ayuda a revisar estado de URL publica, redirect chain, response headers, DNS records, senales canonical/meta, reglas robots, entradas sitemap, tokens y API payloads dentro de flujos practicos." },
+        3: { heading: "Rol de las herramientas practicas", body: "Las herramientas no son solo un archivo de apoyo. Son la superficie principal para deploy, busqueda, security headers, tokens, API y depuracion de datos, con procesamiento local, ejemplos, diagnosticos, revision antes de copiar y siguientes pasos relacionados." },
+      },
+    },
+    contact: {
+      description: "Contacta con bobob.app sobre herramientas de operaciones web, Blog, Play, correcciones de contenido, accesibilidad, localizacion y politica.",
+      sectionPatches: {
+        2: { heading: "Operacion del sitio", body: "El sitio se mantiene como banco de operaciones web, con Blog y Play como superficies de registro y experimentacion. Se prioriza el feedback que mejore revisiones de URL/header/DNS/sitemap/token/API, escritura original, experimentos jugables, precision, navegacion, accesibilidad, localizacion o flujos practicos." },
+      },
+    },
+  },
+  "pt-BR": {
+    about: {
+      description: "Um painel de operacoes web para revisar status de URL, redirects, headers, DNS, sitemap, robots, tokens e respostas API, mantendo Blog e Play como registros e experimentos.",
+      sectionPatches: {
+        0: { heading: "O que este site e agora", body: "bobob.app e primeiro um painel de operacoes web. A superficie principal ajuda a revisar status de URL publica, redirect chain, response headers, DNS records, sinais canonical/meta, regras robots, entradas sitemap, tokens e API payloads dentro de fluxos praticos." },
+        3: { heading: "Papel das ferramentas praticas", body: "As ferramentas nao sao apenas um arquivo de apoio. Elas sao a superficie central para deploy, busca, security headers, tokens, API e depuracao de dados, com processamento local, exemplos, diagnosticos, revisao antes de copiar e proximos passos relacionados." },
+      },
+    },
+    contact: {
+      description: "Fale com o bobob.app sobre ferramentas de operacoes web, Blog, Play, correcoes de conteudo, acessibilidade, localizacao e politica.",
+      sectionPatches: {
+        2: { heading: "Operacao do site", body: "O site e mantido como painel de operacoes web, com Blog e Play como superficies de registro e experimentacao. Feedback que melhore revisoes de URL/header/DNS/sitemap/token/API, escrita original, experimentos jogaveis, precisao, navegacao, acessibilidade, localizacao ou fluxos praticos tem prioridade." },
+      },
+    },
+  },
+  de: {
+    about: {
+      description: "Eine Web-Operations-Werkbank fuer URL-Status, Redirects, Headers, DNS, Sitemap, Robots, Tokens und API-Antworten, mit Blog und Play als Betriebsnotizen und Experimente.",
+      sectionPatches: {
+        0: { heading: "Was diese Seite jetzt ist", body: "bobob.app ist zuerst eine Web-Operations-Werkbank. Die Hauptflaeche hilft, oeffentlichen URL-Status, redirect chain, response headers, DNS records, canonical/meta signals, robots rules, sitemap entries, tokens und API payloads in praktischen Arbeitsablaeufen zu pruefen." },
+        3: { heading: "Rolle der praktischen Tools", body: "Die Tools sind nicht nur ein unterstuetzendes Archiv. Sie sind die zentrale Arbeitsflaeche fuer Deployment, Suche, Security Headers, Tokens, API und Data Debugging, mit lokaler Verarbeitung, Beispielen, Diagnosen, Pruefung vor dem Kopieren und verwandten naechsten Schritten." },
+      },
+    },
+    contact: {
+      description: "Kontaktiere bobob.app zu Web-Operations-Tools, Blog, Play, Inhaltskorrekturen, Barrierefreiheit, Lokalisierung und Richtlinienfragen.",
+      sectionPatches: {
+        2: { heading: "Betrieb der Seite", body: "Die Seite wird als Web-Operations-Werkbank gepflegt, mit Blog und Play als Flaechen fuer Betriebsnotizen und Experimente. Feedback zu URL/header/DNS/sitemap/token/API-Pruefungen, eigenen Texten, spielbaren Experimenten, Genauigkeit, Navigation, Barrierefreiheit, Lokalisierung und praktischen Workflows hat Prioritaet." },
+      },
+    },
+  },
+  fr: {
+    about: {
+      description: "Un poste d'operations web pour verifier URL, redirects, headers, DNS, sitemap, robots, tokens et reponses API, avec Blog et Play comme notes et experiences.",
+      sectionPatches: {
+        0: { heading: "Ce que le site est maintenant", body: "bobob.app est d'abord un poste d'operations web. La surface principale aide a verifier l'etat d'URL publique, redirect chain, response headers, DNS records, signaux canonical/meta, regles robots, entrees sitemap, tokens et API payloads dans des flux pratiques." },
+        3: { heading: "Role des outils pratiques", body: "Les outils ne sont pas seulement une archive de soutien. Ils sont la surface centrale pour deploiement, recherche, security headers, tokens, API et debug donnees, avec traitement local, exemples, diagnostics, verification avant copie et etapes suivantes liees." },
+      },
+    },
+    contact: {
+      description: "Contactez bobob.app pour outils d'operations web, Blog, Play, corrections de contenu, accessibilite, localisation et demandes de politique.",
+      sectionPatches: {
+        2: { heading: "Exploitation du site", body: "Le site est maintenu comme poste d'operations web, avec Blog et Play comme surfaces de notes et d'experiences. Les retours qui ameliorent les controles URL/header/DNS/sitemap/token/API, textes originaux, experiences jouables, precision, navigation, accessibilite, localisation ou flux pratiques sont prioritaires." },
+      },
+    },
+  },
+  hi: {
+    about: {
+      description: "URL status, redirect, headers, DNS, sitemap, robots, token और API response जांचने वाला web-operations workbench, जिसमें Blog और Play operation notes और experiments के रूप में रहते हैं.",
+      sectionPatches: {
+        0: { heading: "यह साइट अब क्या है", body: "bobob.app पहले web-operations workbench है. मुख्य सतह public URL status, redirect chain, response headers, DNS records, canonical/meta signals, robots rules, sitemap entries, tokens और API payloads को practical operations flow में जांचने में मदद करती है." },
+        3: { heading: "Practical operations tools", body: "Developer tools केवल archive नहीं हैं. वे deploy, search discovery, security headers, token, API और data-debug workflows की मुख्य working surface हैं, जिनमें local-first behavior, examples, diagnostics, copy से पहले review और related next steps शामिल हैं." },
+      },
+    },
+    contact: {
+      description: "Web-operations tools, Blog, Play, content corrections, accessibility, localization और policy questions के लिए bobob.app से संपर्क करें.",
+      sectionPatches: {
+        2: { heading: "Site operation", body: "यह site web-operations workbench के रूप में maintain होती है, जिसमें Blog और Play operation notes और experiments को support करते हैं. URL/header/DNS/sitemap/token/API checks, original writing, playable experiments, accuracy, navigation, accessibility, localization और practical workflow सुधारने वाला feedback priority है." },
+      },
+    },
+  },
+  id: {
+    about: {
+      description: "Ruang kerja operasi web untuk memeriksa status URL, redirect, header, DNS, sitemap, robots, token, dan respons API, dengan Blog dan Play sebagai catatan dan eksperimen.",
+      sectionPatches: {
+        0: { heading: "Peran situs saat ini", body: "bobob.app pertama-tama adalah ruang kerja operasi web. Permukaan utama membantu memeriksa status URL publik, redirect chain, response header, DNS record, sinyal canonical/meta, aturan robots, entri sitemap, token, dan API payload dalam alur operasi praktis." },
+        3: { heading: "Peran alat praktis", body: "Alat bukan hanya arsip pendukung. Alat menjadi permukaan kerja utama untuk deploy, pencarian, security header, token, API, dan debug data, dengan perilaku lokal, contoh, diagnostik, pemeriksaan sebelum salin, dan langkah terkait berikutnya." },
+      },
+    },
+    contact: {
+      description: "Hubungi bobob.app tentang alat operasi web, Blog, Play, koreksi konten, aksesibilitas, lokalisasi, dan pertanyaan kebijakan.",
+      sectionPatches: {
+        2: { heading: "Operasi situs", body: "Situs ini dipelihara sebagai ruang kerja operasi web, dengan Blog dan Play sebagai permukaan catatan dan eksperimen. Feedback yang meningkatkan pemeriksaan URL/header/DNS/sitemap/token/API, tulisan asli, eksperimen yang bisa dimainkan, akurasi, navigasi, aksesibilitas, lokalisasi, atau alur praktis diprioritaskan." },
+      },
+    },
+  },
+  vi: {
+    about: {
+      description: "Một bàn làm việc vận hành web để kiểm tra URL, redirect, header, DNS, sitemap, robots, token và phản hồi API, với Blog và Play làm ghi chép và thử nghiệm.",
+      sectionPatches: {
+        0: { heading: "Trang này hiện là gì", body: "bobob.app trước hết là bàn làm việc vận hành web. Bề mặt chính giúp kiểm tra trạng thái URL công khai, redirect chain, response header, DNS record, tín hiệu canonical/meta, quy tắc robots, mục sitemap, token và API payload trong luồng vận hành thực tế." },
+        3: { heading: "Vai trò của công cụ thực dụng", body: "Công cụ không chỉ là bề mặt lưu trữ hỗ trợ. Chúng là bề mặt làm việc chính cho deploy, tìm kiếm, security header, token, API và debug dữ liệu, với xử lý cục bộ, ví dụ, chẩn đoán, kiểm tra trước khi sao chép và bước tiếp theo liên quan." },
+      },
+    },
+    contact: {
+      description: "Liên hệ bobob.app về công cụ vận hành web, Blog, Play, sửa nội dung, khả năng truy cập, bản địa hóa và câu hỏi chính sách.",
+      sectionPatches: {
+        2: { heading: "Vận hành trang", body: "Trang được duy trì như bàn làm việc vận hành web, với Blog và Play là bề mặt ghi chép và thử nghiệm. Phản hồi cải thiện kiểm tra URL/header/DNS/sitemap/token/API, bài viết gốc, thử nghiệm có thể chơi, độ chính xác, điều hướng, khả năng truy cập, bản địa hóa hoặc quy trình thực tế được ưu tiên." },
+      },
+    },
+  },
+  th: {
+    about: {
+      description: "พื้นที่ทำงานด้านการปฏิบัติการเว็บสำหรับตรวจ URL, redirect, header, DNS, sitemap, robots, token และ API response โดยมี Blog และ Play เป็นบันทึกและการทดลอง",
+      sectionPatches: {
+        0: { heading: "ตอนนี้ไซต์นี้คืออะไร", body: "bobob.app เป็นพื้นที่ทำงานด้านการปฏิบัติการเว็บก่อน พื้นผิวหลักช่วยตรวจ status ของ URL สาธารณะ, redirect chain, response header, DNS record, สัญญาณ canonical/meta, robots rule, sitemap entry, token และ API payload ในลำดับงานที่ใช้จริง" },
+        3: { heading: "บทบาทของเครื่องมือปฏิบัติ", body: "เครื่องมือไม่ใช่แค่ archive สนับสนุน แต่เป็นพื้นที่ทำงานหลักสำหรับ deploy, search discovery, security header, token, API และ data debug พร้อมการทำงานในเครื่อง ตัวอย่าง การวินิจฉัย การตรวจทานก่อนคัดลอก และขั้นตอนถัดไปที่เกี่ยวข้อง" },
+      },
+    },
+    contact: {
+      description: "ติดต่อ bobob.app เรื่องเครื่องมือปฏิบัติการเว็บ, Blog, Play, การแก้เนื้อหา, การเข้าถึง, การแปล และคำถามนโยบาย",
+      sectionPatches: {
+        2: { heading: "การดำเนินงานไซต์", body: "ไซต์นี้ดูแลเป็นพื้นที่ทำงานด้านการปฏิบัติการเว็บ โดยมี Blog และ Play เป็นพื้นผิวบันทึกและการทดลอง feedback ที่ช่วยการตรวจ URL/header/DNS/sitemap/token/API, บทความต้นฉบับ, การทดลองที่เล่นได้, ความถูกต้อง, การนำทาง, การเข้าถึง, การแปล หรือ workflow ที่ใช้งานจริงจะถูกให้ความสำคัญ" },
+      },
+    },
+  },
+  ar: {
+    about: {
+      description: "مساحة عمل لعمليات الويب لفحص URL وredirect وheaders وDNS وsitemap وrobots وtoken وAPI response، مع Blog وPlay كسجلات وتجارب.",
+      sectionPatches: {
+        0: { heading: "ما هو هذا الموقع الآن", body: "bobob.app هو أولا مساحة عمل لعمليات الويب. السطح الرئيسي يساعد على فحص حالة URL عام وredirect chain وresponse headers وDNS records وإشارات canonical/meta وقواعد robots ومدخلات sitemap وtokens وAPI payloads ضمن سير عمل عملي." },
+        3: { heading: "دور الأدوات العملية", body: "الأدوات ليست مجرد أرشيف داعم. إنها سطح العمل الرئيسي للنشر والبحث وsecurity headers وtokens وAPI وdebug البيانات، مع سلوك محلي وأمثلة وتشخيصات ومراجعة قبل النسخ وخطوات تالية مرتبطة." },
+      },
+    },
+    contact: {
+      description: "تواصل مع bobob.app بخصوص أدوات عمليات الويب وBlog وPlay وتصحيحات المحتوى والوصول والترجمة وأسئلة السياسة.",
+      sectionPatches: {
+        2: { heading: "تشغيل الموقع", body: "تتم صيانة الموقع كمساحة عمل لعمليات الويب، مع Blog وPlay كسطحين للسجلات والتجارب. تعطى الأولوية للملاحظات التي تحسن فحوص URL/header/DNS/sitemap/token/API أو الكتابة الأصلية أو التجارب القابلة للعب أو الدقة أو التنقل أو الوصول أو الترجمة أو سير العمل العملي." },
+      },
+    },
+  },
+};
+
 const trustUpdatedAt: Record<Locale, string> = {
-  en: "Last updated: July 3, 2026",
-  ko: "최종 업데이트: 2026년 7월 3일",
-  ja: "最終更新日: 2026年7月3日",
-  "zh-CN": "最后更新: 2026年7月3日",
-  "zh-TW": "最後更新: 2026年7月3日",
-  es: "Ultima actualizacion: 3 de julio de 2026",
-  "pt-BR": "Ultima atualizacao: 3 de julho de 2026",
-  de: "Zuletzt aktualisiert: 3. Juli 2026",
-  fr: "Derniere mise a jour: 3 juillet 2026",
-  hi: "अंतिम अपडेट: 3 जुलाई 2026",
-  id: "Terakhir diperbarui: 3 Juli 2026",
-  vi: "Cập nhật lần cuối: 3 tháng 7, 2026",
-  th: "อัปเดตล่าสุด: 3 กรกฎาคม 2026",
-  ar: "آخر تحديث: 3 يوليو 2026",
+  en: "Last updated: July 7, 2026",
+  ko: "최종 업데이트: 2026년 7월 7일",
+  ja: "最終更新日: 2026年7月7日",
+  "zh-CN": "最后更新: 2026年7月7日",
+  "zh-TW": "最後更新: 2026年7月7日",
+  es: "Ultima actualizacion: 7 de julio de 2026",
+  "pt-BR": "Ultima atualizacao: 7 de julho de 2026",
+  de: "Zuletzt aktualisiert: 7. Juli 2026",
+  fr: "Derniere mise a jour: 7 juillet 2026",
+  hi: "अंतिम अपडेट: 7 जुलाई 2026",
+  id: "Terakhir diperbarui: 7 Juli 2026",
+  vi: "Cập nhật lần cuối: 7 tháng 7, 2026",
+  th: "อัปเดตล่าสุด: 7 กรกฎาคม 2026",
+  ar: "آخر تحديث: 7 يوليو 2026",
 };
 
 const localizedTrustExpansionSections: Record<Exclude<Locale, "en">, Record<TrustPageKind, TrustSection[]>> = {
@@ -911,8 +1114,18 @@ const localizedTrustQualitySections: Record<Exclude<Locale, "en">, Record<TrustP
   },
 };
 
+function applyOperationsFirstOverride(content: TrustPageContent, override: TrustPageOperationsFirstOverride) {
+  return {
+    ...content,
+    description: override.description,
+    sections: content.sections.map((section, index) => override.sectionPatches[index] ?? section),
+  };
+}
+
 export function getLocalizedTrustContent(locale: Locale = defaultLocale, kind: TrustPageKind) {
-  const content = locale === defaultLocale ? english[kind] : localized[locale][kind];
+  const baseContent = locale === defaultLocale ? english[kind] : localized[locale][kind];
+  const content =
+    locale === defaultLocale ? baseContent : applyOperationsFirstOverride(baseContent, localizedOperationsFirstOverrides[locale][kind]);
   const expansionSections = locale === defaultLocale ? [] : localizedTrustExpansionSections[locale][kind];
   const depthSections = locale === defaultLocale ? [] : (localizedTrustDepthSections[locale]?.[kind] ?? []);
   const qualitySections = locale === defaultLocale ? [] : localizedTrustQualitySections[locale][kind];
