@@ -251,7 +251,7 @@ for (const fragment of ["data-jwt-examples", "data-jwt-result-details", "data-jw
   const source = fragment === "localizedJwtToolUi" || fragment === "localizedJwtPrivacyToolUi" || fragment === "localizedJwtExpectationToolUi" || fragment === "localizedJwtReportToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`JWT Decoder detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-base64-examples", "base64PngDataUrlExample", "data-base64-result-details", "data-base64-variants", "data-base64-diagnostics", "data-base64-shape", "data-base64-json-preview", "data-base64-image-preview", "data-base64-warnings", "localizedBase64ToolUi", "localizedBase64DiagnosticsToolUi", "localizedBase64ImageToolUi", "localizedCoreDepthToolUi"]) {
+for (const fragment of ["data-base64-examples", "base64PngDataUrlExample", "data-base64-result-details", "data-base64-variants", "data-base64-diagnostics", "data-base64-shape", "data-base64-json-preview", "data-base64-image-preview", "data-base64-warnings", "data-base64-payload-report", "data-base64-payload-report-copy", "data-base64-payload-report-preview", "buildBase64PayloadReport", "copyBase64PayloadReport", "localizedBase64ToolUi", "localizedBase64DiagnosticsToolUi", "localizedBase64ImageToolUi", "localizedBase64ReportToolUi", "localizedCoreDepthToolUi"]) {
   const source = fragment.startsWith("localizedBase64") || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Base64 detail UI missing ${fragment}`);
 }

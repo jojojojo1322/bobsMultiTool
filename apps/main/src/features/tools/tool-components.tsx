@@ -2896,6 +2896,86 @@ function getBase64ShapeKey(value: string, context: { urlSafe?: boolean; jwtSegme
   return "base64TextShape";
 }
 
+type Base64ReportStats = {
+  inputBytes: number;
+  outputChars: number;
+  padding: number;
+  variant: string;
+  outputKind: string;
+};
+
+type Base64ReportDiagnostics = {
+  shapeKey: string;
+  lineCount: number;
+  jsonKeyCount: number;
+  controlCharacters: number;
+};
+
+function buildBase64PayloadReport({
+  mode,
+  stats,
+  diagnostics,
+  warnings,
+  imagePreview,
+  dictionary,
+  checkedAt,
+}: {
+  mode: string;
+  stats: Base64ReportStats;
+  diagnostics: Base64ReportDiagnostics;
+  warnings: string[];
+  imagePreview: { mime: string; bytes: number; dataUrl: string } | null;
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const reviewNotes = warnings.length ? warnings.map((key) => ui(dictionary, key, key)) : [ui(dictionary, "base64PayloadReportNoWarnings", "No obvious Base64 issues detected. Still redact secrets before sharing.")];
+  const detectedContent = ui(dictionary, diagnostics.shapeKey, diagnostics.shapeKey);
+  const checklist = [
+    ui(dictionary, "base64PayloadChecklistRedact", "Redact tokens, cookies, passwords, and customer identifiers before sharing decoded text."),
+    ui(dictionary, "base64PayloadChecklistVariant", "Confirm whether the target expects standard Base64 or URL-safe Base64 before copying."),
+    ui(dictionary, "base64PayloadChecklistJson", "If decoded content is JSON, inspect it in JSON Formatter before attaching it to a ticket."),
+    ui(dictionary, "base64PayloadChecklistJwt", "If decoded content looks like a JWT segment, use JWT Decoder for token context."),
+    ui(dictionary, "base64PayloadChecklistBinary", "If the output is binary or an image, share the data URL or file preview instead of raw text."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "mode", "Mode"), value: mode === "encode" ? ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64") : ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8") },
+    { label: ui(dictionary, "base64DetectedContent", "Detected content"), value: detectedContent },
+    { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(stats.inputBytes) },
+    { label: ui(dictionary, "outputCharacters", "Output characters"), value: String(stats.outputChars) },
+    { label: ui(dictionary, "paddingCharacters", "Padding characters"), value: String(stats.padding) },
+    { label: ui(dictionary, "base64JsonKeys", "JSON keys"), value: String(diagnostics.jsonKeyCount) },
+  ];
+  const imageLines = imagePreview
+    ? [
+        `- ${ui(dictionary, "base64PayloadImageMime", "Image MIME")}: ${imagePreview.mime}`,
+        `- ${ui(dictionary, "base64PayloadImageBytes", "Image bytes")}: ${imagePreview.bytes}`,
+      ]
+    : [];
+  const markdown = [
+    `# ${ui(dictionary, "base64PayloadReport", "Base64 payload report")}`,
+    "",
+    `- ${ui(dictionary, "base64PayloadReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "mode", "Mode")}: ${mode === "encode" ? ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64") : ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8")}`,
+    `- ${ui(dictionary, "base64Variant", "Base64 variant")}: ${stats.variant}`,
+    `- ${ui(dictionary, "base64DetectedContent", "Detected content")}: ${detectedContent}`,
+    `- ${ui(dictionary, "inputBytes", "Input bytes")}: ${stats.inputBytes}`,
+    `- ${ui(dictionary, "outputCharacters", "Output characters")}: ${stats.outputChars}`,
+    `- ${ui(dictionary, "paddingCharacters", "Padding characters")}: ${stats.padding}`,
+    `- ${ui(dictionary, "base64TextLines", "Text lines")}: ${diagnostics.lineCount}`,
+    `- ${ui(dictionary, "base64JsonKeys", "JSON keys")}: ${diagnostics.jsonKeyCount}`,
+    `- ${ui(dictionary, "base64ControlCharacters", "Control characters")}: ${diagnostics.controlCharacters}`,
+    ...imageLines,
+    "",
+    `## ${ui(dictionary, "base64PayloadReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "base64PayloadSafeHandoffChecklist", "Safe handoff checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function UrlEncoderTool({ dictionary }: { dictionary: ClientDictionary }) {
   return (
     <TextTransformTool
@@ -3011,6 +3091,18 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
     if (result.jsonPreview || (result.diagnostics?.jsonKeyCount ?? 0) > 0) return ["base64-json"];
     return [];
   }, [result]);
+  const payloadReport = React.useMemo(() => {
+    if (!result.stats || !result.diagnostics) return null;
+    return buildBase64PayloadReport({
+      mode,
+      stats: result.stats,
+      diagnostics: result.diagnostics,
+      warnings: result.warnings,
+      imagePreview: result.imagePreview,
+      dictionary,
+      checkedAt: ui(dictionary, "base64PayloadReportCopyTime", "Browser copy time"),
+    });
+  }, [dictionary, mode, result.diagnostics, result.imagePreview, result.stats, result.warnings]);
 
   return (
     <div className="space-y-4">
@@ -3160,6 +3252,53 @@ function Base64Tool({ dictionary }: { dictionary: ClientDictionary }) {
               ))}
             </ul>
           </section>
+          {payloadReport && result.stats && result.diagnostics ? (
+            <section className="space-y-3 rounded-md border bg-card p-3" data-base64-payload-report>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{ui(dictionary, "base64PayloadReport", "Base64 payload report")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "base64PayloadReportDescription", "Copy a compact handoff report with Base64 variant, decoded shape, review notes, and safe sharing checks.")}</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  data-base64-payload-report-copy
+                  onClick={() =>
+                    copyToClipboard(
+                      buildBase64PayloadReport({
+                        mode,
+                        stats: result.stats!,
+                        diagnostics: result.diagnostics!,
+                        warnings: result.warnings,
+                        imagePreview: result.imagePreview,
+                        dictionary,
+                        checkedAt: new Date().toISOString(),
+                      }).markdown,
+                    )
+                  }
+                >
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyBase64PayloadReport", "Copy Base64 report")}
+                </Button>
+              </div>
+              <ToolMetricGrid items={payloadReport.metrics} />
+              <ToolWarningList title={ui(dictionary, "base64PayloadReviewNotes", "Review notes")} warnings={payloadReport.reviewNotes} emptyLabel={ui(dictionary, "base64PayloadReportNoWarnings", "No obvious Base64 issues detected. Still redact secrets before sharing.")} />
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "base64PayloadSafeHandoffChecklist", "Safe handoff checklist")}</p>
+                <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                  {payloadReport.checklist.map((item) => (
+                    <li key={item} className="rounded-md bg-muted px-3 py-2">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-base64-payload-report-preview>
+                <code>{payloadReport.markdown}</code>
+              </pre>
+            </section>
+          ) : null}
           <ResultNextActions signals={base64NextActionSignals} dictionary={dictionary} />
           <ResultBlock
             title={result.imagePreview ? ui(dictionary, "dataUrl", "Data URL") : mode === "encode" ? ui(dictionary, "encodeBase64", "Encode UTF-8 to Base64") : ui(dictionary, "decodeBase64", "Decode Base64 to UTF-8")}
