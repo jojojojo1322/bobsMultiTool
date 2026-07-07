@@ -364,7 +364,7 @@ if (feedItemCount !== expectedFeedItemCount) {
   failures.push(`/feed.xml should expose ${expectedFeedItemCount} Blog + Play feed items, found ${feedItemCount}`);
 }
 for (const fragment of [
-  "<title>bobob.app - 개발/AI 기록과 짧은 Play</title>",
+  "<title>bobob.app - 웹 운영 점검 기록과 Play</title>",
   'xmlns:atom="http://www.w3.org/2005/Atom"',
   '<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
   '<atom:link rel="self" href="https://www.bobob.app/feed.xml" />',
@@ -393,7 +393,7 @@ if (atomEntryCount !== expectedFeedItemCount) {
   failures.push(`/atom.xml should expose ${expectedFeedItemCount} Blog + Play feed items, found ${atomEntryCount}`);
 }
 for (const fragment of [
-  "<title>bobob.app - 개발/AI 기록과 짧은 Play</title>",
+  "<title>bobob.app - 웹 운영 점검 기록과 Play</title>",
   '<link rel="hub" href="https://pubsubhubbub.appspot.com/" />',
   '<link rel="self" href="https://www.bobob.app/atom.xml" />',
   "<id>https://www.bobob.app/blog/content-indexing-checklist-before-resubmission</id>",

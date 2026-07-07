@@ -556,7 +556,7 @@ for (const locale of nonEnglishLocales) {
   for (const englishFragment of [
     "genereez",
     'faqDescription: "Common implementation details"',
-    "homeTitle: \"Bob's Multi Tool - Practical Developer Utilities\"",
+    "homeTitle: \"Bob's Multi Tool - Web Operations Workbench\"",
     'theme: { light: "Light", dark: "Dark", system: "System" }',
     'cronRuntimeContext: "Runtime context"',
     'cronTimezone: "Browser timezone"',
@@ -564,7 +564,7 @@ for (const locale of nonEnglishLocales) {
     'privacy: "Privacy"',
     'serverRequired: "Server route"',
     'localOnly: "Browser local"',
-    'badge: "Developer workbench"',
+    'badge: "Web operations workbench"',
     "Workbench developer",
     "Workbench lap trinh",
     "metadata, locale",
@@ -796,9 +796,9 @@ for (const fragment of [
 }
 
 for (const fragment of [
-  "व्यावहारिक डेवलपर यूटिलिटी",
-  "เครื่องมือนักพัฒนาที่ใช้งานจริง",
-  "أدوات مطور عملية",
+  "वेब ऑपरेशंस वर्कबेंच",
+  "พื้นที่ทำงานปฏิบัติการเว็บ",
+  "منضدة عمليات ويب",
 ]) {
   if (!dictionaries.includes(fragment)) failures.push(`localized metadata override missing: ${fragment}`);
 }

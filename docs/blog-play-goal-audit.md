@@ -74,6 +74,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Retired sitemap route cleanup: known non-submitted locale sitemap paths such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN` now 308 redirect to `/sitemaps/en`, so older Naver/Search Advisor rows no longer point at 404 XML routes while broad locale sitemap coverage remains paused.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
 - Trust surface alignment: default and localized About/Contact copy now describe the web-operations workbench first while preserving Blog/Play as supporting operating evidence and experiments. Localized trust routes use `getLocalizedTrustContent` with operations-first descriptions, first sections, practical-tool role copy, contact operation copy, and current `2026-07-07` trust update dates.
+- Site-wide identity alignment: root metadata, WebSite JSON-LD, alternate feed discovery titles, RSS/Atom/JSON feed title/description, and localized homepage dictionary copy now lead with the web-operations workbench direction while preserving Blog/Play as supporting evidence and experiments.
 - Required first-pass topics are present:
   - `ai-side-project-realistic-order`
   - `cursor-codex-web-service-bottlenecks`

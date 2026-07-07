@@ -1297,8 +1297,8 @@ function buildOpenGraphCrawlerReport({
 }
 
 function MetaTagTool({ dictionary }: { dictionary: ClientDictionary }) {
-  const [title, setTitle] = React.useState("Bob's Multi Tool - Practical Developer Utilities");
-  const [description, setDescription] = React.useState("Fast browser tools for developers, built for daily workflows.");
+  const [title, setTitle] = React.useState("Bob's Multi Tool - Web Operations Workbench");
+  const [description, setDescription] = React.useState("Check public URL status, redirects, response headers, DNS, sitemap, robots, tokens, and API responses in one workflow.");
   const [url, setUrl] = React.useState("https://www.bobob.app/tools/meta-tag-generator");
   const [image, setImage] = React.useState("https://www.bobob.app/og-image.png");
   const [robots, setRobots] = React.useState("index,follow");

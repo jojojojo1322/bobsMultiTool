@@ -3169,3 +3169,10 @@ Completion guard:
 - Trust date action: refreshed localized trust `lastUpdated` strings to `2026-07-07` so the updated public trust copy has a current visible date across default and localized routes.
 - Goal-audit action: updated `docs/blog-play-goal-audit.md` so the prior localized trust follow-up gap is no longer listed as pending.
 - Search Console action: none in this source pass. This is trust-surface and localization alignment, not a sitemap submission, URL inspection, Bing evidence, Naver evidence, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Site-Wide Operations Metadata Source Slice
+
+- Source action: aligned root fallback metadata, Open Graph/Twitter metadata, WebSite JSON-LD, alternate feed discovery titles, RSS/Atom/JSON feed title/description, and localized homepage dictionary copy with the web-operations workbench direction.
+- Product-scope guard: Blog and Play remain visible as operating evidence and retention experiments; this slice only removes stale Blog/Play-only and generic developer-tool first-impression copy from site-wide metadata surfaces.
+- Harness action: updated route, live-discovery, and localization smoke expectations so future checks fail if the stale site identity returns.
+- Search Console action: none in this source pass. This is metadata and first-impression alignment, not a sitemap submission, URL inspection, Bing evidence, Naver evidence, traffic proof, or a reason to mark the active goal complete.
