@@ -662,6 +662,13 @@ export const workflowRecipes: WorkflowRecipe[] = [
       "googlebot url health",
       "search discovery checklist",
       "submit sitemap checklist",
+      "naver search advisor sitemap",
+      "naver sitemap not found",
+      "search advisor sitemap not found",
+      "네이버 서치어드바이저 사이트맵",
+      "사이트맵을 찾을 수 없습니다",
+      "사이트맵 제출 확인",
+      "sitemaps/en 제출",
     ],
     steps: [
       {
