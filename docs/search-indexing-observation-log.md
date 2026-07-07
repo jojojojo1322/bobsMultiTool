@@ -3379,3 +3379,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so CORS/preflight query families stay wired to workflow search and HTTP Status Checker registry metadata.
 - Search Console action: none in this source pass. This improves public routing for a high-intent browser/API failure state but does not change Google's page-indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this strengthens an existing submitted HTTP/security-header tool and representative operations article while indexing reports lag. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 CORS Preflight Header Workflow Production Deployment
+
+- Commit: `677be3b`.
+- Change: deployed CORS/preflight search coverage into the existing security-header workflow, HTTP Status Checker registry metadata, and the refreshed `security-header-report-before-copying-devtools` article section.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:deployment-status` returned `overallState: success` for `677be3ba860cddbb3825626580bd947585f7ac34` after earlier pending checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=CORS%20%EC%98%A4%EB%A5%98%20%ED%99%95%EC%9D%B8&deploy=677be3b` and confirmed `보안 헤더 점검`, `/tools/http-status-checker`, `cors header checker`, and `cors preflight checker` appeared with no console errors. Playwright also loaded `https://www.bobob.app/blog/security-header-report-before-copying-devtools?deploy=677be3b` and confirmed the `CORS 에러는 화면 문구보다 header 조합을 본다` section, `Access-Control-Allow-Origin`, `preflight request failed`, `credentials mode`, and `wildcard origin` table rows rendered with no console errors. Both live browser checks showed only the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers CORS/preflight failure intent through the existing submitted HTTP/security-header workflow and representative article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
