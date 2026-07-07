@@ -2846,3 +2846,18 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the Random Token report on the core security generator and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Password Safety Report Source Slice
+
+- Source action: added a copyable Password safety report to `/tools/password-generator` so the password/passphrase generator produces a shareable mode, length/word-count, entropy, charset/word-list, local-generation, compatibility, review-note, and secret-handling checklist artifact without including the generated password or passphrase value.
+- Search surface action: expanded the Password Generator registry/search intents and added the `create-safe-password` workflow recipe for `password handoff report`, `password safety report`, `password compatibility report`, `passphrase report`, `temporary password report`, and `credential handoff report`, with layout/search/localization/agent-skill harness coverage so the feature stays inside the Password tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/password-generator`, confirmed `Password safety report`, `Copy password report`, mode/length/entropy/charset/character-group/generated-local/value-exclusion metrics, review notes, secret-handling checklist, and Markdown preview, then clicked the report copy button with no console errors.
+- Local passphrase safety verification: Playwright switched to passphrase mode, clicked `Copy password report`, and confirmed the copied report began with `# Password safety report`, included separator and password-inclusion policy context, and excluded the generated passphrase from both the clipboard and preview. The default random password report also excluded the generated password from both clipboard and preview. The only console warning was the existing AdSense `data-nscript` warning.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one core security generator as a safe credential handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

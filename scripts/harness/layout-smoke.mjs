@@ -267,11 +267,11 @@ for (const fragment of ["data-hash-examples", "data-hash-hmac-options", "data-ha
   const source = fragment === "localizedHashHmacToolUi" || fragment === "localizedHashReportToolUi" || fragment === "hmacSecretWarning" || fragment.startsWith("hash") || fragment === "copyHashSignatureReport" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Hash Generator detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-password-mode", "data-password-options", "data-password-passphrase-options", "data-password-strength", "data-password-warnings", "passphraseWords"]) {
-  const source = fragment === "passphraseWords" ? dictionaries : toolComponents;
+for (const fragment of ["data-password-mode", "data-password-options", "data-password-passphrase-options", "data-password-strength", "data-password-report", "data-password-report-copy", "data-password-report-preview", "data-password-warnings", "buildPasswordReport", "localizedPasswordReportToolUi", "passwordReport", "copyPasswordReport", "passwordReportValueExcluded", "passwordReportChecklistStore", "passphraseWords"]) {
+  const source = fragment === "passphraseWords" || fragment === "localizedPasswordReportToolUi" || fragment === "passwordReport" || fragment === "copyPasswordReport" || fragment === "passwordReportValueExcluded" || fragment === "passwordReportChecklistStore" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Password Generator detail UI missing ${fragment}`);
 }
-if (!dictionaries.includes("localizedPasswordPassphraseToolUi") || !dictionaries.includes("passphraseCompatibilityWarning")) failures.push("Password passphrase UI labels must be localized");
+if (!dictionaries.includes("localizedPasswordPassphraseToolUi") || !dictionaries.includes("passphraseCompatibilityWarning") || !dictionaries.includes("localizedPasswordReportToolUi")) failures.push("Password passphrase and report UI labels must be localized");
 for (const fragment of ["data-random-token-examples", "data-random-token-diagnostics", "data-random-token-report", "data-random-token-report-copy", "data-random-token-report-preview", "data-random-token-warnings", "buildRandomTokenReport", "localizedRandomTokenToolUi", "localizedRandomTokenReportToolUi", "randomTokenReport", "copyRandomTokenReport", "tokenReportTokenExcluded", "tokenReportChecklistStore"]) {
   const source = fragment === "localizedRandomTokenToolUi" || fragment === "localizedRandomTokenReportToolUi" || fragment === "randomTokenReport" || fragment === "copyRandomTokenReport" || fragment === "tokenReportTokenExcluded" || fragment === "tokenReportChecklistStore" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Random Token Generator detail UI missing ${fragment}`);

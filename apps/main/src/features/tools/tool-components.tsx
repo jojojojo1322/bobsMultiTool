@@ -4939,6 +4939,89 @@ function describeEntropy(dictionary: ClientDictionary, entropy: number) {
   return ui(dictionary, "passwordStrengthWeak", "Needs more length");
 }
 
+function buildPasswordReport({
+  mode,
+  safeLength,
+  safeWordCount,
+  alphabetLength,
+  selectedSetCount,
+  symbols,
+  excludeAmbiguous,
+  includeNumber,
+  separator,
+  entropy,
+  value,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  mode: PasswordMode;
+  safeLength: number;
+  safeWordCount: number;
+  alphabetLength: number;
+  selectedSetCount: number;
+  symbols: boolean;
+  excludeAmbiguous: boolean;
+  includeNumber: boolean;
+  separator: string;
+  entropy: number;
+  value: string;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const roundedEntropy = Math.round(entropy);
+  const modeLabel = mode === "passphrase" ? ui(dictionary, "passwordModePassphrase", "Passphrase") : ui(dictionary, "passwordModeRandom", "Random password");
+  const yesLabel = ui(dictionary, "yes", "Yes");
+  const noLabel = ui(dictionary, "no", "No");
+  const lengthLabel = mode === "passphrase" ? ui(dictionary, "passphraseWords", "Words") : ui(dictionary, "length", "Length");
+  const lengthValue = mode === "passphrase" ? String(safeWordCount) : String(safeLength);
+  const complexityLabel = mode === "passphrase" ? ui(dictionary, "passphraseWordList", "Word list") : ui(dictionary, "charsetSize", "Charset size");
+  const complexityValue = mode === "passphrase" ? String(passphraseWords.length) : String(alphabetLength);
+  const compatibilityLabel = mode === "passphrase" ? ui(dictionary, "passphraseIncludeNumber", "Include number") : ui(dictionary, "symbols", "Symbols");
+  const compatibilityValue = mode === "passphrase" ? (includeNumber ? yesLabel : noLabel) : symbols ? yesLabel : noLabel;
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "passwordReportNoWarnings", "No obvious password generation warnings detected. Store and rotate the secret deliberately.")];
+  const checklist = [
+    ui(dictionary, "passwordReportChecklistStore", "Store the generated secret in a password manager before sharing access."),
+    ui(dictionary, "passwordReportChecklistUnique", "Use a unique password or passphrase for each account or environment."),
+    ui(dictionary, "passwordReportChecklistPolicy", "Confirm the target accepts this length, symbols, separator, and passphrase shape."),
+    ui(dictionary, "passwordReportChecklistRotate", "Record where the secret is used so it can be rotated later."),
+    ui(dictionary, "passwordReportChecklistNoLogs", "Do not paste live credentials into logs, tickets, analytics, or screenshots."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "passwordReportMode", "Mode"), value: modeLabel },
+    { label: lengthLabel, value: lengthValue },
+    { label: ui(dictionary, "entropyEstimate", "Entropy estimate"), value: `${roundedEntropy} bits`, description: describeEntropy(dictionary, entropy) },
+    { label: complexityLabel, value: complexityValue },
+    ...(mode === "password" ? [{ label: ui(dictionary, "characterGroups", "Character groups"), value: String(selectedSetCount) }] : []),
+    { label: compatibilityLabel, value: compatibilityValue },
+    { label: ui(dictionary, "avoidAmbiguous", "Avoid ambiguous"), value: mode === "password" && excludeAmbiguous ? yesLabel : mode === "password" ? noLabel : ui(dictionary, "notApplicable", "Not applicable") },
+    { label: ui(dictionary, "generatedLocally", "Generated locally"), value: yesLabel },
+    { label: ui(dictionary, "passwordReportValuePolicy", "Password included"), value: ui(dictionary, "passwordReportValueExcluded", "No, only password metrics, mode, and handling checks are included.") },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "passwordReport", "Password safety report")}`,
+    "",
+    `- ${ui(dictionary, "passwordReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "passwordReportMode", "Mode")}: ${modeLabel}`,
+    `- ${lengthLabel}: ${lengthValue}`,
+    `- ${ui(dictionary, "entropyEstimate", "Entropy estimate")}: ${roundedEntropy} bits`,
+    `- ${complexityLabel}: ${complexityValue}`,
+    `- ${ui(dictionary, "generatedLocally", "Generated locally")}: ${yesLabel}`,
+    `- ${ui(dictionary, "encodedLength", "Encoded length")}: ${value.length}`,
+    `- ${ui(dictionary, "passwordReportValuePolicy", "Password included")}: ${ui(dictionary, "passwordReportValueExcluded", "No, only password metrics, mode, and handling checks are included.")}`,
+    ...(mode === "passphrase" ? [`- ${ui(dictionary, "passphraseSeparator", "Separator")}: ${separator === " " ? ui(dictionary, "passphraseSeparatorSpace", "space") : separator}`] : []),
+    "",
+    `## ${ui(dictionary, "passwordReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "passwordReportChecklist", "Secret handling checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function PasswordGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [mode, setMode] = React.useState<PasswordMode>("password");
   const [length, setLength] = React.useState(24);
@@ -4979,14 +5062,38 @@ function PasswordGeneratorTool({ dictionary }: { dictionary: ClientDictionary })
   }, [generate]);
 
   const selectedSetCount = selectedSets.length;
-  const warnings = [
-    mode === "password" && safeLength < 16 ? ui(dictionary, "passwordShortWarning", "Use at least 16 characters for reusable credentials.") : "",
-    mode === "password" && selectedSetCount < 3 ? ui(dictionary, "passwordCharsetWarning", "Use at least three character groups unless the target system restricts them.") : "",
-    mode === "password" && !symbols ? ui(dictionary, "passwordNoSymbolsWarning", "Symbols are disabled. Confirm the target accepts longer passwords if symbols are not allowed.") : "",
-    mode === "passphrase" && safeWordCount < 4 ? ui(dictionary, "passphraseShortWarning", "Use at least four words for reusable passphrases.") : "",
-    mode === "passphrase" ? ui(dictionary, "passphraseCompatibilityWarning", "Some systems reject spaces or long passphrases. Confirm the target policy before copying.") : "",
-    ui(dictionary, "passwordStorageWarning", "Store generated secrets in a password manager. Do not paste production secrets into logs or tickets."),
-  ].filter(Boolean);
+  const warnings = React.useMemo(
+    () =>
+      [
+        mode === "password" && safeLength < 16 ? ui(dictionary, "passwordShortWarning", "Use at least 16 characters for reusable credentials.") : "",
+        mode === "password" && selectedSetCount < 3 ? ui(dictionary, "passwordCharsetWarning", "Use at least three character groups unless the target system restricts them.") : "",
+        mode === "password" && !symbols ? ui(dictionary, "passwordNoSymbolsWarning", "Symbols are disabled. Confirm the target accepts longer passwords if symbols are not allowed.") : "",
+        mode === "passphrase" && safeWordCount < 4 ? ui(dictionary, "passphraseShortWarning", "Use at least four words for reusable passphrases.") : "",
+        mode === "passphrase" ? ui(dictionary, "passphraseCompatibilityWarning", "Some systems reject spaces or long passphrases. Confirm the target policy before copying.") : "",
+        ui(dictionary, "passwordStorageWarning", "Store generated secrets in a password manager. Do not paste production secrets into logs or tickets."),
+      ].filter(Boolean),
+    [dictionary, mode, safeLength, safeWordCount, selectedSetCount, symbols],
+  );
+  const passwordReport = React.useMemo(
+    () =>
+      buildPasswordReport({
+        mode,
+        safeLength,
+        safeWordCount,
+        alphabetLength: alphabet.length || passwordCharacterSets.lower.length,
+        selectedSetCount,
+        symbols,
+        excludeAmbiguous,
+        includeNumber,
+        separator,
+        entropy,
+        value,
+        warnings,
+        dictionary,
+        checkedAt: ui(dictionary, "passwordReportCopyTime", "Browser copy time"),
+      }),
+    [alphabet.length, dictionary, entropy, excludeAmbiguous, includeNumber, mode, safeLength, safeWordCount, selectedSetCount, separator, symbols, value, warnings],
+  );
 
   return (
     <div className="space-y-4" data-password-tool>
@@ -5067,6 +5174,58 @@ function PasswordGeneratorTool({ dictionary }: { dictionary: ClientDictionary })
       <div data-password-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "passwordNoWarnings", "Password settings look strong for local generation.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-password-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">{ui(dictionary, "passwordReport", "Password safety report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "passwordReportDescription", "Copy a safe password handoff report without including the generated password or passphrase.")}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-password-report-copy
+            onClick={() =>
+              copyToClipboard(
+                buildPasswordReport({
+                  mode,
+                  safeLength,
+                  safeWordCount,
+                  alphabetLength: alphabet.length || passwordCharacterSets.lower.length,
+                  selectedSetCount,
+                  symbols,
+                  excludeAmbiguous,
+                  includeNumber,
+                  separator,
+                  entropy,
+                  value,
+                  warnings,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyPasswordReport", "Copy password report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={passwordReport.metrics} />
+        <ToolWarningList title={ui(dictionary, "passwordReportReviewNotes", "Review notes")} warnings={passwordReport.reviewNotes} emptyLabel={ui(dictionary, "passwordReportNoWarnings", "No obvious password generation warnings detected. Store and rotate the secret deliberately.")} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "passwordReportChecklist", "Secret handling checklist")}</p>
+          <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {passwordReport.checklist.map((item) => (
+              <li key={item} className="rounded-md bg-muted px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-password-report-preview>
+          <code>{passwordReport.markdown}</code>
+        </pre>
+      </section>
       <ResultBlock title={mode === "passphrase" ? ui(dictionary, "passwordModePassphrase", "Passphrase") : ui(dictionary, "password", "Password")} value={value} dictionary={dictionary} />
     </div>
   );

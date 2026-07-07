@@ -109,6 +109,9 @@ for (const fragment of ["localizedHashReportToolUi", "hashSignatureReport", "cop
 for (const fragment of ["localizedPasswordPassphraseToolUi", "passphraseModeDescription", "passphraseCompatibilityWarning", "암호구문", "パスフレーズ", "Passphrase", "عبارة مرور"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized password passphrase content missing fragment: ${fragment}`);
 }
+for (const fragment of ["localizedPasswordReportToolUi", "passwordReport", "copyPasswordReport", "passwordReportValueExcluded", "비밀번호 안전 리포트", "パスワード安全レポート", "Reporte de seguridad de contrasena", "Passwort-Sicherheitsbericht", "تقرير أمان كلمة المرور"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized password report content missing fragment: ${fragment}`);
+}
 for (const fragment of ["localizedRandomTokenReportToolUi", "randomTokenReport", "copyRandomTokenReport", "tokenReportTokenExcluded", "Random token 리포트", "Random tokenレポート", "Reporte de token aleatorio", "Random-Token-Bericht", "تقرير token عشوائي"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized random token report content missing fragment: ${fragment}`);
 }
