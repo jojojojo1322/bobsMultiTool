@@ -6764,6 +6764,76 @@ function analyzeCss(value: string) {
   };
 }
 
+function buildCssReviewReport({
+  analysis,
+  checkedAt,
+  declarationCount,
+  dictionary,
+  input,
+  minifier,
+  output,
+  warnings,
+}: {
+  analysis: ReturnType<typeof analyzeCss>;
+  checkedAt: string;
+  declarationCount: number;
+  dictionary: ClientDictionary;
+  input: string;
+  minifier: boolean;
+  output: string;
+  warnings: string[];
+}) {
+  const yesLabel = ui(dictionary, "yes", "Yes");
+  const noLabel = ui(dictionary, "no", "No");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "cssReportNoWarnings", "No immediate CSS review warnings detected. Still test the snippet in the target layout.")];
+  const checklist = [
+    ui(dictionary, "cssReportChecklistVisual", "Test the CSS at the target breakpoint, theme, and browser before shipping."),
+    ui(dictionary, "cssReportChecklistCascade", "Confirm selector order, duplicate selectors, and specificity match the intended cascade."),
+    ui(dictionary, "cssReportChecklistTokens", "Compare custom properties and color tokens against the design system before copying."),
+    ui(dictionary, "cssReportChecklistComments", "Preserve license and handoff comments if minifying or pasting into docs."),
+    ui(dictionary, "cssReportChecklistFormatter", "Run the project formatter or build pipeline before committing large stylesheet changes."),
+  ];
+  const selectorSummary = analysis.selectors.slice(0, 8).join(", ") || ui(dictionary, "noSelectorsDetected", "No selectors detected.");
+  const duplicateSummary = analysis.duplicateSelectors.join(", ") || noLabel;
+  const metrics = [
+    { label: ui(dictionary, "cssReportMode", "Output mode"), value: minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print") },
+    { label: ui(dictionary, "selectorBlocks", "Selector blocks"), value: String(analysis.selectors.length), description: selectorSummary },
+    { label: ui(dictionary, "declarations", "Declarations"), value: String(declarationCount) },
+    { label: ui(dictionary, "customProperties", "Custom properties"), value: String(analysis.customProperties.length), description: analysis.customProperties.slice(0, 3).join(", ") || ui(dictionary, "noCustomProperties", "No custom properties detected.") },
+    { label: ui(dictionary, "colorTokens", "Color tokens"), value: String(analysis.colorTokens.length), description: analysis.colorTokens.slice(0, 3).join(", ") || ui(dictionary, "noColorTokens", "No color tokens detected.") },
+    { label: ui(dictionary, "atRules", "At-rules"), value: String(analysis.atRules.length), description: analysis.atRules.slice(0, 2).join(", ") || ui(dictionary, "noAtRules", "No at-rules detected.") },
+    { label: ui(dictionary, "cssReportDuplicateSelectors", "Duplicate selectors"), value: duplicateSummary },
+    { label: ui(dictionary, "cssReportSpecificityRisk", "ID specificity risk"), value: analysis.hasIdSelector ? yesLabel : noLabel },
+    { label: ui(dictionary, "cssReportCommentState", "Comments present"), value: analysis.hasComments ? yesLabel : noLabel },
+    { label: ui(dictionary, "compressionRatio", "Compression ratio"), value: `${analysis.compressionRatio.toFixed(0)}%` },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "cssReviewReport", "CSS review report")}`,
+    "",
+    `- ${ui(dictionary, "cssReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "cssReportMode", "Output mode")}: ${minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")}`,
+    `- ${ui(dictionary, "characters", "Characters")}: ${input.length}`,
+    `- ${ui(dictionary, "outputLines", "Output lines")}: ${output ? output.split(/\r?\n/).length : 0}`,
+    `- ${ui(dictionary, "selectorBlocks", "Selector blocks")}: ${analysis.selectors.length}`,
+    `- ${ui(dictionary, "declarations", "Declarations")}: ${declarationCount}`,
+    `- ${ui(dictionary, "customProperties", "Custom properties")}: ${analysis.customProperties.length}`,
+    `- ${ui(dictionary, "colorTokens", "Color tokens")}: ${analysis.colorTokens.length}`,
+    `- ${ui(dictionary, "atRules", "At-rules")}: ${analysis.atRules.length}`,
+    `- ${ui(dictionary, "cssReportDuplicateSelectors", "Duplicate selectors")}: ${duplicateSummary}`,
+    `- ${ui(dictionary, "cssReportSpecificityRisk", "ID specificity risk")}: ${analysis.hasIdSelector ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "cssReportCommentState", "Comments present")}: ${analysis.hasComments ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "compressionRatio", "Compression ratio")}: ${analysis.compressionRatio.toFixed(0)}%`,
+    `- ${ui(dictionary, "cssReportRawCssExcluded", "Raw CSS is excluded from this report; attach a redacted snippet separately if needed.")}`,
+    "",
+    `## ${ui(dictionary, "cssReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "cssReportChecklist", "Review checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+  return { checklist, markdown, metrics, reviewNotes };
+}
+
 const cssExamples = [
   { labelKey: "flexRuleExample", fallbackLabel: "Flex rule", value: ".card{display:flex;gap:16px;color:#111}" },
   { labelKey: "mediaQueryExample", fallbackLabel: "Media query", value: "@media (min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}" },
@@ -6782,14 +6852,33 @@ function CssFormatterPanel({ dictionary, minifier = false }: { dictionary: Clien
   const cssAnalysis = React.useMemo(() => analyzeCss(input), [input]);
   const openBraces = (input.match(/{/g) ?? []).length;
   const closeBraces = (input.match(/}/g) ?? []).length;
-  const warnings = [
-    openBraces !== closeBraces ? ui(dictionary, "cssUnbalancedBracesWarning", "Opening and closing brace counts do not match.") : "",
-    /!important/.test(input) ? ui(dictionary, "cssImportantWarning", "The snippet contains !important. Confirm this is intentional before copying.") : "",
-    cssAnalysis.duplicateSelectors.length ? ui(dictionary, "cssDuplicateSelectorWarning", "Duplicate selectors were detected. Confirm cascade order before copying.") : "",
-    cssAnalysis.hasIdSelector ? ui(dictionary, "cssSpecificityWarning", "ID selectors raise specificity and can make overrides harder.") : "",
-    minifier && cssAnalysis.hasComments ? ui(dictionary, "cssCommentRemovalWarning", "Minifying removes comments, including license or handoff notes.") : "",
-    ui(dictionary, "cssHeuristicWarning", "This lightweight formatter is for small snippets. Run your project formatter before committing large stylesheets."),
-  ].filter(Boolean);
+  const declarationCount = input.match(/:[^;{}]+[;}]/g)?.length ?? 0;
+  const warnings = React.useMemo(
+    () =>
+      [
+        openBraces !== closeBraces ? ui(dictionary, "cssUnbalancedBracesWarning", "Opening and closing brace counts do not match.") : "",
+        /!important/.test(input) ? ui(dictionary, "cssImportantWarning", "The snippet contains !important. Confirm this is intentional before copying.") : "",
+        cssAnalysis.duplicateSelectors.length ? ui(dictionary, "cssDuplicateSelectorWarning", "Duplicate selectors were detected. Confirm cascade order before copying.") : "",
+        cssAnalysis.hasIdSelector ? ui(dictionary, "cssSpecificityWarning", "ID selectors raise specificity and can make overrides harder.") : "",
+        minifier && cssAnalysis.hasComments ? ui(dictionary, "cssCommentRemovalWarning", "Minifying removes comments, including license or handoff notes.") : "",
+        ui(dictionary, "cssHeuristicWarning", "This lightweight formatter is for small snippets. Run your project formatter before committing large stylesheets."),
+      ].filter(Boolean),
+    [closeBraces, cssAnalysis.duplicateSelectors.length, cssAnalysis.hasComments, cssAnalysis.hasIdSelector, dictionary, input, minifier, openBraces],
+  );
+  const cssReviewReport = React.useMemo(
+    () =>
+      buildCssReviewReport({
+        analysis: cssAnalysis,
+        checkedAt: ui(dictionary, "cssReportCopyTime", "Browser copy time"),
+        declarationCount,
+        dictionary,
+        input,
+        minifier,
+        output: result.value,
+        warnings: result.error ? [result.error] : warnings,
+      }),
+    [cssAnalysis, declarationCount, dictionary, input, minifier, result.error, result.value, warnings],
+  );
 
   return (
     <div className="space-y-4" data-css-tool>
@@ -6808,7 +6897,7 @@ function CssFormatterPanel({ dictionary, minifier = false }: { dictionary: Clien
         <ToolMetricGrid
           items={[
             { label: ui(dictionary, "selectorBlocks", "Selector blocks"), value: String(cssAnalysis.selectors.length) },
-            { label: ui(dictionary, "declarations", "Declarations"), value: String(input.match(/:[^;{}]+[;}]/g)?.length ?? 0) },
+            { label: ui(dictionary, "declarations", "Declarations"), value: String(declarationCount) },
             { label: ui(dictionary, "mediaQueries", "Media queries"), value: String(input.match(/@media/g)?.length ?? 0) },
             { label: ui(dictionary, "outputLines", "Output lines"), value: result.value ? String(result.value.split(/\r?\n/).length) : "0" },
           ]}
@@ -6862,6 +6951,56 @@ function CssFormatterPanel({ dictionary, minifier = false }: { dictionary: Clien
       <div data-css-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "cssNoWarnings", "CSS snippet is ready for visual review.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-css-review-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">{ui(dictionary, "cssReviewReport", "CSS review report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "cssReviewReportDescription", "Copy a handoff report with selector, token, cascade, specificity, compression, warning, and checklist signals.")}</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              copyToClipboard(
+                buildCssReviewReport({
+                  analysis: cssAnalysis,
+                  checkedAt: new Date().toISOString(),
+                  declarationCount,
+                  dictionary,
+                  input,
+                  minifier,
+                  output: result.value,
+                  warnings: result.error ? [result.error] : warnings,
+                }).markdown,
+              )
+            }
+            data-css-review-report-copy
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyCssReviewReport", "Copy CSS report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={cssReviewReport.metrics} />
+        <div className="rounded-md border bg-background p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "cssReportReviewNotes", "Review notes")}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">
+            {cssReviewReport.reviewNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-md border bg-background p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "cssReportChecklist", "Review checklist")}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">
+            {cssReviewReport.checklist.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-css-review-report-preview>
+          {cssReviewReport.markdown}
+        </pre>
+      </section>
       {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")} value={result.value} dictionary={dictionary} />}
     </div>
   );
