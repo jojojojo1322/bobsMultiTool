@@ -2940,3 +2940,36 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the SQL review report on the core SQL formatter and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 JavaScript Review Report Source Slice
+
+- Source action: added a copyable JavaScript review report to `/tools/javascript-formatter` and `/tools/javascript-minifier` so the JS tools produce a shareable module/runtime, import/export, async/await, browser API, fetch, console, eval, TODO, compression, review-note, and runtime-checklist artifact without including the raw JavaScript body in the report.
+- Search surface action: expanded the JavaScript Formatter and JavaScript Minifier registry/search intents and added the `review-javascript-snippet` workflow recipe for `javascript review report`, `js snippet risk report`, `javascript fetch checklist`, `javascript eval checker`, and `javascript handoff report`, with layout/search/localization/agent-skill harness coverage so the feature stays inside the JavaScript tools rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/javascript-formatter`, confirmed `JavaScript review report`, `Copy JS report`, module/runtime/fetch/eval metrics, review notes, safe runtime checklist, Markdown preview, and the `Review a JavaScript snippet` workflow card with no console errors.
+- Local report-copy verification: Playwright stubbed `navigator.clipboard.writeText`, clicked `Copy JS report`, and confirmed the copied report began with `# JavaScript review report`, excluded raw JavaScript, and included the review checklist. It then entered `const run=(code)=>eval(code)` and confirmed the report changed to `Eval risk: Yes`.
+- Local minifier verification: Playwright loaded `http://127.0.0.1:3000/tools/javascript-minifier`, confirmed the same report surface in minify mode, entered `/* license */ function hi(){console.log('bob')}`, and confirmed comment-removal warning context plus `Output mode: Minify` in the report preview.
+- Local search verification: Playwright loaded `http://127.0.0.1:3000/search?q=javascript%20review%20report` and confirmed the localized `JavaScript 스니펫 검토` workflow result pointed to `/tools/javascript-formatter` with the `review-javascript-snippet` match signal.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one core code formatter/minifier pair as a JavaScript review handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 JavaScript Review Report Production Deployment
+
+- Commit: `cbc9a76`.
+- Change: deployed the JavaScript review report on `/tools/javascript-formatter` and `/tools/javascript-minifier` with module/runtime/fetch/eval/TODO/compression report metrics, safe raw-JavaScript exclusion, review notes, runtime checklist, localized report labels, registry/search-intent coverage, `review-javascript-snippet` workflow copy, and harness guards.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=cbc9a760bd8049535ee1c290f722acf226c86617 npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/javascript-formatter?deploy=cbc9a76`, confirmed `JavaScript review report`, `Copy JS report`, report preview beginning with `# JavaScript review report`, and the report copy hook with no console errors. It then loaded `https://www.bobob.app/search?q=javascript%20review%20report&deploy=cbc9a76` and confirmed the localized `JavaScript 스니펫 검토` workflow result pointed to `/tools/javascript-formatter`; the only console warning was the existing AdSense `data-nscript` warning.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `84`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
+- Interpretation: production now serves the JavaScript review report on the core JavaScript formatter/minifier and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
