@@ -3099,3 +3099,15 @@ Completion guard:
 - New Blog URL status before request: `URL이 Google에 등록되어 있지 않음`; page indexing reason `발견됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`; referring page `감지된 페이지 없음`; recent crawl, crawler, crawl allowed, page fetch, indexing allowed, user-declared canonical, and Google-selected canonical all showed `해당사항 없음`.
 - New Blog URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`; Google also says repeated submissions do not change queue position or priority.
 - Interpretation: Search Console discovery is now aligned with the live/source `85` URL sitemap, and the new security-header operations post is queued for crawl. This is stronger discovery evidence than the previous `84` state, but it is still not indexing proof because page indexing remains `1` indexed page, not-indexed pages remain `25`, the page indexing report is still dated `2026. 6. 30.`, and the new Blog URL is explicitly not registered yet.
+
+## 2026-07-07 Bing/Naver Webmaster Follow-up
+
+- Bing Webmaster target: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`.
+- Bing browser result: the page resolved to the public Bing Webmaster Tools landing page with `Sign In`, not the site dashboard. After clicking `Sign In`, the visible page still showed `Please sign in` and `Choose an account convenient to you`.
+- Bing Webmaster recommendations: no site-specific sitemap, Site Explorer, URL Submission, or recommendation state was visible in the browser session.
+- Naver Search Advisor target: `https://searchadvisor.naver.com/console/board`.
+- Naver ownership is confirmed: the signed-in `풀꽃` dashboard lists `https://www.bobob.app`, registered `25.07.24`, with ownership expiring `26.07.24`.
+- Naver site summary: security certificate and HTTPS redirect are normal, but the summary still reports `사이트맵을 찾을 수 없습니다`.
+- Naver submitted sitemap rows: only old broad locale sitemap rows from `26.06.16` were visible: `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`.
+- Naver reduced sitemap attempt: `sitemaps/en` and `/sitemaps/en` were entered through browser control, but the visible submitted sitemap row list did not add `sitemaps/en` and no readable success/error message appeared.
+- Interpretation: Bing still has only IndexNow discovery evidence, not Webmaster dashboard evidence. Naver ownership and HTTPS state are confirmed, but the current reduced `85`-URL `/sitemaps/en` discovery set is not visibly registered in Naver Search Advisor. This is not indexing proof, traffic proof, or a reason to mark the active goal complete.

@@ -188,7 +188,7 @@ for (const fragment of [
   searchConsoleDiscoveryStatusFragment,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
-  "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",
+  "Naver Search Advisor still needs a cleanup/pass for visible `sitemaps/en` registration and later collection/indexing state.",
   "Automation id: `bobob-indexing-observation`",
   "Do not mark the active goal complete",
 ]) {

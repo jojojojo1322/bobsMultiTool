@@ -194,14 +194,14 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Search Console sitemap discovery and IndexNow submission are both aligned at `85`; both still need later indexing observation. IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
-  - The latest 2026-07-06 retry against the current 84-URL production target still reached only the public Bing Webmaster Tools landing page, so no Bing sitemap or recommendation state was observed.
+  - The latest 2026-07-07 retry against the current 85-URL production target still reached only the public Bing Webmaster Tools landing page. After clicking `Sign In`, Bing still showed `Please sign in` and `Choose an account convenient to you`, so no Bing sitemap, Site Explorer, URL Submission, or recommendation state was observed.
   - Public Bing `site:www.bobob.app` search was blocked by a `계속하려면 아래 과제 해결` challenge, so it did not provide indexing evidence.
 - Naver:
   - Signed-in Search Advisor showed `https://www.bobob.app` owned under `풀꽃`, registered `25.07.24`, with ownership expiring `26.07.24`.
   - Naver reports security certificate and HTTPS redirect as normal.
-  - Naver still reports `사이트맵을 찾을 수 없습니다` and `콘텐츠 노출/클릭 정보가 없습니다`.
-  - Visible Naver sitemap rows are old broad locale entries from `26.06.16`; `sitemaps/en` was not visibly added after submission attempts.
-  - The latest 2026-07-06 retry reached only the public Search Advisor landing page with `로그인`; the console retry did not produce a readable signed-in site dashboard before the browser-control session timed out.
+  - Naver still reports `사이트맵을 찾을 수 없습니다`.
+  - The latest 2026-07-07 signed-in retry reached the `풀꽃` dashboard and the `https://www.bobob.app` site summary. The sitemap-submit page still shows only old broad locale entries from `26.06.16`: `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`.
+  - `sitemaps/en` and `/sitemaps/en` submission attempts through browser control were not visibly added to the Naver row list and did not show a readable success/error message.
   - A Naver page collection request, when submitted later, must be logged separately and must not be treated as indexing proof.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
@@ -238,8 +238,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
-- Bing Webmaster recommendation classes still need a signed-in follow-up pass after deployment and submission propagation.
-- Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.
+- Bing Webmaster recommendation classes still need a signed-in follow-up pass that reaches the `www.bobob.app` dashboard after deployment and submission propagation.
+- Naver Search Advisor still needs a cleanup/pass for visible `sitemaps/en` registration and later collection/indexing state.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
 
 ## Scheduled Follow-up
