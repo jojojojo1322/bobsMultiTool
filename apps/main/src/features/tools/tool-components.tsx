@@ -5566,6 +5566,69 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
   );
 }
 
+function buildRandomTokenReport({
+  bytes,
+  format,
+  purposeKey,
+  value,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  bytes: number;
+  format: string;
+  purposeKey: string;
+  value: string;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const safeBytes = clampInteger(bytes, 8, 128);
+  const entropyBits = safeBytes * 8;
+  const formatLabel = format === "url" ? "URL-safe" : format === "base64" ? "Base64" : "Hex";
+  const urlSafeLabel = format === "url" || format === "hex" ? ui(dictionary, "yes", "Yes") : ui(dictionary, "no", "No");
+  const paddingLabel = format === "base64" ? "Base64 =" : ui(dictionary, "notApplicable", "Not applicable");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "tokenReportNoWarnings", "No obvious token generation warnings detected. Store and rotate the secret deliberately.")];
+  const checklist = [
+    ui(dictionary, "tokenReportChecklistStore", "Store production secrets in a secret manager or password manager before sharing any access."),
+    ui(dictionary, "tokenReportChecklistRotate", "Record where the token is used so it can be rotated or revoked later."),
+    ui(dictionary, "tokenReportChecklistUrl", "Use URL-safe format for links, cookies, headers, and path segments."),
+    ui(dictionary, "tokenReportChecklistNoLogs", "Do not paste production tokens into logs, tickets, analytics, or screenshots."),
+    ui(dictionary, "tokenReportChecklistIdentifier", "Use UUIDs for identifiers only; use random tokens for secrets."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "tokenReportFormat", "Format"), value: formatLabel },
+    { label: ui(dictionary, "bytes", "Bytes"), value: String(safeBytes) },
+    { label: ui(dictionary, "entropyEstimate", "Entropy estimate"), value: `${entropyBits} bits` },
+    { label: ui(dictionary, "encodedLength", "Encoded length"), value: String(value.length) },
+    { label: ui(dictionary, "tokenUse", "Intended use"), value: ui(dictionary, purposeKey, purposeKey) },
+    { label: ui(dictionary, "tokenUrlSafe", "URL safe"), value: urlSafeLabel },
+    { label: ui(dictionary, "tokenPadding", "Padding"), value: paddingLabel },
+    { label: ui(dictionary, "tokenReportTokenPolicy", "Token included"), value: ui(dictionary, "tokenReportTokenExcluded", "No, only token metrics, format, and intended use are included.") },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "randomTokenReport", "Random token report")}`,
+    "",
+    `- ${ui(dictionary, "tokenReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "tokenReportFormat", "Format")}: ${formatLabel}`,
+    `- ${ui(dictionary, "bytes", "Bytes")}: ${safeBytes}`,
+    `- ${ui(dictionary, "entropyEstimate", "Entropy estimate")}: ${entropyBits} bits`,
+    `- ${ui(dictionary, "encodedLength", "Encoded length")}: ${value.length}`,
+    `- ${ui(dictionary, "tokenUse", "Intended use")}: ${ui(dictionary, purposeKey, purposeKey)}`,
+    `- ${ui(dictionary, "tokenUrlSafe", "URL safe")}: ${urlSafeLabel}`,
+    `- ${ui(dictionary, "tokenPadding", "Padding")}: ${paddingLabel}`,
+    `- ${ui(dictionary, "tokenReportTokenPolicy", "Token included")}: ${ui(dictionary, "tokenReportTokenExcluded", "No, only token metrics, format, and intended use are included.")}`,
+    "",
+    `## ${ui(dictionary, "tokenReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "tokenReportChecklist", "Secret handling checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function RandomTokenTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [bytes, setBytes] = React.useState(32);
   const [format, setFormat] = React.useState("hex");
@@ -5590,12 +5653,29 @@ function RandomTokenTool({ dictionary }: { dictionary: ClientDictionary }) {
 
   const safeBytes = clampInteger(bytes, 8, 128);
   const entropyBits = safeBytes * 8;
-  const tokenWarnings = [
-    safeBytes < 16 ? ui(dictionary, "tokenShortWarning", "Use at least 16 bytes for security-sensitive tokens.") : "",
-    format === "base64" ? ui(dictionary, "tokenBase64PaddingWarning", "Standard Base64 can include +, /, and = padding. Use URL-safe format for links, cookies, and path segments.") : "",
-    format !== "url" && purposeKey === "tokenUseUrlSafe" ? ui(dictionary, "tokenUrlFormatWarning", "This use case usually needs a URL-safe token. Switch format before copying.") : "",
-    ui(dictionary, "tokenLocalWarning", "Generated locally with browser crypto. Store real secrets in a secret manager or password manager."),
-  ].filter(Boolean);
+  const tokenWarnings = React.useMemo(
+    () =>
+      [
+        safeBytes < 16 ? ui(dictionary, "tokenShortWarning", "Use at least 16 bytes for security-sensitive tokens.") : "",
+        format === "base64" ? ui(dictionary, "tokenBase64PaddingWarning", "Standard Base64 can include +, /, and = padding. Use URL-safe format for links, cookies, and path segments.") : "",
+        format !== "url" && purposeKey === "tokenUseUrlSafe" ? ui(dictionary, "tokenUrlFormatWarning", "This use case usually needs a URL-safe token. Switch format before copying.") : "",
+        ui(dictionary, "tokenLocalWarning", "Generated locally with browser crypto. Store real secrets in a secret manager or password manager."),
+      ].filter(Boolean),
+    [dictionary, format, purposeKey, safeBytes],
+  );
+  const tokenReport = React.useMemo(
+    () =>
+      buildRandomTokenReport({
+        bytes: safeBytes,
+        format,
+        purposeKey,
+        value,
+        warnings: tokenWarnings,
+        dictionary,
+        checkedAt: ui(dictionary, "tokenReportCopyTime", "Browser copy time"),
+      }),
+    [dictionary, format, purposeKey, safeBytes, tokenWarnings, value],
+  );
   const applyPreset = (preset: (typeof tokenPresets)[number]) => {
     setBytes(preset.bytes);
     setFormat(preset.format);
@@ -5648,6 +5728,51 @@ function RandomTokenTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-random-token-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={tokenWarnings} emptyLabel={ui(dictionary, "tokenNoWarnings", "Token settings look ready for local generation.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-random-token-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">{ui(dictionary, "randomTokenReport", "Random token report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "randomTokenReportDescription", "Copy a safe token handoff report without including the generated token value.")}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-random-token-report-copy
+            onClick={() =>
+              copyToClipboard(
+                buildRandomTokenReport({
+                  bytes: safeBytes,
+                  format,
+                  purposeKey,
+                  value,
+                  warnings: tokenWarnings,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyRandomTokenReport", "Copy token report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={tokenReport.metrics} />
+        <ToolWarningList title={ui(dictionary, "tokenReportReviewNotes", "Review notes")} warnings={tokenReport.reviewNotes} emptyLabel={ui(dictionary, "tokenReportNoWarnings", "No obvious token generation warnings detected. Store and rotate the secret deliberately.")} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "tokenReportChecklist", "Secret handling checklist")}</p>
+          <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {tokenReport.checklist.map((item) => (
+              <li key={item} className="rounded-md bg-muted px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-random-token-report-preview>
+          <code>{tokenReport.markdown}</code>
+        </pre>
+      </section>
       <ResultBlock title={ui(dictionary, "randomToken", "Random token")} value={value} dictionary={dictionary} />
     </div>
   );

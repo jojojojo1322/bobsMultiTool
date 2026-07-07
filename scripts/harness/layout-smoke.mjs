@@ -272,8 +272,8 @@ for (const fragment of ["data-password-mode", "data-password-options", "data-pas
   if (!source.includes(fragment)) failures.push(`Password Generator detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedPasswordPassphraseToolUi") || !dictionaries.includes("passphraseCompatibilityWarning")) failures.push("Password passphrase UI labels must be localized");
-for (const fragment of ["data-random-token-examples", "data-random-token-diagnostics", "data-random-token-warnings", "localizedRandomTokenToolUi"]) {
-  const source = fragment === "localizedRandomTokenToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-random-token-examples", "data-random-token-diagnostics", "data-random-token-report", "data-random-token-report-copy", "data-random-token-report-preview", "data-random-token-warnings", "buildRandomTokenReport", "localizedRandomTokenToolUi", "localizedRandomTokenReportToolUi", "randomTokenReport", "copyRandomTokenReport", "tokenReportTokenExcluded", "tokenReportChecklistStore"]) {
+  const source = fragment === "localizedRandomTokenToolUi" || fragment === "localizedRandomTokenReportToolUi" || fragment === "randomTokenReport" || fragment === "copyRandomTokenReport" || fragment === "tokenReportTokenExcluded" || fragment === "tokenReportChecklistStore" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Random Token Generator detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-qr-examples", "data-qr-payload-builder", "data-qr-builder-fields", "data-qr-result-details", "data-qr-diagnostics", "data-qr-payload-type", "data-qr-scan-report", "data-qr-scan-report-copy", "data-qr-scan-report-preview", "data-qr-preview", "data-qr-warnings", "buildQrScanReport", "localizedQrBuilderToolUi", "localizedQrDiagnosticsToolUi", "localizedQrReportToolUi", "localizedCoreDepthToolUi", "qrScanReport", "copyQrScanReport", "qrReportInputExcluded", "qrScanChecklistDevices"]) {

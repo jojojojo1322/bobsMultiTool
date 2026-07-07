@@ -109,6 +109,9 @@ for (const fragment of ["localizedHashReportToolUi", "hashSignatureReport", "cop
 for (const fragment of ["localizedPasswordPassphraseToolUi", "passphraseModeDescription", "passphraseCompatibilityWarning", "암호구문", "パスフレーズ", "Passphrase", "عبارة مرور"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized password passphrase content missing fragment: ${fragment}`);
 }
+for (const fragment of ["localizedRandomTokenReportToolUi", "randomTokenReport", "copyRandomTokenReport", "tokenReportTokenExcluded", "Random token 리포트", "Random tokenレポート", "Reporte de token aleatorio", "Random-Token-Bericht", "تقرير token عشوائي"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized random token report content missing fragment: ${fragment}`);
+}
 for (const fragment of ["localizedQrBuilderToolUi", "qrPayloadBuilder", "qrWifiSsid", "Payload 빌더", "Payloadビルダー", "Constructor de payload", "منشئ payload"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized QR builder content missing fragment: ${fragment}`);
 }
