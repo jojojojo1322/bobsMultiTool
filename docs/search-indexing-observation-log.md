@@ -3055,3 +3055,25 @@ Completion guard:
 - Local discovery spot check: `/sitemaps/en`, `/feed.xml`, `/feed.json`, and `/llms.txt` all included `security-header-report-before-copying-devtools`.
 - Search Console action: none in this source pass. The latest signed-in Search Console observation still reflects the externally submitted `84`-URL sitemap from `2026. 7. 6.`; the current source target is now `85` and needs deployment/live discovery plus later signed-in Search Console/Bing/Naver observation.
 - Interpretation: this strengthens Blog evidence for the HTTP Security header report feature and the web-operations positioning, but it is source/local content evidence only until deployment, live discovery, IndexNow/WebSub, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Security Header Blog Discovery Production Deployment
+
+- Commit: `8dce67e`.
+- Change: deployed `security-header-report-before-copying-devtools` as a representative operations Blog post tied to `indexing-waiting-room`, kept Blog and Play reciprocal links aligned, and refreshed operations discovery metadata for the security-header report lane.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=8dce67ed5036268229462d178af2c6ce41eb5c8a npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `84`, and live sitemap URLs `85`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/blog/security-header-report-before-copying-devtools?deploy=8dce67e` and confirmed the new post rendered with the expected title and no console errors. Playwright also loaded `https://www.bobob.app/search?q=security%20header%20report&deploy=8dce67e` and confirmed the localized `보안 헤더 점검` workflow, `/tools/http-status-checker`, `/blog/security-header-report-before-copying-devtools`, and `/play/indexing-waiting-room` results were visible with no console errors.
+- Live sitemap/cache check: Googlebot and Bobob search-discovery user agents both fetched `/sitemaps/en` with `85` URL entries, and the live sitemap included `security-header-report-before-copying-devtools`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub feed item counts: `62`, `62`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The latest signed-in `bobob935@gmail.com` Search Console observation still reflects the externally submitted `84`-URL sitemap from `2026. 7. 6.`; the current deployed/source target is now `85` URLs and must be checked later from a Chrome profile/session signed in as `bobob935@gmail.com`.
+- Interpretation: production now serves the security-header operations Blog post, live discovery is refreshed at `85` sitemap URLs and `62` feed items, IndexNow has been refreshed at `85`, and WebSub has been refreshed at `62`, but this is still discovery-surface and live-content evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

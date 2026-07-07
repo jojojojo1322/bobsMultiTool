@@ -93,6 +93,10 @@ const currentRepresentativeBlogCount = backtickNumber(discoveryRegistration, "Cu
 const latestExternalSitemapCount = backtickNumber(discoveryRegistration, "Latest external sitemap discovery count") ?? currentSubmittedSitemapCount;
 const latestIndexNowSubmissionCount = backtickNumber(discoveryRegistration, "Latest IndexNow representative submission count") ?? currentSubmittedSitemapCount;
 const latestExternalFeedItemCount = backtickNumber(discoveryRegistration, "Latest external feed publish item count") ?? currentFeedItemCount;
+const searchConsoleDiscoveryStatusFragment =
+  latestExternalSitemapCount === currentSubmittedSitemapCount
+    ? `Search Console sitemap discovery now matches the current live representative sitemap URL count (\`${latestExternalSitemapCount}\`)`
+    : `Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (\`${latestExternalSitemapCount}\`)`;
 
 if (blogEntries.length < 39) failures.push(`audit expects at least 39 Blog posts, found ${blogEntries.length}`);
 if (representativeBlogEntries.length < 30 || representativeBlogEntries.length > 45) {
@@ -179,7 +183,7 @@ for (const fragment of [
   "Search Console has started showing more impressions (`18`)",
   "Google URL Inspection proves the homepage itself is indexed.",
   "Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`.",
-  `Search Console sitemap discovery now matches the current live representative sitemap URL count (\`${latestExternalSitemapCount}\`)`,
+  searchConsoleDiscoveryStatusFragment,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
   "Naver Search Advisor still needs a cleanup/pass for reduced sitemap registration and later collection/indexing state.",
