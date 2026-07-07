@@ -222,6 +222,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Security-header report source target:
   - Current source feed target is now `62` representative Blog + Play items after adding `security-header-report-before-copying-devtools`.
   - This source-target change is deployed and refreshed through IndexNow/WebSub, but it is not Search Console indexing proof until later signed-in Search Console/Bing/Naver observations are recorded.
+- HTTPS certificate and mixed-content source target:
+  - The existing HTTP Status Checker and security-header workflow now route HTTPS redirect, SSL/TLS certificate, browser certificate-error, and mixed-content queries into the same public URL report, security-header report, URL Parser, and DNS Lookup path.
+  - This intentionally does not claim full certificate-expiry auditing; it separates final HTTPS URL, redirect chain, HSTS/CSP headers, DNS target, and copied header evidence before browser or hosting-platform certificate checks.
+  - This source change improves operations-search coverage while the `2026. 6. 30.` Search Console page-indexing report snapshot remains stale. It is not Search Console indexing proof until a later signed-in observation changes.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:

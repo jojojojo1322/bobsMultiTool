@@ -106,6 +106,14 @@ for (const intent of ["robots crawl report", "robots txt report", "crawl policy 
 for (const intent of ["apex to www redirect", "www redirect checker", "308 redirect checker", "http to https redirect checker", "redirect loop checker", "search console redirect page", "리디렉션이 포함된 페이지", "www 리디렉션 확인", "리디렉션 루프 점검"]) {
   if (!registry.includes(intent)) failures.push(`HTTP Status Checker registry search surface missing ${intent}`);
 }
+for (const intent of ["https redirect checker", "ssl redirect checker", "certificate error redirect", "net::err_cert_common_name_invalid", "err_cert_date_invalid", "HTTPS 리디렉션 확인", "SSL 리디렉션 확인", "인증서 오류 리디렉션"]) {
+  if (!workflows.includes(intent)) failures.push(`redirect workflow certificate/HTTPS intent missing ${intent}`);
+  if (!registry.includes(intent)) failures.push(`HTTP Status Checker certificate/HTTPS redirect surface missing ${intent}`);
+}
+for (const intent of ["ssl certificate checker", "tls certificate checker", "https certificate checker", "ssl certificate error", "ssl expiration checker", "certificate error devtools", "mixed content checker", "mixed content warning", "blocked mixed content", "SSL 인증서 확인", "TLS 인증서 확인", "HTTPS 인증서 확인", "인증서 만료 확인", "보안 인증서 오류", "혼합 콘텐츠 확인", "혼합 콘텐츠 경고"]) {
+  if (!workflows.includes(intent)) failures.push(`security header workflow certificate/mixed-content intent missing ${intent}`);
+  if (!registry.includes(intent)) failures.push(`HTTP Status Checker certificate/mixed-content search surface missing ${intent}`);
+}
 for (const intent of ["meta crawler report", "seo meta report", "social preview report", "open graph crawler report", "link preview qa report", "indexable metadata check", "noindex metadata checker", "canonical metadata report"]) {
   if (!registry.includes(intent)) failures.push(`Meta Tag Generator registry search surface missing ${intent}`);
 }
