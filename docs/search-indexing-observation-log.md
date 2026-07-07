@@ -3321,3 +3321,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so deploy-config, Docker Compose, Vercel env, and Korean deployment-setting query families stay wired to workflow search and registry metadata.
 - Search Console action: none in this source pass. This improves public routing for deployment-config intent but does not change Google's page-indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this is a product/search-surface improvement for the operations workbench while indexing reports lag. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Deploy Config Workflow Production Deployment
+
+- Commit: `b8ff5ce`.
+- Change: deployed the deploy-config workflow search surface for Docker Compose, Vercel environment variables, missing production env values, Korean `배포 설정 점검`, and related YAML/ENV config queries; deployed the refreshed `vercel-sitemap-canonical-log` operations article section explaining why DevTools Network output is not enough for deployment root-cause work.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:deployment-status` returned `overallState: success` for `b8ff5cec6592069cb86d8398b3c9cedb8d75819f` after earlier pending checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=배포%20설정%20점검&deploy=b8ff5ce` and confirmed `배포 설정 검증`, `YAML Check`, `ENV Check`, `배포 설정 점검`, and `배포 환경변수 누락` appeared with no console errors. Playwright also loaded `https://www.bobob.app/blog/vercel-sitemap-canonical-log?deploy=b8ff5ce` and confirmed the `배포 설정 파일은 DevTools보다 먼저 본다` section, Docker Compose row, ENV Parser Validator row, and HTTP Status Checker/DNS row rendered with no console errors. Both live browser checks showed only the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The deployed public routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers deployment-config intent with an operations workflow and an updated representative article, while live discovery and submission signals are clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
