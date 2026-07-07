@@ -110,9 +110,16 @@ for (const intent of ["https redirect checker", "ssl redirect checker", "certifi
   if (!workflows.includes(intent)) failures.push(`redirect workflow certificate/HTTPS intent missing ${intent}`);
   if (!registry.includes(intent)) failures.push(`HTTP Status Checker certificate/HTTPS redirect surface missing ${intent}`);
 }
+for (const intent of ["http 500 checker", "http 502 checker", "http 503 checker", "http 504 checker", "5xx status checker", "500 internal server error checker", "502 bad gateway checker", "503 service unavailable checker", "504 gateway timeout checker", "upstream timeout checker", "cloudflare 522 checker", "cloudflare 524 timeout", "500 오류 확인", "502 bad gateway 확인", "504 gateway timeout 확인", "서버 오류 상태 확인", "Cloudflare 522 확인"]) {
+  if (!workflows.includes(intent)) failures.push(`redirect workflow 5xx/CDN intent missing ${intent}`);
+  if (!registry.includes(intent)) failures.push(`HTTP Status Checker 5xx/CDN search surface missing ${intent}`);
+}
 for (const intent of ["ssl certificate checker", "tls certificate checker", "https certificate checker", "ssl certificate error", "ssl expiration checker", "certificate error devtools", "mixed content checker", "mixed content warning", "blocked mixed content", "SSL 인증서 확인", "TLS 인증서 확인", "HTTPS 인증서 확인", "인증서 만료 확인", "보안 인증서 오류", "혼합 콘텐츠 확인", "혼합 콘텐츠 경고"]) {
   if (!workflows.includes(intent)) failures.push(`security header workflow certificate/mixed-content intent missing ${intent}`);
   if (!registry.includes(intent)) failures.push(`HTTP Status Checker certificate/mixed-content search surface missing ${intent}`);
+}
+for (const intent of ["api 500 error report", "500 response body", "internal server error json", "server error response report", "500 오류 응답 정리", "서버 오류 응답 보고서"]) {
+  if (!workflows.includes(intent)) failures.push(`API response 5xx workflow search intent missing ${intent}`);
 }
 for (const intent of ["meta crawler report", "seo meta report", "social preview report", "open graph crawler report", "link preview qa report", "indexable metadata check", "noindex metadata checker", "canonical metadata report"]) {
   if (!registry.includes(intent)) failures.push(`Meta Tag Generator registry search surface missing ${intent}`);
@@ -122,6 +129,9 @@ for (const intent of ["url canonical report", "clean url report", "utm cleanup r
 }
 for (const intent of ["dns deployment checker", "dns deployment checklist", "dns deployment report", "domain dns report", "dmarc checker", "name server checker"]) {
   if (!registry.includes(intent)) failures.push(`DNS Lookup registry search surface missing ${intent}`);
+}
+for (const intent of ["500 after deploy", "502 bad gateway deploy", "503 service unavailable deploy", "504 gateway timeout deploy", "vercel 500 error", "vercel 502 error", "vercel function timeout", "cloudflare 522 error", "cloudflare 524 timeout", "배포 후 500 오류", "배포 후 502 오류", "배포 후 504 오류", "Vercel 500 오류", "Cloudflare 522 오류"]) {
+  if (!workflows.includes(intent)) failures.push(`deploy config 5xx/CDN workflow intent missing ${intent}`);
 }
 for (const intent of ["sql review report", "sql query review report", "sql mutation checklist", "sql handoff report"]) {
   if (!registry.includes(intent)) failures.push(`SQL Formatter registry search surface missing ${intent}`);
