@@ -3119,3 +3119,12 @@ Completion guard:
 - Naver relevance: the latest signed-in Naver Search Advisor check showed only old broad locale sitemap rows from `26.06.16`; those rows were 404 before this source fix, so redirecting them to the reduced sitemap removes a concrete dead-route crawler signal.
 - Harness guard: route and live-discovery smoke now assert that `/sitemaps/ar` 308 redirects to `/sitemaps/en`.
 - Interpretation: this is crawl-surface cleanup for old external webmaster submissions. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Search Console Misread Article Freshness Slice
+
+- Source action: refreshed `search-console-misreads-for-indie-devs` with the signed-in `2026-07-07` Search Console observation: `/sitemaps/en` status `성공`, discovered pages `85`, last read `2026. 7. 7.`, while the Page indexing report was still dated `2026. 6. 30.` with indexed pages `1` and not-indexed pages `25`.
+- Article action: added a 2026-07-07 comparison table that separates live sitemap count, Search Console discovered pages, Page indexing report freshness, indexed/not-indexed page counts, and the new Blog URL's `발견됨 - 현재 색인이 생성되지 않음` inspection state.
+- Naver action: added the retired-locale sitemap row note to the same representative article, so the public operations record explains why old `sitemaps/ar`, `sitemaps/th`, and `sitemaps/zh-CN` rows are now redirected to `/sitemaps/en` instead of being treated as dead XML routes.
+- Sitemap/feed target: unchanged at `85` submitted sitemap URLs and `62` representative feed items; this is an update to an existing representative operations article, not a new submitted URL.
+- Search Console action: none in this source pass. The latest signed-in external observation is already logged above; the next external pass should compare Page indexing report date/reason rows and Bing/Naver evidence rather than resubmitting only because this existing article changed.
+- Interpretation: this strengthens the Blog evidence for the current indexing wait-state and prevents sitemap discovery from being mistaken for indexing proof. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
