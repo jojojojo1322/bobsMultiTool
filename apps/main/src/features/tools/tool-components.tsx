@@ -1590,6 +1590,64 @@ function getJsonDiagnosticRows(diagnostics: ReturnType<typeof collectJsonDiagnos
   ].slice(0, 10);
 }
 
+function buildJsonApiResponseReport({
+  stats,
+  diagnostics,
+  paths,
+  dictionary,
+  checkedAt,
+}: {
+  stats: ReturnType<typeof collectJsonStats>;
+  diagnostics: ReturnType<typeof collectJsonDiagnostics>;
+  paths: ReturnType<typeof collectJsonPaths>;
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const reviewNotes = getJsonDiagnosticWarnings(stats, diagnostics, dictionary);
+  const pathRows = paths.slice(0, 6);
+  const checklist = [
+    ui(dictionary, "jsonApiChecklistRedact", "Redact tokens, cookies, customer identifiers, and internal URLs before sharing."),
+    ui(dictionary, "jsonApiChecklistParseError", "If the response is invalid, include the exact parse error line and column in the bug report."),
+    ui(dictionary, "jsonApiChecklistLargePayload", "For large or deeply nested responses, share a JSONPath-focused sample instead of the full payload."),
+    ui(dictionary, "jsonApiChecklistDuplicateKeys", "Confirm duplicate keys before trusting downstream parser output."),
+    ui(dictionary, "jsonApiChecklistAttachSample", "Attach a formatted sample only after removing production-only values."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "rootType", "Root type"), value: stats.rootType },
+    { label: ui(dictionary, "topLevelItems", "Top-level items"), value: String(stats.topLevelItems) },
+    { label: ui(dictionary, "nestedDepth", "Nested depth"), value: String(stats.depth) },
+    { label: ui(dictionary, "outputLines", "Output lines"), value: String(stats.lines) },
+    { label: ui(dictionary, "sensitiveKeys", "Sensitive keys"), value: String(diagnostics.sensitivePaths.length) },
+    { label: ui(dictionary, "duplicateKeys", "Duplicate keys"), value: String(diagnostics.duplicateKeys.length) },
+  ];
+  const reviewLines = reviewNotes.length ? reviewNotes : [ui(dictionary, "jsonApiReportNoWarnings", "No obvious JSON structure warnings detected. Still redact production identifiers before sharing.")];
+  const pathLines = pathRows.length
+    ? pathRows.map((entry) => `- \`${entry.path}\` (${entry.type}) - ${entry.preview}`)
+    : [`- ${ui(dictionary, "jsonApiReportNoPaths", "No preview paths were available for this payload.")}`];
+
+  const markdown = [
+    `# ${ui(dictionary, "jsonApiResponseReport", "API response report")}`,
+    "",
+    `- ${ui(dictionary, "jsonApiReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "rootType", "Root type")}: ${stats.rootType}`,
+    `- ${ui(dictionary, "topLevelItems", "Top-level items")}: ${stats.topLevelItems}`,
+    `- ${ui(dictionary, "nestedDepth", "Nested depth")}: ${stats.depth}`,
+    `- ${ui(dictionary, "outputLines", "Output lines")}: ${stats.lines}`,
+    `- ${ui(dictionary, "inputBytes", "Input bytes")}: ${diagnostics.bytes}`,
+    "",
+    `## ${ui(dictionary, "jsonApiReportReviewNotes", "Review notes")}`,
+    ...reviewLines.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "jsonApiReportPaths", "Useful JSON paths")}`,
+    ...pathLines,
+    "",
+    `## ${ui(dictionary, "jsonApiSafeHandoffChecklist", "Safe handoff checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, pathRows, checklist };
+}
+
 function collectJsonPaths(value: unknown, limit = 12) {
   const paths: Array<{ path: string; type: string; preview: string }> = [];
   const walk = (node: unknown, path: string, depth: number) => {
@@ -1746,6 +1804,16 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
       return { error: error instanceof Error ? error.message : "Invalid path", normalized: pathQuery, tokens: [], found: false, value: undefined };
     }
   }, [pathQuery, result]);
+  const apiResponseReport = React.useMemo(() => {
+    if (!result.stats || !result.diagnostics) return null;
+    return buildJsonApiResponseReport({
+      stats: result.stats,
+      diagnostics: result.diagnostics,
+      paths: result.paths,
+      dictionary,
+      checkedAt: ui(dictionary, "jsonApiReportCopyTime", "Browser copy time"),
+    });
+  }, [dictionary, result.diagnostics, result.paths, result.stats]);
 
   return (
     <div className="space-y-4">
@@ -1857,6 +1925,51 @@ function JsonFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
                 ) : null}
               </div>
               <ToolWarningList title={ui(dictionary, "jsonReviewNotes", "JSON review notes")} warnings={getJsonDiagnosticWarnings(result.stats, result.diagnostics, dictionary)} emptyLabel={ui(dictionary, "jsonNoDiagnosticWarnings", "JSON structure looks ready to copy. Still redact real production identifiers before sharing.")} />
+            </section>
+          ) : null}
+          {apiResponseReport && result.stats && result.diagnostics ? (
+            <section className="space-y-3 rounded-md border bg-card p-3" data-json-api-report>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{ui(dictionary, "jsonApiResponseReport", "API response report")}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsonApiResponseReportDescription", "Copy a compact handoff report with structure, diagnostics, useful JSON paths, and safe sharing checks.")}</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  data-json-api-report-copy
+                  onClick={() =>
+                    copyToClipboard(
+                      buildJsonApiResponseReport({
+                        stats: result.stats!,
+                        diagnostics: result.diagnostics!,
+                        paths: result.paths,
+                        dictionary,
+                        checkedAt: new Date().toISOString(),
+                      }).markdown,
+                    )
+                  }
+                >
+                  <Copy className="h-4 w-4" />
+                  {ui(dictionary, "copyJsonApiResponseReport", "Copy API report")}
+                </Button>
+              </div>
+              <ToolMetricGrid items={apiResponseReport.metrics} />
+              <ToolWarningList title={ui(dictionary, "jsonApiReportReviewNotes", "Review notes")} warnings={apiResponseReport.reviewNotes} emptyLabel={ui(dictionary, "jsonApiReportNoWarnings", "No obvious JSON structure warnings detected. Still redact production identifiers before sharing.")} />
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jsonApiSafeHandoffChecklist", "Safe handoff checklist")}</p>
+                <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                  {apiResponseReport.checklist.map((item) => (
+                    <li key={item} className="rounded-md bg-muted px-3 py-2">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-json-api-report-preview>
+                <code>{apiResponseReport.markdown}</code>
+              </pre>
             </section>
           ) : null}
           <section className="rounded-md border bg-card p-3" data-json-structure>

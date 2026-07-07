@@ -223,8 +223,8 @@ for (const fragment of ["data-regex-presets", "data-regex-cheat-snippets", "data
   const source = fragment === "localizedRegexToolUi" || fragment === "localizedRegexGeneratorToolUi" || fragment === "localizedRegexSnippetToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Regex detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-json-examples", "data-json-result-details", "data-json-structure", "data-json-diagnostics", "data-json-diagnostic-paths", "collectJsonDiagnostics", "findDuplicateJsonObjectKeys", "getJsonDiagnosticWarnings", "data-json-error-details", "data-json-error-context", "getJsonErrorHintKey", "jsonRepairHint", "data-json-path-inspector", "localizedJsonFormatterToolUi", "localizedJsonDiagnosticsToolUi", "localizedCoreDepthToolUi"]) {
-  const source = fragment === "localizedJsonFormatterToolUi" || fragment === "localizedJsonDiagnosticsToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-json-examples", "data-json-result-details", "data-json-structure", "data-json-diagnostics", "data-json-diagnostic-paths", "data-json-api-report", "data-json-api-report-copy", "data-json-api-report-preview", "buildJsonApiResponseReport", "copyJsonApiResponseReport", "collectJsonDiagnostics", "findDuplicateJsonObjectKeys", "getJsonDiagnosticWarnings", "data-json-error-details", "data-json-error-context", "getJsonErrorHintKey", "jsonRepairHint", "data-json-path-inspector", "localizedJsonFormatterToolUi", "localizedJsonDiagnosticsToolUi", "localizedJsonReportToolUi", "localizedCoreDepthToolUi"]) {
+  const source = fragment === "localizedJsonFormatterToolUi" || fragment === "localizedJsonDiagnosticsToolUi" || fragment === "localizedJsonReportToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`JSON Formatter detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-jsonpath-examples", "data-jsonpath-supported-syntax", "data-jsonpath-result-details", "data-jsonpath-matches", "data-jsonpath-warnings", "localizedJsonPathToolUi"]) {

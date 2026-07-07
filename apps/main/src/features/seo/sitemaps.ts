@@ -5,7 +5,7 @@ import { getPlayContents } from "@/features/content/play";
 import { operationalToolSlugs } from "@/features/tools/operational-surface";
 
 const siteUrl = "https://www.bobob.app";
-const archiveLastmod = "2026-07-06";
+const archiveLastmod = "2026-07-07";
 const sitemapSubmissionLocales = [defaultLocale] as const;
 
 type ChangeFrequency = "weekly" | "monthly" | "yearly";

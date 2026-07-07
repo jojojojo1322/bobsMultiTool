@@ -2663,3 +2663,17 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the JWT auth report on a submitted security/API tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 JSON API Response Report Source Slice
+
+- Source action: added a copyable API response report to `/tools/json-formatter` so the submitted JSON/API tool produces a shareable root-shape, depth, output-size, sensitive-key, duplicate-key, useful-path, and safe-handoff checklist artifact instead of only showing formatted JSON.
+- Search surface action: expanded the JSON Formatter registry/search intents and the `format-api-response` workflow recipe for `api response report`, `json response report`, and `api error report`, and updated layout/search/agent-skill harness coverage so the feature stays inside the submitted JSON Formatter tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/json-formatter`, confirmed `API response report`, `Copy API report`, root/depth/output/sensitive/duplicate metrics, review notes, safe handoff checklist, Markdown preview, and clicked the report copy button with no console errors. The copied system clipboard began with `# API response report`.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one submitted operations tool page as an API response handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
