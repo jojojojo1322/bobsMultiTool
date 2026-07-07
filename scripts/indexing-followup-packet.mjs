@@ -16,8 +16,10 @@ const searchConsoleProperty = "sc-domain:bobob.app";
 const searchConsoleResource = encodeURIComponent(searchConsoleProperty);
 const searchConsoleSitemapsUrl = `https://search.google.com/search-console/sitemaps?resource_id=${searchConsoleResource}&hl=ko`;
 const searchConsoleIndexUrl = `https://search.google.com/search-console/index?resource_id=${searchConsoleResource}&hl=ko`;
-const bingWebmasterUrl = "https://www.bing.com/webmasters/";
-const naverSearchAdvisorUrl = "https://searchadvisor.naver.com/";
+const encodedCanonicalBaseUrl = encodeURIComponent(canonicalBaseUrl);
+const bingWebmasterUrl = `https://www.bing.com/webmasters/home?siteUrl=${encodedCanonicalBaseUrl}`;
+const naverSearchAdvisorUrl = `https://searchadvisor.naver.com/console/site/summary?site=${encodedCanonicalBaseUrl}`;
+const naverSitemapUrl = `https://searchadvisor.naver.com/console/site/request/sitemap?site=${encodedCanonicalBaseUrl}`;
 const retiredSitemapPaths = [
   "/sitemaps/ko",
   "/sitemaps/ja",
@@ -262,6 +264,9 @@ function assertPacket(packet, snapshot, log, registration) {
     "## Naver Search Advisor Check",
     "Naver Search Advisor checklist",
     "If Naver still shows old locale sitemap rows",
+    `Open: ${bingWebmasterUrl}`,
+    `Open site summary: ${naverSearchAdvisorUrl}`,
+    `Open sitemap request: ${naverSitemapUrl}`,
     `Property: \`${searchConsoleProperty}\``,
     `Sitemaps report: ${searchConsoleSitemapsUrl}`,
     `Page indexing report: ${searchConsoleIndexUrl}`,
@@ -344,13 +349,15 @@ function renderPacket(snapshot, log, registration) {
     "## Bing Webmaster Check",
     "",
     `- Open: ${bingWebmasterUrl}`,
+    "- This should go straight to the `www.bobob.app` site dashboard when the browser session is signed in.",
     "- Check SEO recommendations before calling the indexing loop complete.",
     "- Watch for the prior issue classes: missing h1, duplicate title, duplicate description, insufficient content, and weak inbound-link signals.",
     "- If Bing shows page-level examples, compare them against the live rendered route before changing public metadata.",
     "",
     "## Naver Search Advisor Check",
     "",
-    `- Open: ${naverSearchAdvisorUrl}`,
+    `- Open site summary: ${naverSearchAdvisorUrl}`,
+    `- Open sitemap request: ${naverSitemapUrl}`,
     "- Naver Search Advisor checklist: confirm the `https://www.bobob.app` site property, sitemap submission state, robots.txt state, and representative URL collection/request status.",
     "- If Naver still shows old locale sitemap rows, record whether rows such as `sitemaps/ar`, `sitemaps/th`, and `sitemaps/zh-CN` now resolve through the 308 redirect to `/sitemaps/en` instead of dead XML routes.",
     "- If a page collection request is submitted, record the exact date, URL, and UI confirmation in `docs/search-indexing-observation-log.md`.",

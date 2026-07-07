@@ -19,6 +19,7 @@ Run `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run seo:indexing-followup` before the ne
 - the current live sitemap/feed/OpenSearch/robots snapshot
 - the `bobob935@gmail.com` Search Console `sc-domain:bobob.app` property links
 - the representative URL inspection targets
+- the site-specific Bing Webmaster and Naver Search Advisor follow-up links
 - the Bing Webmaster recommendation checklist
 - the stop rule that IndexNow/WebSub/sitemap success is not indexing proof
 
