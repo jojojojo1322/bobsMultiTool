@@ -281,8 +281,9 @@ for (const fragment of ["data-qr-examples", "data-qr-payload-builder", "data-qr-
   if (!source.includes(fragment)) failures.push(`QR Code Generator detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedGeneratorToolUi")) failures.push("generator/security tool detail UI labels must be localized");
-for (const fragment of ["data-color-examples", "data-color-preview", "data-color-result-details", "data-color-diagnostics", "data-color-swatches", "data-color-warnings"]) {
-  if (!toolComponents.includes(fragment)) failures.push(`Color Converter detail UI missing ${fragment}`);
+for (const fragment of ["data-color-examples", "data-color-preview", "data-color-result-details", "data-color-diagnostics", "data-color-accessibility-report", "data-color-accessibility-report-copy", "data-color-accessibility-report-preview", "data-color-swatches", "data-color-warnings", "buildColorAccessibilityReport", "localizedColorReportToolUi", "colorAccessibilityReport", "copyColorAccessibilityReport", "colorReportChecklistFinalBackground"]) {
+  const source = fragment === "localizedColorReportToolUi" || fragment === "colorAccessibilityReport" || fragment === "copyColorAccessibilityReport" || fragment === "colorReportChecklistFinalBackground" ? dictionaries : toolComponents;
+  if (!source.includes(fragment)) failures.push(`Color Converter detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-dns-examples", "data-dns-result-details", "data-dns-diagnostics", "data-dns-record-list", "data-dns-warnings", "data-dns-deployment-checklist", "data-dns-deployment-results", "data-dns-deployment-report", "data-dns-deployment-report-preview", "runDeploymentCheck", "buildDnsDeploymentReport", "getDnsDeploymentStatus", "getApexHostname"]) {
   if (!toolComponents.includes(fragment)) failures.push(`DNS Lookup detail UI missing ${fragment}`);

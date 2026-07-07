@@ -4703,6 +4703,92 @@ function formatSignedDecimal(value: number) {
   return value > 0 ? `+${formatted}` : formatted;
 }
 
+function getColorContrastStatus(contrast: number, dictionary: ClientDictionary) {
+  return contrast >= 7 ? "AAA" : contrast >= 4.5 ? "AA" : contrast >= 3 ? ui(dictionary, "largeTextOnly", "Large text only") : ui(dictionary, "failsContrast", "Fails");
+}
+
+function buildColorAccessibilityReport({
+  foregroundInput,
+  backgroundInput,
+  fg,
+  bg,
+  contrast,
+  foregroundLuminance,
+  backgroundLuminance,
+  hasAlphaInput,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  foregroundInput: string;
+  backgroundInput: string;
+  fg: { r: number; g: number; b: number };
+  bg: { r: number; g: number; b: number };
+  contrast: number;
+  foregroundLuminance: number;
+  backgroundLuminance: number;
+  hasAlphaInput: boolean;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const foregroundLabel = ui(dictionary, "foreground", "Foreground");
+  const backgroundLabel = ui(dictionary, "background", "Background");
+  const contrastStatus = getColorContrastStatus(contrast, dictionary);
+  const yesLabel = ui(dictionary, "yes", "Yes");
+  const noLabel = ui(dictionary, "no", "No");
+  const alphaHandling = hasAlphaInput
+    ? ui(dictionary, "colorReportAlphaReview", "Alpha input detected; recheck against the final rendered background.")
+    : ui(dictionary, "colorReportAlphaNone", "No alpha input detected in the foreground/background fields.");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "colorReportNoWarnings", "Color pair clears normal text AA. Still verify hover, disabled, and focus states.")];
+  const checklist = [
+    ui(dictionary, "colorReportChecklistFinalBackground", "Test the pair on the final rendered background, not only the solid preview."),
+    ui(dictionary, "colorReportChecklistStates", "Check hover, focus, disabled, visited, and selected states before shipping."),
+    ui(dictionary, "colorReportChecklistTextSize", "Confirm the actual font size and weight before relying on the large-text threshold."),
+    ui(dictionary, "colorReportChecklistTokens", "Store foreground and background tokens together so the pair is reused intentionally."),
+    ui(dictionary, "colorReportChecklistNonColor", "Do not use color alone to communicate errors, warnings, or required actions."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "colorReportStatus", "Contrast status"), value: contrastStatus },
+    { label: ui(dictionary, "contrastRatio", "Contrast ratio"), value: contrast.toFixed(2) },
+    { label: ui(dictionary, "aaNormalText", "AA normal text"), value: formatPassState(contrast >= 4.5, dictionary), description: "4.5:1" },
+    { label: ui(dictionary, "aaLargeText", "AA large text"), value: formatPassState(contrast >= 3, dictionary), description: "3:1" },
+    { label: ui(dictionary, "aaaNormalText", "AAA normal text"), value: formatPassState(contrast >= 7, dictionary), description: "7:1" },
+    { label: ui(dictionary, "colorContrastDelta", "AA delta"), value: formatSignedDecimal(contrast - 4.5) },
+    { label: ui(dictionary, "luminanceGap", "Luminance gap"), value: Math.abs(foregroundLuminance - backgroundLuminance).toFixed(3) },
+    { label: ui(dictionary, "colorReportAlphaInput", "Alpha input"), value: hasAlphaInput ? yesLabel : noLabel },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "colorAccessibilityReport", "Color accessibility report")}`,
+    "",
+    `- ${ui(dictionary, "colorReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${foregroundLabel} ${ui(dictionary, "input", "Input")}: ${foregroundInput}`,
+    `- ${foregroundLabel} HEX: ${rgbToHex(fg)}`,
+    `- ${foregroundLabel} RGB: ${formatRgbValue(fg)}`,
+    `- ${foregroundLabel} HSL: ${formatHslValue(fg)}`,
+    `- ${backgroundLabel} ${ui(dictionary, "input", "Input")}: ${backgroundInput}`,
+    `- ${backgroundLabel} HEX: ${rgbToHex(bg)}`,
+    `- ${backgroundLabel} RGB: ${formatRgbValue(bg)}`,
+    `- ${backgroundLabel} HSL: ${formatHslValue(bg)}`,
+    `- ${ui(dictionary, "contrastRatio", "Contrast ratio")}: ${contrast.toFixed(2)}`,
+    `- ${ui(dictionary, "colorReportStatus", "Contrast status")}: ${contrastStatus}`,
+    `- ${ui(dictionary, "aaNormalText", "AA normal text")}: ${formatPassState(contrast >= 4.5, dictionary)} (4.5:1)`,
+    `- ${ui(dictionary, "aaLargeText", "AA large text")}: ${formatPassState(contrast >= 3, dictionary)} (3:1)`,
+    `- ${ui(dictionary, "aaaNormalText", "AAA normal text")}: ${formatPassState(contrast >= 7, dictionary)} (7:1)`,
+    `- ${ui(dictionary, "colorContrastDelta", "AA delta")}: ${formatSignedDecimal(contrast - 4.5)}`,
+    `- ${ui(dictionary, "luminanceGap", "Luminance gap")}: ${Math.abs(foregroundLuminance - backgroundLuminance).toFixed(3)}`,
+    `- ${ui(dictionary, "colorReportAlphaHandling", "Alpha handling")}: ${alphaHandling}`,
+    "",
+    `## ${ui(dictionary, "colorReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "colorReportChecklist", "Accessibility checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [foreground, setForeground] = React.useState("#2563eb");
   const [background, setBackground] = React.useState("#ffffff");
@@ -4741,7 +4827,7 @@ function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
       return { error: error instanceof Error ? error.message : "Invalid color.", fg: null, bg: null, contrast: 0, foregroundLuminance: 0, backgroundLuminance: 0, value: "" };
     }
   }, [background, dictionary, foreground]);
-  const contrastStatus = result.contrast >= 7 ? "AAA" : result.contrast >= 4.5 ? "AA" : result.contrast >= 3 ? ui(dictionary, "largeTextOnly", "Large text only") : ui(dictionary, "failsContrast", "Fails");
+  const contrastStatus = getColorContrastStatus(result.contrast, dictionary);
   const hasAlphaInput = colorInputHasAlpha(foreground) || colorInputHasAlpha(background);
   const colorWarnings = [
     result.error,
@@ -4766,6 +4852,21 @@ function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
       description: ui(dictionary, "luminanceGapDescription", "Higher gaps usually read more clearly."),
     },
   ];
+  const accessibilityReport = result.fg && result.bg
+    ? buildColorAccessibilityReport({
+        foregroundInput: foreground,
+        backgroundInput: background,
+        fg: result.fg,
+        bg: result.bg,
+        contrast: result.contrast,
+        foregroundLuminance: result.foregroundLuminance,
+        backgroundLuminance: result.backgroundLuminance,
+        hasAlphaInput,
+        warnings: colorWarnings,
+        dictionary,
+        checkedAt: ui(dictionary, "colorReportCopyTime", "Browser copy time"),
+      })
+    : null;
 
   return (
     <div className="space-y-4" data-color-tool>
@@ -4822,6 +4923,61 @@ function ColorConverterTool({ dictionary }: { dictionary: ClientDictionary }) {
           </div>
         </div>
       </section>
+      {accessibilityReport ? (
+        <section className="space-y-3 rounded-md border bg-card p-3" data-color-accessibility-report>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold">{ui(dictionary, "colorAccessibilityReport", "Color accessibility report")}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "colorAccessibilityReportDescription", "Copy a WCAG contrast handoff report with color values, thresholds, warnings, and accessibility checks.")}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                copyToClipboard(
+                  buildColorAccessibilityReport({
+                    foregroundInput: foreground,
+                    backgroundInput: background,
+                    fg: result.fg!,
+                    bg: result.bg!,
+                    contrast: result.contrast,
+                    foregroundLuminance: result.foregroundLuminance,
+                    backgroundLuminance: result.backgroundLuminance,
+                    hasAlphaInput,
+                    warnings: colorWarnings,
+                    dictionary,
+                    checkedAt: new Date().toISOString(),
+                  }).markdown,
+                )
+              }
+              data-color-accessibility-report-copy
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              {ui(dictionary, "copyColorAccessibilityReport", "Copy accessibility report")}
+            </Button>
+          </div>
+          <ToolMetricGrid items={accessibilityReport.metrics} />
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "colorReportReviewNotes", "Review notes")}</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              {accessibilityReport.reviewNotes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "colorReportChecklist", "Accessibility checklist")}</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              {accessibilityReport.checklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-color-accessibility-report-preview>
+            {accessibilityReport.markdown}
+          </pre>
+        </section>
+      ) : null}
       <section className="grid gap-3 md:grid-cols-2" data-color-swatches>
         {[
           { label: ui(dictionary, "foreground", "Foreground"), color: result.fg ? rgbToHex(result.fg) : foreground },
