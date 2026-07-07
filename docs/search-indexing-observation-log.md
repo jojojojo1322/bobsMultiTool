@@ -2892,3 +2892,19 @@ Completion guard:
 - Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
 - Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
 - Interpretation: this strengthens one core color/accessibility tool as a design-token contrast handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Color Accessibility Report Production Deployment
+
+- Commit: `3742947`.
+- Change: deployed the Color accessibility report on `/tools/color-converter` with WCAG contrast report metrics, alpha-handling review, accessibility checklist, localized report labels, registry/search-intent coverage, `check-color-accessibility` workflow copy, and harness guards.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=3742947828a26fdd8eff1d06925373d3f9409047 npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/color-converter?deploy=3742947`, confirmed `Color accessibility report`, `Copy accessibility report`, contrast/status/AA/AAA/luminance/alpha metrics, review notes, accessibility checklist, Markdown preview, and the `Check color accessibility` workflow card with no console errors. The live copied clipboard began with `# Color accessibility report`, included foreground/background HEX values, contrast ratio, review notes, and accessibility checklist for the default pair, then included alpha review context after using `rgba(37, 99, 235, .8)` as the foreground; the only console warning was the existing AdSense `data-nscript` warning.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `84`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
+- Interpretation: production now serves the Color accessibility report on the core color/contrast tool and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
