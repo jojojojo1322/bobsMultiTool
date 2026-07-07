@@ -276,8 +276,8 @@ for (const fragment of ["data-random-token-examples", "data-random-token-diagnos
   const source = fragment === "localizedRandomTokenToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Random Token Generator detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-qr-examples", "data-qr-payload-builder", "data-qr-builder-fields", "data-qr-result-details", "data-qr-diagnostics", "data-qr-payload-type", "data-qr-preview", "data-qr-warnings", "localizedQrBuilderToolUi", "localizedQrDiagnosticsToolUi", "localizedCoreDepthToolUi"]) {
-  const source = fragment === "localizedQrBuilderToolUi" || fragment === "localizedQrDiagnosticsToolUi" || fragment === "localizedCoreDepthToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-qr-examples", "data-qr-payload-builder", "data-qr-builder-fields", "data-qr-result-details", "data-qr-diagnostics", "data-qr-payload-type", "data-qr-scan-report", "data-qr-scan-report-copy", "data-qr-scan-report-preview", "data-qr-preview", "data-qr-warnings", "buildQrScanReport", "localizedQrBuilderToolUi", "localizedQrDiagnosticsToolUi", "localizedQrReportToolUi", "localizedCoreDepthToolUi", "qrScanReport", "copyQrScanReport", "qrReportInputExcluded", "qrScanChecklistDevices"]) {
+  const source = fragment === "localizedQrBuilderToolUi" || fragment === "localizedQrDiagnosticsToolUi" || fragment === "localizedQrReportToolUi" || fragment === "localizedCoreDepthToolUi" || fragment === "qrScanReport" || fragment === "copyQrScanReport" || fragment === "qrReportInputExcluded" || fragment === "qrScanChecklistDevices" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`QR Code Generator detail UI missing ${fragment}`);
 }
 if (!dictionaries.includes("localizedGeneratorToolUi")) failures.push("generator/security tool detail UI labels must be localized");

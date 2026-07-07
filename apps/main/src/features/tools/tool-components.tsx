@@ -5167,6 +5167,74 @@ function getQrPayloadInfo(value: string, errorCorrection: "L" | "M" | "Q" | "H")
   };
 }
 
+function buildQrScanReport({
+  input,
+  payloadInfo,
+  errorCorrection,
+  qrSize,
+  qrMargin,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  input: string;
+  payloadInfo: ReturnType<typeof getQrPayloadInfo>;
+  errorCorrection: "L" | "M" | "Q" | "H";
+  qrSize: string;
+  qrMargin: string;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const characters = input.length;
+  const bytes = byteLength(input);
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "qrScanReportNoWarnings", "No QR scan review warnings detected. Test the image on target devices before publishing.")];
+  const checklist = [
+    ui(dictionary, "qrScanChecklistDevices", "Scan the final PNG on at least two phones before printing or posting."),
+    ui(dictionary, "qrScanChecklistDestination", "Confirm the destination opens the expected page or app action."),
+    ui(dictionary, "qrScanChecklistWifi", "For Wi-Fi QR codes, share only in places where the network password can be public."),
+    ui(dictionary, "qrScanChecklistQuietZone", "Keep the quiet zone clear after resizing, cropping, or placing the image in artwork."),
+    ui(dictionary, "qrScanChecklistProtocol", "Use HTTPS for public web URLs unless the target is intentionally local."),
+  ];
+  const payloadTypeLabel = ui(dictionary, payloadInfo.typeKey, payloadInfo.typeKey);
+  const densityLabel = ui(dictionary, payloadInfo.densityKey, payloadInfo.densityKey);
+  const errorCorrectionLabel = `${errorCorrection} · ${ui(dictionary, payloadInfo.errorCorrectionKey, payloadInfo.errorCorrectionKey)}`;
+  const imageSettings = `${qrSize}px / ${ui(dictionary, "qrQuietZone", "Quiet zone")} ${qrMargin}`;
+  const metrics = [
+    { label: ui(dictionary, "qrPayloadType", "Payload type"), value: payloadTypeLabel },
+    { label: ui(dictionary, "characters", "Characters"), value: String(characters) },
+    { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(bytes) },
+    { label: ui(dictionary, "qrDestinationHost", "Destination host"), value: payloadInfo.destinationHost },
+    { label: ui(dictionary, "qrTrackingParameters", "Tracking parameters"), value: String(payloadInfo.trackingParams) },
+    { label: ui(dictionary, "qrScanDensity", "Scan density"), value: densityLabel },
+    { label: ui(dictionary, "errorCorrection", "Error correction"), value: errorCorrectionLabel },
+    { label: ui(dictionary, "qrImageSize", "Image size"), value: imageSettings },
+    { label: ui(dictionary, "qrReportInputPolicy", "Payload included"), value: ui(dictionary, "qrReportInputExcluded", "No, only payload metrics, type, and destination host are included.") },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "qrScanReport", "QR scan report")}`,
+    "",
+    `- ${ui(dictionary, "qrReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "qrPayloadType", "Payload type")}: ${payloadTypeLabel}`,
+    `- ${ui(dictionary, "characters", "Characters")}: ${characters}`,
+    `- ${ui(dictionary, "inputBytes", "Input bytes")}: ${bytes}`,
+    `- ${ui(dictionary, "qrDestinationHost", "Destination host")}: ${payloadInfo.destinationHost}`,
+    `- ${ui(dictionary, "qrTrackingParameters", "Tracking parameters")}: ${payloadInfo.trackingParams}`,
+    `- ${ui(dictionary, "qrScanDensity", "Scan density")}: ${densityLabel}`,
+    `- ${ui(dictionary, "errorCorrection", "Error correction")}: ${errorCorrectionLabel}`,
+    `- ${ui(dictionary, "qrImageSize", "Image size")}: ${imageSettings}`,
+    `- ${ui(dictionary, "qrReportInputPolicy", "Payload included")}: ${ui(dictionary, "qrReportInputExcluded", "No, only payload metrics, type, and destination host are included.")}`,
+    "",
+    `## ${ui(dictionary, "qrReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "qrReportChecklist", "Scan checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("https://www.bobob.app");
   const [errorCorrection, setErrorCorrection] = React.useState<"L" | "M" | "Q" | "H">("M");
@@ -5233,6 +5301,20 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
     errorCorrection === "H" && byteLength(trimmed) > 700 ? ui(dictionary, "qrHighCorrectionWarning", "High error correction with long content can make the code very dense.") : "",
     ui(dictionary, "qrLocalWarning", "The QR image is generated locally in the browser; only the encoded content is visible in the PNG."),
   ].filter(Boolean);
+  const scanReport = React.useMemo(
+    () =>
+      buildQrScanReport({
+        input: trimmed,
+        payloadInfo,
+        errorCorrection,
+        qrSize,
+        qrMargin,
+        warnings: qrWarnings,
+        dictionary,
+        checkedAt: ui(dictionary, "qrReportCopyTime", "Browser copy time"),
+      }),
+    [dictionary, errorCorrection, payloadInfo, qrMargin, qrSize, qrWarnings, trimmed],
+  );
 
   return (
     <div className="space-y-4" data-qr-tool>
@@ -5409,6 +5491,52 @@ function QrCodeTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-qr-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={qrWarnings} emptyLabel={ui(dictionary, "qrNoWarnings", "QR content is ready for a local PNG preview.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-qr-scan-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">{ui(dictionary, "qrScanReport", "QR scan report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "qrScanReportDescription", "Copy a safe scan-readiness report without including the raw QR payload.")}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-qr-scan-report-copy
+            onClick={() =>
+              copyToClipboard(
+                buildQrScanReport({
+                  input: trimmed,
+                  payloadInfo,
+                  errorCorrection,
+                  qrSize,
+                  qrMargin,
+                  warnings: qrWarnings,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyQrScanReport", "Copy scan report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={scanReport.metrics} />
+        <ToolWarningList title={ui(dictionary, "qrReportReviewNotes", "Review notes")} warnings={scanReport.reviewNotes} emptyLabel={ui(dictionary, "qrScanReportNoWarnings", "No QR scan review warnings detected. Test the image on target devices before publishing.")} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "qrReportChecklist", "Scan checklist")}</p>
+          <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {scanReport.checklist.map((item) => (
+              <li key={item} className="rounded-md bg-muted px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-qr-scan-report-preview>
+          <code>{scanReport.markdown}</code>
+        </pre>
+      </section>
       <div className="grid gap-4 md:grid-cols-[340px_1fr]" data-qr-preview>
         <div className="flex min-h-80 items-center justify-center rounded-lg border bg-white p-4">
           {dataUrl ? <Image src={dataUrl} alt="Generated QR code" width={Number(qrSize)} height={Number(qrSize)} unoptimized className="h-auto max-h-72 w-auto max-w-full" /> : <span className="text-sm text-zinc-500">{dictionary.tool.noOutput}</span>}

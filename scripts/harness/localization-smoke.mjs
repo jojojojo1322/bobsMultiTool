@@ -112,6 +112,9 @@ for (const fragment of ["localizedPasswordPassphraseToolUi", "passphraseModeDesc
 for (const fragment of ["localizedQrBuilderToolUi", "qrPayloadBuilder", "qrWifiSsid", "Payload 빌더", "Payloadビルダー", "Constructor de payload", "منشئ payload"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized QR builder content missing fragment: ${fragment}`);
 }
+for (const fragment of ["localizedQrReportToolUi", "qrScanReport", "copyQrScanReport", "qrReportInputExcluded", "QR 스캔 리포트", "QRスキャンレポート", "Reporte de escaneo QR", "QR-Scanbericht", "تقرير مسح QR"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized QR scan report content missing fragment: ${fragment}`);
+}
 for (const fragment of ["localizedSeoGeneratorToolUi", "robotsSitemapUrl", "robotsWarnings", "robotsLooksReady", "sitemapUrlList", "sitemapWarnings", "사이트맵 검토", "サイトマップ確認", "Revision del sitemap", "Sitemap-Pruefung", "فحص خريطة الموقع"]) {
   if (!dictionaries.includes(fragment)) failures.push(`localized robots/sitemap content missing fragment: ${fragment}`);
 }

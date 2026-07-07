@@ -2784,3 +2784,18 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the Hash signature report on the security/checksum tool and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 QR Scan Report Source Slice
+
+- Source action: added a copyable QR scan report to `/tools/qr-code-generator` so the QR tool produces a shareable payload type, destination host, tracking-parameter count, scan density, error-correction, image-size, quiet-zone, review-note, and scan-checklist artifact without including the raw QR payload.
+- Search surface action: expanded the QR Code Generator registry/search intents and the `create-wifi-qr` workflow recipe for `qr scan report`, `qr print checklist`, and `wifi qr scan report`, with layout/search/localization/agent-skill harness coverage so the feature stays inside the QR tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/qr-code-generator`, confirmed `QR scan report`, `Copy scan report`, payload/destination/tracking/density/error-correction/image-size metrics, review notes, scan checklist, Markdown preview, and clicked the report copy button with no console errors.
+- Local Wi-Fi safety verification: Playwright selected the Wi-Fi example, clicked `Copy scan report`, and confirmed the copied report began with `# QR scan report`, included Wi-Fi review context, and excluded the raw example password from both the clipboard and preview. The only console warning was the existing AdSense `data-nscript` warning.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one core web/QR tool as a printable scan-readiness handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
