@@ -3350,3 +3350,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so DevTools API response handoff query families stay wired to workflow search and JSON Formatter registry metadata.
 - Search Console action: none in this source pass. This improves public routing for API response handoff intent but does not change Google's page-indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this strengthens an existing submitted JSON/API tool and representative developer operations article while indexing reports lag. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 DevTools API Response Handoff Production Deployment
+
+- Commit: `52f44cc`.
+- Change: deployed DevTools Network response-body search coverage into the existing API response workflow, JSON Formatter registry metadata, and the refreshed `cursor-codex-web-service-bottlenecks` article section.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:deployment-status` returned `overallState: success` for `52f44cc3eb0b0523a75bd803971e916c0a8e6fb1` after earlier pending checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=DevTools%20API%20%EC%9D%91%EB%8B%B5%20%EB%B3%B5%EC%82%AC&deploy=52f44cc` and confirmed `API 응답 정리`, `/tools/json-formatter`, `JSONPath`, `devtools response formatter`, and `api response handoff` appeared with no console errors. Playwright also loaded `https://www.bobob.app/blog/cursor-codex-web-service-bottlenecks?deploy=52f44cc` and confirmed the `API 응답은 캡처보다 handoff가 먼저다` section, `Network response JSON`, `API response report`, and `redacted handoff` table rows rendered with no console errors. Both live browser checks showed only the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers DevTools API response handoff intent through an existing submitted JSON/API workflow and representative article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
