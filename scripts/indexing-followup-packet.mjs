@@ -20,6 +20,8 @@ const encodedCanonicalBaseUrl = encodeURIComponent(canonicalBaseUrl);
 const bingWebmasterUrl = `https://www.bing.com/webmasters/home?siteUrl=${encodedCanonicalBaseUrl}`;
 const naverSearchAdvisorUrl = `https://searchadvisor.naver.com/console/site/summary?site=${encodedCanonicalBaseUrl}`;
 const naverSitemapUrl = `https://searchadvisor.naver.com/console/site/request/sitemap?site=${encodedCanonicalBaseUrl}`;
+const naverReducedSitemapTarget = "sitemaps/en";
+const naverSitemapIndexTarget = "sitemap.xml";
 const retiredSitemapPaths = [
   "/sitemaps/ko",
   "/sitemaps/ja",
@@ -263,6 +265,9 @@ function assertPacket(packet, snapshot, log, registration) {
     `latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}`,
     "## Naver Search Advisor Check",
     "Naver Search Advisor checklist",
+    `Try reduced sitemap target: \`${naverReducedSitemapTarget}\``,
+    `try the sitemap index target \`${naverSitemapIndexTarget}\``,
+    `The sitemap index must resolve to \`${canonicalBaseUrl}/sitemap.xml\``,
     "If Naver still shows old locale sitemap rows",
     `Open: ${bingWebmasterUrl}`,
     `Open site summary: ${naverSearchAdvisorUrl}`,
@@ -359,6 +364,8 @@ function renderPacket(snapshot, log, registration) {
     `- Open site summary: ${naverSearchAdvisorUrl}`,
     `- Open sitemap request: ${naverSitemapUrl}`,
     "- Naver Search Advisor checklist: confirm the `https://www.bobob.app` site property, sitemap submission state, robots.txt state, and representative URL collection/request status.",
+    `- Try reduced sitemap target: \`${naverReducedSitemapTarget}\`; if the UI hides the row again, try the sitemap index target \`${naverSitemapIndexTarget}\` and record the exact visible success/error state.`,
+    `- The sitemap index must resolve to \`${canonicalBaseUrl}/sitemap.xml\` and include \`${canonicalBaseUrl}/sitemaps/en\`; do not add broad locale sitemap URLs back just to satisfy the UI.`,
     "- If Naver still shows old locale sitemap rows, record whether rows such as `sitemaps/ar`, `sitemaps/th`, and `sitemaps/zh-CN` now resolve through the 308 redirect to `/sitemaps/en` instead of dead XML routes.",
     "- If a page collection request is submitted, record the exact date, URL, and UI confirmation in `docs/search-indexing-observation-log.md`.",
     "- Do not treat a Naver page collection request or sitemap submission as indexing proof; compare later collection/indexing evidence separately.",
