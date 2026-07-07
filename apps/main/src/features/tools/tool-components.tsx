@@ -3568,6 +3568,67 @@ const hashExamples = [
   { labelKey: "hashWebhookExample", fallbackLabel: "Webhook body", value: '{"event":"checkout.session.completed","id":"evt_123"}' },
 ];
 
+function buildHashSignatureReport({
+  mode,
+  input,
+  secret,
+  hashes,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  mode: "digest" | "hmac";
+  input: string;
+  secret: string;
+  hashes: Array<{ name: string; value: string; note: string }>;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const inputBytes = byteLength(input);
+  const inputLines = input.split(/\r?\n/).length;
+  const secretBytes = byteLength(secret);
+  const modeLabel = mode === "hmac" ? ui(dictionary, "hashModeHmac", "HMAC") : ui(dictionary, "hashModeDigest", "Digest");
+  const primaryHash = hashes.find((hash) => hash.name === (mode === "hmac" ? "HMAC-SHA-256" : "SHA-256")) ?? hashes[0];
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "hashSignatureReportNoWarnings", "No obvious hash or HMAC review warnings detected. Confirm normalization against the target system.")];
+  const checklist = [
+    ui(dictionary, "hashSignatureChecklistNormalize", "Normalize line endings, whitespace, and encoding before comparing with another system."),
+    ui(dictionary, "hashSignatureChecklistAlgorithm", "Confirm the algorithm and output encoding match the receiving system."),
+    ui(dictionary, "hashSignatureChecklistSecret", "Never share the HMAC secret itself; share only the signature and verification context."),
+    ui(dictionary, "hashSignatureChecklistPassword", "Do not treat fast hashes as password storage or encryption."),
+    ui(dictionary, "hashSignatureChecklistFullDigest", "Compare the full digest or signature, not only a short prefix."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "hashReportMode", "Mode"), value: modeLabel },
+    { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(inputBytes) },
+    { label: ui(dictionary, "lines", "Lines"), value: String(inputLines) },
+    { label: ui(dictionary, "hashAlgorithms", "Algorithms"), value: String(hashes.length) },
+    { label: ui(dictionary, "hashReportPrimaryOutput", "Primary output"), value: primaryHash?.name ?? ui(dictionary, "notApplicable", "Not applicable") },
+    ...(mode === "hmac" ? [{ label: ui(dictionary, "hmacSecretBytes", "Secret bytes"), value: String(secretBytes) }] : []),
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "hashSignatureReport", "Hash signature report")}`,
+    "",
+    `- ${ui(dictionary, "hashReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "hashReportMode", "Mode")}: ${modeLabel}`,
+    `- ${ui(dictionary, "inputBytes", "Input bytes")}: ${inputBytes}`,
+    `- ${ui(dictionary, "lines", "Lines")}: ${inputLines}`,
+    ...(mode === "hmac" ? [`- ${ui(dictionary, "hmacSecretBytes", "Secret bytes")}: ${secretBytes}`] : []),
+    `- ${ui(dictionary, "hashReportInputPolicy", "Input included")}: ${ui(dictionary, "hashReportInputExcluded", "No, only byte and line counts are included.")}`,
+    "",
+    `## ${ui(dictionary, "hashReportOutputs", "Digest and signature outputs")}`,
+    ...hashes.map((hash) => `- ${hash.name}: ${hash.value} (${hash.note})`),
+    "",
+    `## ${ui(dictionary, "hashReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "hashReportChecklist", "Safe signature checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function HashGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("hello world");
   const [mode, setMode] = React.useState<"digest" | "hmac">("digest");
@@ -3604,6 +3665,19 @@ function HashGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
     /[\r\n]/.test(input) ? ui(dictionary, "hashWhitespaceWarning", "Line endings and trailing spaces change every digest. Normalize before comparing with another system.") : "",
     /^[{\[]/.test(trimmed) ? ui(dictionary, "hashJsonWarning", "JSON key order and whitespace affect the digest. Format or canonicalize before using as a stable checksum.") : "",
   ].filter(Boolean);
+  const signatureReport = React.useMemo(
+    () =>
+      buildHashSignatureReport({
+        mode,
+        input,
+        secret,
+        hashes,
+        warnings,
+        dictionary,
+        checkedAt: ui(dictionary, "hashReportCopyTime", "Browser copy time"),
+      }),
+    [dictionary, hashes, input, mode, secret, warnings],
+  );
 
   return (
     <div className="space-y-4" data-hash-tool>
@@ -3667,6 +3741,51 @@ function HashGeneratorTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-hash-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "hashNoWarnings", "Input looks suitable for local checksum generation.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-hash-signature-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">{ui(dictionary, "hashSignatureReport", "Hash signature report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "hashSignatureReportDescription", "Copy a compact checksum or HMAC handoff report without including the raw input or secret.")}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-hash-signature-report-copy
+            onClick={() =>
+              copyToClipboard(
+                buildHashSignatureReport({
+                  mode,
+                  input,
+                  secret,
+                  hashes,
+                  warnings,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyHashSignatureReport", "Copy signature report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={signatureReport.metrics} />
+        <ToolWarningList title={ui(dictionary, "hashReportReviewNotes", "Review notes")} warnings={signatureReport.reviewNotes} emptyLabel={ui(dictionary, "hashSignatureReportNoWarnings", "No obvious hash or HMAC review warnings detected. Confirm normalization against the target system.")} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "hashReportChecklist", "Safe signature checklist")}</p>
+          <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {signatureReport.checklist.map((item) => (
+              <li key={item} className="rounded-md bg-muted px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-hash-signature-report-preview>
+          <code>{signatureReport.markdown}</code>
+        </pre>
+      </section>
       <ResultBlock title={mode === "hmac" ? ui(dictionary, "hmacHashes", "HMAC signatures") : ui(dictionary, "hashes", "Hashes")} value={output} dictionary={dictionary} />
     </div>
   );

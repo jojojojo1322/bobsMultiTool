@@ -76,10 +76,10 @@ for (const fragment of [
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
 }
-for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "verify-webhook-signature"]) {
   if (!workflows.includes(fragment)) failures.push(`workflow localization missing ${fragment}`);
 }
-for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token"]) {
+for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "verify-webhook-signature"]) {
   const recipeSource = workflows.match(new RegExp(`slug: "${recipeSlug}"[\\s\\S]*?(?=\\n  \\{\\n    slug: "|\\n\\];)`))?.[0] ?? "";
   if (!recipeSource) {
     failures.push(`workflow recipe missing localized source for ${recipeSlug}`);
@@ -102,6 +102,9 @@ for (const fragment of ["localizedCronRuntimeToolUi", "cronRuntimeContext", "cro
 }
 for (const fragment of ["localizedHashHmacToolUi", "hashModeHmac", "hmacSecretWarning", "HMAC signature", "HMAC-Signaturen", "تواقيع HMAC"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized HMAC hash content missing fragment: ${fragment}`);
+}
+for (const fragment of ["localizedHashReportToolUi", "hashSignatureReport", "copyHashSignatureReport", "hashReportInputExcluded", "Hash signature 리포트", "Hash-Signaturbericht", "تقرير توقيع hash"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized Hash signature report content missing fragment: ${fragment}`);
 }
 for (const fragment of ["localizedPasswordPassphraseToolUi", "passphraseModeDescription", "passphraseCompatibilityWarning", "암호구문", "パスフレーズ", "Passphrase", "عبارة مرور"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized password passphrase content missing fragment: ${fragment}`);

@@ -263,8 +263,8 @@ for (const fragment of ["data-cron-presets", "data-cron-scheduler-semantics", "d
 for (const fragment of ["data-uuid-examples", "data-uuid-result-details", "data-uuid-warnings"]) {
   if (!toolComponents.includes(fragment)) failures.push(`UUID Generator detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-hash-examples", "data-hash-hmac-options", "data-hash-result-details", "data-hash-algorithms", "data-hash-warnings", "localizedHashHmacToolUi", "hmacSecretWarning"]) {
-  const source = fragment === "localizedHashHmacToolUi" || fragment === "hmacSecretWarning" ? dictionaries : toolComponents;
+for (const fragment of ["data-hash-examples", "data-hash-hmac-options", "data-hash-result-details", "data-hash-algorithms", "data-hash-signature-report", "data-hash-signature-report-copy", "data-hash-signature-report-preview", "data-hash-warnings", "buildHashSignatureReport", "localizedHashHmacToolUi", "localizedHashReportToolUi", "hmacSecretWarning", "hashSignatureReport", "copyHashSignatureReport", "hashReportInputExcluded", "hashSignatureChecklistNormalize", "hashSignatureChecklistSecret"]) {
+  const source = fragment === "localizedHashHmacToolUi" || fragment === "localizedHashReportToolUi" || fragment === "hmacSecretWarning" || fragment.startsWith("hash") || fragment === "copyHashSignatureReport" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Hash Generator detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-password-mode", "data-password-options", "data-password-passphrase-options", "data-password-strength", "data-password-warnings", "passphraseWords"]) {

@@ -2753,3 +2753,18 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the Cron schedule report on the time/deployment tool and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Hash Signature Report Source Slice
+
+- Source action: added a copyable Hash signature report to `/tools/hash-generator` so the security/checksum tool produces a shareable digest/HMAC mode, byte/line count, secret-byte count, output, warning-note, and safe-signature checklist artifact instead of only showing hashes or signatures.
+- Search surface action: expanded the Hash Generator registry/search intents and added the `verify-webhook-signature` workflow recipe for `hash signature report`, `hmac handoff report`, `hmac verification report`, and `sha256 checksum report`, with layout/search/localization/agent-skill harness coverage so the feature stays inside the Hash tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/hash-generator`, confirmed `Hash signature report`, `Copy signature report`, mode/input-byte/line/algorithm/primary-output metrics, review notes, safe signature checklist, Markdown preview, and clicked the report copy button with no console errors. The copied system clipboard began with `# Hash signature report`.
+- Local HMAC verification: Playwright switched the same page to HMAC mode, clicked `Copy signature report`, and confirmed the copied report includes `Secret bytes` while excluding the raw HMAC secret value. The only console warning was the existing AdSense `data-nscript` warning.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one core security/checksum tool as a webhook signature handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
