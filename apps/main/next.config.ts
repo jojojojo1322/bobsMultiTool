@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const retiredSitemapLocales = ["ko", "ja", "zh-CN", "zh-TW", "es", "pt-BR", "de", "fr", "hi", "id", "vi", "th", "ar"] as const;
+
 const nextConfig: NextConfig = {
   async redirects() {
     return [
@@ -9,6 +11,11 @@ const nextConfig: NextConfig = {
         destination: "https://www.bobob.app/:path*",
         permanent: true,
       },
+      ...retiredSitemapLocales.map((locale) => ({
+        source: `/sitemaps/${locale}`,
+        destination: "https://www.bobob.app/sitemaps/en",
+        permanent: true,
+      })),
       {
         source: "/iframe-viewer",
         destination: "/tools/iframe-viewer",

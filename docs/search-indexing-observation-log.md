@@ -3114,7 +3114,7 @@ Completion guard:
 
 ## 2026-07-07 Retired Locale Sitemap Redirect Source Slice
 
-- Source action: changed the dynamic `/sitemaps/[locale]` route so known locale sitemap paths that are no longer submitted, such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN`, return a 308 redirect to `https://www.bobob.app/sitemaps/en` instead of 404.
+- Source action: added explicit Next redirect config so known locale sitemap paths that are no longer submitted, such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN`, return a 308 redirect to `https://www.bobob.app/sitemaps/en` instead of 404.
 - Scope guard: this does not restore broad per-locale sitemap coverage. `/sitemap.xml` still exposes only the reduced `/sitemaps/en` sitemap index entry, and `/sitemaps/en` remains the only submitted sitemap set.
 - Naver relevance: the latest signed-in Naver Search Advisor check showed only old broad locale sitemap rows from `26.06.16`; those rows were 404 before this source fix, so redirecting them to the reduced sitemap removes a concrete dead-route crawler signal.
 - Harness guard: route and live-discovery smoke now assert that `/sitemaps/ar` 308 redirects to `/sitemaps/en`.

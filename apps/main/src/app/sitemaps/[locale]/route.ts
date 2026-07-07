@@ -1,5 +1,4 @@
 import { isSitemapLocale, localizedSitemapXml, sitemapLocales } from "@/features/seo/sitemaps";
-import { isLocale } from "@/features/i18n/config";
 
 export const dynamic = "force-static";
 export const revalidate = 86_400;
@@ -12,10 +11,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ loc
   const { locale } = await params;
 
   if (!isSitemapLocale(locale)) {
-    if (isLocale(locale)) {
-      return Response.redirect("https://www.bobob.app/sitemaps/en", 308);
-    }
-
     return new Response("Not found", { status: 404 });
   }
 
