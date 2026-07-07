@@ -6916,6 +6916,7 @@ function analyzeJavaScript(value: string) {
     browserApiMatches,
     compressionRatio,
     consoleCalls,
+    hasEval: /\beval\s*\(|new Function\s*\(/.test(withoutComments),
     exportCount,
     functionCount,
     hasComments: /\/\/|\/\*/.test(value),
@@ -6924,6 +6925,73 @@ function analyzeJavaScript(value: string) {
     importCount,
     signals,
   };
+}
+
+function buildJavaScriptReviewReport({
+  input,
+  output,
+  minifier,
+  analysis,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  input: string;
+  output: string;
+  minifier: boolean;
+  analysis: ReturnType<typeof analyzeJavaScript>;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const yesLabel = ui(dictionary, "yes", "Yes");
+  const noLabel = ui(dictionary, "no", "No");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "jsReportNoWarnings", "No immediate JavaScript review warnings detected. Still run tests before shipping.")];
+  const browserSignals = analysis.browserApiMatches.length ? analysis.browserApiMatches.join(", ") : ui(dictionary, "noBrowserApis", "No browser APIs detected.");
+  const checklist = [
+    ui(dictionary, "jsReportChecklistTests", "Run the snippet through project tests or a safe sandbox before shipping."),
+    ui(dictionary, "jsReportChecklistRuntime", "Confirm whether the snippet targets browser, Node.js, edge runtime, or a bundler."),
+    ui(dictionary, "jsReportChecklistNetwork", "Review fetch URLs, credentials, and error handling before copying network code."),
+    ui(dictionary, "jsReportChecklistLogging", "Remove debug console output and TODO notes before production use."),
+    ui(dictionary, "jsReportChecklistComments", "Preserve license and handoff comments if minifying or pasting into docs."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "jsReportMode", "Output mode"), value: minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print") },
+    { label: ui(dictionary, "imports", "Imports"), value: String(analysis.importCount) },
+    { label: ui(dictionary, "exports", "Exports"), value: String(analysis.exportCount) },
+    { label: ui(dictionary, "asyncAwait", "Async/await"), value: String(analysis.asyncCount) },
+    { label: ui(dictionary, "browserApis", "Browser APIs"), value: String(analysis.browserApiMatches.length), description: browserSignals },
+    { label: ui(dictionary, "jsReportFetchCalls", "Fetch calls"), value: analysis.hasFetch ? yesLabel : noLabel },
+    { label: ui(dictionary, "jsReportEvalRisk", "Eval risk"), value: analysis.hasEval ? yesLabel : noLabel },
+    { label: ui(dictionary, "compressionRatio", "Compression ratio"), value: `${analysis.compressionRatio.toFixed(0)}%` },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "jsReviewReport", "JavaScript review report")}`,
+    "",
+    `- ${ui(dictionary, "jsReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "jsReportMode", "Output mode")}: ${minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")}`,
+    `- ${ui(dictionary, "characters", "Characters")}: ${input.length}`,
+    `- ${ui(dictionary, "outputLines", "Output lines")}: ${output ? output.split(/\r?\n/).length : 0}`,
+    `- ${ui(dictionary, "functionCount", "Functions")}: ${analysis.functionCount}`,
+    `- ${ui(dictionary, "imports", "Imports")}: ${analysis.importCount}`,
+    `- ${ui(dictionary, "exports", "Exports")}: ${analysis.exportCount}`,
+    `- ${ui(dictionary, "asyncAwait", "Async/await")}: ${analysis.asyncCount}`,
+    `- ${ui(dictionary, "browserApis", "Browser APIs")}: ${browserSignals}`,
+    `- ${ui(dictionary, "consoleCalls", "Console calls")}: ${analysis.consoleCalls}`,
+    `- ${ui(dictionary, "jsReportFetchCalls", "Fetch calls")}: ${analysis.hasFetch ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "jsReportEvalRisk", "Eval risk")}: ${analysis.hasEval ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "jsReportTodoNotes", "TODO/FIXME/HACK notes")}: ${analysis.hasTodo ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "compressionRatio", "Compression ratio")}: ${analysis.compressionRatio.toFixed(0)}%`,
+    `- ${ui(dictionary, "jsReportRawCodeExcluded", "Raw JavaScript is excluded from this report; attach a redacted snippet separately if needed.")}`,
+    "",
+    `## ${ui(dictionary, "jsReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "jsReportChecklist", "Review checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
 }
 
 const javascriptExamples = [
@@ -6942,15 +7010,32 @@ function JavaScriptFormatterPanel({ dictionary, minifier = false }: { dictionary
     }
   }, [input, minifier]);
   const jsAnalysis = React.useMemo(() => analyzeJavaScript(input), [input]);
-  const warnings = [
-    /\beval\s*\(|new Function\s*\(/.test(input) ? ui(dictionary, "jsEvalWarning", "The snippet contains eval or Function constructor usage. Review it before copying.") : "",
-    jsAnalysis.consoleCalls ? ui(dictionary, "jsConsoleWarning", "Console calls are present. Remove debug logging before production use if needed.") : "",
-    jsAnalysis.browserApiMatches.length ? ui(dictionary, "jsBrowserApiWarning", "Browser APIs were detected. Confirm the snippet is not meant for Node.js before copying.") : "",
-    jsAnalysis.hasFetch ? ui(dictionary, "jsFetchWarning", "Network calls were detected. Review URLs, credentials, and error handling before running.") : "",
-    jsAnalysis.hasTodo ? ui(dictionary, "jsTodoWarning", "TODO, FIXME, or HACK notes are still present.") : "",
-    minifier && jsAnalysis.hasComments ? ui(dictionary, "jsCommentRemovalWarning", "Minifying removes comments, including license or handoff notes.") : "",
-    minifier ? ui(dictionary, "jsMinifyWarning", "The lightweight minifier removes comments and whitespace but does not perform AST-safe bundling.") : ui(dictionary, "jsHeuristicWarning", "This lightweight formatter is for short snippets and does not replace Prettier or your project formatter."),
-  ].filter(Boolean);
+  const warnings = React.useMemo(
+    () =>
+      [
+        jsAnalysis.hasEval ? ui(dictionary, "jsEvalWarning", "The snippet contains eval or Function constructor usage. Review it before copying.") : "",
+        jsAnalysis.consoleCalls ? ui(dictionary, "jsConsoleWarning", "Console calls are present. Remove debug logging before production use if needed.") : "",
+        jsAnalysis.browserApiMatches.length ? ui(dictionary, "jsBrowserApiWarning", "Browser APIs were detected. Confirm the snippet is not meant for Node.js before copying.") : "",
+        jsAnalysis.hasFetch ? ui(dictionary, "jsFetchWarning", "Network calls were detected. Review URLs, credentials, and error handling before running.") : "",
+        jsAnalysis.hasTodo ? ui(dictionary, "jsTodoWarning", "TODO, FIXME, or HACK notes are still present.") : "",
+        minifier && jsAnalysis.hasComments ? ui(dictionary, "jsCommentRemovalWarning", "Minifying removes comments, including license or handoff notes.") : "",
+        minifier ? ui(dictionary, "jsMinifyWarning", "The lightweight minifier removes comments and whitespace but does not perform AST-safe bundling.") : ui(dictionary, "jsHeuristicWarning", "This lightweight formatter is for short snippets and does not replace Prettier or your project formatter."),
+      ].filter(Boolean),
+    [dictionary, jsAnalysis, minifier],
+  );
+  const jsReviewReport = React.useMemo(
+    () =>
+      buildJavaScriptReviewReport({
+        input,
+        output: result.value,
+        minifier,
+        analysis: jsAnalysis,
+        warnings: result.error ? [result.error, ...warnings] : warnings,
+        dictionary,
+        checkedAt: ui(dictionary, "jsReportCopyTime", "Browser copy time"),
+      }),
+    [dictionary, input, jsAnalysis, minifier, result.error, result.value, warnings],
+  );
 
   return (
     <div className="space-y-4" data-javascript-tool>
@@ -7016,6 +7101,55 @@ function JavaScriptFormatterPanel({ dictionary, minifier = false }: { dictionary
       <div data-javascript-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "jsNoWarnings", "JavaScript snippet is ready for review.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-javascript-review-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">{ui(dictionary, "jsReviewReport", "JavaScript review report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jsReviewReportDescription", "Copy a handoff report with module/runtime signals, network and eval risks, warnings, and a safe review checklist.")}</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              copyToClipboard(
+                buildJavaScriptReviewReport({
+                  input,
+                  output: result.value,
+                  minifier,
+                  analysis: jsAnalysis,
+                  warnings: result.error ? [result.error, ...warnings] : warnings,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+            data-javascript-review-report-copy
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            {ui(dictionary, "copyJsReviewReport", "Copy JS report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={jsReviewReport.metrics} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jsReportReviewNotes", "Review notes")}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            {jsReviewReport.reviewNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jsReportChecklist", "Review checklist")}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            {jsReviewReport.checklist.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-javascript-review-report-preview>
+          {jsReviewReport.markdown}
+        </pre>
+      </section>
       {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={minifier ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")} value={result.value} dictionary={dictionary} />}
     </div>
   );

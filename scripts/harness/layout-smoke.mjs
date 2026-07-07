@@ -299,13 +299,13 @@ for (const fragment of ["data-sql-examples", "data-sql-result-details", "data-sq
 for (const fragment of ["data-css-examples", "data-css-result-details", "data-css-diagnostics", "data-css-selector-list", "data-css-warnings"]) {
   if (!toolComponents.includes(fragment)) failures.push(`CSS Formatter detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-javascript-examples", "data-javascript-result-details", "data-javascript-diagnostics", "data-javascript-signal-list", "data-javascript-warnings"]) {
+for (const fragment of ["data-javascript-examples", "data-javascript-result-details", "data-javascript-diagnostics", "data-javascript-signal-list", "data-javascript-warnings", "data-javascript-review-report", "data-javascript-review-report-copy", "data-javascript-review-report-preview", "buildJavaScriptReviewReport", "copyJsReviewReport", "jsReportChecklistRuntime"]) {
   if (!toolComponents.includes(fragment)) failures.push(`JavaScript Formatter detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-markdown-tool", "data-markdown-table-generator", "data-markdown-table-examples", "data-markdown-table-details", "data-markdown-table-warnings", "data-markdown-preview"]) {
   if (!toolComponents.includes(fragment)) failures.push(`Markdown Previewer table workflow missing ${fragment}`);
 }
-if (!dictionaries.includes("localizedCodeFormatterToolUi") || !dictionaries.includes("localizedSqlDiagnosticsToolUi") || !dictionaries.includes("localizedSqlReportToolUi")) failures.push("SQL/CSS/JavaScript formatter labels must be localized");
+if (!dictionaries.includes("localizedCodeFormatterToolUi") || !dictionaries.includes("localizedSqlDiagnosticsToolUi") || !dictionaries.includes("localizedSqlReportToolUi") || !dictionaries.includes("localizedJavaScriptReportToolUi")) failures.push("SQL/CSS/JavaScript formatter labels must be localized");
 if (!dictionaries.includes("localizedMarkdownToolUi")) failures.push("Markdown table generator labels must be localized");
 
 for (const file of [
