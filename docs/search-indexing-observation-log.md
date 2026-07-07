@@ -3150,3 +3150,15 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The latest signed-in external observation already shows `/sitemaps/en` discovered pages `85`, but Page indexing remains a `2026. 6. 30.` report snapshot with `1` indexed page and `25` not-indexed pages.
 - Interpretation: production now serves the refreshed Search Console waiting-state article, live discovery is still clean at `85` sitemap URLs and `62` feed items, IndexNow and WebSub were refreshed again, and the next meaningful external check is whether Search Console page-indexing dates/reasons or Bing/Naver dashboard evidence change. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Search Console sc-domain Recheck
+
+- Google Search Console account surface: `Google 계정: 조현재 (bobob935@gmail.com)`.
+- Search Console domain property: `sc-domain:bobob.app`.
+- Search Console target URL: `https://search.google.com/search-console/sitemaps?resource_id=sc-domain:bobob.app&hl=ko`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Search Console sitemap row before the visible refresh had temporarily shown the older same-day state: `/sitemaps/en`, submitted `2026. 7. 6.`, last read `2026. 7. 6.`, status `성공`, discovered pages `84`, discovered videos `0`.
+- Search Console visible row after reload: `https://www.bobob.app/sitemaps/en`, type `Sitemap`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, discovered videos `0`.
+- Page indexing drilldown recheck: `크롤링됨 - 현재 색인이 생성되지 않음` still shows final update `26. 6. 30.` and affected pages `20`.
+- Page indexing interpretation: the current Search Console domain-property sitemap discovery matches the deployed `85`-URL sitemap, but the page-indexing report has not refreshed past `2026. 6. 30.` and still does not prove Blog, Play, or operations-tool indexing.
+- Next useful external check: compare whether the Search Console page-indexing report date, indexed/not-indexed counts, representative URL Inspection states, Bing Webmaster dashboard evidence, or Naver Search Advisor sitemap/page-collection evidence changes. Re-submitting the same sitemap again without a changed public URL set is not useful evidence.

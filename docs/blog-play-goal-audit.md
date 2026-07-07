@@ -172,9 +172,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
-  - Property: `https://www.bobob.app/`
+  - Property: `sc-domain:bobob.app` for the user's Search Console link; older URL-prefix observations under `https://www.bobob.app/` remain in the log for historical comparison.
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 85-URL representative target was live.
   - Search Console sitemap resubmission for the latest externally submitted 85-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, discovered pages `85`, and videos `0`.
+- The same-day `sc-domain:bobob.app` recheck initially showed the older `84`-page `/sitemaps/en` row from `2026. 7. 6.`, then after reload showed submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, and videos `0`.
 - The representative sitemap remains intentionally reduced. The latest Search Console sitemap observation now aligns with the deployed/source `85` URL count after the security-header report operations post, and IndexNow/WebSub have also been refreshed for that deployed target. This is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
   - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 85-URL target.
