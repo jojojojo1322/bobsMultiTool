@@ -2973,3 +2973,36 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the JavaScript review report on the core JavaScript formatter/minifier and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 CSS Review Report Source Slice
+
+- Source action: added a copyable CSS review report to `/tools/css-formatter` and `/tools/css-minifier` so the CSS tools produce a shareable selector-block, declaration, custom-property, color-token, at-rule, duplicate-selector, specificity, comment, compression, review-note, and cascade-checklist artifact without including the raw CSS body in the report.
+- Search surface action: expanded the CSS Formatter and CSS Minifier registry/search intents and added the `review-css-snippet` workflow recipe for `css review report`, `css selector report`, `css cascade checklist`, `css specificity checker`, and `css handoff report`, with layout/search/localization/agent-skill harness coverage so the feature stays inside the CSS tools rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/css-formatter`, confirmed `CSS review report`, `Copy CSS report`, selector/declaration/token/duplicate/specificity/comment/compression metrics, review notes, review checklist, Markdown preview, and the `Review a CSS snippet` workflow card with no console errors.
+- Local report-copy verification: Playwright entered a duplicate `.title` selector with `#hero` specificity and `!important`, clicked `Copy CSS report`, and confirmed the copied report began with `# CSS review report`, included `Duplicate selectors: .title`, `ID specificity risk: Yes`, and excluded raw CSS. The only console warning was the existing AdSense `data-nscript` warning.
+- Local minifier verification: Playwright loaded `http://127.0.0.1:3000/tools/css-minifier`, entered `/* license */` plus duplicate `.card` rules, and confirmed the same report surface in minify mode with `Output mode: Minify`, `Comments present: Yes`, `Duplicate selectors: .card`, and the comment-removal warning context.
+- Local search verification: Playwright loaded `http://127.0.0.1:3000/search?q=css%20review%20report` and confirmed the localized `CSS 스니펫 검토` workflow result pointed to `/tools/css-formatter`.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one core code formatter/minifier pair as a CSS review handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 CSS Review Report Production Deployment
+
+- Commit: `4d600cb`.
+- Change: deployed the CSS review report on `/tools/css-formatter` and `/tools/css-minifier` with selector/declaration/token/duplicate/specificity/comment/compression report metrics, safe raw-CSS exclusion, review notes, cascade checklist, localized report labels, registry/search-intent coverage, `review-css-snippet` workflow copy, and harness guards.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=4d600cb2ac62323ee9b424864fef83435b035ed5 npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/css-formatter?deploy=4d600cb`, confirmed `CSS review report`, `Copy CSS report`, selector-block, duplicate-selector, specificity, and raw-CSS exclusion signals after entering a duplicate `.title` selector with `#hero` specificity and `!important`. It then loaded `https://www.bobob.app/search?q=css%20review%20report&deploy=4d600cb` and confirmed the localized `CSS 스니펫 검토` workflow result pointed to `/tools/css-formatter`; the only console warning was the existing AdSense `data-nscript` warning.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `84`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
+- Interpretation: production now serves the CSS review report on the core CSS formatter/minifier and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
