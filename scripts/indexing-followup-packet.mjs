@@ -17,6 +17,22 @@ const searchConsoleResource = encodeURIComponent(searchConsoleProperty);
 const searchConsoleSitemapsUrl = `https://search.google.com/u/1/search-console/sitemaps?resource_id=${searchConsoleResource}&pageId=none`;
 const bingWebmasterUrl = "https://www.bing.com/webmasters/";
 const naverSearchAdvisorUrl = "https://searchadvisor.naver.com/";
+const retiredSitemapPaths = [
+  "/sitemaps/ko",
+  "/sitemaps/ja",
+  "/sitemaps/zh-CN",
+  "/sitemaps/zh-TW",
+  "/sitemaps/es",
+  "/sitemaps/pt-BR",
+  "/sitemaps/de",
+  "/sitemaps/fr",
+  "/sitemaps/hi",
+  "/sitemaps/id",
+  "/sitemaps/vi",
+  "/sitemaps/th",
+  "/sitemaps/ar",
+];
+const retiredSitemapDestination = `${canonicalBaseUrl}/sitemaps/en`;
 const representativeUrls = [
   `${canonicalBaseUrl}/`,
   `${canonicalBaseUrl}/blog`,
@@ -112,6 +128,21 @@ async function fetchText(routePath, accept = "text/plain,*/*") {
   };
 }
 
+async function fetchRedirect(routePath) {
+  const response = await fetch(`${baseUrl}${routePath}`, {
+    headers: {
+      "user-agent": "BobobIndexingFollowupPacket/1.0",
+      accept: "application/xml,text/xml,*/*",
+    },
+    redirect: "manual",
+  });
+  return {
+    path: routePath,
+    status: response.status,
+    location: response.headers.get("location") ?? "",
+  };
+}
+
 async function snapshotDiscovery() {
   const [home, robots, sitemapIndex, sitemap, rss, atom, jsonFeedResponse, llms, opensearch] = await Promise.all([
     fetchText("/", "text/html,*/*"),
@@ -130,6 +161,10 @@ async function snapshotDiscovery() {
   const rssItemCount = countMatches(rss.body, /<item>/g);
   const atomEntryCount = countMatches(atom.body, /<entry>/g);
   const jsonFeedItemCount = Array.isArray(jsonFeed.items) ? jsonFeed.items.length : 0;
+  const retiredSitemapRedirects = await Promise.all(retiredSitemapPaths.map((routePath) => fetchRedirect(routePath)));
+  const retiredSitemapRedirectCount = retiredSitemapRedirects.filter(
+    (redirect) => redirect.status === 308 && redirect.location === retiredSitemapDestination,
+  ).length;
   const checks = {
     homeFeedDiscovery: home.body.includes('rel="alternate" type="application/rss+xml"') && home.body.includes('rel="search" type="application/opensearchdescription+xml"'),
     robotsSitemap: robots.body.includes(`${canonicalBaseUrl}/sitemap.xml`),
@@ -142,12 +177,15 @@ async function snapshotDiscovery() {
     webSubDiscovery: rss.body.includes('rel="hub"') && atom.body.includes('rel="hub"') && jsonFeed.hubs?.some((hub) => hub.type === "WebSub"),
     llmsDiscovery: llms.body.includes("## Discovery") && llms.body.includes(`${canonicalBaseUrl}/sitemap.xml`),
     opensearch: opensearch.body.includes("/search?q={searchTerms}"),
+    retiredSitemapRedirectsAligned: retiredSitemapRedirectCount === retiredSitemapPaths.length,
   };
 
   return {
     checks,
     sitemapUrls,
     sitemapIndexUrls,
+    retiredSitemapRedirects,
+    retiredSitemapRedirectCount,
     contentTypes: {
       rss: rss.contentType,
       atom: atom.contentType,
@@ -163,9 +201,17 @@ function assertSnapshot(snapshot, log) {
   const checks = snapshot.checks;
   const latestIndexNowCount = latestLoggedCount(log, "IndexNow submitted URL count");
   const latestDiscoveredPages = latestSitemapDiscoveredPages(log);
+  const failedRetiredRedirects = snapshot.retiredSitemapRedirects.filter(
+    (redirect) => redirect.status !== 308 || redirect.location !== retiredSitemapDestination,
+  );
 
   for (const [key, value] of Object.entries(checks)) {
     if (value === false || value === 0) failures.push(`discovery check failed: ${key}`);
+  }
+  for (const redirect of failedRetiredRedirects) {
+    failures.push(
+      `retired sitemap redirect failed: ${redirect.path} returned ${redirect.status} to ${redirect.location || "(empty)"}, expected 308 to ${retiredSitemapDestination}`,
+    );
   }
   if (latestIndexNowCount !== null && checks.sitemapUrlCount !== latestIndexNowCount) {
     failures.push(`live sitemap URL count ${checks.sitemapUrlCount} should match latest logged IndexNow count ${latestIndexNowCount}`);
@@ -194,6 +240,8 @@ function assertPacket(packet, snapshot, log, registration) {
   const liveSitemapStatus = targetStatus(liveSitemapUrlCount, targets.sitemapUrlCount);
   const liveFeedStatus = feedTargetStatus(snapshot.checks, targets.feedItemCount);
   const searchConsoleGap = latestDiscoveredPages === null ? "not parsed" : liveSitemapUrlCount - latestDiscoveredPages;
+  const retiredSitemapStatus =
+    snapshot.retiredSitemapRedirectCount === retiredSitemapPaths.length ? "aligned" : "check";
   const requiredFragments = [
     `Source /sitemaps/en target: \`${targets.sitemapUrlCount ?? "not parsed"}\``,
     `Source feed target: \`${targets.feedItemCount ?? "not parsed"}\``,
@@ -202,6 +250,8 @@ function assertPacket(packet, snapshot, log, registration) {
     `Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
     `Search Console discovered-vs-live gap: \`${searchConsoleGap}\``,
+    `Retired locale sitemap redirects: \`${retiredSitemapStatus}\``,
+    `Retired redirect sample: \`/sitemaps/ar\` -> \`308\` \`${retiredSitemapDestination}\``,
     "## Deployment Gate",
     "Do not resubmit `/sitemaps/en`, run IndexNow/WebSub submit commands, or request AdSense re-review until live counts match the source targets.",
     "Chrome profile/session already signed in as `bobob935@gmail.com`",
@@ -210,6 +260,7 @@ function assertPacket(packet, snapshot, log, registration) {
     `latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}`,
     "## Naver Search Advisor Check",
     "Naver Search Advisor checklist",
+    "If Naver still shows old locale sitemap rows",
   ];
   const missing = requiredFragments.filter((fragment) => !packet.includes(fragment));
   if (missing.length) throw new Error(`indexing follow-up packet missing current-count guidance:\n${missing.join("\n")}`);
@@ -229,6 +280,10 @@ function renderPacket(snapshot, log, registration) {
   const deploymentGateStatus =
     liveSitemapStatus.label === "aligned" && liveFeedStatus.label === "aligned" ? "ready" : "blocked";
   const searchConsoleGap = latestDiscoveredPages === null ? "not parsed" : checks.sitemapUrlCount - latestDiscoveredPages;
+  const retiredSitemapStatus =
+    snapshot.retiredSitemapRedirectCount === retiredSitemapPaths.length ? "aligned" : "check";
+  const retiredSitemapSample =
+    snapshot.retiredSitemapRedirects.find((redirect) => redirect.path === "/sitemaps/ar") ?? snapshot.retiredSitemapRedirects[0];
 
   return [
     "# bobob.app Indexing Follow-up Packet",
@@ -248,6 +303,8 @@ function renderPacket(snapshot, log, registration) {
     `- Initial Search Console discovered pages baseline: \`${initialDiscoveredPages ?? "not parsed"}\``,
     `- Latest Search Console discovered pages after resubmission: \`${latestDiscoveredPages ?? "not parsed"}\``,
     `- Search Console discovered-vs-live gap: \`${searchConsoleGap}\``,
+    `- Retired locale sitemap redirects: \`${retiredSitemapStatus}\` (${snapshot.retiredSitemapRedirectCount}/${retiredSitemapPaths.length} to \`${retiredSitemapDestination}\`)`,
+    `- Retired redirect sample: \`${retiredSitemapSample.path}\` -> \`${retiredSitemapSample.status}\` \`${retiredSitemapSample.location || "(empty)"}\``,
     `- Feed counts: RSS \`${checks.rssItemCount}\`, Atom \`${checks.atomEntryCount}\`, JSON Feed \`${checks.jsonFeedItemCount}\``,
     `- Source-vs-live feed status: \`${liveFeedStatus.label}\` (target-min-live gap \`${liveFeedStatus.gap}\`)`,
     `- Representative Blog source count: \`${targets.representativeBlogCount ?? "not parsed"}\``,
@@ -289,6 +346,7 @@ function renderPacket(snapshot, log, registration) {
     "",
     `- Open: ${naverSearchAdvisorUrl}`,
     "- Naver Search Advisor checklist: confirm the `https://www.bobob.app` site property, sitemap submission state, robots.txt state, and representative URL collection/request status.",
+    "- If Naver still shows old locale sitemap rows, record whether rows such as `sitemaps/ar`, `sitemaps/th`, and `sitemaps/zh-CN` now resolve through the 308 redirect to `/sitemaps/en` instead of dead XML routes.",
     "- If a page collection request is submitted, record the exact date, URL, and UI confirmation in `docs/search-indexing-observation-log.md`.",
     "- Do not treat a Naver page collection request or sitemap submission as indexing proof; compare later collection/indexing evidence separately.",
     "",
@@ -328,6 +386,7 @@ if (checkOnly) {
         rssItemCount: snapshot.checks.rssItemCount,
         atomEntryCount: snapshot.checks.atomEntryCount,
         jsonFeedItemCount: snapshot.checks.jsonFeedItemCount,
+        retiredSitemapRedirects: `${snapshot.retiredSitemapRedirectCount}/${retiredSitemapPaths.length}`,
       },
       null,
       2,
