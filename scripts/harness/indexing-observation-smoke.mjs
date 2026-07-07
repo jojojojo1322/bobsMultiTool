@@ -164,7 +164,7 @@ const latestLoggedLiveSitemapUrlCount = Array.from(log.matchAll(/(?:Live `?\/sit
   .filter(Number.isFinite)
   .at(-1);
 if (!latestLoggedLiveSitemapUrlCount) failures.push("Could not parse latest logged live sitemap URL count");
-const latestSearchConsoleDiscoveredPages = Array.from(log.matchAll(/\/sitemaps\/en[^\n]*discovered pages `(\d+)`/g))
+const latestSearchConsoleDiscoveredPages = Array.from(log.matchAll(/\/sitemaps\/en[^\n]*?discovered pages `(\d+)`/g))
   .map((match) => Number.parseInt(match[1], 10))
   .filter(Number.isFinite)
   .at(-1);

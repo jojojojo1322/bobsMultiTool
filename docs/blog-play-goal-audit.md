@@ -180,13 +180,16 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - The representative sitemap remains intentionally reduced. The latest Search Console sitemap observation now aligns with the deployed/source `85` URL count after the security-header report operations post, and IndexNow/WebSub have also been refreshed for that deployed target. This is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
   - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 85-URL target.
-  - Latest performance observation showed total clicks `0`, total impressions `18`, CTR `0%`, and average position `1.1` for the `3개월` range.
-  - Latest page indexing report now shows indexed pages `1` and not-indexed pages `25`, with last update `2026. 6. 30`.
-  - Latest page-indexing reason rows include `크롤링됨 - 현재 색인이 생성되지 않음`: `20`, `리디렉션이 포함된 페이지`: `2`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
-  - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`.
+  - Latest performance observation showed total clicks `1`, total impressions `28`, CTR `3.6%`, and average position `3.5` for the `3개월` range, with the report last updated `8.5시간 전`.
+  - Latest page indexing report now shows indexed pages `1` and not-indexed pages `32`, with last update `2026. 6. 30`.
+  - Latest page-indexing reason rows include `리디렉션이 포함된 페이지`: `5`, `크롤링됨 - 현재 색인이 생성되지 않음`: `24`, `사용자가 선택한 표준이 없는 중복 페이지`: `2`, and `적절한 표준 태그가 포함된 대체 페이지`: `1`.
+  - URL Inspection now shows `https://www.bobob.app/` as `URL이 Google에 등록되어 있음` and `페이지 색인이 생성됨`; a recrawl/indexing request was submitted after the site-wide operations metadata deployment.
   - Representative Blog/Play URLs inspected: `https://www.bobob.app/blog`, `https://www.bobob.app/play`, `https://www.bobob.app/blog/ai-side-project-realistic-order`, and `https://www.bobob.app/play/office-survival`.
   - Representative Blog/Play URL status before request: `/blog`, `/play`, and `/play/office-survival` were `크롤링됨 - 현재 색인이 생성되지 않음`; `/blog/ai-side-project-realistic-order` was `발견됨 - 현재 색인이 생성되지 않음`.
   - Representative Blog/Play URL indexing request confirmation: `색인 생성 요청됨`
+  - Operations-tool representative URL inspected: `https://www.bobob.app/tools/http-status-checker`.
+  - Operations-tool representative URL status before request: `URL이 Google에 등록되어 있지 않음`; page indexing reason `크롤링됨 - 현재 색인이 생성되지 않음`; sitemap `https://www.bobob.app/sitemaps/en`.
+  - Operations-tool representative URL indexing request confirmation: `색인 생성 요청됨`.
   - The new security-header operations post `https://www.bobob.app/blog/security-header-report-before-copying-devtools` is not indexed yet; URL Inspection shows `발견됨 - 현재 색인이 생성되지 않음`, sitemap `https://www.bobob.app/sitemaps/en`, and a fresh `색인 생성 요청됨` confirmation with the priority crawl queue message.
   - Post-77-URL pillar URL Inspection checked `https://www.bobob.app/blog/why-bobob-shifted-to-content-lab` and `https://www.bobob.app/blog/content-indexing-checklist-before-resubmission`.
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, fetched successfully, and allowed indexing.
@@ -204,7 +207,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Naver reports security certificate and HTTPS redirect as normal.
   - Naver still reports `사이트맵을 찾을 수 없습니다`.
   - The latest 2026-07-07 signed-in retry reached the `풀꽃` dashboard and the `https://www.bobob.app` site summary. The sitemap-submit page still shows only old broad locale entries from `26.06.16`: `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`.
-  - `sitemaps/en` and `/sitemaps/en` submission attempts through browser control were not visibly added to the Naver row list and did not show a readable success/error message.
+  - `sitemaps/en` and `/sitemaps/en` submission attempts through browser control were not visibly added to the Naver row list and did not show a readable success/error message. A full URL attempt with `https://www.bobob.app/sitemaps/en` showed a JavaScript alert and still did not add a row.
   - Route cleanup now redirects retired known locale sitemap paths to `/sitemaps/en` instead of leaving the old Naver-visible rows on 404 responses; this is a crawl-surface cleanup, not Naver indexing proof.
   - A Naver page collection request, when submitted later, must be logged separately and must not be treated as indexing proof.
 - WebSub:
@@ -234,12 +237,12 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 
 ## Still Not Complete
 
-- Search Console has started showing more impressions (`18`) in the `3개월` performance report, but clicks remain `0`.
+- Search Console has started showing impressions (`28`) and one click in the `3개월` performance report, but this is still far below useful traffic.
 - Google URL Inspection proves the homepage itself is indexed.
-- Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `25`, and the report is still dated `2026. 6. 30`.
+- Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`, and the report is still dated `2026. 6. 30`.
 - Search Console sitemap discovery now matches the current live/source representative sitemap URL count (`85`), but this is discovery only and still does not prove that submitted Blog, Play, or tool URLs are indexed.
 - The current source sitemap target is now `85` after the security-header report operations post, so the next Search Console/Bing/Naver pass must compare indexing/report changes instead of treating sitemap discovery as indexing proof.
-- Blog and Play representative URLs are still not indexed after inspection; requests were queued but that is not indexing proof.
+- Blog, Play, and operations-tool representative URLs are still not indexed after inspection; requests were queued where useful, but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass that reaches the `www.bobob.app` dashboard after deployment and submission propagation.
