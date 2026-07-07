@@ -3262,3 +3262,22 @@ Completion guard:
 - Search Console action: none in this source pass. The latest signed-in external observation still shows Page indexing final update `26. 6. 30.`, indexed pages `1`, and not-indexed pages `32`; this slice explains and routes that waiting state but does not change Google's index.
 - Local verification: `npm run harness:search`, `npm run harness:blog-play-mvp`, `npm run harness:registry`, and `git diff --check` passed.
 - Interpretation: this improves the public answer for the user's current Search Console timing question and gives internal search a direct workflow route for report-refresh-delay queries. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Search Console Report Refresh Delay Production Deployment
+
+- Commit: `d597c6b`.
+- Change: deployed the refreshed `search-console-misreads-for-indie-devs` operations note and Search Console report-refresh delay search intent coverage for `색인 리포트 언제 업데이트`, `페이지 색인 생성 최종 업데이트`, and related English/Korean queries.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:deployment-status` returned `overallState: success` for `d597c6b6cd434d4f22b7cb3123b482e6f1ee869d` after earlier pending checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=%EC%83%89%EC%9D%B8%20%EB%A6%AC%ED%8F%AC%ED%8A%B8%20%EC%96%B8%EC%A0%9C%20%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8&deploy=d597c6b` and confirmed `미색인 URL 진단`, `검색 노출 준비 점검`, `Sitemap`, `색인 리포트 언제 업데이트`, `페이지 색인 생성 최종 업데이트`, and `개인 개발자가 Search Console을 볼 때 자주 착각하는 지점` appeared with no console errors. Playwright also loaded `https://www.bobob.app/blog/search-console-misreads-for-indie-devs?deploy=d597c6b` and confirmed the `그래서 언제 업데이트를 기다리나` section, `Not indexed pages` `32`, `Page indexing report last updated` `2026. 6. 30.`, and the `1주 단위` wait row rendered with no console errors.
+- Search Console action: none in this production pass. The deployed public explanation and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers the report-refresh-delay question and routes the exact Korean query to an operations workflow, but Google Search Console page indexing, Bing dashboard access, and Naver sitemap visibility still require later external observation. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
