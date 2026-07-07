@@ -3437,3 +3437,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so 5xx/CDN timeout query families stay wired to workflow search and HTTP Status Checker registry metadata.
 - Search Console action: none in this source pass. This improves public routing for deployment failure and API/server-error symptoms but does not change Google's page-indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this strengthens existing submitted HTTP/API/deploy-config operations surfaces while indexing reports lag. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 5xx Gateway Error Workflow Production Deployment
+
+- Commit: `127d435`.
+- Change: deployed 500/502/503/504, bad-gateway, gateway-timeout, Cloudflare 522/524, Vercel 500, function-timeout, and server-error response search coverage into the existing redirect, API response, deploy-config, HTTP Status Checker registry, and `vercel-sitemap-canonical-log` article surfaces.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=127d435 npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=500%20%EC%98%A4%EB%A5%98%20%ED%99%95%EC%9D%B8&deploy=127d435` and confirmed `리다이렉트 디버그`, `배포 설정 검증`, `http 500 checker`, and `500 internal server error checker` appeared with no console errors. Playwright also loaded `https://www.bobob.app/blog/vercel-sitemap-canonical-log?deploy=127d435` and confirmed the `5xx 에러는 public 응답과 로그를 분리한다` section, `500 Internal Server Error`, `502 Bad Gateway`, and `Cloudflare 522/524` table rows rendered with no console errors. Both live browser checks showed only the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers 5xx/CDN/upstream deployment symptoms through existing submitted HTTP/API/deploy-config workflows and a representative operations article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

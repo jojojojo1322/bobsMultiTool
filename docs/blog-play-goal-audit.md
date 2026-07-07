@@ -229,7 +229,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - 5xx gateway-error source target:
   - The existing HTTP Status Checker, API response workflow, and deploy-config workflow now route 500/502/503/504, bad gateway, gateway timeout, Cloudflare 522/524, Vercel 500, and server-error response queries into public URL reports, API response reports, YAML validation, ENV parsing, and JSON config checks.
   - This intentionally does not claim log access or automatic root-cause detection; it separates public status/redirect/header/timing evidence from app logs, env values, upstream services, platform runtime, and CDN/origin reachability.
-  - This source change improves operations-search coverage while the `2026. 6. 30.` Search Console page-indexing report snapshot remains stale. It is not Search Console indexing proof until a later signed-in observation changes.
+  - This source change is deployed in commit `127d435`, with live discovery, submitted URL health, Search discovery registration, IndexNow, and WebSub refreshed at the same `85` sitemap URLs and `62` feed items. The `2026. 6. 30.` Search Console page-indexing report snapshot remains stale, so this is not Search Console indexing proof until a later signed-in observation changes.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
