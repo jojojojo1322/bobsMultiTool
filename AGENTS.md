@@ -62,6 +62,7 @@
 - Blog and Play rendered pages should keep exactly one visible `h1`, unique document titles and meta descriptions, canonical URLs on `https://www.bobob.app`, and matching BlogPosting/Game/CollectionPage structured data so Bing/Search Console quality checks do not regress.
 - `docs/search-discovery-registration.md` is the operating matrix for Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots, OpenSearch, llms.txt, and the stop rule that discovery submissions are not indexing proof.
 - Submitted sitemap URLs should remain final 200 HTML pages with matching canonical links, exactly one h1, unique title/description metadata, OpenGraph/Twitter title and description, and no `noindex` robots metadata.
+- Retired known locale sitemap paths such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN` should 308 redirect to `/sitemaps/en` so older external webmaster submissions stop seeing 404s. Do not use this as permission to restore broad per-locale sitemap coverage before localized Blog/Play content exists.
 - New tools must be registered in `apps/main/src/features/tools/registry.ts` and backed by a component key.
 - Every tool needs SEO metadata, examples, FAQs, guide links, related tools, demandTier, searchIntents, supportedLocales, privacyMode, and requiresServer.
 - Every tool also needs aliases, useCases, inputExamples, contentCluster, and monetizationTier so SEO, internal search, and monetization review stay tied to the registry.

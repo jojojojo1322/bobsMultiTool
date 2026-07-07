@@ -167,6 +167,17 @@ if (ogImageResponse && !ogImageResponse.headers.get("content-type")?.includes("i
 const sitemapIndex = await textFor("/sitemap.xml");
 assertIncludes("/sitemap.xml", sitemapIndex, ["<sitemapindex", `<loc>${baseUrl}/sitemaps/en</loc>`]);
 
+const retiredSitemapResponse = await fetchLive(`${baseUrl}/sitemaps/ar`, { redirect: "manual" });
+if (retiredSitemapResponse) {
+  if (retiredSitemapResponse.status !== 308) {
+    failures.push(`/sitemaps/ar should 308 redirect to the reduced sitemap, got ${retiredSitemapResponse.status}`);
+  }
+  const retiredSitemapLocation = retiredSitemapResponse.headers.get("location") ?? "";
+  if (retiredSitemapLocation !== `${baseUrl}/sitemaps/en`) {
+    failures.push(`/sitemaps/ar redirects to ${retiredSitemapLocation || "(empty)"}, expected ${baseUrl}/sitemaps/en`);
+  }
+}
+
 const sitemap = await textFor("/sitemaps/en");
 const sitemapUrlCount = (sitemap?.match(/<url>/g) ?? []).length;
 if (sitemapUrlCount !== expectedSitemapUrlCount) {

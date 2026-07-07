@@ -71,6 +71,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Meta Tag Generator evidence surface: `/tools/meta-tag-generator` now exposes a copyable Meta crawler report with title and description lengths, canonical host, robots policy, Open Graph image host, warning notes, and crawler checklist so the submitted tool page supports metadata/Search Console handoff instead of only producing tag markup.
 - Open Graph Preview evidence surface: `/tools/open-graph-preview` now exposes a copyable Open Graph crawler report with title and description lengths, page host, image host, robots policy, warning notes, and crawler checklist so the submitted SEO tool page supports social-preview/Search Console handoff instead of only showing a card mock.
 - URL Parser evidence surface: `/tools/url-parser` now exposes a copyable URL canonical report with host, query, tracking, fragment, clean URL, canonical candidate, warning notes, and crawler follow-up checklist so the submitted operations tool page supports URL cleanup/Search Console handoff instead of only showing parsed URL JSON.
+- Retired sitemap route cleanup: known non-submitted locale sitemap paths such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN` now 308 redirect to `/sitemaps/en`, so older Naver/Search Advisor rows no longer point at 404 XML routes while broad locale sitemap coverage remains paused.
 - Blog index evidence surface: `apps/main/src/app/blog/page.tsx` now exposes the same three pillar posts in the `data-blog-pillars` first-read section before category cards, so `/blog` starts with the site direction, Play architecture, and content/indexing policy instead of a long chronological archive.
 - Trust surface alignment: default About/Contact copy now describes the web-operations workbench first while preserving Blog/Play context; localized trust routes still need a follow-up pass if the operations-first wording is expanded beyond this source-locale recovery slice.
 - Required first-pass topics are present:
@@ -202,6 +203,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Naver still reports `사이트맵을 찾을 수 없습니다`.
   - The latest 2026-07-07 signed-in retry reached the `풀꽃` dashboard and the `https://www.bobob.app` site summary. The sitemap-submit page still shows only old broad locale entries from `26.06.16`: `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`.
   - `sitemaps/en` and `/sitemaps/en` submission attempts through browser control were not visibly added to the Naver row list and did not show a readable success/error message.
+  - Route cleanup now redirects retired known locale sitemap paths to `/sitemaps/en` instead of leaving the old Naver-visible rows on 404 responses; this is a crawl-surface cleanup, not Naver indexing proof.
   - A Naver page collection request, when submitted later, must be logged separately and must not be treated as indexing proof.
 - WebSub:
   - Feed topics submitted: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`
@@ -239,7 +241,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
 - Bing Webmaster recommendation classes still need a signed-in follow-up pass that reaches the `www.bobob.app` dashboard after deployment and submission propagation.
-- Naver Search Advisor still needs a cleanup/pass for visible `sitemaps/en` registration and later collection/indexing state.
+- Naver Search Advisor still needs a follow-up pass for visible `sitemaps/en` registration or proof that Naver reread the redirected retired sitemap rows, plus later collection/indexing state.
 - Discovery submissions are hints only. They do not prove that Google, Bing, or Naver indexed the new Blog + Play pages.
 
 ## Scheduled Follow-up

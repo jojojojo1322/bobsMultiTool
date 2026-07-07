@@ -155,6 +155,7 @@ for (const fragment of [
   "`why-small-web-toys-return` was deepened from a smaller interest note into a near-900 word Blog + Play article",
   "`deploy-stacker-build-log` was deepened from an 860-word archive absorption note into a 1,200+ word release-rail production log",
   "`lottery-endless-stage-loop-note` now absorbs `lottery-scratch-stage-note` into a 1,100+ word representative Play-safety build log",
+  "Retired sitemap route cleanup: known non-submitted locale sitemap paths such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN` now 308 redirect to `/sitemaps/en`",
   `Sitemap URLs: \`${currentSubmittedSitemapCount}\``,
   `Feed items: \`${currentFeedItemCount}\``,
   `Search Console sitemap resubmission for the latest externally submitted ${latestExternalSitemapCount}-URL sitemap showed \`사이트맵이 제출됨\`.`,
@@ -188,7 +189,7 @@ for (const fragment of [
   searchConsoleDiscoveryStatusFragment,
   "The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.",
   "Bing Webmaster recommendation classes still need a signed-in follow-up pass",
-  "Naver Search Advisor still needs a cleanup/pass for visible `sitemaps/en` registration and later collection/indexing state.",
+  "Naver Search Advisor still needs a follow-up pass for visible `sitemaps/en` registration or proof that Naver reread the redirected retired sitemap rows",
   "Automation id: `bobob-indexing-observation`",
   "Do not mark the active goal complete",
 ]) {

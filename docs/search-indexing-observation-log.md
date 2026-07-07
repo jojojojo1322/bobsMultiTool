@@ -3111,3 +3111,11 @@ Completion guard:
 - Naver submitted sitemap rows: only old broad locale sitemap rows from `26.06.16` were visible: `sitemaps/ar`, `sitemaps/th`, `sitemaps/vi`, `sitemaps/id`, `sitemaps/hi`, `sitemaps/fr`, `sitemaps/pt-BR`, `sitemaps/zh-TW`, `sitemaps/zh-CN`, and `sitemaps/es`.
 - Naver reduced sitemap attempt: `sitemaps/en` and `/sitemaps/en` were entered through browser control, but the visible submitted sitemap row list did not add `sitemaps/en` and no readable success/error message appeared.
 - Interpretation: Bing still has only IndexNow discovery evidence, not Webmaster dashboard evidence. Naver ownership and HTTPS state are confirmed, but the current reduced `85`-URL `/sitemaps/en` discovery set is not visibly registered in Naver Search Advisor. This is not indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 Retired Locale Sitemap Redirect Source Slice
+
+- Source action: changed the dynamic `/sitemaps/[locale]` route so known locale sitemap paths that are no longer submitted, such as `/sitemaps/ar`, `/sitemaps/th`, and `/sitemaps/zh-CN`, return a 308 redirect to `https://www.bobob.app/sitemaps/en` instead of 404.
+- Scope guard: this does not restore broad per-locale sitemap coverage. `/sitemap.xml` still exposes only the reduced `/sitemaps/en` sitemap index entry, and `/sitemaps/en` remains the only submitted sitemap set.
+- Naver relevance: the latest signed-in Naver Search Advisor check showed only old broad locale sitemap rows from `26.06.16`; those rows were 404 before this source fix, so redirecting them to the reduced sitemap removes a concrete dead-route crawler signal.
+- Harness guard: route and live-discovery smoke now assert that `/sitemaps/ar` 308 redirects to `/sitemaps/en`.
+- Interpretation: this is crawl-surface cleanup for old external webmaster submissions. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

@@ -316,6 +316,14 @@ if (!sitemapIndexBody.includes("<sitemapindex") || !sitemapIndexBody.includes("h
   failures.push("/sitemap.xml missing canonical reduced sitemap index entry");
 }
 
+const retiredSitemapResponse = await fetch(`${baseUrl}/sitemaps/ar`, { headers: smokeHeaders, redirect: "manual" });
+if (retiredSitemapResponse.status !== 308) {
+  failures.push(`/sitemaps/ar should 308 redirect to the reduced sitemap, got ${retiredSitemapResponse.status}`);
+}
+if (retiredSitemapResponse.headers.get("location") !== "https://www.bobob.app/sitemaps/en") {
+  failures.push(`/sitemaps/ar redirects to ${retiredSitemapResponse.headers.get("location") || "(empty)"}, expected https://www.bobob.app/sitemaps/en`);
+}
+
 const reducedSitemapBody = await (await fetch(`${baseUrl}/sitemaps/en`, { headers: smokeHeaders })).text();
 const reducedSitemapUrlCount = (reducedSitemapBody.match(/<url>/g) ?? []).length;
 if (reducedSitemapUrlCount !== expectedSitemapUrlCount) {

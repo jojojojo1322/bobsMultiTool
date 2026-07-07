@@ -134,6 +134,8 @@ for (const fragment of [
   "IndexNow response status: `200`",
   "WebSub feed item counts: `61`, `61`",
   "WebSub response statuses: `204`, `204`",
+  "Retired Locale Sitemap Redirect Source Slice",
+  "return a 308 redirect to `https://www.bobob.app/sitemaps/en` instead of 404",
 ]) {
   assertIncludes(log, fragment, logPath);
 }
