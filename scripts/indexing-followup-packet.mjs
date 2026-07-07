@@ -12,9 +12,10 @@ const outputPath = argValue("--out") || process.env.BOBOB_INDEXING_PACKET_OUT;
 const checkOnly = hasArg("--check");
 const logPath = path.join(root, "docs/search-indexing-observation-log.md");
 const discoveryRegistrationPath = path.join(root, "docs/search-discovery-registration.md");
-const searchConsoleProperty = "https://www.bobob.app/";
+const searchConsoleProperty = "sc-domain:bobob.app";
 const searchConsoleResource = encodeURIComponent(searchConsoleProperty);
-const searchConsoleSitemapsUrl = `https://search.google.com/u/1/search-console/sitemaps?resource_id=${searchConsoleResource}&pageId=none`;
+const searchConsoleSitemapsUrl = `https://search.google.com/search-console/sitemaps?resource_id=${searchConsoleResource}&hl=ko`;
+const searchConsoleIndexUrl = `https://search.google.com/search-console/index?resource_id=${searchConsoleResource}&hl=ko`;
 const bingWebmasterUrl = "https://www.bing.com/webmasters/";
 const naverSearchAdvisorUrl = "https://searchadvisor.naver.com/";
 const retiredSitemapPaths = [
@@ -261,6 +262,9 @@ function assertPacket(packet, snapshot, log, registration) {
     "## Naver Search Advisor Check",
     "Naver Search Advisor checklist",
     "If Naver still shows old locale sitemap rows",
+    `Property: \`${searchConsoleProperty}\``,
+    `Sitemaps report: ${searchConsoleSitemapsUrl}`,
+    `Page indexing report: ${searchConsoleIndexUrl}`,
   ];
   const missing = requiredFragments.filter((fragment) => !packet.includes(fragment));
   if (missing.length) throw new Error(`indexing follow-up packet missing current-count guidance:\n${missing.join("\n")}`);
@@ -326,6 +330,8 @@ function renderPacket(snapshot, log, registration) {
     "- Browser session: use the Chrome profile/session already signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.",
     `- Property: \`${searchConsoleProperty}\``,
     `- Sitemaps report: ${searchConsoleSitemapsUrl}`,
+    `- Page indexing report: ${searchConsoleIndexUrl}`,
+    "- Compare this domain-property view against older URL-prefix rows only when reviewing historical observations.",
     `- Compare against the 2026-06-25 baseline: clicks 0, impressions 0, indexed pages 0, not indexed pages 5, initial /sitemaps/en discovered pages ${initialDiscoveredPages ?? "not parsed"}.`,
     `- Also compare against the same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}, live sitemap URL count ${checks.sitemapUrlCount}, latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}.`,
     "- Record whether `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` changed, disappeared, or gained sample URLs.",

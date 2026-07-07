@@ -17,7 +17,7 @@ Tracked files in this folder are safe templates and instructions only. Real expo
 Run `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run seo:indexing-followup` before the next Search Console/Bing pass when local CLI TLS trust fails. It writes `reports/indexing-followup.md` with:
 
 - the current live sitemap/feed/OpenSearch/robots snapshot
-- the `bobob935@gmail.com` Search Console property link
+- the `bobob935@gmail.com` Search Console `sc-domain:bobob.app` property links
 - the representative URL inspection targets
 - the Bing Webmaster recommendation checklist
 - the stop rule that IndexNow/WebSub/sitemap success is not indexing proof
