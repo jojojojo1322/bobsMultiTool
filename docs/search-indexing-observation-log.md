@@ -2924,3 +2924,19 @@ Completion guard:
 - Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
 - Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
 - Interpretation: this strengthens one core code formatter as a query-review handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 SQL Review Report Production Deployment
+
+- Commit: `cf81a0c`.
+- Change: deployed the SQL review report on `/tools/sql-formatter` with query-type/table-reference/JOIN/subquery/parameter/WHERE/LIMIT/mutation-risk report metrics, safe raw-SQL exclusion, review notes, execution checklist, localized report labels, registry/search-intent coverage, `review-sql-query` workflow copy, and harness guards.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=cf81a0c58ced8efb34facd16a7810d06eb4ce6cd npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/sql-formatter?deploy=cf81a0c`, confirmed `SQL review report`, `Copy SQL report`, query/table/JOIN/subquery/parameter/WHERE/LIMIT metrics, review notes, execution checklist, Markdown preview, and report copy handler with no console errors. The copied report began with `# SQL review report`, included `WHERE status: Yes`, and included the review checklist. After entering `update users set active=false`, the live report changed to `Mutation query`, `WHERE status: No`, and `Mutation or schema risk: Yes`; the only console warning was the existing AdSense `data-nscript` warning.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `84`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
+- Interpretation: production now serves the SQL review report on the core SQL formatter and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
