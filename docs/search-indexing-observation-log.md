@@ -3006,3 +3006,35 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the CSS review report on the core CSS formatter/minifier and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 HTTP Security Header Report Source Slice
+
+- Source action: added a copyable Security header report inside `/tools/http-status-checker` so pasted DevTools/curl response headers produce a shareable security score, missing-required-header count, cookie/CORS warning summary, per-header readiness results, and deployment checklist without including the raw header block.
+- Search surface action: expanded HTTP Status Checker registry/search intents and the existing `review-security-headers` workflow for `security header report`, `http security report`, `csp review report`, and `hsts report`, with layout/search/localization/agent-skill harness coverage so security-header report behavior stays inside the HTTP tool instead of becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/http-status-checker`, confirmed `Security header report`, `Copy security report`, security score, missing required, cookie/CORS, raw-header-exclusion, review notes, deployment checklist, and Markdown preview with no console errors.
+- Local report-copy verification: Playwright stubbed `navigator.clipboard.writeText`, clicked `Copy security report`, and confirmed the copied report began with `# Security header report`, included `Security header score: 3/6`, excluded raw headers, and included the deployment checklist. It then pasted a risky response header block with `Set-Cookie`, wildcard CORS credentials, and no security headers, and confirmed the report changed to `Security header score: 0/6`, `Missing required: 3`, cookie warning context, CORS warning context, and raw-header exclusion.
+- Local search verification: Playwright loaded `http://127.0.0.1:3000/search?q=security%20header%20report` and confirmed the localized `보안 헤더 점검` workflow result pointed to `/tools/http-status-checker`.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens the HTTP/network core tool as a security-header handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 HTTP Security Header Report Production Deployment
+
+- Commit: `e447dab`.
+- Change: deployed the Security header report on `/tools/http-status-checker` with pasted-header security score, required-header, cookie/CORS, readiness-check, raw-header-exclusion, review-note, and deployment-checklist output plus localized report labels, registry/search-intent coverage, `review-security-headers` workflow copy, and harness guards.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=e447dabe953c30a197e6359995d81867510cba31 npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/http-status-checker?deploy=e447dab`, confirmed `Security header report`, `Copy security report`, report preview, security score, raw-header exclusion, and deployment checklist. It then loaded `https://www.bobob.app/search?q=security%20header%20report&deploy=e447dab` and confirmed the localized `보안 헤더 점검` workflow result pointed to `/tools/http-status-checker`; the only console warning was the existing AdSense `data-nscript` warning.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `84`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
+- Interpretation: production now serves the Security header report on the core HTTP Status Checker and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
