@@ -8796,16 +8796,21 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [cspReportOnly, setCspReportOnly] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const hydratedUrlParamRef = React.useRef(false);
+  const autoCheckUrlParamRef = React.useRef<string | null>(null);
   React.useEffect(() => {
     if (hydratedUrlParamRef.current || typeof window === "undefined") return;
     hydratedUrlParamRef.current = true;
     const nextUrl = new URLSearchParams(window.location.search).get("url")?.trim();
-    if (nextUrl && nextUrl.length <= 2048) setUrl(nextUrl);
+    if (nextUrl && nextUrl.length <= 2048) {
+      setUrl(nextUrl);
+      autoCheckUrlParamRef.current = nextUrl;
+    }
   }, []);
-  const check = async () => {
+  const check = React.useCallback(async (overrideUrl?: string) => {
+    const targetUrl = overrideUrl ?? url;
     setLoading(true);
     try {
-      const response = await fetch(`/api/http-status?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`/api/http-status?url=${encodeURIComponent(targetUrl)}`);
       const body = (await response.json()) as HttpStatusResult;
       setResult(body);
       setRawResult(JSON.stringify(body, null, 2));
@@ -8816,7 +8821,13 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url]);
+  React.useEffect(() => {
+    const nextUrl = autoCheckUrlParamRef.current;
+    if (!nextUrl) return;
+    autoCheckUrlParamRef.current = null;
+    void check(nextUrl);
+  }, [check]);
   const headerRows = result
     ? (result.finalResponseHeaders?.length
         ? result.finalResponseHeaders.map((header) => ({ ...header, ...classifyHttpHeader(header.name.toLowerCase()) }))
@@ -8855,7 +8866,7 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-[1fr_auto]">
         <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" data-session-key="url" />
-        <Button onClick={check} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
+        <Button onClick={() => void check()} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
       </div>
       {result?.error ? <ErrorAlert title={ui(dictionary, "httpCheckFailed", "HTTP check failed")} message={formatHttpStatusError(result.error, dictionary)} /> : null}
       {result && !result.error ? (
