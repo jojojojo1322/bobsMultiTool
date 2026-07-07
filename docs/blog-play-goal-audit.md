@@ -234,7 +234,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Cache/CDN source target:
   - The existing HTTP Status Checker, redirect workflow, security-header workflow, and deploy-config workflow now route cache-control, ETag, 304, browser cache, CDN cache, `x-vercel-cache`, `cf-cache-status`, and stale-after-deploy queries into public URL reports, pasted-header review, DNS/URL follow-up, and deploy-config checks.
   - This intentionally does not claim browser cache, CDN purge, or service-worker control; it separates public response headers from browser state, CDN edge state, platform cache settings, and later Search Console recrawl observations.
-  - This source change is not Search Console indexing proof, Bing indexing proof, Naver indexing proof, or traffic proof until later signed-in external observations change.
+  - This source change is deployed in commit `4b0af7fa`, with live discovery, submitted URL health, Search discovery registration, IndexNow, and WebSub refreshed at the same `85` sitemap URLs and `62` feed items. The `2026. 6. 30.` Search Console page-indexing report snapshot remains stale, so this is not Search Console indexing proof until a later signed-in observation changes.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:

@@ -3466,3 +3466,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so cache/CDN header query families stay wired to workflow search, deploy-config search, and HTTP Status Checker registry metadata.
 - Search Console action: none in this source pass. This improves public routing for stale deploy, cache-header, and CDN-cache symptoms but does not change Google's page-indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this strengthens existing submitted HTTP/deploy-config operations surfaces while indexing reports lag. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-08 Cache And CDN Header Workflow Production Deployment
+
+- Commit: `4b0af7fa`.
+- Change: deployed cache-control, ETag, 304, browser cache, CDN cache, `x-vercel-cache`, `cf-cache-status`, and stale-after-deploy search coverage into the existing redirect, security-header, deploy-config, HTTP Status Checker registry, and `devtools-cannot-see-crawler-state` article surfaces.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=4b0af7fa npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=x-vercel-cache%20%ED%99%95%EC%9D%B8&deploy=4b0af7fa` and confirmed `리다이렉트 디버그`, `보안 헤더 점검`, `배포 설정 검증`, `cache-control checker`, `x-vercel-cache`, and `cf-cache-status` appeared. Playwright also loaded `https://www.bobob.app/blog/devtools-cannot-see-crawler-state?deploy=4b0af7fa` and confirmed the `캐시는 내 탭과 public response를 갈라놓는다` section, `304 Not Modified`, `x-vercel-cache`, `cf-cache-status`, and `배포 후 캐시 확인` text rendered. The search page had only the existing AdSense `data-nscript` warning; the Blog page also logged a Google report-only frame-ancestors CSP message while rendering the expected content.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers cache/CDN/stale-deploy symptoms through existing submitted HTTP/header/deploy-config workflows and a representative operations article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
