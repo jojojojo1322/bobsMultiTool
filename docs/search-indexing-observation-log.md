@@ -3110,6 +3110,27 @@ Completion guard:
 - Local browser verification: Playwright loaded `/search?q=리디렉션이 포함된 페이지` and confirmed `리다이렉트 디버그`, `검색 노출 준비 점검`, `미색인 URL 진단`, and `/tools/http-status-checker` results surfaced the redirect reason query. Playwright also loaded `/blog/devtools-cannot-see-crawler-state` and confirmed the new `리디렉션 사유를 볼 때 먼저 가르는 것` section, comparison table, related `indexing-waiting-room` Play link, and no console errors.
 - Interpretation: this strengthens the operations-first developer-tool surface for a visible Search Console indexing reason, but it is still source/local evidence until deployment, live discovery refresh, IndexNow/WebSub submission, and later signed-in Search Console/Bing/Naver observations are recorded. It is not indexing proof, traffic proof, or a reason to close the active goal.
 
+## 2026-07-07 Redirect Reason Search Surface Production Deployment
+
+- Commit: `a297ae5`.
+- Change: deployed Search Console redirect reason query coverage for `리디렉션이 포함된 페이지`, `www 리디렉션 확인`, `308 redirect checker`, `redirect loop checker`, and related HTTP/canonical redirect searches across `/tools/http-status-checker`, the `debug-redirect` workflow, `devtools-cannot-see-crawler-state`, and the measured SEO export packet.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=a297ae5ce8e6e17c3f96db50efea69a518cf03c1 npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub feed item counts: `62`, `62`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=리디렉션이 포함된 페이지&deploy=a297ae5` and confirmed `리다이렉트 디버그`, `검색 노출 준비 점검`, `미색인 URL 진단`, `/tools/http-status-checker`, and the exact redirect-reason match signal. Playwright also loaded `https://www.bobob.app/blog/devtools-cannot-see-crawler-state?deploy=a297ae5` and confirmed the `리디렉션 사유를 볼 때 먼저 가르는 것` section, comparison table, and related Play link. Both pages had no console errors; the only warning was the existing external script warning.
+- Search Console action: none in this production pass. The latest signed-in external observation still shows `/sitemaps/en` discovered pages `85`, while Page indexing remains a `2026. 6. 30.` report snapshot with only `1` indexed page.
+- Interpretation: production now answers the exact redirect-reason query family with an operations workflow and a representative article, and discovery hints were refreshed again. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
 ## 2026-07-07 Bing/Naver Webmaster Follow-up
 
 - Bing Webmaster target: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`.
