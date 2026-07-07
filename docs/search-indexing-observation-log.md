@@ -2632,3 +2632,18 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the URL canonical report on a submitted operations tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 JWT Auth Report Source Slice
+
+- Source action: added a copyable JWT auth report to `/tools/jwt-decoder` so the submitted security/API tool produces a shareable token status, expected issuer/audience/scope, sensitive-claim, signature-warning, and safe-handoff checklist artifact instead of only showing decoded header/payload JSON.
+- Search surface action: expanded the JWT Decoder registry/search intents and the `decode-api-token` workflow recipe for `jwt auth report`, `api token handoff report`, and `token auth report`, and updated layout/search/agent-skill harness coverage so the feature stays inside the submitted JWT tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/jwt-decoder`, confirmed `JWT auth report`, `Copy report`, token status/algorithm/expected-match/sensitive-claim/signature metrics, review notes, safe handoff checklist, Markdown preview, and clicked the report copy button with no console errors. The copied system clipboard began with `# JWT auth report`.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`; the same command without the TLS override failed at live sitemap fetch in this local shell.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one submitted operations tool page as an API/auth handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

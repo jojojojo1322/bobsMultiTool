@@ -2271,6 +2271,95 @@ function getJwtRedaction(payload: Record<string, unknown>) {
   };
 }
 
+function buildJwtAuthReport({
+  checkedAt,
+  summary,
+  claims,
+  timeWindow,
+  expectedChecks,
+  warningKeys,
+  dictionary,
+}: {
+  checkedAt: string;
+  summary: {
+    algorithm: string;
+    type: string;
+    status: string;
+    expiresAt: string;
+    claimCount: number;
+    sensitiveClaimCount: number;
+    expectedMatchCount: string;
+  };
+  claims: Array<{ label: string; value: string }>;
+  timeWindow: Array<{ label: string; value: string }>;
+  expectedChecks: ReturnType<typeof getJwtExpectedChecks>;
+  warningKeys: string[];
+  dictionary: ClientDictionary;
+}) {
+  const signatureState = claims.find((claim) => claim.label === ui(dictionary, "signature", "Signature"))?.value ?? "—";
+  const expectedRows = expectedChecks.checks.map((check) => ({
+    label: check.label,
+    expected: check.expected || "—",
+    actual: check.actual || "—",
+    status: ui(
+      dictionary,
+      check.configured ? (check.matches ? "jwtExpectationMatch" : "jwtExpectationMismatch") : "jwtExpectationNotSet",
+      check.configured ? (check.matches ? "Match" : "Mismatch") : "Not set",
+    ),
+  }));
+  const reviewNotes = Array.from(new Set(warningKeys.map((key) => ui(dictionary, key, key))));
+  const checklist = [
+    ui(dictionary, "jwtChecklistSignature", "Do not treat decoded JWT content as signature verification."),
+    ui(dictionary, "jwtChecklistExpectedClaims", "Verify issuer, audience, and scope against the target API or auth gateway."),
+    ui(dictionary, "jwtChecklistRedaction", "Use the redacted payload before sharing a ticket, document, or chat message."),
+    ui(dictionary, "jwtChecklistPrivateHeader", "Keep the full Authorization header in private logs or secure debugging tools only."),
+    ui(dictionary, "jwtChecklistReproduce", "Reproduce the failing request against the intended environment before changing auth rules."),
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "jwtAuthReport", "JWT auth report")}`,
+    "",
+    `## ${ui(dictionary, "jwtReportTokenSummary", "Token summary")}`,
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "algorithm", "Algorithm")}: ${summary.algorithm}`,
+    `- ${ui(dictionary, "tokenType", "Token type")}: ${summary.type}`,
+    `- ${ui(dictionary, "tokenStatus", "Token status")}: ${summary.status}`,
+    `- ${ui(dictionary, "expiresAt", "Expires at")}: ${summary.expiresAt}`,
+    `- ${ui(dictionary, "jwtExpectedClaimsConfigured", "Expected matches")}: ${summary.expectedMatchCount}`,
+    `- ${ui(dictionary, "sensitiveClaimCount", "Sensitive claims")}: ${summary.sensitiveClaimCount}/${summary.claimCount}`,
+    `- ${ui(dictionary, "signature", "Signature")}: ${signatureState}`,
+    "",
+    `## ${ui(dictionary, "jwtClaims", "JWT claims")}`,
+    ...claims.map((claim) => `- ${claim.label}: ${claim.value}`),
+    "",
+    `## ${ui(dictionary, "jwtExpectedChecks", "Expected claim checks")}`,
+    ...(expectedRows.length
+      ? expectedRows.map((row) => `- ${row.label}: ${row.status} (${ui(dictionary, "expectedClaim", "Expected")}: ${row.expected}; ${ui(dictionary, "actualClaim", "Actual")}: ${row.actual})`)
+      : [`- ${ui(dictionary, "jwtNoExpectedChecks", "No expected issuer, audience, or scope values were configured.")}`]),
+    "",
+    `## ${ui(dictionary, "jwtTimeWindow", "JWT time window")}`,
+    ...timeWindow.map((item) => `- ${item.label}: ${item.value}`),
+    "",
+    `## ${ui(dictionary, "jwtReportReviewNotes", "Review notes")}`,
+    ...(reviewNotes.length ? reviewNotes.map((note) => `- ${note}`) : [`- ${ui(dictionary, "jwtReportNoWarnings", "No JWT review warnings were detected.")}`]),
+    "",
+    `## ${ui(dictionary, "jwtSafeHandoffChecklist", "Safe handoff checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    checklist,
+    metrics: [
+      { label: ui(dictionary, "tokenStatus", "Token status"), value: summary.status },
+      { label: ui(dictionary, "algorithm", "Algorithm"), value: summary.algorithm },
+      { label: ui(dictionary, "jwtExpectedClaimsConfigured", "Expected matches"), value: summary.expectedMatchCount },
+      { label: ui(dictionary, "sensitiveClaimCount", "Sensitive claims"), value: `${summary.sensitiveClaimCount}/${summary.claimCount}` },
+      { label: ui(dictionary, "signature", "Signature"), value: signatureState },
+    ],
+  };
+}
+
 function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [token, setToken] = React.useState(jwtDecoderExamples[0]!.value);
   const [expectedIssuer, setExpectedIssuer] = React.useState("https://auth.example.com");
@@ -2297,6 +2386,35 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
         redaction.sensitiveClaims.length ? "jwtSensitiveClaimWarning" : "",
         expectedChecks.configuredCount > expectedChecks.matchedCount ? "jwtExpectedClaimMismatchWarning" : "",
       ].filter(Boolean);
+      const summary = {
+        algorithm: getRecordValue(headerObject, "alg"),
+        type: getRecordValue(headerObject, "typ"),
+        status: getJwtStatus(payloadObject, nowSeconds, dictionary),
+        expiresAt: formatJwtDate(expiresAt),
+        claimCount: Object.keys(payloadObject).length,
+        sensitiveClaimCount: redaction.sensitiveClaims.length,
+        expectedMatchCount: expectedChecks.configuredCount ? `${expectedChecks.matchedCount}/${expectedChecks.configuredCount}` : ui(dictionary, "jwtExpectationNotSet", "Not set"),
+      };
+      const claims = [
+        { label: ui(dictionary, "subject", "Subject"), value: getRecordValue(payloadObject, "sub") },
+        { label: ui(dictionary, "issuer", "Issuer"), value: getRecordValue(payloadObject, "iss") },
+        { label: ui(dictionary, "audience", "Audience"), value: getRecordValue(payloadObject, "aud") },
+        { label: ui(dictionary, "scope", "Scope"), value: getRecordValue(payloadObject, "scope") },
+        { label: ui(dictionary, "issuedAt", "Issued at"), value: formatJwtDate(getNumericClaim(payloadObject, "iat")) },
+        { label: ui(dictionary, "notBefore", "Not before"), value: formatJwtDate(getNumericClaim(payloadObject, "nbf")) },
+        { label: ui(dictionary, "expiresAt", "Expires at"), value: formatJwtDate(getNumericClaim(payloadObject, "exp")) },
+        { label: ui(dictionary, "signature", "Signature"), value: signature ? ui(dictionary, "present", "Present") : ui(dictionary, "missing", "Missing") },
+      ];
+      const timeWindow = getJwtTimeWindow(payloadObject, nowSeconds, dictionary);
+      const authReport = buildJwtAuthReport({
+        checkedAt: new Date(nowSeconds * 1000).toISOString(),
+        summary,
+        claims,
+        timeWindow,
+        expectedChecks,
+        warningKeys,
+        dictionary,
+      });
 
       return {
         error: "",
@@ -2304,33 +2422,17 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
         payload: JSON.stringify(payloadObject, null, 2),
         redactedPayload: redaction.redactedPayload,
         authorizationHeader: `Authorization: Bearer ${token.trim()}`,
-        summary: {
-          algorithm: getRecordValue(headerObject, "alg"),
-          type: getRecordValue(headerObject, "typ"),
-          status: getJwtStatus(payloadObject, nowSeconds, dictionary),
-          expiresAt: formatJwtDate(expiresAt),
-          claimCount: Object.keys(payloadObject).length,
-          sensitiveClaimCount: redaction.sensitiveClaims.length,
-          expectedMatchCount: expectedChecks.configuredCount ? `${expectedChecks.matchedCount}/${expectedChecks.configuredCount}` : ui(dictionary, "jwtExpectationNotSet", "Not set"),
-        },
-        claims: [
-          { label: ui(dictionary, "subject", "Subject"), value: getRecordValue(payloadObject, "sub") },
-          { label: ui(dictionary, "issuer", "Issuer"), value: getRecordValue(payloadObject, "iss") },
-          { label: ui(dictionary, "audience", "Audience"), value: getRecordValue(payloadObject, "aud") },
-          { label: ui(dictionary, "scope", "Scope"), value: getRecordValue(payloadObject, "scope") },
-          { label: ui(dictionary, "issuedAt", "Issued at"), value: formatJwtDate(getNumericClaim(payloadObject, "iat")) },
-          { label: ui(dictionary, "notBefore", "Not before"), value: formatJwtDate(getNumericClaim(payloadObject, "nbf")) },
-          { label: ui(dictionary, "expiresAt", "Expires at"), value: formatJwtDate(getNumericClaim(payloadObject, "exp")) },
-          { label: ui(dictionary, "signature", "Signature"), value: signature ? ui(dictionary, "present", "Present") : ui(dictionary, "missing", "Missing") },
-        ],
+        summary,
+        claims,
         claimInspector: getJwtClaimInspector(payloadObject),
         sensitiveClaims: redaction.sensitiveClaims,
-        timeWindow: getJwtTimeWindow(payloadObject, nowSeconds, dictionary),
+        timeWindow,
         expectedChecks,
         warningKeys,
+        authReport,
       };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : "Invalid token", header: "", payload: "", redactedPayload: "", authorizationHeader: "", summary: null, claims: [], claimInspector: [], sensitiveClaims: [], timeWindow: [], expectedChecks: { checks: [], configuredCount: 0, matchedCount: 0 }, warningKeys: [] };
+      return { error: error instanceof Error ? error.message : "Invalid token", header: "", payload: "", redactedPayload: "", authorizationHeader: "", summary: null, claims: [], claimInspector: [], sensitiveClaims: [], timeWindow: [], expectedChecks: { checks: [], configuredCount: 0, matchedCount: 0 }, warningKeys: [], authReport: null };
     }
   }, [dictionary, expectedAudience, expectedIssuer, expectedScope, token]);
 
@@ -2432,6 +2534,37 @@ function JwtDecoderTool({ dictionary }: { dictionary: ClientDictionary }) {
               </div>
             </div>
           </section>
+          {result.authReport ? (
+            <section className="rounded-md border bg-card" data-jwt-auth-report>
+              <div className="border-b p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold">{ui(dictionary, "jwtAuthReport", "JWT auth report")}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtAuthReportDescription", "Copy a compact token status, expected-claim, redaction, and handoff note for auth debugging.")}</p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.authReport.markdown)} data-jwt-auth-report-copy>
+                    <Copy className="h-4 w-4" />
+                    {ui(dictionary, "copyJwtAuthReport", "Copy report")}
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-3 p-3">
+                <ToolMetricGrid items={result.authReport.metrics} />
+                <ToolWarningList title={ui(dictionary, "jwtReportReviewNotes", "Review notes")} warnings={result.authReport.reviewNotes} emptyLabel={ui(dictionary, "jwtReportNoWarnings", "No JWT review warnings were detected.")} />
+                <div className="rounded-md border bg-background p-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "jwtSafeHandoffChecklist", "Safe handoff checklist")}</p>
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    {result.authReport.checklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/70 p-3 text-xs leading-relaxed text-muted-foreground" data-jwt-auth-report-preview>
+                  <code>{result.authReport.markdown}</code>
+                </pre>
+              </div>
+            </section>
+          ) : null}
           <section className="rounded-md border bg-card p-3" data-jwt-time-window>
             <p className="text-sm font-medium">{ui(dictionary, "jwtTimeWindow", "JWT time window")}</p>
             <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "jwtTimeWindowDescription", "Compare iat, nbf, exp, and lifetime against the current browser time before using the token.")}</p>
