@@ -3202,3 +3202,23 @@ Completion guard:
 - Search Console guard: corrected the article's account/property checklist to the current `bobob935@gmail.com` and `sc-domain:bobob.app` operating surface.
 - Search Console action: none in this source pass. The latest signed-in external observation already shows `/sitemaps/en` discovered pages `85`, while Page indexing remains a `2026. 6. 30.` report snapshot; this source update should be deployed and then observed through live discovery, IndexNow/WebSub freshness, and a later signed-in Search Console/Bing/Naver pass.
 - Interpretation: this strengthens public Blog evidence and internal search continuation for the not-indexed state. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 DevTools Boundary Not-Indexed Workflow Production Deployment
+
+- Commit: `95592e6`.
+- Change: deployed the refreshed `devtools-cannot-see-crawler-state` representative operations article with the `미색인 URL 진단` workflow table, current `sc-domain:bobob.app` Search Console checklist, and updated Blog/goal-audit evidence.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:deployment-status` returned `overallState: success` for `95592e6391544ea973f11646d2463f56f0586f26` after earlier pending checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/blog/devtools-cannot-see-crawler-state?deploy=95592e6` and confirmed the `미색인 URL을 볼 때 남기는 증거` section, `/search?q=crawled%20currently%20not%20indexed` text, `/tools/http-status-checker` table row, and `sc-domain:bobob.app` checklist rendered without broken Markdown link syntax. Playwright also loaded `https://www.bobob.app/search?q=crawled%20currently%20not%20indexed&deploy=95592e6` and confirmed the `미색인 URL 진단` workflow, `/tools/http-status-checker` destination, and `/blog/devtools-cannot-see-crawler-state` result were visible. Both pages had no console errors; the only console warning was the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The latest signed-in external observation already shows `/sitemaps/en` discovered pages `85`, but Page indexing remains a `2026. 6. 30.` report snapshot and representative Blog, Play, and operations-tool URLs still need later signed-in Google/Bing/Naver observation.
+- Interpretation: production now serves the strengthened not-indexed diagnostic Blog path, live discovery is clean at `85` sitemap URLs and `62` feed items, and IndexNow/WebSub were refreshed again. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
