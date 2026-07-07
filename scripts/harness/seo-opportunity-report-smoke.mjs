@@ -89,6 +89,7 @@ assert(report.measuredExportPlan.copyTargets.requiredMeasuredPathsEnv.includes("
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("regex tester"), "measured export plan should include search intent seeds");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("email regex"), "measured export plan should include long-tail Regex snippet search intent seeds");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("content security policy generator"), "measured export plan should include workflow CSP search intent seeds");
+assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("리디렉션이 포함된 페이지"), "measured export plan should include Search Console redirect reason seeds");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("docker compose validator"), "measured export plan should include workflow Docker Compose search intent seeds");
 assert(report.measuredExportPlan.copyTargets.searchIntentSeedList.includes("csv cleaner"), "measured export plan should include workflow CSV cleanup search intent seeds");
 assert(report.measuredExportPlan.copyTargets.workflowSearchIntentSeeds.includes("security headers checker"), "measured export plan should expose workflow search intent seed source");
@@ -221,6 +222,7 @@ assert(exportPacket.includes("Page,Impressions,Page RPM,Estimated earnings,CTR")
 assert(exportPacket.includes("BOBOB_REQUIRED_MEASURED_PATHS="), "export packet should include focused gate env copy target");
 assert(exportPacket.includes("metadataRewriteReadiness.canRewritePublicMetadata"), "export packet should include metadata readiness stop rule");
 assert(exportPacket.includes("content security policy generator"), "export packet should include workflow CSP seed");
+assert(exportPacket.includes("리디렉션이 포함된 페이지"), "export packet should include Search Console redirect reason seed");
 assert(exportPacket.includes("docker compose validator"), "export packet should include workflow config seed");
 assert(exportPacket.includes("csv cleaner"), "export packet should include workflow CSV seed");
 

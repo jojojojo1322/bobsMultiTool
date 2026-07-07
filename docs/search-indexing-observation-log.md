@@ -3100,6 +3100,16 @@ Completion guard:
 - New Blog URL indexing request confirmation: `색인 생성 요청됨`; queue message `URL이 우선순위 크롤링 대기열에 추가되었습니다`; Google also says repeated submissions do not change queue position or priority.
 - Interpretation: Search Console discovery is now aligned with the live/source `85` URL sitemap, and the new security-header operations post is queued for crawl. This is stronger discovery evidence than the previous `84` state, but it is still not indexing proof because page indexing remains `1` indexed page, not-indexed pages remain `25`, the page indexing report is still dated `2026. 6. 30.`, and the new Blog URL is explicitly not registered yet.
 
+## 2026-07-07 Redirect Reason Search Surface Source Update
+
+- Source action: expanded the `debug-redirect` workflow and `/tools/http-status-checker` registry/search surface for Search Console redirect reason queries including `리디렉션이 포함된 페이지`, `www 리디렉션 확인`, `308 redirect checker`, `http to https redirect checker`, `redirect loop checker`, and `too many redirects checker`.
+- Representative content action: deepened `devtools-cannot-see-crawler-state` with a redirect reason table that separates healthy apex/www or HTTP/HTTPS canonical redirects from submitted redirect URLs, looped redirects, DNS/CDN drift, canonical-host mismatches, and stale Page indexing report timing.
+- SEO export action: increased the measured SEO export packet search-intent seed cap from `180` to `260`, and added smoke coverage so redirect reason seeds no longer push Docker Compose or CSV cleanup workflow seeds out of the export packet.
+- Source checks: `npm run harness:search`, `npm run harness:registry`, `npm run harness:blog-play-mvp`, `npm run harness:localization`, `npm run harness:goal-audit`, `npm run harness:i18n`, `npm run harness:adsense-content`, `npm run harness:seo-opportunities:smoke`, `npm run lint`, and `NEXT_TELEMETRY_DISABLED=1 npm run build` passed.
+- Local route/content checks: `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed for `270` paths, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:blog-play-quality` passed for `70` pages.
+- Local browser verification: Playwright loaded `/search?q=리디렉션이 포함된 페이지` and confirmed `리다이렉트 디버그`, `검색 노출 준비 점검`, `미색인 URL 진단`, and `/tools/http-status-checker` results surfaced the redirect reason query. Playwright also loaded `/blog/devtools-cannot-see-crawler-state` and confirmed the new `리디렉션 사유를 볼 때 먼저 가르는 것` section, comparison table, related `indexing-waiting-room` Play link, and no console errors.
+- Interpretation: this strengthens the operations-first developer-tool surface for a visible Search Console indexing reason, but it is still source/local evidence until deployment, live discovery refresh, IndexNow/WebSub submission, and later signed-in Search Console/Bing/Naver observations are recorded. It is not indexing proof, traffic proof, or a reason to close the active goal.
+
 ## 2026-07-07 Bing/Naver Webmaster Follow-up
 
 - Bing Webmaster target: `https://www.bing.com/webmasters/home?siteUrl=https%3A%2F%2Fwww.bobob.app`.

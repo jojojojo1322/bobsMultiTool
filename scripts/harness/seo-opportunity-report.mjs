@@ -518,7 +518,7 @@ function measuredExportPlan(measuredCoverageSummary, measurementBacklogRows) {
   const requiredMeasuredPathsEnv = priorityPages.map((row) => row.path).join(",");
   const searchIntentSeedList = Array.from(
     new Set([...criticalArchiveSearchIntentSeeds, ...workflowSearchIntentSeeds, ...priorityPages.flatMap((row) => row.searchIntents)]),
-  ).slice(0, 180);
+  ).slice(0, 260);
 
   return {
     status: measuredCoverageSummary.pass ? "covered" : "needs-measured-exports",
