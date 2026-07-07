@@ -148,7 +148,12 @@ if (!registry.includes("docker compose validator") || !registry.includes("compos
 if (!registry.includes("csrf token generator") || !registry.includes("api key generator") || !registry.includes("url safe token generator")) failures.push("Random Token search intents must cover CSRF, API key, and URL-safe token queries");
 if (!registry.includes("hmac sha256 generator") || !registry.includes("webhook signature generator") || !registry.includes("webhook hmac")) failures.push("Hash Generator search intents must cover HMAC and webhook signature queries");
 if (!registry.includes("passphrase generator") || !registry.includes("memorable password generator") || !registry.includes("secure passphrase generator")) failures.push("Password Generator search intents must cover passphrase and memorable password queries");
-if (!registry.includes("cron timezone preview") || !registry.includes("cron timezone checker")) failures.push("Cron Generator search intents must cover timezone preview and server-timezone mismatch queries");
+for (const intent of ["cron timezone preview", "cron timezone checker", "cron schedule report", "cron handoff report", "cron deployment schedule"]) {
+  if (!registry.includes(intent)) failures.push(`Cron Generator search intent missing ${intent}`);
+}
+for (const intent of ["cron schedule report", "cron timezone report", "cron next run report"]) {
+  if (!workflows.includes(intent)) failures.push(`Cron workflow search intent missing ${intent}`);
+}
 if (!registry.includes("wifi qr code generator") || !registry.includes("free qr code generator") || !registry.includes("contact qr code generator") || !registry.includes("qr quiet zone") || !registry.includes("qr code size")) failures.push("QR Code Generator search intents must cover Wi-Fi, free QR, contact QR, sizing, and quiet-zone queries");
 if (!registry.includes("monetizationTier")) failures.push("monetization tier field missing");
 

@@ -256,8 +256,8 @@ for (const fragment of ["data-base64-examples", "base64PngDataUrlExample", "data
   if (!source.includes(fragment)) failures.push(`Base64 detail UI missing ${fragment}`);
 }
 if (!toolComponents.includes("result.imagePreview?.dataUrl")) failures.push("Base64 image decode should expose a copyable data URL instead of raw binary output");
-for (const fragment of ["data-cron-presets", "data-cron-scheduler-semantics", "data-cron-timezone-select", "data-cron-result-details", "data-cron-fields", "data-cron-runtime-context", "data-cron-next-runs", "data-cron-warnings", "formatCronRun", "localizedCronToolUi", "localizedCronRuntimeToolUi", "cronPreviewTimezone", "cronDayOverlapOrWarning"]) {
-  const source = fragment === "localizedCronToolUi" || fragment === "localizedCronRuntimeToolUi" || fragment === "cronDayOverlapOrWarning" ? dictionaries : toolComponents;
+for (const fragment of ["data-cron-presets", "data-cron-scheduler-semantics", "data-cron-timezone-select", "data-cron-result-details", "data-cron-fields", "data-cron-runtime-context", "data-cron-next-runs", "data-cron-schedule-report", "data-cron-schedule-report-copy", "data-cron-schedule-report-preview", "data-cron-warnings", "formatCronRun", "buildCronScheduleReport", "localizedCronToolUi", "localizedCronRuntimeToolUi", "localizedCronReportToolUi", "cronPreviewTimezone", "cronDayOverlapOrWarning", "copyCronScheduleReport"]) {
+  const source = fragment === "localizedCronToolUi" || fragment === "localizedCronRuntimeToolUi" || fragment === "localizedCronReportToolUi" || fragment === "cronDayOverlapOrWarning" || fragment === "copyCronScheduleReport" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`Cron detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-uuid-examples", "data-uuid-result-details", "data-uuid-warnings"]) {

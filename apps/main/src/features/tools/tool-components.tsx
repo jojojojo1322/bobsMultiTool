@@ -903,6 +903,68 @@ function getCronAnalysis(expression: string, dictionary: ClientDictionary, dayMa
   }
 }
 
+function buildCronScheduleReport({
+  expression,
+  analysis,
+  previewTimezone,
+  dayMatchingModeLabel,
+  dictionary,
+  checkedAt,
+}: {
+  expression: string;
+  analysis: ReturnType<typeof getCronAnalysis>;
+  previewTimezone: string;
+  dayMatchingModeLabel: string;
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const syntaxLabel = analysis.valid ? ui(dictionary, "cronReportValidSyntax", "Valid five-field syntax") : ui(dictionary, "cronReportInvalidSyntax", "Needs syntax review");
+  const reviewNotes = analysis.warnings.length ? analysis.warnings.map((key) => ui(dictionary, key, key)) : [ui(dictionary, "cronReportNoWarnings", "No obvious schedule warnings detected. Confirm the runtime timezone before deploying.")];
+  const checklist = [
+    ui(dictionary, "cronReportChecklistTimezone", "Confirm the scheduler timezone, not only the browser preview timezone."),
+    ui(dictionary, "cronReportChecklistRuntime", "Check whether the target runtime uses standard crontab, Quartz, GitHub Actions, or another cron dialect."),
+    ui(dictionary, "cronReportChecklistFrequency", "Confirm the job can handle the planned frequency, retries, and overlapping runs."),
+    ui(dictionary, "cronReportChecklistDayMatching", "When day-of-month and day-of-week are both restricted, document OR/AND semantics."),
+    ui(dictionary, "cronReportChecklistDryRun", "Run the schedule in staging or dry-run logs before shipping production automation."),
+  ];
+  const nextRunLines = analysis.nextRuns.length ? analysis.nextRuns.map((run) => `- ${formatCronRun(run, previewTimezone)}`) : [`- ${ui(dictionary, "cronNoRunsFound", "No runs found in the preview window.")}`];
+  const fieldLines = analysis.fields.length
+    ? analysis.fields.map((field) => `- ${ui(dictionary, field.key, field.fallback)}: ${field.value} (${field.description}, ${ui(dictionary, "cronAllowedValues", "Allowed values")}: ${field.count})`)
+    : [`- ${ui(dictionary, "cronFiveFieldSyntax", "Use standard five-field crontab syntax: minute hour day-of-month month day-of-week.")}`];
+  const metrics = [
+    { label: ui(dictionary, "cronExpression", "Cron expression"), value: expression || ui(dictionary, "emptyValue", "Empty") },
+    { label: ui(dictionary, "cronReportSyntax", "Syntax"), value: syntaxLabel },
+    { label: ui(dictionary, "cronPreviewTimezone", "Preview timezone"), value: previewTimezone },
+    { label: ui(dictionary, "cronDayMatching", "Day matching"), value: dayMatchingModeLabel },
+    { label: ui(dictionary, "cronReportNextRuns", "Next runs in preview"), value: String(analysis.nextRuns.length) },
+    { label: ui(dictionary, "cronReportFields", "Fields"), value: String(analysis.parts.length) },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "cronScheduleReport", "Cron schedule report")}`,
+    "",
+    `- ${ui(dictionary, "cronReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "cronExpression", "Cron expression")}: ${expression || ui(dictionary, "emptyValue", "Empty")}`,
+    `- ${ui(dictionary, "cronReportSyntax", "Syntax")}: ${syntaxLabel}`,
+    `- ${ui(dictionary, "cronBrowserTimezone", "Browser timezone")}: ${analysis.timezone}`,
+    `- ${ui(dictionary, "cronPreviewTimezone", "Preview timezone")}: ${previewTimezone}`,
+    `- ${ui(dictionary, "cronDayMatching", "Day matching")}: ${dayMatchingModeLabel}`,
+    "",
+    `## ${ui(dictionary, "cronReportFields", "Fields")}`,
+    ...fieldLines,
+    "",
+    `## ${ui(dictionary, "cronReportNextRuns", "Next runs in preview")}`,
+    ...nextRunLines,
+    "",
+    `## ${ui(dictionary, "cronReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "cronReportChecklist", "Safe deployment checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
+}
+
 function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [expression, setExpression] = React.useState(cronPresets[0]!.value);
   const [dayMatchingMode, setDayMatchingMode] = React.useState<CronDayMatchingMode>("or");
@@ -917,6 +979,18 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
     analysis.valid && analysis.parts.length === 5
       ? `${ui(dictionary, "minuteField", "Minute")}: ${analysis.parts[0]}, ${ui(dictionary, "hourField", "Hour")}: ${analysis.parts[1]}, ${ui(dictionary, "dayOfMonthField", "Day of month")}: ${analysis.parts[2]}, ${ui(dictionary, "monthField", "Month")}: ${analysis.parts[3]}, ${ui(dictionary, "dayOfWeekField", "Day of week")}: ${analysis.parts[4]}.`
       : ui(dictionary, "cronFiveFieldSyntax", "Use standard five-field crontab syntax: minute hour day-of-month month day-of-week.");
+  const scheduleReport = React.useMemo(
+    () =>
+      buildCronScheduleReport({
+        expression,
+        analysis,
+        previewTimezone,
+        dayMatchingModeLabel,
+        dictionary,
+        checkedAt: ui(dictionary, "cronReportCopyTime", "Browser copy time"),
+      }),
+    [analysis, dayMatchingModeLabel, dictionary, expression, previewTimezone],
+  );
 
   return (
     <div className="space-y-4">
@@ -1003,6 +1077,50 @@ function CronTool({ dictionary }: { dictionary: ClientDictionary }) {
             </div>
           )}
         </div>
+      </section>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-cron-schedule-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">{ui(dictionary, "cronScheduleReport", "Cron schedule report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "cronScheduleReportDescription", "Copy a compact handoff report with cron fields, timezone context, next runs, and deployment checks.")}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-cron-schedule-report-copy
+            onClick={() =>
+              copyToClipboard(
+                buildCronScheduleReport({
+                  expression,
+                  analysis,
+                  previewTimezone,
+                  dayMatchingModeLabel,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyCronScheduleReport", "Copy schedule report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={scheduleReport.metrics} />
+        <ToolWarningList title={ui(dictionary, "cronReportReviewNotes", "Review notes")} warnings={scheduleReport.reviewNotes} emptyLabel={ui(dictionary, "cronReportNoWarnings", "No obvious schedule warnings detected. Confirm the runtime timezone before deploying.")} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "cronReportChecklist", "Safe deployment checklist")}</p>
+          <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {scheduleReport.checklist.map((item) => (
+              <li key={item} className="rounded-md bg-muted px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-cron-schedule-report-preview>
+          <code>{scheduleReport.markdown}</code>
+        </pre>
       </section>
       <section className="rounded-md border bg-card p-3" data-cron-warnings>
         <p className="text-sm font-medium">{ui(dictionary, "cronReviewNotes", "Review notes")}</p>
