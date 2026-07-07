@@ -4265,6 +4265,17 @@ function getSqlDiagnostics(input: string, dictionary: ClientDictionary) {
     clauseChecks,
     tableReferences,
     warnings,
+    queryType: ui(dictionary, queryTypeKey, queryTypeKey),
+    statementCount: statements.length,
+    joinCount,
+    subqueryCount,
+    parameterCount,
+    sensitiveFieldCount,
+    hasSelect,
+    hasMutation,
+    hasSchemaChange,
+    hasWhere,
+    hasLimit,
     metrics: [
       { label: ui(dictionary, "queryType", "Query type"), value: ui(dictionary, queryTypeKey, queryTypeKey) },
       { label: ui(dictionary, "tableReferences", "Table references"), value: String(tableReferences.length) },
@@ -4274,6 +4285,77 @@ function getSqlDiagnostics(input: string, dictionary: ClientDictionary) {
       { label: ui(dictionary, "sensitiveFields", "Sensitive fields"), value: String(sensitiveFieldCount) },
     ],
   };
+}
+
+function buildSqlReviewReport({
+  input,
+  mode,
+  output,
+  diagnostics,
+  warnings,
+  dictionary,
+  checkedAt,
+}: {
+  input: string;
+  mode: string;
+  output: string;
+  diagnostics: ReturnType<typeof getSqlDiagnostics>;
+  warnings: string[];
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const yesLabel = ui(dictionary, "yes", "Yes");
+  const noLabel = ui(dictionary, "no", "No");
+  const modeLabel = mode === "minify" ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "sqlReportNoWarnings", "No immediate SQL review warnings detected. Still run it in a safe environment first.")];
+  const tableReferences = diagnostics.tableReferences.length ? diagnostics.tableReferences : [ui(dictionary, "noSqlTableReferences", "No table references detected yet.")];
+  const checklist = [
+    ui(dictionary, "sqlReportChecklistEnvironment", "Run the query against staging or a transaction-wrapped session before production."),
+    ui(dictionary, "sqlReportChecklistWhere", "Confirm WHERE, LIMIT, and JOIN keys match the intended row set."),
+    ui(dictionary, "sqlReportChecklistExplain", "Use EXPLAIN or the database query plan for expensive SELECT or JOIN queries."),
+    ui(dictionary, "sqlReportChecklistTransaction", "Wrap UPDATE, DELETE, INSERT, and schema changes in a reviewed migration or rollback plan."),
+    ui(dictionary, "sqlReportChecklistRedact", "Redact credentials, customer identifiers, and production literals before sharing."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "sqlReportQueryType", "Query type"), value: diagnostics.queryType },
+    { label: ui(dictionary, "sqlReportStatementCount", "Statements"), value: String(diagnostics.statementCount) },
+    { label: ui(dictionary, "sqlReportTableReferences", "Table references"), value: String(diagnostics.tableReferences.length) },
+    { label: ui(dictionary, "sqlReportJoinCount", "JOIN clauses"), value: String(diagnostics.joinCount) },
+    { label: ui(dictionary, "sqlReportSubqueryCount", "Subqueries"), value: String(diagnostics.subqueryCount) },
+    { label: ui(dictionary, "sqlReportParameterCount", "Parameters"), value: String(diagnostics.parameterCount) },
+    { label: ui(dictionary, "sqlReportWhereStatus", "WHERE status"), value: diagnostics.hasWhere ? yesLabel : noLabel },
+    { label: ui(dictionary, "sqlReportLimitStatus", "LIMIT status"), value: diagnostics.hasLimit ? yesLabel : noLabel },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "sqlReviewReport", "SQL review report")}`,
+    "",
+    `- ${ui(dictionary, "sqlReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "sqlReportMode", "Output mode")}: ${modeLabel}`,
+    `- ${ui(dictionary, "sqlReportQueryType", "Query type")}: ${diagnostics.queryType}`,
+    `- ${ui(dictionary, "sqlReportStatementCount", "Statements")}: ${diagnostics.statementCount}`,
+    `- ${ui(dictionary, "sqlReportTableReferences", "Table references")}: ${diagnostics.tableReferences.length}`,
+    `- ${ui(dictionary, "sqlReportJoinCount", "JOIN clauses")}: ${diagnostics.joinCount}`,
+    `- ${ui(dictionary, "sqlReportSubqueryCount", "Subqueries")}: ${diagnostics.subqueryCount}`,
+    `- ${ui(dictionary, "sqlReportParameterCount", "Parameters")}: ${diagnostics.parameterCount}`,
+    `- ${ui(dictionary, "sqlReportSensitiveFields", "Sensitive fields")}: ${diagnostics.sensitiveFieldCount}`,
+    `- ${ui(dictionary, "sqlReportWhereStatus", "WHERE status")}: ${diagnostics.hasWhere ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "sqlReportLimitStatus", "LIMIT status")}: ${diagnostics.hasLimit ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "sqlReportMutationRisk", "Mutation or schema risk")}: ${diagnostics.hasMutation || diagnostics.hasSchemaChange ? yesLabel : noLabel}`,
+    `- ${ui(dictionary, "inputBytes", "Input bytes")}: ${byteLength(input)}`,
+    `- ${ui(dictionary, "outputLines", "Output lines")}: ${output ? output.split(/\r?\n/).length : 0}`,
+    `- ${ui(dictionary, "sqlReportRawSqlExcluded", "Raw SQL is excluded from this report; attach a redacted formatted query separately if needed.")}`,
+    "",
+    `## ${ui(dictionary, "sqlReportTableReferences", "Table references")}`,
+    ...tableReferences.map((table) => `- ${table}`),
+    "",
+    `## ${ui(dictionary, "sqlReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "sqlReportChecklist", "Review checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { markdown, metrics, reviewNotes, checklist };
 }
 
 function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
@@ -4288,16 +4370,33 @@ function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
   }, [input, mode]);
   const lowerInput = input.toLowerCase();
   const sqlDiagnostics = React.useMemo(() => getSqlDiagnostics(input, dictionary), [dictionary, input]);
-  const warnings = Array.from(
-    new Set(
-      [
-        /\b(update|delete|drop|truncate|alter)\b/i.test(input) ? ui(dictionary, "destructiveSqlWarning", "This looks like a mutation query. Review WHERE clauses and transactions before copying.") : "",
-        /\bselect\s+\*/i.test(input) ? ui(dictionary, "selectStarWarning", "SELECT * can hide schema changes. Prefer explicit columns for shared queries.") : "",
-        !input.trim().endsWith(";") ? ui(dictionary, "sqlSemicolonWarning", "No trailing semicolon detected. Add one if your SQL client expects statement terminators.") : "",
-        lowerInput.includes(" password") || lowerInput.includes(" token") || lowerInput.includes(" secret") ? ui(dictionary, "sqlSecretWarning", "The query may reference sensitive fields. Redact real values before sharing.") : "",
-        ...sqlDiagnostics.warnings,
-      ].filter(Boolean),
-    ),
+  const warnings = React.useMemo(
+    () =>
+      Array.from(
+        new Set(
+          [
+            /\b(update|delete|drop|truncate|alter)\b/i.test(input) ? ui(dictionary, "destructiveSqlWarning", "This looks like a mutation query. Review WHERE clauses and transactions before copying.") : "",
+            /\bselect\s+\*/i.test(input) ? ui(dictionary, "selectStarWarning", "SELECT * can hide schema changes. Prefer explicit columns for shared queries.") : "",
+            !input.trim().endsWith(";") ? ui(dictionary, "sqlSemicolonWarning", "No trailing semicolon detected. Add one if your SQL client expects statement terminators.") : "",
+            lowerInput.includes(" password") || lowerInput.includes(" token") || lowerInput.includes(" secret") ? ui(dictionary, "sqlSecretWarning", "The query may reference sensitive fields. Redact real values before sharing.") : "",
+            ...sqlDiagnostics.warnings,
+          ].filter(Boolean),
+        ),
+      ),
+    [dictionary, input, lowerInput, sqlDiagnostics],
+  );
+  const sqlReviewReport = React.useMemo(
+    () =>
+      buildSqlReviewReport({
+        input,
+        mode,
+        output: result.value,
+        diagnostics: sqlDiagnostics,
+        warnings: result.error ? [result.error, ...warnings] : warnings,
+        dictionary,
+        checkedAt: ui(dictionary, "sqlReportCopyTime", "Browser copy time"),
+      }),
+    [dictionary, input, mode, result.error, result.value, sqlDiagnostics, warnings],
   );
 
   return (
@@ -4371,6 +4470,55 @@ function SqlFormatterTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-sql-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={result.error ? [result.error] : warnings} emptyLabel={ui(dictionary, "sqlNoWarnings", "SQL is ready for review. Run it against a safe environment before production use.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-sql-review-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">{ui(dictionary, "sqlReviewReport", "SQL review report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "sqlReviewReportDescription", "Copy a handoff report with query shape, table references, clause checks, warnings, and a safe execution checklist.")}</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              copyToClipboard(
+                buildSqlReviewReport({
+                  input,
+                  mode,
+                  output: result.value,
+                  diagnostics: sqlDiagnostics,
+                  warnings: result.error ? [result.error, ...warnings] : warnings,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+            data-sql-review-report-copy
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            {ui(dictionary, "copySqlReviewReport", "Copy SQL report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={sqlReviewReport.metrics} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "sqlReportReviewNotes", "Review notes")}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            {sqlReviewReport.reviewNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "sqlReportChecklist", "Review checklist")}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            {sqlReviewReport.checklist.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-sql-review-report-preview>
+          {sqlReviewReport.markdown}
+        </pre>
+      </section>
       {result.error ? <ErrorAlert title={ui(dictionary, "transformError", "Transform error")} message={result.error} /> : <ResultBlock title={mode === "minify" ? ui(dictionary, "minify", "Minify") : ui(dictionary, "prettyPrint", "Pretty print")} value={result.value} dictionary={dictionary} />}
     </div>
   );

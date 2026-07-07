@@ -293,7 +293,7 @@ if (!dictionaries.includes("localizedDnsReportToolUi") || !dictionaries.includes
 for (const fragment of ["normalizePublicDnsName", "label.includes(\"_\")", "isPrivateOrReservedIp"]) {
   if (!dnsRoute.includes(fragment)) failures.push(`DNS Lookup API guard missing ${fragment}`);
 }
-for (const fragment of ["data-sql-examples", "data-sql-result-details", "data-sql-diagnostics", "data-sql-clause-checks", "data-sql-table-list", "data-sql-warnings"]) {
+for (const fragment of ["data-sql-examples", "data-sql-result-details", "data-sql-diagnostics", "data-sql-clause-checks", "data-sql-table-list", "data-sql-warnings", "data-sql-review-report", "data-sql-review-report-copy", "data-sql-review-report-preview", "buildSqlReviewReport", "copySqlReviewReport", "sqlReportChecklistWhere"]) {
   if (!toolComponents.includes(fragment)) failures.push(`SQL Formatter detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-css-examples", "data-css-result-details", "data-css-diagnostics", "data-css-selector-list", "data-css-warnings"]) {
@@ -305,7 +305,7 @@ for (const fragment of ["data-javascript-examples", "data-javascript-result-deta
 for (const fragment of ["data-markdown-tool", "data-markdown-table-generator", "data-markdown-table-examples", "data-markdown-table-details", "data-markdown-table-warnings", "data-markdown-preview"]) {
   if (!toolComponents.includes(fragment)) failures.push(`Markdown Previewer table workflow missing ${fragment}`);
 }
-if (!dictionaries.includes("localizedCodeFormatterToolUi") || !dictionaries.includes("localizedSqlDiagnosticsToolUi")) failures.push("SQL/CSS/JavaScript formatter labels must be localized");
+if (!dictionaries.includes("localizedCodeFormatterToolUi") || !dictionaries.includes("localizedSqlDiagnosticsToolUi") || !dictionaries.includes("localizedSqlReportToolUi")) failures.push("SQL/CSS/JavaScript formatter labels must be localized");
 if (!dictionaries.includes("localizedMarkdownToolUi")) failures.push("Markdown table generator labels must be localized");
 
 for (const file of [

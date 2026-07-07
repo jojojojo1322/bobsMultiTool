@@ -2908,3 +2908,19 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
 - Interpretation: production now serves the Color accessibility report on the core color/contrast tool and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 SQL Review Report Source Slice
+
+- Source action: added a copyable SQL review report to `/tools/sql-formatter` so the SQL tool produces a shareable query type, table-reference, JOIN/subquery/parameter, WHERE/LIMIT, mutation/schema-risk, review-note, and safe-execution-checklist artifact without including the raw SQL body in the report.
+- Search surface action: expanded the SQL Formatter registry/search intents and added the `review-sql-query` workflow recipe for `sql review report`, `sql query review report`, `sql mutation checklist`, `sql where clause report`, and `sql handoff report`, with layout/search/localization/agent-skill harness coverage so the feature stays inside the SQL tool rather than becoming a thin standalone page.
+- Sitemap/feed target: unchanged at `84` submitted sitemap URLs and `61` representative feed items.
+- Build check: `NEXT_TELEMETRY_DISABLED=1 npm run build` passed with `1300` generated static pages.
+- Local browser verification: Playwright loaded `http://127.0.0.1:3000/tools/sql-formatter`, confirmed `SQL review report`, `Copy SQL report`, query/table/JOIN/subquery/parameter/WHERE/LIMIT metrics, review notes, safe execution checklist, Markdown preview, and the `Review a SQL query` workflow card with no console errors.
+- Local report-copy verification: Playwright stubbed `navigator.clipboard.writeText`, clicked `Copy SQL report`, and confirmed the copied report began with `# SQL review report`, included `WHERE status: Yes`, and included the review checklist. It then entered `update users set active=false` and confirmed the report changed to `Mutation query`, `WHERE status: No`, `Mutation or schema risk: Yes`, and included the mutation-without-WHERE warning. The only console warning was the existing AdSense `data-nscript` warning.
+- Local search verification: Playwright loaded `http://127.0.0.1:3000/search?q=sql%20review%20report` and confirmed the localized `SQL 쿼리 검토` workflow result pointed to `/tools/sql-formatter` with `sql review report`, `sql query review report`, and `sql mutation checklist` match chips.
+- Local route smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:routes` passed for `269` paths.
+- Local Blog/Play quality smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:blog-play-quality` passed for `69` pages.
+- Local submitted URL health: `BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=http://127.0.0.1:3000 npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Local visual smoke: `BOBOB_BASE_URL=http://127.0.0.1:3000 npm run harness:visual` passed for `8` scenarios.
+- Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
+- Interpretation: this strengthens one core code formatter as a query-review handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

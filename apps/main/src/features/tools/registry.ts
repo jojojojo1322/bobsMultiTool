@@ -447,11 +447,12 @@ const approvalContentBoosts: Record<string, ApprovalContentBoost> = {
     ],
   },
   "sql-formatter": {
-    searchIntents: ["sql query formatter", "format select query", "sql where clause checker", "sql join review"],
-    aliases: ["pretty sql", "sql query beautifier", "sql mutation review"],
+    searchIntents: ["sql query formatter", "format select query", "sql where clause checker", "sql join review", "sql review report", "sql query review report", "sql mutation checklist", "sql handoff report"],
+    aliases: ["pretty sql", "sql query beautifier", "sql mutation review", "sql report generator", "sql query checklist"],
     examples: [
       { label: "Join review", value: "select u.id,o.total from users u join orders o on o.user_id=u.id where o.status='paid'", note: "Formats table aliases, join condition, and filter clauses for review." },
       { label: "Mutation warning", value: "update users set active=false", note: "Highlights why mutation queries need a WHERE review before running." },
+      { label: "Review report", value: "select p.id,count(*) from payments p join refunds r on r.payment_id=p.id where p.created_at >= '2026-01-01' group by p.id", note: "Creates a copyable report with query shape, tables, clause checks, and execution checklist." },
     ],
     faqs: [
       { question: "Does formatting make SQL safe?", answer: "No. Formatting improves readability only. Review query type, WHERE clauses, joins, parameters, and database behavior before running it." },
@@ -1122,14 +1123,14 @@ const baseTools: ToolDefinition[] = [
     component: "sqlFormatter",
     accent: "border-indigo-500",
     demandTier: "core",
-    keywords: ["sql formatter", "format sql", "sql beautifier", "sql minifier"],
+    keywords: ["sql formatter", "format sql", "sql beautifier", "sql minifier", "sql review report", "sql query review", "sql mutation checklist"],
     guideSlug: "sql-formatting-workflow",
     guideTitle: "SQL formatting workflow",
     relatedTools: ["json-formatter", "text-diff", "csv-json-converter"],
-    inputExamples: ["select id,name from users where active=1 order by created_at desc", "select count(*) from orders where created_at >= '2026-01-01'", "select u.id,o.total from users u join orders o on o.user_id=u.id"],
+    inputExamples: ["select id,name from users where active=1 order by created_at desc", "select count(*) from orders where created_at >= '2026-01-01'", "select u.id,o.total from users u join orders o on o.user_id=u.id", "update users set active=false"],
     sample: "select id,name from users where active=1 order by created_at desc",
-    action: "Pretty-print compact SQL and compare query revisions.",
-    result: "SELECT\n  id,\n  name\nFROM users",
+    action: "Pretty-print compact SQL and copy a query review report before running it.",
+    result: "Formatted SQL plus query type, table references, clause checks, warnings, and review checklist",
   }),
   tool({
     slug: "xml-formatter",

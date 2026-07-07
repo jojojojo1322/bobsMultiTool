@@ -76,10 +76,10 @@ for (const fragment of [
 ]) {
   if (!localizedContent.includes(fragment)) failures.push(`localized-content missing ${fragment}`);
 }
-for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-color-accessibility", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "verify-webhook-signature"]) {
+for (const fragment of ["workflowRecipes", "getLocalizedWorkflowRecipes", "getWorkflowRecipesForTool", "format-api-response", "extract-json-field", "review-sql-query", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-color-accessibility", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "verify-webhook-signature"]) {
   if (!workflows.includes(fragment)) failures.push(`workflow localization missing ${fragment}`);
 }
-for (const recipeSlug of ["format-api-response", "extract-json-field", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-color-accessibility", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "verify-webhook-signature"]) {
+for (const recipeSlug of ["format-api-response", "extract-json-field", "review-sql-query", "decode-api-token", "debug-redirect", "check-search-discovery-readiness", "inspect-image-data-url", "check-color-accessibility", "check-dns-deployment", "create-wifi-qr", "generate-secure-token", "verify-webhook-signature"]) {
   const recipeSource = workflows.match(new RegExp(`slug: "${recipeSlug}"[\\s\\S]*?(?=\\n  \\{\\n    slug: "|\\n\\];)`))?.[0] ?? "";
   if (!recipeSource) {
     failures.push(`workflow recipe missing localized source for ${recipeSlug}`);
@@ -382,6 +382,10 @@ for (const fragment of [
   "colorAccessibilityReport",
   "copyColorAccessibilityReport",
   "colorReportChecklistFinalBackground",
+  "localizedSqlReportToolUi",
+  "sqlReviewReport",
+  "copySqlReviewReport",
+  "sqlReportChecklistWhere",
   "localizedBase64DiagnosticsToolUi",
   "localizedJsonDiagnosticsToolUi",
   "localizedDnsDeploymentToolUi",
