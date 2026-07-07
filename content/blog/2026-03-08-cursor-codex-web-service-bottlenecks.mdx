@@ -3,9 +3,9 @@ slug: cursor-codex-web-service-bottlenecks
 title: Cursor와 Codex로 웹서비스를 만들 때 실제로 막히는 부분
 description: AI 코딩 도구로 화면을 빠르게 만든 뒤에도 라우트, 데이터 파일, 배포, sitemap, Play 결과 흐름은 사람이 다시 묶어 확인해야 했던 운영 기록입니다.
 date: 2026-03-08
-updatedAt: 2026-07-03
+updatedAt: 2026-07-07
 category: 개발
-readingMinutes: 6
+readingMinutes: 7
 relatedPlay: bug-clicker
 publicationTier: representative
 indexPolicy: index
@@ -38,6 +38,21 @@ AI는 많은 코드를 만들 수 있지만 운영 신호를 책임지지는 않
 | 상호작용 | 버튼이 보임 | 모바일/데스크톱에서 결과 상태까지 실제로 도달하는지 본다 |
 
 이 경계들은 AI가 한 번에 보기 어렵다. 컴포넌트는 그럴듯하게 만들 수 있어도, canonical host와 Search Console의 discovered pages는 코드 밖의 시간표를 탄다. 그래서 작업을 마칠 때는 "파일 diff가 예쁘다"보다 "외부에서 봐도 같은 상태인가"를 확인한다.
+
+## API 응답은 캡처보다 handoff가 먼저다
+
+AI 코딩 도구로 API 화면을 붙일 때도 비슷한 일이 생긴다. DevTools Network 탭에서 response body를 보면 당장은 빠르다. 하지만 그 JSON을 그대로 캡처해서 넘기면 누가 어떤 필드를 봐야 하는지, 에러 위치가 어디인지, 토큰이나 내부 URL을 지웠는지 다시 확인해야 한다. DevTools는 관찰 화면이고, handoff는 다음 사람이 바로 움직이게 하는 짧은 기록이다.
+
+그래서 API 응답을 볼 때는 `copy api response from devtools`에서 멈추지 않고 JSON Formatter의 API response report로 줄인다. root type, top-level key, depth, sensitive-looking key, duplicate key, useful JSON path를 같이 남기면 "응답이 이상함"이라는 말보다 훨씬 낫다. 필요한 필드 하나만 볼 때는 JSONPath Tester로 이어가서 `$.data.items[0].id` 같은 경로를 따로 남긴다.
+
+| DevTools에서 본 것 | 바로 부족한 점 | Bobob에서 남기는 것 |
+| --- | --- | --- |
+| Network response JSON | 길고 nested object가 많아 핵심 필드가 묻힌다 | API response report의 root shape, depth, useful paths |
+| API error body | message만 복사하면 code, requestId, validation field가 빠진다 | error response 구조와 복사 전 redaction checklist |
+| 배열 payload | 첫 row만 보고 전체 구조를 착각하기 쉽다 | top-level count, large array warning, JSONPath wildcard |
+| 민감한 key | token, cookie, email, internal URL이 같이 복사될 수 있다 | sensitive-looking key warning과 redacted handoff |
+
+이 흐름은 JSON pretty printer를 하나 더 쓰자는 말이 아니다. DevTools에서 본 응답을 issue, PR, QA 메모에 붙일 수 있는 형태로 줄이는 일이다. AI가 "이 필드가 있을 것"이라고 코드를 짜도 실제 응답이 다르면 화면은 깨진다. 그때 필요한 것은 예쁜 캡처가 아니라, 어떤 응답을 봤고 어떤 필드를 근거로 다음 코드를 고칠지 남긴 작은 보고서다.
 
 ## 내가 작업을 자르는 기준
 
