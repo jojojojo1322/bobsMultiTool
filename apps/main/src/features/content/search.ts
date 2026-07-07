@@ -157,6 +157,7 @@ function scoreTool(tool: ReturnType<typeof getLocalizedTools>[number], query: st
 const defaultWorkflowSlugs = [
   "debug-redirect",
   "check-search-discovery-readiness",
+  "diagnose-not-indexed-url",
   "check-dns-deployment",
   "review-security-headers",
 ];
