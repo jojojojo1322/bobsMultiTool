@@ -643,6 +643,8 @@ export const workflowRecipes: WorkflowRecipe[] = [
       "google indexing checker",
       "search console sitemap",
       "search console indexing",
+      "search console update delay",
+      "search console last updated",
       "search discovery report",
       "sitemap indexing check",
       "sitemap submission report",
@@ -669,6 +671,9 @@ export const workflowRecipes: WorkflowRecipe[] = [
       "사이트맵을 찾을 수 없습니다",
       "사이트맵 제출 확인",
       "sitemaps/en 제출",
+      "Search Console 색인 업데이트",
+      "페이지 색인 생성 최종 업데이트",
+      "색인 리포트 언제 업데이트",
     ],
     steps: [
       {
@@ -825,7 +830,12 @@ export const workflowRecipes: WorkflowRecipe[] = [
       "crawled currently not indexed",
       "discovered currently not indexed",
       "page indexing report",
+      "page indexing report not updated",
+      "page indexing report refresh",
       "search console page indexing",
+      "when does search console update",
+      "search console update delay",
+      "search console last updated",
       "url inspection request",
       "indexing request queued",
       "indexing observation log",
@@ -836,6 +846,10 @@ export const workflowRecipes: WorkflowRecipe[] = [
       "발견됨 현재 색인이 생성되지 않음",
       "색인 생성 요청됨",
       "색인 대기 점검",
+      "색인 대체 언제 업데이트",
+      "색인 리포트 언제 업데이트",
+      "페이지 색인 생성 최종 업데이트",
+      "Search Console 색인 업데이트",
     ],
     steps: [
       {

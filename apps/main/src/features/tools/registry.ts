@@ -582,8 +582,8 @@ const approvalContentBoosts: Record<string, ApprovalContentBoost> = {
     ],
   },
   "sitemap-generator": {
-    searchIntents: ["xml sitemap builder", "sitemap url validator", "canonical url sitemap", "remove duplicate sitemap urls", "search discovery report", "sitemap submission report", "search console sitemap report", "page indexing report", "url inspection evidence", "indexing observation log", "crawled currently not indexed", "discovered currently not indexed"],
-    aliases: ["sitemap xml generator", "url list to sitemap", "crawl url list", "search discovery report", "sitemap submission checklist", "indexing observation checklist"],
+    searchIntents: ["xml sitemap builder", "sitemap url validator", "canonical url sitemap", "remove duplicate sitemap urls", "search discovery report", "sitemap submission report", "search console sitemap report", "page indexing report", "page indexing report not updated", "url inspection evidence", "indexing observation log", "crawled currently not indexed", "discovered currently not indexed", "search console update delay", "search console last updated", "색인 리포트 언제 업데이트", "페이지 색인 생성 최종 업데이트"],
+    aliases: ["sitemap xml generator", "url list to sitemap", "crawl url list", "search discovery report", "sitemap submission checklist", "indexing observation checklist", "search console refresh delay"],
     examples: [
       { label: "Canonical tool URLs", value: "https://www.bobob.app/tools\nhttps://www.bobob.app/tools/json-formatter", note: "Builds XML entries and a submission report from final public URLs only." },
       { label: "Mixed host warning", value: "https://bobob.app/\nhttps://www.bobob.app/tools", note: "Shows why apex and www should be normalized before copying." },
