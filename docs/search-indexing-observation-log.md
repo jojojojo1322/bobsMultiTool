@@ -2647,3 +2647,19 @@ Completion guard:
 - Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`; the same command without the TLS override failed at live sitemap fetch in this local shell.
 - Search Console action: none in this source pass. The current live `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but indexing observation still needs later Google/Bing/Naver evidence.
 - Interpretation: this strengthens one submitted operations tool page as an API/auth handoff workflow, but it is source/local verification only until deployment, live discovery, and external observation are logged. It is not Google/Bing/Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-07 JWT Auth Report Production Deployment
+
+- Commit: `2ab3b9c`.
+- Change: deployed the JWT auth report on `/tools/jwt-decoder` with report metrics, safe handoff checklist, localized report labels, registry/search-intent coverage, `decode-api-token` workflow copy, and harness guards.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=2ab3b9c1dee40f3f909c055640916c360f9ce256 npm run harness:deployment-status` returned `overallState: success`; earlier checks returned `pending` while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `84`, feed items `61`, Blog posts `35`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `84` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `84` sitemap URLs, `61` feed items, `35/128` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `84`, Search Console discovered pages `84`, and live sitemap URLs `84`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/jwt-decoder?deploy=2ab3b9c`, confirmed `JWT auth report`, `Copy report`, token status/algorithm/expected-match/sensitive-claim/signature metrics, review notes, safe handoff checklist, Markdown preview, and clicked the report copy button with no console errors. The live copied clipboard began with `# JWT auth report`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `84`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The current `/sitemaps/en` sitemap and Search Console discovered count already match at `84`, but submitted discovery is still not indexing proof.
+- Interpretation: production now serves the JWT auth report on a submitted security/API tool page and IndexNow has been refreshed, but this is still discovery-surface and live-feature evidence only. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
