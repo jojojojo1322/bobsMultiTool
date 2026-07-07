@@ -8719,6 +8719,58 @@ function buildPublicUrlReport(
   };
 }
 
+function buildSecurityHeaderReport(parsedHeaders: ReturnType<typeof parseHttpHeaders>, dictionary: ClientDictionary, checkedAt: string) {
+  const securityScore = `${parsedHeaders.metrics.presentSecurityHeaders}/${parsedHeaders.metrics.securityCheckCount}`;
+  const reviewNotes = parsedHeaders.warnings.length ? parsedHeaders.warnings : [ui(dictionary, "securityHeaderReportNoWarnings", "No obvious security-header warnings detected. Still confirm the target app policy before publishing.")];
+  const checklist = [
+    ui(dictionary, "securityHeaderReportChecklistHsts", "Confirm HTTPS pages send Strict-Transport-Security after the first production response."),
+    ui(dictionary, "securityHeaderReportChecklistCsp", "Review Content-Security-Policy sources before switching report-only policies to enforcement."),
+    ui(dictionary, "securityHeaderReportChecklistCookies", "Check Set-Cookie values for Secure, HttpOnly, SameSite, and cache interaction."),
+    ui(dictionary, "securityHeaderReportChecklistCors", "Verify CORS origins and credentials against the intended public API clients."),
+    ui(dictionary, "securityHeaderReportChecklistRecheck", "Re-run the public URL check after CDN, proxy, or deployment changes."),
+  ];
+  const checkLines = parsedHeaders.securityChecks.map((check) => {
+    const status = check.present ? ui(dictionary, "headerPresent", "Present") : ui(dictionary, "headerMissing", "Missing");
+    const priority = check.required ? ui(dictionary, "requiredHeader", "Required") : ui(dictionary, "recommendedHeader", "Recommended");
+    return `- ${check.label}: ${status} (${priority})`;
+  });
+  const markdown = [
+    `# ${ui(dictionary, "securityHeaderReport", "Security header report")}`,
+    "",
+    `- ${ui(dictionary, "checkedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "headerCount", "Headers")}: ${parsedHeaders.metrics.headerCount}`,
+    `- ${ui(dictionary, "duplicateHeaders", "Duplicate names")}: ${parsedHeaders.metrics.duplicateHeaderNames}`,
+    `- ${ui(dictionary, "securityHeaderScore", "Security header score")}: ${securityScore}`,
+    `- ${ui(dictionary, "missingRequiredHeaders", "Missing required")}: ${parsedHeaders.metrics.missingRequiredSecurityHeaders}`,
+    `- ${ui(dictionary, "cookieHeaders", "Cookie headers")}: ${parsedHeaders.metrics.cookieHeaders}`,
+    `- ${ui(dictionary, "corsHeaderCategory", "CORS")}: ${parsedHeaders.metrics.corsHeaders}`,
+    `- ${ui(dictionary, "securityHeaderReportRawPolicy", "Raw headers included")}: ${ui(dictionary, "securityHeaderReportRawExcluded", "No, only metrics, readiness checks, and review notes are included.")}`,
+    "",
+    `## ${ui(dictionary, "securityHeaderReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "securityHeaderReportCheckResults", "Security header checks")}`,
+    ...checkLines,
+    "",
+    `## ${ui(dictionary, "securityHeaderReportChecklist", "Deployment checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return {
+    markdown,
+    reviewNotes,
+    checklist,
+    metrics: [
+      { label: ui(dictionary, "headerCount", "Headers"), value: String(parsedHeaders.metrics.headerCount) },
+      { label: ui(dictionary, "securityHeaderScore", "Security header score"), value: securityScore },
+      { label: ui(dictionary, "missingRequiredHeaders", "Missing required"), value: String(parsedHeaders.metrics.missingRequiredSecurityHeaders) },
+      { label: ui(dictionary, "cookieHeaders", "Cookie headers"), value: String(parsedHeaders.metrics.cookieHeaders) },
+      { label: ui(dictionary, "corsHeaderCategory", "CORS"), value: String(parsedHeaders.metrics.corsHeaders) },
+      { label: ui(dictionary, "securityHeaderReportRawPolicy", "Raw headers included"), value: ui(dictionary, "no", "No"), description: ui(dictionary, "securityHeaderReportRawExcluded", "No, only metrics, readiness checks, and review notes are included.") },
+    ],
+  };
+}
+
 function formatHttpStatusError(message: string, dictionary: ClientDictionary) {
   if (/fetch failed/i.test(message)) {
     return ui(dictionary, "httpRequestFailedPublic", "The request failed before a response was received. The host may block server-side checks; try another public URL.");
@@ -8776,6 +8828,7 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
     : [];
   const responseHeaderLines = result ? headerRows.map((header) => `${header.name}: ${header.value}`).join("\n") : "";
   const parsedHeaders = React.useMemo(() => parseHttpHeaders(rawHeaders, dictionary), [dictionary, rawHeaders]);
+  const securityHeaderReport = React.useMemo(() => buildSecurityHeaderReport(parsedHeaders, dictionary, ui(dictionary, "securityHeaderReportCopyTime", "Browser copy time")), [dictionary, parsedHeaders]);
   const generatedCspHeader = React.useMemo(() => buildCspHeader(cspDirectives, cspReportOnly), [cspDirectives, cspReportOnly]);
   const cspWarnings = React.useMemo(() => getCspWarnings(cspDirectives, cspReportOnly, dictionary), [cspDirectives, cspReportOnly, dictionary]);
   const redirectDiagnostics = React.useMemo(() => (result && !result.error ? getRedirectDiagnostics(result, dictionary) : null), [dictionary, result]);
@@ -8991,6 +9044,38 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
           <div data-http-header-warnings>
             <ToolWarningList title={ui(dictionary, "headerReviewNotes", "Header review notes")} warnings={parsedHeaders.warnings} emptyLabel={ui(dictionary, "httpHeadersNoWarnings", "Headers look ready for debugging notes. Still confirm policy with the target app.")} />
           </div>
+          <section className="space-y-3 rounded-md border bg-background p-3" data-http-security-report>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h4 className="text-sm font-semibold">{ui(dictionary, "securityHeaderReport", "Security header report")}</h4>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "securityHeaderReportDescription", "Copy a safe header-readiness report with security score, missing required headers, cookie/CORS notes, and deployment checks.")}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => copyToClipboard(buildSecurityHeaderReport(parsedHeaders, dictionary, new Date().toISOString()).markdown)}
+                data-http-security-report-copy
+              >
+                <Copy className="h-4 w-4" />
+                {ui(dictionary, "copySecurityHeaderReport", "Copy security report")}
+              </Button>
+            </div>
+            <ToolMetricGrid items={securityHeaderReport.metrics} />
+            <ToolWarningList title={ui(dictionary, "securityHeaderReportReviewNotes", "Review notes")} warnings={securityHeaderReport.reviewNotes} emptyLabel={ui(dictionary, "securityHeaderReportNoWarnings", "No obvious security-header warnings detected. Still confirm the target app policy before publishing.")} />
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "securityHeaderReportChecklist", "Deployment checklist")}</p>
+              <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                {securityHeaderReport.checklist.map((item) => (
+                  <li key={item} className="rounded-md bg-muted px-3 py-2">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs" data-http-security-report-preview>
+              <code>{securityHeaderReport.markdown}</code>
+            </pre>
+          </section>
           <div className="rounded-md bg-muted p-3 text-xs" data-http-header-json>
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <span className="font-medium">{ui(dictionary, "parsedHeaderJson", "Parsed header JSON")}</span>

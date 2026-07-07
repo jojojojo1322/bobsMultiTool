@@ -1529,7 +1529,7 @@ export const workflowRecipes: WorkflowRecipe[] = [
       th: "ตรวจ header ของ response ร่าง CSP แล้วเช็ก URL และ DNS target ให้ถูกต้อง",
       ar: "افحص رؤوس الاستجابة واكتب مسودة CSP ثم تأكد من الرابط وهدف DNS.",
     }),
-    searchIntents: ["security headers checker", "security response header checker", "content security policy generator", "csp header generator", "http headers parser", "strict transport security check", "hsts checker", "x content type options checker", "referrer policy checker"],
+    searchIntents: ["security headers checker", "security response header checker", "security header report", "http security report", "csp review report", "content security policy generator", "csp header generator", "http headers parser", "strict transport security check", "hsts checker", "hsts report", "x content type options checker", "referrer policy checker"],
     steps: [
       { toolSlug: "http-status-checker", reason: localized({
         en: "Inspect status, redirects, pasted headers, and CSP warnings in one surface.",
