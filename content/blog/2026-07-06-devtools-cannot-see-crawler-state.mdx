@@ -3,9 +3,9 @@ slug: devtools-cannot-see-crawler-state
 title: Chrome DevTools로는 안 보이는 공개 URL 점검
 description: Chrome DevTools에서 보이는 로컬 응답과 검색엔진이 보는 공개 URL 상태를 분리하며 미색인 URL을 status, sitemap, robots, canonical, Search Console 기준으로 진단하는 운영 기록입니다.
 date: 2026-07-06
-updatedAt: 2026-07-07
+updatedAt: 2026-07-08
 category: 운영 기록
-readingMinutes: 7
+readingMinutes: 8
 relatedPlay: indexing-waiting-room
 publicationTier: representative
 indexPolicy: index
@@ -52,6 +52,22 @@ DevTools를 버리자는 뜻은 아니다. 입력 폼이 깨졌는지, client bu
 - 제출, 발견, 색인, 노출, 클릭을 같은 성공 단어로 합치지 않는다.
 
 이 순서는 느려 보이지만 실제로는 시간을 줄인다. Search Console에서 "크롤링됨 - 현재 색인이 생성되지 않음"을 봤을 때도 바로 제목을 고치지 않는다. 먼저 sitemap에 들어갔는지, fetch가 성공했는지, canonical이 맞는지, noindex가 없는지 본다. 그 다음에 본문 품질과 title/description을 본다.
+
+## 캐시는 내 탭과 public response를 갈라놓는다
+
+배포 뒤에 "나는 새 화면을 보는데 검색엔진이나 다른 브라우저는 예전 화면을 본다"는 말이 나오면 먼저 캐시를 의심한다. DevTools Network 탭은 현재 탭의 memory cache, disk cache, service worker, conditional request를 같이 보여줄 수 있다. 반대로 공개 URL checker는 서버가 지금 외부 요청에 돌려주는 status, redirect chain, `cache-control`, `etag`, `last-modified`, `x-vercel-cache`, `cf-cache-status` 같은 header를 남긴다.
+
+이 둘은 역할이 다르다. DevTools에서 disable cache를 켜고 새로고침해도 CDN edge가 `HIT`나 `STALE`을 줄 수 있고, public checker에서 200을 받아도 내 브라우저가 `304 Not Modified`로 기존 asset을 재사용할 수 있다. 그래서 cache 문제는 "새로고침했는데 그대로"가 아니라 어느 층이 그대로인지로 적어야 한다.
+
+| 증상 | 먼저 볼 header/status | 다음 행동 |
+| --- | --- | --- |
+| 배포 뒤 HTML이 예전 내용처럼 보임 | `cache-control`, `etag`, `last-modified`, `x-vercel-cache`, `cf-cache-status` | public URL report를 남기고 Vercel/Cloudflare cache 설정, purge, redeploy 기록을 따로 확인 |
+| `304 Not Modified`가 반복됨 | status `304`, request 조건 header, response `etag` | 브라우저 conditional request인지 CDN stale response인지 나눠서 본다 |
+| Search Console snippet이나 metadata가 예전 값임 | final 200 HTML, canonical, meta title/description, sitemap lastmod | Search Console URL Inspection fetch와 Page indexing report 날짜를 따로 적는다 |
+| CDN이 `HIT`, `STALE`, `BYPASS`를 보여줌 | `cf-cache-status`, `x-vercel-cache`, `age`, `cache-control` | CDN layer 판단으로 적고 app code나 title만 계속 바꾸지 않는다 |
+| API 응답은 새 값인데 정적 asset만 예전임 | asset URL, content hash, cache policy | HTML, JS/CSS asset, API response를 다른 줄로 기록한다 |
+
+그래서 `캐시 헤더 확인`, `304 확인`, `x-vercel-cache 확인`, `cf-cache-status 확인`, `배포 후 캐시 확인` 같은 검색은 HTTP Status Checker로 보내되, 그 도구가 캐시를 지운다고 말하지 않는다. 하는 일은 public response evidence를 잡는 것이다. 캐시를 실제로 비우는 일은 hosting platform, CDN, browser, service worker 쪽에서 한다.
 
 ## 리디렉션 사유를 볼 때 먼저 가르는 것
 
