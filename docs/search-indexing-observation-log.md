@@ -3495,3 +3495,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so canonical duplicate reason query families stay wired to workflow search plus URL Parser, Meta Tag Generator, and Sitemap Generator registry metadata.
 - Search Console action: none in this source pass. This improves public routing for the currently observed canonical/duplicate page-indexing reason rows, but does not change Google's page-indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this strengthens existing submitted URL/meta/sitemap operations surfaces while indexing reports lag. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-08 Canonical Duplicate Reason Workflow Production Deployment
+
+- Commit: `3bdf7487`.
+- Change: deployed canonical/duplicate Search Console reason coverage into the existing search discovery and not-indexed URL workflows, URL Parser, Meta Tag Generator, Sitemap Generator, and `devtools-cannot-see-crawler-state` article surfaces.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=3bdf7487f9f7a121e12074882197d2c562dc0630 npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=duplicate%20without%20user-selected%20canonical&deploy=3bdf7487` and confirmed `검색 노출 준비 점검`, `미색인 URL 진단`, `duplicate canonical checker`, URL Parser, Meta Tag Generator, and Sitemap Generator results rendered. Playwright also loaded `https://www.bobob.app/search?q=사용자가%20선택한%20표준이%20없는%20중복%20페이지&deploy=3bdf7487` and confirmed Korean reason chips plus workflow and tool results rendered. The production article `https://www.bobob.app/blog/devtools-cannot-see-crawler-state?deploy=3bdf7487` rendered the `canonical 중복 사유는 URL 모양부터 맞춘다` section and canonical duplicate table with no console errors. The checks showed only the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1`, not-indexed pages `32`, and canonical/duplicate reason rows still pending a future report refresh.
+- Interpretation: production now answers canonical/duplicate Search Console reason symptoms through existing submitted URL/meta/sitemap workflows and a representative operations article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
