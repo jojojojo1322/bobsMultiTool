@@ -3555,3 +3555,23 @@ Completion guard:
 - Harness action: extended `scripts/harness/search-smoke.mjs` so Bing/Naver/IndexNow delay query families stay wired to workflow search and the Sitemap Generator registry surface.
 - Search Console/Bing/Naver action: none in this source pass. The direct Search Console browser retry still requires a Chrome session signed in as `bobob935@gmail.com`; the latest valid external observation remains the `2026. 7. 7.` sitemap read with Page indexing still on the `2026. 6. 30.` snapshot.
 - Interpretation: this improves public routing for the exact external-submission-delay symptoms while waiting for Search Console/Bing/Naver to update. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-08 Bing/Naver/IndexNow Delay Production Deployment
+
+- Commit: `783d8b1a`.
+- Change: deployed Bing/Naver/IndexNow delay query coverage into the existing search-discovery and not-indexed URL workflows, `/tools/sitemap-generator` registry surface, `search-console-misreads-for-indie-devs` article, and search smoke harness.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=783d8b1a npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=IndexNow%20%EC%A0%9C%EC%B6%9C%20%EC%83%89%EC%9D%B8%20%EC%95%84%EB%8B%98&deploy=783d8b1a`, `https://www.bobob.app/search?q=Bing%20Webmaster%20%EB%A1%9C%EA%B7%B8%EC%9D%B8%20%ED%95%84%EC%9A%94&deploy=783d8b1a`, and `https://www.bobob.app/search?q=naver%20search%20advisor%20sitemap%20not%20found&deploy=783d8b1a`; each rendered `검색 노출 준비 점검`, `미색인 URL 진단`, and `Sitemap` with no console errors. Playwright also loaded `https://www.bobob.app/blog/search-console-misreads-for-indie-devs?deploy=783d8b1a` and confirmed `Bing, IndexNow, Naver는 다른 줄로 본다`, `IndexNow`, `사이트맵을 찾을 수 없습니다`, and `오래된 Naver locale sitemap row` rendered. The checks showed only the existing AdSense `data-nscript` warning.
+- Search Console/Bing/Naver action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: sitemap last read `2026. 7. 7.`, discovered pages `85`, and Page indexing still on the `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers Bing/Naver/IndexNow delay symptoms through existing submitted sitemap/search-discovery workflows and a representative operations article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

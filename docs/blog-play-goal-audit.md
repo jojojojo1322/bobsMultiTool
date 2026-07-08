@@ -245,7 +245,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - The existing search-discovery and not-indexed URL workflows now route `indexnow submitted but not indexed`, `bing webmaster sign in blocked`, `bing site search challenge`, `naver search advisor collection status`, `naver sitemap row not visible`, and matching Korean queries into the current HTTP/Sitemap/Robots/Meta/URL Parser path.
   - `/tools/sitemap-generator` now carries the same IndexNow/Bing/Naver delay query family in search intents, aliases, and keywords so the sitemap report remains the handoff surface instead of creating a thin webmaster-delay page.
   - `search-console-misreads-for-indie-devs` now separates IndexNow `200`, Bing Webmaster sign-in state, Bing public search challenge, Naver ownership/HTTPS state, Naver `사이트맵을 찾을 수 없습니다`, and older Naver locale sitemap rows.
-  - This source change is not Search Console, Bing, Naver, traffic, or indexing proof until later signed-in external observations change.
+  - This source change is deployed in commit `783d8b1a`, with live discovery, submitted URL health, Search discovery registration, IndexNow, and WebSub refreshed at the same `85` sitemap URLs and `62` feed items. The `2026. 6. 30.` Search Console page-indexing report snapshot remains stale, so this is not Search Console, Bing, Naver, traffic, or indexing proof until later signed-in external observations change.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
