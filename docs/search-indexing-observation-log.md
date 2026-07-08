@@ -3526,3 +3526,23 @@ Completion guard:
 - Local browser verification: Playwright loaded `http://localhost:3000/search?q=page%20indexing%20report%20date%20not%20changing`, `http://localhost:3000/search?q=색인%20리포트%20날짜%20안%20바뀜`, and `http://localhost:3000/blog/search-console-misreads-for-indie-devs`. The search pages surfaced `미색인 URL 진단` and `검색 노출 준비 점검`; the Blog page rendered the new timestamp table. Final browser checks had no console errors and only the existing AdSense `data-nscript` warning.
 - Search Console action: none in this source pass. This improves public routing for the user's current "when does indexing update" symptom and the next signed-in observation packet, but it does not change Google's Page indexing report, Bing dashboard access, or Naver sitemap visibility.
 - Interpretation: this strengthens existing submitted sitemap/search-discovery operations surfaces while the Page indexing report remains stale. It is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-08 Page Indexing Report Freshness Production Deployment
+
+- Commit: `6e96be0a`.
+- Change: deployed Page indexing report freshness and report-lag search coverage into the existing search discovery and not-indexed URL workflows, `/tools/sitemap-generator` registry surface, `search-console-misreads-for-indie-devs` article, and the generated indexing follow-up packet.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=6e96be0a npm run harness:deployment-status` returned `overallState: success` after an earlier `pending` check while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=page%20indexing%20report%20date%20not%20changing&deploy=6e96be0a` and confirmed `미색인 URL 진단` and `검색 노출 준비 점검` rendered with no console errors. Playwright loaded `https://www.bobob.app/search?q=색인%20리포트%20날짜%20안%20바뀜&deploy=6e96be0a` and confirmed the Korean workflow chips plus Sitemap result surfaced with no console errors. Playwright also loaded `https://www.bobob.app/blog/search-console-misreads-for-indie-devs?deploy=6e96be0a` and confirmed the `Sitemap last read`, `Page indexing report last updated`, `URL Inspection live test time`, and `Performance last updated` rows rendered. The checks showed only the existing AdSense `data-nscript` warning.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now answers Page indexing report freshness/report-lag symptoms through existing submitted sitemap/search-discovery workflows and a representative operations article, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
