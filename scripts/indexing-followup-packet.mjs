@@ -275,6 +275,8 @@ function assertPacket(packet, snapshot, log, registration) {
     `Property: \`${searchConsoleProperty}\``,
     `Sitemaps report: ${searchConsoleSitemapsUrl}`,
     `Page indexing report: ${searchConsoleIndexUrl}`,
+    "Record the visible `Sitemaps last read`, `Page indexing report last updated`, `URL Inspection live test time`, and `Performance last updated` separately.",
+    "If sitemap last read is current but Page indexing report is still old, keep the next action as observation instead of resubmitting the same sitemap again.",
   ];
   const missing = requiredFragments.filter((fragment) => !packet.includes(fragment));
   if (missing.length) throw new Error(`indexing follow-up packet missing current-count guidance:\n${missing.join("\n")}`);
@@ -344,6 +346,8 @@ function renderPacket(snapshot, log, registration) {
     "- Compare this domain-property view against older URL-prefix rows only when reviewing historical observations.",
     `- Compare against the 2026-06-25 baseline: clicks 0, impressions 0, indexed pages 0, not indexed pages 5, initial /sitemaps/en discovered pages ${initialDiscoveredPages ?? "not parsed"}.`,
     `- Also compare against the same-day post-expansion sitemap resubmission: /sitemaps/en discovered pages ${latestDiscoveredPages ?? "not parsed"}, live sitemap URL count ${checks.sitemapUrlCount}, latest IndexNow URL count ${latestIndexNowCount ?? "not parsed"}.`,
+    "- Record the visible `Sitemaps last read`, `Page indexing report last updated`, `URL Inspection live test time`, and `Performance last updated` separately.",
+    "- If sitemap last read is current but Page indexing report is still old, keep the next action as observation instead of resubmitting the same sitemap again.",
     "- Record whether `리디렉션이 포함된 페이지` and `적절한 표준 태그가 포함된 대체 페이지` changed, disappeared, or gained sample URLs.",
     "- If impressions appear, export Search Console Page + Query rows to `reports/search-console.csv` or `reports/search-console.tsv` and run `npm run harness:seo-opportunities`.",
     "",
