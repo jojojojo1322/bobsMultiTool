@@ -139,6 +139,11 @@ for (const fragment of [
   "WebSub response statuses: `204`, `204`",
   "Retired Locale Sitemap Redirect Source Slice",
   "return a 308 redirect to `https://www.bobob.app/sitemaps/en` instead of 404",
+  "2026-07-09 HTTP Crawler Profile Production Deployment",
+  "Commit: `946fe35b`",
+  "deployed fixed request profiles for `/tools/http-status-checker` and `/api/http-status`: `public`, `googlebot-smartphone`, and `google-inspection-mobile`",
+  "Live API verification: a production `/api/http-status` request with `requestProfile=google-inspection-mobile` returned final `200`",
+  "This is public reachability and request-context evidence only",
 ]) {
   assertIncludes(log, fragment, logPath);
 }

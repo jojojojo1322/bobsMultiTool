@@ -176,6 +176,10 @@ for (const fragment of [
   "Both pillar URL indexing request confirmations showed `색인 생성 요청됨`",
   `Latest submitted URL count: \`${latestIndexNowSubmissionCount}\``,
   `The latest deployed ${latestIndexNowSubmissionCount}-URL representative sitemap set has been submitted to IndexNow with response status \`200\`.`,
+  "Crawler-profile evidence surface: `/tools/http-status-checker` now supports fixed `public`, `Googlebot Smartphone`, and `Google InspectionTool mobile` request profiles",
+  "HTTP crawler-profile source target:",
+  "This source change is deployed in commit `946fe35b`",
+  "This is public reachability and request-context evidence only",
   "Bing Webmaster Tools reached the public landing page with `Sign In`",
   "Public Bing `site:www.bobob.app` search was blocked",
   "Latest response statuses: `204`, `204`",
@@ -226,6 +230,9 @@ for (const fragment of [
   "Codex heartbeat automation id: `bobob-indexing-observation`",
   "Bing Webmaster recommendations",
   "Naver ownership is confirmed",
+  "2026-07-09 HTTP Crawler Profile Production Deployment",
+  "Commit: `946fe35b`",
+  "Live API verification: a production `/api/http-status` request with `requestProfile=google-inspection-mobile` returned final `200`",
 ]) {
   assertIncludes(observationLog, fragment, observationLogPath);
 }

@@ -3650,3 +3650,18 @@ Completion guard:
 - Live browser verification: Playwright loaded `https://www.bobob.app/search?q=Search%20Console%20%ED%8C%A8%EC%8A%A4%ED%82%A4%20%ED%99%95%EC%9D%B8&deploy=1c272c1a`, `https://www.bobob.app/search?q=%EB%B3%B8%EC%9D%B8%20%ED%99%95%EC%9D%B8%20%EC%A4%91&deploy=1c272c1a`, and `https://www.bobob.app/search?q=%ED%8C%A8%EC%8A%A4%ED%82%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC%20%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%9D%84%20%EC%99%84%EB%A3%8C%ED%95%A9%EB%8B%88%EB%8B%A4&deploy=1c272c1a`; each surfaced `검색 노출 준비 점검`, `미색인 URL 진단`, a Sitemap step, and account/passkey signal text with no console errors.
 - Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation because the valid `bobob935@gmail.com` report was blocked by passkey verification.
 - Interpretation: production now routes Search Console passkey/authentication-stop symptoms into the existing account/property guard workflow and preserves the separation between `authentication blocked`, `discovery submitted`, and `indexing proven`. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 HTTP Crawler Profile Production Deployment
+
+- Commit: `946fe35b`.
+- Change: deployed fixed request profiles for `/tools/http-status-checker` and `/api/http-status`: `public`, `googlebot-smartphone`, and `google-inspection-mobile`. The API response now returns `requestProfile` evidence with key, label, and user-agent context so a copied Public URL report records which safe request profile was used.
+- Route smoke coverage: local route smoke checks the default `public` profile, the Googlebot Smartphone profile with `Googlebot/2.1` user-agent evidence, and the Google InspectionTool mobile profile with `Google-InspectionTool/1.0` user-agent evidence.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=946fe35b npm run harness:deployment-status` returned `overallState: success`.
+- Live API verification: a production `/api/http-status` request with `requestProfile=google-inspection-mobile` returned final `200` and `requestProfile.key` `google-inspection-mobile`.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The new request-profile evidence makes future reachability reports more precise, but it does not update the latest signed-in Search Console observation: sitemap discovered pages remain `85`, and Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production can now distinguish public, Googlebot Smartphone, and Google InspectionTool-style reachability checks inside the HTTP Status Checker. This is public reachability and request-context evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
