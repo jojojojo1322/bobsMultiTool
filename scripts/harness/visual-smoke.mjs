@@ -79,7 +79,7 @@ const scenarios = [
     name: "ja-regex-desktop",
     path: "/ja/tools/regex-tester",
     viewport: { width: 1366, height: 900 },
-    expectedText: ["Regex", "開発者"],
+    expectedText: ["Regex", "Web運用"],
   },
   {
     name: "ar-json-rtl",

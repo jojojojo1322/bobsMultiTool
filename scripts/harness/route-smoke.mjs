@@ -499,6 +499,30 @@ if (httpStatusResponse.status !== 200) {
   if (!Array.isArray(httpStatusBody?.finalResponseHeaders)) {
     failures.push("/api/http-status response missing finalResponseHeaders array");
   }
+  if (httpStatusBody?.requestProfile?.key !== "public" || !String(httpStatusBody?.requestProfile?.userAgent ?? "").includes("BobobStatusChecker")) {
+    failures.push("/api/http-status default response should expose the public request profile");
+  }
+}
+
+const googlebotStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}&profile=googlebot-smartphone`);
+const googlebotStatusBody = await googlebotStatusResponse.json().catch(() => null);
+if (googlebotStatusResponse.status !== 200) {
+  failures.push(`/api/http-status should accept Googlebot profile checks, got ${googlebotStatusResponse.status}`);
+} else {
+  if (googlebotStatusBody?.requestProfile?.key !== "googlebot-smartphone") {
+    failures.push("/api/http-status Googlebot profile response missing googlebot-smartphone key");
+  }
+  if (!String(googlebotStatusBody?.requestProfile?.userAgent ?? "").includes("Googlebot/2.1")) {
+    failures.push("/api/http-status Googlebot profile response missing Googlebot user-agent evidence");
+  }
+}
+
+const inspectionStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}&profile=google-inspection-mobile`);
+const inspectionStatusBody = await inspectionStatusResponse.json().catch(() => null);
+if (inspectionStatusResponse.status !== 200) {
+  failures.push(`/api/http-status should accept Google InspectionTool profile checks, got ${inspectionStatusResponse.status}`);
+} else if (inspectionStatusBody?.requestProfile?.key !== "google-inspection-mobile" || !String(inspectionStatusBody?.requestProfile?.userAgent ?? "").includes("Google-InspectionTool/1.0")) {
+  failures.push("/api/http-status Google InspectionTool profile response missing request-profile evidence");
 }
 
 const privateStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("http://localhost:3000")}`);

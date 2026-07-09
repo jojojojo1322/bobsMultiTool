@@ -8300,9 +8300,22 @@ type HttpRedirectHop = {
   elapsedMs?: number;
 };
 
+type HttpRequestProfileKey = "public" | "googlebot-smartphone" | "google-inspection-mobile";
+
+const httpRequestProfileOptions: Array<{ key: HttpRequestProfileKey; labelKey: string; fallbackLabel: string }> = [
+  { key: "public", labelKey: "publicCheckerProfile", fallbackLabel: "Public checker" },
+  { key: "googlebot-smartphone", labelKey: "googlebotSmartphoneProfile", fallbackLabel: "Googlebot Smartphone" },
+  { key: "google-inspection-mobile", labelKey: "googleInspectionMobileProfile", fallbackLabel: "Google InspectionTool mobile" },
+];
+
 type HttpStatusResult = {
   inputUrl?: string;
   finalUrl?: string;
+  requestProfile?: {
+    key: HttpRequestProfileKey;
+    label: string;
+    userAgent: string;
+  };
   redirectCount?: number;
   redirectChain?: HttpRedirectHop[];
   finalResponseHeaders?: Array<{ name: string; value: string }>;
@@ -8613,6 +8626,11 @@ function parseUrlSafely(value?: string | null) {
   }
 }
 
+function getHttpRequestProfileLabel(result: HttpStatusResult, dictionary: ClientDictionary) {
+  const option = httpRequestProfileOptions.find((item) => item.key === result.requestProfile?.key);
+  return option ? ui(dictionary, option.labelKey, option.fallbackLabel) : result.requestProfile?.label ?? ui(dictionary, "publicCheckerProfile", "Public checker");
+}
+
 function getRedirectDiagnostics(result: HttpStatusResult, dictionary: ClientDictionary) {
   const chain = result.redirectChain ?? [];
   const urls = chain.map((hop) => parseUrlSafely(hop.url)).filter((value): value is URL => value !== null);
@@ -8677,13 +8695,19 @@ function buildPublicUrlReport(
   const headerWarnings = responseHeaderLines
     ? checkedHeaders.warnings
     : [ui(dictionary, "publicUrlReportNoHeadersWarning", "No allowlisted final-response headers were available for the report.")];
-  const reviewNotes = Array.from(new Set([...redirectDiagnostics.warnings, ...headerWarnings]));
   const finalStatus = `${result.status ?? "-"} ${result.statusText ?? ""}`.trim();
   const finalUrl = result.finalUrl ?? "-";
   const inputUrl = result.inputUrl ?? result.redirectChain?.[0]?.url ?? "-";
+  const requestProfile = getHttpRequestProfileLabel(result, dictionary);
+  const requestUserAgent = result.requestProfile?.userAgent ?? "-";
   const contentType = result.contentType ?? "-";
   const cacheControl = result.cacheControl ?? "-";
   const redirectCount = result.redirectCount ?? 0;
+  const crawlerProfileWarnings =
+    result.requestProfile?.key && result.requestProfile.key !== "public"
+      ? [ui(dictionary, "crawlerProfileEvidenceWarning", "This request uses a crawler user-agent preset from bobob.app infrastructure; it is useful reachability evidence, not proof that Google crawled or indexed the URL.")]
+      : [];
+  const reviewNotes = Array.from(new Set([...crawlerProfileWarnings, ...redirectDiagnostics.warnings, ...headerWarnings]));
 
   const markdown = [
     `# ${ui(dictionary, "publicUrlReport", "Public URL report")}`,
@@ -8692,6 +8716,8 @@ function buildPublicUrlReport(
     `- ${ui(dictionary, "inputUrl", "Input URL")}: ${inputUrl}`,
     `- ${ui(dictionary, "finalUrl", "Final URL")}: ${finalUrl}`,
     `- ${ui(dictionary, "finalStatus", "Final status")}: ${finalStatus}`,
+    `- ${ui(dictionary, "requestProfile", "Request profile")}: ${requestProfile}`,
+    `- ${ui(dictionary, "requestUserAgent", "Request User-Agent")}: ${requestUserAgent}`,
     `- ${ui(dictionary, "redirects", "Redirects")}: ${redirectCount}`,
     `- ${ui(dictionary, "securityHeaderScore", "Security header score")}: ${securityScore}`,
     `- ${ui(dictionary, "missingRequiredHeaders", "Missing required")}: ${requiredMissing}`,
@@ -8712,6 +8738,7 @@ function buildPublicUrlReport(
     reviewNotes,
     metrics: [
       { label: ui(dictionary, "finalStatus", "Final status"), value: finalStatus },
+      { label: ui(dictionary, "requestProfile", "Request profile"), value: requestProfile },
       { label: ui(dictionary, "redirects", "Redirects"), value: String(redirectCount) },
       { label: ui(dictionary, "securityHeaderScore", "Security header score"), value: securityScore },
       { label: ui(dictionary, "missingRequiredHeaders", "Missing required"), value: String(requiredMissing) },
@@ -8789,6 +8816,7 @@ function formatHttpStatusError(message: string, dictionary: ClientDictionary) {
 
 function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [url, setUrl] = React.useState("https://www.google.com");
+  const [requestProfile, setRequestProfile] = React.useState<HttpRequestProfileKey>("public");
   const [result, setResult] = React.useState<HttpStatusResult | null>(null);
   const [rawResult, setRawResult] = React.useState("");
   const [rawHeaders, setRawHeaders] = React.useState(httpHeaderExamples[0]?.value ?? "");
@@ -8810,7 +8838,8 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
     const targetUrl = overrideUrl ?? url;
     setLoading(true);
     try {
-      const response = await fetch(`/api/http-status?url=${encodeURIComponent(targetUrl)}`);
+      const params = new URLSearchParams({ url: targetUrl, profile: requestProfile });
+      const response = await fetch(`/api/http-status?${params.toString()}`);
       const body = (await response.json()) as HttpStatusResult;
       setResult(body);
       setRawResult(JSON.stringify(body, null, 2));
@@ -8821,7 +8850,7 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
     } finally {
       setLoading(false);
     }
-  }, [url]);
+  }, [requestProfile, url]);
   React.useEffect(() => {
     const nextUrl = autoCheckUrlParamRef.current;
     if (!nextUrl) return;
@@ -8864,10 +8893,21 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_240px_auto]">
         <Input value={url} onChange={(event) => setUrl(event.target.value)} aria-label="URL" data-session-key="url" />
-        <Button onClick={() => void check()} disabled={loading}>{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
+        <label className="block space-y-1">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "requestProfile", "Request profile")}</span>
+          <Select value={requestProfile} onChange={(event) => setRequestProfile(event.target.value as HttpRequestProfileKey)} aria-label={ui(dictionary, "requestProfile", "Request profile")}>
+            {httpRequestProfileOptions.map((option) => (
+              <option key={option.key} value={option.key}>
+                {ui(dictionary, option.labelKey, option.fallbackLabel)}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <Button onClick={() => void check()} disabled={loading} className="md:self-end">{loading ? ui(dictionary, "checking", "Checking") : ui(dictionary, "check", "Check")}</Button>
       </div>
+      <p className="text-xs text-muted-foreground">{ui(dictionary, "requestProfileDescription", "Crawler presets only change safe request headers for this server-side check; use Search Console or logs for real crawl and indexing proof.")}</p>
       {result?.error ? <ErrorAlert title={ui(dictionary, "httpCheckFailed", "HTTP check failed")} message={formatHttpStatusError(result.error, dictionary)} /> : null}
       {result && !result.error ? (
         <div className="space-y-4" data-http-status-details>
@@ -8881,6 +8921,10 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
             <div className="rounded-md border bg-card p-3">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "redirects", "Redirects")}</p>
               <p className="mt-2 text-lg font-semibold">{result.redirectCount ?? 0}</p>
+            </div>
+            <div className="rounded-md border bg-card p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "requestProfile", "Request profile")}</p>
+              <p className="mt-2 break-words text-sm font-semibold">{getHttpRequestProfileLabel(result, dictionary)}</p>
             </div>
             <div className="rounded-md border bg-card p-3 md:col-span-2">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "finalUrl", "Final URL")}</p>
