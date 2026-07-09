@@ -3776,3 +3776,21 @@ Completion guard:
 - Live browser verification: Playwright loaded `https://www.bobob.app/tools/yaml-validator?deploy=582101cf`, entered a Compose sample, and confirmed `data-yaml-deployment-report`, `data-yaml-deployment-report-copy`, raw YAML exclusion, raw environment value exclusion, Compose service preview, no raw secret-like sample value, and no mobile horizontal overflow.
 - Search Console action: none in this production pass. The deployed YAML report and new sitemap inclusion improve deploy-config handoff and discovery quality, but they do not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `86`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
 - Interpretation: production now gives deploy-config visitors a safe shareable YAML/Compose report and includes that strengthened page in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 ENV Parser Representative Sitemap Production Deployment
+
+- Commit: `f24ccba2`.
+- Change: added `/tools/env-parser-validator` to the representative operations-first sitemap set so deployment-config traffic can land on the already-deployed ENV report surface.
+- Representative sitemap URL target: `87`.
+- Representative feed item target: `62`.
+- Local verification: `npm run harness:agents`, `npm run harness:registry`, `npm run harness:search`, `npm run lint`, and `npm run build` passed. `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed against a fresh local production server. The local `/sitemaps/en` check returned `200`, included both `https://www.bobob.app/tools/yaml-validator` and `https://www.bobob.app/tools/env-parser-validator`, and exposed `87` `<url>` entries.
+- Local browser verification: Playwright loaded `/tools` and `/tools/env-parser-validator` at desktop and mobile widths, confirmed `YAML Validator`, `ENV Parser Validator`, `data-env-deployment-report`, raw-value exclusion, no raw secret sample value or secret-like key name, and no horizontal overflow.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=f24ccba2 npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `87`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Live sitemap check: `https://www.bobob.app/sitemaps/en` returned `200`, included both `https://www.bobob.app/tools/yaml-validator` and `https://www.bobob.app/tools/env-parser-validator`, and exposed `87` `<url>` entries.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `87` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- IndexNow command: the first `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit` attempt failed when the remote side closed the socket; rerunning the same command submitted `87` URLs successfully.
+- IndexNow submitted URL count: `87`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The deployed ENV sitemap inclusion improves deploy-config discovery quality, but it does not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `87`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now includes both YAML and ENV deploy-config report pages in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
