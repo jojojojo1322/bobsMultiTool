@@ -30,6 +30,18 @@ const failures = [];
 const nonEnglishLocales = ["ko", "ja", "zh-CN", "zh-TW", "es", "pt-BR", "de", "fr", "hi", "id", "vi", "th", "ar"];
 const longTailLocales = ["zh-CN", "zh-TW", "pt-BR", "fr", "hi", "id", "vi", "th", "ar"];
 
+function localeKey(locale) {
+  return locale.includes("-") ? `"${locale}"` : locale;
+}
+
+function sourceBlockForLocale(source, locale, orderedLocales) {
+  const start = source.indexOf(`\n  ${localeKey(locale)}: {`);
+  if (start === -1) return "";
+  const nextLocale = orderedLocales[orderedLocales.indexOf(locale) + 1];
+  const end = nextLocale ? source.indexOf(`\n  ${localeKey(nextLocale)}: {`, start + 1) : source.indexOf("\n};", start + 1);
+  return end === -1 ? source.slice(start) : source.slice(start, end);
+}
+
 for (const locale of nonEnglishLocales) {
   if (!localizedContent.includes(`${locale}:`) && !localizedContent.includes(`"${locale}":`)) {
     failures.push(`localized content pack missing locale: ${locale}`);
@@ -278,6 +290,54 @@ for (const fragment of [
   "حول bobob.app",
 ]) {
   if (!trustContent.includes(fragment)) failures.push(`localized trust content missing ${fragment}`);
+}
+
+const trustOperationsFirstSource =
+  trustContent.match(/const localizedOperationsFirstOverrides[\s\S]*?\nconst trustUpdatedAt/)?.[0] ?? "";
+if (!trustOperationsFirstSource) {
+  failures.push("localized trust content missing operations-first override source");
+}
+
+if (!trustContent.includes("bobob.app is a web-operations workbench first")) {
+  failures.push("default trust content must stay operations-first");
+}
+
+if (
+  !trustContent.includes("applyOperationsFirstOverride(baseContent, localizedOperationsFirstOverrides[locale][kind])")
+) {
+  failures.push("getLocalizedTrustContent must apply operations-first overrides for non-English locales");
+}
+
+const trustOperationsFirstSignals = {
+  ko: "web-operations workbench가 먼저입니다",
+  ja: "Web 運用ワークベンチが第一",
+  "zh-CN": "网页运营工作台",
+  "zh-TW": "網頁營運工作台",
+  es: "banco de operaciones web",
+  "pt-BR": "painel de operacoes web",
+  de: "Web-Operations-Werkbank",
+  fr: "poste d'operations web",
+  hi: "web-operations workbench है",
+  id: "ruang kerja operasi web",
+  vi: "bàn làm việc vận hành web",
+  th: "พื้นที่ทำงานด้านการปฏิบัติการเว็บ",
+  ar: "مساحة عمل لعمليات الويب",
+};
+
+for (const locale of nonEnglishLocales) {
+  const localeSource = sourceBlockForLocale(trustOperationsFirstSource, locale, nonEnglishLocales);
+  if (!localeSource) {
+    failures.push(`localized trust operations-first override missing locale ${locale}`);
+    continue;
+  }
+  for (const fragment of ["about:", "contact:", "description:", "sectionPatches:", "URL", "redirect", "DNS", "sitemap", "token", "API"]) {
+    if (!localeSource.includes(fragment)) {
+      failures.push(`localized trust operations-first override for ${locale} missing ${fragment}`);
+    }
+  }
+  if (!localeSource.includes(trustOperationsFirstSignals[locale])) {
+    failures.push(`localized trust operations-first signal missing for ${locale}`);
+  }
 }
 
 const pageChecks = [
