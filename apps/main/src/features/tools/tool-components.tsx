@@ -4164,11 +4164,16 @@ function buildEnvDeploymentReport({
   const urlLikeValues = parsed.entries.filter((entry) => /^https?:\/\//i.test(entry.value) || /^[\w.+-]+:\/\/\S+/i.test(entry.value));
   const emptyValues = parsed.entries.filter((entry) => entry.value.length === 0);
   const publicPrefixedKeys = parsed.entries.filter((entry) => /^(NEXT_PUBLIC_|PUBLIC_|VITE_)/i.test(entry.key));
+  const secretLikeKeyNames = Array.from(new Set(secretLikeKeys.map((entry) => entry.key))).sort((a, b) => b.length - a.length);
+  const secretLikeKeyNameSet = new Set(secretLikeKeyNames);
+  const redactedSecretKeyLabel = `[${ui(dictionary, "envReportSecretKeyPolicy", "Secret-like key names")}]`;
+  const redactSecretLikeKeyNames = (text: string) =>
+    secretLikeKeyNames.reduce((redacted, key) => redacted.replaceAll(key, redactedSecretKeyLabel), text);
   const nonSecretKeys = parsed.entries
-    .filter((entry) => !secretLikeKeys.some((secret) => secret.key === entry.key && secret.line === entry.line))
+    .filter((entry) => !secretLikeKeyNameSet.has(entry.key))
     .map((entry) => entry.key);
   const displayedKeys = nonSecretKeys.length ? nonSecretKeys.join(", ") : ui(dictionary, "notApplicable", "Not applicable");
-  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "envReportNoWarnings", "No obvious ENV parsing warnings detected. Confirm required hosting variables before deployment.")];
+  const reviewNotes = warnings.length ? warnings.map(redactSecretLikeKeyNames) : [ui(dictionary, "envReportNoWarnings", "No obvious ENV parsing warnings detected. Confirm required hosting variables before deployment.")];
   const checklist = [
     ui(dictionary, "envChecklistHosting", "Compare this key list with the hosting, CI, and server runtime variable list."),
     ui(dictionary, "envChecklistDuplicates", "Resolve duplicate keys before copying values because the final loader may keep only one assignment."),
