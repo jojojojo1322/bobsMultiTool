@@ -3960,6 +3960,66 @@ function getComposeDiagnostics(parsed: unknown, dictionary: ClientDictionary) {
   };
 }
 
+function buildYamlDeploymentReport({
+  input,
+  summary,
+  yamlWarnings,
+  composeDiagnostics,
+  dictionary,
+  checkedAt,
+}: {
+  input: string;
+  summary: { type: string; entries: number };
+  yamlWarnings: string[];
+  composeDiagnostics: ReturnType<typeof getComposeDiagnostics>;
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const reviewNotes = [...yamlWarnings, ...composeDiagnostics.warnings];
+  const checklist = [
+    ui(dictionary, "yamlReportChecklistConfig", "Run the formatted YAML through the target tool such as docker compose config, CI, or hosting validation."),
+    ui(dictionary, "yamlReportChecklistSecrets", "Check environment values in a separate secret-safe review; this report does not include raw environment values."),
+    ui(dictionary, "yamlReportChecklistPorts", "Confirm published ports, host path mounts, and dependencies match the deployment environment."),
+    ui(dictionary, "yamlReportChecklistResponse", "After deployment, verify the public URL, DNS, and server response instead of trusting YAML parsing alone."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "inputBytes", "Input bytes"), value: String(byteLength(input)) },
+    { label: ui(dictionary, "lines", "Lines"), value: String(input.split(/\r?\n/).length) },
+    { label: ui(dictionary, "documentType", "Document type"), value: summary.type },
+    { label: ui(dictionary, "topLevelEntries", "Top-level entries"), value: String(summary.entries) },
+    ...composeDiagnostics.metrics,
+    { label: ui(dictionary, "yamlReportRawYamlPolicy", "Raw YAML body included"), value: ui(dictionary, "yamlReportRawYamlExcluded", "No, the full YAML body is excluded.") },
+    { label: ui(dictionary, "yamlReportEnvValuePolicy", "Raw environment values included"), value: ui(dictionary, "yamlReportEnvValuesExcluded", "No, environment values are excluded.") },
+  ];
+  const serviceLines = composeDiagnostics.serviceRows.length
+    ? composeDiagnostics.serviceRows.map((service) =>
+        `- ${service.name}: ${ui(dictionary, "composeImageOrBuild", "Image / build")} ${service.imageOrBuild}; ${ui(dictionary, "composePorts", "Ports")} ${service.ports}; ${ui(dictionary, "composeEnv", "Env")} ${service.env}; ${ui(dictionary, "composeVolumes", "Volumes")} ${service.volumes}; ${ui(dictionary, "composeDependsOn", "Depends on")} ${service.dependsOn}`,
+      )
+    : [`- ${ui(dictionary, "notApplicable", "Not applicable")}`];
+  const markdown = [
+    `# ${ui(dictionary, "yamlDeploymentReport", "YAML deployment report")}`,
+    "",
+    `- ${ui(dictionary, "envReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    ...metrics.map((item) => `- ${item.label}: ${item.value}`),
+    "",
+    `## ${ui(dictionary, "composeServicePreview", "Service preview")}`,
+    ...serviceLines,
+    "",
+    `## ${ui(dictionary, "envReportReviewNotes", "Review notes")}`,
+    ...(reviewNotes.length ? reviewNotes : [`- ${ui(dictionary, "yamlReportNoWarnings", "No YAML or Compose review warnings detected. Confirm runtime behavior in the target environment.")}`]),
+    "",
+    `## ${ui(dictionary, "yamlReportChecklist", "Deployment checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return {
+    checklist,
+    markdown,
+    metrics,
+    reviewNotes,
+  };
+}
+
 function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("name: Bob\nactive: true\nitems:\n  - json\n  - yaml");
   const result = React.useMemo(() => {
@@ -3978,6 +4038,17 @@ function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
     /:\s*(yes|no|on|off)\s*(#.*)?$/im.test(input) ? ui(dictionary, "yamlAmbiguousBooleanWarning", "Unquoted yes/no/on/off values can behave differently across YAML tooling. Quote them when they are strings.") : "",
     /^\s*-\s*$/m.test(input) ? ui(dictionary, "yamlEmptyListItemWarning", "An empty list item is present. Confirm this is intentional.") : "",
   ].filter(Boolean);
+  const yamlDeploymentReport = React.useMemo(() => {
+    if (result.error || !result.summary || !composeDiagnostics) return null;
+    return buildYamlDeploymentReport({
+      input,
+      summary: result.summary,
+      yamlWarnings: warnings,
+      composeDiagnostics,
+      dictionary,
+      checkedAt: ui(dictionary, "envReportCopyTime", "Browser copy time"),
+    });
+  }, [composeDiagnostics, dictionary, input, result.error, result.summary, warnings]);
 
   return (
     <div className="space-y-4" data-yaml-validator-tool>
@@ -4053,6 +4124,41 @@ function YamlValidatorTool({ dictionary }: { dictionary: ClientDictionary }) {
               <ToolWarningList title={ui(dictionary, "composeWarnings", "Compose review notes")} warnings={composeDiagnostics.warnings} emptyLabel={ui(dictionary, "composeNoWarnings", "Compose service checks look ready for local validation or formatting.")} />
             </div>
           </div>
+        </section>
+      ) : null}
+      {yamlDeploymentReport ? (
+        <section className="space-y-3 rounded-md border bg-card p-3" data-yaml-deployment-report>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium">{ui(dictionary, "yamlDeploymentReport", "YAML deployment report")}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "yamlDeploymentReportDescription", "Copy a safe YAML or Compose handoff report with config shape, service counts, warnings, and deployment checks.")}</p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              data-yaml-deployment-report-copy
+              onClick={() => copyToClipboard(yamlDeploymentReport.markdown)}
+            >
+              <Copy className="h-4 w-4" />
+              {ui(dictionary, "copyYamlDeploymentReport", "Copy YAML report")}
+            </Button>
+          </div>
+          <ToolMetricGrid items={yamlDeploymentReport.metrics} />
+          <ToolWarningList title={ui(dictionary, "envReportReviewNotes", "Review notes")} warnings={yamlDeploymentReport.reviewNotes} emptyLabel={ui(dictionary, "yamlReportNoWarnings", "No YAML or Compose review warnings detected. Confirm runtime behavior in the target environment.")} />
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "yamlReportChecklist", "Deployment checklist")}</p>
+            <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+              {yamlDeploymentReport.checklist.map((item) => (
+                <li key={item} className="rounded-md bg-muted px-3 py-2">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-yaml-deployment-report-preview>
+            <code>{yamlDeploymentReport.markdown}</code>
+          </pre>
         </section>
       ) : null}
       {result.error ? (

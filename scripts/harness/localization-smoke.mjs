@@ -82,7 +82,7 @@ for (const fragment of [
   "longTailPriorityToolIntents",
   "priorityGuideDescriptions",
   "localizedExampleValues",
-  "유효한 YAML / Docker Compose 진단 / 포맷된 YAML",
+  "유효한 YAML / Docker Compose 진단 / YAML 배포 보고서",
   "Docker Compose service",
   "파싱된 변수, 중복/형식 경고, ENV 배포 보고서",
 ]) {
@@ -129,6 +129,9 @@ for (const fragment of ["localizedRandomTokenReportToolUi", "randomTokenReport",
 }
 for (const fragment of ["localizedEnvReportToolUi", "envDeploymentReport", "copyEnvDeploymentReport", "envReportValuesExcluded", "ENV 배포 보고서", "ENVデプロイレポート", "Reporte de despliegue ENV", "ENV-Deployment-Bericht", "تقرير نشر ENV"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized ENV deployment report content missing fragment: ${fragment}`);
+}
+for (const fragment of ["localizedYamlReportToolUi", "yamlDeploymentReport", "copyYamlDeploymentReport", "yamlReportEnvValuesExcluded", "YAML 배포 보고서", "YAMLデプロイレポート", "Reporte de despliegue YAML", "YAML-Deployment-Bericht", "تقرير نشر YAML"]) {
+  if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized YAML deployment report content missing fragment: ${fragment}`);
 }
 for (const fragment of ["localizedQrBuilderToolUi", "qrPayloadBuilder", "qrWifiSsid", "Payload 빌더", "Payloadビルダー", "Constructor de payload", "منشئ payload"]) {
   if (!dictionaries.includes(fragment) && !localizedContent.includes(fragment)) failures.push(`localized QR builder content missing fragment: ${fragment}`);

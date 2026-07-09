@@ -237,8 +237,8 @@ for (const fragment of ["data-json-escape-examples", "data-json-escape-result-de
   const source = fragment === "localizedJsonEscapeToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`JSON Escape detail UI missing ${fragment}`);
 }
-for (const fragment of ["data-yaml-examples", "data-yaml-result-details", "data-yaml-warnings", "data-compose-diagnostics", "data-compose-service-preview", "data-compose-warnings", "localizedYamlValidatorToolUi", "localizedDockerComposeToolUi"]) {
-  const source = fragment === "localizedYamlValidatorToolUi" || fragment === "localizedDockerComposeToolUi" ? dictionaries : toolComponents;
+for (const fragment of ["data-yaml-examples", "data-yaml-result-details", "data-yaml-warnings", "data-compose-diagnostics", "data-compose-service-preview", "data-compose-warnings", "data-yaml-deployment-report", "data-yaml-deployment-report-copy", "data-yaml-deployment-report-preview", "buildYamlDeploymentReport", "localizedYamlValidatorToolUi", "localizedDockerComposeToolUi", "localizedYamlReportToolUi"]) {
+  const source = fragment === "localizedYamlValidatorToolUi" || fragment === "localizedDockerComposeToolUi" || fragment === "localizedYamlReportToolUi" ? dictionaries : toolComponents;
   if (!source.includes(fragment)) failures.push(`YAML Validator detail UI missing ${fragment}`);
 }
 for (const fragment of ["data-env-examples", "data-env-result-details", "data-env-entry-list", "data-env-warnings", "localizedEnvParserToolUi"]) {
