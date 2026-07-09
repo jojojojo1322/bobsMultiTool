@@ -371,6 +371,7 @@ for (const fragment of [
   "<loc>https://www.bobob.app/tools/open-graph-preview</loc>",
   "<loc>https://www.bobob.app/tools/jwt-decoder</loc>",
   "<loc>https://www.bobob.app/tools/base64-tool</loc>",
+  "<loc>https://www.bobob.app/tools/sql-formatter</loc>",
   "<loc>https://www.bobob.app/tools/hash-generator</loc>",
   "<loc>https://www.bobob.app/tools/random-token-generator</loc>",
   "<loc>https://www.bobob.app/tools/yaml-validator</loc>",
