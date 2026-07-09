@@ -3683,3 +3683,22 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The new indexability report makes future URL Inspection/Search Console handoffs more concrete, but it does not update the latest signed-in Search Console observation: sitemap discovered pages remain `85`, and Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
 - Interpretation: production can now prove the checked final HTML page has indexable metadata and canonical shape before a manual indexing request. This is public URL readiness evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 Baseline Security Headers Production Deployment
+
+- Commit: `18c48977`.
+- Change: deployed baseline app response headers through `apps/main/next.config.ts`: `Content-Security-Policy`, `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy`. Route smoke now verifies representative HTML responses expose those headers.
+- CSP compatibility verification: local Playwright initially caught blocked AdSense `adtrafficquality.google` script/connect/frame requests, then the CSP was adjusted to allow that current Google ads quality flow. The final local browser check showed no CSP errors and only the existing AdSense `data-nscript` warning.
+- Local verification: `npm run lint`, `npm run harness:agents`, `npm run harness:layout`, `npm run harness:adsense-content`, `npm run build`, and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` passed. Playwright verified `/tools/http-status-checker?url=https%3A%2F%2Fwww.google.com` rendered the HTTP tool, indexability section, and security header readiness section with no app console errors.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=18c48977 npm run harness:deployment-status` returned `overallState: success` after an earlier `pending` check while Vercel was still deploying.
+- Live header verification: `curl -skI https://www.bobob.app/` returned the deployed `Content-Security-Policy`, `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy` headers.
+- Live API verification: production `/api/http-status?url=https%3A%2F%2Fwww.bobob.app%2Ftools%2Fhttp-status-checker` returned final `200`, `securityHeaders` containing all six baseline headers, `canonicalMatchesFinal: true`, `htmlLang: en`, and `h1Count: 1`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/tools/http-status-checker?url=https%3A%2F%2Fwww.bobob.app%2Ftools%2Fhttp-status-checker` and confirmed Public URL report output with `Security header score: 6/6`, `Missing required: 0`, and `Search ready: Ready for indexing request`. The only console warning was the existing AdSense `data-nscript` warning.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The new public security headers improve self-check readiness and handoff quality, but they do not update the latest signed-in Search Console observation: sitemap discovered pages remain `85`, and Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now emits the same baseline security headers that the public HTTP Status Checker expects when reviewing a deploy/search-readiness URL. This is public response-readiness evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

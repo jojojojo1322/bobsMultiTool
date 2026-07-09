@@ -267,6 +267,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/tools/http-status-checker` now renders an `Indexability signals` card and `/api/http-status` returns final HTML canonical, robots, Googlebot robots, title/description length, h1 count, html lang, and noindex evidence.
   - This source change is deployed in commits `a735e46a` and `68aa240e`, with live discovery, submitted URL health, Search discovery registration, IndexNow, live API verification, and production browser verification refreshed at the same `85` sitemap URLs.
   - This is public URL readiness evidence before Search Console follow-up. It does not prove Google, Bing, or Naver indexed the checked URLs.
+- Baseline security headers source target:
+  - The main Next app now emits `Content-Security-Policy`, `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy` on public app responses.
+  - This source change is deployed in commit `18c48977`, with route smoke guarding representative HTML headers, live discovery, submitted URL health, Search discovery registration, IndexNow, live API verification, and production browser verification refreshed at the same `85` sitemap URLs.
+  - This is public response-readiness evidence for the web-operations workbench. It does not prove Google, Bing, or Naver indexed the checked URLs.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
