@@ -6,6 +6,7 @@ export const operationalToolSlugs = [
   "sitemap-generator",
   "robots-txt-generator",
   "meta-tag-generator",
+  "open-graph-preview",
   "url-parser",
   "jwt-decoder",
   "json-formatter",

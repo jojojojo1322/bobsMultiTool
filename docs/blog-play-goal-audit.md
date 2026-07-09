@@ -5,7 +5,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 ## Current Product State
 
 - Public direction: bobob.app is now a web-operations workbench first, with Blog and Play preserved as supporting operating evidence and retention experiments.
-- Tools position: selected high-utility tools for URL status, redirect chains, response headers, DNS, sitemap, robots, meta/canonical, JWT auth handoff reports, Base64 payload handoff reports, JSON/API inspection, JSON API response reports, Cron schedule handoff reports, and Hash signature handoff reports are now presented as practical workflow surfaces. Generic developer utilities remain available under `/tools` but should not read as a thin DevTools clone.
+- Tools position: selected high-utility tools for URL status, redirect chains, response headers, DNS, sitemap, robots, meta/canonical, Open Graph/social crawler reports, JWT auth handoff reports, Base64 payload handoff reports, JSON/API inspection, JSON API response reports, Cron schedule handoff reports, and Hash signature handoff reports are now presented as practical workflow surfaces. Generic developer utilities remain available under `/tools` but should not read as a thin DevTools clone.
 - Blog/Play position: Blog and Play are not removed; they stay visible as operating notes, build logs, and short interaction surfaces below the primary operations workflow.
 - No support monetization: the first pass does not expose donation, coffee, paid-pack, login, ranking, comments, or game-ad UI.
 
@@ -194,6 +194,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Feed items: `62`
   - Representative Blog posts: `36`
   - Submitted operations tool URLs: `11`
+- Current source discovery target after adding Open Graph Preview to representative operations tools:
+  - Sitemap URLs: `89`
+  - Feed items: `62`
+  - Representative Blog posts: `36`
+  - Submitted operations tool URLs: `12`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
@@ -201,7 +206,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 85-URL representative target was live.
   - Search Console sitemap resubmission for the latest externally submitted 85-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, discovered pages `85`, and videos `0`.
 - The same-day `sc-domain:bobob.app` recheck initially showed the older `84`-page `/sitemaps/en` row from `2026. 7. 6.`, then after reload showed submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, and videos `0`.
-- The representative sitemap remains intentionally reduced. The latest signed-in Search Console sitemap observation still reflects the previous `85` URL target, while the current source target is now `88` after adding Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set. IndexNow has been refreshed for the 88-URL target. This is discovery evidence, not indexing proof.
+- The representative sitemap remains intentionally reduced. The latest signed-in Search Console sitemap observation still reflects the previous `85` URL target, while the current source target is now `89` after adding Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set. The latest deployed IndexNow evidence remains the previous `88`-URL submission until the 89-URL target is deployed and submitted. This is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
   - The latest 2026-07-09 Chrome retry again opened Search Console as `task10@ljfriends.net`; `authuser=bobob935@gmail.com` did not switch the report, and Google AccountChooser reached the `bobob935@gmail.com` passkey challenge (`본인 확인 중... 패스키를 사용하여 로그인을 완료합니다`), so no updated sitemap, Page indexing, Performance, or URL Inspection row was recorded from that retry.
   - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 85-URL target.
@@ -305,6 +310,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/tools/base64-tool` now renders a copyable Base64 payload report that records encoding variant, decoded content shape, JSON key count, JWT segment signals, image/binary warnings, and safe handoff notes before users copy or share encoded payloads.
   - The API/debug workflow, Base64 registry search intents, payload report surface, and representative sitemap set now route Base64 payload report, Base64 JSON report, Base64 image preview, and JWT segment debugging into the existing API/auth inspection path instead of treating Base64 as only an encode/decode field.
   - `/tools/base64-tool` was added to the representative operations sitemap set in the Base64 sitemap follow-up. The latest production deployment refreshed live discovery, submitted URL health, IndexNow, and follow-up packet checks at `88` sitemap URLs and `62` feed items. It is API/auth handoff and discovery-submission evidence only and does not prove Google, Bing, or Naver indexed the checked URLs.
+- Open Graph crawler report source target:
+  - `/tools/open-graph-preview` already renders `data-og-crawler-report`, `data-og-crawler-report-copy`, and a copyable crawler report that records title and description length, page host, image host, robots policy, image format, warning notes, and crawler follow-up checklist.
+  - The social-preview workflow, Open Graph registry search intents, and search-discovery workflow route open graph crawler report, social crawler report, and link preview QA queries into the existing SEO/social metadata path instead of creating a thin standalone crawler page.
+  - `/tools/open-graph-preview` has been added to the representative operations sitemap source target. It still needs production deployment, submitted URL health, IndexNow refresh, and a later valid Search Console/Bing/Naver observation before it can count as external discovery or indexing evidence.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -328,8 +337,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`, and the report is still dated `2026. 6. 30`.
 - The `2026-07-09` Page indexing drilldown still shows `크롤링됨 - 현재 색인이 생성되지 않음` for `24` examples; this is not current crawl failure, but it still means Google has not indexed those examples yet.
-- Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (`85`), but the current live/source representative sitemap URL count is now `88` after adding `/tools/base64-tool`, `/tools/yaml-validator`, and `/tools/env-parser-validator`.
-- The current source sitemap target is now `88` after adding Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set, so the next Search Console/Bing/Naver pass must compare whether external discovery catches up and whether indexing/report changes appear instead of treating sitemap discovery as indexing proof.
+- Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (`85`), but the current source representative sitemap URL count is now `89` after adding `/tools/open-graph-preview`, `/tools/base64-tool`, `/tools/yaml-validator`, and `/tools/env-parser-validator`.
+- The current source sitemap target is now `89` after adding Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set, so the next deployment and Search Console/Bing/Naver pass must compare whether external discovery catches up and whether indexing/report changes appear instead of treating sitemap discovery as indexing proof.
 - Blog, Play, and operations-tool representative URLs are still not indexed after inspection; requests were queued where useful, but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.

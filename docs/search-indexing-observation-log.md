@@ -3812,3 +3812,13 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The deployed Base64 sitemap inclusion improves API/auth payload discovery quality, but it does not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `88`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
 - Interpretation: production now includes Base64 payload review, YAML deployment config review, and ENV deployment config review in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 Open Graph Preview Representative Sitemap Source Target
+
+- Source action: added `/tools/open-graph-preview` to the representative operations-first sitemap set so SEO/social-preview visitors can land on the already-deployed Open Graph crawler report surface.
+- Representative sitemap URL target: `89`.
+- Representative feed item target: `62`.
+- Product evidence: `/tools/open-graph-preview` already renders `data-og-crawler-report`, `data-og-crawler-report-copy`, and `data-og-crawler-report-preview`, with title/description length, page host, image host, robots policy, image-format warnings, review notes, and a crawler follow-up checklist before raw Open Graph tags.
+- Search surface evidence: the Open Graph registry, social-preview workflow, and search-discovery workflow route open graph crawler report, social crawler report, and link preview QA queries into the existing SEO/social metadata path instead of creating a thin standalone crawler page.
+- Search Console/Bing/Naver action: none in this source slice. The latest external Search Console discovery evidence remains the previous `85` discovered pages until the 89-URL target is deployed. The latest deployed IndexNow evidence remains the previous `88`-URL submission until the new target is deployed and submitted.
+- Interpretation: this changes the source sitemap target and representative operations set only. It is not live discovery proof, Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
