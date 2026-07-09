@@ -3794,3 +3794,21 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The deployed ENV sitemap inclusion improves deploy-config discovery quality, but it does not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `87`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
 - Interpretation: production now includes both YAML and ENV deploy-config report pages in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 Base64 Tool Representative Sitemap Production Deployment
+
+- Commit: `0e7c7182`.
+- Change: added `/tools/base64-tool` to the representative operations-first sitemap set so API/JWT payload visitors can land on the already-deployed Base64 payload report surface.
+- Representative sitemap URL target: `88`.
+- Representative feed item target: `62`.
+- Local verification: `npm run harness:agents`, `npm run harness:registry`, `npm run harness:search`, `npm run lint`, and `npm run build` passed before this production pass. `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes` and `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content` passed against a fresh local production server. The local `/sitemaps/en` check returned `200`, included `https://www.bobob.app/tools/base64-tool`, `https://www.bobob.app/tools/yaml-validator`, and `https://www.bobob.app/tools/env-parser-validator`, and exposed `88` `<url>` entries.
+- Local browser verification: Playwright loaded `/tools` and `/tools/base64-tool` at desktop and mobile widths, confirmed the Base64 directory link, `data-base64-payload-report`, `data-base64-payload-report-copy`, JSON preview, report preview with `JSON keys: 2`, related JWT and JSON next-step links, and no horizontal overflow. The only console warning was the existing AdSense `data-nscript` warning.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=0e7c7182 npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `88`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Live sitemap check: `https://www.bobob.app/sitemaps/en` returned `200`, included `https://www.bobob.app/tools/base64-tool`, `https://www.bobob.app/tools/yaml-validator`, and `https://www.bobob.app/tools/env-parser-validator`, and exposed `88` `<url>` entries.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `88` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `88`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The deployed Base64 sitemap inclusion improves API/auth payload discovery quality, but it does not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `88`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now includes Base64 payload review, YAML deployment config review, and ENV deployment config review in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
