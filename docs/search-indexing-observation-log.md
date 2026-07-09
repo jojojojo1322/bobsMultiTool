@@ -3822,3 +3822,21 @@ Completion guard:
 - Search surface evidence: the Open Graph registry, social-preview workflow, and search-discovery workflow route open graph crawler report, social crawler report, and link preview QA queries into the existing SEO/social metadata path instead of creating a thin standalone crawler page.
 - Search Console/Bing/Naver action: none in this source slice. The latest external Search Console discovery evidence remains the previous `85` discovered pages until the 89-URL target is deployed. The latest deployed IndexNow evidence remains the previous `88`-URL submission until the new target is deployed and submitted.
 - Interpretation: this changes the source sitemap target and representative operations set only. It is not live discovery proof, Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 Open Graph Preview Representative Sitemap Production Deployment
+
+- Commit: `a1bbb062`.
+- Change: deployed `/tools/open-graph-preview` in the representative operations-first sitemap set so SEO/social-preview visitors can land on the existing Open Graph crawler report surface.
+- Representative sitemap URL target: `89`.
+- Representative feed item target: `62`.
+- Local verification: `npm run harness:agents`, `npm run harness:registry`, `npm run harness:search`, `npm run lint`, and `npm run build` passed. `BOBOB_BASE_URL=http://localhost:3000 npm run harness:routes`, `BOBOB_BASE_URL=http://localhost:3000 npm run harness:rendered-content`, and `BOBOB_DISCOVERY_REGISTRATION_BASE_URL=http://localhost:3000 NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:search-discovery-registration` passed against a fresh local production server. The local `/sitemaps/en` check returned `200`, included `https://www.bobob.app/tools/open-graph-preview`, and exposed `89` `<url>` entries.
+- Local browser verification: Playwright loaded `/tools` and `/tools/open-graph-preview` at desktop and mobile widths, confirmed the OG Preview directory link, `data-og-crawler-report`, `data-og-crawler-report-copy`, `data-og-crawler-report-preview`, the Search discovery workflow OG step, report text that separates valid tags from indexing proof, and no horizontal overflow. The only console warning was the existing AdSense `data-nscript` warning.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=a1bbb062 npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `89`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Live sitemap check: `https://www.bobob.app/sitemaps/en` returned `200`, included `https://www.bobob.app/tools/open-graph-preview`, `https://www.bobob.app/tools/meta-tag-generator`, and `https://www.bobob.app/tools/base64-tool`, and exposed `89` `<url>` entries.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `89` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `89`.
+- IndexNow response status: `200`.
+- Search Console action: none in this production pass. The deployed Open Graph sitemap inclusion improves SEO/social crawler handoff quality, but it does not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `89`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
+- Interpretation: production now includes Open Graph social crawler review, Base64 payload review, YAML deployment config review, and ENV deployment config review in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
