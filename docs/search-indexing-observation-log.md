@@ -3598,3 +3598,23 @@ Completion guard:
 - Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
 - Source action: added exact Korean Search Console reason queries such as `크롤링됨 - 현재 색인이 생성되지 않음`, `크롤링됨 현재 색인이 생성되지 않음`, and `크롤링은 됐는데 색인 안됨` to the existing search-discovery/not-indexed workflows and `/tools/sitemap-generator` search surface.
 - Interpretation: the current failure signal is Google choosing not to index some old-crawled URLs yet, not current public URL reachability failure. The next useful Search Console action is representative live URL inspection and selective indexing request for current indexable URLs, not repeating sitemap submission or counting noindex archive examples as active failures.
+
+## 2026-07-09 Crawled Currently Not Indexed Production Deployment
+
+- Commit: `95d60414`.
+- Change: deployed exact `크롤링됨 - 현재 색인이 생성되지 않음` Search Console reason coverage into the existing search-discovery and not-indexed URL workflows, `/tools/sitemap-generator` search surface, `devtools-cannot-see-crawler-state`, `search-console-misreads-for-indie-devs`, and the search/registration harness checks.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=95d60414 npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=%ED%81%AC%EB%A1%A4%EB%A7%81%EB%90%A8%20-%20%ED%98%84%EC%9E%AC%20%EC%83%89%EC%9D%B8%EC%9D%B4%20%EC%83%9D%EC%84%B1%EB%90%98%EC%A7%80%20%EC%95%8A%EC%9D%8C&deploy=95d60414` and confirmed the crawled-not-indexed query surfaced discovery, not-indexed, Sitemap-step, and reason text with no console errors. Playwright also loaded `https://www.bobob.app/blog/devtools-cannot-see-crawler-state?deploy=95d60414` and confirmed the crawl-interpretation and Search Console account/property sections rendered, then loaded `https://www.bobob.app/blog/search-console-misreads-for-indie-devs?deploy=95d60414` and confirmed the Google-account/passkey warning text rendered. The corrected production checks had no console errors.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation: Page indexing remains a `2026. 6. 30.` report snapshot with `크롤링됨 - 현재 색인이 생성되지 않음` visible for `24` examples.
+- Interpretation: production now answers crawled-but-not-indexed Search Console reason symptoms through existing submitted URL/search-discovery workflows and representative operations articles, while live discovery and submission signals remain clean at `85` sitemap URLs and `62` feed items. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

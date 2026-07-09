@@ -255,6 +255,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - The existing search-discovery and not-indexed URL workflows now route exact Korean Search Console reason queries such as `크롤링됨 - 현재 색인이 생성되지 않음`, `크롤링됨 현재 색인이 생성되지 않음`, and `크롤링은 됐는데 색인 안됨` into the current HTTP/Sitemap/Robots/Meta/URL Parser path.
   - `/tools/sitemap-generator` carries the same Korean reason query family so users looking at the Search Console drilldown land on the sitemap/search-discovery report surface.
   - The `2026-07-09` live triage recorded that `/blog`, `/play`, `/play/office-survival`, and `/tools` are currently Googlebot-reachable and indexable, while `boring-maintenance-is-content-too` is intentionally `noindex` and excluded from `/sitemaps/en`.
+  - This source change is deployed in commit `95d60414`, with live discovery, submitted URL health, Search discovery registration, IndexNow, WebSub, and production browser verification refreshed at the same `85` sitemap URLs and `62` feed items.
   - This is crawlability and source-routing evidence only. It does not prove Google indexed the Blog, Play, or operations-tool representative URLs.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
