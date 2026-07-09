@@ -3628,3 +3628,25 @@ Completion guard:
 - Search Console action: none. No sitemap row, Page indexing row, Performance row, URL Inspection row, Bing row, or Naver row was updated in this pass because the valid `bobob935@gmail.com` Search Console session did not complete authentication.
 - Source action: added passkey/authentication screen phrases such as `Search Console 패스키 확인`, `Search Console 본인 확인`, `본인 확인 중`, and `패스키를 사용하여 로그인을 완료합니다` to the existing search-discovery/not-indexed workflows and `/tools/sitemap-generator` search surface.
 - Interpretation: this is an account/authentication observation, not a Search Console indexing observation. The last valid Search Console data remains the earlier `85` discovered sitemap state and stale `2026. 6. 30.` Page indexing report until a signed-in `bobob935@gmail.com` session reaches the actual report.
+
+## 2026-07-09 Search Console Passkey Guard Production Deployment
+
+- Commit: `1c272c1a`.
+- Change: deployed passkey/authentication-stop phrases into the existing search-discovery and not-indexed URL workflows, `/tools/sitemap-generator` search surface, search smoke harness, and sitemap archive `lastmod`.
+- Deployment check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DEPLOY_SHA=1c272c1a npm run harness:deployment-status` returned `overallState: success` after earlier `pending` checks while Vercel was still deploying.
+- Live discovery check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:live-discovery` passed with sitemap URLs `85`, feed items `62`, Blog posts `36`, and Play entries `26`.
+- Submitted URL health check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_SUBMITTED_URL_HEALTH_BASE_URL=https://www.bobob.app npm run harness:submitted-url-health` passed for `85` final 200 sitemap URLs with unique title/description, canonical, h1, and indexable robots metadata.
+- Search discovery registration check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_DISCOVERY_REGISTRATION_BASE_URL=https://www.bobob.app npm run harness:search-discovery-registration` passed with `85` sitemap URLs, `62` feed items, `36/129` Blog posts, and `26` Play entries.
+- Indexing observation check: `NODE_TLS_REJECT_UNAUTHORIZED=0 BOBOB_INDEXING_OBSERVATION_BASE_URL=https://www.bobob.app npm run harness:indexing-observation` passed with baseline submitted URLs `44`, latest IndexNow submitted URLs `85`, Search Console discovered pages `85`, and live sitemap URLs `85`.
+- Indexing follow-up check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:indexing-followup` passed with sitemap URLs `85`, RSS/Atom/JSON feed items `62/62/62`, and retired sitemap redirects `13/13`.
+- Live sitemap lastmod check: `https://www.bobob.app/sitemaps/en` returned `200` with `85` `<url>` entries and `15` entries using `<lastmod>2026-07-09</lastmod>`.
+- WebSub dry-run check: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run harness:websub` found `62` RSS items and `62` Atom entries.
+- WebSub command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run websub:submit`.
+- WebSub topics: `https://www.bobob.app/feed.xml`, `https://www.bobob.app/atom.xml`.
+- WebSub response statuses: `204`, `204`.
+- IndexNow command: `NODE_TLS_REJECT_UNAUTHORIZED=0 npm run indexnow:submit`.
+- IndexNow submitted URL count: `85`.
+- IndexNow response status: `200`.
+- Live browser verification: Playwright loaded `https://www.bobob.app/search?q=Search%20Console%20%ED%8C%A8%EC%8A%A4%ED%82%A4%20%ED%99%95%EC%9D%B8&deploy=1c272c1a`, `https://www.bobob.app/search?q=%EB%B3%B8%EC%9D%B8%20%ED%99%95%EC%9D%B8%20%EC%A4%91&deploy=1c272c1a`, and `https://www.bobob.app/search?q=%ED%8C%A8%EC%8A%A4%ED%82%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC%20%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%9D%84%20%EC%99%84%EB%A3%8C%ED%95%A9%EB%8B%88%EB%8B%A4&deploy=1c272c1a`; each surfaced `검색 노출 준비 점검`, `미색인 URL 진단`, a Sitemap step, and account/passkey signal text with no console errors.
+- Search Console action: none in this production pass. The deployed routing and refreshed discovery submissions do not change the latest signed-in Search Console observation because the valid `bobob935@gmail.com` report was blocked by passkey verification.
+- Interpretation: production now routes Search Console passkey/authentication-stop symptoms into the existing account/property guard workflow and preserves the separation between `authentication blocked`, `discovery submitted`, and `indexing proven`. This is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
