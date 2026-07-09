@@ -204,6 +204,7 @@ assertIncludes("/sitemaps/en", sitemap, [
   `<loc>${baseUrl}/tools/open-graph-preview</loc>`,
   `<loc>${baseUrl}/tools/jwt-decoder</loc>`,
   `<loc>${baseUrl}/tools/base64-tool</loc>`,
+  `<loc>${baseUrl}/tools/hash-generator</loc>`,
   `<loc>${baseUrl}/tools/yaml-validator</loc>`,
   `<loc>${baseUrl}/tools/env-parser-validator</loc>`,
 ]);

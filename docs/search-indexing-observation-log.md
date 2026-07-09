@@ -3840,3 +3840,13 @@ Completion guard:
 - IndexNow response status: `200`.
 - Search Console action: none in this production pass. The deployed Open Graph sitemap inclusion improves SEO/social crawler handoff quality, but it does not update the latest signed-in Search Console observation: the last valid sitemap discovery remains `85` from `2026. 7. 7.`, while the current source/live sitemap target is now `89`; Page indexing remains the stale `2026. 6. 30.` report snapshot with indexed pages `1` and not-indexed pages `32`.
 - Interpretation: production now includes Open Graph social crawler review, Base64 payload review, YAML deployment config review, and ENV deployment config review in the representative sitemap. This is product/search-surface and discovery-submission evidence only; it is not Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.
+
+## 2026-07-09 Hash Generator Representative Sitemap Source Target
+
+- Source action: added `/tools/hash-generator` to the representative operations-first sitemap set so security/API handoff visitors can land on the already-deployed Hash signature report surface.
+- Representative sitemap URL target: `90`.
+- Representative feed item target: `62`.
+- Product evidence: `/tools/hash-generator` already renders `data-hash-signature-report`, `data-hash-signature-report-copy`, and `data-hash-signature-report-preview`, with digest/HMAC mode selection, HMAC secret byte diagnostics, input byte/line counts, algorithm notes, password/JSON/whitespace/secret warnings, review notes, and a safe signature checklist before raw hash output.
+- Search surface evidence: the Hash registry, secure-generator workflow, and search smoke coverage route hash signature report, HMAC handoff report, webhook signature checker, and SHA-256 checksum report queries into the existing security/API handoff path instead of creating a thin standalone signature page.
+- Search Console/Bing/Naver action: none in this source slice. The latest external Search Console discovery evidence remains the previous `85` discovered pages until the 90-URL target is deployed and later observed. The latest deployed IndexNow evidence remains the previous `89`-URL submission until the new target is deployed and submitted.
+- Interpretation: this changes the source sitemap target and representative operations set only. It is not live discovery proof, Google indexing proof, Bing indexing proof, Naver indexing proof, traffic proof, or a reason to mark the active goal complete.

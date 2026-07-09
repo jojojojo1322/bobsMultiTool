@@ -199,6 +199,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Feed items: `62`
   - Representative Blog posts: `36`
   - Submitted operations tool URLs: `12`
+- Current source discovery target after adding Hash Generator to representative operations tools:
+  - Sitemap URLs: `90`
+  - Feed items: `62`
+  - Representative Blog posts: `36`
+  - Submitted operations tool URLs: `13`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
@@ -206,7 +211,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 85-URL representative target was live.
   - Search Console sitemap resubmission for the latest externally submitted 85-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, discovered pages `85`, and videos `0`.
 - The same-day `sc-domain:bobob.app` recheck initially showed the older `84`-page `/sitemaps/en` row from `2026. 7. 6.`, then after reload showed submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, and videos `0`.
-- The representative sitemap remains intentionally reduced. The latest signed-in Search Console sitemap observation still reflects the previous `85` URL target, while the current source/live target is now `89` after adding Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set. IndexNow has been refreshed for the 89-URL target. This is discovery evidence, not indexing proof.
+- The representative sitemap remains intentionally reduced. The latest signed-in Search Console sitemap observation still reflects the previous `85` URL target, while the current source target is now `90` after adding Hash Generator, Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set. The latest deployed IndexNow evidence remains the 89-URL target until the Hash target is deployed and submitted. This is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
   - The latest 2026-07-09 Chrome retry again opened Search Console as `task10@ljfriends.net`; `authuser=bobob935@gmail.com` did not switch the report, and Google AccountChooser reached the `bobob935@gmail.com` passkey challenge (`본인 확인 중... 패스키를 사용하여 로그인을 완료합니다`), so no updated sitemap, Page indexing, Performance, or URL Inspection row was recorded from that retry.
   - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 85-URL target.
@@ -227,7 +232,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - IndexNow:
   - Latest submitted URL count: `89`
   - The latest deployed 89-URL representative sitemap set has been submitted to IndexNow with response status `200`.
-  - Search Console sitemap discovery still needs a later valid signed-in observation for the new 89-URL source target. IndexNow is not Google indexing proof.
+  - Search Console sitemap discovery still needs a later valid signed-in observation for the new 90-URL source target. IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - The latest 2026-07-07 retry against the current 85-URL production target still reached only the public Bing Webmaster Tools landing page. After clicking `Sign In`, Bing still showed `Please sign in` and `Choose an account convenient to you`, so no Bing sitemap, Site Explorer, URL Submission, or recommendation state was observed.
@@ -314,6 +319,10 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/tools/open-graph-preview` already renders `data-og-crawler-report`, `data-og-crawler-report-copy`, and a copyable crawler report that records title and description length, page host, image host, robots policy, image format, warning notes, and crawler follow-up checklist.
   - The social-preview workflow, Open Graph registry search intents, and search-discovery workflow route open graph crawler report, social crawler report, and link preview QA queries into the existing SEO/social metadata path instead of creating a thin standalone crawler page.
   - `/tools/open-graph-preview` was added to the representative operations sitemap set in commit `a1bbb062`. The production deployment refreshed live discovery, submitted URL health, IndexNow, and follow-up packet checks at `89` sitemap URLs and `62` feed items. It is SEO/social crawler handoff and discovery-submission evidence only and does not prove Google, Bing, or Naver indexed the checked URLs.
+- Hash signature report source target:
+  - `/tools/hash-generator` already renders `data-hash-signature-report`, `data-hash-signature-report-copy`, and a copyable Hash signature report that records digest/HMAC mode, input byte/line counts, HMAC secret byte diagnostics, algorithm output, review notes, and a safe signature checklist while excluding the raw input and HMAC secret.
+  - The secure-generator workflow, Hash registry search intents, and search smoke coverage route hash signature report, HMAC handoff report, webhook signature checker, and SHA-256 checksum report queries into the existing security/API handoff path instead of treating Hash as only a digest field.
+  - `/tools/hash-generator` is now added to the representative operations sitemap source target. It still needs production deployment and IndexNow submission before the live discovery target moves from `89` to `90`; this is security/API handoff and source discovery evidence only and does not prove Google, Bing, or Naver indexed the checked URLs.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -337,8 +346,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Google URL Inspection proves the homepage itself is indexed.
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`, and the report is still dated `2026. 6. 30`.
 - The `2026-07-09` Page indexing drilldown still shows `크롤링됨 - 현재 색인이 생성되지 않음` for `24` examples; this is not current crawl failure, but it still means Google has not indexed those examples yet.
-- Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (`85`), but the current source representative sitemap URL count is now `89` after adding `/tools/open-graph-preview`, `/tools/base64-tool`, `/tools/yaml-validator`, and `/tools/env-parser-validator`.
-- The current live/source sitemap target is now `89` after adding Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set, so the next Search Console/Bing/Naver pass must compare whether external discovery catches up and whether indexing/report changes appear instead of treating sitemap discovery as indexing proof.
+- Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (`85`), but the current source representative sitemap URL count is now `90` after adding `/tools/hash-generator`, `/tools/open-graph-preview`, `/tools/base64-tool`, `/tools/yaml-validator`, and `/tools/env-parser-validator`.
+- The current source sitemap target is now `90` after adding Hash Generator, Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set. The latest deployed live/IndexNow target remains `89` until the Hash target is deployed and submitted, so the next Search Console/Bing/Naver pass must compare whether external discovery catches up and whether indexing/report changes appear instead of treating sitemap discovery as indexing proof.
 - Blog, Play, and operations-tool representative URLs are still not indexed after inspection; requests were queued where useful, but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
