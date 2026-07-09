@@ -8477,6 +8477,82 @@ function classifyHttpHeader(name: string) {
   return { categoryKey: "generalHeaderCategory", categoryFallback: "General" };
 }
 
+function splitHttpHeaderTokens(value: string) {
+  return value
+    .split(",")
+    .map((token) => token.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function getJoinedHttpHeaderValue(valuesByName: Map<string, string[]>, name: string) {
+  return (valuesByName.get(name) ?? []).join(", ").trim();
+}
+
+function getCorsPreflightDiagnostics(valuesByName: Map<string, string[]>, statusCode: number | null, headerCount: number, dictionary: ClientDictionary) {
+  const allowOriginValue = getJoinedHttpHeaderValue(valuesByName, "access-control-allow-origin");
+  const allowCredentialsValue = getJoinedHttpHeaderValue(valuesByName, "access-control-allow-credentials");
+  const allowMethodsValue = getJoinedHttpHeaderValue(valuesByName, "access-control-allow-methods");
+  const allowHeadersValue = getJoinedHttpHeaderValue(valuesByName, "access-control-allow-headers");
+  const exposeHeadersValue = getJoinedHttpHeaderValue(valuesByName, "access-control-expose-headers");
+  const varyValue = getJoinedHttpHeaderValue(valuesByName, "vary");
+  const allowOrigin = allowOriginValue.toLowerCase();
+  const credentialsAllowed = /\btrue\b/i.test(allowCredentialsValue);
+  const allowMethods = splitHttpHeaderTokens(allowMethodsValue);
+  const allowHeaders = splitHttpHeaderTokens(allowHeadersValue);
+  const varyTokens = splitHttpHeaderTokens(varyValue);
+  const hasCorsHeaders = Boolean(allowOriginValue || allowCredentialsValue || allowMethodsValue || allowHeadersValue || exposeHeadersValue);
+  const isWildcardOrigin = allowOrigin.includes("*");
+  const hasExplicitOrigin = Boolean(allowOriginValue && !isWildcardOrigin);
+  const optionsAllowed = allowMethods.includes("options");
+  const variesByOrigin = varyTokens.includes("origin");
+  const originPolicy = !allowOriginValue
+    ? ui(dictionary, "corsOriginMissing", "Missing")
+    : isWildcardOrigin
+      ? ui(dictionary, "corsOriginWildcard", "Wildcard")
+      : ui(dictionary, "corsOriginExplicit", "Explicit");
+  const credentialsPolicy = credentialsAllowed ? ui(dictionary, "corsCredentialsAllowed", "Credentials allowed") : ui(dictionary, "corsCredentialsNotAllowed", "Credentials not allowed");
+  const optionsPolicy = allowMethods.length
+    ? optionsAllowed
+      ? ui(dictionary, "corsOptionsAllowed", "OPTIONS allowed")
+      : ui(dictionary, "corsOptionsMissing", "OPTIONS missing")
+    : "—";
+  const methodsDisplay = allowMethods.length ? allowMethods.map((method) => method.toUpperCase()).join(", ") : "—";
+  const headersDisplay = allowHeaders.length ? allowHeaders.join(", ") : "—";
+  const warnings = [
+    headerCount > 0 && !hasCorsHeaders ? ui(dictionary, "corsNoHeadersWarning", "No CORS response headers were found. That is fine for normal pages, but browser API calls will still fail cross-origin.") : "",
+    hasCorsHeaders && !allowOriginValue ? ui(dictionary, "corsMissingOriginWarning", "Access-Control-Allow-Origin is missing. Browsers need it before exposing cross-origin API responses.") : "",
+    isWildcardOrigin && credentialsAllowed ? ui(dictionary, "corsWildcardCredentialsWarning", "Wildcard origin cannot be used with Access-Control-Allow-Credentials: true in browsers.") : "",
+    credentialsAllowed && !hasExplicitOrigin ? ui(dictionary, "corsCredentialsNoExplicitOriginWarning", "Credentialed CORS needs a specific allowed origin, not a missing or wildcard origin.") : "",
+    hasExplicitOrigin && !variesByOrigin ? ui(dictionary, "corsExplicitOriginNoVaryWarning", "Specific CORS origins should usually send Vary: Origin so caches do not reuse the wrong origin policy.") : "",
+    allowMethods.length > 0 && !optionsAllowed ? ui(dictionary, "corsMissingOptionsWarning", "Access-Control-Allow-Methods does not include OPTIONS. Browser preflight requests may fail before app code runs.") : "",
+    statusCode !== null && statusCode >= 400 ? ui(dictionary, "corsPreflightStatusWarning", "The pasted status is an error response. Preflight should usually finish with a successful 2xx or 204 response.") : "",
+  ].filter(Boolean);
+  const reviewWarnings = warnings.filter((warning) => warning !== ui(dictionary, "corsNoHeadersWarning", "No CORS response headers were found. That is fine for normal pages, but browser API calls will still fail cross-origin."));
+
+  return {
+    hasCorsHeaders,
+    warnings,
+    reviewWarnings,
+    originPolicy,
+    originValue: allowOriginValue || "—",
+    credentialsPolicy,
+    methodsDisplay,
+    headersDisplay,
+    optionsPolicy,
+    varyOriginLabel: formatBooleanSignal(variesByOrigin, dictionary),
+    statusDisplay: statusCode === null ? "—" : String(statusCode),
+    metrics: [
+      { label: ui(dictionary, "corsOriginPolicy", "Origin policy"), value: originPolicy, description: allowOriginValue || "—" },
+      { label: ui(dictionary, "corsCredentialsPolicy", "Credentials policy"), value: credentialsPolicy },
+      { label: ui(dictionary, "corsMethods", "Allowed methods"), value: methodsDisplay },
+      { label: ui(dictionary, "corsAllowedHeaders", "Allowed headers"), value: headersDisplay },
+      { label: ui(dictionary, "corsVaryOrigin", "Vary Origin"), value: formatBooleanSignal(variesByOrigin, dictionary), description: varyValue || "—" },
+      { label: ui(dictionary, "corsPreflightStatus", "Preflight status"), value: statusCode === null ? "—" : String(statusCode) },
+      { label: ui(dictionary, "corsOptionsSignal", "OPTIONS signal"), value: optionsPolicy },
+    ],
+  };
+}
+
 function getSecurityHeaderChecks(valuesByName: Map<string, string[]>, dictionary: ClientDictionary): SecurityHeaderCheck[] {
   const valueOf = (name: string) => (valuesByName.get(name) ?? []).join(", ").toLowerCase();
   const hasHeader = (name: string) => valuesByName.has(name);
@@ -8532,11 +8608,16 @@ function getSecurityHeaderChecks(valuesByName: Map<string, string[]>, dictionary
 function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
   const entries: ParsedHttpHeader[] = [];
   let malformedLines = 0;
+  let statusCode: number | null = null;
 
   for (const line of rawHeaders.split(/\r?\n/)) {
     const trimmed = line.trimEnd();
     if (!trimmed.trim()) continue;
-    if (/^HTTP\/\d(?:\.\d)?\s+\d{3}/i.test(trimmed)) continue;
+    const statusMatch = trimmed.match(/^HTTP\/\d(?:\.\d)?\s+(\d{3})/i);
+    if (statusMatch) {
+      statusCode = Number(statusMatch[1]);
+      continue;
+    }
     if (/^\s/.test(line) && entries.length) {
       entries[entries.length - 1].value = `${entries[entries.length - 1].value} ${trimmed.trim()}`;
       continue;
@@ -8574,6 +8655,7 @@ function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
   const securityChecks = getSecurityHeaderChecks(valuesByName, dictionary);
   const presentSecurityHeaders = securityChecks.filter((check) => check.present).length;
   const missingRequiredSecurityHeaders = securityChecks.filter((check) => check.required && !check.present).length;
+  const corsPreflight = getCorsPreflightDiagnostics(valuesByName, statusCode, entries.length, dictionary);
   const warnings = [
     !entries.length ? ui(dictionary, "httpHeadersEmptyWarning", "Paste response headers before reviewing.") : "",
     malformedLines ? ui(dictionary, "httpHeadersMalformedWarning", "{count} header lines could not be parsed.").replace("{count}", String(malformedLines)) : "",
@@ -8582,12 +8664,10 @@ function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
     cookies.some((cookie) => !/;\s*secure\b/i.test(cookie)) ? ui(dictionary, "httpHeadersCookieSecureWarning", "At least one Set-Cookie header is missing Secure.") : "",
     cookies.some((cookie) => !/;\s*httponly\b/i.test(cookie)) ? ui(dictionary, "httpHeadersCookieHttpOnlyWarning", "At least one Set-Cookie header is missing HttpOnly.") : "",
     cookies.some((cookie) => !/;\s*samesite=/i.test(cookie)) ? ui(dictionary, "httpHeadersCookieSameSiteWarning", "At least one Set-Cookie header is missing SameSite.") : "",
-    valueOf("access-control-allow-origin").includes("*") && valueOf("access-control-allow-credentials").includes("true")
-      ? ui(dictionary, "httpHeadersCorsWildcardWarning", "CORS allows wildcard origin with credentials. Browsers reject or expose risky intent.")
-      : "",
     valueOf("cache-control").includes("public") && cookies.length
       ? ui(dictionary, "httpHeadersPublicCookieCacheWarning", "Public cache headers appear with Set-Cookie. Confirm private data is not cacheable.")
       : "",
+    ...corsPreflight.reviewWarnings,
   ].filter(Boolean);
 
   return {
@@ -8604,6 +8684,7 @@ function parseHttpHeaders(rawHeaders: string, dictionary: ClientDictionary) {
       missingRequiredSecurityHeaders,
     },
     securityChecks,
+    corsPreflight,
     warnings,
   };
 }
@@ -8831,6 +8912,7 @@ function buildPublicUrlReport(
 function buildSecurityHeaderReport(parsedHeaders: ReturnType<typeof parseHttpHeaders>, dictionary: ClientDictionary, checkedAt: string) {
   const securityScore = `${parsedHeaders.metrics.presentSecurityHeaders}/${parsedHeaders.metrics.securityCheckCount}`;
   const reviewNotes = parsedHeaders.warnings.length ? parsedHeaders.warnings : [ui(dictionary, "securityHeaderReportNoWarnings", "No obvious security-header warnings detected. Still confirm the target app policy before publishing.")];
+  const corsNotes = parsedHeaders.corsPreflight.warnings.length ? parsedHeaders.corsPreflight.warnings : [ui(dictionary, "corsNoWarnings", "CORS preflight headers do not show obvious browser-blocking issues.")];
   const checklist = [
     ui(dictionary, "securityHeaderReportChecklistHsts", "Confirm HTTPS pages send Strict-Transport-Security after the first production response."),
     ui(dictionary, "securityHeaderReportChecklistCsp", "Review Content-Security-Policy sources before switching report-only policies to enforcement."),
@@ -8853,10 +8935,20 @@ function buildSecurityHeaderReport(parsedHeaders: ReturnType<typeof parseHttpHea
     `- ${ui(dictionary, "missingRequiredHeaders", "Missing required")}: ${parsedHeaders.metrics.missingRequiredSecurityHeaders}`,
     `- ${ui(dictionary, "cookieHeaders", "Cookie headers")}: ${parsedHeaders.metrics.cookieHeaders}`,
     `- ${ui(dictionary, "corsHeaderCategory", "CORS")}: ${parsedHeaders.metrics.corsHeaders}`,
+    `- ${ui(dictionary, "corsOriginPolicy", "Origin policy")}: ${parsedHeaders.corsPreflight.originPolicy} (${parsedHeaders.corsPreflight.originValue})`,
+    `- ${ui(dictionary, "corsCredentialsPolicy", "Credentials policy")}: ${parsedHeaders.corsPreflight.credentialsPolicy}`,
+    `- ${ui(dictionary, "corsMethods", "Allowed methods")}: ${parsedHeaders.corsPreflight.methodsDisplay}`,
+    `- ${ui(dictionary, "corsAllowedHeaders", "Allowed headers")}: ${parsedHeaders.corsPreflight.headersDisplay}`,
+    `- ${ui(dictionary, "corsVaryOrigin", "Vary Origin")}: ${parsedHeaders.corsPreflight.varyOriginLabel}`,
+    `- ${ui(dictionary, "corsOptionsSignal", "OPTIONS signal")}: ${parsedHeaders.corsPreflight.optionsPolicy}`,
+    `- ${ui(dictionary, "corsPreflightStatus", "Preflight status")}: ${parsedHeaders.corsPreflight.statusDisplay}`,
     `- ${ui(dictionary, "securityHeaderReportRawPolicy", "Raw headers included")}: ${ui(dictionary, "securityHeaderReportRawExcluded", "No, only metrics, readiness checks, and review notes are included.")}`,
     "",
     `## ${ui(dictionary, "securityHeaderReportReviewNotes", "Review notes")}`,
     ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "corsPreflightNotes", "CORS preflight notes")}`,
+    ...corsNotes.map((note) => `- ${note}`),
     "",
     `## ${ui(dictionary, "securityHeaderReportCheckResults", "Security header checks")}`,
     ...checkLines,
@@ -8875,6 +8967,8 @@ function buildSecurityHeaderReport(parsedHeaders: ReturnType<typeof parseHttpHea
       { label: ui(dictionary, "missingRequiredHeaders", "Missing required"), value: String(parsedHeaders.metrics.missingRequiredSecurityHeaders) },
       { label: ui(dictionary, "cookieHeaders", "Cookie headers"), value: String(parsedHeaders.metrics.cookieHeaders) },
       { label: ui(dictionary, "corsHeaderCategory", "CORS"), value: String(parsedHeaders.metrics.corsHeaders) },
+      { label: ui(dictionary, "corsOriginPolicy", "Origin policy"), value: parsedHeaders.corsPreflight.originPolicy, description: parsedHeaders.corsPreflight.originValue },
+      { label: ui(dictionary, "corsOptionsSignal", "OPTIONS signal"), value: parsedHeaders.corsPreflight.optionsPolicy },
       { label: ui(dictionary, "securityHeaderReportRawPolicy", "Raw headers included"), value: ui(dictionary, "no", "No"), description: ui(dictionary, "securityHeaderReportRawExcluded", "No, only metrics, readiness checks, and review notes are included.") },
     ],
   };
@@ -9188,6 +9282,20 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+          <section className="rounded-md border bg-background" data-http-cors-preflight-readiness>
+            <div className="border-b p-3">
+              <h4 className="text-sm font-semibold">{ui(dictionary, "corsPreflightReadiness", "CORS preflight readiness")}</h4>
+              <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "corsPreflightReadinessDescription", "Check Access-Control response headers before treating a browser preflight error as an application bug.")}</p>
+            </div>
+            <div className="space-y-3 p-3">
+              <ToolMetricGrid items={parsedHeaders.corsPreflight.metrics} />
+              <ToolWarningList
+                title={ui(dictionary, "corsPreflightNotes", "CORS preflight notes")}
+                warnings={parsedHeaders.corsPreflight.warnings}
+                emptyLabel={ui(dictionary, "corsNoWarnings", "CORS preflight headers do not show obvious browser-blocking issues.")}
+              />
             </div>
           </section>
           <section className="rounded-md border bg-background" data-http-header-list>
