@@ -9,6 +9,7 @@ export const operationalToolSlugs = [
   "url-parser",
   "jwt-decoder",
   "json-formatter",
+  "yaml-validator",
 ] as const;
 
 export function orderToolsWithOperationalFirst<T extends { slug: string }>(tools: T[]) {

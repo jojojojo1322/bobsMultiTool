@@ -202,6 +202,7 @@ assertIncludes("/sitemaps/en", sitemap, [
   `<loc>${baseUrl}/tools/dns-lookup</loc>`,
   `<loc>${baseUrl}/tools/sitemap-generator</loc>`,
   `<loc>${baseUrl}/tools/jwt-decoder</loc>`,
+  `<loc>${baseUrl}/tools/yaml-validator</loc>`,
 ]);
 
 const rssFeed = await textFor("/feed.xml");

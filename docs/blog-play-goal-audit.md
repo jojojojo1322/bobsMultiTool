@@ -65,6 +65,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - CORS preflight evidence: `security-header-report-before-copying-devtools`, `/tools/http-status-checker`, and the `review-security-headers` workflow now cover `cors preflight checker`, `access-control-allow-origin`, `fetch cors error`, and Korean CORS/preflight queries, separating DevTools console error text from final public response headers, credential policy, `Vary: Origin`, OPTIONS support, preflight status, and safe header-report notes.
 - Deploy-config workflow evidence: `vercel-sitemap-canonical-log` now includes a deploy config table that separates Docker Compose, `.env`, YAML, JSON config fragments, and public URL/DNS checks, while `/search?q=deployment config checker`, `/search?q=vercel environment variables`, and `/search?q=배포 설정 점검` route into the existing YAML Validator, ENV Parser Validator, JSON Formatter, HTTP Status Checker, and DNS Lookup workflow path instead of creating a thin deployment-only page.
 - ENV deployment report evidence surface: `/tools/env-parser-validator` now produces a copyable deployment ENV report with variable counts, duplicate/malformed/secret-like/public-prefix diagnostics, URL-like and empty-value counts, review notes, and a deploy checklist while excluding raw values and secret-like key names, so env handoff becomes a safer deploy workflow instead of only parsing `.env` text.
+- YAML deployment report evidence surface: `/tools/yaml-validator` now produces a copyable YAML/Compose deployment report with document metrics, Compose service counts, image/build/port/volume/dependency diagnostics, review notes, and a deploy checklist while excluding the raw YAML body and raw environment values, so Compose handoff becomes a safer deploy workflow instead of only validating YAML syntax.
 - JWT auth report evidence surface: `/tools/jwt-decoder` now produces a copyable Markdown auth report with token status, expected issuer/audience/scope checks, sensitive-claim notes, signature-not-verified warnings, and a safe handoff checklist, so token debugging is a shareable API/auth workflow rather than only a decoded JSON viewer.
 - Base64 payload report evidence surface: `/tools/base64-tool` now produces a copyable Markdown payload report with Base64 variant, decoded content shape, JSON key count, JWT-segment notes, image/binary warnings, and a safe handoff checklist, so pasted encoded payloads become a shareable API/JWT debugging workflow rather than only an encode/decode field.
 - JSON API response report evidence surface: `/tools/json-formatter` now produces a copyable Markdown API response report with root shape, depth, output size, sensitive/duplicate-key diagnostics, useful JSON paths, and a safe handoff checklist, so response formatting becomes a shareable API debugging workflow rather than only a pretty-printer.
@@ -178,6 +179,11 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Feed items: `62`
   - Representative Blog posts: `36`
   - Submitted operations tool URLs: `8`
+- Current source discovery target after adding YAML Validator to representative operations tools:
+  - Sitemap URLs: `86`
+  - Feed items: `62`
+  - Representative Blog posts: `36`
+  - Submitted operations tool URLs: `9`
 - Google Search Console:
   - Account: `bobob935@gmail.com`
   - Browser/session guard: use the Chrome profile/session signed in as `bobob935@gmail.com`; do not inspect Search Console from another signed-in Chrome profile.
@@ -185,7 +191,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - `/sitemaps/en` was checked and submitted again from the signed-in `bobob935@gmail.com` Chrome session after the current 85-URL representative target was live.
   - Search Console sitemap resubmission for the latest externally submitted 85-URL sitemap showed `사이트맵이 제출됨`. The visible `/sitemaps/en` row showed status `성공`, submitted `2026. 7. 7.`, last read `2026. 7. 7.`, discovered pages `85`, and videos `0`.
 - The same-day `sc-domain:bobob.app` recheck initially showed the older `84`-page `/sitemaps/en` row from `2026. 7. 6.`, then after reload showed submitted `2026. 7. 7.`, last read `2026. 7. 7.`, status `성공`, discovered pages `85`, and videos `0`.
-- The representative sitemap remains intentionally reduced. The latest Search Console sitemap observation now aligns with the deployed/source `85` URL count after the security-header report operations post, and IndexNow/WebSub have also been refreshed for that deployed target. This is discovery evidence, not indexing proof.
+- The representative sitemap remains intentionally reduced. The latest signed-in Search Console sitemap observation still reflects the previous `85` URL target, while the current source target is now `86` after adding YAML Validator to the representative operations tool set. IndexNow has been refreshed for the 86-URL target, but this is discovery evidence, not indexing proof.
   - Earlier 2026-07-06 follow-ups exposed only `task10@ljfriends.net` in Chrome and did not count as valid `bobob935@gmail.com` observations.
   - The latest 2026-07-09 Chrome retry again opened Search Console as `task10@ljfriends.net`; `authuser=bobob935@gmail.com` did not switch the report, and Google AccountChooser reached the `bobob935@gmail.com` passkey challenge (`본인 확인 중... 패스키를 사용하여 로그인을 완료합니다`), so no updated sitemap, Page indexing, Performance, or URL Inspection row was recorded from that retry.
   - The later signed-in `bobob935@gmail.com` pass is the current Search Console sitemap observation for the 85-URL target.
@@ -204,9 +210,9 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, fetched successfully, and allowed indexing.
   - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
-  - Latest submitted URL count: `85`
-  - The latest deployed 85-URL representative sitemap set has been submitted to IndexNow with response status `200`.
-  - Search Console sitemap discovery and IndexNow submission are both aligned at `85`; both still need later indexing observation. IndexNow is not Google indexing proof.
+  - Latest submitted URL count: `86`
+  - The latest deployed 86-URL representative sitemap set has been submitted to IndexNow with response status `200`.
+  - Search Console sitemap discovery still needs a later valid signed-in observation for the new 86-URL source target. IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
   - The latest 2026-07-07 retry against the current 85-URL production target still reached only the public Bing Webmaster Tools landing page. After clicking `Sign In`, Bing still showed `Please sign in` and `Choose an account convenient to you`, so no Bing sitemap, Site Explorer, URL Submission, or recommendation state was observed.

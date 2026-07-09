@@ -369,6 +369,7 @@ for (const fragment of [
   "<loc>https://www.bobob.app/tools/dns-lookup</loc>",
   "<loc>https://www.bobob.app/tools/sitemap-generator</loc>",
   "<loc>https://www.bobob.app/tools/jwt-decoder</loc>",
+  "<loc>https://www.bobob.app/tools/yaml-validator</loc>",
   "<lastmod>2026-07-06</lastmod>",
   'hreflang="x-default"',
 ]) {
