@@ -230,8 +230,8 @@ This audit tracks the active first-pass goal. It is not a completion certificate
   - Both pillar URLs were `URL이 Google에 등록되어 있지 않음` with `페이지 색인이 생성되지 않음: 크롤링됨 - 현재 색인이 생성되지 않음`; both remain tied to `https://www.bobob.app/sitemaps/en`, fetched successfully, and allowed indexing.
   - Both pillar URL indexing request confirmations showed `색인 생성 요청됨` and `URL이 우선순위 크롤링 대기열에 추가되었습니다`.
 - IndexNow:
-  - Latest submitted URL count: `89`
-  - The latest deployed 89-URL representative sitemap set has been submitted to IndexNow with response status `200`.
+  - Latest submitted URL count: `90`
+  - The latest deployed 90-URL representative sitemap set has been submitted to IndexNow with response status `200`.
   - Search Console sitemap discovery still needs a later valid signed-in observation for the new 90-URL source target. IndexNow is not Google indexing proof.
 - Bing:
   - Bing Webmaster Tools reached the public landing page with `Sign In`; site-specific recommendation classes were not visible without a signed-in session.
@@ -322,7 +322,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Hash signature report source target:
   - `/tools/hash-generator` already renders `data-hash-signature-report`, `data-hash-signature-report-copy`, and a copyable Hash signature report that records digest/HMAC mode, input byte/line counts, HMAC secret byte diagnostics, algorithm output, review notes, and a safe signature checklist while excluding the raw input and HMAC secret.
   - The secure-generator workflow, Hash registry search intents, and search smoke coverage route hash signature report, HMAC handoff report, webhook signature checker, and SHA-256 checksum report queries into the existing security/API handoff path instead of treating Hash as only a digest field.
-  - `/tools/hash-generator` is now added to the representative operations sitemap source target. It still needs production deployment and IndexNow submission before the live discovery target moves from `89` to `90`; this is security/API handoff and source discovery evidence only and does not prove Google, Bing, or Naver indexed the checked URLs.
+  - `/tools/hash-generator` was added to the representative operations sitemap set in commit `88bc5406`. The production deployment refreshed live discovery, submitted URL health, IndexNow, and production browser verification at `90` sitemap URLs and `62` feed items. It is security/API handoff and discovery-submission evidence only and does not prove Google, Bing, or Naver indexed the checked URLs.
 - Discovery registration matrix:
   - `docs/search-discovery-registration.md` tracks Google Search Console, Bing/IndexNow, Naver Search Advisor, feeds, WebSub, robots.txt, OpenSearch, llms.txt, current counts, and the stop rule that discovery submissions are not indexing proof.
 - Submitted URL health:
@@ -347,7 +347,7 @@ This audit tracks the active first-pass goal. It is not a completion certificate
 - Search Console page indexing is still unresolved: indexed pages `1`, not-indexed pages `32`, and the report is still dated `2026. 6. 30`.
 - The `2026-07-09` Page indexing drilldown still shows `크롤링됨 - 현재 색인이 생성되지 않음` for `24` examples; this is not current crawl failure, but it still means Google has not indexed those examples yet.
 - Search Console sitemap discovery still matches the previous externally submitted representative sitemap URL count (`85`), but the current source representative sitemap URL count is now `90` after adding `/tools/hash-generator`, `/tools/open-graph-preview`, `/tools/base64-tool`, `/tools/yaml-validator`, and `/tools/env-parser-validator`.
-- The current source sitemap target is now `90` after adding Hash Generator, Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set. The latest deployed live/IndexNow target remains `89` until the Hash target is deployed and submitted, so the next Search Console/Bing/Naver pass must compare whether external discovery catches up and whether indexing/report changes appear instead of treating sitemap discovery as indexing proof.
+- The current live/source sitemap target is now `90` after adding Hash Generator, Open Graph Preview, Base64 Tool, YAML Validator, and ENV Parser Validator to the representative operations tool set, so the next Search Console/Bing/Naver pass must compare whether external discovery catches up and whether indexing/report changes appear instead of treating sitemap discovery as indexing proof.
 - Blog, Play, and operations-tool representative URLs are still not indexed after inspection; requests were queued where useful, but that is not indexing proof.
 - The two new pillar posts have `색인 생성 요청됨` confirmations, but they are still not indexed after the latest inspection.
 - Search Console and AdSense measured CSV exports are still missing, so measured SEO review and public metadata rewrites are intentionally blocked.
