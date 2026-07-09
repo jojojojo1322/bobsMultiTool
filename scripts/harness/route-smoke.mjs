@@ -143,6 +143,26 @@ const blogDetailHtmlByPath = new Map();
 const robotsNoindexPattern = /<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["'][^"']*noindex)/i;
 const archiveBadgePattern = /\bdata-blog-archive-badge(?:=""|="true")?/i;
 
+function checkSecurityHeaders(response, routePath) {
+  const csp = response.headers.get("content-security-policy") ?? "";
+  const expectedHeaders = [
+    ["strict-transport-security", "max-age=31536000"],
+    ["x-content-type-options", "nosniff"],
+    ["x-frame-options", "DENY"],
+    ["referrer-policy", "strict-origin-when-cross-origin"],
+    ["permissions-policy", "camera=()"],
+  ];
+
+  for (const [name, fragment] of expectedHeaders) {
+    const value = response.headers.get(name) ?? "";
+    if (!value.includes(fragment)) failures.push(`${routePath} missing security header ${name}: ${fragment}`);
+  }
+
+  for (const fragment of ["default-src 'self'", "frame-ancestors 'none'", "script-src 'self' 'unsafe-inline'", "https://*.googlesyndication.com", "upgrade-insecure-requests"]) {
+    if (!csp.includes(fragment)) failures.push(`${routePath} missing CSP fragment: ${fragment}`);
+  }
+}
+
 for (const routePath of paths) {
   const response = await fetch(`${baseUrl}${routePath}`, { redirect: "manual", headers: smokeHeaders });
   if (response.status < 200 || response.status >= 400) {
@@ -202,7 +222,9 @@ for (const [routePath, fragments] of contentStructuredDataPaths) {
   }
 }
 
-const homeHtml = await (await fetch(`${baseUrl}/`, { headers: smokeHeaders })).text();
+const homeResponse = await fetch(`${baseUrl}/`, { headers: smokeHeaders });
+checkSecurityHeaders(homeResponse, "/");
+const homeHtml = await homeResponse.text();
 for (const fragment of [
   'name="google-adsense-account" content="ca-pub-2620992505263949"',
   "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2620992505263949",
