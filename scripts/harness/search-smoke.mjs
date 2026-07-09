@@ -190,7 +190,7 @@ for (const intent of ["copy api response from devtools", "devtools network respo
 for (const intent of ["docker compose validator", "compose yaml validator", "docker compose yaml validator", "yaml config checker", "deployment yaml checker", "deploy config validator", "도커 컴포즈 검증"]) {
   if (!registry.includes(intent)) failures.push(`YAML Validator search surface missing ${intent}`);
 }
-for (const intent of ["env parser validator", "dotenv validator", ".env validator", "env variable checker", "production env checker", "missing env variable deploy", "vercel environment variables", "vercel env checker", "환경변수 누락 확인"]) {
+for (const intent of ["env parser validator", "dotenv validator", ".env validator", "env variable checker", "env deployment report", "dotenv handoff report", "environment variable report", "production env checker", "missing env variable deploy", "vercel environment variables", "vercel env checker", "vercel env report", "환경변수 누락 확인", "환경변수 보고서"]) {
   if (!registry.includes(intent)) failures.push(`ENV Parser search surface missing ${intent}`);
 }
 if (!registry.includes("csrf token generator") || !registry.includes("api key generator") || !registry.includes("url safe token generator")) failures.push("Random Token search intents must cover CSRF, API key, and URL-safe token queries");

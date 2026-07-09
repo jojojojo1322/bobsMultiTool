@@ -156,6 +156,7 @@ type ResultNextActionSignal =
   | "dns-result"
   | "yaml-valid"
   | "yaml-compose"
+  | "env-parsed"
   | "csv-converted"
   | "qr-generated"
   | "regex-tested";
@@ -170,6 +171,7 @@ const resultNextActionRules: Record<ResultNextActionSignal, string[]> = {
   "dns-result": ["http-status-checker", "url-parser", "sitemap-generator"],
   "yaml-valid": ["env-parser-validator", "yaml-json-converter", "json-formatter"],
   "yaml-compose": ["env-parser-validator", "yaml-json-converter", "json-formatter"],
+  "env-parsed": ["yaml-validator", "json-formatter", "base64-tool"],
   "csv-converted": ["text-sort-dedupe", "markdown-previewer", "json-formatter"],
   "qr-generated": ["url-parser", "open-graph-preview", "color-converter"],
   "regex-tested": ["url-encoder", "text-diff", "json-formatter"],
@@ -4144,6 +4146,73 @@ function formatEnvWarning(dictionary: ClientDictionary, warning: EnvWarning) {
     .replaceAll("{firstLine}", "firstLine" in warning ? String(warning.firstLine) : "");
 }
 
+function buildEnvDeploymentReport({
+  parsed,
+  warnings,
+  secretLikeKeys,
+  dictionary,
+  checkedAt,
+}: {
+  parsed: ReturnType<typeof parseEnvContent>;
+  warnings: string[];
+  secretLikeKeys: Array<{ key: string; value: string; line: number }>;
+  dictionary: ClientDictionary;
+  checkedAt: string;
+}) {
+  const duplicateCount = parsed.warnings.filter((warning) => warning.type === "duplicateKey").length;
+  const malformedLineCount = parsed.warnings.filter((warning) => warning.type === "missingSyntax" || warning.type === "invalidName" || warning.type === "unclosedQuote").length;
+  const urlLikeValues = parsed.entries.filter((entry) => /^https?:\/\//i.test(entry.value) || /^[\w.+-]+:\/\/\S+/i.test(entry.value));
+  const emptyValues = parsed.entries.filter((entry) => entry.value.length === 0);
+  const publicPrefixedKeys = parsed.entries.filter((entry) => /^(NEXT_PUBLIC_|PUBLIC_|VITE_)/i.test(entry.key));
+  const nonSecretKeys = parsed.entries
+    .filter((entry) => !secretLikeKeys.some((secret) => secret.key === entry.key && secret.line === entry.line))
+    .map((entry) => entry.key);
+  const displayedKeys = nonSecretKeys.length ? nonSecretKeys.join(", ") : ui(dictionary, "notApplicable", "Not applicable");
+  const reviewNotes = warnings.length ? warnings : [ui(dictionary, "envReportNoWarnings", "No obvious ENV parsing warnings detected. Confirm required hosting variables before deployment.")];
+  const checklist = [
+    ui(dictionary, "envChecklistHosting", "Compare this key list with the hosting, CI, and server runtime variable list."),
+    ui(dictionary, "envChecklistDuplicates", "Resolve duplicate keys before copying values because the final loader may keep only one assignment."),
+    ui(dictionary, "envChecklistSecrets", "Move production secrets into a secret manager or hosting variable store instead of sharing raw values."),
+    ui(dictionary, "envChecklistPublicPrefix", "Confirm public-prefixed keys are safe for client-side exposure."),
+    ui(dictionary, "envChecklistPostDeploy", "After deployment, verify the public URL, DNS, and server response rather than trusting config parsing alone."),
+  ];
+  const metrics = [
+    { label: ui(dictionary, "variableCount", "Variables"), value: String(parsed.entries.length) },
+    { label: ui(dictionary, "duplicateCount", "Duplicates"), value: String(duplicateCount) },
+    { label: ui(dictionary, "malformedLineCount", "Malformed lines"), value: String(malformedLineCount) },
+    { label: ui(dictionary, "secretLikeKeys", "Secret-like keys"), value: String(secretLikeKeys.length) },
+    { label: ui(dictionary, "envUrlLikeValues", "URL-like values"), value: String(urlLikeValues.length) },
+    { label: ui(dictionary, "envEmptyValues", "Empty values"), value: String(emptyValues.length) },
+    { label: ui(dictionary, "envPublicPrefixedKeys", "Public-prefixed keys"), value: String(publicPrefixedKeys.length) },
+    { label: ui(dictionary, "envReportRawValuePolicy", "Raw values included"), value: ui(dictionary, "envReportValuesExcluded", "No, raw values are excluded.") },
+  ];
+  const markdown = [
+    `# ${ui(dictionary, "envDeploymentReport", "ENV deployment report")}`,
+    "",
+    `- ${ui(dictionary, "envReportCheckedAt", "Checked at")}: ${checkedAt}`,
+    `- ${ui(dictionary, "variableCount", "Variables")}: ${parsed.entries.length}`,
+    `- ${ui(dictionary, "duplicateCount", "Duplicates")}: ${duplicateCount}`,
+    `- ${ui(dictionary, "malformedLineCount", "Malformed lines")}: ${malformedLineCount}`,
+    `- ${ui(dictionary, "secretLikeKeys", "Secret-like keys")}: ${secretLikeKeys.length}`,
+    `- ${ui(dictionary, "envUrlLikeValues", "URL-like values")}: ${urlLikeValues.length}`,
+    `- ${ui(dictionary, "envEmptyValues", "Empty values")}: ${emptyValues.length}`,
+    `- ${ui(dictionary, "envPublicPrefixedKeys", "Public-prefixed keys")}: ${publicPrefixedKeys.length}`,
+    `- ${ui(dictionary, "envReportRawValuePolicy", "Raw values included")}: ${ui(dictionary, "envReportValuesExcluded", "No, raw values are excluded.")}`,
+    `- ${ui(dictionary, "envReportSecretKeyPolicy", "Secret-like key names")}: ${ui(dictionary, "envReportSecretKeysCountOnly", "Count only; names and values are excluded.")}`,
+    "",
+    `## ${ui(dictionary, "envReportKeyList", "Non-secret key list")}`,
+    displayedKeys,
+    "",
+    `## ${ui(dictionary, "envReportReviewNotes", "Review notes")}`,
+    ...reviewNotes.map((note) => `- ${note}`),
+    "",
+    `## ${ui(dictionary, "envReportChecklist", "Deployment checklist")}`,
+    ...checklist.map((item) => `- ${item}`),
+  ].join("\n");
+
+  return { checklist, markdown, metrics, reviewNotes };
+}
+
 function EnvParserTool({ dictionary }: { dictionary: ClientDictionary }) {
   const [input, setInput] = React.useState("APP_ENV=production\nAPI_URL=https://api.example.com\nFEATURE_FLAG=true");
   const result = React.useMemo(() => {
@@ -4159,6 +4228,17 @@ function EnvParserTool({ dictionary }: { dictionary: ClientDictionary }) {
     ...parsed.warnings.map((warning) => formatEnvWarning(dictionary, warning)),
     secretLikeKeys.length ? ui(dictionary, "envSecretWarning", "Secret-like keys are present. Do not paste production secrets into shared screenshots or tickets.") : "",
   ].filter(Boolean);
+  const envReport = React.useMemo(
+    () =>
+      buildEnvDeploymentReport({
+        parsed,
+        warnings,
+        secretLikeKeys,
+        dictionary,
+        checkedAt: ui(dictionary, "envReportCopyTime", "Browser copy time"),
+      }),
+    [dictionary, parsed, secretLikeKeys, warnings],
+  );
 
   return (
     <div className="space-y-4" data-env-parser-tool>
@@ -4203,6 +4283,50 @@ function EnvParserTool({ dictionary }: { dictionary: ClientDictionary }) {
       <div data-env-warnings>
         <ToolWarningList title={ui(dictionary, "reviewNotes", "Review notes")} warnings={warnings} emptyLabel={ui(dictionary, "envNoWarnings", "ENV syntax looks ready to copy into a local config file.")} />
       </div>
+      <section className="space-y-3 rounded-md border bg-card p-3" data-env-deployment-report>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">{ui(dictionary, "envDeploymentReport", "ENV deployment report")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "envDeploymentReportDescription", "Copy a safe deployment handoff report with variable counts, warning notes, and checklist items without raw values.")}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-env-deployment-report-copy
+            onClick={() =>
+              copyToClipboard(
+                buildEnvDeploymentReport({
+                  parsed,
+                  warnings,
+                  secretLikeKeys,
+                  dictionary,
+                  checkedAt: new Date().toISOString(),
+                }).markdown,
+              )
+            }
+          >
+            <Copy className="h-4 w-4" />
+            {ui(dictionary, "copyEnvDeploymentReport", "Copy ENV report")}
+          </Button>
+        </div>
+        <ToolMetricGrid items={envReport.metrics} />
+        <ToolWarningList title={ui(dictionary, "envReportReviewNotes", "Review notes")} warnings={envReport.reviewNotes} emptyLabel={ui(dictionary, "envReportNoWarnings", "No obvious ENV parsing warnings detected. Confirm required hosting variables before deployment.")} />
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui(dictionary, "envReportChecklist", "Deployment checklist")}</p>
+          <ul className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {envReport.checklist.map((item) => (
+              <li key={item} className="rounded-md bg-muted px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <pre className="max-h-72 overflow-auto rounded-md bg-muted p-3 text-xs" data-env-deployment-report-preview>
+          <code>{envReport.markdown}</code>
+        </pre>
+      </section>
+      <ResultNextActions signals={["env-parsed"]} dictionary={dictionary} />
       <ResultBlock title={ui(dictionary, "validationResult", "Validation result")} value={result} dictionary={dictionary} />
     </div>
   );
