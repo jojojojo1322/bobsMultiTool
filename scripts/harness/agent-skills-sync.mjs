@@ -195,6 +195,7 @@ const checks = [
   ["agents", "`redirectChain` array"],
   ["agents", "HTTP Status Checker UI must render"],
   ["agents", "redirect diagnostics"],
+  ["agents", "final HTML indexability readiness"],
   ["agents", "local HTTP header parser"],
   ["agents", "copyable security header report"],
   ["agents", "CSP generator"],
@@ -381,6 +382,7 @@ const checks = [
   ["design", "redirect diagnostics"],
   ["design", "hop timing/cache details"],
   ["design", "allowlisted final response headers"],
+  ["design", "final HTML indexability readiness"],
   ["design", "pasted-header parser"],
   ["design", "security header readiness"],
   ["design", "copyable security header report"],
@@ -498,6 +500,7 @@ const checks = [
   ["localization", "JavaScript module/runtime/compression diagnostics"],
   ["localization", "pasted-header parser labels"],
   ["localization", "security header report labels"],
+  ["localization", "HTTP Status Checker indexability labels"],
   ["localization", "CSP generator labels"],
   ["localization", "`failureCases`"],
   ["localization", "`preCopyChecklist`"],
@@ -540,6 +543,7 @@ const checks = [
   ["seo", "robots.txt and sitemap generator pages"],
   ["seo", "localized review messages before raw output"],
   ["seo", "CSP Generator"],
+  ["seo", "Search Console preflight intent"],
   ["seo", "harness:seo-opportunities"],
   ["seo", "harness:seo-measured"],
   ["seo", "BOBOB_REQUIRE_MEASURED_SEO"],
@@ -726,6 +730,7 @@ const checks = [
   ["verification", "security header readiness"],
   ["verification", "hop timing/cache details"],
   ["verification", "allowlisted final response headers"],
+  ["verification", "final HTML indexability readiness"],
   ["verification", "redirect diagnostics"],
   ["verification", "local HTTP header parser"],
   ["verification", "copyable security header report"],
@@ -924,7 +929,7 @@ for (const file of [
   if (read(file).includes("PointerBackground")) failures.push(`${file} still includes removed guide pointer background`);
 }
 const httpStatusRoute = read("apps/main/src/app/api/http-status/route.ts");
-  for (const fragment of ["redirectChain", "statusText", "contentType", "location", "cacheControl", "elapsedMs", "finalResponseHeaders", "finalHeaderAllowlist"]) {
+  for (const fragment of ["redirectChain", "statusText", "contentType", "location", "cacheControl", "elapsedMs", "finalResponseHeaders", "finalHeaderAllowlist", "indexability", "canonicalMatchesFinal", "h1Count", "htmlLang"]) {
     if (!httpStatusRoute.includes(fragment)) failures.push(`HTTP status route missing redirect chain field ${fragment}`);
   }
 if (!fs.existsSync(path.join(root, "scripts/harness/seo-opportunity-report.mjs"))) {

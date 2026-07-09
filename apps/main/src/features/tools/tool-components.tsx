@@ -8325,7 +8325,24 @@ type HttpStatusResult = {
   contentType?: string | null;
   cacheControl?: string | null;
   server?: string | null;
+  indexability?: HttpIndexabilitySignals | null;
   error?: string;
+};
+
+type HttpIndexabilitySignals = {
+  checked: boolean;
+  isHtml: boolean;
+  htmlLang: string | null;
+  title: string | null;
+  titleLength: number;
+  description: string | null;
+  descriptionLength: number;
+  canonicalHref: string | null;
+  canonicalMatchesFinal: boolean | null;
+  robots: string | null;
+  googlebotRobots: string | null;
+  noindex: boolean;
+  h1Count: number;
 };
 
 type ParsedHttpHeader = {
@@ -8682,9 +8699,57 @@ function getRedirectDiagnostics(result: HttpStatusResult, dictionary: ClientDict
   };
 }
 
+function formatBooleanSignal(value: boolean | null | undefined, dictionary: ClientDictionary) {
+  if (value === true) return ui(dictionary, "yes", "Yes");
+  if (value === false) return ui(dictionary, "no", "No");
+  return "—";
+}
+
+function getHttpIndexabilityDiagnostics(result: HttpStatusResult, dictionary: ClientDictionary) {
+  const summary = result.indexability ?? null;
+  const statusOk = typeof result.status === "number" && result.status >= 200 && result.status < 300;
+  const contentType = result.contentType ?? "—";
+  const robotsPolicy = [summary?.robots, summary?.googlebotRobots].filter(Boolean).join(" / ") || ui(dictionary, "defaultRobotsPolicy", "Default index/follow");
+  const warnings = [
+    !summary ? ui(dictionary, "metadataUnavailableWarning", "HTML metadata could not be inspected from this response.") : "",
+    summary && !summary.isHtml ? ui(dictionary, "indexabilityNonHtmlWarning", "The final response is not HTML, so canonical, robots, title, and h1 signals were not inspected.") : "",
+    !statusOk ? ui(dictionary, "indexabilityStatusWarning", "The final status is not a 2xx response. Search crawlers usually need a stable successful HTML page before indexing.") : "",
+    summary?.noindex ? ui(dictionary, "indexabilityNoindexWarning", "A robots noindex directive is present. This URL should not be submitted as an indexable page.") : "",
+    summary?.isHtml && !summary.canonicalHref ? ui(dictionary, "indexabilityCanonicalMissingWarning", "No canonical link was found in the inspected HTML.") : "",
+    summary?.canonicalMatchesFinal === false ? ui(dictionary, "indexabilityCanonicalMismatchWarning", "The canonical URL differs from the final URL. Confirm this is intentional before requesting indexing.") : "",
+    summary?.isHtml && !summary.title ? ui(dictionary, "indexabilityTitleMissingWarning", "No title tag was found in the inspected HTML.") : "",
+    summary?.title && (summary.titleLength < 10 || summary.titleLength > 65) ? ui(dictionary, "indexabilityTitleLengthWarning", "The title length is outside the usual compact search-result range.") : "",
+    summary?.isHtml && !summary.description ? ui(dictionary, "indexabilityDescriptionMissingWarning", "No meta description was found in the inspected HTML.") : "",
+    summary?.description && (summary.descriptionLength < 50 || summary.descriptionLength > 170) ? ui(dictionary, "indexabilityDescriptionLengthWarning", "The meta description length should be reviewed before search submission.") : "",
+    summary?.isHtml && summary.h1Count === 0 ? ui(dictionary, "indexabilityH1MissingWarning", "No h1 was found in the inspected HTML.") : "",
+    summary && summary.h1Count > 1 ? ui(dictionary, "indexabilityMultipleH1Warning", "{count} h1 elements were found. Submitted pages should usually expose exactly one visible h1.").replace("{count}", String(summary.h1Count)) : "",
+    summary?.isHtml && !summary.htmlLang ? ui(dictionary, "indexabilityHtmlLangMissingWarning", "No html lang attribute was found in the inspected HTML.") : "",
+  ].filter(Boolean);
+  const ready = warnings.length === 0;
+  const searchReadyLabel = ready ? ui(dictionary, "indexabilityStatusReady", "Ready for indexing request") : ui(dictionary, "indexabilityStatusReview", "Review before indexing request");
+
+  return {
+    summary,
+    warnings,
+    ready,
+    searchReadyLabel,
+    metrics: [
+      { label: ui(dictionary, "searchReady", "Search ready"), value: searchReadyLabel },
+      { label: ui(dictionary, "contentType", "Content type"), value: contentType },
+      { label: ui(dictionary, "canonicalMatch", "Canonical match"), value: formatBooleanSignal(summary?.canonicalMatchesFinal, dictionary) },
+      { label: ui(dictionary, "robotsPolicy", "Robots policy"), value: robotsPolicy },
+      { label: ui(dictionary, "h1Count", "H1 count"), value: summary ? String(summary.h1Count) : "—" },
+      { label: ui(dictionary, "titleLength", "Title length"), value: summary ? String(summary.titleLength) : "—" },
+      { label: ui(dictionary, "descriptionLength", "Description length"), value: summary ? String(summary.descriptionLength) : "—" },
+      { label: ui(dictionary, "htmlLang", "HTML lang"), value: summary?.htmlLang ?? "—" },
+    ],
+  };
+}
+
 function buildPublicUrlReport(
   result: HttpStatusResult,
   redirectDiagnostics: ReturnType<typeof getRedirectDiagnostics>,
+  indexabilityDiagnostics: ReturnType<typeof getHttpIndexabilityDiagnostics> | null,
   checkedHeaders: ReturnType<typeof parseHttpHeaders>,
   responseHeaderLines: string,
   dictionary: ClientDictionary,
@@ -8703,11 +8768,13 @@ function buildPublicUrlReport(
   const contentType = result.contentType ?? "-";
   const cacheControl = result.cacheControl ?? "-";
   const redirectCount = result.redirectCount ?? 0;
+  const indexability = indexabilityDiagnostics?.summary ?? null;
   const crawlerProfileWarnings =
     result.requestProfile?.key && result.requestProfile.key !== "public"
       ? [ui(dictionary, "crawlerProfileEvidenceWarning", "This request uses a crawler user-agent preset from bobob.app infrastructure; it is useful reachability evidence, not proof that Google crawled or indexed the URL.")]
       : [];
-  const reviewNotes = Array.from(new Set([...crawlerProfileWarnings, ...redirectDiagnostics.warnings, ...headerWarnings]));
+  const indexabilityWarnings = indexabilityDiagnostics?.warnings ?? [];
+  const reviewNotes = Array.from(new Set([...crawlerProfileWarnings, ...redirectDiagnostics.warnings, ...indexabilityWarnings, ...headerWarnings]));
 
   const markdown = [
     `# ${ui(dictionary, "publicUrlReport", "Public URL report")}`,
@@ -8721,8 +8788,19 @@ function buildPublicUrlReport(
     `- ${ui(dictionary, "redirects", "Redirects")}: ${redirectCount}`,
     `- ${ui(dictionary, "securityHeaderScore", "Security header score")}: ${securityScore}`,
     `- ${ui(dictionary, "missingRequiredHeaders", "Missing required")}: ${requiredMissing}`,
+    `- ${ui(dictionary, "searchReady", "Search ready")}: ${indexabilityDiagnostics?.searchReadyLabel ?? "—"}`,
+    `- ${ui(dictionary, "canonicalUrl", "Canonical URL")}: ${indexability?.canonicalHref ?? "—"}`,
+    `- ${ui(dictionary, "canonicalMatch", "Canonical match")}: ${formatBooleanSignal(indexability?.canonicalMatchesFinal, dictionary)}`,
+    `- ${ui(dictionary, "robotsPolicy", "Robots policy")}: ${[indexability?.robots, indexability?.googlebotRobots].filter(Boolean).join(" / ") || ui(dictionary, "defaultRobotsPolicy", "Default index/follow")}`,
+    `- ${ui(dictionary, "h1Count", "H1 count")}: ${indexability ? indexability.h1Count : "—"}`,
     `- ${ui(dictionary, "contentType", "Content type")}: ${contentType}`,
     `- ${ui(dictionary, "cacheControl", "Cache-Control")}: ${cacheControl}`,
+    "",
+    `## ${ui(dictionary, "indexabilitySignals", "Indexability signals")}`,
+    `- ${ui(dictionary, "titleLength", "Title length")}: ${indexability ? indexability.titleLength : "—"}`,
+    `- ${ui(dictionary, "descriptionLength", "Description length")}: ${indexability ? indexability.descriptionLength : "—"}`,
+    `- ${ui(dictionary, "htmlLang", "HTML lang")}: ${indexability?.htmlLang ?? "—"}`,
+    `- ${ui(dictionary, "googlebotRobotsPolicy", "Googlebot robots policy")}: ${indexability?.googlebotRobots ?? "—"}`,
     "",
     `## ${ui(dictionary, "publicUrlReportReviewNotes", "Review notes")}`,
     ...(reviewNotes.length ? reviewNotes.map((note) => `- ${note}`) : [`- ${ui(dictionary, "publicUrlReportNoWarnings", "No redirect or final-response header warnings were detected.")}`]),
@@ -8742,6 +8820,7 @@ function buildPublicUrlReport(
       { label: ui(dictionary, "redirects", "Redirects"), value: String(redirectCount) },
       { label: ui(dictionary, "securityHeaderScore", "Security header score"), value: securityScore },
       { label: ui(dictionary, "missingRequiredHeaders", "Missing required"), value: String(requiredMissing) },
+      { label: ui(dictionary, "searchReady", "Search ready"), value: indexabilityDiagnostics?.searchReadyLabel ?? "—" },
     ],
   };
 }
@@ -8872,10 +8951,11 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
   const generatedCspHeader = React.useMemo(() => buildCspHeader(cspDirectives, cspReportOnly), [cspDirectives, cspReportOnly]);
   const cspWarnings = React.useMemo(() => getCspWarnings(cspDirectives, cspReportOnly, dictionary), [cspDirectives, cspReportOnly, dictionary]);
   const redirectDiagnostics = React.useMemo(() => (result && !result.error ? getRedirectDiagnostics(result, dictionary) : null), [dictionary, result]);
+  const indexabilityDiagnostics = React.useMemo(() => (result && !result.error ? getHttpIndexabilityDiagnostics(result, dictionary) : null), [dictionary, result]);
   const checkedResponseHeaders = React.useMemo(() => parseHttpHeaders(responseHeaderLines, dictionary), [dictionary, responseHeaderLines]);
   const publicUrlReport = React.useMemo(
-    () => (result && !result.error && redirectDiagnostics ? buildPublicUrlReport(result, redirectDiagnostics, checkedResponseHeaders, responseHeaderLines, dictionary) : null),
-    [checkedResponseHeaders, dictionary, redirectDiagnostics, responseHeaderLines, result],
+    () => (result && !result.error && redirectDiagnostics ? buildPublicUrlReport(result, redirectDiagnostics, indexabilityDiagnostics, checkedResponseHeaders, responseHeaderLines, dictionary) : null),
+    [checkedResponseHeaders, dictionary, indexabilityDiagnostics, redirectDiagnostics, responseHeaderLines, result],
   );
   const cspDirectiveCount = cspDirectiveRows.filter((row) => cspDirectives[row.key].trim()).length;
   const updateCspDirective = (key: CspDirectiveKey, value: string) => setCspDirectives((current) => ({ ...current, [key]: value }));
@@ -8988,6 +9068,38 @@ function HttpStatusTool({ dictionary }: { dictionary: ClientDictionary }) {
 	                  </div>
 	                ))}
 	              </dl>
+            </section>
+          ) : null}
+          {indexabilityDiagnostics ? (
+            <section className="rounded-md border bg-card" data-http-indexability>
+              <div className="border-b p-3">
+                <h3 className="text-sm font-semibold">{ui(dictionary, "indexabilitySignals", "Indexability signals")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{ui(dictionary, "indexabilitySignalsDescription", "Inspect final HTML metadata that Search Console and crawlers use before an indexing request.")}</p>
+              </div>
+              <div className="space-y-3 p-3">
+                <ToolMetricGrid items={indexabilityDiagnostics.metrics} />
+                {indexabilityDiagnostics.summary ? (
+                  <dl className="divide-y rounded-md border bg-background text-sm">
+                    <div className="grid gap-2 p-3 md:grid-cols-[160px_1fr]">
+                      <dt className="font-medium">{ui(dictionary, "canonicalUrl", "Canonical URL")}</dt>
+                      <dd className="break-all text-muted-foreground">{indexabilityDiagnostics.summary.canonicalHref ?? "—"}</dd>
+                    </div>
+                    <div className="grid gap-2 p-3 md:grid-cols-[160px_1fr]">
+                      <dt className="font-medium">{ui(dictionary, "robotsPolicy", "Robots policy")}</dt>
+                      <dd className="break-words text-muted-foreground">{[indexabilityDiagnostics.summary.robots, indexabilityDiagnostics.summary.googlebotRobots].filter(Boolean).join(" / ") || ui(dictionary, "defaultRobotsPolicy", "Default index/follow")}</dd>
+                    </div>
+                    <div className="grid gap-2 p-3 md:grid-cols-[160px_1fr]">
+                      <dt className="font-medium">{ui(dictionary, "title", "Title")}</dt>
+                      <dd className="break-words text-muted-foreground">{indexabilityDiagnostics.summary.title ?? "—"}</dd>
+                    </div>
+                    <div className="grid gap-2 p-3 md:grid-cols-[160px_1fr]">
+                      <dt className="font-medium">{ui(dictionary, "description", "Description")}</dt>
+                      <dd className="break-words text-muted-foreground">{indexabilityDiagnostics.summary.description ?? "—"}</dd>
+                    </div>
+                  </dl>
+                ) : null}
+                <ToolWarningList title={ui(dictionary, "publicUrlReportReviewNotes", "Review notes")} warnings={indexabilityDiagnostics.warnings} emptyLabel={ui(dictionary, "indexabilityNoWarnings", "Final HTML status, canonical, robots, title, description, h1, and lang signals look ready for an indexing request.")} />
+              </div>
             </section>
           ) : null}
           {publicUrlReport ? (

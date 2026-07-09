@@ -502,6 +502,23 @@ if (httpStatusResponse.status !== 200) {
   if (httpStatusBody?.requestProfile?.key !== "public" || !String(httpStatusBody?.requestProfile?.userAgent ?? "").includes("BobobStatusChecker")) {
     failures.push("/api/http-status default response should expose the public request profile");
   }
+  if (!httpStatusBody?.indexability || typeof httpStatusBody.indexability !== "object") {
+    failures.push("/api/http-status response missing indexability summary");
+  } else {
+    for (const [field, expectedType] of [
+      ["isHtml", "boolean"],
+      ["h1Count", "number"],
+      ["titleLength", "number"],
+      ["descriptionLength", "number"],
+    ]) {
+      if (typeof httpStatusBody.indexability[field] !== expectedType) {
+        failures.push(`/api/http-status indexability summary missing ${field}`);
+      }
+    }
+    if (!("canonicalMatchesFinal" in httpStatusBody.indexability)) {
+      failures.push("/api/http-status indexability summary missing canonicalMatchesFinal");
+    }
+  }
 }
 
 const googlebotStatusResponse = await fetch(`${baseUrl}/api/http-status?url=${encodeURIComponent("https://www.google.com")}&profile=googlebot-smartphone`);

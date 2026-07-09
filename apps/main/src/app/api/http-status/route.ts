@@ -13,6 +13,22 @@ type RedirectHop = {
 
 type RequestProfileKey = "public" | "googlebot-smartphone" | "google-inspection-mobile";
 
+type HtmlIndexabilitySignals = {
+  checked: boolean;
+  isHtml: boolean;
+  htmlLang: string | null;
+  title: string | null;
+  titleLength: number;
+  description: string | null;
+  descriptionLength: number;
+  canonicalHref: string | null;
+  canonicalMatchesFinal: boolean | null;
+  robots: string | null;
+  googlebotRobots: string | null;
+  noindex: boolean;
+  h1Count: number;
+};
+
 const requestProfiles: Record<
   RequestProfileKey,
   {
@@ -87,6 +103,157 @@ function collectFinalHeaders(headers: Headers) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+function decodeHtmlText(value: string) {
+  return value
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function htmlAttribute(tag: string, name: string) {
+  const unquotedAttribute = "[^\\s\"'=<>`]+";
+  const match = tag.match(new RegExp(`${name}\\s*=\\s*("([^"]*)"|'([^']*)'|(${unquotedAttribute}))`, "i"));
+  return match ? decodeHtmlText(match[2] ?? match[3] ?? match[4] ?? "") : null;
+}
+
+function findMetaContent(html: string, name: string) {
+  const tags = html.match(/<meta\b[^>]*>/gi) ?? [];
+  const expected = name.toLowerCase();
+  for (const tag of tags) {
+    const tagName = htmlAttribute(tag, "name")?.toLowerCase();
+    if (tagName === expected) return htmlAttribute(tag, "content");
+  }
+  return null;
+}
+
+function findCanonicalHref(html: string, finalUrl: string) {
+  const tags = html.match(/<link\b[^>]*>/gi) ?? [];
+  for (const tag of tags) {
+    const rel = htmlAttribute(tag, "rel")?.toLowerCase() ?? "";
+    if (!rel.split(/\s+/).includes("canonical")) continue;
+    const href = htmlAttribute(tag, "href");
+    if (!href) return null;
+    try {
+      return new URL(href, finalUrl).toString();
+    } catch {
+      return href;
+    }
+  }
+  return null;
+}
+
+function normalizeUrlForComparison(value: string) {
+  try {
+    const url = new URL(value);
+    url.hash = "";
+    return url.toString();
+  } catch {
+    return value.trim();
+  }
+}
+
+function getCharset(contentType: string | null) {
+  return contentType?.match(/charset=([^;]+)/i)?.[1]?.trim().replace(/^["']|["']$/g, "") || "utf-8";
+}
+
+function decodeHtmlPreview(bytes: Uint8Array, contentType: string | null) {
+  try {
+    return new TextDecoder(getCharset(contentType)).decode(bytes);
+  } catch {
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+}
+
+async function readHtmlPreview(response: Response, contentType: string | null, maxBytes = 300_000) {
+  if (!response.body) return (await response.text()).slice(0, maxBytes);
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+
+  try {
+    while (received < maxBytes) {
+      const { done, value } = await reader.read();
+      if (done || !value) break;
+      const remaining = maxBytes - received;
+      const chunk = value.byteLength > remaining ? value.slice(0, remaining) : value;
+      chunks.push(chunk);
+      received += chunk.byteLength;
+      if (value.byteLength > remaining) break;
+    }
+  } finally {
+    await reader.cancel().catch(() => undefined);
+  }
+
+  const bytes = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return decodeHtmlPreview(bytes, contentType);
+}
+
+function parseHtmlIndexability(html: string, finalUrl: string, contentType: string | null): HtmlIndexabilitySignals {
+  const title = decodeHtmlText(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "");
+  const description = findMetaContent(html, "description") ?? "";
+  const canonicalHref = findCanonicalHref(html, finalUrl);
+  const robots = findMetaContent(html, "robots");
+  const googlebotRobots = findMetaContent(html, "googlebot");
+  const combinedRobots = `${robots ?? ""},${googlebotRobots ?? ""}`.toLowerCase();
+  const htmlTag = html.match(/<html\b[^>]*>/i)?.[0] ?? "";
+  const htmlLang = htmlTag ? htmlAttribute(htmlTag, "lang") : null;
+
+  return {
+    checked: true,
+    isHtml: Boolean(contentType?.toLowerCase().includes("html")),
+    htmlLang,
+    title: title || null,
+    titleLength: title.length,
+    description: description || null,
+    descriptionLength: description.length,
+    canonicalHref,
+    canonicalMatchesFinal: canonicalHref ? normalizeUrlForComparison(canonicalHref) === normalizeUrlForComparison(finalUrl) : null,
+    robots,
+    googlebotRobots,
+    noindex: combinedRobots.includes("noindex"),
+    h1Count: html.match(/<h1\b/gi)?.length ?? 0,
+  };
+}
+
+async function collectHtmlIndexability(response: Response, finalUrl: string): Promise<HtmlIndexabilitySignals | null> {
+  const contentType = response.headers.get("content-type");
+  if (!contentType?.toLowerCase().includes("html")) {
+    return {
+      checked: false,
+      isHtml: false,
+      htmlLang: null,
+      title: null,
+      titleLength: 0,
+      description: null,
+      descriptionLength: 0,
+      canonicalHref: null,
+      canonicalMatchesFinal: null,
+      robots: null,
+      googlebotRobots: null,
+      noindex: false,
+      h1Count: 0,
+    };
+  }
+
+  try {
+    const html = await readHtmlPreview(response, contentType);
+    return parseHtmlIndexability(html, finalUrl, contentType);
+  } catch {
+    return null;
+  }
+}
+
 async function fetchPublicUrl(value: string, signal: AbortSignal, requestProfileKey: RequestProfileKey) {
   let url = await assertPublicHttpUrl(value);
   const redirectChain: RedirectHop[] = [];
@@ -151,6 +318,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const { response, finalUrl, redirectCount, redirectChain, finalResponseHeaders, requestProfile } = await fetchPublicUrl(value, controller.signal, requestProfileKey);
+    const indexability = await collectHtmlIndexability(response, finalUrl);
     return NextResponse.json({
       inputUrl: value,
       finalUrl,
@@ -168,6 +336,7 @@ export async function GET(request: NextRequest) {
       contentType: response.headers.get("content-type"),
       cacheControl: response.headers.get("cache-control"),
       server: response.headers.get("server"),
+      indexability,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "HTTP check failed.";
