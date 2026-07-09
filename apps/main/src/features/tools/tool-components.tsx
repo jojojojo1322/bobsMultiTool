@@ -8710,7 +8710,7 @@ function getHttpIndexabilityDiagnostics(result: HttpStatusResult, dictionary: Cl
   const statusOk = typeof result.status === "number" && result.status >= 200 && result.status < 300;
   const contentType = result.contentType ?? "—";
   const robotsPolicy = [summary?.robots, summary?.googlebotRobots].filter(Boolean).join(" / ") || ui(dictionary, "defaultRobotsPolicy", "Default index/follow");
-  const warnings = [
+  const blockingWarnings = [
     !summary ? ui(dictionary, "metadataUnavailableWarning", "HTML metadata could not be inspected from this response.") : "",
     summary && !summary.isHtml ? ui(dictionary, "indexabilityNonHtmlWarning", "The final response is not HTML, so canonical, robots, title, and h1 signals were not inspected.") : "",
     !statusOk ? ui(dictionary, "indexabilityStatusWarning", "The final status is not a 2xx response. Search crawlers usually need a stable successful HTML page before indexing.") : "",
@@ -8718,14 +8718,17 @@ function getHttpIndexabilityDiagnostics(result: HttpStatusResult, dictionary: Cl
     summary?.isHtml && !summary.canonicalHref ? ui(dictionary, "indexabilityCanonicalMissingWarning", "No canonical link was found in the inspected HTML.") : "",
     summary?.canonicalMatchesFinal === false ? ui(dictionary, "indexabilityCanonicalMismatchWarning", "The canonical URL differs from the final URL. Confirm this is intentional before requesting indexing.") : "",
     summary?.isHtml && !summary.title ? ui(dictionary, "indexabilityTitleMissingWarning", "No title tag was found in the inspected HTML.") : "",
-    summary?.title && (summary.titleLength < 10 || summary.titleLength > 65) ? ui(dictionary, "indexabilityTitleLengthWarning", "The title length is outside the usual compact search-result range.") : "",
     summary?.isHtml && !summary.description ? ui(dictionary, "indexabilityDescriptionMissingWarning", "No meta description was found in the inspected HTML.") : "",
-    summary?.description && (summary.descriptionLength < 50 || summary.descriptionLength > 170) ? ui(dictionary, "indexabilityDescriptionLengthWarning", "The meta description length should be reviewed before search submission.") : "",
     summary?.isHtml && summary.h1Count === 0 ? ui(dictionary, "indexabilityH1MissingWarning", "No h1 was found in the inspected HTML.") : "",
     summary && summary.h1Count > 1 ? ui(dictionary, "indexabilityMultipleH1Warning", "{count} h1 elements were found. Submitted pages should usually expose exactly one visible h1.").replace("{count}", String(summary.h1Count)) : "",
     summary?.isHtml && !summary.htmlLang ? ui(dictionary, "indexabilityHtmlLangMissingWarning", "No html lang attribute was found in the inspected HTML.") : "",
   ].filter(Boolean);
-  const ready = warnings.length === 0;
+  const qualityWarnings = [
+    summary?.title && (summary.titleLength < 10 || summary.titleLength > 65) ? ui(dictionary, "indexabilityTitleLengthWarning", "The title length is outside the usual compact search-result range.") : "",
+    summary?.description && (summary.descriptionLength < 50 || summary.descriptionLength > 170) ? ui(dictionary, "indexabilityDescriptionLengthWarning", "The meta description length should be reviewed before search submission.") : "",
+  ].filter(Boolean);
+  const warnings = [...blockingWarnings, ...qualityWarnings];
+  const ready = blockingWarnings.length === 0;
   const searchReadyLabel = ready ? ui(dictionary, "indexabilityStatusReady", "Ready for indexing request") : ui(dictionary, "indexabilityStatusReview", "Review before indexing request");
 
   return {
