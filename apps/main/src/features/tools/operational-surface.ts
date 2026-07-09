@@ -12,6 +12,7 @@ export const operationalToolSlugs = [
   "json-formatter",
   "base64-tool",
   "hash-generator",
+  "random-token-generator",
   "yaml-validator",
   "env-parser-validator",
 ] as const;
