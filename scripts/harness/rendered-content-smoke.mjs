@@ -58,11 +58,12 @@ const rows = [];
 
 async function gotoWithRetry(page, url) {
   let lastError;
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
     try {
       return await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
     } catch (error) {
       lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
     }
   }
   throw lastError;
